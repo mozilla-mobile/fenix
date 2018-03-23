@@ -31,6 +31,10 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+// -------------------------------------------------------------------------------------------------
+// -- detekt ---------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
 detekt {
     version = "1.0.0.RC6-4"
     profile("main") {
@@ -39,4 +43,23 @@ detekt {
         filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
         output = "$projectDir/build/reports/detekt"
     }
+}
+
+// -------------------------------------------------------------------------------------------------
+// -- ktlint ---------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint "com.github.shyiko:ktlint:0.20.0"
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.github.shyiko.ktlint.Main"
+    args "components/**/*.kt"
 }
