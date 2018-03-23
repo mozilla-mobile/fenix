@@ -1,0 +1,1 @@
+[![Task Status](https://github.taskcluster.net/v1/repository/mozilla-mobile/phoenix/master/badge.svg)](https://github.taskcluster.net/v1/repository/mozilla-mobile/phoenix/master/latest)
