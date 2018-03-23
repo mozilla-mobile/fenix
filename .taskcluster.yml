@@ -1,0 +1,38 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+version: 0
+allowPullRequests: public
+tasks:
+####################################################################################################
+# Task: Pull requests
+####################################################################################################
+  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+    workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        events:
+          - pull_request.opened
+          - pull_request.edited
+          - pull_request.synchronize
+          - pull_request.reopened
+          - push
+    payload:
+      maxRunTime: 3600
+      deadline: "{{ '2 hours' | $fromNow }}"
+      image: 'mozillamobile/phoenix:1.0'
+      command:
+        - /bin/bash
+        - '--login'
+        - '-cx'
+        - >-
+          git fetch {{ event.head.repo.url }} {{ event.head.repo.branch }}
+          && git config advice.detachedHead false
+          && git checkout {{event.head.sha}}
+          && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+    metadata:
+      name: Phoenix - Pull Request
+      description: Building and testing phoenix - triggered by a pull request.
+      owner: '{{ event.head.user.email }}'
+      source: '{{ event.head.repo.url }}'
