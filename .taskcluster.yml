@@ -31,6 +31,15 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+      artifacts:
+        'public/reports':
+          type: 'directory'
+          path: '/build/phoenix/build/reports'
+          expires: "{{ '1 week' | $fromNow }}"
+        'public/app/reports':
+          type: 'directory'
+          path: '/build/phoenix/app/build/reports'
+          expires: "{{ '1 week' | $fromNow }}"
     metadata:
       name: Phoenix - Pull Request
       description: Building and testing phoenix - triggered by a pull request.
