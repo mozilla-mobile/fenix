@@ -73,7 +73,7 @@ tasks:
           git fetch origin
           && git checkout {{event.head.sha}}
           && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
-          && ./gradlew --no-daemon clean assemble test
+          && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
       features:
         taskclusterProxy: true
       artifacts:
@@ -86,7 +86,7 @@ tasks:
           path: '/build/phoenix/app/build/reports'
           expires: "{{ '1 week' | $fromNow }}"
     metadata:
-      name: Fenix - Pull Request
-      description: Building and testing fenix - triggered by a pull request.
+      name: Fenix - Master build
+      description: Building and testing fenix
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
