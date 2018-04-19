@@ -15,6 +15,8 @@ class FenixApplication : Application() {
         initializeCrashReporting()
     }
 
+    @Suppress( // The IDE doesn't know that the token is set dynamically gradle.
+            "SENSELESS_COMPARISON")
     private fun initializeCrashReporting() {
         if (BuildConfig.SENTRY_TOKEN != null) {
             Sentry.init(BuildConfig.SENTRY_TOKEN, AndroidSentryClientFactory(this))
