@@ -17,7 +17,6 @@ tasks:
           - pull_request.edited
           - pull_request.synchronize
           - pull_request.reopened
-          - push
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
@@ -41,7 +40,52 @@ tasks:
           path: '/build/phoenix/app/build/reports'
           expires: "{{ '1 week' | $fromNow }}"
     metadata:
-      name: Phoenix - Pull Request
-      description: Building and testing phoenix - triggered by a pull request.
+      name: Fenix - Pull Request
+      description: Building and testing fenix - triggered by a pull request.
+      owner: '{{ event.head.user.email }}'
+      source: '{{ event.head.repo.url }}'
+####################################################################################################
+# Task: Master pushes
+####################################################################################################
+  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+    workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        env: true
+        events:
+          - push
+        branches:
+          - master
+    scopes:
+      - "queue:create-task:aws-provisioner-v1/github-worker"
+      - "queue:scheduler-id:taskcluster-github"
+      - "secrets:get:project/fenix/sentry"
+      - "queue:route:index.project.fenix.android.preview-builds"
+    payload:
+      maxRunTime: 3600
+      deadline: "{{ '2 hours' | $fromNow }}"
+      image: 'mozillamobile/phoenix:1.0'
+      command:
+        - /bin/bash
+        - '--login'
+        - '-cx'
+        - >-
+          git fetch origin
+          && git checkout {{event.head.sha}}
+          && ./gradlew --no-daemon clean assemble test
+      features:
+        taskclusterProxy: true
+      artifacts:
+        'public/reports':
+          type: 'directory'
+          path: '/build/phoenix/build/reports'
+          expires: "{{ '1 week' | $fromNow }}"
+        'public/app/reports':
+          type: 'directory'
+          path: '/build/phoenix/app/build/reports'
+          expires: "{{ '1 week' | $fromNow }}"
+    metadata:
+      name: Fenix - Pull Request
+      description: Building and testing fenix - triggered by a pull request.
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
