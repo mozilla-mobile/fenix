@@ -10,7 +10,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "org.mozilla.phoenix"
+        applicationId "mozilla.fenix"
 
         minSdkVersion 21
         targetSdkVersion 27
