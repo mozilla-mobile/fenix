@@ -14,7 +14,7 @@ ENV GLIBC_VERSION "2.27-r0"
 ENV ANDROID_BUILD_TOOLS "27.0.3"
 ENV ANDROID_SDK_VERSION "3859397"
 ENV ANDROID_PLATFORM_VERSION "27"
-ENV PROJECT_REPOSITORY "https://github.com/mozilla-mobile/phoenix.git"
+ENV PROJECT_REPOSITORY "https://github.com/mozilla-mobile/fenix.git"
 
 #----------------------------------------------------------------------------------------------------------------------
 #-- System ------------------------------------------------------------------------------------------------------------
@@ -74,7 +74,6 @@ RUN sdkmanager --verbose "platform-tools" \
 
 RUN git clone $PROJECT_REPOSITORY
 
-WORKDIR /build/phoenix
+WORKDIR /build/fenix
 
 RUN ./gradlew --no-daemon assemble test lint detektCheck ktlint
-
