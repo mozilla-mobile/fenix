@@ -48,3 +48,7 @@ l10n-repo/
 # OS X
 .DS_Store
 
+# Sentry token file
+.sentry
+
+
