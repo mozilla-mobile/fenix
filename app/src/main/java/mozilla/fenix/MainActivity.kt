@@ -4,9 +4,8 @@
 
 package mozilla.fenix
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import org.mozilla.fenix.R
+import android.support.v7.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
