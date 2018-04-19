@@ -72,6 +72,7 @@ tasks:
         - >-
           git fetch origin
           && git checkout {{event.head.sha}}
+          && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
           && ./gradlew --no-daemon clean assemble test
       features:
         taskclusterProxy: true
