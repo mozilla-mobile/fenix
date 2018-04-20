@@ -5,6 +5,12 @@
 buildscript {
     ext.kotlin_version = '1.2.30'
 
+    ext.build = [
+        compileSdkVersion: 27,
+        targetSdkVersion: 27,
+        minSdkVersion: 21
+    ]
+
     repositories {
         google()
         jcenter()
