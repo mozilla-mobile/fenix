@@ -7,13 +7,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.build['compileSdkVersion']
 
     defaultConfig {
         applicationId "mozilla.fenix"
 
-        minSdkVersion 21
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.build['minSdkVersion']
+        targetSdkVersion rootProject.ext.build['targetSdkVersion']
         versionCode 1
         versionName "1.0"
 
