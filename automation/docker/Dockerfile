@@ -77,3 +77,10 @@ RUN git clone $PROJECT_REPOSITORY
 WORKDIR /build/fenix
 
 RUN ./gradlew --no-daemon assemble test lint detektCheck ktlint
+
+#----------------------------------------------------------------------------------------------------------------------
+#-- Addendum ----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
+
+# Alphine Linux creates a bash profile that overrides our PATH again. Let's fix that.
+RUN echo "export PATH=$PATH" >> /etc/profile
