@@ -30,6 +30,9 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+          && mkdir ./preview
+          && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
+          && touch ./preview/{{event.head.sha}}
       artifacts:
         'public/reports':
           type: 'directory'
@@ -82,6 +85,8 @@ tasks:
           && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStorePassword -f .store_token
           && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
           && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
+          && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
+          && touch ./preview/{{event.head.sha}}
       features:
         taskclusterProxy: true
       artifacts:
