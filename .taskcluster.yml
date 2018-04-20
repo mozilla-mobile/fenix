@@ -79,7 +79,7 @@ tasks:
           && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStoreFile -f .store --decode
           && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStorePassword -f .store_token
           && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
-          && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive preview
+          && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
       features:
         taskclusterProxy: true
       artifacts:
