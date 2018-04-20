@@ -39,9 +39,8 @@ def sign(path, store, store_token, key_alias, key_token):
             "--out", apk.replace('unsigned', 'signed'), apk])
 
 def archive(path, archive):
-    artifacts_path = os.path.join(archive)
-    if not os.path.exists(artifacts_path):
-        os.makedirs(artifacts_path)
+    if not os.path.exists(archive):
+        os.makedirs(archive)
 
     signed_apks = collect_apks(path, '*-signed-*.apk')
     print "Found %d APK(s) to archive in %s" % (len(signed_apks), path)
@@ -51,7 +50,7 @@ def archive(path, archive):
         print subprocess.check_output(['apksigner', 'verify', apk])
 
         print "Archiving", apk
-        os.rename(apk, artifacts_path + "/" + os.path.basename(apk))
+        os.rename(apk, archive + "/" + os.path.basename(apk))
 
 def main():
     parser = argparse.ArgumentParser(
