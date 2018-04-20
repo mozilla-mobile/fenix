@@ -82,6 +82,8 @@ tasks:
           && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
       features:
         taskclusterProxy: true
+      routes:
+        - "index.project.fenix.android.preview-builds"
       artifacts:
         'public':
           type: 'directory'
