@@ -60,6 +60,7 @@ tasks:
       - "queue:create-task:aws-provisioner-v1/github-worker"
       - "queue:scheduler-id:taskcluster-github"
       - "secrets:get:project/fenix/sentry"
+      - "secrets:get:project/fenix/preview-key-store"
       - "queue:route:index.project.fenix.android.preview-builds"
     payload:
       maxRunTime: 3600
@@ -74,16 +75,17 @@ tasks:
           && git checkout {{event.head.sha}}
           && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
           && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+          && ./gradlew --no-daemon clean assembleRelease
+          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStoreFile -f .store --decode
+          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStorePassword -f .store_token
+          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
+          && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive preview
       features:
         taskclusterProxy: true
       artifacts:
-        'public/reports':
+        'public/preview':
           type: 'directory'
-          path: '/build/phoenix/build/reports'
-          expires: "{{ '1 week' | $fromNow }}"
-        'public/app/reports':
-          type: 'directory'
-          path: '/build/phoenix/app/build/reports'
+          path: '/build/phoenix/preview'
           expires: "{{ '1 week' | $fromNow }}"
     metadata:
       name: Fenix - Master build
