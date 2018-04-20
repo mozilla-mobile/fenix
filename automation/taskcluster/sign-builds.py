@@ -49,8 +49,10 @@ def archive(path, archive):
         print "Verifying", apk
         print subprocess.check_output(['apksigner', 'verify', apk])
 
+        destination = archive + "/" + os.path.basename(apk)
         print "Archiving", apk
-        os.rename(apk, archive + "/" + os.path.basename(apk))
+        print " `->", destination
+        os.rename(apk, destination)
 
 def main():
     parser = argparse.ArgumentParser(
