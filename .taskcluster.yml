@@ -20,7 +20,7 @@ tasks:
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'mozillamobile/fenix:1.1'
+      image: 'mozillamobile/fenix:1.2'
       command:
         - /bin/bash
         - '--login'
@@ -65,7 +65,7 @@ tasks:
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'mozillamobile/fenix:1.1'
+      image: 'mozillamobile/fenix:1.2'
       command:
         - /bin/bash
         - '--login'
