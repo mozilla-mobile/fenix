@@ -33,11 +33,11 @@ tasks:
       artifacts:
         'public/reports':
           type: 'directory'
-          path: '/build/phoenix/build/reports'
+          path: '/build/fenix/build/reports'
           expires: "{{ '1 week' | $fromNow }}"
         'public/app/reports':
           type: 'directory'
-          path: '/build/phoenix/app/build/reports'
+          path: '/build/fenix/app/build/reports'
           expires: "{{ '1 week' | $fromNow }}"
     metadata:
       name: Fenix - Pull Request
@@ -85,7 +85,7 @@ tasks:
       artifacts:
         'public':
           type: 'directory'
-          path: '/build/phoenix/preview'
+          path: '/build/fenix/preview'
           expires: "{{ '1 month' | $fromNow }}"
     metadata:
       name: Fenix - Master build
