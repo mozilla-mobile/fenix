@@ -62,6 +62,8 @@ tasks:
       - "secrets:get:project/fenix/sentry"
       - "secrets:get:project/fenix/preview-key-store"
       - "queue:route:index.project.fenix.android.preview-builds"
+    routes:
+      - "index.project.fenix.android.preview-builds"
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
@@ -82,8 +84,6 @@ tasks:
           && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
       features:
         taskclusterProxy: true
-      routes:
-        - "index.project.fenix.android.preview-builds"
       artifacts:
         'public':
           type: 'directory'
