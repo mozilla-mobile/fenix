@@ -83,10 +83,10 @@ tasks:
       features:
         taskclusterProxy: true
       artifacts:
-        'public/preview':
+        'public':
           type: 'directory'
           path: '/build/phoenix/preview'
-          expires: "{{ '1 week' | $fromNow }}"
+          expires: "{{ '1 month' | $fromNow }}"
     metadata:
       name: Fenix - Master build
       description: Building and testing fenix
