@@ -4,13 +4,34 @@
 
 package mozilla.fenix
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.AttributeSet
+import android.view.View
+import kotlinx.android.synthetic.main.activity_main.*
+import mozilla.components.concept.engine.EngineView
+import mozilla.components.feature.session.SessionFeature
+import mozilla.fenix.components.FeatureLifecycleObserver
+import mozilla.fenix.ext.components
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val sessionFeature = SessionFeature(components.sessionManager, components.sessionUseCases,
+                components.engine, engineView, components.sessionMapping)
+
+        lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature))
+    }
+
+    override fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?): View? {
+        if (name == EngineView::class.java.name) {
+            return components.engine.createView(context!!, attrs).asView()
+        }
+
+        return super.onCreateView(parent, name, context, attrs)
     }
 }
