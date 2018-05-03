@@ -8,20 +8,24 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import mozilla.components.feature.session.SessionFeature
+import mozilla.components.feature.toolbar.ToolbarFeature
 
 /**
  * LifecycleObserver implementation that will forward lifecycle callbacks to "feature" components.
  */
 class FeatureLifecycleObserver(
-    private val sessionFeature: SessionFeature
+    private val sessionFeature: SessionFeature,
+    private val toolbarFeature: ToolbarFeature
 ): LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun startFeatures() {
         sessionFeature.start()
+        toolbarFeature.start()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stopFeatures() {
         sessionFeature.stop()
+        toolbarFeature.stop()
     }
 }

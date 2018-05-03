@@ -9,6 +9,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <mozilla.components.browser.toolbar.BrowserToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
     <mozilla.components.concept.engine.EngineView
         android:id="@+id/engineView"
         android:layout_width="match_parent"

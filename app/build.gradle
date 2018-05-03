@@ -49,6 +49,11 @@ android {
 }
 
 repositories {
+    maven {
+        // Temporary solution until all required packages are on JCenter
+        url "https://dl.bintray.com/pocmo/Mozilla-Mobile/"
+    }
+
     // GeckoView ARM
     maven {
         url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${rootProject.ext.gecko['nightlyDate']}.revision.${rootProject.ext.gecko['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
@@ -75,7 +80,13 @@ dependencies {
     implementation "org.mozilla.components:toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-session:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
+
+    implementation "org.mozilla.components:autocomplete:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:ktx:${rootProject.ext.dependencies['mozillaComponents']}"
+
+    implementation "org.mozilla.photon:colors:${rootProject.ext.dependencies['mozillaComponents']}"
+    implementation "org.mozilla.photon:icons:${rootProject.ext.dependencies['mozillaComponents']}"
+    implementation "org.mozilla.photon:progress:${rootProject.ext.dependencies['mozillaComponents']}"
 
     armImplementation "org.mozilla:geckoview-nightly-armeabi-v7a:${rootProject.ext.gecko['version']}"
     x86Implementation "org.mozilla:geckoview-nightly-x86:${rootProject.ext.gecko['version']}"

@@ -12,6 +12,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.session.SessionFeature
+import mozilla.components.feature.toolbar.ToolbarFeature
 import mozilla.fenix.components.FeatureLifecycleObserver
 import mozilla.fenix.ext.components
 
@@ -21,10 +22,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sessionFeature = SessionFeature(components.sessionManager, components.sessionUseCases,
-                components.engine, engineView, components.sessionMapping)
+        val toolbarFeature = ToolbarFeature(
+                components.sessionManager,
+                components.sessionUseCases.loadUrl,
+                toolbar)
 
-        lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature))
+        val sessionFeature = SessionFeature(
+                components.sessionManager,
+                components.sessionUseCases,
+                components.engine,
+                engineView,
+                components.sessionMapping)
+
+        lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature, toolbarFeature))
     }
 
     override fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?): View? {
