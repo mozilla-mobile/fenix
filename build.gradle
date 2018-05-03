@@ -3,7 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.dependencies = [
+        kotlin: '1.2.30',
+        sentry: '1.7.3',
+        supportLibraries: '27.1.1',
+        junit: '4.12',
+        constraintLayout: '1.1.0'
+    ]
 
     ext.build = [
         compileSdkVersion: 27,
@@ -18,7 +24,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.ext.dependencies['kotlin']}"
     }
 }
 
