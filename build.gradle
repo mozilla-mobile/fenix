@@ -4,7 +4,7 @@
 
 buildscript {
     ext.dependencies = [
-        kotlin: '1.2.30',
+        kotlin: '1.2.40',
         sentry: '1.7.3',
         supportLibraries: '27.1.1',
         junit: '4.12',
