@@ -7,9 +7,11 @@ buildscript {
         kotlin: '1.2.40',
         sentry: '1.7.3',
         supportLibraries: '27.1.1',
-        junit: '4.12',
         constraintLayout: '1.1.0',
-        mozillaComponents: '0.5'
+        // Testing
+        junit: '4.12',
+        // Mozilla
+        mozillaComponents: '0.5.1'
     ]
 
     ext.gecko = [

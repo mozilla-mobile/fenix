@@ -7,8 +7,11 @@ package mozilla.fenix
 import android.app.Application
 import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
+import mozilla.fenix.components.Components
 
 class FenixApplication : Application() {
+    val components by lazy { Components(this) }
+
     override fun onCreate() {
         super.onCreate()
 
