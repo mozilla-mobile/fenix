@@ -49,11 +49,6 @@ android {
 }
 
 repositories {
-    maven {
-        // Temporary solution until all required packages are on JCenter
-        url "https://dl.bintray.com/pocmo/Mozilla-Mobile/"
-    }
-
     // GeckoView ARM
     maven {
         url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${rootProject.ext.gecko['nightlyDate']}.revision.${rootProject.ext.gecko['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
