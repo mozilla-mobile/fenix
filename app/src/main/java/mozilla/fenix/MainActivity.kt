@@ -17,24 +17,36 @@ import mozilla.fenix.components.FeatureLifecycleObserver
 import mozilla.fenix.ext.components
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var toolbarFeature: ToolbarFeature
+    private lateinit var sessionFeature: SessionFeature
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toolbarFeature = ToolbarFeature(
-                components.sessionManager,
-                components.sessionUseCases.loadUrl,
-                toolbar)
+        toolbarFeature = ToolbarFeature(
+            components.sessionManager,
+            components.sessionUseCases.loadUrl,
+            toolbar)
 
-        val sessionFeature = SessionFeature(
-                components.sessionManager,
-                components.sessionUseCases,
-                components.engine,
-                engineView,
-                components.sessionMapping)
+        sessionFeature = SessionFeature(
+            components.sessionManager,
+            components.sessionUseCases,
+            components.engine,
+            engineView,
+            components.sessionMapping)
 
         lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature, toolbarFeature))
+    }
+
+    override fun onBackPressed() {
+        if (toolbarFeature.handleBackPressed())
+            return
+
+        if (sessionFeature.handleBackPressed())
+            return
+
+        super.onBackPressed()
     }
 
     override fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?): View? {
