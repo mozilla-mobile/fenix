@@ -11,14 +11,14 @@ buildscript {
         // Testing
         junit: '4.12',
         // Mozilla
-        mozillaComponents: '0.5.1'
+        mozillaComponents: '0.6'
     ]
 
     ext.gecko = [
         // Discover nightly builds: https://tools.taskcluster.net/index/gecko.v2.mozilla-central.nightly
-        nightlyDate: '2018.04.10',
-        revision: 'a8061a09cd7064a8783ca9e67979d77fb52e001e',
-        version: '61.0.20180410100334'
+        nightlyDate: '2018.05.16',
+        revision: 'dedd25bfd2794eaba95225361f82c701e49c9339',
+        version: '62.0.20180516100458'
     ]
 
     ext.build = [
