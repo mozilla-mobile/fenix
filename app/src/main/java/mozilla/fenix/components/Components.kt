@@ -6,28 +6,24 @@ package mozilla.fenix.components
 
 import android.content.Context
 import mozilla.components.browser.engine.gecko.GeckoEngine
-import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.session.SessionProvider
+import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.Engine
-import mozilla.components.feature.session.SessionMapping
+import mozilla.components.feature.session.SessionProvider
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.fenix.components.session.DefaultSessionProvider
 import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoRuntimeSettings
 
 /**
  * Helper class for lazily instantiating components needed by the application.
  */
 class Components(private val applicationContext: Context) {
     private val geckoRuntime by lazy {
-        val settings = GeckoRuntimeSettings()
-        GeckoRuntime.create(applicationContext, settings)
+        GeckoRuntime.getDefault(applicationContext)
     }
-
     val engine : Engine by lazy { GeckoEngine(geckoRuntime) }
 
-    private val sessionProvider: SessionProvider by lazy { DefaultSessionProvider() }
-    val sessionManager by lazy { SessionManager(sessionProvider) }
-    val sessionMapping by lazy { SessionMapping() }
-    val sessionUseCases by lazy { SessionUseCases(sessionManager, engine, sessionMapping) }
+    val sessionProvider : SessionProvider by lazy {
+        SessionProvider(applicationContext, Session("https://www.mozilla.org"))
+    }
+
+    val sessionUseCases = SessionUseCases(sessionProvider, engine)
 }

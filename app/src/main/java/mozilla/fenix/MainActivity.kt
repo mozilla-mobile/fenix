@@ -25,16 +25,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         toolbarFeature = ToolbarFeature(
-            components.sessionManager,
+            components.sessionProvider.sessionManager,
             components.sessionUseCases.loadUrl,
             toolbar)
 
         sessionFeature = SessionFeature(
-            components.sessionManager,
+            components.sessionProvider,
             components.sessionUseCases,
             components.engine,
-            engineView,
-            components.sessionMapping)
+            engineView)
 
         lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature, toolbarFeature))
     }
