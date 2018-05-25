@@ -8,6 +8,7 @@ import android.content.Context
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.session.DefaultSessionStorage
 import mozilla.components.feature.session.SessionProvider
 import mozilla.components.feature.session.SessionUseCases
 import org.mozilla.geckoview.GeckoRuntime
@@ -22,7 +23,7 @@ class Components(private val applicationContext: Context) {
     val engine : Engine by lazy { GeckoEngine(geckoRuntime) }
 
     val sessionProvider : SessionProvider by lazy {
-        SessionProvider(applicationContext, Session("https://www.mozilla.org"))
+        SessionProvider(Session("https://www.mozilla.org"), DefaultSessionStorage(applicationContext))
     }
 
     val sessionUseCases = SessionUseCases(sessionProvider, engine)

@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         toolbarFeature = ToolbarFeature(
+            toolbar,
             components.sessionProvider.sessionManager,
-            components.sessionUseCases.loadUrl,
-            toolbar)
+            components.sessionUseCases.loadUrl)
 
         sessionFeature = SessionFeature(
             components.sessionProvider,
