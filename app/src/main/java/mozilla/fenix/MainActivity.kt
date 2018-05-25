@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        toolbar.setMenuBuilder(components.menuBuilder)
+
         toolbarFeature = ToolbarFeature(
             toolbar,
             components.sessionProvider.sessionManager,
