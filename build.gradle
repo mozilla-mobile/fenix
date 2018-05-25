@@ -11,7 +11,7 @@ buildscript {
         // Testing
         junit: '4.12',
         // Mozilla
-        mozillaComponents: '0.6'
+        mozillaComponents: '0.7'
     ]
 
     ext.gecko = [
