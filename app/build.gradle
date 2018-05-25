@@ -70,9 +70,15 @@ dependencies {
 
     implementation "org.mozilla.components:engine:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:engine-gecko:${rootProject.ext.dependencies['mozillaComponents']}"
+
+    implementation "org.mozilla.components:search:${rootProject.ext.dependencies['mozillaComponents']}"
+
     implementation "org.mozilla.components:session:${rootProject.ext.dependencies['mozillaComponents']}"
+
     implementation "org.mozilla.components:abstract-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
+
+    implementation "org.mozilla.components:feature-search:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-session:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
 
@@ -89,6 +95,7 @@ dependencies {
 
     implementation "com.android.support:appcompat-v7:${rootProject.ext.dependencies['supportLibraries']}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.ext.dependencies['kotlin']}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${rootProject.ext.dependencies['coroutines']}"
     implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.dependencies['constraintLayout']}"
 
     testImplementation "junit:junit:${rootProject.ext.dependencies['junit']}"

@@ -27,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         toolbarFeature = ToolbarFeature(
             toolbar,
             components.sessionProvider.sessionManager,
-            components.sessionUseCases.loadUrl)
+            components.sessionUseCases.loadUrl,
+            components.defaultSearchUseCase)
 
         sessionFeature = SessionFeature(
             components.sessionProvider,
