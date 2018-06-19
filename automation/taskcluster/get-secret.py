@@ -7,6 +7,7 @@ import base64
 import os
 import taskcluster
 
+
 def write_secret_to_file(path, data, key, base64decode=False):
     path = os.path.join(os.path.dirname(__file__), '../../' + path)
     with open(path, 'w') as f:
@@ -14,6 +15,7 @@ def write_secret_to_file(path, data, key, base64decode=False):
         if base64decode:
             value = base64.b64decode(value)
         f.write(value)
+
 
 def fetch_secret_from_taskcluster(name):
     secrets = taskcluster.Secrets({'baseUrl': 'http://taskcluster/secrets/v1'})
@@ -27,7 +29,10 @@ def main():
     parser.add_argument('-s', dest="secret", action="store", help="name of the secret")
     parser.add_argument('-k', dest='key', action="store", help='key of the secret')
     parser.add_argument('-f', dest="path", action="store", help='file to save secret to')
-    parser.add_argument('--decode', dest="decode", action="store_true", default=False, help='base64 decode secret before saving to file')
+    parser.add_argument(
+        '--decode', dest="decode", action="store_true", default=False,
+        help='base64 decode secret before saving to file'
+    )
 
     result = parser.parse_args()
 
