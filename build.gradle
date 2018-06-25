@@ -12,14 +12,27 @@ buildscript {
         // Testing
         junit: '4.12',
         // Mozilla
-        mozillaComponents: '0.7'
+        mozillaComponents: '0.11'
     ]
 
-    ext.gecko = [
-        // Discover nightly builds: https://tools.taskcluster.net/index/gecko.v2.mozilla-central.nightly
-        nightlyDate: '2018.05.16',
-        revision: 'dedd25bfd2794eaba95225361f82c701e49c9339',
-        version: '62.0.20180516100458'
+    // Synchronized versions numbers of GeckoView (Nightly) artifacts.
+    ext.geckoNightly = [
+            // Discover nightly builds: https://tools.taskcluster.net/index/gecko.v2.mozilla-central.nightly
+            nightlyDate: '2018.06.21',
+            revision: 'e834d23a292972ab4250a8be00e6740c43e41db2',
+            version: '62.0.20180621100051'
+    ]
+
+    // Synchronized versions numbers of GeckoView (Beta) artifacts.
+    ext.geckoBeta = [
+            // (61.0b14)
+            revision: '585281dde9604ddd197693ca5330f2b95987a181',
+            version: '61.0.20180614135649'
+    ]
+
+    ext.geckoRelease = [
+            revision: 'a0b222c551f586904f51228c49149d9b6b7e2a81',
+            version: '60.0.2'
     ]
 
     ext.build = [
