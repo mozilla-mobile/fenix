@@ -31,9 +31,21 @@ android {
         lintConfig file("${rootDir}/config/lint.xml")
     }
 
-    flavorDimensions "abi"
+    flavorDimensions "channel", "abi"
 
     productFlavors {
+        // GeckoView release channels
+        nightly {
+            dimension "channel"
+        }
+        beta {
+            dimension "channel"
+        }
+        production {
+            dimension "channel"
+        }
+
+        // Processor architecture
         x86 {
             dimension "abi"
         }
@@ -49,30 +61,84 @@ android {
 }
 
 repositories {
-    // GeckoView ARM
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // GeckoView Nightly
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    // ARM
     maven {
-        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${rootProject.ext.gecko['nightlyDate']}.revision.${rootProject.ext.gecko['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${geckoNightly['nightlyDate']}.revision.${geckoNightly['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
     }
 
-    // GeckoView x86
+    // x86
     maven {
-        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${rootProject.ext.gecko['nightlyDate']}.revision.${rootProject.ext.gecko['revision']}.mobile.android-x86-opt/artifacts/public/android/maven"
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${geckoNightly['nightlyDate']}.revision.${geckoNightly['revision']}.mobile.android-x86-opt/artifacts/public/android/maven"
     }
 
-    // GeckoView aarch64
+    // aarch64
     maven {
-        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${rootProject.ext.gecko['nightlyDate']}.revision.${rootProject.ext.gecko['revision']}.mobile.android-aarch64-opt/artifacts/public/android/maven"
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.${geckoNightly['nightlyDate']}.revision.${geckoNightly['revision']}.mobile.android-aarch64-opt/artifacts/public/android/maven"
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // GeckoView Beta
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    // ARM
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-beta.revision.${geckoBeta['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
+    }
+
+    // x86
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-beta.revision.${geckoBeta['revision']}.mobile.android-x86-opt/artifacts/public/android/maven"
+    }
+
+    // aarch64
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-beta.revision.${geckoBeta['revision']}.mobile.android-aarch64-opt/artifacts/public/android/maven"
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // GeckoView Release (60.0.2)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    // ARM
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-release.revision.${geckoRelease['revision']}.mobile.android-api-16-opt/artifacts/public/android/maven"
+    }
+
+    // x86
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-release.revision.${geckoRelease['revision']}.mobile.android-x86-opt/artifacts/public/android/maven"
+    }
+
+    // aarch64
+    maven {
+        url "https://index.taskcluster.net/v1/task/gecko.v2.mozilla-release.revision.${geckoRelease['revision']}.mobile.android-aarch64-opt/artifacts/public/android/maven"
+    }
+}
+
+
+configurations {
+    nightlyArmImplementation {}
+    nightlyX86Implementation {}
+    nightlyAarch64Implementation {}
+
+    betaArmImplementation {}
+    betaX86Implementation {}
+    betaAarch64Implementation {}
+
+    productionArmImplementation {}
+    productionX86Implementation {}
+    productionAarch64Implementation {}
 }
 
 dependencies {
     implementation "io.sentry:sentry-android:${rootProject.ext.dependencies['sentry']}"
 
     implementation "org.mozilla.components:engine:${rootProject.ext.dependencies['mozillaComponents']}"
-    implementation "org.mozilla.components:engine-gecko:${rootProject.ext.dependencies['mozillaComponents']}"
-
     implementation "org.mozilla.components:search:${rootProject.ext.dependencies['mozillaComponents']}"
-
     implementation "org.mozilla.components:session:${rootProject.ext.dependencies['mozillaComponents']}"
 
     implementation "org.mozilla.components:abstract-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
@@ -89,9 +155,20 @@ dependencies {
     implementation "org.mozilla.photon:icons:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.photon:progress:${rootProject.ext.dependencies['mozillaComponents']}"
 
-    armImplementation "org.mozilla:geckoview-nightly-armeabi-v7a:${rootProject.ext.gecko['version']}"
-    x86Implementation "org.mozilla:geckoview-nightly-x86:${rootProject.ext.gecko['version']}"
-    aarch64Implementation "org.mozilla:geckoview-nightly-arm64-v8a:${rootProject.ext.gecko['version']}"
+    nightlyImplementation "org.mozilla.components:engine-gecko-nightly:${rootProject.ext.dependencies['mozillaComponents']}"
+    nightlyArmImplementation "org.mozilla:geckoview-nightly-armeabi-v7a:${rootProject.ext.geckoNightly['version']}"
+    nightlyX86Implementation "org.mozilla:geckoview-nightly-x86:${rootProject.ext.geckoNightly['version']}"
+    nightlyAarch64Implementation "org.mozilla:geckoview-nightly-arm64-v8a:${rootProject.ext.geckoNightly['version']}"
+
+    betaImplementation "org.mozilla.components:engine-gecko-beta:${rootProject.ext.dependencies['mozillaComponents']}"
+    betaArmImplementation "org.mozilla:geckoview-beta-armeabi-v7a:${rootProject.ext.geckoBeta['version']}"
+    betaX86Implementation "org.mozilla:geckoview-beta-x86:${rootProject.ext.geckoBeta['version']}"
+    betaAarch64Implementation "org.mozilla:geckoview-beta-arm64-v8a:${rootProject.ext.geckoBeta['version']}"
+
+    productionImplementation "org.mozilla.components:engine-gecko:${rootProject.ext.dependencies['mozillaComponents']}"
+    productionArmImplementation "org.mozilla:geckoview-release-armeabi-v7a:${rootProject.ext.geckoRelease['version']}"
+    productionX86Implementation "org.mozilla:geckoview-release-x86:${rootProject.ext.geckoRelease['version']}"
+    productionAarch64Implementation "org.mozilla:geckoview-release-arm64-v8a:${rootProject.ext.geckoRelease['version']}"
 
     implementation "com.android.support:appcompat-v7:${rootProject.ext.dependencies['supportLibraries']}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.ext.dependencies['kotlin']}"
@@ -99,7 +176,6 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.dependencies['constraintLayout']}"
 
     testImplementation "junit:junit:${rootProject.ext.dependencies['junit']}"
-
 }
 
 // -------------------------------------------------------------------------------------------------

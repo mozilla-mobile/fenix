@@ -28,15 +28,15 @@ class MainActivity : AppCompatActivity() {
 
         toolbarFeature = ToolbarFeature(
             toolbar,
-            components.sessionProvider.sessionManager,
+            components.sessionManager,
             components.sessionUseCases.loadUrl,
             components.defaultSearchUseCase)
 
         sessionFeature = SessionFeature(
-            components.sessionProvider,
+            components.sessionManager,
             components.sessionUseCases,
-            components.engine,
-            engineView)
+            engineView,
+            components.sessionStorage)
 
         lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature, toolbarFeature))
     }
