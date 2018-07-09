@@ -6,6 +6,7 @@ package mozilla.fenix.components
 
 import android.content.Context
 import kotlinx.coroutines.experimental.async
+import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.search.SearchEngineManager
@@ -16,21 +17,24 @@ import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.fenix.R
-import org.mozilla.samples.browser.EngineProvider
+import org.mozilla.geckoview.GeckoRuntime
 
 /**
  * Helper class for lazily instantiating components needed by the application.
  */
 class Components(private val applicationContext: Context) {
     // Engine
-    val engine: Engine by lazy { EngineProvider.createEngine(applicationContext) }
+    val engine: Engine by lazy {
+        val runtime = GeckoRuntime.getDefault(applicationContext)
+        GeckoEngine(runtime)
+    }
 
     // Session
     val sessionStorage by lazy { DefaultSessionStorage(applicationContext) }
 
     val sessionManager by lazy {
         SessionManager(engine).apply {
-            sessionStorage.restore(engine, this)
+            sessionStorage.restore(this)
 
             if (size == 0) {
                 val initialSession =  Session("https://www.mozilla.org")
