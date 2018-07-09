@@ -9,53 +9,40 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
+import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.engine.EngineView
-import mozilla.components.feature.session.SessionFeature
-import mozilla.components.feature.toolbar.ToolbarFeature
-import mozilla.fenix.components.FeatureLifecycleObserver
+import mozilla.components.concept.tabstray.TabsTray
 import mozilla.fenix.ext.components
+import mozilla.fenix.fragment.BackHandler
+import mozilla.fenix.fragment.BrowserFragment
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var toolbarFeature: ToolbarFeature
-    private lateinit var sessionFeature: SessionFeature
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolbar.setMenuBuilder(components.menuBuilder)
-
-        toolbarFeature = ToolbarFeature(
-            toolbar,
-            components.sessionManager,
-            components.sessionUseCases.loadUrl,
-            components.defaultSearchUseCase)
-
-        sessionFeature = SessionFeature(
-            components.sessionManager,
-            components.sessionUseCases,
-            engineView,
-            components.sessionStorage)
-
-        lifecycle.addObserver(FeatureLifecycleObserver(sessionFeature, toolbarFeature))
+        if (savedInstanceState == null) {
+            supportFragmentManager?.beginTransaction()?.apply {
+                replace(R.id.container, BrowserFragment.create())
+                commit()
+            }
+        }
     }
 
     override fun onBackPressed() {
-        if (toolbarFeature.handleBackPressed())
-            return
-
-        if (sessionFeature.handleBackPressed())
-            return
+        supportFragmentManager.fragments.forEach {
+            if (it is BackHandler && it.onBackPressed()) {
+                return
+            }
+        }
 
         super.onBackPressed()
     }
 
-    override fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?): View? {
-        if (name == EngineView::class.java.name) {
-            return components.engine.createView(context!!, attrs).asView()
+    override fun onCreateView(parent: View?, name: String?, context: Context, attrs: AttributeSet?): View? =
+        when (name) {
+            EngineView::class.java.name -> components.engine.createView(context, attrs).asView()
+            TabsTray::class.java.name -> BrowserTabsTray(context, attrs)
+            else -> super.onCreateView(parent, name, context, attrs)
         }
-
-        return super.onCreateView(parent, name, context, attrs)
-    }
 }
