@@ -5,7 +5,7 @@
 package mozilla.fenix.components
 
 import android.content.Context
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
@@ -48,7 +48,7 @@ class Components(private val applicationContext: Context) {
     // Search
     private val searchEngineManager by lazy {
         SearchEngineManager().apply {
-            async { load(applicationContext) }
+            launch { load(applicationContext) }
         }
     }
     private val searchUseCases = SearchUseCases(applicationContext, searchEngineManager, sessionManager)
