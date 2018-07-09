@@ -27,6 +27,12 @@ android {
         }
     }
 
+    kotlin {
+        experimental {
+            coroutines 'enable'
+        }
+    }
+
     lintOptions {
         lintConfig file("${rootDir}/config/lint.xml")
     }
