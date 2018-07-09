@@ -146,12 +146,14 @@ dependencies {
     implementation "org.mozilla.components:engine:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:search:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:session:${rootProject.ext.dependencies['mozillaComponents']}"
-
+    implementation "org.mozilla.components:tabstray:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:abstract-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
+    implementation "org.mozilla.photon:icons:${rootProject.ext.dependencies['mozillaComponents']}"
 
     implementation "org.mozilla.components:feature-search:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-session:${rootProject.ext.dependencies['mozillaComponents']}"
+    implementation "org.mozilla.components:feature-tabs:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:feature-toolbar:${rootProject.ext.dependencies['mozillaComponents']}"
 
     implementation "org.mozilla.components:autocomplete:${rootProject.ext.dependencies['mozillaComponents']}"
@@ -177,6 +179,8 @@ dependencies {
     productionAarch64Implementation "org.mozilla:geckoview-release-arm64-v8a:${rootProject.ext.geckoRelease['version']}"
 
     implementation "com.android.support:appcompat-v7:${rootProject.ext.dependencies['supportLibraries']}"
+    implementation "com.android.support.constraint:constraint-layout:1.1.2"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.ext.dependencies['kotlin']}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${rootProject.ext.dependencies['coroutines']}"
     implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.dependencies['constraintLayout']}"
