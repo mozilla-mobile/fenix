@@ -61,11 +61,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-
-        // Temporary until all modules are synced to JCenter
-        maven {
-            url "https://dl.bintray.com/pocmo/Mozilla-Mobile"
-        }
     }
 }
 
