@@ -15,6 +15,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.storage.DefaultSessionStorage
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.search.SearchUseCases
+import mozilla.components.feature.session.SessionIntentProcessor
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.fenix.R
@@ -45,6 +46,7 @@ class Components(private val applicationContext: Context) {
     }
 
     val sessionUseCases = SessionUseCases(sessionManager)
+    val sessionIntentProcessor by lazy { SessionIntentProcessor(sessionUseCases, sessionManager) }
 
     // Search
     private val searchEngineManager by lazy {
