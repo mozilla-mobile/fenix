@@ -12,18 +12,21 @@ import android.view.View
 import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.tabstray.TabsTray
+import mozilla.components.feature.session.SessionIntentProcessor
+import mozilla.components.support.utils.SafeIntent
 import mozilla.fenix.ext.components
 import mozilla.fenix.fragment.BackHandler
 import mozilla.fenix.fragment.BrowserFragment
 
-class MainActivity : AppCompatActivity() {
+open class BrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
+            val sessionId = SafeIntent(intent).getStringExtra(SessionIntentProcessor.ACTIVE_SESSION_ID)
             supportFragmentManager?.beginTransaction()?.apply {
-                replace(R.id.container, BrowserFragment.create())
+                replace(R.id.container, BrowserFragment.create(sessionId))
                 commit()
             }
         }
