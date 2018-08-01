@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.fragment_browser.*
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarFeature
+import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import mozilla.fenix.ext.components
 import mozilla.fenix.R
 
@@ -29,6 +30,17 @@ class BrowserFragment : Fragment(), BackHandler {
         super.onViewCreated(view, savedInstanceState)
 
         toolbar.setMenuBuilder(components.menuBuilder)
+        toolbar.setAutocompleteFilter { value, autocompleteView ->
+            autocompleteView?.let {
+                val result = components.autoCompleteProvider.autocomplete(value)
+                val autocompleteResult = InlineAutocompleteEditText.AutocompleteResult(
+                    result.text, result.source, result.size) {
+                    result.url
+                }
+
+                autocompleteView.applyAutocompleteResult(autocompleteResult)
+            }
+        }
 
         val sessionId = arguments?.getString(SESSION_ID)
 
