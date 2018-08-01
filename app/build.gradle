@@ -143,6 +143,8 @@ configurations {
 dependencies {
     implementation "io.sentry:sentry-android:${rootProject.ext.dependencies['sentry']}"
 
+    implementation "org.mozilla.components:autocomplete:${rootProject.ext.dependencies['mozillaComponents']}"
+    implementation "org.mozilla.components:domains:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:engine:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:search:${rootProject.ext.dependencies['mozillaComponents']}"
     implementation "org.mozilla.components:session:${rootProject.ext.dependencies['mozillaComponents']}"

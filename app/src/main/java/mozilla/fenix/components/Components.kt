@@ -6,6 +6,7 @@ package mozilla.fenix.components
 
 import android.content.Context
 import kotlinx.coroutines.experimental.launch
+import mozilla.components.browser.domains.DomainAutoCompleteProvider
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
@@ -85,4 +86,9 @@ class Components(private val applicationContext: Context) {
 
     // Tabs
     val tabsUseCases: TabsUseCases by lazy { TabsUseCases(sessionManager) }
+
+    // Autocomplete
+    val autoCompleteProvider: DomainAutoCompleteProvider = DomainAutoCompleteProvider().apply {
+        initialize(applicationContext)
+    }
 }
