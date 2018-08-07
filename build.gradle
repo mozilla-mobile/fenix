@@ -12,7 +12,7 @@ buildscript {
         // Testing
         junit: '4.12',
         // Mozilla
-        mozillaComponents: '0.16.1'
+        mozillaComponents: '0.17'
     ]
 
     // Synchronized versions numbers of GeckoView (Nightly) artifacts.
