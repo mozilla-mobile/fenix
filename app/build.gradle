@@ -15,7 +15,7 @@ android {
         minSdkVersion rootProject.ext.build['minSdkVersion']
         targetSdkVersion rootProject.ext.build['targetSdkVersion']
         versionCode 1
-        versionName "1.0"
+        versionName AppVersion.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -23,6 +23,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -63,6 +65,33 @@ android {
         aarch64 {
             dimension "abi"
         }
+    }
+}
+
+android.applicationVariants.all { variant ->
+    def buildType = variant.buildType.name
+
+    if (buildType == "release") {
+        def versionCode = AppVersion.baseVersionCode
+
+        // The Google Play Store does not allow multiple APKs for the same app that all have the
+        // same version code. Therefore we need to have different version codes for our ARM and x86
+        // builds.
+
+        // Our x86 builds need a higher version code to avoid installing ARM builds on an x86 device
+        // with ARM compatibility mode. In addition to that aarch64 builds should be preferred over
+        // ARM builds if suitable: x86 (+2) > aarch64 (+1) > arm.
+
+        // Note: This assumes that we do not need to release more often than every 2 minutes!
+        //       Otherwise this will create version code conflicts.
+
+        if (variant.flavorName.contains("X86")) {
+            versionCode = versionCode + 2
+        } else if (variant.flavorName.contains("Aarch64")) {
+            versionCode = versionCode + 1
+        }
+
+        variant.outputs.all { output -> setVersionCodeOverride(versionCode) }
     }
 }
 
