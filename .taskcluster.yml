@@ -2,7 +2,8 @@ version: 1
 policy:
   pullRequests: public
 tasks:
-  - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]'
+  # TODO remove `false` *before* the PR is merged
+  - $if: false && 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]'
     then:
       created: {$fromNow: ''}
       deadline: {$fromNow: '2 hours'}
@@ -82,4 +83,70 @@ tasks:
         name: Fenix - Master build
         description: Building and testing fenix
         owner: ${event.pusher.name}@users.noreply.github.com
+        source: ${event.repository.url}
+  # TODO
+  # - $if: 'tasks_for == "github-release"
+  - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]'
+    then:
+      created: {$fromNow: ''}
+      deadline: {$fromNow: '2 hours'}
+      expires: {$fromNow: '1 year'}
+      provisionerId: aws-provisioner-v1
+      workerType: gecko-focus    # This workerType has ChainOfTrust enabled
+      scopes:
+        - "queue:create-task:aws-provisioner-v1/github-worker"
+        - "queue:create-task:lowest:aws-provisioner-v1/gecko-focus"
+        - "queue:create-task:lowest:scriptworker-prov-v1/mobile-signing-v1"
+        - "queue:create-task:lowest:scriptworker-prov-v1/mobile-pushapk-v1"
+        - "queue:scheduler-id:taskcluster-github"
+        - "project:mobile:fenix:releng:signing:cert:release-signing"
+        - "project:mobile:fenix:releng:signing:format:autograph_fenix"
+        - "project:mobile:fenix:releng:googleplay:product:fenix"
+        # TODO Put back tag:
+        # - "queue:route:index.project.mobile.fenix.release.latest"
+      payload:
+        maxRunTime: 7200
+        image: 'mozillamobile/fenix:1.2'
+        command:
+          - /bin/bash
+          - '--login'
+          - '-cx'
+          # TODO Use:
+          # git fetch origin --tags
+          # git checkout ${event.release.tag_name} instead
+          - >
+            git fetch ${event.pull_request.head.repo.clone_url} ${event.pull_request.head.sha}
+            && git config advice.detachedHead false
+            && git checkout ${event.pull_request.head.sha}
+            && python automation/taskcluster/release.py \
+              --track alpha \
+              --output /build/fenix/app/build/outputs/apk \
+              --apk nightlyAarch64/release/app-nightly-aarch64-release-unsigned.apk \
+              --apk nightlyArm/release/app-nightly-arm-release-unsigned.apk \
+              --apk nightlyX86/release/app-nightly-x86-release-unsigned.apk
+        features:
+          taskclusterProxy: true
+          chainOfTrust: true
+        artifacts:
+          public/task-graph.json:
+            type: file
+            path: /build/fenix/task-graph.json
+            expires: {$fromNow: '1 year'}
+          public/actions.json:
+            type: file
+            path: /build/fenix/actions.json
+            expires: {$fromNow: '1 year'}
+          public/parameters.yml:
+            type: file
+            path: /build/fenix/parameters.yml
+            expires: {$fromNow: '1 year'}
+      metadata:
+        # TODO
+        # name: Fenix - Decision task (${event.release.tag_name})
+        # description: Scheduling tasks for releasing Fenix
+        # owner: ${event.sender.login}@users.noreply.github.com
+        # source: ${event.repository.clone_url}
+        name: Fenix - Pull Request (temporary signature)
+        description: Building and testing fenix - triggered by a pull request.
+        owner: ${event.pull_request.user.login}@users.noreply.github.com
         source: ${event.repository.url}
