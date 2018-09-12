@@ -63,7 +63,7 @@ tasks:
           - -cx
           - >-
             git fetch origin
-            && git checkout ${event.pull_request.head.sha}
+            && git checkout ${event.after}
             && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
             && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
             && ./gradlew --no-daemon clean assembleRelease
@@ -72,7 +72,7 @@ tasks:
             && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
             && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
             && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
-            && touch ./preview/${event.pull_request.head.sha}
+            && touch ./preview/${event.after}
         artifacts:
           public:
             type: directory
