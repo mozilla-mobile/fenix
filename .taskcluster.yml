@@ -1,101 +1,85 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-version: 0
-allowPullRequests: public
+version: 1
+policy:
+  pullRequests: public
 tasks:
-####################################################################################################
-# Task: Pull requests
-####################################################################################################
-  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
-    workerType: '{{ taskcluster.docker.workerType }}'
-    extra:
-      github:
-        events:
-          - pull_request.opened
-          - pull_request.edited
-          - pull_request.synchronize
-          - pull_request.reopened
-    payload:
-      maxRunTime: 3600
-      deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'mozillamobile/fenix:1.2'
-      command:
-        - /bin/bash
-        - '--login'
-        - '-cx'
-        - >-
-          git fetch {{ event.head.repo.url }} {{ event.head.repo.branch }}
-          && git config advice.detachedHead false
-          && git checkout {{event.head.sha}}
-          && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
-          && mkdir ./preview
-          && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
-          && touch ./preview/{{event.head.sha}}
-      artifacts:
-        'public/reports':
-          type: 'directory'
-          path: '/build/fenix/build/reports'
-          expires: "{{ '1 week' | $fromNow }}"
-        'public/app/reports':
-          type: 'directory'
-          path: '/build/fenix/app/build/reports'
-          expires: "{{ '1 week' | $fromNow }}"
-    metadata:
-      name: Fenix - Pull Request
-      description: Building and testing fenix - triggered by a pull request.
-      owner: '{{ event.head.user.email }}'
-      source: '{{ event.head.repo.url }}'
-####################################################################################################
-# Task: Master pushes
-####################################################################################################
-  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
-    workerType: '{{ taskcluster.docker.workerType }}'
-    extra:
-      github:
-        env: true
-        events:
-          - push
-        branches:
-          - master
-    scopes:
-      - "queue:create-task:aws-provisioner-v1/github-worker"
-      - "queue:scheduler-id:taskcluster-github"
-      - "secrets:get:project/fenix/sentry"
-      - "secrets:get:project/fenix/preview-key-store"
-      - "queue:route:index.project.fenix.android.preview-builds"
-    routes:
-      - "index.project.fenix.android.preview-builds"
-    payload:
-      maxRunTime: 3600
-      deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'mozillamobile/fenix:1.2'
-      command:
-        - /bin/bash
-        - '--login'
-        - '-cx'
-        - >-
-          git fetch origin
-          && git checkout {{event.head.sha}}
-          && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
-          && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
-          && ./gradlew --no-daemon clean assembleRelease
-          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStoreFile -f .store --decode
-          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStorePassword -f .store_token
-          && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
-          && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
-          && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
-          && touch ./preview/{{event.head.sha}}
-      features:
-        taskclusterProxy: true
-      artifacts:
-        'public':
-          type: 'directory'
-          path: '/build/fenix/preview'
-          expires: "{{ '1 month' | $fromNow }}"
-    metadata:
-      name: Fenix - Master build
-      description: Building and testing fenix
-      owner: '{{ event.head.user.email }}'
-      source: '{{ event.head.repo.url }}'
+  - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]'
+    then:
+      taskId: {$eval: as_slugid("pr_task")}
+      deadline: {$fromNow: '2 hours'}
+      provisionerId: aws-provisioner-v1
+      workerType: github-worker
+      scopes: []
+      payload:
+        maxRunTime: 600
+        image: mozillamobile/fenix:1.2
+        command:
+          - /bin/bash
+          - --login
+          - -cx
+          - >-
+            git fetch ${event.pull_request.head.repo.clone_url} ${event.pull_request.head.ref}
+            && git config advice.detachedHead false
+            && git checkout ${event.pull_request.head.sha}
+            && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+            && mkdir ./preview
+            && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
+            && touch ./preview/${event.pull_request.head.sha}
+        artifacts:
+          public/reports:
+            type: directory
+            path: /build/fenix/build/reports
+            expires: {$fromNow: '1 week'}
+          public/app/reports:
+            type: directory
+            path: /build/fenix/app/build/reports
+            expires: {$fromNow: '1 week'}
+      metadata:
+        name: Fenix - Pull Request
+        description: Building and testing fenix - triggered by a pull request.
+        owner: ${event.pull_request.user.login}@users.noreply.github.com
+        source: ${event.repository.url}
+  - $if: 'tasks_for == "github-push"'
+    then:
+      taskId: {$eval: as_slugid("push_task")}
+      deadline: {$fromNow: '2 hours'}
+      provisionerId: aws-provisioner-v1
+      workerType: github-worker
+      scopes:
+        - queue:create-task:aws-provisioner-v1/github-worker
+        - queue:scheduler-id:taskcluster-github
+        - secrets:get:project/fenix/sentry
+        - secrets:get:project/fenix/preview-key-store
+        - queue:route:index.project.fenix.android.preview-builds
+      routes:
+        - index.project.fenix.android.preview-builds
+      payload:
+        maxRunTime: 3600
+        image: mozillamobile/fenix:1.2
+        features:
+          taskclusterProxy: true
+        command:
+          - /bin/bash
+          - --login
+          - -cx
+          - >-
+            git fetch origin
+            && git checkout ${event.pull_request.head.sha}
+            && python automation/taskcluster/get-secret.py -s project/fenix/sentry -k sentryDsn -f .sentry
+            && ./gradlew --no-daemon clean assemble test detektCheck ktlint lint
+            && ./gradlew --no-daemon clean assembleRelease
+            && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStoreFile -f .store --decode
+            && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyStorePassword -f .store_token
+            && python automation/taskcluster/get-secret.py -s project/fenix/preview-key-store -k keyPassword -f .key_token
+            && python automation/taskcluster/sign-builds.py --zipalign --path ./app/build/outputs/apk --store .store --store-token .store_token --key-alias preview-key --key-token .key_token --archive ./preview
+            && touch ./preview/`date +"%Y-%m-%d-%H-%M"`
+            && touch ./preview/${event.pull_request.head.sha}
+        artifacts:
+          public:
+            type: directory
+            path: /build/fenix/preview
+            expires: {$fromNow: '1 month'}
+      metadata:
+        name: Fenix - Master build
+        description: Building and testing fenix
+        owner: ${event.pusher.name}@users.noreply.github.com
+        source: ${event.repository.url}
