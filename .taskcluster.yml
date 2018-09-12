@@ -10,7 +10,7 @@ tasks:
       workerType: github-worker
       scopes: []
       payload:
-        maxRunTime: 600
+        maxRunTime: 3600
         image: mozillamobile/fenix:1.2
         command:
           - /bin/bash
