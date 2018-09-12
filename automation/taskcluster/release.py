@@ -91,24 +91,6 @@ def generate_signing_task(build_task_id, apks, tag):
         routes=routes
     )
 
-def generate_push_task(signing_task_id, apks, track, commit):
-    artifacts = []
-    for apk in apks:
-        artifacts.append("public/" + os.path.basename(apk))
-
-    print artifacts
-
-    return taskcluster.slugId(), BUILDER.build_push_task(
-        signing_task_id,
-        name="Fenix - Push task",
-        description="Upload signed release builds of Fenix to Google Play",
-        apks=artifacts,
-        scopes=[
-            "project:mobile:fenix:releng:googleplay:product:fenix"
-        ],
-        track = track,
-        commit = commit
-    )
 
 def populate_chain_of_trust_required_but_unused_files():
     # Thoses files are needed to keep chainOfTrust happy. However, they have no need for Fenix,
@@ -136,12 +118,6 @@ def release(apks, track, commit, tag):
 
     task_graph[sign_task_id] = {}
     task_graph[sign_task_id]["task"] = queue.task(sign_task_id)
-
-    push_task_id, push_task = generate_push_task(sign_task_id, apks, track, commit)
-    lib.tasks.schedule_task(queue, push_task_id, push_task)
-
-    task_graph[push_task_id] = {}
-    task_graph[push_task_id]["task"] = queue.task(push_task_id)
 
     print json.dumps(task_graph, indent=4, separators=(',', ': '))
 
