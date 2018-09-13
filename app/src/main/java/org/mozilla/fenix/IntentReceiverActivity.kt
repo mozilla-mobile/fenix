@@ -2,14 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix
+package org.mozilla.fenix
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import mozilla.components.browser.session.tab.CustomTabConfig
 import mozilla.components.support.utils.SafeIntent
-import mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.components
 
 class IntentReceiverActivity : Activity() {
 

@@ -2,11 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix.ext
+package org.mozilla.fenix.ext
 
 import android.content.Context
-import mozilla.fenix.components.Components
-import mozilla.fenix.FenixApplication
+import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.FenixApplication
 
 /**
  * Get the FenixApplication object from a context.

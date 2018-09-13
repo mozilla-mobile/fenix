@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix.components
+package org.mozilla.fenix.components
 
 import android.content.Context
 import kotlinx.coroutines.experimental.launch
@@ -19,7 +19,7 @@ import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionIntentProcessor
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.fenix.R
+import org.mozilla.fenix.R
 import org.mozilla.geckoview.GeckoRuntime
 
 /**

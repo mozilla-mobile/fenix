@@ -10,7 +10,7 @@ android {
     compileSdkVersion rootProject.ext.build['compileSdkVersion']
 
     defaultConfig {
-        applicationId "mozilla.fenix"
+        applicationId "org.mozilla.fenix"
 
         minSdkVersion rootProject.ext.build['minSdkVersion']
         targetSdkVersion rootProject.ext.build['targetSdkVersion']

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix.fragment
+package org.mozilla.fenix.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,8 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_tabstray.*
 import mozilla.components.feature.tabs.tabstray.TabsFeature
-import mozilla.fenix.R
-import mozilla.fenix.ext.components
+import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 
 /**
  * A fragment for displaying the tabs tray.

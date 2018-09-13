@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix.fragment
+package org.mozilla.fenix.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,8 +14,8 @@ import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarFeature
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
-import mozilla.fenix.ext.components
-import mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.R
 
 class BrowserFragment : Fragment(), BackHandler {
     private lateinit var sessionFeature: SessionFeature

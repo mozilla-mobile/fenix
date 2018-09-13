@@ -2,12 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix
+package org.mozilla.fenix
 
 import android.app.Application
 import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
-import mozilla.fenix.components.Components
+import org.mozilla.fenix.components.Components
 
 class FenixApplication : Application() {
     val components by lazy { Components(this) }

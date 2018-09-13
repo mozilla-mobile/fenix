@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.fenix
+package org.mozilla.fenix
 
 import android.content.Context
 import android.os.Bundle
@@ -14,9 +14,9 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.session.SessionIntentProcessor
 import mozilla.components.support.utils.SafeIntent
-import mozilla.fenix.ext.components
-import mozilla.fenix.fragment.BackHandler
-import mozilla.fenix.fragment.BrowserFragment
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.fragment.BackHandler
+import org.mozilla.fenix.fragment.BrowserFragment
 
 open class BrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
