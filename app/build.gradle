@@ -1,8 +1,12 @@
+import com.github.spotbugs.SpotBugsTask
+
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'kotlin-kapt'
+apply plugin: "com.github.spotbugs"
 
 android {
     compileSdkVersion 28
@@ -12,7 +16,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -20,14 +24,92 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        lintConfig file("lint.xml")
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation "org.mozilla.components:browser-session:$mozilla_components_version"
+    implementation "org.mozilla.components:browser-domains:$mozilla_components_version"
+    implementation "org.mozilla.components:browser-search:$mozilla_components_version"
+    implementation "org.mozilla.components:concept-engine:$mozilla_components_version"
+    implementation "org.mozilla.components:ui-autocomplete:$mozilla_components_version"
+    implementation "org.mozilla.components:ui-colors:$mozilla_components_version"
+    implementation "org.mozilla.components:service-telemetry:$mozilla_components_version"
+    implementation "org.mozilla.components:browser-errorpages:$mozilla_components_version"
+    implementation "org.mozilla.components:service-fretboard:$mozilla_components_version", {
+        exclude group: 'android.arch.work', module: 'work-runtime'
+    }
+    implementation "org.mozilla.components:support-ktx:$mozilla_components_version"
+    implementation "org.mozilla.components:support-utils:$mozilla_components_version"
+    implementation "org.mozilla.components:lib-crash:$mozilla_components_version"
+}
+
+// -------------------------------------------------------------------------------------------------
+// Static Analysis: findbugs and pmd
+// -------------------------------------------------------------------------------------------------
+spotbugs {
+    ignoreFailures = false
+
+    effort = "min"
+    // This selects what level of bugs to report: low means low priority issues will be reported
+    // (in addition to medium+high), which corresponds to warning about everything.
+    reportLevel = "high"
+
+    excludeFilter = new File("${project.rootDir}/quality/spotbugs-exclude.xml")
+}
+
+task spotbugs(type: SpotBugsTask, dependsOn: "assemble", group: 'verification') {
+    classes = files("$projectDir.absolutePath/build/intermediates/javac")
+
+    source = fileTree('src/main/java')
+    classpath = files()
+
+    // Only one report format is supported. Html is easier to read, so let's use that
+    // (xml is the one that's enabled by default).
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+pmd {
+    toolVersion = '6.10.0'
+    ignoreFailures = true
+    ruleSetFiles = files("${project.rootDir}/quality/pmd-rules.xml")
+    ruleSets = []
+}
+
+task pmd(type: Pmd, group: 'verification') {
+    source 'src'
+    include '**/*.java'
+    exclude('**/gen/**',
+            '**/debug/**',
+            '**/androidTest/**',
+            '**/test**/**')
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html {
+            destination file("$projectDir.absolutePath/build/reports/pmd/pmd.html")
+        }
+    }
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile file("${project.rootDir}/quality/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
 }
