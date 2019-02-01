@@ -30,6 +30,10 @@
                 motion:target="@id/wordmark"
                 motion:framePosition="90"
                 android:alpha="0" />
+            <KeyAttribute
+                motion:target="@id/wordmark"
+                motion:framePosition="100"
+                android:alpha="0" />
 
             <KeyAttribute
                 motion:target="@id/menuButton"
@@ -40,12 +44,21 @@
                 motion:framePosition="90"
                 android:alpha="0" />
             <KeyAttribute
+                motion:target="@id/menuButton"
+                motion:framePosition="100"
+                android:alpha="0" />
+
+            <KeyAttribute
                 motion:target="@id/privateBrowsingButton"
                 motion:framePosition="50"
                 android:alpha="1" />
             <KeyAttribute
                 motion:target="@id/privateBrowsingButton"
                 motion:framePosition="90"
+                android:alpha="0" />
+            <KeyAttribute
+                motion:target="@id/privateBrowsingButton"
+                motion:framePosition="100"
                 android:alpha="0" />
 
             <KeyAttribute
@@ -80,14 +93,14 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-                android:id="@+id/wordmark"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:alpha="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                motion:layout_constraintStart_toStartOf="parent"
-                motion:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/wordmark"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/toolbar_wrapper"
@@ -98,23 +111,22 @@
             android:layout_marginEnd="16dp"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:elevation="0dp"/>
+            motion:layout_constraintEnd_toEndOf="parent" />
 
         <Constraint
             android:id="@+id/menuButton"
-            android:alpha="0"
             android:layout_marginTop="16dp"
             android:layout_height="@dimen/glyph_button_height"
             android:layout_width="@dimen/glyph_button_height"
+            android:visibility="invisible"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent"/>
 
         <Constraint
             android:id="@+id/privateBrowsingButton"
-            android:alpha="0"
             android:layout_height="@dimen/glyph_button_height"
             android:layout_width="@dimen/glyph_button_height"
+            android:visibility="invisible"
             motion:layout_constraintEnd_toStartOf="@id/menuButton"
             motion:layout_constraintTop_toTopOf="@id/menuButton"/>
 
