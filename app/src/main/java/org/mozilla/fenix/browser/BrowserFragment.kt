@@ -60,8 +60,7 @@ class BrowserFragment : Fragment(), BackHandler {
         toolbarComponent = ToolbarComponent(
             view.browserLayout,
             ActionBusFactory.get(this),
-            SearchState("", isEditing = false),
-            DefaultThemeManager(activity!!)
+            SearchState("", isEditing = false)
         )
 
         toolbarComponent.uiView.view.apply {

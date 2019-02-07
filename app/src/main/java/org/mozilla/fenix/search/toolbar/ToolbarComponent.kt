@@ -21,8 +21,7 @@ import org.mozilla.fenix.mvi.ViewState
 class ToolbarComponent(
     private val container: ViewGroup,
     bus: ActionBusFactory,
-    override var initialState: SearchState = SearchState("", false),
-    private val themeManager: ThemeManager
+    override var initialState: SearchState = SearchState("", false)
 ) :
     UIComponent<SearchState, SearchAction, SearchChange>(
         bus.getManagedEmitter(SearchAction::class.java),

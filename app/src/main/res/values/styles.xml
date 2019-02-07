@@ -58,7 +58,7 @@
         <item name="android:colorPrimary">@color/offwhite</item>
 
         <!-- Style the navigation bar -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
 
         <!-- Home fragment colors -->
         <item name="homeBackgroundTopGradient">@color/offwhite</item>

@@ -6,8 +6,11 @@ package org.mozilla.fenix
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.util.Log
 import android.util.TypedValue
+import org.jetbrains.anko.defaultSharedPreferences
 
 interface ThemeManager {
     enum class Theme {
@@ -18,7 +21,7 @@ interface ThemeManager {
     fun setTheme(theme: Theme, shouldApplyImmediately: Boolean = true)
 }
 
-class DefaultThemeManager(private val activity: Activity) : ThemeManager {
+class DefaultThemeManager(private val activity: Activity) : ThemeManager, SharedPreferences.OnSharedPreferenceChangeListener {
 
     interface ThemeManagerListener {
         fun onThemeChange()
@@ -60,6 +63,13 @@ class DefaultThemeManager(private val activity: Activity) : ThemeManager {
 
         // Alert those listening to us
         listener?.onThemeChange()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.d("Theme", "key: " + key)
+        if (key == activity.getString(R.string.pref_key_private_mode)) {
+            setTheme(ThemeManager.Theme.Private)
+        }
     }
 
     companion object {

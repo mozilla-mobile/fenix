@@ -37,8 +37,7 @@ class SearchFragment : Fragment() {
         toolbarComponent = ToolbarComponent(
             view.toolbar_wrapper,
             ActionBusFactory.get(this),
-            SearchState("", isEditing = true),
-            DefaultThemeManager(activity!!)
+            SearchState("", isEditing = true)
         )
         awesomeBarComponent = AwesomeBarComponent(view.search_layout, ActionBusFactory.get(this))
         ActionBusFactory.get(this).logMergedObservables()

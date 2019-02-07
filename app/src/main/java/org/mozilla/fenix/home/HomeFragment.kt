@@ -85,9 +85,7 @@ class HomeFragment : Fragment() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) { }
         })
 
-        val themeManager = DefaultThemeManager(activity!!)
         privateBrowsingButton.setOnClickListener {
-            // Get the current private mode preference and flip it
             PreferenceManager.getDefaultSharedPreferences(context!!)
                 .edit()
                 .putBoolean(getString(R.string.pref_key_private_mode),
@@ -95,7 +93,7 @@ class HomeFragment : Fragment() {
                     .getBoolean(getString(R.string.pref_key_private_mode), false))
                 .apply()
 
-            themeManager.setTheme(ThemeManager.Theme.Private)
+            DefaultThemeManager(activity!!).setTheme(ThemeManager.Theme.Private)
         }
     }
 

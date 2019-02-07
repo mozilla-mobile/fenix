@@ -13,6 +13,8 @@ import androidx.navigation.fragment.NavHostFragment
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.intent.IntentProcessor
 import mozilla.components.support.utils.SafeIntent
+import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.support.v4.defaultSharedPreferences
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.ext.components
 
@@ -23,6 +25,7 @@ open class HomeActivity : AppCompatActivity() {
 
         val defaultThemeManager = DefaultThemeManager(this)
         defaultThemeManager.setTheme(defaultThemeManager.getCurrentTheme(), false)
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(defaultThemeManager)
 
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
             openToBrowser()
