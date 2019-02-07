@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
 import android.util.TypedValue
-import org.jetbrains.anko.defaultSharedPreferences
 
 interface ThemeManager {
     enum class Theme {
@@ -21,7 +20,8 @@ interface ThemeManager {
     fun setTheme(theme: Theme, shouldApplyImmediately: Boolean = true)
 }
 
-class DefaultThemeManager(private val activity: Activity) : ThemeManager, SharedPreferences.OnSharedPreferenceChangeListener {
+class DefaultThemeManager(private val activity: Activity) : ThemeManager,
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     interface ThemeManagerListener {
         fun onThemeChange()

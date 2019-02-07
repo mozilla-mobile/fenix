@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.component_search.*
 import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.Change
