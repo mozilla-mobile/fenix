@@ -6,7 +6,6 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -22,10 +21,8 @@ open class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val theme = PreferenceManager.getDefaultSharedPreferences(this)
-            .getInt(this.getString(R.string.pref_key_theme), R.style.LightTheme)
-
-        setTheme(theme)
+        val defaultThemeManager = DefaultThemeManager(this)
+        defaultThemeManager.setTheme(defaultThemeManager.getCurrentTheme(), false)
 
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
             openToBrowser()

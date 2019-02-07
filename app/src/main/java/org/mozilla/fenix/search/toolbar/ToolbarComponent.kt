@@ -4,12 +4,12 @@
 
 package org.mozilla.fenix.search.toolbar
 
-import android.preference.PreferenceManager
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.component_search.*
 import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.Change
@@ -20,7 +20,8 @@ import org.mozilla.fenix.mvi.ViewState
 class ToolbarComponent(
     private val container: ViewGroup,
     bus: ActionBusFactory,
-    override var initialState: SearchState = SearchState("", false)
+    override var initialState: SearchState = SearchState("", false),
+    private val themeManager: ThemeManager
 ) :
     UIComponent<SearchState, SearchAction, SearchChange>(
         bus.getManagedEmitter(SearchAction::class.java),
@@ -36,18 +37,16 @@ class ToolbarComponent(
     override fun initView() = ToolbarUIView(container, actionEmitter, changesObservable)
     init {
         render(reducer)
-        applyPrivateModeIfNecessary()
+        applyTheme()
     }
 
     fun getView(): BrowserToolbar = uiView.toolbar
 
-    private fun applyPrivateModeIfNecessary() {
-        val isPrivate = PreferenceManager.getDefaultSharedPreferences(container.context)
-            .getBoolean(container.context.getString(R.string.pref_key_private_mode), false)
-        if (!isPrivate) { return }
-
-        getView().textColor = ContextCompat.getColor(container.context, R.color.offwhite)
-        getView().hintColor = ContextCompat.getColor(container.context, R.color.offwhite)
+    private fun applyTheme() {
+        getView().textColor = ContextCompat.getColor(container.context,
+            themeManager.resolveAttribute(R.attr.awesomeBarTitleTextColor))
+        getView().hintColor = ContextCompat.getColor(container.context,
+            themeManager.resolveAttribute(R.attr.awesomeBarDescriptionTextColor))
     }
 }
 

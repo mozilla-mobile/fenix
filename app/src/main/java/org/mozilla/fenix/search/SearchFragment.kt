@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_search.view.*
+import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getSafeManagedObservable
@@ -36,7 +37,8 @@ class SearchFragment : Fragment() {
         toolbarComponent = ToolbarComponent(
             view.toolbar_wrapper,
             ActionBusFactory.get(this),
-            SearchState("", isEditing = true)
+            SearchState("", isEditing = true),
+            DefaultThemeManager(activity!!)
         )
         awesomeBarComponent = AwesomeBarComponent(view.search_layout, ActionBusFactory.get(this))
         ActionBusFactory.get(this).logMergedObservables()

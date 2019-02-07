@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessions.SessionsComponent
 import org.mozilla.fenix.home.sessions.layoutComponents
@@ -83,6 +85,7 @@ class HomeFragment : Fragment() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) { }
         })
 
+        val themeManager = DefaultThemeManager(activity!!)
         privateBrowsingButton.setOnClickListener {
             // Get the current private mode preference and flip it
             PreferenceManager.getDefaultSharedPreferences(context!!)
@@ -92,23 +95,8 @@ class HomeFragment : Fragment() {
                     .getBoolean(getString(R.string.pref_key_private_mode), false))
                 .apply()
 
-            applyPrivateModeIfNecessary()
+            themeManager.setTheme(ThemeManager.Theme.Private)
         }
-    }
-
-    private fun applyPrivateModeIfNecessary() {
-        val isPrivate = PreferenceManager.getDefaultSharedPreferences(context!!)
-            .getBoolean(getString(R.string.pref_key_private_mode), false)
-
-        if (isPrivate) {
-            PreferenceManager.getDefaultSharedPreferences(context)
-                .edit().putInt(activity!!.getString(R.string.pref_key_theme), R.style.PrivateTheme).apply()
-        } else {
-            PreferenceManager.getDefaultSharedPreferences(activity!!)
-                .edit().putInt(activity!!.getString(R.string.pref_key_theme), R.style.LightTheme).apply()
-        }
-
-        activity!!.recreate()
     }
 
     @SuppressWarnings("MagicNumber")

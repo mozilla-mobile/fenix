@@ -31,6 +31,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import mozilla.components.feature.prompts.PromptFeature
 import org.mozilla.fenix.BackHandler
+import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getSafeManagedObservable
@@ -58,7 +59,8 @@ class BrowserFragment : Fragment(), BackHandler {
         toolbarComponent = ToolbarComponent(
             view.browserLayout,
             ActionBusFactory.get(this),
-            SearchState("", isEditing = false)
+            SearchState("", isEditing = false),
+            DefaultThemeManager(activity!!)
         )
 
         toolbarComponent.uiView.view.apply {
