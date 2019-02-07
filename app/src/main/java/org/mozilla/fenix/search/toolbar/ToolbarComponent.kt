@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.component_search.*
 import mozilla.components.browser.toolbar.BrowserToolbar
+import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.mvi.Action
@@ -44,9 +45,9 @@ class ToolbarComponent(
 
     private fun applyTheme() {
         getView().textColor = ContextCompat.getColor(container.context,
-            themeManager.resolveAttribute(R.attr.awesomeBarTitleTextColor))
+            DefaultThemeManager.resolveAttribute(R.attr.awesomeBarTitleTextColor, container.context))
         getView().hintColor = ContextCompat.getColor(container.context,
-            themeManager.resolveAttribute(R.attr.awesomeBarDescriptionTextColor))
+            DefaultThemeManager.resolveAttribute(R.attr.awesomeBarDescriptionTextColor, container.context))
     }
 }
 

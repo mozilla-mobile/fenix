@@ -26,4 +26,9 @@
     <attr name="searchBackground" format="reference"/>
     <attr name="searchShortcutsTextColor" format="reference"/>
     <attr name="pillWrapperBackground" format="reference"/>
+
+    <!-- Browser fragment -->
+    <attr name="browserToolbarBackground" format="reference"/>
+    <attr name="browserToolbarIcons" format="reference"/>
+    <attr name="browserToolbarHomeIcon" format="reference"/>
 </resources>

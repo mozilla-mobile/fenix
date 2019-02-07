@@ -41,6 +41,11 @@
         <item name="pillWrapperBackground">@color/private_browsing_top_gradient</item>
         <item name="awesomeBarTitleTextColor">@color/offwhite</item>
         <item name="awesomeBarDescriptionTextColor">@color/photonGrey40</item>
+
+        <!-- Browser fragment colors -->
+        <item name="browserToolbarBackground">@color/private_browsing_bottom_gradient</item>
+        <item name="browserToolbarIcons">@color/offwhite</item>
+        <item name="browserToolbarHomeIcon">@drawable/ic_home_white</item>
     </style>
 
     <style name="PrivateTheme" parent="PrivateThemeBase">
@@ -72,6 +77,11 @@
         <item name="pillWrapperBackground">@color/offwhite</item>
         <item name="awesomeBarTitleTextColor">@color/awesomeBarTitleColor</item>
         <item name="awesomeBarDescriptionTextColor">@color/awesomeBarDescriptionColor</item>
+
+        <!-- Browser fragment colors -->
+        <item name="browserToolbarBackground">@color/offwhite</item>
+        <item name="browserToolbarIcons">@color/icons</item>
+        <item name="browserToolbarHomeIcon">@drawable/ic_home</item>
     </style>
 
     <style name="LightTheme" parent="LightThemeBase">

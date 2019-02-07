@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
+import android.widget.Button
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -16,7 +17,9 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.ToolbarFeature
+import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 
@@ -32,7 +35,9 @@ class ToolbarIntegration(
         toolbar.setMenuBuilder(context.components.toolbar.menuBuilder)
 
         val home = BrowserToolbar.Button(
-            context.resources.getDrawable(R.drawable.ic_home, context.application.theme),
+            context.resources
+                .getDrawable(DefaultThemeManager.resolveAttribute(R.attr.browserToolbarHomeIcon, context),
+                    context.application.theme),
             context.getString(R.string.browser_home_button),
             visible = { sessionManager.runWithSession(sessionId) { it.isCustomTabSession().not() } }
         ) {

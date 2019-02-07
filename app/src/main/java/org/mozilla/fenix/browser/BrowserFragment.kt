@@ -56,6 +56,7 @@ class BrowserFragment : Fragment(), BackHandler {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_browser, container, false)
+
         toolbarComponent = ToolbarComponent(
             view.browserLayout,
             ActionBusFactory.get(this),
@@ -64,7 +65,8 @@ class BrowserFragment : Fragment(), BackHandler {
         )
 
         toolbarComponent.uiView.view.apply {
-            setBackgroundColor(ContextCompat.getColor(view.context, R.color.offwhite))
+            setBackgroundColor(ContextCompat.getColor(view.context,
+                DefaultThemeManager.resolveAttribute(R.attr.browserToolbarBackground, context)))
 
             (layoutParams as CoordinatorLayout.LayoutParams).apply {
                 // Stop toolbar from collapsing if TalkBack is enabled

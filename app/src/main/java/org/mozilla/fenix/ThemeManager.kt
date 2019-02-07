@@ -5,6 +5,7 @@
 package org.mozilla.fenix
 
 import android.app.Activity
+import android.content.Context
 import android.preference.PreferenceManager
 import android.util.TypedValue
 
@@ -15,10 +16,15 @@ interface ThemeManager {
 
     fun getCurrentTheme(): Theme
     fun setTheme(theme: Theme, shouldApplyImmediately: Boolean = true)
-    fun resolveAttribute(attribute: Int): Int
 }
 
 class DefaultThemeManager(private val activity: Activity) : ThemeManager {
+
+    interface ThemeManagerListener {
+        fun onThemeChange()
+    }
+
+    private val listener: ThemeManagerListener? = null
 
     override fun getCurrentTheme(): ThemeManager.Theme {
         val isPrivate = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -51,13 +57,18 @@ class DefaultThemeManager(private val activity: Activity) : ThemeManager {
         }
 
         if (shouldApplyImmediately) { activity.recreate() }
+
+        // Alert those listening to us
+        listener?.onThemeChange()
     }
 
-    override fun resolveAttribute(attribute: Int): Int {
-        val typedValue = TypedValue()
-        val theme = activity.theme
-        theme.resolveAttribute(attribute, typedValue, true)
+    companion object {
+        fun resolveAttribute(attribute: Int, context: Context): Int {
+            val typedValue = TypedValue()
+            val theme = context.theme
+            theme.resolveAttribute(attribute, typedValue, true)
 
-        return typedValue.resourceId
+            return typedValue.resourceId
+        }
     }
 }
