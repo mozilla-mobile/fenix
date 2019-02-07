@@ -2,13 +2,10 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<resources>
-    <style name="PrivateTheme" parent="PrivateThemeBase">
 
-    </style>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="oval">
 
-    <style name="LightTheme" parent="LightThemeBase">
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-</resources>
+    <corners android:radius="60dp"/>
+    <solid android:color="@color/private_browsing_primary" />
+</shape>

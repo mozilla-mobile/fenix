@@ -6,6 +6,7 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
 import android.content.Intent
+import android.preference.PreferenceManager
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
@@ -124,7 +125,14 @@ class Toolbar(
                 context.getString(R.string.browser_menu_private_tab),
                 R.color.icons
             ) {
-                // TODO Private Tab
+                PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit()
+                    .putBoolean(context.getString(R.string.pref_key_private_mode),
+                        !PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(context.getString(R.string.pref_key_private_mode), false))
+                    .apply()
+
+                // TODO Actually open a new private tab
             },
 
             BrowserMenuImageText(
