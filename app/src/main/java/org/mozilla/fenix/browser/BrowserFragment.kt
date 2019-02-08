@@ -203,13 +203,13 @@ class BrowserFragment : Fragment(), BackHandler {
                 .navigate(R.id.action_browserFragment_to_libraryFragment, null, null)
             is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(action.item.isChecked)
             is ToolbarMenu.Item.Share -> requireComponents.core.sessionManager
-                .selectedSession?.url?.apply{ requireContext().share(this)
+                .selectedSession?.url?.apply { requireContext().share(this)
             }
             is ToolbarMenu.Item.NewPrivateTab -> {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(context!!.getString(R.string.pref_key_private_mode*),
+                PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit().putBoolean(context!!.getString(R.string.pref_key_private_mode),
                     !PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context!!.getString(R.string.pref_key_private_mode), false))
-                    .apply()
+                        .getBoolean(context!!.getString(R.string.pref_key_private_mode), false)).apply()
             }
         }
     }
