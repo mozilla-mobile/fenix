@@ -51,6 +51,9 @@ class BrowserFragment : Fragment(), BackHandler {
     private lateinit var toolbarComponent: ToolbarComponent
     private lateinit var customTabsToolbarFeature: CustomTabsToolbarFeature
 
+    private val sessionId: String?
+        get() = arguments?.getString(SESSION_ID)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,7 +63,7 @@ class BrowserFragment : Fragment(), BackHandler {
         toolbarComponent = ToolbarComponent(
             view.browserLayout,
             ActionBusFactory.get(this),
-            SearchState("", isEditing = false)
+            SearchState("", isEditing = false, sessionId = sessionId)
         )
 
         toolbarComponent.uiView.view.apply {
@@ -99,8 +102,6 @@ class BrowserFragment : Fragment(), BackHandler {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val sessionId = arguments?.getString(SESSION_ID)
 
         val sessionManager = requireComponents.core.sessionManager
 

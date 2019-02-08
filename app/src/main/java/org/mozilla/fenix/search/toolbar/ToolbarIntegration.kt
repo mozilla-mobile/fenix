@@ -11,7 +11,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.Navigation
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.session.runWithSession
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
@@ -35,7 +34,13 @@ class ToolbarIntegration(
         val home = BrowserToolbar.Button(
             context.resources.getDrawable(R.drawable.ic_home, context.application.theme),
             context.getString(R.string.browser_home_button),
-            visible = { sessionManager.runWithSession(sessionId) { it.isCustomTabSession().not() } }
+            visible = {
+                if (sessionId == null) {
+                    true
+                } else {
+                    sessionManager.findSessionById(sessionId)?.isCustomTabSession()?.not() ?: true
+                }
+            }
         ) {
             Navigation.findNavController(toolbar).navigate(R.id.action_browserFragment_to_homeFragment)
         }

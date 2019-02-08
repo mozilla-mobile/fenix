@@ -28,13 +28,13 @@ class ToolbarComponent(
         }
     }
 
-    override fun initView() = ToolbarUIView(container, actionEmitter, changesObservable)
+    override fun initView() = ToolbarUIView(container, actionEmitter, changesObservable, initialState.sessionId)
     init {
         render(reducer)
     }
 }
 
-data class SearchState(val query: String, val isEditing: Boolean) : ViewState
+data class SearchState(val query: String, val isEditing: Boolean, val sessionId: String? = null) : ViewState
 
 sealed class SearchAction : Action {
     data class UrlCommitted(val url: String) : SearchAction()

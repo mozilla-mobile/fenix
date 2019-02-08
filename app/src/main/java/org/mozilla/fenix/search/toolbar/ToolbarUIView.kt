@@ -20,7 +20,8 @@ import org.mozilla.fenix.mvi.UIView
 class ToolbarUIView(
     container: ViewGroup,
     actionEmitter: Observer<SearchAction>,
-    changesObservable: Observable<SearchChange>
+    changesObservable: Observable<SearchChange>,
+    sessionId: String? = null
 ) :
     UIView<SearchState, SearchAction, SearchChange>(container, actionEmitter, changesObservable) {
 
@@ -71,7 +72,7 @@ class ToolbarUIView(
                 ShippedDomainsProvider().also { it.initialize(this) },
                 components.core.historyStorage,
                 components.core.sessionManager,
-                components.core.sessionManager.selectedSession?.id
+                sessionId
             )
         }
     }
