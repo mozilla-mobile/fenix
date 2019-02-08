@@ -7,6 +7,9 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
+import android.view.View
+import android.view.Window
+import androidx.core.content.ContextCompat
 
 interface ThemeManager {
     enum class Theme {
@@ -48,6 +51,29 @@ class DefaultThemeManager : ThemeManager {
             theme.resolveAttribute(attribute, typedValue, true)
 
             return typedValue.resourceId
+        }
+
+        // Handles status bar theme change since the window does not dynamically recreate
+        fun applyStatusBarTheme(window: Window, themeManager: ThemeManager, context: Context) {
+            window.statusBarColor = ContextCompat
+                .getColor(context, DefaultThemeManager
+                    .resolveAttribute(android.R.attr.statusBarColor, context))
+
+            window.navigationBarColor = ContextCompat
+                .getColor(context, DefaultThemeManager
+                    .resolveAttribute(android.R.attr.navigationBarColor, context))
+
+            when (themeManager.currentTheme) {
+                ThemeManager.Theme.Light -> {
+                    window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or
+                            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                }
+                ThemeManager.Theme.Private -> {
+                    window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and
+                            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and
+                            View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+                }
+            }
         }
     }
 }

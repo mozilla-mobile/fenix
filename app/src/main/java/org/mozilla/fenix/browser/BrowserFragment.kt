@@ -208,7 +208,7 @@ class BrowserFragment : Fragment(), BackHandler {
                 PreferenceManager.getDefaultSharedPreferences(context)
                     .edit().putBoolean(context!!.getString(R.string.pref_key_private_mode),
                     !PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context!!.getString(R.string.pref_key_private_mode), false)).apply()
+                        .getBoolean(context!!.getString(R.string.pref_key_private_mode), false)).apply() }
             is ToolbarMenu.Item.ReportIssue -> requireComponents.core.sessionManager
                 .selectedSession?.url?.apply {
                 val reportUrl = String.format(REPORT_SITE_ISSUE_URL, this)
