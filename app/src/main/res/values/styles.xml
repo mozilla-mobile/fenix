@@ -24,6 +24,9 @@
         <item name="android:textColorHighlight">@color/private_browsing_primary</item>
         <item name="android:colorPrimary">@color/private_browsing_primary</item>
 
+        <!-- Style the navigation bar -->
+        <item name="android:navigationBarColor">@color/private_browsing_bottom_gradient</item>
+
         <!-- Home fragment colors -->
         <item name="homeBackgroundTopGradient">@color/private_browsing_top_gradient</item>
         <item name="homeBackgroundBottomGradient">@color/private_browsing_bottom_gradient</item>
@@ -58,7 +61,7 @@
         <item name="android:colorPrimary">@color/offwhite</item>
 
         <!-- Style the navigation bar -->
-        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <!-- Home fragment colors -->
         <item name="homeBackgroundTopGradient">@color/offwhite</item>

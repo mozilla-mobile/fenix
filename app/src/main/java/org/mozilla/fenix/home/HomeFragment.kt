@@ -7,7 +7,6 @@ package org.mozilla.fenix.home
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import org.mozilla.fenix.*
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessions.SessionsComponent
 import org.mozilla.fenix.home.sessions.layoutComponents
+import org.mozilla.fenix.isPrivate
 import org.mozilla.fenix.mvi.ActionBusFactory
 import kotlin.math.roundToInt
 
@@ -91,7 +93,7 @@ class HomeFragment : Fragment() {
         privateBrowsingButton.setOnClickListener {
             // When we build out private mode we will want to handle this logic elsewhere.
             (requireActivity() as HomeActivity).themeManager.apply {
-                val newTheme = when(this.currentTheme) {
+                val newTheme = when (this.currentTheme) {
                     ThemeManager.Theme.Light -> ThemeManager.Theme.Private
                     ThemeManager.Theme.Private -> ThemeManager.Theme.Light
                 }

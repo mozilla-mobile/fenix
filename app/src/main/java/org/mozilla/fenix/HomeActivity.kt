@@ -9,12 +9,11 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.intent.IntentProcessor
 import mozilla.components.support.utils.SafeIntent
-import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.support.v4.defaultSharedPreferences
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.ext.components
 
@@ -31,6 +30,7 @@ open class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         setTheme(themeManager.currentTheme)
+        applyStatusBarTheme()
 
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
             openToBrowser()
@@ -65,6 +65,28 @@ open class HomeActivity : AppCompatActivity() {
         host.navController.navigate(R.id.action_global_browser, Bundle().apply {
             putString(BrowserFragment.SESSION_ID, sessionId)
         })
+    }
+
+    // Handles status bar theme change since the window does not dynamically recreate
+    private fun applyStatusBarTheme() {
+        window.statusBarColor = ContextCompat
+            .getColor(this, DefaultThemeManager
+                .resolveAttribute(android.R.attr.statusBarColor, this))
+
+        window.navigationBarColor = ContextCompat
+            .getColor(this, DefaultThemeManager
+                .resolveAttribute(android.R.attr.navigationBarColor, this))
+
+        when (themeManager.currentTheme) {
+            ThemeManager.Theme.Light -> {
+                window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or
+                        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            }
+            ThemeManager.Theme.Private -> {
+                window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and
+                        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+            }
+        }
     }
 
     companion object {

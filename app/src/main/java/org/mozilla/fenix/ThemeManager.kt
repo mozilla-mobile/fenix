@@ -6,9 +6,6 @@ package org.mozilla.fenix
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import android.util.Log
 import android.util.TypedValue
 
 interface ThemeManager {
@@ -28,7 +25,6 @@ fun Activity.setTheme(theme: ThemeManager.Theme) {
 
     setTheme(themeCode)
 }
-
 
 fun ThemeManager.Theme.isPrivate(): Boolean = this == ThemeManager.Theme.Private
 

@@ -6,7 +6,6 @@ package org.mozilla.fenix.home
 
 import android.content.Context
 import android.graphics.drawable.TransitionDrawable
-import android.preference.PreferenceManager
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import org.mozilla.fenix.R
