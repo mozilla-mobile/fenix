@@ -25,15 +25,15 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.customtabs.CustomTabsToolbarFeature
 import mozilla.components.feature.downloads.DownloadsFeature
+import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
-import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.requireComponents
-import mozilla.components.feature.prompts.PromptFeature
 import org.mozilla.fenix.BackHandler
 import org.mozilla.fenix.DefaultThemeManager
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FindInPageIntegration
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.share
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getSafeManagedObservable
@@ -170,7 +170,7 @@ class BrowserFragment : Fragment(), BackHandler {
     @SuppressWarnings("ReturnCount")
     override fun onBackPressed(): Boolean {
         if (findInPageIntegration.onBackPressed()) return true
-        if (sessionFeature.handleBackPressed()) return true
+        if (sessionFeature.onBackPressed()) return true
         if (customTabsToolbarFeature.onBackPressed()) return true
 
         // We'll want to improve this when we add multitasking
@@ -203,13 +203,16 @@ class BrowserFragment : Fragment(), BackHandler {
                 .navigate(R.id.action_browserFragment_to_libraryFragment, null, null)
             is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(action.item.isChecked)
             is ToolbarMenu.Item.Share -> requireComponents.core.sessionManager
-                .selectedSession?.url?.apply { requireContext().share(this)
-            }
+                .selectedSession?.url?.apply { requireContext().share(this) }
             is ToolbarMenu.Item.NewPrivateTab -> {
                 PreferenceManager.getDefaultSharedPreferences(context)
                     .edit().putBoolean(context!!.getString(R.string.pref_key_private_mode),
                     !PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(context!!.getString(R.string.pref_key_private_mode), false)).apply()
+            is ToolbarMenu.Item.ReportIssue -> requireComponents.core.sessionManager
+                .selectedSession?.url?.apply {
+                val reportUrl = String.format(REPORT_SITE_ISSUE_URL, this)
+                sessionUseCases.loadUrl.invoke(reportUrl)
             }
         }
     }
@@ -219,5 +222,6 @@ class BrowserFragment : Fragment(), BackHandler {
         private const val REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
         private const val REQUEST_CODE_PROMPT_PERMISSIONS = 2
         private const val TOOLBAR_HEIGHT = 56f
+        private const val REPORT_SITE_ISSUE_URL = "https://webcompat.com/issues/new?url=%s&label=browser-fenix"
     }
 }
