@@ -13,7 +13,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:name=".FenixApplication"
-            android:theme="@style/LightAppTheme"
+            android:theme="@style/LightTheme"
             android:usesCleartextTraffic="true"
             tools:ignore="UnusedAttribute">
         <activity android:name=".HomeActivity"
