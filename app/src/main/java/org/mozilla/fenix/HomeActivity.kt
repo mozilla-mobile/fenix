@@ -19,13 +19,18 @@ import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.ext.components
 
 open class HomeActivity : AppCompatActivity() {
+    val themeManager = DefaultThemeManager().also {
+        it.onThemeChange = { theme ->
+            setTheme(theme)
+            recreate()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val defaultThemeManager = DefaultThemeManager(this)
-        defaultThemeManager.setTheme(defaultThemeManager.getCurrentTheme(), false)
-        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(defaultThemeManager)
+        setTheme(themeManager.currentTheme)
 
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
             openToBrowser()

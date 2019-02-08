@@ -12,6 +12,9 @@ import android.widget.FrameLayout
 import org.mozilla.fenix.R
 
 class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+
+    var isPrivateModeEnabled = false
+
     private val lightDrawable = resources.getDrawable(R.drawable.home_search_background_light)
     private val privateLightDrawable = resources.getDrawable(R.drawable.home_search_background_private)
     private val darkDrawable = resources.getDrawable(R.drawable.home_search_background_dark)
@@ -26,7 +29,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     private val privateDarkToNoBorder = TransitionDrawable(arrayOf(privateDarkDrawable, privateDarkNoBorderDrawable))
 
     fun transitionToLight() {
-        if (isPrivateMode()) {
+        if (isPrivateModeEnabled) {
             background = privateLightToDark
             privateLightToDark.reverseTransition(transitionDurationMs)
         } else {
@@ -36,7 +39,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun transitionToDark() {
-        if (isPrivateMode()) {
+        if (isPrivateModeEnabled) {
             background = privateLightToDark
             privateLightToDark.startTransition(transitionDurationMs)
         } else {
@@ -46,7 +49,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun transitionToDarkFromNoBorder() {
-        if (isPrivateMode()) {
+        if (isPrivateModeEnabled) {
             background = privateDarkToNoBorder
             privateDarkToNoBorder.reverseTransition(transitionDurationMs)
         } else {
@@ -56,18 +59,13 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun transitionToDarkNoBorder() {
-        if (isPrivateMode()) {
+        if (isPrivateModeEnabled) {
             background = privateDarkToNoBorder
             privateDarkToNoBorder.startTransition(transitionDurationMs)
         } else {
             background = darkToNoBorder
             darkToNoBorder.startTransition(transitionDurationMs)
         }
-    }
-
-    private fun isPrivateMode(): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_key_private_mode), false)
     }
 
     companion object {

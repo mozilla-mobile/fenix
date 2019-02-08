@@ -13,63 +13,36 @@ import android.util.TypedValue
 
 interface ThemeManager {
     enum class Theme {
-        Light, Dark, Private
+        Light, Private
     }
 
-    fun getCurrentTheme(): Theme
-    fun setTheme(theme: Theme, shouldApplyImmediately: Boolean = true)
+    val currentTheme: Theme
+    fun setTheme(theme: Theme)
 }
 
-class DefaultThemeManager(private val activity: Activity) : ThemeManager,
-    SharedPreferences.OnSharedPreferenceChangeListener {
-
-    interface ThemeManagerListener {
-        fun onThemeChange()
+fun Activity.setTheme(theme: ThemeManager.Theme) {
+    val themeCode = when (theme) {
+        ThemeManager.Theme.Light -> R.style.LightTheme
+        ThemeManager.Theme.Private -> R.style.PrivateTheme
     }
 
-    private val listener: ThemeManagerListener? = null
+    setTheme(themeCode)
+}
 
-    override fun getCurrentTheme(): ThemeManager.Theme {
-        val isPrivate = PreferenceManager.getDefaultSharedPreferences(activity)
-            .getBoolean(activity.getString(R.string.pref_key_private_mode), false)
 
-        if (isPrivate) { return ThemeManager.Theme.Private }
+fun ThemeManager.Theme.isPrivate(): Boolean = this == ThemeManager.Theme.Private
 
-        val currentTheme = PreferenceManager.getDefaultSharedPreferences(activity)
-            .getInt(activity.getString(R.string.pref_key_theme), R.style.LightTheme)
+private var temporaryThemeManagerStorage = ThemeManager.Theme.Light
+class DefaultThemeManager : ThemeManager {
+    var onThemeChange: ((ThemeManager.Theme) -> Unit)? = null
 
-        return when (currentTheme) {
-            R.style.LightTheme -> ThemeManager.Theme.Light
-            else -> ThemeManager.Theme.Dark
-        }
-    }
+    override val currentTheme: ThemeManager.Theme
+        get() = temporaryThemeManagerStorage
 
-    override fun setTheme(theme: ThemeManager.Theme, shouldApplyImmediately: Boolean) {
-        val themeCode = when (theme) {
-            ThemeManager.Theme.Light -> R.style.LightTheme
-            ThemeManager.Theme.Private -> R.style.PrivateTheme
-            else -> R.style.LightTheme
-        }
+    override fun setTheme(theme: ThemeManager.Theme) {
+        temporaryThemeManagerStorage = theme
 
-        activity.setTheme(themeCode)
-
-        // Do not store the private theme so we remember the user's theme choice after they exit private mode
-        if (themeCode != R.style.PrivateTheme) {
-            PreferenceManager.getDefaultSharedPreferences(activity)
-                .edit().putInt(activity.getString(R.string.pref_key_theme), themeCode).apply()
-        }
-
-        if (shouldApplyImmediately) { activity.recreate() }
-
-        // Alert those listening to us
-        listener?.onThemeChange()
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Log.d("Theme", "key: " + key)
-        if (key == activity.getString(R.string.pref_key_private_mode)) {
-            setTheme(ThemeManager.Theme.Private)
-        }
+        onThemeChange?.invoke(currentTheme)
     }
 
     companion object {
