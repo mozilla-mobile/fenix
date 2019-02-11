@@ -13,6 +13,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.BuildConfig.BUILD_DATE
 import org.mozilla.fenix.ext.replace
 import org.mozilla.geckoview.BuildConfig
+import android.graphics.BitmapFactory
+import mozilla.components.support.ktx.android.graphics.toDataUri
 
 object AboutPage {
     fun createAboutPage(context: Context): String {
@@ -36,10 +38,13 @@ object AboutPage {
 
         substitutionMap["%build-date%"] = BUILD_DATE
 
-        context.resources.getString(R.string.about_content, appName).also { content ->
+        context.resources.getString(R.string.about_content, appName, SupportUtils.MOZILLA_MANIFESTO_URL)
+            .also { content ->
             substitutionMap["%about-content%"] = content
         }
 
+        substitutionMap["%wordmark%"] = BitmapFactory.decodeResource(context.resources,
+            org.mozilla.fenix.R.drawable.ic_logo_wordmark).toDataUri()
         return loadResourceFile(context, R.raw.about, substitutionMap)
     }
 

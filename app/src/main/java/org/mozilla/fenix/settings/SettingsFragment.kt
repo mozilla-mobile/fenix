@@ -18,9 +18,14 @@ import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.R.string.pref_key_about
 import org.mozilla.fenix.R.string.pref_key_leakcanary
+import org.mozilla.fenix.R.string.pref_key_feedback
+import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
+import org.mozilla.fenix.R.string.pref_key_rate
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
+import android.net.Uri
+import org.mozilla.fenix.HomeActivity
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -39,18 +44,37 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setupPreferences()
     }
 
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
+            resources.getString(pref_key_help) -> {
+                requireComponents.useCases.tabsUseCases.addTab
+                    .invoke(SupportUtils.getSumoURLForTopic(context!!, SupportUtils.SumoTopic.HELP))
+                navigateToSettingsArticle()
+            }
+            resources.getString(pref_key_rate) -> {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SupportUtils.RATE_APP_URL)))
+            }
+            resources.getString(pref_key_feedback) -> {
+                requireComponents.useCases.tabsUseCases.addTab.invoke(SupportUtils.FEEDBACK_URL)
+                navigateToSettingsArticle()
+            }
+            resources.getString(pref_key_about) -> {
+                requireComponents.useCases.tabsUseCases.addTab.invoke(aboutURL, true)
+                navigateToSettingsArticle()
+            }
+        }
+        return super.onPreferenceTreeClick(preference)
+    }
+
     private fun setupPreferences() {
         val makeDefaultBrowserKey = context?.getPreferenceKey(pref_key_make_default_browser)
-        val aboutKey = context?.getPreferenceKey(pref_key_about)
         val leakKey = context?.getPreferenceKey(pref_key_leakcanary)
 
         val preferenceMakeDefaultBrowser = findPreference<Preference>(makeDefaultBrowserKey)
-        val preferenceAbout = findPreference<Preference>(aboutKey)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
 
         preferenceMakeDefaultBrowser.onPreferenceClickListener =
             getClickListenerForMakeDefaultBrowser()
-        preferenceAbout.onPreferenceClickListener = getAboutPageListener()
 
         preferenceLeakCanary.isVisible = BuildConfig.DEBUG
         if (BuildConfig.DEBUG) {
@@ -81,19 +105,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun getAboutPageListener(): OnPreferenceClickListener {
-        return OnPreferenceClickListener {
-            requireComponents.useCases.tabsUseCases.addTab.invoke(aboutURL, true)
-            view?.let {
-                Navigation.findNavController(it)
-                    .navigate(
-                        SettingsFragmentDirections.actionGlobalBrowser(
-                            null, false
-                        )
-                    )
-            }
-            true
-        }
+    private fun navigateToSettingsArticle() {
+        val newSession = requireComponents.core.sessionManager.selectedSession?.id
+        val directions = SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(newSession,
+            (activity as HomeActivity).browsingModeManager.isPrivate)
+        Navigation.findNavController(view!!).navigate(directions)
     }
 
     companion object {
