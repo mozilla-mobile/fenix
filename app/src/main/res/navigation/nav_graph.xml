@@ -87,5 +87,10 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="org.mozilla.fenix.settings.SettingsFragment"
-        android:label="@string/settings_title" />
+        android:label="@string/settings_title" >
+        <action
+            android:id="@+id/action_settingsFragment_to_browserFragment"
+            app:destination="@id/browserFragment"
+            app:popUpTo="@+id/settingsFragment" />
+    </fragment>
 </navigation>

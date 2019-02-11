@@ -25,7 +25,10 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.R.string.pref_key_leakcanary
+import org.mozilla.fenix.R.string.pref_key_feedback
+import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
+import org.mozilla.fenix.R.string.pref_key_rate
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
 import java.io.File
@@ -56,7 +59,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            resources.getString(R.string.pref_key_help) -> {
+            resources.getString(pref_key_help) -> {
                 requireComponents.useCases.tabsUseCases.addTab
                     .invoke(SupportUtils.getSumoURLForTopic(context!!, SupportUtils.SumoTopic.HELP))
                 navigateToSettingsArticle()
@@ -70,6 +73,12 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
             }
             resources.getString(R.string.pref_key_about) -> {
                 requireComponents.useCases.tabsUseCases.addTab.invoke(aboutURL, true)
+            }
+            resources.getString(pref_key_rate) -> {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SupportUtils.RATE_APP_URL)))
+            }
+            resources.getString(pref_key_feedback) -> {
+                requireComponents.useCases.tabsUseCases.addTab.invoke(SupportUtils.FEEDBACK_URL)
                 navigateToSettingsArticle()
             }
         }
