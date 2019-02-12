@@ -17,13 +17,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.tab_list_header.view.*
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import org.mozilla.fenix.DefaultThemeManager
+import org.mozilla.fenix.BrowsingModeManager
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessions.SessionsComponent
 import org.mozilla.fenix.home.tabs.TabsAction
@@ -68,7 +71,8 @@ class HomeFragment : Fragment() {
                 when (it) {
                     is TabsAction.Select -> {
                         requireComponents.core.sessionManager.select(it.session)
-                        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(it.session.id)
+                        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(it.session.id,
+                            (activity as HomeActivity).browsingModeManager.isPrivate)
                         Navigation.findNavController(view).navigate(directions)
                     }
                     is TabsAction.Close -> {
@@ -90,8 +94,15 @@ class HomeFragment : Fragment() {
         view.toolbar.setCompoundDrawablesWithIntrinsicBounds(searchIcon, null, null, null)
         val roundToInt = (toolbarPaddingDp * Resources.getSystem().displayMetrics.density).roundToInt()
         view.toolbar.compoundDrawablePadding = roundToInt
-        view.toolbar.setOnClickListener {
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null)
+        view.toolbar.setOnClickListener { it ->
+            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null,
+                (activity as HomeActivity).browsingModeManager.isPrivate)
+            Navigation.findNavController(it).navigate(directions)
+        }
+        view.add_tab_button.increaseTapArea(addTabButtonIncreaseDps)
+        view.add_tab_button.setOnClickListener {
+            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null,
+                (activity as HomeActivity).browsingModeManager.isPrivate)
             Navigation.findNavController(it).navigate(directions)
         }
 
@@ -129,14 +140,10 @@ class HomeFragment : Fragment() {
             .isPrivate()
 
         privateBrowsingButton.setOnClickListener {
-            // When we build out private mode we will want to handle this logic elsewhere.
-            (requireActivity() as HomeActivity).themeManager.apply {
-                val newTheme = when (this.currentTheme) {
-                    ThemeManager.Theme.Light -> ThemeManager.Theme.Private
-                    ThemeManager.Theme.Private -> ThemeManager.Theme.Light
-                }
-
-                setTheme(newTheme)
+            val browsingModeManager = (activity as HomeActivity).browsingModeManager
+            browsingModeManager.mode = when (browsingModeManager.mode) {
+                BrowsingModeManager.Mode.Normal -> BrowsingModeManager.Mode.Private
+                BrowsingModeManager.Mode.Private -> BrowsingModeManager.Mode.Normal
             }
         }
     }
@@ -144,6 +151,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         sessionObserver = subscribeToSessions()
+        sessionObserver?.onSessionsRestored()
     }
 
     override fun onPause() {
@@ -170,31 +178,36 @@ class HomeFragment : Fragment() {
             override fun onSessionAdded(session: Session) {
                 super.onSessionAdded(session)
                 getManagedEmitter<TabsChange>().onNext(
-                    TabsChange.Changed(requireComponents.core.sessionManager.sessions))
+                    TabsChange.Changed(requireComponents.core.sessionManager.sessions
+                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }))
             }
 
             override fun onSessionRemoved(session: Session) {
                 super.onSessionRemoved(session)
                 getManagedEmitter<TabsChange>().onNext(
-                    TabsChange.Changed(requireComponents.core.sessionManager.sessions))
+                    TabsChange.Changed(requireComponents.core.sessionManager.sessions
+                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }))
             }
 
             override fun onSessionSelected(session: Session) {
                 super.onSessionSelected(session)
                 getManagedEmitter<TabsChange>().onNext(
-                    TabsChange.Changed(requireComponents.core.sessionManager.sessions))
+                    TabsChange.Changed(requireComponents.core.sessionManager.sessions
+                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }))
             }
 
             override fun onSessionsRestored() {
                 super.onSessionsRestored()
                 getManagedEmitter<TabsChange>().onNext(
-                    TabsChange.Changed(requireComponents.core.sessionManager.sessions))
+                    TabsChange.Changed(requireComponents.core.sessionManager.sessions
+                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }))
             }
 
             override fun onAllSessionsRemoved() {
                 super.onAllSessionsRemoved()
                 getManagedEmitter<TabsChange>().onNext(
-                    TabsChange.Changed(requireComponents.core.sessionManager.sessions))
+                    TabsChange.Changed(requireComponents.core.sessionManager.sessions
+                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }))
             }
         }
         requireComponents.core.sessionManager.register(observer)

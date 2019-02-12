@@ -19,6 +19,7 @@ import org.mozilla.fenix.mvi.UIView
 
 class ToolbarUIView(
     sessionId: String?,
+    isPrivate: Boolean,
     container: ViewGroup,
     actionEmitter: Observer<SearchAction>,
     changesObservable: Observable<SearchChange>
@@ -73,7 +74,8 @@ class ToolbarUIView(
                 ShippedDomainsProvider().also { it.initialize(this) },
                 components.core.historyStorage,
                 components.core.sessionManager,
-                sessionId
+                sessionId,
+                isPrivate
             )
         }
     }

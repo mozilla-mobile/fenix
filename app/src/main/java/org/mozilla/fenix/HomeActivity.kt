@@ -29,6 +29,8 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
+    val browsingModeManager = DefaultBrowsingModeManager(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -85,7 +87,7 @@ open class HomeActivity : AppCompatActivity() {
     private fun openToBrowser() {
         val sessionId = SafeIntent(intent).getStringExtra(IntentProcessor.ACTIVE_SESSION_ID)
         val host = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
-        val directions = NavGraphDirections.actionGlobalBrowser(sessionId)
+        val directions = NavGraphDirections.actionGlobalBrowser(sessionId, browsingModeManager.isPrivate)
         host.navController.navigate(directions)
     }
 
