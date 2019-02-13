@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         TabsComponent(view.homeLayout, bus, TabsState(requireComponents.core.sessionManager.sessions))
-        SessionsComponent(view.homeLayout, bus)
+        SessionsComponent(view.homeLayout, bus, (activity as HomeActivity).browsingModeManager.isPrivate)
         layoutComponents(view)
         ActionBusFactory.get(this).logMergedObservables()
         val activity = activity as HomeActivity
