@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.app
 
 class SessionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isPrivate = false
@@ -48,11 +47,12 @@ class SessionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             is PrivateEmptyListViewHolder -> {
                 // Format the description text to include a hyperlink
-                val descriptionText = String.format(holder.description.text.toString(), System.getProperty("line.separator"))
+                val descriptionText = String
+                    .format(holder.description.text.toString(), System.getProperty("line.separator"))
                 val linkStartIndex = descriptionText.indexOf("\n\n") + 2
                 val linkAction = object : ClickableSpan() {
                     override fun onClick(widget: View?) {
-                        //TODO Go to SUMO page
+                        // TODO Go to SUMO page
                     }
                 }
                 val textWithLink = SpannableString(descriptionText).apply {

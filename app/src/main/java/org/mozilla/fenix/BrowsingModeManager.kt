@@ -12,12 +12,12 @@ interface BrowsingModeManager {
     }
 }
 
-var temporaryModeStorage = BrowsingModeManager.Mode.Normal
+var temporaryModeStorage: BrowsingModeManager.Mode? = null
 class DefaultBrowsingModeManager(private val homeActivity: HomeActivity) : BrowsingModeManager {
     val isPrivate: Boolean
         get() = mode == BrowsingModeManager.Mode.Private
     var mode: BrowsingModeManager.Mode
-        get() = temporaryModeStorage
+        get() = temporaryModeStorage!!
         set(value) {
             temporaryModeStorage = value
             updateTheme(value)
@@ -39,11 +39,13 @@ class DefaultBrowsingModeManager(private val homeActivity: HomeActivity) : Brows
             .edit().putBoolean(homeActivity.getString(R.string.pref_key_private_mode), isPrivate).apply()
     }
 
-    /*
-    mode = when(PreferenceManager.getDefaultSharedPreferences(homeActivity)
-            .getBoolean(homeActivity.getString(R.string.pref_key_private_mode), false)) {
-            true -> BrowsingModeManager.Mode.Private
-            false -> BrowsingModeManager.Mode.Normal
+    init {
+        if (temporaryModeStorage == null) {
+            mode = when (PreferenceManager.getDefaultSharedPreferences(homeActivity)
+                .getBoolean(homeActivity.getString(R.string.pref_key_private_mode), false)) {
+                true -> BrowsingModeManager.Mode.Private
+                false -> BrowsingModeManager.Mode.Normal
+            }
         }
-     */
+    }
 }

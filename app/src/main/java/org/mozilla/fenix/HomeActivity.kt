@@ -29,10 +29,12 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
-    val browsingModeManager = DefaultBrowsingModeManager(this)
+    lateinit var browsingModeManager: DefaultBrowsingModeManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        browsingModeManager = DefaultBrowsingModeManager(this)
+
         setContentView(R.layout.activity_home)
 
         setTheme(themeManager.currentTheme)

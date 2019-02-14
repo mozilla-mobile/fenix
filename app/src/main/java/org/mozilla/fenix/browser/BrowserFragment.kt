@@ -64,8 +64,10 @@ class BrowserFragment : Fragment(), BackHandler {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        require(arguments != null)
         sessionId = BrowserFragmentArgs.fromBundle(arguments!!).sessionId
         isPrivate = BrowserFragmentArgs.fromBundle(arguments!!).isPrivateTab
+
         val view = inflater.inflate(R.layout.fragment_browser, container, false)
 
         toolbarComponent = ToolbarComponent(

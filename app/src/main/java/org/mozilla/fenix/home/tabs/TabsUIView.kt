@@ -18,7 +18,6 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.tab_list_header.view.*
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.HomeFragment
@@ -29,6 +28,7 @@ import org.mozilla.fenix.mvi.UIView
 class TabsUIView(
     container: ViewGroup,
     actionEmitter: Observer<TabsAction>,
+    isPrivate: Boolean,
     changesObservable: Observable<TabsChange>
 ) :
     UIView<TabsState, TabsAction, TabsChange>(container, actionEmitter, changesObservable) {
@@ -51,11 +51,9 @@ class TabsUIView(
         }
         header.add_tab_button.increaseTapArea(HomeFragment.addTabButtonIncreaseDps)
         header.add_tab_button.setOnClickListener {
-            if (view.context as? HomeActivity != null) {
-                val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null,
-                    (view.context as HomeActivity).browsingModeManager.isPrivate)
-                Navigation.findNavController(it).navigate(directions)
-            }
+            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null,
+                isPrivate)
+            Navigation.findNavController(it).navigate(directions)
         }
         header.tabs_overflow_button.increaseTapArea(HomeFragment.overflowButtonIncreaseDps)
         header.tabs_overflow_button.setOnClickListener {
