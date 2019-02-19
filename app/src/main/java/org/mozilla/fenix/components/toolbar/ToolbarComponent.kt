@@ -7,7 +7,6 @@ package org.mozilla.fenix.components.toolbar
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.component_search.*
-import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.mvi.Action
@@ -29,6 +28,8 @@ class ToolbarComponent(
         bus.getSafeManagedObservable(SearchChange::class.java)
     ) {
 
+    private val view = uiView.toolbar
+
     override val reducer: Reducer<SearchState, SearchChange> = { state, change ->
         when (change) {
             is SearchChange.QueryChanged -> state.copy(query = change.query)
@@ -41,12 +42,12 @@ class ToolbarComponent(
         applyTheme()
     }
 
-    fun getView(): BrowserToolbar = uiView.toolbar
-
     private fun applyTheme() {
-        getView().textColor = ContextCompat.getColor(container.context,
+        view.suggestionBackgroundColor = ContextCompat.getColor(container.context,
+            DefaultThemeManager.resolveAttribute(R.attr.suggestionBackground, container.context))
+        view.textColor = ContextCompat.getColor(container.context,
             DefaultThemeManager.resolveAttribute(R.attr.awesomeBarTitleTextColor, container.context))
-        getView().hintColor = ContextCompat.getColor(container.context,
+        view.hintColor = ContextCompat.getColor(container.context,
             DefaultThemeManager.resolveAttribute(R.attr.awesomeBarDescriptionTextColor, container.context))
     }
 }
