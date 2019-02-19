@@ -12,12 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.SearchAction
 import org.mozilla.fenix.components.toolbar.SearchState
 import org.mozilla.fenix.components.toolbar.ToolbarComponent
 import org.mozilla.fenix.components.toolbar.ToolbarUIView
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -88,7 +88,7 @@ class SearchFragment : Fragment() {
     private fun transitionToBrowser() {
         val sessionId = SearchFragmentArgs.fromBundle(arguments!!).sessionId
         val directions = SearchFragmentDirections.actionSearchFragmentToBrowserFragment(sessionId,
-            (activity as HomeActivity).browsingModeManager.isPrivate)
+            requireComponents.core.sessionManager.selectedSession!!.private)
 
         Navigation.findNavController(view!!.search_layout).navigate(directions)
     }
