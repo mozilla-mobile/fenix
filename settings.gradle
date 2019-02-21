@@ -1,1 +1,18 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.yaml:snakeyaml:1.23'
+    }
+}
+
+import org.yaml.snakeyaml.Yaml
 include ':app', ':architecture'
+
+gradle.projectsLoaded { ->
+    // Wait until root project is "loaded" before we set "depConfig"
+    def buildconfig = new Yaml().load(new File(rootDir, '.buildconfig.yml').newInputStream())
+    gradle.rootProject.ext.depConfig = new DepConfig(buildconfig.geckoNightlyVersion)
+}

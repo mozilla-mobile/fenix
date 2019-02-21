@@ -29,17 +29,17 @@ androidExtensions {
 }
 
 dependencies {
-    implementation Deps.kotlin_stdlib
+    implementation depConfig.kotlin_stdlib
 
-    implementation Deps.androidx_annotation
-    implementation Deps.androidx_lifecycle_runtime
+    implementation depConfig.androidx_annotation
+    implementation depConfig.androidx_lifecycle_runtime
 
-    implementation Deps.mozilla_support_base
+    implementation depConfig.mozilla_support_base
 
-    implementation Deps.rxAndroid
-    implementation Deps.rxKotlin
+    implementation depConfig.rxAndroid
+    implementation depConfig.rxKotlin
 
-    implementation Deps.autodispose
-    implementation Deps.autodispose_android
-    implementation Deps.autodispose_android_aac
+    implementation depConfig.autodispose
+    implementation depConfig.autodispose_android
+    implementation depConfig.autodispose_android_aac
 }

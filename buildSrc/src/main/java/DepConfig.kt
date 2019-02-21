@@ -1,0 +1,138 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+private object Versions {
+    const val kotlin = "1.3.11"
+    const val android_gradle_plugin = "3.2.1"
+
+    const val rxAndroid = "2.1.0"
+    const val rxKotlin = "2.3.0"
+    const val anko = "0.10.8"
+    const val sentry = "1.7.10"
+    const val leakcanary = "1.6.3"
+
+    const val androidx_appcompat = "1.1.0-alpha02"
+    const val androidx_constraint_layout = "2.0.0-alpha2"
+    const val androidx_preference = "1.1.0-alpha03"
+    const val androidx_legacy = "1.0.0"
+    const val androidx_annotation = "1.0.1"
+    const val androidx_lifecycle = "2.0.0"
+    const val androidx_fragment = "1.1.0-alpha04"
+    const val androidx_safeargs = "1.0.0-beta01"
+
+    const val mozilla_android_components = "0.43.0-SNAPSHOT"
+
+    const val test_tools = "1.0.2"
+    const val espresso_core = "2.2.2"
+
+    const val android_arch_navigation = "1.0.0-rc01"
+
+    const val autodispose = "1.1.0"
+
+    const val junit_jupiter = "5.3.2"
+    const val mockito = "2.23.0"
+    const val mockk = "1.9.kotlin12"
+    const val glide = "4.9.0"
+}
+
+@Suppress("unused")
+object BuildScriptDepConfig {
+    const val android = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
+    const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    const val kotlin_allopen =  "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
+    const val androidx_safeargs = "android.arch.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_safeargs}"
+}
+
+@Suppress("unused")
+class DepConfig(geckoNightlyVersion: String) {
+    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+
+    val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
+    val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
+
+    val anko_commons = "org.jetbrains.anko:anko-commons:${Versions.anko}"
+    val anko_sdk = "org.jetbrains.anko:anko-sdk25:${Versions.anko}"
+    val anko_appcompat = "org.jetbrains.anko:anko-appcompat-v7:${Versions.anko}"
+    val anko_constraintlayout = "org.jetbrains.anko:anko-constraint-layout:${Versions.anko}"
+
+    val geckoview_nightly_arm = "org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:$geckoNightlyVersion"
+    val geckoview_nightly_x86 = "org.mozilla.geckoview:geckoview-nightly-x86:$geckoNightlyVersion"
+    val geckoview_nightly_aarch64 = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a:$geckoNightlyVersion"
+
+    val mozilla_concept_engine = "org.mozilla.components:concept-engine:${Versions.mozilla_android_components}"
+    val mozilla_concept_tabstray = "org.mozilla.components:concept-tabstray:${Versions.mozilla_android_components}"
+    val mozilla_concept_toolbar = "org.mozilla.components:concept-toolbar:${Versions.mozilla_android_components}"
+    val mozilla_concept_storage = "org.mozilla.components:concept-storage:${Versions.mozilla_android_components}"
+
+    val mozilla_browser_awesomebar = "org.mozilla.components:browser-awesomebar:${Versions.mozilla_android_components}"
+    val mozilla_browser_engine_gecko_nightly = "org.mozilla.components:browser-engine-gecko-nightly:${Versions.mozilla_android_components}"
+    val mozilla_browser_domains = "org.mozilla.components:browser-domains:${Versions.mozilla_android_components}"
+    val mozilla_browser_search = "org.mozilla.components:browser-search:${Versions.mozilla_android_components}"
+    val mozilla_browser_session = "org.mozilla.components:browser-session:${Versions.mozilla_android_components}"
+    val mozilla_browser_tabstray = "org.mozilla.components:browser-tabstray:${Versions.mozilla_android_components}"
+    val mozilla_browser_toolbar = "org.mozilla.components:browser-toolbar:${Versions.mozilla_android_components}"
+    val mozilla_browser_menu = "org.mozilla.components:browser-menu:${Versions.mozilla_android_components}"
+    val mozilla_browser_errorpages = "org.mozilla.components:browser-errorpages:${Versions.mozilla_android_components}"
+    val mozilla_browser_storage_sync = "org.mozilla.components:browser-storage-sync:${Versions.mozilla_android_components}"
+
+    val mozilla_feature_awesomebar = "org.mozilla.components:feature-awesomebar:${Versions.mozilla_android_components}"
+    val mozilla_feature_contextmenu = "org.mozilla.components:feature-contextmenu:${Versions.mozilla_android_components}"
+    val mozilla_feature_customtabs = "org.mozilla.components:feature-customtabs:${Versions.mozilla_android_components}"
+    val mozilla_feature_intent = "org.mozilla.components:feature-intent:${Versions.mozilla_android_components}"
+    val mozilla_feature_search = "org.mozilla.components:feature-search:${Versions.mozilla_android_components}"
+    val mozilla_feature_session = "org.mozilla.components:feature-session:${Versions.mozilla_android_components}"
+    val mozilla_feature_sync = "org.mozilla.components:feature-sync:${Versions.mozilla_android_components}"
+    val mozilla_feature_tabs = "org.mozilla.components:feature-tabs:${Versions.mozilla_android_components}"
+    val mozilla_feature_downloads = "org.mozilla.components:feature-downloads:${Versions.mozilla_android_components}"
+    val mozilla_feature_storage = "org.mozilla.components:feature-storage:${Versions.mozilla_android_components}"
+    val mozilla_feature_prompts = "org.mozilla.components:feature-prompts:${Versions.mozilla_android_components}"
+    val mozilla_feature_toolbar = "org.mozilla.components:feature-toolbar:${Versions.mozilla_android_components}"
+    val mozilla_feature_findinpage = "org.mozilla.components:feature-findinpage:${Versions.mozilla_android_components}"
+    val mozilla_feature_session_bundling = "org.mozilla.components:feature-session-bundling:${Versions.mozilla_android_components}"
+
+    val mozilla_service_fretboard = "org.mozilla.components:service-fretboard:${Versions.mozilla_android_components}"
+    val mozilla_service_glean = "org.mozilla.components:service-glean:${Versions.mozilla_android_components}"
+
+    val mozilla_ui_colors = "org.mozilla.components:ui-colors:${Versions.mozilla_android_components}"
+    val mozilla_ui_icons = "org.mozilla.components:ui-icons:${Versions.mozilla_android_components}"
+
+    val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
+
+    val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
+    val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
+
+    val sentry = "io.sentry:sentry-android:${Versions.sentry}"
+    val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
+    val leakcanary_noop = "com.squareup.leakcanary:leakcanary-android-no-op:${Versions.leakcanary}"
+
+    val tools_test_runner = "com.android.support.test:runner:${Versions.test_tools}"
+    val tools_espresso_core = "com.android.support.test.espresso:espresso-core:${Versions.espresso_core}"
+
+    val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
+    val androidx_fragment = "androidx.fragment:fragment:${Versions.androidx_fragment}"
+    val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
+    val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint_layout}"
+    val androidx_legacy = "androidx.legacy:legacy-support-v4:${Versions.androidx_legacy}"
+    val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime:${Versions.androidx_lifecycle}"
+    val androidx_preference = "androidx.preference:preference-ktx:${Versions.androidx_preference}"
+    val android_arch_navigation = "android.arch.navigation:navigation-fragment:${Versions.android_arch_navigation}"
+    val android_arch_navigation_ui = "android.arch.navigation:navigation-ui:${Versions.android_arch_navigation}"
+
+    val autodispose = "com.uber.autodispose:autodispose:${Versions.autodispose}"
+    val autodispose_android = "com.uber.autodispose:autodispose-android:${Versions.autodispose}"
+    val autodispose_android_aac = "com.uber.autodispose:autodispose-android-archcomponents:${Versions.autodispose}"
+    val autodispose_android_aac_test = "com.uber.autodispose:autodispose-android-archcomponents-test:${Versions.autodispose}"
+
+    val junit_jupiter_api = "org.junit.jupiter:junit-jupiter-api:${Versions.junit_jupiter}"
+    val junit_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${Versions.junit_jupiter}"
+    val junit_jupiter_engine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit_jupiter}"
+
+    val mockito_core = "org.mockito:mockito-core:${Versions.mockito}"
+    val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
+    val mockk = "io.mockk:mockk:${Versions.mockk}"
+
+    val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
+    val glideAnnotationProcessor = "com.github.bumptech.glide:compiler:${Versions.glide}"
+}
+

@@ -113,80 +113,80 @@ androidExtensions {
 dependencies {
     implementation project(':architecture')
 
-    implementation Deps.kotlin_stdlib
-    implementation Deps.androidx_appcompat
-    implementation Deps.androidx_constraintlayout
+    implementation depConfig.kotlin_stdlib
+    implementation depConfig.androidx_appcompat
+    implementation depConfig.androidx_constraintlayout
 
-    implementation Deps.rxAndroid
-    implementation Deps.rxKotlin
-    implementation Deps.anko_commons
-    implementation Deps.anko_sdk
-    implementation Deps.anko_appcompat
-    implementation Deps.anko_constraintlayout
+    implementation depConfig.rxAndroid
+    implementation depConfig.rxKotlin
+    implementation depConfig.anko_commons
+    implementation depConfig.anko_sdk
+    implementation depConfig.anko_appcompat
+    implementation depConfig.anko_constraintlayout
 
-    implementation Deps.sentry
+    implementation depConfig.sentry
 
-    implementation Deps.mozilla_concept_engine
-    implementation Deps.mozilla_concept_storage
-    implementation Deps.mozilla_concept_toolbar
+    implementation depConfig.mozilla_concept_engine
+    implementation depConfig.mozilla_concept_storage
+    implementation depConfig.mozilla_concept_toolbar
 
-    implementation Deps.mozilla_browser_awesomebar
-    implementation Deps.mozilla_feature_downloads
-    implementation Deps.mozilla_browser_domains
-    implementation Deps.mozilla_browser_engine_gecko_nightly
-    implementation Deps.mozilla_browser_session
-    implementation Deps.mozilla_browser_storage_sync
-    implementation Deps.mozilla_browser_toolbar
+    implementation depConfig.mozilla_browser_awesomebar
+    implementation depConfig.mozilla_feature_downloads
+    implementation depConfig.mozilla_browser_domains
+    implementation depConfig.mozilla_browser_engine_gecko_nightly
+    implementation depConfig.mozilla_browser_session
+    implementation depConfig.mozilla_browser_storage_sync
+    implementation depConfig.mozilla_browser_toolbar
 
-    implementation Deps.mozilla_feature_awesomebar
-    implementation Deps.mozilla_feature_contextmenu
-    implementation Deps.mozilla_feature_customtabs
-    implementation Deps.mozilla_feature_downloads
-    implementation Deps.mozilla_feature_intent
-    implementation Deps.mozilla_feature_prompts
-    implementation Deps.mozilla_feature_session
-    implementation Deps.mozilla_feature_toolbar
-    implementation Deps.mozilla_feature_tabs
-    implementation Deps.mozilla_feature_findinpage
-    implementation Deps.mozilla_feature_session_bundling
+    implementation depConfig.mozilla_feature_awesomebar
+    implementation depConfig.mozilla_feature_contextmenu
+    implementation depConfig.mozilla_feature_customtabs
+    implementation depConfig.mozilla_feature_downloads
+    implementation depConfig.mozilla_feature_intent
+    implementation depConfig.mozilla_feature_prompts
+    implementation depConfig.mozilla_feature_session
+    implementation depConfig.mozilla_feature_toolbar
+    implementation depConfig.mozilla_feature_tabs
+    implementation depConfig.mozilla_feature_findinpage
+    implementation depConfig.mozilla_feature_session_bundling
 
-    implementation Deps.mozilla_service_fretboard
-    implementation Deps.mozilla_service_glean
+    implementation depConfig.mozilla_service_fretboard
+    implementation depConfig.mozilla_service_glean
 
-    implementation Deps.mozilla_support_ktx
+    implementation depConfig.mozilla_support_ktx
 
-    implementation Deps.mozilla_ui_colors
-    implementation Deps.mozilla_ui_icons
+    implementation depConfig.mozilla_ui_colors
+    implementation depConfig.mozilla_ui_icons
 
-    implementation Deps.mozilla_lib_crash
-    debugImplementation Deps.leakcanary
-    releaseImplementation Deps.leakcanary_noop
+    implementation depConfig.mozilla_lib_crash
+    debugImplementation depConfig.leakcanary
+    releaseImplementation depConfig.leakcanary_noop
 
-    armImplementation Deps.geckoview_nightly_arm
-    x86Implementation Deps.geckoview_nightly_x86
-    aarch64Implementation Deps.geckoview_nightly_aarch64
+    armImplementation depConfig.geckoview_nightly_arm
+    x86Implementation depConfig.geckoview_nightly_x86
+    aarch64Implementation depConfig.geckoview_nightly_aarch64
 
-    implementation Deps.androidx_legacy
-    implementation Deps.androidx_preference
-    implementation Deps.androidx_fragment
-    implementation Deps.android_arch_navigation
-    implementation Deps.android_arch_navigation_ui
+    implementation depConfig.androidx_legacy
+    implementation depConfig.androidx_preference
+    implementation depConfig.androidx_fragment
+    implementation depConfig.android_arch_navigation
+    implementation depConfig.android_arch_navigation_ui
 
-    implementation Deps.autodispose
+    implementation depConfig.autodispose
 
-    androidTestImplementation Deps.tools_test_runner
-    androidTestImplementation Deps.tools_espresso_core
+    androidTestImplementation depConfig.tools_test_runner
+    androidTestImplementation depConfig.tools_espresso_core
 
-    testImplementation Deps.junit_jupiter_api
-    testImplementation Deps.junit_jupiter_params
-    testImplementation Deps.junit_jupiter_engine
+    testImplementation depConfig.junit_jupiter_api
+    testImplementation depConfig.junit_jupiter_params
+    testImplementation depConfig.junit_jupiter_engine
 
-    testImplementation Deps.mockito_core
-    androidTestImplementation Deps.mockito_android
-    testImplementation Deps.mockk
+    testImplementation depConfig.mockito_core
+    androidTestImplementation depConfig.mockito_android
+    testImplementation depConfig.mockk
 
-    implementation Deps.glide
-    annotationProcessor Deps.glideAnnotationProcessor
+    implementation depConfig.glide
+    annotationProcessor depConfig.glideAnnotationProcessor
 }
 
 
