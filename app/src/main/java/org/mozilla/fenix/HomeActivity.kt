@@ -41,6 +41,7 @@ open class HomeActivity : AppCompatActivity() {
         DefaultThemeManager.applyStatusBarTheme(window, themeManager, this)
 
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
+            intent?.putExtra(OPEN_TO_BROWSER, false)
             openToBrowser()
         }
 
