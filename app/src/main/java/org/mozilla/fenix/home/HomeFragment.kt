@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
 
         setupHomeMenu()
 
@@ -129,7 +130,7 @@ class HomeFragment : Fragment() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) { }
         })
 
-        view.toolbar_wrapper.isPrivateModeEnabled = (activity as HomeActivity).browsingModeManager.isPrivate
+        view.toolbar_wrapper.isPrivateModeEnabled = isPrivate
 
         privateBrowsingButton.setOnClickListener {
             val browsingModeManager = (activity as HomeActivity).browsingModeManager
@@ -138,6 +139,8 @@ class HomeFragment : Fragment() {
                 BrowsingModeManager.Mode.Private -> BrowsingModeManager.Mode.Normal
             }
         }
+
+        sessionsComponent.view.visibility = if (isPrivate) { View.GONE } else { View.VISIBLE }
     }
 
     override fun onResume() {
