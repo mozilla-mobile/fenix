@@ -5,9 +5,6 @@
 package org.mozilla.fenix.home.sessions
 
 import android.graphics.PorterDuff
-import android.text.SpannableString
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,10 +19,36 @@ import org.mozilla.fenix.R
 class SessionsAdapter(
     private val actionEmitter: Observer<SessionsAction>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var items = listOf<ArchivedSession>()
+    sealed class SessionListState {
+        data class DisplaySessions(val sessions: List<ArchivedSession>) : SessionListState()
+        object Empty : SessionListState()
 
-    fun reloadDatat(items: List<ArchivedSession>) {
-        this.items = items
+        val items: List<ArchivedSession>
+            get() = when (this) {
+                is DisplaySessions -> this.sessions
+                is Empty -> listOf()
+            }
+
+        val size: Int
+            get() = when (this) {
+                is DisplaySessions -> this.sessions.size
+                is Empty -> EMPTY_SIZE
+            }
+
+        companion object {
+            private const val EMPTY_SIZE = 1
+        }
+    }
+
+    private var state: SessionListState = SessionListState.Empty
+
+    fun reloadData(items: List<ArchivedSession>) {
+        this.state = if (items.isEmpty()) {
+            SessionListState.Empty
+        } else {
+            SessionListState.DisplaySessions(items)
+        }
+
         notifyDataSetChanged()
     }
 
@@ -36,40 +59,25 @@ class SessionsAdapter(
             HeaderViewHolder.LAYOUT_ID -> HeaderViewHolder(view)
             EmptyListViewHolder.LAYOUT_ID -> EmptyListViewHolder(view)
             SessionItemViewHolder.LAYOUT_ID -> SessionItemViewHolder(view, actionEmitter)
-            PrivateEmptyListViewHolder.LAYOUT_ID -> PrivateEmptyListViewHolder(view)
             else -> EmptyListViewHolder(view)
         }
     }
 
     override fun getItemViewType(position: Int) = when (position) {
         0 -> HeaderViewHolder.LAYOUT_ID
-        else -> SessionItemViewHolder.LAYOUT_ID
+        else -> if (state is SessionListState.DisplaySessions) {
+            SessionItemViewHolder.LAYOUT_ID
+        } else {
+            EmptyListViewHolder.LAYOUT_ID
+        }
     }
 
-    override fun getItemCount(): Int = items.size + 1
+    override fun getItemCount(): Int = state.size + 1
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> holder.headerText.text = "Today"
-            is SessionItemViewHolder -> holder.bind(items[position - 1])
-            is PrivateEmptyListViewHolder -> {
-                // Format the description text to include a hyperlink
-                val descriptionText = String
-                    .format(holder.description.text.toString(), System.getProperty("line.separator"))
-                val linkStartIndex = descriptionText.indexOf("\n\n") + 2
-                val linkAction = object : ClickableSpan() {
-                    override fun onClick(widget: View?) {
-                        // TODO Go to SUMO page
-                    }
-                }
-                val textWithLink = SpannableString(descriptionText).apply {
-                    setSpan(linkAction, linkStartIndex, descriptionText.length, 0)
-
-                    val colorSpan = ForegroundColorSpan(holder.description.currentTextColor)
-                    setSpan(colorSpan, linkStartIndex, descriptionText.length, 0)
-                }
-                holder.description.text = textWithLink
-            }
+            is SessionItemViewHolder -> holder.bind(state.items[position - 1])
         }
     }
 
@@ -77,13 +85,6 @@ class SessionsAdapter(
         val headerText = view.findViewById<TextView>(R.id.header_text)
         companion object {
             const val LAYOUT_ID = R.layout.session_list_header
-        }
-    }
-
-    private class PrivateEmptyListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val description = view.findViewById<TextView>(R.id.session_description)
-        companion object {
-            const val LAYOUT_ID = R.layout.session_list_empty_private
         }
     }
 
