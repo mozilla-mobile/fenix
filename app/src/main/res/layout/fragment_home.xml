@@ -8,6 +8,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/floating_delete_button"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:elevation="10dp"
+        android:background="@drawable/delete_button_rounded"
+        android:drawableStart="@drawable/ic_delete_white"
+        android:text="@string/private_browsing_erase_session"
+        android:textAllCaps="false"
+        android:textColor="@color/photonWhite"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_gravity="bottom|center_horizontal"/>
+
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/homeLayout"
         android:layout_width="match_parent"
@@ -130,6 +146,5 @@
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

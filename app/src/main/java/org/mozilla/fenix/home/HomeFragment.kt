@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.coroutines.withContext
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -82,11 +83,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupHomeMenu()
-        setupPrivateBrowsingDescription()
-        updatePrivateSessionDescriptionVisibility()
+        setupPrivateBrowsingUI()
+        updatePrivateBrowsingUIVisibility()
 
-        sessionsComponent.view.visibility = if ((activity as HomeActivity).browsingModeManager.isPrivate)
-            View.GONE else View.VISIBLE
         tabsComponent.tabList.isNestedScrollingEnabled = false
         sessionsComponent.view.isNestedScrollingEnabled = false
 
@@ -126,13 +125,17 @@ class HomeFragment : Fragment() {
         view.homeLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             private val firstKeyTrigger = KeyTrigger(
                 firstKeyTriggerFrame,
-                { view.toolbar_wrapper.transitionToDark() },
-                { view.toolbar_wrapper.transitionToLight() }
+                { view.toolbar_wrapper.transitionToDark()
+                updatePrivateBrowsingDeleteButtonVisibility()},
+                { view.toolbar_wrapper.transitionToLight()
+                    updatePrivateBrowsingDeleteButtonVisibility()}
             )
             private val secondKeyTrigger = KeyTrigger(
                 secondKeyTriggerFrame,
-                { view.toolbar_wrapper.transitionToDarkNoBorder() },
-                { view.toolbar_wrapper.transitionToDarkFromNoBorder() }
+                { view.toolbar_wrapper.transitionToDarkNoBorder()
+                    updatePrivateBrowsingDeleteButtonVisibility()},
+                { view.toolbar_wrapper.transitionToDarkFromNoBorder()
+                    updatePrivateBrowsingDeleteButtonVisibility()}
             )
 
             override fun onTransitionChange(
@@ -183,6 +186,7 @@ class HomeFragment : Fragment() {
                             requireComponents.core.sessionManager.findSessionById(it.sessionId)?.let { session ->
                                 requireComponents.core.sessionManager.remove(session)
                             }
+                            updatePrivateBrowsingUIVisibility()
                         }
                     }
                 }
@@ -226,6 +230,26 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setupPrivateBrowsingUI() {
+        setupPrivateBrowsingDeleteButton()
+        setupPrivateBrowsingDescription()
+    }
+
+    private fun updatePrivateBrowsingUIVisibility() {
+        updatePrivateBrowsingDeleteButtonVisibility()
+        updatePrivateSessionDescriptionVisibility()
+
+        sessionsComponent.view.visibility = if ((activity as HomeActivity).browsingModeManager.isPrivate)
+            View.GONE else View.VISIBLE
+    }
+
+    private fun setupPrivateBrowsingDeleteButton() {
+        view?.floating_delete_button?.setOnClickListener {
+            requireComponents.useCases.tabsUseCases.removeAllTabsOfType.invoke(private = true)
+            updatePrivateBrowsingUIVisibility()
+        }
+    }
+
     private fun setupPrivateBrowsingDescription() {
         // Format the description text to include a hyperlink
         val descriptionText = String
@@ -245,6 +269,17 @@ class HomeFragment : Fragment() {
         private_session_description.text = textWithLink
     }
 
+    private fun updatePrivateBrowsingDeleteButtonVisibility() {
+        val isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
+        val hasTabs = !requireComponents.core.sessionManager.all.none { it.private }
+
+        view?.floating_delete_button?.visibility = if (isPrivate && hasTabs) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
     private fun updatePrivateSessionDescriptionVisibility() {
         val isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
         val hasNoTabs = requireComponents.core.sessionManager.all.none { it.private }
@@ -261,31 +296,31 @@ class HomeFragment : Fragment() {
             override fun onSessionAdded(session: Session) {
                 super.onSessionAdded(session)
                 emitSessionChanges()
-                updatePrivateSessionDescriptionVisibility()
+                updatePrivateBrowsingUIVisibility()
             }
 
             override fun onSessionRemoved(session: Session) {
                 super.onSessionRemoved(session)
                 emitSessionChanges()
-                updatePrivateSessionDescriptionVisibility()
+                updatePrivateBrowsingUIVisibility()
             }
 
             override fun onSessionSelected(session: Session) {
                 super.onSessionSelected(session)
                 emitSessionChanges()
-                updatePrivateSessionDescriptionVisibility()
+                updatePrivateBrowsingUIVisibility()
             }
 
             override fun onSessionsRestored() {
                 super.onSessionsRestored()
                 emitSessionChanges()
-                updatePrivateSessionDescriptionVisibility()
+                updatePrivateBrowsingUIVisibility()
             }
 
             override fun onAllSessionsRemoved() {
                 super.onAllSessionsRemoved()
                 emitSessionChanges()
-                updatePrivateSessionDescriptionVisibility()
+                updatePrivateBrowsingUIVisibility()
             }
         }
         requireComponents.core.sessionManager.register(observer)
