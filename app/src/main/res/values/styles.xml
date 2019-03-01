@@ -38,7 +38,7 @@
         <item name="pillWrapperBackground">@color/off_white</item>
         <item name="awesomeBarTitleTextColor">@color/awesome_bar_title_color</item>
         <item name="awesomeBarDescriptionTextColor">@color/awesome_bar_description_color</item>
-        <item name="suggestionBackground">@color/session_list_empty_bg</item>
+        <item name="suggestionBackground">@color/photonBlue50</item>
 
         <!-- Browser fragment colors -->
         <item name="browserUrlBarBackground">@drawable/home_search_background_dark</item>
