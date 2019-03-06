@@ -46,6 +46,7 @@ import org.mozilla.fenix.R.string.pref_key_about
 import org.mozilla.fenix.R.string.pref_key_sign_in
 import org.mozilla.fenix.R.string.pref_key_account
 import org.mozilla.fenix.R.string.pref_key_account_category
+import org.mozilla.fenix.R.string.pref_key_search_engine_settings
 
 @SuppressWarnings("TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObserver {
@@ -74,6 +75,9 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     @Suppress("ComplexMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
+            resources.getString(pref_key_search_engine_settings) -> {
+                navigateToSearchEngineSettings()
+            }
             resources.getString(pref_key_site_permissions) -> {
                 navigateToSitePermissions()
             }
@@ -205,6 +209,11 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         } else {
             defaultClickListener
         }
+    }
+
+    private fun navigateToSearchEngineSettings() {
+        val directions = SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
+        Navigation.findNavController(view!!).navigate(directions)
     }
 
     private fun navigateToSitePermissions() {
