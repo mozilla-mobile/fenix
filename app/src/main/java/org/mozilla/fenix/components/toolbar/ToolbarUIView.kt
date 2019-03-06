@@ -4,8 +4,10 @@
 
 package org.mozilla.fenix.components.toolbar
 
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -13,6 +15,7 @@ import io.reactivex.functions.Consumer
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.support.ktx.android.content.res.pxToDp
+import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.mvi.UIView
@@ -22,11 +25,14 @@ class ToolbarUIView(
     isPrivate: Boolean,
     container: ViewGroup,
     actionEmitter: Observer<SearchAction>,
-    changesObservable: Observable<SearchChange>
+    changesObservable: Observable<SearchChange>,
+    private val engineIconView: ImageView? = null
 ) :
     UIView<SearchState, SearchAction, SearchChange>(container, actionEmitter, changesObservable) {
 
     val toolbarIntegration: ToolbarIntegration
+    var state: SearchState? = null
+        private set
 
     override val view: BrowserToolbar = LayoutInflater.from(container.context)
         .inflate(R.layout.component_search, container, true)
@@ -38,7 +44,7 @@ class ToolbarUIView(
     init {
         view.apply {
             setOnUrlCommitListener {
-                actionEmitter.onNext(SearchAction.UrlCommitted(it, sessionId))
+                actionEmitter.onNext(SearchAction.UrlCommitted(it, sessionId, state?.engine))
             false
             }
             onUrlClicked = {
@@ -87,12 +93,37 @@ class ToolbarUIView(
     }
 
     override fun updateView() = Consumer<SearchState> {
-        if (it.isEditing) {
-            view.url = it.query
-            view.editMode()
-        } else {
-            view.displayMode()
+        with(view.context) {
+            if (it.isEditing) {
+                val defaultEngineIcon = components.search.searchEngineManager.defaultSearchEngine?.icon
+                val searchIcon = it.engine?.icon ?: defaultEngineIcon
+                val draw = BitmapDrawable(searchIcon)
+                val iconSize =
+                    containerView?.context!!.resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
+                draw.setBounds(0, 0, iconSize, iconSize)
+                engineIconView?.backgroundDrawable = draw
+            }
         }
+
+        if (shouldClearSearchURL(it)) {
+            view.url = ""
+            view.editMode()
+        }
+
+        if (it.engine == state?.engine) {
+            if (it.isEditing) {
+                view.url = it.query
+                view.editMode()
+            } else {
+                view.displayMode()
+            }
+        }
+
+        state = it
+    }
+
+    private fun shouldClearSearchURL(newState: SearchState): Boolean {
+        return newState.engine != state?.engine && view.url == newState.query
     }
 
     companion object {
