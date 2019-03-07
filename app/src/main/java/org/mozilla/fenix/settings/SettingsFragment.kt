@@ -21,8 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
-import java.io.File
 import mozilla.components.service.fxa.AccountObserver
 import mozilla.components.service.fxa.FirefoxAccountShaped
 import mozilla.components.service.fxa.FxaUnauthorizedException
@@ -30,22 +28,24 @@ import mozilla.components.service.fxa.Profile
 import mozilla.components.support.ktx.android.graphics.toDataUri
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.R
-import org.mozilla.fenix.R.string.pref_key_leakcanary
-import org.mozilla.fenix.R.string.pref_key_feedback
-import org.mozilla.fenix.R.string.pref_key_help
-import org.mozilla.fenix.R.string.pref_key_make_default_browser
-import org.mozilla.fenix.R.string.pref_key_rate
-import org.mozilla.fenix.R.string.pref_key_site_permissions
-import org.mozilla.fenix.R.string.pref_key_accessibility
-import org.mozilla.fenix.R.string.pref_key_language
-import org.mozilla.fenix.R.string.pref_key_data_choices
 import org.mozilla.fenix.R.string.pref_key_about
-import org.mozilla.fenix.R.string.pref_key_sign_in
+import org.mozilla.fenix.R.string.pref_key_accessibility
 import org.mozilla.fenix.R.string.pref_key_account
 import org.mozilla.fenix.R.string.pref_key_account_category
+import org.mozilla.fenix.R.string.pref_key_data_choices
+import org.mozilla.fenix.R.string.pref_key_feedback
+import org.mozilla.fenix.R.string.pref_key_help
+import org.mozilla.fenix.R.string.pref_key_language
+import org.mozilla.fenix.R.string.pref_key_leakcanary
+import org.mozilla.fenix.R.string.pref_key_make_default_browser
+import org.mozilla.fenix.R.string.pref_key_rate
+import org.mozilla.fenix.R.string.pref_key_sign_in
+import org.mozilla.fenix.R.string.pref_key_site_permissions
+import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
+import java.io.File
+import kotlin.coroutines.CoroutineContext
 
 @SuppressWarnings("TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObserver {
@@ -66,6 +66,10 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         super.onResume()
 
         (activity as AppCompatActivity).supportActionBar?.show()
+        val preference =
+            findPreference(getString(R.string.pref_key_make_default_browser)) as DefaultBrowserPreference
+        preference.updateSwitch()
+
         generateWordmark()
         setupPreferences()
         setupAccountUI()
@@ -208,7 +212,8 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     }
 
     private fun navigateToSitePermissions() {
-        val directions = SettingsFragmentDirections.actionSettingsFragmentToSitePermissionsFragment()
+        val directions =
+            SettingsFragmentDirections.actionSettingsFragmentToSitePermissionsFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 
@@ -231,7 +236,8 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     }
 
     private fun navigateToAccountSettings() {
-        val directions = SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()
+        val directions =
+            SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 
@@ -243,7 +249,8 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     override fun onError(error: Exception) {
         // TODO we could display some error states in this UI.
         when (error) {
-            is FxaUnauthorizedException -> {}
+            is FxaUnauthorizedException -> {
+            }
         }
     }
 
@@ -257,8 +264,10 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
 
     // --- Account UI helpers ---
     private fun updateAuthState(account: FirefoxAccountShaped? = null) {
-        val preferenceSignIn = findPreference<Preference>(context?.getPreferenceKey(pref_key_sign_in))
-        val preferenceFirefoxAccount = findPreference<Preference>(context?.getPreferenceKey(pref_key_account))
+        val preferenceSignIn =
+            findPreference<Preference>(context?.getPreferenceKey(pref_key_sign_in))
+        val preferenceFirefoxAccount =
+            findPreference<Preference>(context?.getPreferenceKey(pref_key_account))
         val accountPreferenceCategory =
             findPreference<PreferenceCategory>(context?.getPreferenceKey(pref_key_account_category))
 
@@ -277,7 +286,8 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
 
     private fun updateAccountProfile(profile: Profile) {
         launch {
-            val preferenceFirefoxAccount = findPreference<Preference>(context?.getPreferenceKey(pref_key_account))
+            val preferenceFirefoxAccount =
+                findPreference<Preference>(context?.getPreferenceKey(pref_key_account))
             preferenceFirefoxAccount.title = profile.displayName.orEmpty()
             preferenceFirefoxAccount.summary = profile.email.orEmpty()
         }
