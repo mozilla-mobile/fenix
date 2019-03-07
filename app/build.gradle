@@ -29,6 +29,7 @@ android {
         versionName Config.versionName + Config.generateVersionSuffix()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders.isRaptorEnabled = "false"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
