@@ -69,6 +69,7 @@ class ToolbarUIView(
                 this,
                 view,
                 ToolbarMenu(this,
+                    sessionId = sessionId,
                     requestDesktopStateProvider = { session?.desktopMode ?: false },
                     onItemTapped = { actionEmitter.onNext(SearchAction.ToolbarMenuItemTapped(it)) }
                 ),
