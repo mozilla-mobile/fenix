@@ -19,10 +19,12 @@ import androidx.navigation.ui.NavigationUI
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.intent.IntentProcessor
+import mozilla.components.lib.crash.Crash
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
+import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -38,6 +40,8 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private val navHost = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+
     lateinit var browsingModeManager: DefaultBrowsingModeManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,12 +54,10 @@ open class HomeActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_home)
 
-        val host = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
-        val hostNavController = host.navController
         val appBarConfiguration = AppBarConfiguration.Builder(setOf(R.id.libraryFragment)).build()
         val navigationToolbar = findViewById<Toolbar>(R.id.navigationToolbar)
         setSupportActionBar(navigationToolbar)
-        NavigationUI.setupWithNavController(navigationToolbar, hostNavController, appBarConfiguration)
+        NavigationUI.setupWithNavController(navigationToolbar, navHost.navController, appBarConfiguration)
 
         handleOpenedFromExternalSourceIfNecessary(intent)
     }
@@ -67,6 +69,7 @@ open class HomeActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        handleCrashIfNecessary(intent)
         handleOpenedFromExternalSourceIfNecessary(intent)
     }
 
@@ -104,6 +107,15 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleCrashIfNecessary(intent: Intent?) {
+        if (intent == null) { return }
+        if (!Crash.isCrashIntent(intent)) { return }
+
+        val browserFragment = navHost.navController.currentDestination as BrowserFragment?
+        val crash = Crash.fromIntent(intent)
+        browserFragment?.handleTabCrash(crash)
+    }
+
     private fun handleOpenedFromExternalSourceIfNecessary(intent: Intent?) {
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) == true) {
             handleOpenedFromExternalSource()
@@ -121,8 +133,6 @@ open class HomeActivity : AppCompatActivity() {
     }
 
     fun openToBrowser(sessionId: String?, from: BrowserDirection) {
-        val host = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
-
         val directions = when (from) {
             BrowserDirection.FromGlobal -> NavGraphDirections.actionGlobalBrowser(sessionId)
             BrowserDirection.FromHome -> HomeFragmentDirections.actionHomeFragmentToBrowserFragment(sessionId)
@@ -131,7 +141,7 @@ open class HomeActivity : AppCompatActivity() {
                 SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(sessionId)
         }
 
-        host.navController.navigate(directions)
+        navHost.navController.navigate(directions)
     }
 
     private fun load(text: String, sessionId: String?) {
