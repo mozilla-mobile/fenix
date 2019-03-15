@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_browser.view.*
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
-import mozilla.components.feature.customtabs.CustomTabsToolbarFeature
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.FullScreenFeature
@@ -64,7 +63,6 @@ class BrowserFragment : Fragment(), BackHandler, ComponentCallbacks2 {
     private val downloadsFeature = ViewBoundFeatureWrapper<DownloadsFeature>()
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
-    private val customTabsToolbarFeature = ViewBoundFeatureWrapper<CustomTabsToolbarFeature>()
     private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
@@ -169,15 +167,6 @@ class BrowserFragment : Fragment(), BackHandler, ComponentCallbacks2 {
             owner = this,
             view = view)
 
-        customTabsToolbarFeature.set(
-            feature = CustomTabsToolbarFeature(
-                sessionManager,
-                toolbarComponent.getView(),
-                sessionId,
-                closeListener = { requireActivity().finish() }),
-            owner = this,
-            view = view)
-
         toolbarIntegration.set(
             feature = (toolbarComponent.uiView as ToolbarUIView).toolbarIntegration,
             owner = this,
@@ -261,7 +250,7 @@ class BrowserFragment : Fragment(), BackHandler, ComponentCallbacks2 {
         return when {
             findInPageIntegration.onBackPressed() -> true
             sessionFeature.onBackPressed() -> true
-            customTabsToolbarFeature.onBackPressed() -> true
+            customTabsIntegration.onBackPressed() -> true
             else -> false
         }
     }
