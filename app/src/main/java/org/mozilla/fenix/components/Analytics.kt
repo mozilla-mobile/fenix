@@ -27,10 +27,11 @@ import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
 class Analytics(
     private val context: Context
 ) {
+
     val crashReporter: CrashReporter by lazy {
         val sentryService = SentryService(
             context,
-            BuildConfig.SENTRY_TOKEN,
+            SENTRY_TOKEN,
             tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
             sendEventForNativeCrashes = true
         )
@@ -68,5 +69,9 @@ class Analytics(
             ),
             isTelemetryEnabled = { Settings.getInstance(context).isTelemetryEnabled }
         )
+    }
+
+    companion object {
+        val SENTRY_TOKEN = "https://718d381780b54062a571b990e1cecd07@sentry.prod.mozaws.net/368"
     }
 }
