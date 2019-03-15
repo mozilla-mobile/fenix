@@ -5,11 +5,14 @@
 package org.mozilla.fenix.components
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
@@ -24,15 +27,27 @@ import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
 class Analytics(
     private val context: Context
 ) {
+
     val crashReporter: CrashReporter by lazy {
         val sentryService = SentryService(
             context,
-            BuildConfig.SENTRY_TOKEN,
+            SENTRY_TOKEN,
             tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
             sendEventForNativeCrashes = true
         )
 
         val socorroService = MozillaSocorroService(context, "Fenix")
+
+        val intent = Intent(context, HomeActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            0
+        )
 
         CrashReporter(
             services = listOf(sentryService, socorroService),
@@ -41,7 +56,8 @@ class Analytics(
                 appName = context.getString(R.string.app_name),
                 organizationName = "Mozilla"
             ),
-            enabled = true
+            enabled = true,
+            nonFatalCrashIntent = pendingIntent
         )
     }
 
@@ -53,5 +69,9 @@ class Analytics(
             ),
             isTelemetryEnabled = { Settings.getInstance(context).isTelemetryEnabled }
         )
+    }
+
+    companion object {
+        val SENTRY_TOKEN = "https://718d381780b54062a571b990e1cecd07@sentry.prod.mozaws.net/368"
     }
 }

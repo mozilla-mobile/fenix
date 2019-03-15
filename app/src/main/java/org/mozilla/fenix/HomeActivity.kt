@@ -24,7 +24,6 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
-import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -40,7 +39,9 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private val navHost = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+    private val navHost by lazy {
+        supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+    }
 
     lateinit var browsingModeManager: DefaultBrowsingModeManager
 
@@ -111,9 +112,12 @@ open class HomeActivity : AppCompatActivity() {
         if (intent == null) { return }
         if (!Crash.isCrashIntent(intent)) { return }
 
-        val browserFragment = navHost.navController.currentDestination as BrowserFragment?
-        val crash = Crash.fromIntent(intent)
-        browserFragment?.handleTabCrash(crash)
+        openToCrashReporter(intent)
+    }
+
+    private fun openToCrashReporter(intent: Intent) {
+        val directions = NavGraphDirections.actionGlobalCrashReporter(intent)
+        navHost.navController.navigate(directions)
     }
 
     private fun handleOpenedFromExternalSourceIfNecessary(intent: Intent?) {
