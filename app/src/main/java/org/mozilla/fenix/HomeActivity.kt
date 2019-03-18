@@ -25,7 +25,6 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.crashes.CrashReporterFragmentDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.search.SearchFragmentDirections
@@ -172,11 +171,6 @@ open class HomeActivity : AppCompatActivity() {
         } else {
             searchUseCase.invoke(text)
         }
-    }
-
-    fun openToHome() {
-        val directions = CrashReporterFragmentDirections.actionCrashReporterFragmentToHomeFragment()
-        navHost.navController.navigate(directions)
     }
 
     companion object {

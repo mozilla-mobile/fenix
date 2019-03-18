@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_crash_reporter.*
 import mozilla.components.lib.crash.Crash
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.utils.Settings
 
 class CrashReporterFragment : Fragment() {
     override fun onCreateView(
@@ -24,14 +25,14 @@ class CrashReporterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val crashIntent = CrashReporterFragmentArgs.fromBundle(arguments!!).crashIntent
-
         val crash = Crash.fromIntent(CrashReporterFragmentArgs.fromBundle(arguments!!).crashIntent)
+
+        sendCrashCheckbox.isChecked = Settings.getInstance(context!!).isCrashReportingEnabled
         // TODO TelemetryWrapper.crashReporterOpened()
 
         closeTabButton.setOnClickListener {
-            val wantsToSubmitCrashReport = sendCrashCheckbox.isChecked
+            val wantsToSubmitCrashReport = sendCrashCheckbox.isChecked && Settings.getInstance(context!!).isCrashReportingEnabled
             val selectedSession = requireComponents.core.sessionManager.selectedSession
 
             selectedSession?.let { session -> requireComponents.useCases.tabsUseCases.removeTab.invoke(session) }

@@ -57,7 +57,7 @@
             android:layout_height="32dp"
             android:layout_marginBottom="@dimen/crash_reporter_close_tab_button_bottom_margin"
             android:buttonTint="@color/crash_page_accent"
-            android:checked="true"
+            android:checked="false"
             android:text="@string/tab_crash_send_report"
             android:textColor="@color/search_text"
             android:textSize="15sp"
