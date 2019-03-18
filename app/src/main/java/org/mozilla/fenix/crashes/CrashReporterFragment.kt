@@ -32,7 +32,8 @@ class CrashReporterFragment : Fragment() {
         // TODO TelemetryWrapper.crashReporterOpened()
 
         closeTabButton.setOnClickListener {
-            val wantsToSubmitCrashReport = sendCrashCheckbox.isChecked && Settings.getInstance(context!!).isCrashReportingEnabled
+            val wantsToSubmitCrashReport =
+                sendCrashCheckbox.isChecked && Settings.getInstance(context!!).isCrashReportingEnabled
             val selectedSession = requireComponents.core.sessionManager.selectedSession
 
             selectedSession?.let { session -> requireComponents.useCases.tabsUseCases.removeTab.invoke(session) }
