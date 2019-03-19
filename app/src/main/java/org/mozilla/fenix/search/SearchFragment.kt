@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.qr.QrFeature
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -29,12 +30,19 @@ import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.search.awesomebar.AwesomeBarAction
 import org.mozilla.fenix.search.awesomebar.AwesomeBarChange
 import org.mozilla.fenix.search.awesomebar.AwesomeBarComponent
+import android.widget.Toast
+import org.mozilla.gecko.GeckoAppShell.getApplicationContext
+
 
 class SearchFragment : Fragment() {
+    companion object {
+        private const val REQUEST_CAMERA_PERMISSIONS = 1
+    }
     private lateinit var toolbarComponent: ToolbarComponent
     private lateinit var awesomeBarComponent: AwesomeBarComponent
     private var sessionId: String? = null
     private var isPrivate = false
+    lateinit var qrFeature: QrFeature
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,6 +78,22 @@ class SearchFragment : Fragment() {
         lifecycle.addObserver((toolbarComponent.uiView as ToolbarUIView).toolbarIntegration)
 
         view.toolbar_wrapper.clipToOutline = false
+
+        qrFeature = QrFeature(
+            requireContext(),
+            fragmentManager = fragmentManager!!,
+            onNeedToRequestPermissions = { permissions ->
+                requestPermissions(permissions, REQUEST_CAMERA_PERMISSIONS)
+            },
+            onScanResult = { scanResult:String ->
+                val res = scanResult;
+                // scanResult is here
+            }
+        )
+
+        view.search_scan_button.setOnClickListener {
+            qrFeature.scan(view.id);
+        }
     }
 
     override fun onResume() {
@@ -135,4 +159,8 @@ class SearchFragment : Fragment() {
             false -> context.components.useCases.tabsUseCases.addTab
         }
     }
+
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+//        qrFeature.onPermissionsResult(android.R.id.content)
+//    }
 }

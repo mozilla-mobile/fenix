@@ -23,7 +23,7 @@ private object Versions {
     const val androidx_navigation = "2.0.0"
 
     const val appservices_gradle_plugin = "0.3.1"
-    const val mozilla_android_components = "0.47.0-SNAPSHOT"
+    const val mozilla_android_components = "0.47.0-vlad2"
 
     const val test_tools = "1.0.2"
     const val espresso_core = "2.2.2"
@@ -85,6 +85,7 @@ object Deps {
     const val mozilla_feature_search = "org.mozilla.components:feature-search:${Versions.mozilla_android_components}"
     const val mozilla_feature_session = "org.mozilla.components:feature-session:${Versions.mozilla_android_components}"
     const val mozilla_feature_sync = "org.mozilla.components:feature-sync:${Versions.mozilla_android_components}"
+    const val mozilla_feature_qr = "org.mozilla.components:feature-qr:${Versions.mozilla_android_components}"
     const val mozilla_feature_tabs = "org.mozilla.components:feature-tabs:${Versions.mozilla_android_components}"
     const val mozilla_feature_downloads = "org.mozilla.components:feature-downloads:${Versions.mozilla_android_components}"
     const val mozilla_feature_storage = "org.mozilla.components:feature-storage:${Versions.mozilla_android_components}"
