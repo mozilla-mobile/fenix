@@ -66,4 +66,9 @@ class Settings private constructor(context: Context) {
         appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
         true
     )
+
+    fun isRemoteDebuggingEnabled(): Boolean = preferences.getBoolean(
+        appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
+        false
+    )
 }
