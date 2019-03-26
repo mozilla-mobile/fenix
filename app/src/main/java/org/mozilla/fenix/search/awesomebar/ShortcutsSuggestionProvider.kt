@@ -46,7 +46,6 @@ class ShortcutsSuggestionProvider(
                 },
                 title = context.getString(R.string.search_shortcuts_engine_settings),
                 onSuggestionClicked = {
-                    // Open search engine settings
                     selectShortcutEngineSettings()
                 })
         )
