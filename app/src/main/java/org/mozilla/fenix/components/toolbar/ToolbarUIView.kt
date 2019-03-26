@@ -109,7 +109,7 @@ class ToolbarUIView(
     }
 
     private fun shouldUpdateEngineIcon(newState: SearchState): Boolean {
-        return (newState.isEditing && engineDidChange(newState))
+        return newState.isEditing && (engineDidChange(newState) || state == null)
     }
 
     private fun updateEngineIcon(newState: SearchState) {

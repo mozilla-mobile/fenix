@@ -30,6 +30,7 @@ import org.mozilla.fenix.mvi.UIView
 import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.utils.Settings
 
+@SuppressWarnings("TooManyFunctions")
 class AwesomeBarUIView(
     private val container: ViewGroup,
     actionEmitter: Observer<AwesomeBarAction>,
@@ -109,8 +110,8 @@ class AwesomeBarUIView(
                         searchUseCase = searchUseCase,
                         fetchClient = components.core.client,
                         mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
-                        limit = 3
-                        // TODO icon = draw?.toBitmap()
+                        limit = 3,
+                        icon = draw?.toBitmap()
                     )
             }
 
@@ -175,8 +176,8 @@ class AwesomeBarUIView(
                 components.search.searchEngineManager.getDefaultSearchEngine(this, engine.name),
                 shortcutSearchUseCase,
                 components.core.client,
-                mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS
-                // TODO icon = draw?.toBitmap()
+                mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
+                icon = draw?.toBitmap()
             )
         }
     }
@@ -198,18 +199,17 @@ class AwesomeBarUIView(
     }
 
     override fun updateView() = Consumer<AwesomeBarState> {
-        it.suggestionEngine?.let { newEngine ->
-            if (state?.suggestionEngine != newEngine) {
+        if (engineDidChange(it)) {
+            it.suggestionEngine?.let { newEngine ->
                 setShortcutEngine(newEngine)
             }
         }
 
-        when (it.showShortcutEnginePicker) {
-            true -> {
+        if (shouldUpdateShortcutEnginePickerVisibility(it)) {
+            if (it.showShortcutEnginePicker) {
                 showShortcutEnginePicker()
                 updateSearchWithVisibility(true)
-            }
-            false -> {
+            } else {
                 hideShortcutEnginePicker()
                 updateSearchWithVisibility(false)
                 it.suggestionEngine?.also { showSearchSuggestionProvider() } ?: showSuggestionProviders()
@@ -218,5 +218,13 @@ class AwesomeBarUIView(
 
         view.onInputChanged(it.query)
         state = it
+    }
+
+    private fun engineDidChange(newState: AwesomeBarState): Boolean {
+        return state?.suggestionEngine != newState.suggestionEngine
+    }
+
+    private fun shouldUpdateShortcutEnginePickerVisibility(newState: AwesomeBarState): Boolean {
+        return state?.showShortcutEnginePicker != newState.showShortcutEnginePicker
     }
 }
