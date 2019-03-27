@@ -55,7 +55,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.share
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
-import org.mozilla.fenix.quickactionsheet.QuickActionSheet
 
 class BrowserFragment : Fragment(), BackHandler {
     private lateinit var toolbarComponent: ToolbarComponent
@@ -212,9 +211,6 @@ class BrowserFragment : Fragment(), BackHandler {
             owner = this,
             view = view
         )
-
-        val actionSheet = view.findViewById<QuickActionSheet>(R.id.quick_action_sheet)
-        // actionSheet.afterInflate()
 
         val actionEmitter = ActionBusFactory.get(this).getManagedEmitter(SearchAction::class.java)
         sessionId?.let { id ->

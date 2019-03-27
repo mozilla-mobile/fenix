@@ -43,17 +43,22 @@ class QuickActionSheet @JvmOverloads constructor(
         val accessibilityManager = context
             .getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
 
+        handle.increaseTapArea(grabHandleIncreasedTapArea)
+
         if (accessibilityManager.isTouchExplorationEnabled) {
-            linearLayout.setOnClickListener {
+
+            val clickBehavior = View.OnClickListener {
                 quickActionSheetBehavior.state = when (quickActionSheetBehavior.state) {
-                    BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_COLLAPSED
-                    else -> BottomSheetBehavior.STATE_EXPANDED
+                BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_COLLAPSED
+                else -> BottomSheetBehavior.STATE_EXPANDED
                 }
             }
+
+            linearLayout.setOnClickListener(clickBehavior)
+            handle.setOnClickListener(clickBehavior)
             return
         }
 
-        handle.increaseTapArea(grabHandleIncreasedTapArea)
         handle.setOnClickListener {
             bounceSheet(quickActionSheetBehavior)
         }
