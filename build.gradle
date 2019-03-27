@@ -23,7 +23,6 @@ plugins {
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
 
         // Currently the main repository where appservices artifacts are published.
