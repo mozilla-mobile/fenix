@@ -43,7 +43,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
             android:id="@+id/search_with_shortcuts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

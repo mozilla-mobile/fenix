@@ -65,13 +65,13 @@ class AwesomeBarUIView(
         }
     }
 
-    val searchUseCase = object : SearchUseCases.SearchUseCase {
+    private val searchUseCase = object : SearchUseCases.SearchUseCase {
         override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
             actionEmitter.onNext(AwesomeBarAction.SearchTermsTapped(searchTerms, searchEngine))
         }
     }
 
-    val shortcutSearchUseCase = object : SearchUseCases.SearchUseCase {
+    private val shortcutSearchUseCase = object : SearchUseCases.SearchUseCase {
         override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
             actionEmitter.onNext(AwesomeBarAction.SearchTermsTapped(searchTerms, state?.suggestionEngine))
         }
@@ -192,10 +192,7 @@ class AwesomeBarUIView(
     }
 
     private fun updateSearchWithVisibility(visible: Boolean) {
-        search_with_shortcuts.visibility = when (visible) {
-            true -> View.VISIBLE
-            false -> View.GONE
-        }
+        search_with_shortcuts.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     override fun updateView() = Consumer<AwesomeBarState> {
