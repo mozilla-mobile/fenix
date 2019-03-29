@@ -91,6 +91,4 @@
     <color name="quick_action_pull_tab">#2915141A</color>
 
     <color name="library_list_item_text_color_light_mode">#202340</color>
-
-    <color name="search_with_shortcut_text_color">#99202340</color>
 </resources>
