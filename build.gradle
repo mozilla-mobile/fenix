@@ -1,4 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 
 buildscript {
     repositories {
@@ -72,4 +73,11 @@ task ktlint(type: JavaExec, group: "verification") {
     classpath = configurations.ktlint
     main = "com.github.shyiko.ktlint.Main"
     args "app/src/**/*.kt", "architecture/src/**/*.kt"
+}
+
+tasks {
+    wrapper {
+        gradleVersion = "5.3.1"
+        distributionType = DistributionType.ALL
+    }
 }
