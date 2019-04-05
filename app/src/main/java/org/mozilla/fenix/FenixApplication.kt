@@ -138,8 +138,6 @@ open class FenixApplication : Application() {
         }
     }
 
-    @SuppressLint("WrongConstant")
-    // Suppressing erroneous lint warning about using MODE_NIGHT_AUTO_BATTERY, a likely library bug
     private fun setDayNightTheme() {
         when {
             Settings.getInstance(this).shouldUseLightTheme -> {
@@ -150,11 +148,6 @@ open class FenixApplication : Application() {
             Settings.getInstance(this).shouldUseDarkTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
                     AppCompatDelegate.MODE_NIGHT_YES
-                )
-            }
-            Settings.getInstance(this).shouldUseAutoBatteryTheme -> {
-                AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
                 )
             }
             Settings.getInstance(this).shouldFollowDeviceTheme -> {

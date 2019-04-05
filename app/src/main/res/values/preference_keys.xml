@@ -52,6 +52,5 @@
     <!-- Theme Settings -->
     <string name="pref_key_light_theme" translatable="false">pref_key_light_theme</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_dark_theme</string>
-    <string name="pref_key_auto_battery_theme" translatable="false">pref_key_auto_battery_theme</string>
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 </resources>

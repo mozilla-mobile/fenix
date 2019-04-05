@@ -76,16 +76,9 @@ class Settings private constructor(context: Context) {
             false
         )
 
-    val shouldUseAutoBatteryTheme: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
-            false
-        )
-
     val themeSettingString: String
         get() = when {
             shouldFollowDeviceTheme -> appContext.getString(R.string.preference_follow_device_theme)
-            shouldUseAutoBatteryTheme -> appContext.getString(R.string.preference_auto_battery_theme)
             shouldUseDarkTheme -> appContext.getString(R.string.preference_dark_theme)
             shouldUseLightTheme -> appContext.getString(R.string.preference_light_theme)
             else -> appContext.getString(R.string.preference_light_theme)
