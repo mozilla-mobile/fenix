@@ -72,7 +72,7 @@ events:
       item:
         description: >
           A string containing the name of the item the user tapped. These items include:
-          Settings, Your library, Help, Desktop Site toggle on/off, Find in Page, New Tab,
+          Settings, Library, Help, Desktop Site toggle on/off, Find in Page, New Tab,
           Private Tab, Share, Report Site Issue, Back/Forward button, Reload Button
     bugs:
     - 1024
@@ -219,6 +219,74 @@ find_in_page:
     - 1036
     data_reviews:
     - https://github.com/mozilla-mobile/fenix/pull/1344#issuecomment-479285010
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+
+quick_action_sheet:
+  opened:
+    type: event
+    description: >
+      A user opened the quick action sheet UI
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+  closed:
+    type: event
+    description: >
+      A user closed the quick action sheet UI
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+  share_tapped:
+    type: event
+    description: >
+      A user tapped the share button
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+  bookmark_tapped:
+    type: event
+    description: >
+      A user tapped the bookmark button
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+  download_tapped:
+    type: event
+    description: >
+      A user tapped the download button
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
+    notification_emails:
+    - telemetry-client-dev@mozilla.com
+    expires: "2020-03-01"
+  read_tapped:
+    type: event
+    description: >
+      A user tapped the read button
+    bugs:
+    - 1195
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
     notification_emails:
     - telemetry-client-dev@mozilla.com
     expires: "2020-03-01"
