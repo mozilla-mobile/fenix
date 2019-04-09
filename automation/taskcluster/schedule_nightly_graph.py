@@ -71,7 +71,7 @@ def make_decision_task(params):
 
     rendered = jsone.render(taskcluster_yml, context)
     if len(rendered['tasks']) != 1:
-        raise Exception('Expected .taskcluster.yml to only produce one cron task')
+        raise Exception('Expected .taskcluster.yml to only produce one cron taska')
     task = rendered['tasks'][0]
 
     task_id = task.pop('taskId')
