@@ -158,7 +158,7 @@ class Metrics(private val services: List<MetricsService>, private val isTelemetr
     }
 
     fun start() {
-        if (BuildConfig.TELEMETRY && !isTelemetryEnabled.invoke() || initialized) { return }
+        if (BuildConfig.TELEMETRY && (!isTelemetryEnabled.invoke() || initialized)) { return }
 
         services.forEach { it.start() }
         initialized = true
@@ -172,7 +172,7 @@ class Metrics(private val services: List<MetricsService>, private val isTelemetr
     }
 
     fun track(event: Event) {
-        if (BuildConfig.TELEMETRY && !isTelemetryEnabled.invoke() && !initialized) { return }
+        if (BuildConfig.TELEMETRY && (!isTelemetryEnabled.invoke() && !initialized)) { return }
 
         services
             .filter { it.shouldTrack(event) }

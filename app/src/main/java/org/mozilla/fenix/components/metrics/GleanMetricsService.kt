@@ -110,8 +110,8 @@ private val Event.wrapper
 
 class GleanMetricsService(private val context: Context) : MetricsService {
     override fun start() {
+        Glean.setUploadEnabled(true)
         Glean.initialize(context)
-        Glean.setUploadEnabled(IsGleanEnabled)
 
         Metrics.apply {
             defaultBrowser.set(Browsers.all(context).isDefaultBrowser)
@@ -128,9 +128,5 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
     override fun shouldTrack(event: Event): Boolean {
         return Settings.getInstance(context).isTelemetryEnabled && event.wrapper != null
-    }
-
-    companion object {
-        private const val IsGleanEnabled = BuildConfig.TELEMETRY
     }
 }
