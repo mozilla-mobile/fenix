@@ -16,6 +16,17 @@ DEFAULT_EXPIRES_IN = '1 year'
 _OFFICIAL_REPO_URL = 'https://github.com/mozilla-mobile/fenix'
 
 
+def capitalize(s):
+    "Turn 'fooBar' into 'FooBar'."
+    # Can't use str.capitalize because it lower cases trailing letters.
+    return (s[0].upper() + s[1:]) if s else ''
+
+
+def uncapitalize(s):
+    "Turn 'FooBar' into 'fooBar'."
+    return (s[0].lower() + s[1:]) if s else ''
+
+
 class TaskBuilder(object):
     def __init__(
         self,
@@ -447,8 +458,8 @@ def _craft_apk_full_path_from_variant(variant):
     )
 
     short_variant = variant[:-len(build_type)]
-    postfix = '-unsigned' if build_type == 'release' else ''
-    product = '{}{}'.format(product[0].lower(), product[1:])
+    postfix = '-unsigned' if build_type.startswith('release') else ''
+    product = uncapitalize(product)
 
     return '/opt/fenix/app/build/outputs/apk/{short_variant}/{build_type}/app-{architecture}-{product}-{build_type}{postfix}.apk'.format(     # noqa: E501
         architecture=architecture,
@@ -479,7 +490,7 @@ def _get_architecture_and_build_type_and_product_from_variant(variant):
 
     for supported_build_type in _SUPPORTED_BUILD_TYPES:
         if variant.endswith(supported_build_type):
-            build_type = supported_build_type.lower()
+            build_type = uncapitalize(supported_build_type)
             break
     else:
         raise ValueError(
