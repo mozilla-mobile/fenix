@@ -7,7 +7,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/photonGrey10">
+        android:background="@color/searchBackground_normal_theme">
 
     <ImageView
         android:id="@+id/crash_tab_image"
@@ -27,7 +27,7 @@
             android:layout_marginTop="6dp"
             android:lineSpacingExtra="8sp"
             android:singleLine="false"
-            android:textColor="@color/about_primary_text_color"
+            android:textColor="@color/text_color_normal_theme"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
             android:buttonTint="@color/crash_page_accent"
             android:checked="true"
             android:text="@string/tab_crash_send_report"
-            android:textColor="@color/about_primary_text_color"
+            android:textColor="@color/text_color_normal_theme"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@id/close_tab_button"
             app:layout_constraintEnd_toEndOf="parent"
