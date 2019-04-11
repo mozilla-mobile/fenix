@@ -25,7 +25,8 @@
             tools:ignore="UnusedAttribute">
         <activity android:name=".HomeActivity"
                   android:launchMode="singleInstance"
-                  android:windowSoftInputMode="adjustResize">
+                  android:windowSoftInputMode="adjustResize"
+                  android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
