@@ -297,7 +297,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                             .findNavController(toolbarComponent.getView())
                             .navigate(
                                 BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                                    requireComponents.core.sessionManager.selectedSession?.id
+                                    getSessionByIdOrUseSelectedSession().id
                                 )
                             )
 
@@ -329,8 +329,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                     }
                     is QuickActionAction.SharePressed -> {
                         requireComponents.analytics.metrics.track(Event.QuickActionSheetShareTapped)
-                        requireComponents.core.sessionManager
-                            .selectedSession?.url?.apply { requireContext().share(this) }
+                        getSessionByIdOrUseSelectedSession().url.apply { requireContext().share(this) }
                     }
                     is QuickActionAction.DownloadsPressed -> {
                         requireComponents.analytics.metrics.track(Event.QuickActionSheetDownloadTapped)
@@ -338,10 +337,10 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                     }
                     is QuickActionAction.BookmarkPressed -> {
                         requireComponents.analytics.metrics.track(Event.QuickActionSheetBookmarkTapped)
-                        val session = requireComponents.core.sessionManager.selectedSession
+                        val session = getSessionByIdOrUseSelectedSession()
                         CoroutineScope(IO).launch {
                             val guid = requireComponents.core.bookmarksStorage
-                                .addItem(BookmarkRoot.Mobile.id, session!!.url, session.title, null)
+                                .addItem(BookmarkRoot.Mobile.id, session.url, session.title, null)
                             launch(Main) {
                                 FenixSnackbar.make(
                                     view!!,
@@ -352,8 +351,8 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                                             .navigate(
                                                 BrowserFragmentDirections
                                                     .actionBrowserFragmentToBookmarkEditFragment(
-                                                    guid
-                                                )
+                                                        guid
+                                                    )
                                             )
                                     }
                                     .setText(getString(R.string.bookmark_created_snackbar))
@@ -425,6 +424,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
 
         requireComponents.analytics.metrics.track(Event.BrowserMenuItemTapped(item))
     }
+
     // This method triggers the complexity warning. However it's actually not that hard to understand.
     @SuppressWarnings("ComplexMethod")
     private fun handleToolbarItemInteraction(action: SearchAction.ToolbarMenuItemTapped) {
@@ -439,8 +439,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             ToolbarMenu.Item.Library -> Navigation.findNavController(toolbarComponent.getView())
                 .navigate(BrowserFragmentDirections.actionBrowserFragmentToLibraryFragment())
             is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(action.item.isChecked)
-            ToolbarMenu.Item.Share -> requireComponents.core.sessionManager
-                .selectedSession?.url?.apply { requireContext().share(this) }
+            ToolbarMenu.Item.Share -> getSessionByIdOrUseSelectedSession().url.apply { requireContext().share(this) }
             ToolbarMenu.Item.NewPrivateTab -> {
                 val directions = BrowserFragmentDirections
                     .actionBrowserFragmentToSearchFragment(null)
@@ -451,8 +450,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                 FindInPageIntegration.launch?.invoke()
                 requireComponents.analytics.metrics.track(Event.FindInPageOpened)
             }
-            ToolbarMenu.Item.ReportIssue -> requireComponents.core.sessionManager
-                .selectedSession?.url?.apply {
+            ToolbarMenu.Item.ReportIssue -> getSessionByIdOrUseSelectedSession().url.apply {
                 val reportUrl = String.format(REPORT_SITE_ISSUE_URL, this)
                 sessionUseCases.loadUrl.invoke(reportUrl)
             }
