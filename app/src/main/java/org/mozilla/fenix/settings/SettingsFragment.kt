@@ -59,6 +59,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
+        updateSignInVisibility()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -151,9 +152,6 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         // Observe account changes to keep the UI up-to-date.
         accountManager.register(this, owner = this)
 
-        // TODO an authenticated state will mark 'preferenceSignIn' as invisible; currently that behaviour is non-ideal:
-        // a "sign in" UI will be displayed at first, and then quickly animate away.
-        // Ideally we don't want it to be displayed at all.
         updateAuthState(accountManager.authenticatedAccount())
         accountManager.accountProfile()?.let { updateAccountProfile(it) }
     }
@@ -283,6 +281,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
 
     override fun onLoggedOut() {
         updateAuthState()
+        updateSignInVisibility()
     }
 
     override fun onProfileUpdated(profile: Profile) {
@@ -291,6 +290,12 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
 
     // --- Account UI helpers ---
     private fun updateAuthState(account: OAuthAccount? = null) {
+        // Cache the user's auth state to improve performance of sign in visibility
+        org.mozilla.fenix.utils.Settings.getInstance(context!!).setHasCachedAccount(account != null)
+    }
+
+    private fun updateSignInVisibility() {
+        val hasCachedAccount = org.mozilla.fenix.utils.Settings.getInstance(context!!).hasCachedAccount
         val preferenceSignIn =
             findPreference<Preference>(context!!.getPreferenceKey(pref_key_sign_in))
         val preferenceFirefoxAccount =
@@ -298,7 +303,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         val accountPreferenceCategory =
             findPreference<PreferenceCategory>(context!!.getPreferenceKey(pref_key_account_category))
 
-        if (account != null) {
+        if (hasCachedAccount) {
             preferenceSignIn?.isVisible = false
             preferenceSignIn?.onPreferenceClickListener = null
             preferenceFirefoxAccount?.isVisible = true
