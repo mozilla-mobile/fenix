@@ -118,7 +118,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             view.browserLayout,
             ActionBusFactory.get(this), sessionId,
             (activity as HomeActivity).browsingModeManager.isPrivate,
-            SearchState("", isEditing = false),
+            SearchState("", isEditing = false, searchTerm = requireComponents.core.searchTerm),
             search_engine_icon
         )
 
@@ -545,6 +545,14 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
 
     private fun subscribeToSession(): Session.Observer {
         val observer = object : Session.Observer {
+            override fun onUrlChanged(session: Session, url: String) {
+                if (!requireComponents.core.searchTermDidChange) {
+                    requireComponents.core.searchTerm = ""
+                }
+
+                requireComponents.core.searchTermDidChange = false
+                super.onUrlChanged(session, url)
+            }
             override fun onLoadingStateChanged(session: Session, loading: Boolean) {
                 super.onLoadingStateChanged(session, loading)
                 setToolbarBehavior(loading)

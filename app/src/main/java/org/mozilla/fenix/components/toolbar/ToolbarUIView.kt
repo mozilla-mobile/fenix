@@ -160,7 +160,7 @@ class ToolbarUIView(
 
     private fun updateEditingState(newState: SearchState) {
         if (newState.isEditing) {
-            view.url = newState.query
+            view.url = if (newState.searchTerm.isEmpty()) newState.query else newState.searchTerm
             view.editMode()
         } else {
             view.displayMode()

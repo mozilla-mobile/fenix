@@ -51,6 +51,13 @@ class Core(private val context: Context) {
         GeckoRuntime.create(context, runtimeSettings)
     }
 
+    var searchTermDidChange = false
+    var searchTerm = ""
+        set(value) {
+            searchTermDidChange = true
+            field = value
+        }
+
     var testConfig: Bundle? = null
 
     /**

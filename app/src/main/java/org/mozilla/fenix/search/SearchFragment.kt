@@ -65,7 +65,7 @@ class SearchFragment : Fragment() {
             ActionBusFactory.get(this),
             sessionId,
             isPrivate,
-            SearchState(url, isEditing = true),
+            SearchState(url, isEditing = true, searchTerm = requireComponents.core.searchTerm),
             view.search_engine_icon
         )
 
@@ -119,6 +119,7 @@ class SearchFragment : Fragment() {
                             val event = if (it.url.isUrl()) {
                                 Event.EnteredUrl(false)
                             } else {
+                                requireComponents.core.searchTerm = it.url
                                 val isSearchShortcut = it.engine !=
                                         requireComponents.search.searchEngineManager.defaultSearchEngine
                                 Event.PerformedSearch(false, isSearchShortcut)
@@ -149,6 +150,8 @@ class SearchFragment : Fragment() {
                     is AwesomeBarAction.SearchTermsTapped -> {
                         getSearchUseCase(requireContext(), sessionId == null)
                             .invoke(it.searchTerms, it.engine)
+
+                        requireComponents.core.searchTerm = it.searchTerms
                         (activity as HomeActivity).openToBrowser(sessionId, BrowserDirection.FromSearch)
 
                         val isSearchShortcut = it.engine !=
