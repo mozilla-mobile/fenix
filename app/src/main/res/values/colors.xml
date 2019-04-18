@@ -11,7 +11,7 @@
     <color name="above_darkened_light_theme">#F2F2F5</color>
     <color name="accent_light_theme">#312A65</color>
     <color name="accent_bright_light_theme">#592ACB</color>
-    <color name="neutral_light_theme">@color/photonGrey20</color>
+    <color name="neutral_light_theme">@color/photonGrey40</color>
 
     <!-- Dark theme color palette -->
     <color name="primary_text_dark_theme">#FBFBFE</color>
