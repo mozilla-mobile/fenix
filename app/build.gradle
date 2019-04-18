@@ -57,6 +57,7 @@ android {
             resValue "bool", "IS_NOT_RELEASED", "false"
         }
         beta releaseTemplate >> {
+            applicationIdSuffix ".beta"
             buildConfigField "boolean", "IS_RELEASED", "true"
             resValue "bool", "IS_NOT_RELEASED", "false"
         }
@@ -129,10 +130,11 @@ android.applicationVariants.all { variant ->
 
     def buildType = variant.buildType.name
     def versionCode = null
+    def isReleased = variant.buildType.buildConfigFields['IS_RELEASED']?.value ?: false
 
     buildConfigField 'Boolean', 'COLLECTIONS_ENABLED', (buildType != "release").toString()
 
-    if (buildType == "nightly") {
+    if (isReleased) {
         versionCode = generatedVersionCode
 
         // The Google Play Store does not allow multiple APKs for the same app that all have the
@@ -197,7 +199,7 @@ android.applicationVariants.all { variant ->
 
     print("Adjust token: ")
 
-    if (variant.buildType.buildConfigFields['IS_RELEASED']?.value) {
+    if (isReleased) {
         try {
             def token = new File("${rootDir}/.adjust_token").text.trim()
             buildConfigField 'String', 'ADJUST_TOKEN', '"' + token + '"'

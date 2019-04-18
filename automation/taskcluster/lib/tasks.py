@@ -7,10 +7,9 @@ from __future__ import print_function
 import arrow
 import datetime
 import json
-import os
 import taskcluster
 
-from lib.util import convert_camel_case_into_kebab_case, lower_case_first_letter
+from lib.util import upper_case_first_letter
 
 DEFAULT_EXPIRES_IN = '1 year'
 DEFAULT_APK_ARTIFACT_LOCATION = 'public/target.apk'
@@ -41,12 +40,12 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_nightly_task(self, architectures, is_staging=False):
+    def craft_assemble_release_task(self, architectures, track, is_staging=False):
         artifacts = {
             'public/target.{}.apk'.format(arch): {
                 "type": 'file',
                 "path": '/opt/fenix/app/build/outputs/apk/'
-                        '{}/nightly/app-{}-nightly-unsigned.apk'.format(arch, arch),
+                        '{arch}/{track}/app-{arch}-{track}-unsigned.apk'.format(arch=arch, track=track),
                 "expires": taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
             }
             for arch in architectures
@@ -73,8 +72,10 @@ class TaskBuilder(object):
             )
         )
 
+        capitalized_build_type = upper_case_first_letter(track)
         gradle_commands = (
-            './gradlew --no-daemon -PcrashReports=true -Ptelemetry=true clean test assembleNightly',
+            './gradlew --no-daemon -PcrashReports=true -Ptelemetry=true clean test assemble{}'.format(
+                capitalized_build_type),
         )
 
         command = ' && '.join(
@@ -89,8 +90,8 @@ class TaskBuilder(object):
         ]
 
         return self._craft_build_ish_task(
-            name='Build task',
-            description='Build Fenix from source code',
+            name='Build {} task'.format(capitalized_build_type),
+            description='Build Fenix {} from source code'.format(capitalized_build_type),
             command=command,
             scopes=[
                 "secrets:get:{}".format(secret) for secret in (sentry_secret, leanplum_secret, adjust_secret)
@@ -100,9 +101,9 @@ class TaskBuilder(object):
             treeherder={
                 'jobKind': 'build',
                 'machine': {
-                  'platform': 'android-all',
+                    'platform': 'android-all',
                 },
-                'symbol': 'NA',
+                'symbol': '{}A'.format(capitalized_build_type[0]),
                 'tier': 1,
             },
         )
@@ -277,13 +278,13 @@ class TaskBuilder(object):
         }
 
         return self._craft_default_task_definition(
-            worker_type='mobile-signing-dep-v1' if signing_type == 'dep-signing' else 'mobile-signing-v1',
+            worker_type='mobile-signing-dep-v1' if signing_type == 'dep' else 'mobile-signing-v1',
             provisioner_id='scriptworker-prov-v1',
             dependencies=[assemble_task_id],
             routes=routes,
             scopes=[
                 "project:mobile:fenix:releng:signing:format:{}".format(signing_format),
-                "project:mobile:fenix:releng:signing:cert:{}".format(signing_type),
+                "project:mobile:fenix:releng:signing:cert:{}-signing".format(signing_type),
             ],
             name=name,
             description=description,
@@ -365,7 +366,7 @@ class TaskBuilder(object):
         return self._craft_signing_task(
             name='sign: {}'.format(variant),
             description='Dep-signing variant {}'.format(variant),
-            signing_type="dep-signing",
+            signing_type="dep",
             assemble_task_id=assemble_task_id,
             apk_paths=["public/target.apk"],
             routes=routes,
@@ -380,24 +381,26 @@ class TaskBuilder(object):
             },
         )
 
-    def craft_nightly_signing_task(
-        self, build_task_id, apk_paths, is_staging=True,
+    def craft_release_signing_task(
+        self, build_task_id, apk_paths, track, is_staging=False,
     ):
-        index_release = 'staging-signed-nightly' if is_staging else 'signed-nightly'
+        capitalized_build_type = upper_case_first_letter(track)
+        index_release = 'staging.{}'.format(track) if is_staging else track
+
         routes = [
-            "index.project.mobile.fenix.{}.nightly.{}.{}.{}.latest".format(
+            "index.project.mobile.fenix.v2.{}.{}.{}.{}.latest".format(
                 index_release, self.date.year, self.date.month, self.date.day
             ),
-            "index.project.mobile.fenix.{}.nightly.{}.{}.{}.revision.{}".format(
+            "index.project.mobile.fenix.v2.{}.{}.{}.{}.revision.{}".format(
                 index_release, self.date.year, self.date.month, self.date.day, self.commit
             ),
-            "index.project.mobile.fenix.{}.nightly.latest".format(index_release),
+            "index.project.mobile.fenix.v2.{}.latest".format(index_release),
         ]
 
         return self._craft_signing_task(
-            name="Signing task",
-            description="Sign release builds of Fenix",
-            signing_type="dep-signing" if is_staging else "release-signing",
+            name="Signing {} task".format(capitalized_build_type),
+            description="Sign {} builds of Fenix".format(capitalized_build_type),
+            signing_type="dep" if is_staging else track,
             assemble_task_id=build_task_id,
             apk_paths=apk_paths,
             routes=routes,
@@ -406,17 +409,17 @@ class TaskBuilder(object):
                 'machine': {
                   'platform': 'android-all',
                 },
-                'symbol': 'Ns',
+                'symbol': '{}s'.format(capitalized_build_type[0]),
                 'tier': 1,
             },
         )
 
     def craft_push_task(
-        self, signing_task_id, apks, is_staging=True
+        self, signing_task_id, apks, track, is_staging=False
     ):
         payload = {
             "commit": True,
-            "google_play_track": 'nightly',
+            "google_play_track": track,
             "upstreamArtifacts": [
                 {
                     "paths": apks,
