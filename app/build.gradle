@@ -8,17 +8,6 @@ apply plugin: 'kotlin-android-extensions'
 apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
-apply plugin: 'org.mozilla.appservices'
-
-appservices {
-    defaultConfig {
-        megazord = 'fenix'
-        // Necessary to allow for local dependency substitutions.
-        // See https://github.com/mozilla-mobile/reference-browser/pull/356#issuecomment-449190236
-        unitTestingEnabled = false
-    }
-}
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -357,7 +346,7 @@ dependencies {
     }
 
     androidTestImplementation Deps.espresso_idling_resources
-    
+
     androidTestImplementation Deps.tools_test_runner
     androidTestImplementation Deps.tools_test_rules
     androidTestUtil Deps.orchestrator
@@ -399,3 +388,35 @@ task printBuildVariants {
 // Normally this should use the same version as the glean dependency. But since we are currently using AC snapshots we
 // can't reference a git tag with a specific version here. So we are just using "master" and hoping for the best.
 apply from: 'https://github.com/mozilla-mobile/android-components/raw/master/components/service/glean/scripts/sdk_generator.gradle'
+
+// Internal, but stable and convenient.
+import org.gradle.api.internal.artifacts.DefaultModuleIdentifier
+
+// This is the equivalent of what the `org.mozilla.appservices` Gradle plugin
+// achieves, minus asserting that the versions of all the megazord components
+// agree.  This could be added if required.
+afterEvaluate {
+    def megazord = DefaultModuleIdentifier.newId('org.mozilla.appservices', 'fenix-megazord')
+    def megazordComponents = [
+        DefaultModuleIdentifier.newId('org.mozilla.appservices', 'fxaclient'),
+        DefaultModuleIdentifier.newId('org.mozilla.appservices', 'places'),
+        DefaultModuleIdentifier.newId('org.mozilla.appservices', 'push'),
+        DefaultModuleIdentifier.newId('org.mozilla.appservices', 'rustlog'),
+        DefaultModuleIdentifier.newId('org.mozilla.appservices', 'viaduct')
+    ]
+
+    configurations.each { configuration ->
+        configuration.resolutionStrategy.dependencySubstitution.all { dependency ->
+            if (dependency.requested instanceof ModuleComponentSelector) {
+                def moduleIdentifier = ((ModuleComponentSelector) dependency.requested).moduleIdentifier
+                if (megazordComponents.contains(moduleIdentifier)) {
+                    def megazordVersion = Deps.mozilla_appservices
+                    def substitution = "${megazord.group}:${megazord.name}:${megazordVersion}"
+                    logger.lifecycle("In ${configuration}: substituting megazord module '$substitution' for component module" +
+                                     " '${moduleIdentifier.group}:${moduleIdentifier.name}:${dependency.requested.version}'")
+                    dependency.useTarget(substitution)
+                }
+            }
+        }
+    }
+}

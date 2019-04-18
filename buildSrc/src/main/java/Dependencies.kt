@@ -24,7 +24,6 @@ private object Versions {
     const val androidx_navigation = "2.1.0-alpha02"
     const val androidx_recyclerview = "1.1.0-alpha04"
 
-    const val appservices_gradle_plugin = "0.4.4"
     const val mozilla_android_components = "0.51.0-SNAPSHOT"
     const val mozilla_appservices = "0.25.2"
 
@@ -52,7 +51,6 @@ private object Versions {
 object Deps {
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    const val tools_appservicesgradle = "org.mozilla.appservices:gradle-plugin:${Versions.appservices_gradle_plugin}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
 
@@ -102,6 +100,7 @@ object Deps {
     const val mozilla_feature_session_bundling = "org.mozilla.components:feature-session-bundling:${Versions.mozilla_android_components}"
     const val mozilla_feature_site_permissions = "org.mozilla.components:feature-sitepermissions:${Versions.mozilla_android_components}"
 
+    const val mozilla_appservices = Versions.mozilla_appservices
     const val mozilla_places = "org.mozilla.appservices:places:${Versions.mozilla_appservices}"
 
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"

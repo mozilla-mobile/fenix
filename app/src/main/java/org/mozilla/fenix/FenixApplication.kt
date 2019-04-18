@@ -13,6 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.Deferred
+import mozilla.appservices.FenixMegazord
 import mozilla.components.concept.fetch.Client
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fretboard.Fretboard
