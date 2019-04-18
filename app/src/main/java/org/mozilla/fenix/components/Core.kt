@@ -23,7 +23,6 @@ import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.session.HistoryDelegate
-import mozilla.components.feature.session.bundling.SessionBundleStorage
 import mozilla.components.lib.crash.handler.CrashHandlerService
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.utils.Settings
@@ -76,9 +75,8 @@ class Core(private val context: Context) {
         GeckoViewFetchClient(context, runtime)
     }
 
-    val sessionStorage: SessionBundleStorage by lazy {
-        SessionBundleStorage(context, bundleLifetime = Pair(BUNDLE_LIFETIME_IN_MINUTES, TimeUnit.MINUTES),
-            engine = engine)
+    val sessionStorage: SessionStorage by lazy {
+        SessionStorage(context, engine = engine)
     }
 
     /**
@@ -92,7 +90,7 @@ class Core(private val context: Context) {
             // Restore a previous, still active bundle.
             GlobalScope.launch(Dispatchers.Main) {
                 val snapshot = async(Dispatchers.IO) {
-                    sessionStorage.restore()?.restoreSnapshot()
+                    sessionStorage.restore()
                 }
 
                 // There's an active bundle with a snapshot: Feed it into the SessionManager.
@@ -111,7 +109,6 @@ class Core(private val context: Context) {
                         .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                         .whenGoingToBackground()
                         .whenSessionsChange()
-                    autoClose(sessionManager)
                 }
             }
         }

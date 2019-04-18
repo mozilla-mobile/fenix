@@ -17,15 +17,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -35,12 +32,8 @@ import org.mozilla.fenix.BrowsingModeManager
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.utils.ItsNotBrokenSnack
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.archive
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.home.sessioncontrol.ArchivedSession
-import org.mozilla.fenix.home.sessioncontrol.ArchivedSessionAction
 import org.mozilla.fenix.home.sessioncontrol.Mode
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
@@ -77,7 +70,7 @@ class HomeFragment : Fragment(), CoroutineScope {
         sessionControlComponent = SessionControlComponent(
             view.homeLayout,
             bus,
-            SessionControlState(listOf(), listOf(), mode)
+            SessionControlState(listOf(), mode)
         )
 
         view.homeLayout.applyConstraintSet {
@@ -102,20 +95,6 @@ class HomeFragment : Fragment(), CoroutineScope {
         super.onViewCreated(view, savedInstanceState)
 
         setupHomeMenu()
-
-        val bundles = requireComponents.core.sessionStorage.bundles(limit = temporaryNumberOfSessions)
-
-        bundles.observe(this, Observer { sessionBundles ->
-            val sessions = sessionBundles
-                .filter { it.id != requireComponents.core.sessionStorage.current()?.id }
-                .mapNotNull { sessionBundle ->
-                    sessionBundle.id?.let {
-                        ArchivedSession(it, sessionBundle, sessionBundle.lastSavedAt, sessionBundle.urls)
-                    }
-                }
-
-            getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.ArchivedSessionsChange(sessions))
-        })
 
         val searchIcon = requireComponents.search.searchEngineManager.getDefaultSearchEngine(
             requireContext()
@@ -177,7 +156,6 @@ class HomeFragment : Fragment(), CoroutineScope {
                 .subscribe {
                     when (it) {
                         is SessionControlAction.Tab -> handleTabAction(it.action)
-                        is SessionControlAction.Session -> handleSessionAction(it.action)
                     }
                 }
         }
@@ -196,11 +174,7 @@ class HomeFragment : Fragment(), CoroutineScope {
     @SuppressWarnings("ComplexMethod")
     private fun handleTabAction(action: TabAction) {
         Do exhaustive when (action) {
-            is TabAction.Archive -> {
-                launch {
-                    requireComponents.core.sessionStorage.archive(requireComponents.core.sessionManager)
-                }
-            }
+            is TabAction.Archive -> {}
             is TabAction.MenuTapped -> {
                 val isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
                 val titles = requireComponents.core.sessionManager.sessions
@@ -241,28 +215,6 @@ class HomeFragment : Fragment(), CoroutineScope {
                 val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(null)
                 Navigation.findNavController(view!!).navigate(directions)
             }
-        }
-    }
-
-    private fun handleSessionAction(action: ArchivedSessionAction) {
-        when (action) {
-            is ArchivedSessionAction.Select -> {
-                launch {
-                    requireComponents.core.sessionStorage.archive(requireComponents.core.sessionManager)
-                    action.session.bundle.restoreSnapshot()?.apply {
-                        requireComponents.core.sessionManager.restore(this)
-                    }
-                }
-            }
-            is ArchivedSessionAction.Delete -> {
-                launch(IO) {
-                    requireComponents.core.sessionStorage.remove(action.session.bundle)
-                }
-            }
-            is ArchivedSessionAction.MenuTapped ->
-                openSessionMenu(SessionBottomSheetFragment.SessionType.Archived(action.session))
-            is ArchivedSessionAction.ShareTapped ->
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "244")
         }
     }
 
@@ -339,37 +291,18 @@ class HomeFragment : Fragment(), CoroutineScope {
     }
 
     private fun openSessionMenu(sessionType: SessionBottomSheetFragment.SessionType) {
-        SessionBottomSheetFragment.create(sessionType).apply {
-            onArchive = {
-                launch {
-                    requireComponents.core.sessionStorage.archive(requireComponents.core.sessionManager)
+        SessionBottomSheetFragment
+            .create(sessionType)
+            .apply {
+                onDelete = {
+                    val isPrivate = sessionType is SessionBottomSheetFragment.SessionType.Private
+                    requireComponents.useCases.tabsUseCases.removeAllTabsOfType.invoke(isPrivate)
                 }
             }
-            onDelete = {
-                when (it) {
-                    is SessionBottomSheetFragment.SessionType.Archived -> {
-                        launch(IO) {
-                            requireComponents.core.sessionStorage.remove(it.archivedSession.bundle)
-                        }
-                    }
-                    is SessionBottomSheetFragment.SessionType.Current -> {
-                        requireComponents.useCases.tabsUseCases.removeAllTabsOfType.invoke(false)
-                        launch(IO) {
-                            requireComponents.core.sessionStorage.current()?.apply {
-                                requireComponents.core.sessionStorage.remove(this)
-                            }
-                        }
-                    }
-                    is SessionBottomSheetFragment.SessionType.Private -> {
-                        requireComponents.useCases.tabsUseCases.removeAllTabsOfType.invoke(true)
-                    }
-                }
-            }
-        }.show(requireActivity().supportFragmentManager, SessionBottomSheetFragment.overflowFragmentTag)
+            .show(requireActivity().supportFragmentManager, SessionBottomSheetFragment.overflowFragmentTag)
     }
 
     companion object {
         const val toolbarPaddingDp = 12f
-        const val temporaryNumberOfSessions = 25
     }
 }
