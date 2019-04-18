@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/text_url"
+            android:id="@+id/text_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -56,9 +56,9 @@
             android:paddingStart="12dp"
             android:paddingEnd="10dp"
             android:src="@drawable/ic_close"
-            app:layout_constraintBottom_toBottomOf="@id/text_url"
+            app:layout_constraintBottom_toBottomOf="@id/text_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/text_url" />
+            app:layout_constraintTop_toTopOf="@id/text_title" />
 
         <org.mozilla.fenix.home.ImageViewTopCrop
             android:id="@+id/tab_background"

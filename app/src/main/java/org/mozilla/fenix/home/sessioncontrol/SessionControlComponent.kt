@@ -43,7 +43,7 @@ class SessionControlComponent(
     }
 }
 
-data class Tab(val sessionId: String, val url: String, val selected: Boolean, val thumbnail: Bitmap? = null)
+data class Tab(val sessionId: String, val url: String, val title: String, val selected: Boolean, val thumbnail: Bitmap? = null)
 data class ArchivedSession(val id: Long, val bundle: SessionBundle, val savedAt: Long, val urls: List<String>)
 sealed class Mode {
     object Normal : Mode()

@@ -332,7 +332,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                     .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }
                     .map {
                         val selected = it == sessionManager.selectedSession
-                        org.mozilla.fenix.home.sessioncontrol.Tab(it.id, it.url, selected, it.thumbnail)
+                        org.mozilla.fenix.home.sessioncontrol.Tab(it.id, it.url, it.title, selected, it.thumbnail)
                     }
             )
         )

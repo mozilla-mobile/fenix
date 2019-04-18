@@ -53,13 +53,17 @@ class TabViewHolder(
 
     fun bindSession(tab: Tab, position: Int) {
         this.tab = tab
+        updateIcon(tab.url)
+        updateTitle(tab.title)
         updateTabBackground(position)
-        updateUrl(tab.url)
         updateSelected(tab.selected)
     }
 
-    fun updateUrl(url: String) {
-        text_url.text = url
+    fun updateTitle(title: String) {
+        text_title.text = title
+    }
+
+    fun updateIcon(url: String) {
         launch(Dispatchers.IO) {
             val bitmap = favicon_image.context.components.utils.icons
                 .loadIcon(IconRequest(url)).await().bitmap
