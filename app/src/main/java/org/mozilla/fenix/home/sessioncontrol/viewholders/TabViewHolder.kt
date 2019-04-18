@@ -54,13 +54,13 @@ class TabViewHolder(
     fun bindSession(tab: Tab, position: Int) {
         this.tab = tab
         updateIcon(tab.url)
-        updateTitle(tab.title)
+        updateTitle(tab.title, tab.url)
         updateTabBackground(position)
         updateSelected(tab.selected)
     }
 
-    fun updateTitle(title: String) {
-        text_title.text = title
+    fun updateTitle(title: String, url: String) {
+        text_title.text = title.ifEmpty { url }
     }
 
     fun updateIcon(url: String) {
