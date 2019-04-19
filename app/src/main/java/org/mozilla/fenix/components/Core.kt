@@ -64,8 +64,19 @@ class Core(private val context: Context) {
             trackingProtectionPolicy = createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(historyStorage)
         )
+        val e = GeckoEngine(context, defaultSettings, runtime)
 
-        GeckoEngine(context, defaultSettings, runtime)
+        val inDark =
+            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                    Configuration.UI_MODE_NIGHT_YES
+        e.settings.preferredColorScheme = when {
+            Settings.getInstance(context).shouldUseDarkTheme -> PreferredColorScheme.Dark
+            Settings.getInstance(context).shouldUseLightTheme -> PreferredColorScheme.Light
+            inDark -> PreferredColorScheme.Dark
+            else -> PreferredColorScheme.Light
+        }
+
+        e
     }
 
     /**
@@ -147,21 +158,6 @@ class Core(private val context: Context) {
             normalMode && !privateMode -> trackingProtectionPolicy.forRegularSessionsOnly()
             !normalMode && privateMode -> trackingProtectionPolicy.forPrivateSessionsOnly()
             else -> TrackingProtectionPolicy.none()
-        }
-    }
-
-    /**
-     * Sets Preferred Color scheme based on Dark/Light Theme Settings or Current Configuration
-     */
-    fun setEnginePreferredColorScheme() {
-        val inDark =
-            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_YES
-        engine.settings.preferredColorScheme = when {
-            Settings.getInstance(context).shouldUseDarkTheme -> PreferredColorScheme.Dark
-            Settings.getInstance(context).shouldUseLightTheme -> PreferredColorScheme.Light
-            inDark -> PreferredColorScheme.Dark
-            else -> PreferredColorScheme.Light
         }
     }
 }
