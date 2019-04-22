@@ -567,3 +567,21 @@ custom_tab:
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
+
+preferences:
+  preference_toggled:
+    type: event
+    description: >
+      A user toggled a preference switch in settings
+    extra_keys:
+      preferenceKey:
+        description: "The preference key for the switch preference the user toggled"
+      enabled:
+        description: "Whether or not the preference is *now* enabled"
+    bugs:
+    - 975
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1896
+    notification_emails:
+    - fenix-core@mozilla.com
+    expires: "2020-03-01"

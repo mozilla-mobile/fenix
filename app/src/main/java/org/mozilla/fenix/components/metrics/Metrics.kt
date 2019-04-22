@@ -71,6 +71,14 @@ sealed class Event {
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
 
+    data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf(
+                "preferenceKey" to preferenceKey,
+                "enabled" to enabled.toString()
+            )
+    }
+
     // Interaction Events
     data class SearchBarTapped(val source: Source) : Event() {
         enum class Source { HOME, BROWSER }

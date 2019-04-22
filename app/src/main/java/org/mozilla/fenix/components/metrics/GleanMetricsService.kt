@@ -16,6 +16,7 @@ import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.QuickActionSheet
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 
 private class EventWrapper<T : Enum<T>>(
@@ -194,6 +195,21 @@ class GleanMetricsService(private val context: Context) : MetricsService {
     }
 
     override fun shouldTrack(event: Event): Boolean {
+        if (event is Event.PreferenceToggled) {
+            return switchPreferenceTelemetryAllowList.contains(event.preferenceKey)
+        }
+
         return event.wrapper != null
     }
+
+    // Switch preferences that should have their toggle events sent to Glean
+    private val switchPreferenceTelemetryAllowList = listOf(
+        context.getString(R.string.pref_key_leakcanary),
+        context.getString(R.string.pref_key_make_default_browser),
+        context.getString(R.string.pref_key_show_search_suggestions),
+        context.getString(R.string.pref_key_show_visited_sites_bookmarks),
+        context.getString(R.string.pref_key_remote_debugging),
+        context.getString(R.string.pref_key_telemetry),
+        context.getString(R.string.pref_key_tracking_protection)
+    )
 }
