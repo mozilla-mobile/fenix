@@ -64,12 +64,14 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         updateSignInVisibility()
 
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            context!!.components.analytics.metrics.track(
-                Event.PreferenceToggled(
-                    key,
-                    sharedPreferences.getBoolean(key, false)
-                )
-            )
+            try {
+                context?.let {
+                    it.components.analytics.metrics.track(Event.PreferenceToggled
+                    (key, sharedPreferences.getBoolean(key, false), it))
+                }
+            } catch (e: IllegalArgumentException) {
+                // The event is not tracked
+            }
         }
     }
 

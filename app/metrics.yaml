@@ -574,8 +574,10 @@ preferences:
     description: >
       A user toggled a preference switch in settings
     extra_keys:
-      preferenceKey:
-        description: "The preference key for the switch preference the user toggled"
+      preference_key:
+        description: "The preference key for the switch preference the user toggled. We currently track: leakcanary,
+        make_default_browser, show_search_suggestions, show_visited_sites_bookmarks, remote_debugging, telemetry,
+        tracking_protection"
       enabled:
         description: "Whether or not the preference is *now* enabled"
     bugs:
