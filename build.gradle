@@ -34,6 +34,7 @@ allprojects {
             url "https://repo.leanplum.com/"
         }
         jcenter()
+        mavenLocal()
     }
 }
 

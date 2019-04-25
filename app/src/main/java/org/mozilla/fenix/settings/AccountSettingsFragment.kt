@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.StoreStats
 import mozilla.components.concept.sync.SyncStatusObserver
 import mozilla.components.feature.sync.getLastSynced
 import org.mozilla.fenix.R
@@ -95,6 +96,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
                 pref?.isEnabled = false
             }
         }
+
+        override fun onStoreSynced(stats: StoreStats) {}
 
         // Sync stopped successfully.
         override fun onIdle() {

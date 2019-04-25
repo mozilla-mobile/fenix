@@ -29,8 +29,8 @@ private object Versions {
     const val androidx_transition = "1.1.0-rc01"
 
     const val appservices_gradle_plugin = "0.4.4"
-    const val mozilla_android_components = "0.53.0-SNAPSHOT"
-    const val mozilla_appservices = "0.27.0"
+    const val mozilla_android_components = "0.53.0-lina1"
+    const val mozilla_appservices = "0.27.1-lina9"
 
     const val autodispose = "1.1.0"
     const val adjust = "4.11.4"
