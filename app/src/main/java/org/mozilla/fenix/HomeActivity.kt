@@ -21,9 +21,8 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.intent.IntentProcessor
 import mozilla.components.lib.crash.Crash
 import mozilla.components.support.base.feature.BackHandler
-import mozilla.components.support.ktx.kotlin.isUrl
-import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
+import mozilla.components.support.utils.URLStringUtils
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -180,8 +179,8 @@ open class HomeActivity : AppCompatActivity() {
             } else components.useCases.searchUseCases.defaultSearch.invoke(searchTerms, engine)
         }
 
-        if (text.isUrl()) {
-            loadUrlUseCase.invoke(text.toNormalizedUrl())
+        if (URLStringUtils.isURLLike(text)) {
+            loadUrlUseCase.invoke(URLStringUtils.toNormalizedURL(text))
         } else {
             searchUseCase.invoke(text)
         }

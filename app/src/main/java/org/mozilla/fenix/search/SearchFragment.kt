@@ -20,7 +20,7 @@ import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.kotlin.isUrl
+import mozilla.components.support.utils.URLStringUtils
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -156,7 +156,7 @@ class SearchFragment : Fragment(), BackHandler {
                                 BrowserDirection.FromSearch
                             )
 
-                            val event = if (it.url.isUrl()) {
+                            val event = if (URLStringUtils.isURLLike(it.url)) {
                                 Event.EnteredUrl(false)
                             } else {
                                 val engine = it.engine ?: requireComponents
