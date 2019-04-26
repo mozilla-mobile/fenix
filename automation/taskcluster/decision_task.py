@@ -9,6 +9,7 @@ Decision task for nightly releases.
 from __future__ import print_function
 
 import argparse
+import datetime
 import os
 import taskcluster
 
@@ -94,7 +95,7 @@ def pr_or_push(is_push):
     return (build_tasks, signing_tasks, other_tasks)
 
 
-def release(track, is_staging):
+def release(track, is_staging, version_name):
     architectures = ['x86', 'arm', 'aarch64']
     apk_paths = ["public/target.{}.apk".format(arch) for arch in architectures]
 
@@ -103,7 +104,7 @@ def release(track, is_staging):
     push_tasks = {}
 
     build_task_id = taskcluster.slugId()
-    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, track, is_staging)
+    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, track, is_staging, version_name)
 
     signing_task_id = taskcluster.slugId()
     signing_tasks[signing_task_id] = BUILDER.craft_release_signing_task(
@@ -149,9 +150,10 @@ if __name__ == "__main__":
     elif command == 'push':
         ordered_groups_of_tasks = pr_or_push(True)
     elif command == 'nightly':
-        ordered_groups_of_tasks = release('nightly', result.staging)
+        formatted_date = datetime.datetime.now().strftime('%y%V')
+        ordered_groups_of_tasks = release('nightly', result.staging, '1.0.{}'.format(formatted_date))
     elif command == 'beta':
-        ordered_groups_of_tasks = release('beta', False)
+        ordered_groups_of_tasks = release('beta', False, result.tag)
     else:
         raise Exception('Unsupported command "{}"'.format(command))
 

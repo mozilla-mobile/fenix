@@ -177,10 +177,10 @@ tasks:
                 payload:
                   command:
                     - >-
-                      git fetch ${repository} ${head_branch}
+                      git fetch ${repository} refs/tags/${head_rev}
                       && git config advice.detachedHead false
                       && git checkout FETCH_HEAD
-                      && python automation/taskcluster/decision_task.py release --track beta
+                      && python automation/taskcluster/decision_task.py release --track beta ${event.release.tag_name}
                 extra:
                   treeherder:
                     symbol: B
@@ -198,16 +198,18 @@ tasks:
                 routes:
                   - notify.email.fenix-eng-notifications@mozilla.com.on-failed
                 payload:
-                  staging_flag:
-                    $if: 'trust_level == 3'
-                    then: ''
-                    else: '--staging'
-                  command:
-                    - >-
-                      git fetch ${repository} ${head_branch}
-                      && git config advice.detachedHead false
-                      && git checkout FETCH_HEAD
-                      && python automation/taskcluster/decision_task.py nightly ${staging_flag}
+                  $let:
+                    staging_flag:
+                      $if: 'trust_level == 3'
+                      then: ''
+                      else: '--staging'
+                  in:
+                    command:
+                      - >-
+                        git fetch ${repository} ${head_branch}
+                        && git config advice.detachedHead false
+                        && git checkout FETCH_HEAD
+                        && python automation/taskcluster/decision_task.py nightly ${staging_flag}
                 extra:
                   cron: {$json: {$eval: 'cron'}}
                   treeherder:

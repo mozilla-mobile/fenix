@@ -40,7 +40,7 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, track, is_staging=False):
+    def craft_assemble_release_task(self, architectures, track, is_staging, version_name):
         artifacts = {
             'public/target.{}.apk'.format(arch): {
                 "type": 'file',
@@ -74,8 +74,8 @@ class TaskBuilder(object):
 
         capitalized_build_type = upper_case_first_letter(track)
         gradle_commands = (
-            './gradlew --no-daemon -PcrashReports=true -Ptelemetry=true clean test assemble{}'.format(
-                capitalized_build_type),
+            './gradlew --no-daemon -PcrashReports=true -Ptelemetry=true -PversionName={} clean test assemble{}'.format(
+                version_name, capitalized_build_type),
         )
 
         command = ' && '.join(
