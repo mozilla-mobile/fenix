@@ -183,7 +183,7 @@ tasks:
                       && python automation/taskcluster/decision_task.py beta ${event.release.tag_name}
                 extra:
                   treeherder:
-                    symbol: B
+                    symbol: beta-D
                 metadata:
                   name: Fenix Beta Decision Task
                   description: Building and releasing Fenix to the beta channel - triggered by release ${event.release.tag_name}
@@ -196,7 +196,9 @@ tasks:
                     then: assume:hook-id:project-mobile/fenix-nightly
                     else: assume:hook-id:project-mobile/fenix-nightly-staging
                 routes:
-                  - notify.email.fenix-eng-notifications@mozilla.com.on-failed
+                  $if: 'trust_level == 3'
+                  then:
+                    - notify.email.fenix-eng-notifications@mozilla.com.on-failed
                 payload:
                   $let:
                     staging_flag:
@@ -213,7 +215,7 @@ tasks:
                 extra:
                   cron: {$json: {$eval: 'cron'}}
                   treeherder:
-                    symbol: N
+                    symbol: nightly-D
                 metadata:
                   name: Fenix Nightly Decision Task
                   description: Decision task scheduled by cron task [${cron.task_id}](https://tools.taskcluster.net/tasks/${cron.task_id})

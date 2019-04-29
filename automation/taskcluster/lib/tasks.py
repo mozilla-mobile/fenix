@@ -53,7 +53,7 @@ class TaskBuilder(object):
 
         def secret_index(name):
             if is_staging:
-                return '/garbage/staging/project/mobile/fenix/{}'.format(name)
+                return 'garbage/staging/project/mobile/fenix/{}'.format(name)
             elif track == 'nightly':
                 # TODO: Move nightly secrets to "project/mobile/fenix/nightly/..."
                 return 'project/mobile/fenix/{}'.format(name)
@@ -75,10 +75,10 @@ class TaskBuilder(object):
             )
         )
 
-        capitalized_build_type = upper_case_first_letter(track)
+        capitalized_track = upper_case_first_letter(track)
         gradle_commands = (
             './gradlew --no-daemon -PcrashReports=true -Ptelemetry=true -PversionName={} clean test assemble{}'.format(
-                version_name, capitalized_build_type),
+                version_name, capitalized_track),
         )
 
         command = ' && '.join(
@@ -93,8 +93,8 @@ class TaskBuilder(object):
         ]
 
         return self._craft_build_ish_task(
-            name='Build {} task'.format(capitalized_build_type),
-            description='Build Fenix {} from source code'.format(capitalized_build_type),
+            name='Build {} task'.format(capitalized_track),
+            description='Build Fenix {} from source code'.format(capitalized_track),
             command=command,
             scopes=[
                 "secrets:get:{}".format(secret) for secret in (sentry_secret, leanplum_secret, adjust_secret)
@@ -106,7 +106,7 @@ class TaskBuilder(object):
                 'machine': {
                     'platform': 'android-all',
                 },
-                'symbol': '{}A'.format(capitalized_build_type[0]),
+                'symbol': '{}-A'.format(track),
                 'tier': 1,
             },
         )
@@ -179,7 +179,7 @@ class TaskBuilder(object):
         return self._craft_clean_gradle_task(
             name='lint',
             description='Running lint for aarch64 release variant',
-            gradle_task='lintAarch64Nightly',
+            gradle_task='lintDebug',
             treeherder={
                 'jobKind': 'test',
                 'machine': {
@@ -387,7 +387,7 @@ class TaskBuilder(object):
     def craft_release_signing_task(
         self, build_task_id, apk_paths, track, is_staging=False,
     ):
-        capitalized_build_type = upper_case_first_letter(track)
+        capitalized_track = upper_case_first_letter(track)
         index_release = 'staging.{}'.format(track) if is_staging else track
 
         routes = [
@@ -401,8 +401,8 @@ class TaskBuilder(object):
         ]
 
         return self._craft_signing_task(
-            name="Signing {} task".format(capitalized_build_type),
-            description="Sign {} builds of Fenix".format(capitalized_build_type),
+            name="Signing {} task".format(capitalized_track),
+            description="Sign {} builds of Fenix".format(capitalized_track),
             signing_type="dep" if is_staging else track,
             assemble_task_id=build_task_id,
             apk_paths=apk_paths,
@@ -412,7 +412,7 @@ class TaskBuilder(object):
                 'machine': {
                   'platform': 'android-all',
                 },
-                'symbol': '{}s'.format(capitalized_build_type[0]),
+                'symbol': '{}-s'.format(track),
                 'tier': 1,
             },
         )
@@ -450,7 +450,7 @@ class TaskBuilder(object):
                 'machine': {
                   'platform': 'android-all',
                 },
-                'symbol': 'gp',
+                'symbol': '{}-gp'.format(track),
                 'tier': 1,
             },
         )
