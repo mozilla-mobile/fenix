@@ -9,7 +9,7 @@ import datetime
 import json
 import taskcluster
 
-from lib.util import upper_case_first_letter
+from lib.util import upper_case_first_letter, convert_camel_case_into_kebab_case, lower_case_first_letter
 
 DEFAULT_EXPIRES_IN = '1 year'
 DEFAULT_APK_ARTIFACT_LOCATION = 'public/target.apk'
@@ -51,15 +51,18 @@ class TaskBuilder(object):
             for arch in architectures
         }
 
-        sentry_secret = '{}project/mobile/fenix/sentry'.format(
-            'garbage/staging/' if is_staging else ''
-        )
-        leanplum_secret = '{}project/mobile/fenix/leanplum'.format(
-            'garbage/staging/' if is_staging else ''
-        )
-        adjust_secret = '{}project/mobile/fenix/adjust'.format(
-            'garbage/staging/' if is_staging else ''
-        )
+        def secret_index(name):
+            if is_staging:
+                return '/garbage/staging/project/mobile/fenix/{}'.format(name)
+            elif track == 'nightly':
+                # TODO: Move nightly secrets to "project/mobile/fenix/nightly/..."
+                return 'project/mobile/fenix/{}'.format(name)
+            else:
+                return 'project/mobile/fenix/{}/{}'.format(track, name)
+
+        sentry_secret = secret_index('sentry')
+        leanplum_secret = secret_index('leanplum')
+        adjust_secret = secret_index('adjust')
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
@@ -68,7 +71,7 @@ class TaskBuilder(object):
             for secret, key, target_file in (
                 (sentry_secret, 'dsn', '.sentry_token'),
                 (leanplum_secret, 'production', '.leanplum_token'),
-                (adjust_secret, 'Greenfield', '.adjust_token'),
+                (adjust_secret, 'adjust', '.adjust_token'),
             )
         )
 
