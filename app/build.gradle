@@ -200,12 +200,7 @@ android.applicationVariants.all { variant ->
         buildConfigField 'boolean', 'CRASH_REPORTING', 'false'
     }
 
-    // Activating telemetry only if command line parameter was provided (in automation)
-    if (project.hasProperty("telemetry") && project.property("telemetry") == "true") {
-        buildConfigField 'boolean', 'TELEMETRY', 'true'
-    } else {
-        buildConfigField 'boolean', 'TELEMETRY', 'false'
-    }
+    buildConfigField 'boolean', 'TELEMETRY', 'true'
 
     def buildDate = Config.generateBuildDate()
     buildConfigField 'String', 'BUILD_DATE', '"' + buildDate + '"'

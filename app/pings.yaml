@@ -11,3 +11,13 @@ activation:
     include the client_id, since it might be reporting an hashed version of the
     Google Advertising ID.
   include_client_id: false
+history_sync:
+  description: >
+    A ping sent for every history sync. It doesn't include the `client_id`
+    because it reports a hashed version of the user's FxA ID.
+  include_client_id: false
+bookmarks_sync:
+  description: >
+    A ping sent for every bookmarks sync. It doesn't include the `client_id`
+    because it reports a hashed version of the user's FxA ID.
+  include_client_id: false
