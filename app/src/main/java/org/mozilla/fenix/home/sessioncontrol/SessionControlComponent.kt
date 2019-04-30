@@ -17,7 +17,7 @@ import org.mozilla.fenix.mvi.ViewState
 class SessionControlComponent(
     private val container: ViewGroup,
     bus: ActionBusFactory,
-    override var initialState: SessionControlState = SessionControlState(emptyList(), Mode.Normal)
+    override var initialState: SessionControlState = SessionControlState(emptyList(), emptyList(), Mode.Normal)
 ) :
     UIComponent<SessionControlState, SessionControlAction, SessionControlChange>(
         bus.getManagedEmitter(SessionControlAction::class.java),
@@ -49,6 +49,11 @@ data class Tab(
     val thumbnail: Bitmap? = null
 )
 
+data class TabCollection(
+    val title: String,
+    val tabs: List<Tab>
+)
+
 sealed class Mode {
     object Normal : Mode()
     object Private : Mode()
@@ -56,6 +61,7 @@ sealed class Mode {
 
 data class SessionControlState(
     val tabs: List<Tab>,
+    val collections: List<TabCollection>,
     val mode: Mode
 ) : ViewState
 

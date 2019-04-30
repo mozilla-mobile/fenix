@@ -85,7 +85,7 @@ class TabViewHolder(
             setOnClickListener {
                 tabMenu.menuBuilder
                     .build(view.context)
-                    .show(anchor = it, orientation = BrowserMenu.Orientation.DOWN)
+                    .show(anchor = it)
             }
         }
     }

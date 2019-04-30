@@ -15,6 +15,9 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.NoTabMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionMessageViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import java.lang.IllegalStateException
 
 sealed class AdapterItem {
@@ -24,6 +27,9 @@ sealed class AdapterItem {
     object PrivateBrowsingDescription : AdapterItem()
     object SaveTabGroup : AdapterItem()
     object DeleteTabs : AdapterItem()
+    object CollectionHeader : AdapterItem()
+    object NoCollectionMessage : AdapterItem()
+    data class CollectionItem(val collection: TabCollection) : AdapterItem()
 
     val viewType: Int
         get() = when (this) {
@@ -33,6 +39,9 @@ sealed class AdapterItem {
             SaveTabGroup -> SaveTabGroupViewHolder.LAYOUT_ID
             PrivateBrowsingDescription -> PrivateBrowsingDescriptionViewHolder.LAYOUT_ID
             DeleteTabs -> DeleteTabsViewHolder.LAYOUT_ID
+            CollectionHeader -> CollectionHeaderViewHolder.LAYOUT_ID
+            NoCollectionMessage -> NoCollectionMessageViewHolder.LAYOUT_ID
+            is CollectionItem -> CollectionViewHolder.LAYOUT_ID
         }
 }
 
@@ -62,6 +71,11 @@ class SessionControlAdapter(
                 actionEmitter
             )
             DeleteTabsViewHolder.LAYOUT_ID -> DeleteTabsViewHolder(view, actionEmitter)
+            CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
+            NoCollectionMessageViewHolder.LAYOUT_ID -> NoCollectionMessageViewHolder(
+                view
+            )
+            CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, actionEmitter, job)
             else -> throw IllegalStateException()
         }
     }
@@ -84,6 +98,9 @@ class SessionControlAdapter(
         when (holder) {
             is TabViewHolder -> holder.bindSession(
                 (items[position] as AdapterItem.TabItem).tab
+            )
+            is CollectionViewHolder -> holder.bindSession(
+                (items[position] as AdapterItem.CollectionItem).collection
             )
         }
     }
