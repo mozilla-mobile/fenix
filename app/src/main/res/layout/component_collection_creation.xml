@@ -102,21 +102,18 @@
         android:layout_marginEnd="16dp"
         android:fadingEdgeLength="30dp"
         android:requiresFadingEdge="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/add_tabs_button"
+        app:layout_constraintBottom_toTopOf="@+id/add_tabs_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/back_button" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_tabs_button"
+        android:id="@+id/add_tabs_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/add_tabs_to_collection_background"
-        android:clickable="true"
         android:clipToPadding="false"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -135,31 +132,31 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/add_tabs_button_text"
+            android:id="@+id/select_tabs_layout_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:importantForAccessibility="no"
             android:singleLine="true"
             android:text="@string/create_collection_save_to_collection_empty"
             android:textColor="?neutral"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/close_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/save_icon"
+        <Button
+            android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:importantForAccessibility="no"
-            android:tint="?neutral"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/create_collection_save"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+            android:textColor="?neutral"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_archive" />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

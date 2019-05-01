@@ -19,6 +19,7 @@ import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.component_collection_creation.*
 import kotlinx.android.synthetic.main.component_collection_creation.view.*
+import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.mvi.UIView
@@ -54,7 +55,7 @@ class CollectionCreationUIView(
             }
         }
 
-        name_collection_edittext.setOnEditorActionListener { v, actionId, event ->
+        view.name_collection_edittext.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 actionEmitter.onNext(
                     CollectionCreationAction.SaveCollectionName(
@@ -67,12 +68,12 @@ class CollectionCreationUIView(
             false
         }
 
-        view.add_tabs_button.setOnClickListener {
+        view.save_button.setOnClickListener {
             actionEmitter.onNext(CollectionCreationAction.SaveTabsToCollection(selectedTabs.toList()))
         }
 
         view.add_collection_button.setOnClickListener {
-            actionEmitter.onNext(CollectionCreationAction.AddNewCollection(selectedTabs.toList()))
+            actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
         }
 
         view.tab_list.run {
@@ -104,7 +105,7 @@ class CollectionCreationUIView(
 
                 back_button.text = view.context.getString(R.string.create_collection_select_tabs)
 
-                val buttonText = if (it.selectedTabs.isEmpty()) {
+                val selectTabsText = if (it.selectedTabs.isEmpty()) {
                     view.context.getString(R.string.create_collection_save_to_collection_empty)
                 } else {
                     view.context.getString(
@@ -113,15 +114,16 @@ class CollectionCreationUIView(
                     )
                 }
 
+                save_button.visibility = if (it.selectedTabs.isEmpty()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+
                 tab_list.visibility = View.VISIBLE
                 select_all_button.visibility = View.VISIBLE
-                add_tabs_button.visibility = View.VISIBLE
-
-                val enableSaveButton = it.selectedTabs.isNotEmpty()
-                view.add_tabs_button.isClickable = enableSaveButton
-
-                view.add_tabs_button.contentDescription = buttonText
-                view.add_tabs_button_text.text = buttonText
+                add_tabs_layout.visibility = View.VISIBLE
+                view.select_tabs_layout_text.text = selectTabsText
             }
             is SaveCollectionStep.SelectCollection -> {
                 back_button.setOnClickListener {
@@ -132,7 +134,7 @@ class CollectionCreationUIView(
                 divider.visibility = View.VISIBLE
                 tab_list.visibility = View.GONE
                 select_all_button.visibility = View.GONE
-                add_tabs_button.visibility = View.GONE
+                add_tabs_layout.visibility = View.GONE
                 name_collection_edittext.visibility = View.GONE
 
                 back_button.text =
@@ -153,10 +155,16 @@ class CollectionCreationUIView(
 
                 tab_list.visibility = View.GONE
                 select_all_button.visibility = View.GONE
-                add_tabs_button.visibility = View.GONE
+                add_tabs_layout.visibility = View.GONE
                 back_button.text =
                     view.context.getString(R.string.create_collection_name_collection)
             }
+        }
+    }
+
+    fun onResumed() {
+        if (step == SaveCollectionStep.NameCollection) {
+            view.name_collection_edittext.showKeyboard()
         }
     }
 
