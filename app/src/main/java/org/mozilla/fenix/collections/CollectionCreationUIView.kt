@@ -149,6 +149,13 @@ class CollectionCreationUIView(
                 val imm =
                     view.context.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
                 imm?.showSoftInput(name_collection_edittext, SHOW_IMPLICIT)
+                name_collection_edittext.setText(
+                    view.context.getString(
+                        R.string.create_collection_default_name,
+                        1
+                    )
+                )
+                name_collection_edittext.setSelection(name_collection_edittext.text.length)
                 collections_list.visibility = View.GONE
                 add_collection_button.visibility = View.GONE
                 divider.visibility = View.GONE
