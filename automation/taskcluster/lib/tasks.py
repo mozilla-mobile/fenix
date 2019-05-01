@@ -341,29 +341,31 @@ class TaskBuilder(object):
             },
         }
 
-    def craft_master_commit_signing_task(
+    def craft_raptor_signing_task(
         self, assemble_task_id, variant
     ):
-        architecture, build_type = get_architecture_and_build_type_from_variant(variant)
-        build_type = convert_camel_case_into_kebab_case(build_type)
-
+        architecture, _ = get_architecture_and_build_type_from_variant(variant)
         routes = []
         if self.repo_url == _OFFICIAL_REPO_URL:
-            routes = [
-                'index.project.mobile.fenix.v2.branch.master.revision.{}.{}.{}'.format(
-                    self.commit, build_type, architecture
-                ),
-                'index.project.mobile.fenix.v2.branch.master.latest.{}.{}'.format(
-                    build_type, architecture
-                ),
-                'index.project.mobile.fenix.v2.branch.master.pushdate.{}.{}.{}.revision.{}.{}.{}'.format(
-                    self.date.year, self.date.month, self.date.day, self.commit,
-                    build_type, architecture
-                ),
-                'index.project.mobile.fenix.v2.branch.master.pushdate.{}.{}.{}.latest.{}.{}'.format(
-                    self.date.year, self.date.month, self.date.day, build_type, architecture
-                ),
-            ]
+            def routes_from_build_type(build_type):
+                return [
+                    'index.project.mobile.fenix.v2.branch.master.revision.{}.{}.{}'.format(
+                        self.commit, build_type, architecture
+                    ),
+                    'index.project.mobile.fenix.v2.branch.master.latest.{}.{}'.format(
+                        build_type, architecture
+                    ),
+                    'index.project.mobile.fenix.v2.branch.master.pushdate.{}.{}.{}.revision.{}.{}.{}'.format(
+                        self.date.year, self.date.month, self.date.day, self.commit,
+                        build_type, architecture
+                    ),
+                    'index.project.mobile.fenix.v2.branch.master.pushdate.{}.{}.{}.latest.{}.{}'.format(
+                        self.date.year, self.date.month, self.date.day, build_type, architecture
+                    ),
+                ]
+
+            # For backwards-compat for the perf-testing team, we'll still create routes with the "release-raptor" value
+            routes = routes_from_build_type('raptor') + routes_from_build_type('release-raptor')
 
         return self._craft_signing_task(
             name='sign: {}'.format(variant),
@@ -525,7 +527,7 @@ class TaskBuilder(object):
                     "--test-packages-url={}/{}/artifacts/public/build/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
                     "--test={}".format(test_name),
                     "--app=fenix",
-                    "--binary=org.mozilla.fenix",
+                    "--binary=org.mozilla.fenix.raptor",
                     "--activity=GeckoViewActivity",
                     "--download-symbols=ondemand"
                 ] + extra_test_args,
