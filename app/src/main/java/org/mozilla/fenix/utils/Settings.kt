@@ -69,6 +69,13 @@ class Settings private constructor(context: Context) {
             false
         )
 
+    fun setLightTheme(newValue: Boolean) {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_light_theme),
+            newValue
+        ).apply()
+    }
+
     val shouldShowVisitedSitesBookmarks: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_show_visited_sites_bookmarks),
@@ -87,11 +94,25 @@ class Settings private constructor(context: Context) {
             false
         )
 
+    fun setFollowDeviceTheme(newValue: Boolean) {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
+            newValue
+        ).apply()
+    }
+
     val shouldUseTrackingProtection: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
             true
         )
+
+    fun setTrackingProtection(newValue: Boolean) {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
+            newValue
+        ).apply()
+    }
 
     val shouldUseAutoBatteryTheme: Boolean
         get() = preferences.getBoolean(
