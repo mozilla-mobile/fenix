@@ -4,21 +4,24 @@ package org.mozilla.fenix.collections
    License, v. 2.0. If a copy of the MPL was not distributed with this
    file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import android.content.Context.INPUT_METHOD_SERVICE
+import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.AutoTransition
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.component_collection_creation.*
 import kotlinx.android.synthetic.main.component_collection_creation.view.*
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
@@ -42,8 +45,24 @@ class CollectionCreationUIView(
     private val collectionCreationTabListAdapter = CollectionCreationTabListAdapter(actionEmitter)
     private val collectionSaveListAdapter = SaveCollectionListAdapter(actionEmitter)
     private var selectedTabs: Set<Tab> = setOf()
+    private val selectTabsConstraints = ConstraintSet()
+    private val selectCollectionConstraints = ConstraintSet()
+    private val nameCollectionConstraints = ConstraintSet()
+    private val transition = AutoTransition()
 
     init {
+        transition.duration = TRANSITION_DURATION
+
+        selectTabsConstraints.clone(collection_constraint_layout)
+        selectCollectionConstraints.clone(
+            view.context,
+            R.layout.component_collection_creation_select_collection
+        )
+        nameCollectionConstraints.clone(
+            view.context,
+            R.layout.component_collection_creation_name_collection
+        )
+
         view.select_all_button.setOnClickListener {
             actionEmitter.onNext(CollectionCreationAction.SelectAllTapped)
         }
@@ -87,6 +106,7 @@ class CollectionCreationUIView(
         }
     }
 
+    @Suppress("ComplexMethod")
     override fun updateView() = Consumer<CollectionCreationState> {
         step = it.saveCollectionStep
         when (it.saveCollectionStep) {
@@ -94,11 +114,12 @@ class CollectionCreationUIView(
                 back_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectTabs))
                 }
-
-                name_collection_edittext.visibility = View.GONE
-                collections_list.visibility = View.GONE
-                add_collection_button.visibility = View.GONE
-                divider.visibility = View.GONE
+                TransitionManager.beginDelayedTransition(
+                    view.collection_constraint_layout,
+                    transition
+                )
+                val constraint = selectTabsConstraints
+                constraint.applyTo(view.collection_constraint_layout)
 
                 this.selectedTabs = it.selectedTabs
                 collectionCreationTabListAdapter.updateData(it.tabs, it.selectedTabs)
@@ -113,42 +134,57 @@ class CollectionCreationUIView(
                         it.selectedTabs.size
                     )
                 }
+                view.select_tabs_layout_text.text = selectTabsText
 
                 save_button.visibility = if (it.selectedTabs.isEmpty()) {
                     View.GONE
                 } else {
                     View.VISIBLE
                 }
-
-                tab_list.visibility = View.VISIBLE
-                select_all_button.visibility = View.VISIBLE
-                add_tabs_layout.visibility = View.VISIBLE
-                view.select_tabs_layout_text.text = selectTabsText
             }
             is SaveCollectionStep.SelectCollection -> {
+                // Only show selected tabs and hide checkboxes
+                collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), setOf(), true)
+
                 back_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectCollection))
                 }
-                collections_list.visibility = View.VISIBLE
-                add_collection_button.visibility = View.VISIBLE
-                divider.visibility = View.VISIBLE
-                tab_list.visibility = View.GONE
-                select_all_button.visibility = View.GONE
-                add_tabs_layout.visibility = View.GONE
-                name_collection_edittext.visibility = View.GONE
-
+                TransitionManager.beginDelayedTransition(
+                    view.collection_constraint_layout,
+                    transition
+                )
+                val constraint = selectCollectionConstraints
+                constraint.applyTo(view.collection_constraint_layout)
                 back_button.text =
                     view.context.getString(R.string.create_collection_select_collection)
             }
             is SaveCollectionStep.NameCollection -> {
                 back_button.setOnClickListener {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.NameCollection))
+                    name_collection_edittext.hideKeyboard()
+                    val handler = Handler()
+                    handler.postDelayed({
+                        actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.NameCollection))
+                    }, TRANSITION_DURATION)
                 }
-                name_collection_edittext.visibility = View.VISIBLE
-                name_collection_edittext.requestFocus()
-                val imm =
-                    view.context.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.showSoftInput(name_collection_edittext, SHOW_IMPLICIT)
+                transition.addListener(object : Transition.TransitionListener {
+                    override fun onTransitionStart(transition: Transition) {
+                    }
+
+                    override fun onTransitionEnd(transition: Transition) {
+                        view.name_collection_edittext.showKeyboard()
+                        transition.removeListener(this)
+                    }
+
+                    override fun onTransitionCancel(transition: Transition) {}
+                    override fun onTransitionPause(transition: Transition) {}
+                    override fun onTransitionResume(transition: Transition) {}
+                })
+                TransitionManager.beginDelayedTransition(
+                    view.collection_constraint_layout,
+                    transition
+                )
+                val constraint = nameCollectionConstraints
+                constraint.applyTo(view.collection_constraint_layout)
                 name_collection_edittext.setText(
                     view.context.getString(
                         R.string.create_collection_default_name,
@@ -156,13 +192,6 @@ class CollectionCreationUIView(
                     )
                 )
                 name_collection_edittext.setSelection(name_collection_edittext.text.length)
-                collections_list.visibility = View.GONE
-                add_collection_button.visibility = View.GONE
-                divider.visibility = View.GONE
-
-                tab_list.visibility = View.GONE
-                select_all_button.visibility = View.GONE
-                add_tabs_layout.visibility = View.GONE
                 back_button.text =
                     view.context.getString(R.string.create_collection_name_collection)
             }
@@ -193,6 +222,7 @@ class CollectionCreationUIView(
     }
 
     companion object {
+        private const val TRANSITION_DURATION = 200L
         private const val increaseButtonByDps = 16
     }
 }

@@ -553,31 +553,34 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope,
                 val directions = BrowserFragmentDirections
                     .actionBrowserFragmentToSearchFragment(null)
                 Navigation.findNavController(view!!).navigate(directions)
-                (activity as HomeActivity).browsingModeManager.mode = BrowsingModeManager.Mode.Normal
+                (activity as HomeActivity).browsingModeManager.mode =
+                    BrowsingModeManager.Mode.Normal
             }
-            ToolbarMenu.Item.SaveToCollection -> {
-                getSessionById()?.let {
-                    val tabs = Tab(it.id, it.url, it.url.urlToHost(), it.title)
-                    val viewModel = activity?.run {
-                        ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
-                    }
-                    viewModel?.tabs = listOf(tabs)
-                    val selectedSet = setOf(tabs)
-                    viewModel?.selectedTabs = selectedSet
-                    viewModel?.saveCollectionStep = SaveCollectionStep.SelectCollection
-                    CreateCollectionFragment()
-                        .show(
-                            requireActivity().supportFragmentManager,
-                            CreateCollectionFragment.createCollectionTag
-                        )
-                }
-            }
+            ToolbarMenu.Item.SaveToCollection -> showSaveToCollection()
             ToolbarMenu.Item.OpenInFenix -> {
                 val intent = Intent(context, IntentReceiverActivity::class.java)
                 intent.action = Intent.ACTION_VIEW
                 intent.data = Uri.parse(getSessionById()?.url)
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun showSaveToCollection() {
+        getSessionById()?.let {
+            val tabs = Tab(it.id, it.url, it.url.urlToHost(), it.title)
+            val viewModel = activity?.run {
+                ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
+            }
+            viewModel?.tabs = listOf(tabs)
+            val selectedSet = setOf(tabs)
+            viewModel?.selectedTabs = selectedSet
+            viewModel?.saveCollectionStep = SaveCollectionStep.SelectCollection
+            CreateCollectionFragment()
+                .show(
+                    requireActivity().supportFragmentManager,
+                    CreateCollectionFragment.createCollectionTag
+                )
         }
     }
 
