@@ -31,7 +31,7 @@ sealed class AdapterItem {
     object CollectionHeader : AdapterItem()
     object NoCollectionMessage : AdapterItem()
     data class CollectionItem(val collection: TabCollection) : AdapterItem()
-    data class TabInCollectionItem(val tab: Tab, val isLastTab: Boolean) : AdapterItem()
+    data class TabInCollectionItem(val collection: TabCollection, val tab: Tab, val isLastTab: Boolean) : AdapterItem()
 
     val viewType: Int
         get() = when (this) {
@@ -108,7 +108,7 @@ class SessionControlAdapter(
             )
             is TabInCollectionViewHolder -> {
                 val item = (items[position] as AdapterItem.TabInCollectionItem)
-                holder.bindSession(item.tab, item.isLastTab)
+                holder.bindSession(item.collection, item.tab, item.isLastTab)
             }
         }
     }

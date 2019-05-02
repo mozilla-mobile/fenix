@@ -6,8 +6,19 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/collections_header"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+    <View
+            android:id="@+id/divider_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="?neutralFaded"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
             android:id="@+id/collections_header_text"
@@ -15,7 +26,8 @@
             android:layout_height="wrap_content"
             android:text="@string/collections_header"
             android:textAppearance="@style/HeaderTextStyle"
+            android:layout_marginTop="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/divider_line" />
 </androidx.constraintlayout.widget.ConstraintLayout>

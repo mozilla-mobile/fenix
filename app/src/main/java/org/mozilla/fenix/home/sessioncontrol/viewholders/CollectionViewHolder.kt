@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.collection_home_list_row.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import mozilla.appservices.fxaclient.exhaustive
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
@@ -46,7 +47,10 @@ class CollectionViewHolder(
     init {
         collectionMenu = CollectionItemMenu(view.context) {
             when (it) {
-                // Handle action emitting
+                is CollectionItemMenu.Item.DeleteCollection -> actionEmitter.onNext(CollectionAction.Delete(collection))
+                is CollectionItemMenu.Item.AddTab -> actionEmitter.onNext(CollectionAction.AddTab(collection))
+                is CollectionItemMenu.Item.RenameCollection -> actionEmitter.onNext(CollectionAction.Rename(collection))
+                is CollectionItemMenu.Item.OpenTabs -> actionEmitter.onNext(CollectionAction.OpenTabs(collection))
             }
         }
 
@@ -56,6 +60,13 @@ class CollectionViewHolder(
                 collectionMenu.menuBuilder
                     .build(view.context)
                     .show(anchor = it, orientation = BrowserMenu.Orientation.DOWN)
+            }
+        }
+
+        collection_share_button.run {
+            increaseTapArea(buttonIncreaseDps)
+            setOnClickListener {
+                actionEmitter.onNext(CollectionAction.ShareTabs(collection))
             }
         }
 
@@ -134,7 +145,7 @@ class CollectionViewHolder(
     companion object {
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
-        const val buttonIncreaseDps = 12
+        const val buttonIncreaseDps = 24
     }
 
     enum class CollectionState {
@@ -148,7 +159,7 @@ class CollectionItemMenu(
     private val onItemTapped: (Item) -> Unit = {}
 ) {
     sealed class Item {
-        object DeleteCollction : Item()
+        object DeleteCollection : Item()
         object AddTab : Item()
         object RenameCollection : Item()
         object OpenTabs : Item()
@@ -162,7 +173,7 @@ class CollectionItemMenu(
                 context.getString(R.string.collection_delete),
                 textColorResource = DefaultThemeManager.resolveAttribute(R.attr.destructive, context)
             ) {
-                onItemTapped.invoke(Item.DeleteCollction)
+                onItemTapped.invoke(Item.DeleteCollection)
             },
             SimpleBrowserMenuItem(
                 context.getString(R.string.add_tab)

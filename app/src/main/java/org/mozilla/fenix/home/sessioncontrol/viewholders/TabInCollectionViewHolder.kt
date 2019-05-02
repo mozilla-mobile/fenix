@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
-import android.content.Context
 import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -12,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.collections_list_item.*
 import kotlinx.android.synthetic.main.tab_in_collection.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,8 +22,7 @@ import org.jetbrains.anko.backgroundColor
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getColorFromAttr
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
-import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.home.sessioncontrol.*
 import kotlin.coroutines.CoroutineContext
 
 class TabInCollectionViewHolder(
@@ -38,6 +35,7 @@ class TabInCollectionViewHolder(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
+    private lateinit var collection: TabCollection
     private lateinit var tab: Tab
     private var isLastTab = false
 
@@ -54,9 +52,14 @@ class TabInCollectionViewHolder(
                 )
             }
         }
+
+        collection_tab_close_button.setOnClickListener {
+            actionEmitter.onNext(CollectionAction.RemoveTab(collection, tab))
+        }
     }
 
-    fun bindSession(tab: Tab, isLastTab: Boolean) {
+    fun bindSession(collection: TabCollection, tab: Tab, isLastTab: Boolean) {
+        this.collection = collection
         this.tab = tab
         this.isLastTab = isLastTab
         updateTabUI()

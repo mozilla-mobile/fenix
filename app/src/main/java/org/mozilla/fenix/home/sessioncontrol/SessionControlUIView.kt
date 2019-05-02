@@ -49,7 +49,7 @@ private fun SessionControlState.toAdapterList(): List<AdapterItem> {
                     items.add(it)
                     for (tabIndex in 0 until it.collection.tabs.size) {
                         items.add(AdapterItem.TabInCollectionItem
-                            (it.collection.tabs[tabIndex], tabIndex == it.collection.tabs.size - 1))
+                            (it.collection, it.collection.tabs[tabIndex], tabIndex == it.collection.tabs.size - 1))
                     }
                 } else {
                     items.add(it)

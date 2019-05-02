@@ -275,11 +275,29 @@ class HomeFragment : Fragment(), CoroutineScope {
                 storedCollections.find { it.id == action.collection.id }?.apply { expanded = false }
                 emitCollectionChange()
             }
+            is CollectionAction.Delete -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
+            }
+            is CollectionAction.AddTab -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1575")
+            }
+            is CollectionAction.Rename -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1575")
+            }
+            is CollectionAction.OpenTabs -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "2205")
+            }
+            is CollectionAction.ShareTabs -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1585")
+            }
+            is CollectionAction.RemoveTab -> {
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
+            }
         }
     }
 
     private fun emitCollectionChange() {
-        // Pass in a _copy_ of the tabs
+        // Pass in a *copy* of stored collections so an change is detected
         storedCollections.map { it.copy() }.let { getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it)) }
     }
 
