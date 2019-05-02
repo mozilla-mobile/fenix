@@ -21,7 +21,8 @@ data class Tab(
 
 data class Collection(
     val collectionId: String,
-    val title: String
+    val title: String,
+    val iconColor: Int
 )
 
 sealed class SaveCollectionStep {

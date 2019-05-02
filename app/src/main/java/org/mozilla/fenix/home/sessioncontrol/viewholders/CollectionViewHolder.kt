@@ -5,13 +5,15 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.collection_home_list_row.*
 import kotlinx.android.synthetic.main.collection_home_list_row.view.*
-import kotlinx.android.synthetic.main.tab_list_row.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,7 +22,6 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.*
 import kotlin.coroutines.CoroutineContext
@@ -36,7 +37,8 @@ class CollectionViewHolder(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
-    var collection: TabCollection? = null
+    private var state = CollectionState.Collapsed
+    private var collection: TabCollection? = null
     private var collectionMenu: CollectionItemMenu
 
     init {
@@ -55,13 +57,18 @@ class CollectionViewHolder(
             }
         }
 
+        view.setOnClickListener {
+            updateState()
+        }
+
+        view.collection_icon.setColorFilter(ContextCompat.getColor(view.context, getNextIconColor()), android.graphics.PorterDuff.Mode.SRC_IN)
+
         updateTitle()
     }
 
     fun bindSession(collection: TabCollection) {
         this.collection = collection
         updateTitle()
-        //updateSelected(tab.selected)
     }
 
     private fun updateTitle() {
@@ -85,14 +92,39 @@ class CollectionViewHolder(
             }
         }
 
-        //view.collection_description.text = titleList + "${hostNameList.size - tabsDisplayed} more"
         view.collection_description.text = titleList
+    }
+
+    private fun updateState() {
+        state = when (state) {
+            CollectionState.Expanded -> CollectionState.Collapsed
+            CollectionState.Collapsed -> CollectionState.Expanded
+        }
+
+        // Emit an action that our adapter will consume, and then will call notifyDataSetChanged()
+
+    }
+
+    private fun getNextIconColor(): Int {
+        val randomIndex = (0..4).random()
+        return when (randomIndex) {
+            0 -> R.color.collection_icon_color_violet
+            1 -> R.color.collection_icon_color_blue
+            2 -> R.color.collection_icon_color_pink
+            3 -> R.color.collection_icon_color_green
+            4 -> R.color.collection_icon_color_yellow
+            else -> R.color.white_color
+        }
     }
 
     companion object {
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
         const val buttonIncreaseDps = 12
+    }
+
+    enum class CollectionState {
+        Expanded, Collapsed
     }
 }
 
