@@ -6,6 +6,9 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import android.widget.RelativeLayout
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
@@ -18,6 +21,7 @@ import kotlinx.coroutines.Job
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
+import org.jetbrains.anko.dimen
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
@@ -64,15 +68,15 @@ class CollectionViewHolder(
 
     fun bindSession(collection: TabCollection) {
         this.collection = collection
-        updateTitle()
+        updateCollectionUI()
     }
 
-    private fun updateTitle() {
+    private fun updateCollectionUI() {
         view.collection_title.text = collection?.title
 
         var hostNameList = listOf<String>()
 
-        collection?.tabs?.forEach {
+        collection.tabs.forEach {
             hostNameList += it.hostname.capitalize()
         }
 
@@ -89,6 +93,17 @@ class CollectionViewHolder(
         }
 
         view.collection_description.text = titleList
+
+        // Update the view based on its expanded state
+        if (collection.expanded) {
+            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
+            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
+            view.collection_description.visibility = View.GONE
+        } else {
+            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 12
+            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
+            view.collection_description.visibility = View.VISIBLE
+        }
     }
 
     private fun updateState() {

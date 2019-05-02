@@ -42,11 +42,15 @@ private fun SessionControlState.toAdapterList(): List<AdapterItem> {
         items.add(AdapterItem.CollectionHeader)
         if (collections.isNotEmpty()) {
 
-            // Is the collection expanded?
+            // If the collection is expanded, we want to map it to be an AdapterItem.Expanded
+            // This expanded adapter item will have
             collections.reversed().map(AdapterItem::CollectionItem).forEach {
                 if (it.collection.expanded) {
                     items.add(it)
-                    items.add(AdapterItem.TabInCollectionItem(it.collection.tabs.first()))
+                    for (tabIndex in 0 until it.collection.tabs.size) {
+                        items.add(AdapterItem.TabInCollectionItem
+                            (it.collection.tabs[tabIndex], tabIndex == it.collection.tabs.size - 1))
+                    }
                 } else {
                     items.add(it)
                 }

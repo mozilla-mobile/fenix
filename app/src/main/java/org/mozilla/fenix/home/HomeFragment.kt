@@ -166,10 +166,15 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     private fun addMockCollection() {
         // TODO: Remove this. Mock a collection
-        val mockSession = requireComponents.core.sessionManager.sessions.last()
+        val mockSession = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
         val mockTab = Tab(mockSession.id, mockSession.url, mockSession.url.urlToHost(), mockSession.title, false, null)
-        val mockCollection1 = TabCollection(0, "Reading list", listOf(mockTab), false)
-        storedCollections.add(mockCollection1)
+        val mockSession2 = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
+        val mockTab2 = Tab(mockSession2.id, mockSession2.url, mockSession2.url.urlToHost(), mockSession2.title, false, null)
+        val mockSession3 = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
+        val mockTab3 = Tab(mockSession3.id, mockSession3.url, mockSession3.url.urlToHost(), mockSession3.title, false, null)
+
+        val mockCollection = TabCollection(storedCollections.size, "Reading list", listOf(mockTab, mockTab2, mockTab3), false)
+        storedCollections.add(mockCollection)
 
         emitCollectionChange()
     }
@@ -321,7 +326,6 @@ class HomeFragment : Fragment(), CoroutineScope {
             override fun onSessionAdded(session: Session) {
                 super.onSessionAdded(session)
                 emitSessionChanges()
-                if (requireComponents.core.sessionManager.sessions.size == 1) { addMockCollection() }
             }
 
             override fun onSessionRemoved(session: Session) {

@@ -31,7 +31,7 @@ sealed class AdapterItem {
     object CollectionHeader : AdapterItem()
     object NoCollectionMessage : AdapterItem()
     data class CollectionItem(val collection: TabCollection) : AdapterItem()
-    data class TabInCollectionItem(val tab: Tab) : AdapterItem()
+    data class TabInCollectionItem(val tab: Tab, val isLastTab: Boolean) : AdapterItem()
 
     val viewType: Int
         get() = when (this) {
@@ -79,7 +79,7 @@ class SessionControlAdapter(
                 view
             )
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, actionEmitter, job)
-            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view)
+            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view, actionEmitter, job)
             else -> throw IllegalStateException()
         }
     }
@@ -106,6 +106,10 @@ class SessionControlAdapter(
             is CollectionViewHolder -> holder.bindSession(
                 (items[position] as AdapterItem.CollectionItem).collection
             )
+            is TabInCollectionViewHolder -> {
+                val item = (items[position] as AdapterItem.TabInCollectionItem)
+                holder.bindSession(item.tab, item.isLastTab)
+            }
         }
     }
 }

@@ -91,11 +91,11 @@ class TabViewHolder(
 
     fun bindSession(tab: Tab) {
         this.tab = tab
-        updateText(tab)
+        updateTabUI(tab)
         updateSelected(tab.selected)
     }
 
-    fun updateText(tab: Tab) {
+    private fun updateTabUI(tab: Tab) {
         hostname.text = tab.hostname
         tab_title.text = tab.title
         launch(Dispatchers.IO) {
