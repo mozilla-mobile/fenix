@@ -169,7 +169,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
             bookmark_overflow.setOnClickListener {
                 bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                     anchor = it,
-                    orientation = BrowserMenu.Orientation.DOWN
+                    orientation = BrowserMenu.Orientation.UP
                 )
             }
             bookmark_title.text = if (item.title.isNullOrBlank()) item.url else item.title
@@ -293,7 +293,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
                 bookmark_overflow.setOnClickListener {
                     bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                         anchor = it,
-                        orientation = BrowserMenu.Orientation.DOWN
+                        orientation = BrowserMenu.Orientation.UP
                     )
                 }
                 bookmark_layout.setOnLongClickListener(null)
@@ -359,7 +359,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
             bookmark_overflow.setOnClickListener {
                 bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                     anchor = it,
-                    orientation = BrowserMenu.Orientation.DOWN
+                    orientation = BrowserMenu.Orientation.UP
                 )
             }
         }
