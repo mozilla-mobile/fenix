@@ -5,8 +5,6 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 
 class CollectionViewHolder(
     val view: View,
-    actionEmitter: Observer<SessionControlAction>,
+    val actionEmitter: Observer<SessionControlAction>,
     val job: Job,
     override val containerView: View? = view
 ) :
@@ -37,8 +35,8 @@ class CollectionViewHolder(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
+    private lateinit var collection: TabCollection
     private var state = CollectionState.Collapsed
-    private var collection: TabCollection? = null
     private var collectionMenu: CollectionItemMenu
 
     init {
@@ -62,8 +60,6 @@ class CollectionViewHolder(
         }
 
         view.collection_icon.setColorFilter(ContextCompat.getColor(view.context, getNextIconColor()), android.graphics.PorterDuff.Mode.SRC_IN)
-
-        updateTitle()
     }
 
     fun bindSession(collection: TabCollection) {
@@ -97,12 +93,15 @@ class CollectionViewHolder(
 
     private fun updateState() {
         state = when (state) {
-            CollectionState.Expanded -> CollectionState.Collapsed
-            CollectionState.Collapsed -> CollectionState.Expanded
+            CollectionState.Expanded -> {
+                actionEmitter.onNext(CollectionAction.Collapse(collection))
+                CollectionState.Collapsed
+            }
+            CollectionState.Collapsed -> {
+                actionEmitter.onNext(CollectionAction.Expand(collection))
+                CollectionState.Expanded
+            }
         }
-
-        // Emit an action that our adapter will consume, and then will call notifyDataSetChanged()
-
     }
 
     private fun getNextIconColor(): Int {

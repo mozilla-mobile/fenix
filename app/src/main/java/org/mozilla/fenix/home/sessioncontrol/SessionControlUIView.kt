@@ -41,10 +41,17 @@ private fun SessionControlState.toAdapterList(): List<AdapterItem> {
     if (mode == Mode.Normal) {
         items.add(AdapterItem.CollectionHeader)
         if (collections.isNotEmpty()) {
-            collections.reversed().map(AdapterItem::CollectionItem).forEach { items.add(it) }
+
+            // Is the collection expanded?
+            collections.reversed().map(AdapterItem::CollectionItem).forEach {
+                if (it.collection.expanded) {
+                    items.add(it)
+                    items.add(AdapterItem.TabInCollectionItem(it.collection.tabs.first()))
+                } else {
+                    items.add(it)
+                }
+            }
         } else {
-            val tabCollection = TabCollection("Reading list", tabs)
-            items.add(AdapterItem.CollectionItem(tabCollection))
             items.add(AdapterItem.NoCollectionMessage)
         }
     }

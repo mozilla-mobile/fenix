@@ -38,7 +38,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.collections.CreateCollectionFragment
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
-import org.mozilla.fenix.collections.Tab
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.allowUndo
 import org.mozilla.fenix.ext.requireComponents
@@ -50,6 +49,9 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
 import org.mozilla.fenix.home.sessioncontrol.SessionControlState
 import org.mozilla.fenix.home.sessioncontrol.TabAction
+import org.mozilla.fenix.home.sessioncontrol.CollectionAction
+import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
@@ -73,6 +75,9 @@ class HomeFragment : Fragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
+    // TODO: Remove this stub when we have the a-c version!
+    var storedCollections = mutableListOf<TabCollection>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,8 +85,8 @@ class HomeFragment : Fragment(), CoroutineScope {
     ): View? {
         job = Job()
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        val mode =
-            if ((activity as HomeActivity).browsingModeManager.isPrivate) Mode.Private else Mode.Normal
+        val mode = if ((activity as HomeActivity).browsingModeManager.isPrivate) Mode.Private else Mode.Normal
+
         sessionControlComponent = SessionControlComponent(
             view.homeLayout,
             bus,
@@ -159,6 +164,16 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeDividerShadow.bringToFront()
     }
 
+    private fun addMockCollection() {
+        // TODO: Remove this. Mock a collection
+        val mockSession = requireComponents.core.sessionManager.sessions.last()
+        val mockTab = Tab(mockSession.id, mockSession.url, mockSession.url.urlToHost(), mockSession.title, false, null)
+        val mockCollection1 = TabCollection(0, "Reading list", listOf(mockTab), false)
+        storedCollections.add(mockCollection1)
+
+        emitCollectionChange()
+    }
+
     override fun onDestroyView() {
         homeMenu = null
         job.cancel()
@@ -178,6 +193,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                 .subscribe {
                     when (it) {
                         is SessionControlAction.Tab -> handleTabAction(it.action)
+                        is SessionControlAction.Collection -> handleCollectionAction(it.action)
                     }
                 }
         }
@@ -244,6 +260,24 @@ class HomeFragment : Fragment(), CoroutineScope {
         }
     }
 
+    private fun handleCollectionAction(action: CollectionAction) {
+        when (action) {
+            is CollectionAction.Expand -> {
+                storedCollections.find { it.id == action.collection.id }?.apply { expanded = true }
+                emitCollectionChange()
+            }
+            is CollectionAction.Collapse -> {
+                storedCollections.find { it.id == action.collection.id }?.apply { expanded = false }
+                emitCollectionChange()
+            }
+        }
+    }
+
+    private fun emitCollectionChange() {
+        // Pass in a _copy_ of the tabs
+        storedCollections.map { it.copy() }.let { getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it)) }
+    }
+
     override fun onPause() {
         super.onPause()
         sessionObserver?.let {
@@ -287,6 +321,7 @@ class HomeFragment : Fragment(), CoroutineScope {
             override fun onSessionAdded(session: Session) {
                 super.onSessionAdded(session)
                 emitSessionChanges()
+                if (requireComponents.core.sessionManager.sessions.size == 1) { addMockCollection() }
             }
 
             override fun onSessionRemoved(session: Session) {
