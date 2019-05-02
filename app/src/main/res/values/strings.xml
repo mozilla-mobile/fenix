@@ -436,13 +436,16 @@
 
     <!-- Text to prompt users to select how many tabs they have
     selected in the "select tabs" stepof the collection creator -->
-    <string name="create_collection_save_to_collection_full">%d tabs selected</string>
+    <plurals name="create_collection_save_to_collection_full_plural">
+        <item quantity="one">%d tab selected</item>
+        <item quantity="other">%d tabs selected</item>
+    </plurals>
 
-    <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
-    <string name="create_collection_tabs_saved">Tabs saved!</string>
-
-    <!-- Text shown in snackbar when one tab has been saved in a collection -->
-    <string name="create_collection_tab_saved">Tab saved!</string>
+    <!-- Text shown in snackbar when tab(s) have been saved in a collection -->
+    <plurals name="create_collection_tabs_saved">
+        <item quantity="one">Tab saved!</item>
+        <item quantity="other">Tabs saved!</item>
+    </plurals>
 
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Close</string>

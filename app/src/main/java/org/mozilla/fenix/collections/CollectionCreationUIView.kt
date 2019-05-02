@@ -129,8 +129,9 @@ class CollectionCreationUIView(
                 val selectTabsText = if (it.selectedTabs.isEmpty()) {
                     view.context.getString(R.string.create_collection_save_to_collection_empty)
                 } else {
-                    view.context.getString(
-                        R.string.create_collection_save_to_collection_full,
+                    view.context.resources.getQuantityString(
+                        R.plurals.create_collection_save_to_collection_full_plural,
+                        it.selectedTabs.size,
                         it.selectedTabs.size
                     )
                 }
