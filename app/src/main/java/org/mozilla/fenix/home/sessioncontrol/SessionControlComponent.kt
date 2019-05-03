@@ -53,7 +53,7 @@ data class Tab(
 data class TabCollection(
     val id: Int,
     val title: String,
-    val tabs: List<Tab>,
+    val tabs: MutableList<Tab>,
     var expanded: Boolean
 )
 

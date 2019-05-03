@@ -31,7 +31,9 @@ class SwipeToDeleteCallback(
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         when (viewHolder) {
             is TabViewHolder -> actionEmitter.onNext(TabAction.Close(viewHolder.tab?.sessionId!!))
-            is TabInCollectionViewHolder -> { Log.d("sawyer", "test") }
+            is TabInCollectionViewHolder -> {
+                actionEmitter.onNext(CollectionAction.RemoveTab(viewHolder.collection, viewHolder.tab))
+            }
         }
     }
 
@@ -46,10 +48,17 @@ class SwipeToDeleteCallback(
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val icon = ContextCompat.getDrawable(recyclerView.context, R.drawable.ic_delete)
-        val background = ContextCompat.getDrawable(
-            recyclerView.context,
-            R.drawable.session_background
-        )
+
+        val background = when (viewHolder) {
+            is TabInCollectionViewHolder -> {
+                if (viewHolder.isLastTab) {
+                    ContextCompat.getDrawable(recyclerView.context, R.drawable.tab_in_collection_last_swipe_background)
+                } else {
+                    ContextCompat.getDrawable(recyclerView.context, R.drawable.tab_in_collection_swipe_background)
+                }
+            }
+            else -> ContextCompat.getDrawable(recyclerView.context, R.drawable.session_background)
+        }
 
         background?.let {
             icon?.let {

@@ -35,9 +35,11 @@ class TabInCollectionViewHolder(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
-    private lateinit var collection: TabCollection
-    private lateinit var tab: Tab
-    private var isLastTab = false
+    lateinit var collection: TabCollection
+        private set
+    lateinit var tab: Tab
+        private set
+    var isLastTab = false
 
     init {
         collection_tab_icon.clipToOutline = true

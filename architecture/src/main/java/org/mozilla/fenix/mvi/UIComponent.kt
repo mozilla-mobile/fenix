@@ -33,7 +33,6 @@ abstract class UIComponent<S : ViewState, A : Action, C : Change>(
     fun internalRender(reducer: Reducer<S, C>): Observable<S> =
         changesObservable
             .scan(initialState, reducer)
-            .distinctUntilChanged()
             .doOnNext{
                 Log.d("sawyer", "" + it)
             }

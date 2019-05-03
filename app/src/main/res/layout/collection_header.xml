@@ -15,8 +15,8 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="?neutralFaded"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginEnd="23dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

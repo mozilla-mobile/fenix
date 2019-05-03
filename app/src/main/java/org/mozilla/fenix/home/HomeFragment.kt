@@ -173,7 +173,7 @@ class HomeFragment : Fragment(), CoroutineScope {
         val mockSession3 = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
         val mockTab3 = Tab(mockSession3.id, mockSession3.url, mockSession3.url.urlToHost(), mockSession3.title, false, null)
 
-        val mockCollection = TabCollection(storedCollections.size, "Reading list", listOf(mockTab, mockTab2, mockTab3), false)
+        val mockCollection = TabCollection(storedCollections.size, "Reading list", mutableListOf(mockTab, mockTab2, mockTab3), false)
         storedCollections.add(mockCollection)
 
         emitCollectionChange()
@@ -276,7 +276,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                 emitCollectionChange()
             }
             is CollectionAction.Delete -> {
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
+                storedCollections.find { it.id == action.collection.id }?.let { storedCollections.clear() }
             }
             is CollectionAction.AddTab -> {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1575")
@@ -291,14 +291,18 @@ class HomeFragment : Fragment(), CoroutineScope {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1585")
             }
             is CollectionAction.RemoveTab -> {
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
+                // TODO: Integrate with a-c collections
+                storedCollections.find { it.id == action.collection.id }?.let { collection ->
+                    collection.tabs.find { it.sessionId == action.tab.sessionId }?.let { tab -> collection.tabs.remove(tab) }
+                }
             }
         }
+
+        emitCollectionChange()
     }
 
     private fun emitCollectionChange() {
-        // Pass in a *copy* of stored collections so an change is detected
-        storedCollections.map { it.copy() }.let { getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it)) }
+        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(storedCollections))
     }
 
     override fun onPause() {
