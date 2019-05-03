@@ -22,7 +22,11 @@ import org.jetbrains.anko.backgroundColor
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getColorFromAttr
-import org.mozilla.fenix.home.sessioncontrol.*
+import org.mozilla.fenix.home.sessioncontrol.CollectionAction
+import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
+import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.home.sessioncontrol.onNext
 import kotlin.coroutines.CoroutineContext
 
 class TabInCollectionViewHolder(

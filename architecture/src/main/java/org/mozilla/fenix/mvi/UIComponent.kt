@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.mvi
 
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,9 +32,7 @@ abstract class UIComponent<S : ViewState, A : Action, C : Change>(
     fun internalRender(reducer: Reducer<S, C>): Observable<S> =
         changesObservable
             .scan(initialState, reducer)
-            .doOnNext{
-                Log.d("sawyer", "" + it)
-            }
+            .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 }

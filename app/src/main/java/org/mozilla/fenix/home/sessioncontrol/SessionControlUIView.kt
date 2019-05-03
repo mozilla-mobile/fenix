@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import org.mozilla.fenix.BuildConfig
 
 // Convert HomeState into a data structure HomeAdapter understands
-@SuppressWarnings("ComplexMethod")
+@SuppressWarnings("ComplexMethod", "NestedBlockDepth")
 private fun SessionControlState.toAdapterList(): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     items.add(AdapterItem.TabHeader)
@@ -42,15 +42,11 @@ private fun SessionControlState.toAdapterList(): List<AdapterItem> {
         items.add(AdapterItem.CollectionHeader)
         if (collections.isNotEmpty()) {
 
-            // If the collection is expanded, we want to map it to be an AdapterItem.Expanded
-            // This expanded adapter item will have
+            // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
             collections.reversed().map(AdapterItem::CollectionItem).forEach {
                 if (it.collection.expanded) {
                     items.add(it)
-                    for (tabIndex in 0 until it.collection.tabs.size) {
-                        items.add(AdapterItem.TabInCollectionItem
-                            (it.collection, it.collection.tabs[tabIndex], tabIndex == it.collection.tabs.size - 1))
-                    }
+                    addCollectionTabItems(it.collection, it.collection.tabs, items)
                 } else {
                     items.add(it)
                 }
@@ -61,6 +57,17 @@ private fun SessionControlState.toAdapterList(): List<AdapterItem> {
     }
 
     return items
+}
+
+private fun addCollectionTabItems(
+    collection: TabCollection,
+    tabs: MutableList<Tab>,
+    itemList: MutableList<AdapterItem>
+) {
+    for (tabIndex in 0 until tabs.size) {
+        itemList.add(AdapterItem.TabInCollectionItem
+            (collection, collection.tabs[tabIndex], tabIndex == collection.tabs.size - 1))
+    }
 }
 
 class SessionControlUIView(

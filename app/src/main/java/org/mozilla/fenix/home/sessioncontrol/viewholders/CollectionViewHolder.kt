@@ -7,8 +7,6 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
@@ -18,15 +16,17 @@ import kotlinx.android.synthetic.main.collection_home_list_row.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import mozilla.appservices.fxaclient.exhaustive
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
-import org.jetbrains.anko.dimen
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.home.sessioncontrol.*
+import org.mozilla.fenix.home.sessioncontrol.CollectionAction
+import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
+import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.home.sessioncontrol.onNext
+import org.mozilla.fenix.utils.Settings
 import kotlin.coroutines.CoroutineContext
 
 class CollectionViewHolder(
@@ -74,7 +74,11 @@ class CollectionViewHolder(
             updateState()
         }
 
-        view.collection_icon.setColorFilter(ContextCompat.getColor(view.context, getNextIconColor()), android.graphics.PorterDuff.Mode.SRC_IN)
+        view.collection_icon.setColorFilter(ContextCompat.getColor(
+            view.context,
+            getNextIconColor()),
+            android.graphics.PorterDuff.Mode.SRC_IN
+        )
     }
 
     fun bindSession(collection: TabCollection) {
@@ -83,7 +87,7 @@ class CollectionViewHolder(
     }
 
     private fun updateCollectionUI() {
-        view.collection_title.text = collection?.title
+        view.collection_title.text = collection.title
 
         var hostNameList = listOf<String>()
 
@@ -97,7 +101,7 @@ class CollectionViewHolder(
                 it.substring(0,
                     maxTitleLength
                 ) + "..."
-            }  else {
+            } else {
                 tabsDisplayed += 1
                 it
             }
@@ -105,14 +109,13 @@ class CollectionViewHolder(
 
         view.collection_description.text = titleList
 
-        // Update the view based on its expanded state
         if (collection.expanded) {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
+            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = EXPANDED_MARGIN
             view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
             view.collection_description.visibility = View.GONE
             view.expand_button.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_chevron_up))
         } else {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 12
+            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = COLLAPSED_MARGIN
             view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
             view.collection_description.visibility = View.VISIBLE
             view.expand_button.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_chevron_down))
@@ -132,19 +135,34 @@ class CollectionViewHolder(
         }
     }
 
+    @Suppress("ComplexMethod", "MagicNumber")
     private fun getNextIconColor(): Int {
-        val randomIndex = (0..4).random()
-        return when (randomIndex) {
-            0 -> R.color.collection_icon_color_violet
-            1 -> R.color.collection_icon_color_blue
-            2 -> R.color.collection_icon_color_pink
-            3 -> R.color.collection_icon_color_green
-            4 -> R.color.collection_icon_color_yellow
-            else -> R.color.white_color
+        with(view.context) {
+            var sessionColorIndex = Settings.getInstance(this).preferences
+                .getInt(getString(R.string.pref_key_collection_color), 0)
+
+            val iconResource = when (sessionColorIndex) {
+                0 -> R.color.collection_icon_color_violet
+                1 -> R.color.collection_icon_color_blue
+                2 -> R.color.collection_icon_color_pink
+                3 -> R.color.collection_icon_color_green
+                4 -> R.color.collection_icon_color_yellow
+                else -> R.color.white_color
+            }
+
+            if (sessionColorIndex >= MAX_COLOR_INDEX) { sessionColorIndex = 0 } else { sessionColorIndex += 1 }
+
+            Settings.getInstance(this).preferences.edit()
+                .putInt(getString(R.string.pref_key_collection_color), sessionColorIndex).apply()
+
+            return iconResource
         }
     }
 
     companion object {
+        const val MAX_COLOR_INDEX = 4
+        const val EXPANDED_MARGIN = 8
+        const val COLLAPSED_MARGIN = 12
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
         const val buttonIncreaseDps = 24
@@ -154,7 +172,6 @@ class CollectionViewHolder(
         Expanded, Collapsed
     }
 }
-
 
 class CollectionItemMenu(
     private val context: Context,

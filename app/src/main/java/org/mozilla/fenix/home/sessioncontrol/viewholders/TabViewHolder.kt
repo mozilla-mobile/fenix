@@ -92,7 +92,7 @@ class TabViewHolder(
     fun bindSession(tab: Tab) {
         this.tab = tab
         updateTabUI(tab)
-        updateSelected(tab.selected)
+        updateSelected(tab.selected ?: false)
     }
 
     private fun updateTabUI(tab: Tab) {

@@ -75,7 +75,7 @@ class HomeFragment : Fragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    // TODO: Remove this stub when we have the a-c version!
+    // TODO Remove this stub when we have the a-c version!
     var storedCollections = mutableListOf<TabCollection>()
 
     override fun onCreateView(
@@ -164,21 +164,6 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeDividerShadow.bringToFront()
     }
 
-    private fun addMockCollection() {
-        // TODO: Remove this. Mock a collection
-        val mockSession = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
-        val mockTab = Tab(mockSession.id, mockSession.url, mockSession.url.urlToHost(), mockSession.title, false, null)
-        val mockSession2 = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
-        val mockTab2 = Tab(mockSession2.id, mockSession2.url, mockSession2.url.urlToHost(), mockSession2.title, false, null)
-        val mockSession3 = requireComponents.core.sessionManager.sessions[(0..requireComponents.core.sessionManager.sessions.size-1).random()]
-        val mockTab3 = Tab(mockSession3.id, mockSession3.url, mockSession3.url.urlToHost(), mockSession3.title, false, null)
-
-        val mockCollection = TabCollection(storedCollections.size, "Reading list", mutableListOf(mockTab, mockTab2, mockTab3), false)
-        storedCollections.add(mockCollection)
-
-        emitCollectionChange()
-    }
-
     override fun onDestroyView() {
         homeMenu = null
         job.cancel()
@@ -265,15 +250,14 @@ class HomeFragment : Fragment(), CoroutineScope {
         }
     }
 
+    @Suppress("ComplexMethod")
     private fun handleCollectionAction(action: CollectionAction) {
         when (action) {
             is CollectionAction.Expand -> {
                 storedCollections.find { it.id == action.collection.id }?.apply { expanded = true }
-                emitCollectionChange()
             }
             is CollectionAction.Collapse -> {
                 storedCollections.find { it.id == action.collection.id }?.apply { expanded = false }
-                emitCollectionChange()
             }
             is CollectionAction.Delete -> {
                 storedCollections.find { it.id == action.collection.id }?.let { storedCollections.clear() }
@@ -291,10 +275,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1585")
             }
             is CollectionAction.RemoveTab -> {
-                // TODO: Integrate with a-c collections
-                storedCollections.find { it.id == action.collection.id }?.let { collection ->
-                    collection.tabs.find { it.sessionId == action.tab.sessionId }?.let { tab -> collection.tabs.remove(tab) }
-                }
+                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
             }
         }
 
@@ -302,7 +283,9 @@ class HomeFragment : Fragment(), CoroutineScope {
     }
 
     private fun emitCollectionChange() {
-        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(storedCollections))
+        storedCollections.map { it.copy() }.let {
+            getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it))
+        }
     }
 
     override fun onPause() {

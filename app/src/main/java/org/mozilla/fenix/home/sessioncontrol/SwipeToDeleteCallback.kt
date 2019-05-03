@@ -7,7 +7,6 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -49,17 +48,17 @@ class SwipeToDeleteCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val icon = ContextCompat.getDrawable(recyclerView.context, R.drawable.ic_delete)
 
-        val background = when (viewHolder) {
-            is TabInCollectionViewHolder -> {
-                if (viewHolder.isLastTab) {
-                    ContextCompat.getDrawable(recyclerView.context, R.drawable.tab_in_collection_last_swipe_background)
-                } else {
-                    ContextCompat.getDrawable(recyclerView.context, R.drawable.tab_in_collection_swipe_background)
-                }
+        val backgroundDrawable = when {
+            viewHolder is TabInCollectionViewHolder && viewHolder.isLastTab -> {
+                R.drawable.tab_in_collection_last_swipe_background
             }
-            else -> ContextCompat.getDrawable(recyclerView.context, R.drawable.session_background)
+            viewHolder is TabInCollectionViewHolder -> {
+                R.drawable.tab_in_collection_swipe_background
+            }
+            else -> R.drawable.session_background
         }
 
+        val background = ContextCompat.getDrawable(recyclerView.context, backgroundDrawable)
         background?.let {
             icon?.let {
                 val itemView = viewHolder.itemView

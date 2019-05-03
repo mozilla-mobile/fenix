@@ -46,7 +46,7 @@ data class Tab(
     val url: String,
     val hostname: String,
     val title: String,
-    val selected: Boolean,
+    val selected: Boolean? = null,
     val thumbnail: Bitmap? = null
 )
 
@@ -54,7 +54,8 @@ data class TabCollection(
     val id: Int,
     val title: String,
     val tabs: MutableList<Tab>,
-    var expanded: Boolean
+    val iconColor: Int = 0,
+    var expanded: Boolean = false
 )
 
 sealed class Mode {
@@ -79,7 +80,7 @@ sealed class TabAction : Action {
     object PrivateBrowsingLearnMore : TabAction()
 }
 
-sealed class CollectionAction: Action {
+sealed class CollectionAction : Action {
     data class Expand(val collection: TabCollection) : CollectionAction()
     data class Collapse(val collection: TabCollection) : CollectionAction()
     data class Delete(val collection: TabCollection) : CollectionAction()
