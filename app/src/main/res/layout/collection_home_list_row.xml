@@ -37,14 +37,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="17dp"
                 android:layout_marginStart="14dp"
-                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
-                android:maxLines="2"
-                android:minLines="2"
+                android:maxLines="1"
+                android:minLines="1"
                 android:textAppearance="@style/Header16TextStyle"
                 app:layout_constraintStart_toEndOf="@id/collection_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/collection_share_button"/>
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+                android:id="@+id/expand_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="26dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_chevron_down"
+                app:layout_constraintStart_toEndOf="@id/collection_title"
+                app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
                 android:id="@+id/collection_description"

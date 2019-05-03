@@ -110,10 +110,12 @@ class CollectionViewHolder(
             (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
             view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
             view.collection_description.visibility = View.GONE
+            view.expand_button.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_chevron_up))
         } else {
             (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 12
             view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
             view.collection_description.visibility = View.VISIBLE
+            view.expand_button.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_chevron_down))
         }
     }
 
