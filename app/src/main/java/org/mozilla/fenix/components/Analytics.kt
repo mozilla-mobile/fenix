@@ -8,10 +8,12 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import io.sentry.dsn.InvalidDsnException
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
+import mozilla.components.support.base.log.Log
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -33,14 +35,33 @@ class Analytics(
         var services = listOf<CrashReporterService>()
 
         if (!BuildConfig.SENTRY_TOKEN.isNullOrEmpty()) {
-            val sentryService = SentryService(
-                context,
-                BuildConfig.SENTRY_TOKEN,
-                tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
-                sendEventForNativeCrashes = true
-            )
+            try {
+                val sentryService = SentryService(
+                    context,
+                    BuildConfig.SENTRY_TOKEN,
+                    tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
+                    sendEventForNativeCrashes = true
+                )
 
-            services += sentryService
+                services += sentryService
+            } catch (e: IllegalArgumentException) {
+                /*
+                 * Simply log that we had a problem. In the future, maybe we do something else?
+                 */
+                Log.log(
+                    Log.Priority.WARN,
+                    message = "Sentry Service could not be initialized because of a bad argument to the constructor",
+                    throwable = e,
+                    tag = "Analytics"
+                )
+            } catch (e: InvalidDsnException) {
+                Log.log(
+                    Log.Priority.WARN,
+                    message = "Sentry Service could not be initialized because of a bad DSN",
+                    throwable = e,
+                    tag = "Analytics"
+                )
+            }
         }
 
         val socorroService = MozillaSocorroService(context, context.getString(R.string.app_name))
