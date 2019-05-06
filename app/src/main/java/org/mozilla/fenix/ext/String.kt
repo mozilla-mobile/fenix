@@ -21,6 +21,15 @@ fun String.replace(pairs: Map<String, String>): String {
 fun String?.urlToHost(): String {
     return try {
         val url = URL(this)
+        url.host
+    } catch (e: MalformedURLException) {
+        ""
+    }
+}
+
+fun String?.urlToTrimmedHost(): String {
+    return try {
+        val url = URL(this)
         val firstIndex = url.host.indexOfFirst { it == '.' } + 1
         val lastIndex = url.host.indexOfLast { it == '.' }
 

@@ -110,7 +110,8 @@ class CollectionViewHolder(
         view.collection_description.text = titleList
 
         if (collection.expanded) {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = EXPANDED_MARGIN
+            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
+            collection_title.setPadding(0, 0, 0, EXPANDED_PADDING)
             view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
             view.collection_description.visibility = View.GONE
             view.expand_button.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_chevron_up))
@@ -161,7 +162,7 @@ class CollectionViewHolder(
 
     companion object {
         const val MAX_COLOR_INDEX = 4
-        const val EXPANDED_MARGIN = 8
+        const val EXPANDED_PADDING = 60
         const val COLLAPSED_MARGIN = 12
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20

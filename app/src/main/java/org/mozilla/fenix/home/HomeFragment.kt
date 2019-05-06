@@ -42,7 +42,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.allowUndo
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.share
-import org.mozilla.fenix.ext.urlToHost
+import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Mode
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
@@ -260,7 +260,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                 storedCollections.find { it.id == action.collection.id }?.apply { expanded = false }
             }
             is CollectionAction.Delete -> {
-                storedCollections.find { it.id == action.collection.id }?.let { storedCollections.clear() }
+                storedCollections.find { it.id == action.collection.id }?.let { storedCollections.remove(it) }
             }
             is CollectionAction.AddTab -> {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1575")
@@ -370,7 +370,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                         org.mozilla.fenix.home.sessioncontrol.Tab(
                             it.id,
                             it.url,
-                            it.url.urlToHost(),
+                            it.url.urlToTrimmedHost(),
                             it.title,
                             selected,
                             it.thumbnail
@@ -408,7 +408,7 @@ class HomeFragment : Fragment(), CoroutineScope {
                         org.mozilla.fenix.home.sessioncontrol.Tab(
                             it.id,
                             it.url,
-                            it.url.urlToHost(),
+                            it.url.urlToTrimmedHost(),
                             it.title,
                             selected,
                             it.thumbnail
@@ -420,7 +420,7 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     private fun showCollectionCreationFragment(selectedTabId: String?) {
         val tabs = requireComponents.core.sessionManager.sessions
-            .map { Tab(it.id, it.url, it.url.urlToHost(), it.title) }
+            .map { Tab(it.id, it.url, it.url.urlToTrimmedHost(), it.title) }
 
         val viewModel = activity?.run {
             ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
@@ -431,11 +431,17 @@ class HomeFragment : Fragment(), CoroutineScope {
         viewModel?.selectedTabs = selectedSet
         viewModel?.saveCollectionStep = SaveCollectionStep.SelectTabs
 
-        CreateCollectionFragment()
-            .show(
+        CreateCollectionFragment().also {
+            it.onCollectionSaved = {
+                storedCollections.add(it)
+                emitCollectionChange()
+            }
+
+            it.show(
                 requireActivity().supportFragmentManager,
                 CreateCollectionFragment.createCollectionTag
             )
+        }
     }
 
     companion object {

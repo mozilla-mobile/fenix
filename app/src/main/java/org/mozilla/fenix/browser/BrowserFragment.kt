@@ -74,7 +74,7 @@ import org.mozilla.fenix.customtabs.CustomTabsIntegration
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.share
-import org.mozilla.fenix.ext.urlToHost
+import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.mvi.ActionBusFactory
@@ -606,7 +606,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope,
 
     private fun showSaveToCollection() {
         getSessionById()?.let {
-            val tabs = Tab(it.id, it.url, it.url.urlToHost(), it.title)
+            val tabs = Tab(it.id, it.url, it.url.urlToTrimmedHost(), it.title)
             val viewModel = activity?.run {
                 ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
             }
