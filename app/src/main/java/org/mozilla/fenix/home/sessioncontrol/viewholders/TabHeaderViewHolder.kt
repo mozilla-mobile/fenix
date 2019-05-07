@@ -42,9 +42,10 @@ class TabHeaderViewHolder(
                 if (isPrivate) R.string.tabs_header_private_title else R.string.tab_header_label
             header_text.text = context.getString(headerTextResourceId)
 
-            add_tab_button.increaseTapArea(addTabButtonIncreaseDps)
-            add_tab_button.setOnClickListener {
-                actionEmitter.onNext(TabAction.Add)
+            add_tab_button.run {
+                setOnClickListener {
+                    actionEmitter.onNext(TabAction.Add)
+                }
             }
 
             tabs_overflow_button.run {
@@ -94,7 +95,6 @@ class TabHeaderViewHolder(
     companion object {
         const val LAYOUT_ID = R.layout.tab_header
 
-        const val addTabButtonIncreaseDps = 8
-        const val overflowButtonIncreaseDps = 8
+        const val overflowButtonIncreaseDps = 16
     }
 }

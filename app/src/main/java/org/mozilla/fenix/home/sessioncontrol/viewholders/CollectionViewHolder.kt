@@ -55,7 +55,7 @@ class CollectionViewHolder(
         }
 
         collection_overflow_button.run {
-            increaseTapArea(buttonIncreaseDps)
+            increaseTapArea(overflowButtonIncreaseDps)
             setOnClickListener {
                 collectionMenu.menuBuilder
                     .build(view.context)
@@ -64,7 +64,6 @@ class CollectionViewHolder(
         }
 
         collection_share_button.run {
-            increaseTapArea(buttonIncreaseDps)
             setOnClickListener {
                 actionEmitter.onNext(CollectionAction.ShareTabs(collection))
             }
@@ -166,7 +165,7 @@ class CollectionViewHolder(
         const val COLLAPSED_MARGIN = 12
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
-        const val buttonIncreaseDps = 24
+        const val overflowButtonIncreaseDps = 16
     }
 
     enum class CollectionState {
