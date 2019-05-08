@@ -10,15 +10,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.sync.BackgroundSyncManager
 import mozilla.components.feature.sync.GlobalSyncableStoreProvider
 import mozilla.components.service.fxa.Config
-import mozilla.components.service.fxa.FxaAccountManager
+import mozilla.components.service.fxa.manager.DeviceTuple
+import mozilla.components.service.fxa.manager.FxaAccountManager
+import org.mozilla.fenix.test.Mockable
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
  * background worker.
  */
+@Mockable
 class BackgroundServices(
     context: Context,
     historyStorage: PlacesHistoryStorage,
@@ -47,7 +51,13 @@ class BackgroundServices(
         it.addStore("bookmarks")
     }
 
-    val accountManager = FxaAccountManager(context, config, scopes, syncManager).also {
+    val accountManager = FxaAccountManager(
+        context,
+        config,
+        scopes,
+        DeviceTuple("Fenix", DeviceType.MOBILE, emptyList()),
+        syncManager
+    ).also {
         CoroutineScope(Dispatchers.Main).launch { it.initAsync().await() }
     }
 }

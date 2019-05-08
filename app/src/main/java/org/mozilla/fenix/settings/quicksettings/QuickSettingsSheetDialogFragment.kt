@@ -4,15 +4,21 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity.BOTTOM
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.core.widget.NestedScrollView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,27 +27,31 @@ import mozilla.components.feature.sitepermissions.SitePermissions
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
+import org.mozilla.fenix.exceptions.ExceptionDomains
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.utils.Settings
+import java.net.MalformedURLException
+import java.net.URL
 import kotlin.coroutines.CoroutineContext
 
 private const val KEY_URL = "KEY_URL"
 private const val KEY_IS_SECURED = "KEY_IS_SECURED"
 private const val KEY_SITE_PERMISSIONS = "KEY_SITE_PERMISSIONS"
 private const val KEY_IS_TP_ON = "KEY_IS_TP_ON"
+private const val KEY_DIALOG_GRAVITY = "KEY_DIALOG_GRAVITY"
 private const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4
 
 @SuppressWarnings("TooManyFunctions")
-class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineScope {
+class QuickSettingsSheetDialogFragment : AppCompatDialogFragment(), CoroutineScope {
     private val safeArguments get() = requireNotNull(arguments)
     private val url: String by lazy { safeArguments.getString(KEY_URL) }
     private val isSecured: Boolean by lazy { safeArguments.getBoolean(KEY_IS_SECURED) }
     private val isTrackingProtectionOn: Boolean by lazy { safeArguments.getBoolean(KEY_IS_TP_ON) }
+    private val promptGravity: Int by lazy { safeArguments.getInt(KEY_DIALOG_GRAVITY) }
     private lateinit var quickSettingsComponent: QuickSettingsComponent
     private lateinit var job: Job
 
@@ -62,23 +72,53 @@ class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineS
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        return inflateRootView(container)
+    }
+
+    private fun inflateRootView(container: ViewGroup? = null): View {
         val contextThemeWrapper = ContextThemeWrapper(
             activity,
             (activity as HomeActivity).themeManager.currentThemeResource
         )
-        val localInflater = inflater.cloneInContext(contextThemeWrapper)
-        return localInflater.inflate(
+        return LayoutInflater.from(contextThemeWrapper).inflate(
             R.layout.fragment_quick_settings_dialog_sheet,
             container,
             false
         )
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val customDialog = if (promptGravity == BOTTOM) {
+            return BottomSheetDialog(requireContext(), this.theme)
+        } else {
+            Dialog(requireContext())
+        }
+        return customDialog.applyCustomizationsForTopDialog(inflateRootView())
+    }
+
+    private fun Dialog.applyCustomizationsForTopDialog(rootView: View): Dialog {
+        addContentView(
+            rootView,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+        )
+
+        window?.apply {
+            setGravity(promptGravity)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            // This must be called after addContentView, or it won't fully fill to the edge.
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        return this
+    }
+
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
         quickSettingsComponent = QuickSettingsComponent(
-            rootView as ConstraintLayout, ActionBusFactory.get(this),
+            rootView as NestedScrollView, ActionBusFactory.get(this),
             QuickSettingsState(
                 QuickSettingsState.Mode.Normal(
                     url,
@@ -97,7 +137,8 @@ class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineS
             url: String,
             isSecured: Boolean,
             isTrackingProtectionOn: Boolean,
-            sitePermissions: SitePermissions?
+            sitePermissions: SitePermissions?,
+            gravity: Int = BOTTOM
         ): QuickSettingsSheetDialogFragment {
 
             val fragment = QuickSettingsSheetDialogFragment()
@@ -108,6 +149,7 @@ class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineS
                 putBoolean(KEY_IS_SECURED, isSecured)
                 putBoolean(KEY_IS_TP_ON, isTrackingProtectionOn)
                 putParcelable(KEY_SITE_PERMISSIONS, sitePermissions)
+                putInt(KEY_DIALOG_GRAVITY, gravity)
             }
             fragment.arguments = arguments
             return fragment
@@ -134,19 +176,17 @@ class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineS
     private fun arePermissionsGranted(requestCode: Int, grantResults: IntArray) =
         requestCode == REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }
 
-    private fun toggleTrackingProtection(trackingEnabled: Boolean, context: Context) {
-        with(requireComponents.core) {
-            val policy =
-                createTrackingProtectionPolicy(trackingEnabled)
-            Settings.getInstance(context).setTrackingProtection(trackingEnabled)
-            engine.settings.trackingProtectionPolicy = policy
-
-            with(sessionManager) {
-                sessions.forEach {
-                    getEngineSession(it)?.enableTrackingProtection(
-                        policy
-                    )
-                }
+    private fun toggleTrackingProtection(context: Context, url: String) {
+        val host = try {
+            URL(url).host
+        } catch (e: MalformedURLException) {
+            url
+        }
+        launch {
+            if (!ExceptionDomains.load(context).contains(host)) {
+                ExceptionDomains.add(context, host)
+            } else {
+                ExceptionDomains.remove(context, listOf(host))
             }
         }
     }
@@ -169,7 +209,7 @@ class QuickSettingsSheetDialogFragment : BottomSheetDialogFragment(), CoroutineS
                     }
                     is QuickSettingsAction.ToggleTrackingProtection -> {
                         val trackingEnabled = it.trackingProtection
-                        context?.let { toggleTrackingProtection(trackingEnabled, it) }
+                        context?.let { context: Context -> toggleTrackingProtection(context, url) }
                         launch(Dispatchers.Main) {
                             getManagedEmitter<QuickSettingsChange>().onNext(
                                 QuickSettingsChange.Change(
