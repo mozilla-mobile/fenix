@@ -13,7 +13,6 @@ import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabAction
 import org.mozilla.fenix.home.sessioncontrol.onNext
@@ -49,7 +48,6 @@ class TabHeaderViewHolder(
             }
 
             tabs_overflow_button.run {
-                increaseTapArea(overflowButtonIncreaseDps)
                 setOnClickListener {
                     tabsMenu.menuBuilder
                         .build(view.context)
@@ -94,7 +92,5 @@ class TabHeaderViewHolder(
 
     companion object {
         const val LAYOUT_ID = R.layout.tab_header
-
-        const val overflowButtonIncreaseDps = 16
     }
 }

@@ -21,7 +21,6 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
@@ -55,7 +54,6 @@ class CollectionViewHolder(
         }
 
         collection_overflow_button.run {
-            increaseTapArea(overflowButtonIncreaseDps)
             setOnClickListener {
                 collectionMenu.menuBuilder
                     .build(view.context)
@@ -165,7 +163,6 @@ class CollectionViewHolder(
         const val COLLAPSED_MARGIN = 12
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
-        const val overflowButtonIncreaseDps = 16
     }
 
     enum class CollectionState {
