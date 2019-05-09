@@ -20,6 +20,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.mvi.UIView
+import org.mozilla.fenix.utils.Settings
 
 class QuickActionUIView(
     container: ViewGroup,
@@ -30,6 +31,8 @@ class QuickActionUIView(
     override val view: NestedScrollView = LayoutInflater.from(container.context)
         .inflate(R.layout.component_quick_action_sheet, container, true)
         .findViewById(R.id.nestedScrollQuickAction) as NestedScrollView
+
+    val quickActionSheet = view.quick_action_sheet as QuickActionSheet
 
     init {
         val quickActionSheetBehavior =
@@ -111,5 +114,9 @@ class QuickActionUIView(
         }
         view.quick_action_read_appearance.visibility = if (it.readerActive) View.VISIBLE else View.GONE
         view.quick_action_bookmark.isSelected = it.bookmarked
+
+        if (it.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
+            quickActionSheet.bounceSheet()
+        }
     }
 }

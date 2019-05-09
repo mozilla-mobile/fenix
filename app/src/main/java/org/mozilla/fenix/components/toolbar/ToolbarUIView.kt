@@ -48,6 +48,8 @@ class ToolbarUIView(
             ?: sessionManager.selectedSession
 
         view.apply {
+            elevation = resources.pxToDp(TOOLBAR_ELEVATION).toFloat()
+
             setOnUrlCommitListener {
                 actionEmitter.onNext(SearchAction.UrlCommitted(it, sessionId, state?.engine))
             false
@@ -186,6 +188,7 @@ class ToolbarUIView(
     }
 
     companion object {
+        private const val TOOLBAR_ELEVATION = 16
         private const val PROGRESS_BOTTOM = 0
         private const val PROGRESS_TOP = 1
         const val browserActionMarginDp = 8
