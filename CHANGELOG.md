@@ -46,9 +46,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - #1311 - Enable downloads in custom tabs.
 - #1874 - Added TOP info panel dialog for custom tabs.
 - #1411 - Added disabled style for disabled permissions items in site info panel.
+- #1735 - Adds API to see the release channel
 
 ### Changed
 - #1429 - Updated site permissions ui for MVP
 - #1599 - Fixed a crash creating a bookmark for a custom tab
 - #1414 - Fixed site permissions settings getting reset in Android 6.
+- #1994 - Made app state persist better when rotating the screen
+
 ### Removed

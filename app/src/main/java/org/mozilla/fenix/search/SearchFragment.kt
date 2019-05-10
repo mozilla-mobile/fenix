@@ -67,6 +67,7 @@ class SearchFragment : Fragment(), BackHandler {
 
         toolbarComponent = ToolbarComponent(
             view.toolbar_component_wrapper,
+            this,
             ActionBusFactory.get(this),
             sessionId,
             isPrivate,
@@ -74,7 +75,7 @@ class SearchFragment : Fragment(), BackHandler {
             view.search_engine_icon
         )
 
-        awesomeBarComponent = AwesomeBarComponent(view.search_layout, ActionBusFactory.get(this))
+        awesomeBarComponent = AwesomeBarComponent(view.search_layout, this, ActionBusFactory.get(this))
         ActionBusFactory.get(this).logMergedObservables()
         return view
     }
@@ -228,7 +229,8 @@ class SearchFragment : Fragment(), BackHandler {
                             searchTermOrURL = it.searchTerms,
                             newTab = sessionId == null,
                             from = BrowserDirection.FromSearch,
-                            engine = it.engine
+                            engine = it.engine,
+                            forceSearch = true
                         )
 
                         val engine = it.engine ?: requireComponents
