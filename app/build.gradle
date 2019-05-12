@@ -322,7 +322,6 @@ dependencies {
 
     implementation Deps.mozilla_lib_crash
     debugImplementation Deps.leakcanary
-    releaseImplementation Deps.leakcanary_noop
 
     implementation Deps.mozilla_lib_fetch_httpurlconnection
 

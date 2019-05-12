@@ -59,7 +59,6 @@ open class FenixApplication : Application() {
             return
         }
 
-        setupLeakCanary()
         if (Settings.getInstance(this).isTelemetryEnabled) {
             components.analytics.metrics.start()
         }
@@ -100,7 +99,7 @@ open class FenixApplication : Application() {
         // no-op, LeakCanary is disabled by default
     }
 
-    open fun toggleLeakCanary(newValue: Boolean) {
+    open fun updateLeakCanaryState() {
         // no-op, LeakCanary is disabled by default
     }
 
