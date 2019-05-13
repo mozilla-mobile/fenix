@@ -20,5 +20,5 @@ class TestComponents(private val context: Context) : Components(context) {
         )
     }
     override val analytics by lazy { Analytics(context) }
-    override val storage by lazy { Storage(context) }
+    override val storage by lazy { PermissionStorage(context) }
 }

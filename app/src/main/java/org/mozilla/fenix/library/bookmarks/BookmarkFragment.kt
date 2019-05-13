@@ -48,6 +48,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.share
 import org.mozilla.fenix.ext.urlToHost
+import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -241,7 +242,7 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
                         getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(currentRoot - it.item.guid))
 
                         CoroutineScope(Main).allowUndo(
-                            view!!, getString(R.string.bookmark_deletion_snackbar_message, it.item.url.urlToHost()),
+                            view!!, getString(R.string.bookmark_deletion_snackbar_message, it.item.url.urlToTrimmedHost()),
                             getString(R.string.bookmark_undo_deletion), { refreshBookmarks(components) }
                         ) {
                             components.core.bookmarksStorage.deleteNode(it.item.guid)
