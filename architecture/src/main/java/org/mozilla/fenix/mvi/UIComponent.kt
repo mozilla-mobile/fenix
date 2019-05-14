@@ -9,8 +9,11 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 
 abstract class UIComponent<S : ViewState, A : Action, C : Change>(
     protected val owner: Fragment,
@@ -32,32 +35,39 @@ open class UIComponentViewModel<S : ViewState, A : Action, C : Change>(
     private val reducer: Reducer<S, C>
 ) : ViewModel() {
 
-    private var currentState: S = initialState
-    private var statesDisposable: Disposable? = null
+    private var currentState: BehaviorSubject<S> = BehaviorSubject.createDefault(initialState)
+    private var statesDisposable: CompositeDisposable = CompositeDisposable()
 
     /**
      * Render the ViewState to the View through the Reducer
      */
     fun render(changesObservable: Observable<C>, uiView: UIView<S, A, C>): Observable<S> {
         val statesObservable = internalRender(changesObservable, reducer)
-        statesDisposable = statesObservable
+
+        statesObservable
+            .subscribe(currentState::onNext)
+            .addTo(statesDisposable)
+
+        statesObservable
             .subscribe(uiView.updateView())
+            .addTo(statesDisposable)
+
         return statesObservable
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected fun internalRender(changesObservable: Observable<C>, reducer: Reducer<S, C>): Observable<S> =
         changesObservable
-            .scan(currentState, reducer)
+            .withLatestFrom(currentState)
+            .map { reducer(it.second, it.first) }
             .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .replay(1)
             .autoConnect(0)
-            .doOnNext { currentState = it }
 
     override fun onCleared() {
         super.onCleared()
-        statesDisposable?.dispose()
+        statesDisposable.clear()
     }
 }
