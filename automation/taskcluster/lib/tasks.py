@@ -530,7 +530,7 @@ class TaskBuilder(object):
                     "--test={}".format(test_name),
                     "--app=fenix",
                     "--binary=org.mozilla.fenix.raptor",
-                    "--activity=GeckoViewActivity",
+                    "--activity=org.mozilla.fenix.browser.BrowserPerformanceTestActivity",
                     "--download-symbols=ondemand"
                 ] + extra_test_args,
                 "env": {
