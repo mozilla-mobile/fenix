@@ -10,41 +10,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.reactivex.Observable
 import mozilla.components.concept.storage.BookmarkNode
-import org.mozilla.fenix.mvi.Action
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.Change
-import org.mozilla.fenix.mvi.Reducer
-import org.mozilla.fenix.mvi.UIComponent
-import org.mozilla.fenix.mvi.UIComponentViewModel
-import org.mozilla.fenix.mvi.UIView
-import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.*
 import org.mozilla.fenix.test.Mockable
 
 @Mockable
 class BookmarkComponent(
     private val container: ViewGroup,
-    owner: Fragment,
     bus: ActionBusFactory,
-    override var initialState: BookmarkState =
-        BookmarkState(null, BookmarkState.Mode.Normal)
+    viewModelProvider: UIComponentViewModelProvider<BookmarkState, BookmarkChange>
 ) :
     UIComponent<BookmarkState, BookmarkAction, BookmarkChange>(
-        owner,
         bus.getManagedEmitter(BookmarkAction::class.java),
-        bus.getSafeManagedObservable(BookmarkChange::class.java)
+        bus.getSafeManagedObservable(BookmarkChange::class.java),
+        viewModelProvider
     ) {
     override fun initView(): UIView<BookmarkState, BookmarkAction, BookmarkChange> =
         BookmarkUIView(container, actionEmitter, changesObservable)
 
-    override fun render(): Observable<BookmarkState> {
-        return ViewModelProvider(
-            owner,
-            BookmarkViewModel.Factory(initialState)
-        ).get(BookmarkViewModel::class.java).render(changesObservable, uiView)
-    }
-
     init {
-        render()
+        bind()
     }
 }
 
@@ -82,15 +66,7 @@ operator fun BookmarkNode.contains(item: BookmarkNode): Boolean {
 }
 
 class BookmarkViewModel(initialState: BookmarkState) :
-    UIComponentViewModel<BookmarkState, BookmarkAction, BookmarkChange>(initialState, reducer) {
-
-    class Factory(
-        private val initialState: BookmarkState
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            BookmarkViewModel(initialState) as T
-    }
+    UIComponentViewModelBase<BookmarkState, BookmarkChange>(initialState, reducer) {
 
     companion object {
         val reducer: Reducer<BookmarkState, BookmarkChange> = { state, change ->

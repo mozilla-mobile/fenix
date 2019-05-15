@@ -4,70 +4,62 @@
 
 package org.mozilla.fenix.mvi
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+
+interface UIComponentViewModel<S : ViewState, C : Change> {
+    val changes: Observer<C>
+    val state: Observable<S>
+}
+
+interface UIComponentViewModelProvider<S : ViewState, C : Change> {
+    fun fetchViewModel(): UIComponentViewModel<S, C>
+}
 
 abstract class UIComponent<S : ViewState, A : Action, C : Change>(
-    protected val owner: Fragment,
     protected val actionEmitter: Observer<A>,
-    protected val changesObservable: Observable<C>
+    protected val changesObservable: Observable<C>,
+    private val viewModelProvider: UIComponentViewModelProvider<S, C>
 ) {
-
-    abstract var initialState: S
-
     open val uiView: UIView<S, A, C> by lazy { initView() }
 
     abstract fun initView(): UIView<S, A, C>
     open fun getContainerId() = uiView.containerId
-    abstract fun render(): Observable<S>
+
+    fun bind(): Disposable {
+        val viewModel = viewModelProvider.fetchViewModel()
+
+        changesObservable.subscribe(viewModel.changes)
+        return viewModel.state.subscribe(uiView.updateView())
+    }
 }
 
-open class UIComponentViewModel<S : ViewState, A : Action, C : Change>(
+abstract class UIComponentViewModelBase<S : ViewState, C: Change>(
     initialState: S,
-    private val reducer: Reducer<S, C>
-) : ViewModel() {
+    reducer: Reducer<S, C>
+) : ViewModel(), UIComponentViewModel<S, C> {
 
-    private var currentState: BehaviorSubject<S> = BehaviorSubject.createDefault(initialState)
-    private var statesDisposable: CompositeDisposable = CompositeDisposable()
+    final override val changes: Observer<C>
+    private var _state: BehaviorSubject<S> = BehaviorSubject.createDefault(initialState)
+    override val state: Observable<S>
+        get() = _state
 
-    /**
-     * Render the ViewState to the View through the Reducer
-     */
-    fun render(changesObservable: Observable<C>, uiView: UIView<S, A, C>): Observable<S> {
-        val statesObservable = internalRender(changesObservable, reducer)
+    init {
+        changes = PublishSubject.create()
 
-        statesObservable
-            .subscribe(currentState::onNext)
-            .addTo(statesDisposable)
-
-        statesObservable
-            .subscribe(uiView.updateView())
-            .addTo(statesDisposable)
-
-        return statesObservable
-    }
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    protected fun internalRender(changesObservable: Observable<C>, reducer: Reducer<S, C>): Observable<S> =
-        changesObservable
-            .withLatestFrom(currentState)
+        changes
+            .withLatestFrom(_state)
             .map { reducer(it.second, it.first) }
             .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .replay(1)
-            .autoConnect(0)
-
-    override fun onCleared() {
-        super.onCleared()
-        statesDisposable.clear()
+            .subscribe(_state)
     }
 }
