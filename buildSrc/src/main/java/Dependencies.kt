@@ -160,9 +160,6 @@ object Deps {
     const val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
 
-    const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
-    const val glideAnnotationProcessor = "com.github.bumptech.glide:compiler:${Versions.glide}"
-
     const val flipper = "com.facebook.flipper:flipper:${Versions.flipper}"
     const val soLoader = "com.facebook.soloader:soloader:${Versions.soLoader}"
 
