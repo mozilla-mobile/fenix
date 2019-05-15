@@ -5,11 +5,15 @@
 package org.mozilla.fenix.library.bookmarks
 
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import io.reactivex.Observable
-import org.mozilla.fenix.mvi.*
+import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.Change
+import org.mozilla.fenix.mvi.Action
+import org.mozilla.fenix.mvi.ActionBusFactory
+import org.mozilla.fenix.mvi.Reducer
+import org.mozilla.fenix.mvi.UIComponent
+import org.mozilla.fenix.mvi.UIComponentViewModelBase
+import org.mozilla.fenix.mvi.UIComponentViewModelProvider
+import org.mozilla.fenix.mvi.UIView
 
 class SignInComponent(
     private val container: ViewGroup,

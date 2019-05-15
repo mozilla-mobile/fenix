@@ -7,15 +7,16 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.graphics.Bitmap
 import android.os.Parcelable
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observable
 import io.reactivex.Observer
 import kotlinx.android.parcel.Parcelize
-import org.mozilla.fenix.mvi.*
+import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.Change
+import org.mozilla.fenix.mvi.Action
+import org.mozilla.fenix.mvi.ActionBusFactory
+import org.mozilla.fenix.mvi.UIComponent
+import org.mozilla.fenix.mvi.UIComponentViewModelBase
+import org.mozilla.fenix.mvi.UIComponentViewModelProvider
 
 class SessionControlComponent(
     private val container: ViewGroup,
@@ -27,7 +28,6 @@ class SessionControlComponent(
         bus.getSafeManagedObservable(SessionControlChange::class.java),
         viewModelProvider
     ) {
-
 
     override fun initView() = SessionControlUIView(container, actionEmitter, changesObservable)
 

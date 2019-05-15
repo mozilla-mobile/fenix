@@ -456,6 +456,7 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     private fun emitSessionChanges() {
         val sessionManager = requireComponents.core.sessionManager
+
         getManagedEmitter<SessionControlChange>().onNext(
             SessionControlChange.TabsChange(
                 sessionManager.sessions

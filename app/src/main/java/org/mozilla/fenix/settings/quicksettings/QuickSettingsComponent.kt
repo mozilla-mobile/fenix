@@ -6,15 +6,17 @@ package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import io.reactivex.Observable
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.ktx.kotlin.toUri
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.mvi.*
-import org.mozilla.fenix.quickactionsheet.QuickActionState
+import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.Change
+import org.mozilla.fenix.mvi.Action
+import org.mozilla.fenix.mvi.ActionBusFactory
+import org.mozilla.fenix.mvi.UIComponent
+import org.mozilla.fenix.mvi.UIComponentViewModelBase
+import org.mozilla.fenix.mvi.UIComponentViewModelProvider
+import org.mozilla.fenix.mvi.UIView
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.toStatus
 import org.mozilla.fenix.settings.toggle
