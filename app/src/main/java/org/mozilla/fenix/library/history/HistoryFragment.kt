@@ -65,10 +65,9 @@ class HistoryFragment : Fragment(), CoroutineScope, BackHandler {
             ActionBusFactory.get(this),
             FenixViewModelProvider.create(
                 this,
-                HistoryViewModel::class.java
-            ) {
-                HistoryViewModel(HistoryState(emptyList(), HistoryState.Mode.Normal))
-            }
+                HistoryViewModel::class.java,
+                HistoryViewModel.Companion::create
+            )
         )
         return view
     }

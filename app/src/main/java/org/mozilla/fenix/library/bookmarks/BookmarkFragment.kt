@@ -80,10 +80,9 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
             ActionBusFactory.get(this),
             FenixViewModelProvider.create(
                 this,
-                BookmarkViewModel::class.java
-            ) {
-                BookmarkViewModel(BookmarkState(null, BookmarkState.Mode.Normal))
-            }
+                BookmarkViewModel::class.java,
+                BookmarkViewModel.Companion::create
+            )
         )
         signInComponent = SignInComponent(
             view.bookmark_layout,

@@ -68,6 +68,7 @@ class HistoryViewModel(
     initialState: HistoryState
 ) : UIComponentViewModelBase<HistoryState, HistoryChange>(initialState, reducer) {
     companion object {
+        fun create() = HistoryViewModel(HistoryState(emptyList(), HistoryState.Mode.Normal))
         val reducer: (HistoryState, HistoryChange) -> HistoryState = { state, change ->
             when (change) {
                 is HistoryChange.Change -> state.copy(mode = HistoryState.Mode.Normal, items = change.list)

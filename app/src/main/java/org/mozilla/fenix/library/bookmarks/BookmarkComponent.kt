@@ -73,6 +73,8 @@ class BookmarkViewModel(initialState: BookmarkState) :
     UIComponentViewModelBase<BookmarkState, BookmarkChange>(initialState, reducer) {
 
     companion object {
+        fun create() = BookmarkViewModel(BookmarkState(null, BookmarkState.Mode.Normal))
+
         val reducer: Reducer<BookmarkState, BookmarkChange> = { state, change ->
             when (change) {
                 is BookmarkChange.Change -> {
