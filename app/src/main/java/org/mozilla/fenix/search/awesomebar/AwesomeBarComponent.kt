@@ -12,13 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import io.reactivex.Observable
 import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.ext.logDebug
-import org.mozilla.fenix.mvi.Action
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.Change
-import org.mozilla.fenix.mvi.Reducer
-import org.mozilla.fenix.mvi.UIComponent
-import org.mozilla.fenix.mvi.UIComponentViewModel
-import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.*
 
 data class AwesomeBarState(
     val query: String,
@@ -40,42 +34,25 @@ sealed class AwesomeBarChange : Change {
 
 class AwesomeBarComponent(
     private val container: ViewGroup,
-    owner: Fragment,
     bus: ActionBusFactory,
-    override var initialState: AwesomeBarState = AwesomeBarState("", false)
+    viewModelProvider: UIComponentViewModelProvider<AwesomeBarState, AwesomeBarChange>
 ) : UIComponent<AwesomeBarState, AwesomeBarAction, AwesomeBarChange>(
-    owner,
     bus.getManagedEmitter(AwesomeBarAction::class.java),
-    bus.getSafeManagedObservable(AwesomeBarChange::class.java)
+    bus.getSafeManagedObservable(AwesomeBarChange::class.java),
+    viewModelProvider
 ) {
     override fun initView() = AwesomeBarUIView(container, actionEmitter, changesObservable)
 
-    override fun render(): Observable<AwesomeBarState> =
-        ViewModelProviders.of(owner, AwesomeBarViewModel.Factory(initialState))
-            .get(AwesomeBarViewModel::class.java).render(changesObservable, uiView)
-
     init {
-        render()
+        bind()
     }
 }
 
-class AwesomeBarViewModel(initialState: AwesomeBarState) :
-    UIComponentViewModel<AwesomeBarState, AwesomeBarAction, AwesomeBarChange>(
-        initialState,
-        reducer
-    ) {
-
-    class Factory(
-        private val initialState: AwesomeBarState
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            AwesomeBarViewModel(initialState) as T
-    }
-
+class AwesomeBarViewModel(
+    initialState: AwesomeBarState
+) : UIComponentViewModelBase<AwesomeBarState, AwesomeBarChange>(initialState, reducer) {
     companion object {
         val reducer: Reducer<AwesomeBarState, AwesomeBarChange> = { state, change ->
-            logDebug("IN_REDUCER", change.toString())
             when (change) {
                 is AwesomeBarChange.SearchShortcutEngineSelected ->
                     state.copy(suggestionEngine = change.engine, showShortcutEnginePicker = false)

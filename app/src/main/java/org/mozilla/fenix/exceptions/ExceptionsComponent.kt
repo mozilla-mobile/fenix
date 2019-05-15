@@ -9,12 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import io.reactivex.Observable
-import org.mozilla.fenix.mvi.Action
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.Change
-import org.mozilla.fenix.mvi.UIComponent
-import org.mozilla.fenix.mvi.UIComponentViewModel
-import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.*
 import org.mozilla.fenix.test.Mockable
 
 data class ExceptionsItem(val url: String)
@@ -22,24 +17,19 @@ data class ExceptionsItem(val url: String)
 @Mockable
 class ExceptionsComponent(
     private val container: ViewGroup,
-    owner: Fragment,
     bus: ActionBusFactory,
-    override var initialState: ExceptionsState = ExceptionsState(emptyList())
+    viewModelProvider: UIComponentViewModelProvider<ExceptionsState, ExceptionsChange>
 ) :
     UIComponent<ExceptionsState, ExceptionsAction, ExceptionsChange>(
-        owner,
         bus.getManagedEmitter(ExceptionsAction::class.java),
-        bus.getSafeManagedObservable(ExceptionsChange::class.java)
+        bus.getSafeManagedObservable(ExceptionsChange::class.java),
+        viewModelProvider
     ) {
-
-    override fun render(): Observable<ExceptionsState> =
-        ViewModelProviders.of(owner, ExceptionsViewModel.Factory(initialState))
-            .get(ExceptionsViewModel::class.java).render(changesObservable, uiView)
 
     override fun initView() = ExceptionsUIView(container, actionEmitter, changesObservable)
 
     init {
-        render()
+        bind()
     }
 }
 
@@ -56,20 +46,9 @@ sealed class ExceptionsChange : Change {
     data class Change(val list: List<ExceptionsItem>) : ExceptionsChange()
 }
 
-class ExceptionsViewModel(initialState: ExceptionsState) :
-    UIComponentViewModel<ExceptionsState, ExceptionsAction, ExceptionsChange>(
-        initialState,
-        reducer
-    ) {
-
-    class Factory(
-        private val initialState: ExceptionsState
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            ExceptionsViewModel(initialState) as T
-    }
-
+class ExceptionsViewModel(
+    initialState: ExceptionsState
+) : UIComponentViewModelBase<ExceptionsState, ExceptionsChange>(initialState, reducer) {
     companion object {
         val reducer: (ExceptionsState, ExceptionsChange) -> ExceptionsState = { state, change ->
             when (change) {

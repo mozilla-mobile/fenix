@@ -53,23 +53,14 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.kotlin.toUri
-import org.mozilla.fenix.BrowsingModeManager
-import org.mozilla.fenix.DefaultThemeManager
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.IntentReceiverActivity
-import org.mozilla.fenix.R
+import org.mozilla.fenix.*
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.BrowserMenuItemTapped.Item
-import org.mozilla.fenix.components.toolbar.SearchAction
-import org.mozilla.fenix.components.toolbar.SearchState
-import org.mozilla.fenix.components.toolbar.ToolbarComponent
-import org.mozilla.fenix.components.toolbar.ToolbarIntegration
-import org.mozilla.fenix.components.toolbar.ToolbarMenu
-import org.mozilla.fenix.components.toolbar.ToolbarUIView
+import org.mozilla.fenix.components.toolbar.*
 import org.mozilla.fenix.customtabs.CustomTabsIntegration
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
@@ -78,12 +69,10 @@ import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.mvi.ActionBusFactory
+import org.mozilla.fenix.mvi.UIComponentViewModelProvider
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
-import org.mozilla.fenix.quickactionsheet.QuickActionAction
-import org.mozilla.fenix.quickactionsheet.QuickActionChange
-import org.mozilla.fenix.quickactionsheet.QuickActionComponent
-import org.mozilla.fenix.quickactionsheet.QuickActionState
+import org.mozilla.fenix.quickactionsheet.*
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 import org.mozilla.fenix.utils.Settings
 import kotlin.coroutines.CoroutineContext
@@ -129,11 +118,17 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
 
         toolbarComponent = ToolbarComponent(
             view.browserLayout,
-            this,
             ActionBusFactory.get(this), customTabSessionId,
             (activity as HomeActivity).browsingModeManager.isPrivate,
-            SearchState("", getSessionById()?.searchTerms ?: "", isEditing = false),
-            search_engine_icon
+            search_engine_icon,
+            FenixViewModelProvider.create(
+                this,
+                ToolbarViewModel::class.java
+            ) {
+                ToolbarViewModel(
+                    SearchState("", getSessionById()?.searchTerms ?: "", isEditing = false)
+                )
+            }
         )
 
         toolbarComponent.uiView.view.apply {
@@ -154,14 +149,20 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
 
         QuickActionComponent(
             view.nestedScrollQuickAction,
-            this,
             ActionBusFactory.get(this),
-            QuickActionState(
-                readable = getSessionById()?.readerable ?: false,
-                bookmarked = findBookmarkedURL(getSessionById()),
-                readerActive = getSessionById()?.readerMode ?: false,
-                bounceNeeded = false
+            FenixViewModelProvider.create(
+                this,
+                QuickActionViewModel::class.java
+            ) {
+                QuickActionViewModel(
+                QuickActionState(
+                    readable = getSessionById()?.readerable ?: false,
+                    bookmarked = findBookmarkedURL(getSessionById()),
+                    readerActive = getSessionById()?.readerMode ?: false,
+                    bounceNeeded = false
+                )
             )
+            }
         )
 
         val activity = activity as HomeActivity
