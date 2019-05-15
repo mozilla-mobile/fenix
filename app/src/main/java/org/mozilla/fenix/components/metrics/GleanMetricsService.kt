@@ -22,6 +22,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.GleanMetrics.QrScanner
 
 private class EventWrapper<T : Enum<T>>(
     private val recorder: ((Map<T, String>?) -> Unit),
@@ -157,6 +158,18 @@ private val Event.wrapper
         )
         is Event.UriOpened -> EventWrapper<NoExtraKeys>(
             { Events.totalUriCount.add(1) }
+        )
+        is Event.QRScannerOpened -> EventWrapper<NoExtraKeys>(
+            { QrScanner.opened.record(it) }
+        )
+        is Event.QRScannerPromptDisplayed -> EventWrapper<NoExtraKeys>(
+            { QrScanner.promptDisplayed.record(it) }
+        )
+        is Event.QRScannerNavigationAllowed -> EventWrapper<NoExtraKeys>(
+            { QrScanner.navigationAllowed.record(it) }
+        )
+        is Event.QRScannerNavigationDenied -> EventWrapper<NoExtraKeys>(
+            { QrScanner.navigationDenied.record(it) }
         )
 
         // Don't track other events with Glean
