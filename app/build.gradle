@@ -385,9 +385,6 @@ dependencies {
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
 
-    implementation Deps.glide
-    annotationProcessor Deps.glideAnnotationProcessor
-
     debugImplementation Deps.flipper
     debugImplementation Deps.soLoader
 }
