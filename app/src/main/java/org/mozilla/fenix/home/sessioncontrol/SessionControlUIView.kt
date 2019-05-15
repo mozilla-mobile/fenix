@@ -18,7 +18,7 @@ import org.mozilla.fenix.BuildConfig
 
 private fun normalModeAdapterItems(tabs: List<Tab>, collections: List<TabCollection>): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(tabs.isNotEmpty()))
+    items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
@@ -48,7 +48,7 @@ private fun normalModeAdapterItems(tabs: List<Tab>, collections: List<TabCollect
 
 private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(tabs.isNotEmpty()))
+    items.add(AdapterItem.TabHeader(true, tabs.isNotEmpty()))
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))

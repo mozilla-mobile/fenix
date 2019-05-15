@@ -22,7 +22,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHold
 import java.lang.IllegalStateException
 
 sealed class AdapterItem {
-    data class TabHeader(val hasTabs: Boolean) : AdapterItem()
+    data class TabHeader(val isPrivate: Boolean, val hasTabs: Boolean) : AdapterItem()
     object NoTabMessage : AdapterItem()
     data class TabItem(val tab: Tab) : AdapterItem()
     object PrivateBrowsingDescription : AdapterItem()
@@ -95,6 +95,10 @@ class SessionControlAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
+            is TabHeaderViewHolder -> {
+                val tabHeader = items[position] as AdapterItem.TabHeader
+                holder.bind(tabHeader.isPrivate, tabHeader.hasTabs)
+            }
             is TabViewHolder -> holder.bindSession(
                 (items[position] as AdapterItem.TabItem).tab
             )
@@ -102,7 +106,7 @@ class SessionControlAdapter(
                 (items[position] as AdapterItem.CollectionItem).collection
             )
             is TabInCollectionViewHolder -> {
-                val item = (items[position] as AdapterItem.TabInCollectionItem)
+                val item = items[position] as AdapterItem.TabInCollectionItem
                 holder.bindSession(item.collection, item.tab, item.isLastTab)
             }
         }
