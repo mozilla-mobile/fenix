@@ -7,17 +7,19 @@ package org.mozilla.fenix.components.toolbar
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import io.reactivex.Observable
 import kotlinx.android.synthetic.main.component_search.*
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.mvi.*
+import org.mozilla.fenix.mvi.ViewState
+import org.mozilla.fenix.mvi.Change
+import org.mozilla.fenix.mvi.Action
+import org.mozilla.fenix.mvi.ActionBusFactory
+import org.mozilla.fenix.mvi.Reducer
+import org.mozilla.fenix.mvi.UIComponent
+import org.mozilla.fenix.mvi.UIComponentViewModelBase
+import org.mozilla.fenix.mvi.UIComponentViewModelProvider
 
 class ToolbarComponent(
     private val container: ViewGroup,

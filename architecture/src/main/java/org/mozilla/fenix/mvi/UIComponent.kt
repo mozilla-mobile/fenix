@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -33,15 +33,18 @@ abstract class UIComponent<S : ViewState, A : Action, C : Change>(
     abstract fun initView(): UIView<S, A, C>
     open fun getContainerId() = uiView.containerId
 
-    fun bind(): Disposable {
+    fun bind(): CompositeDisposable {
+        val compositeDisposable = CompositeDisposable()
         val viewModel = viewModelProvider.fetchViewModel()
 
-        changesObservable.subscribe(viewModel.changes)
-        return viewModel.state.subscribe(uiView.updateView())
+        compositeDisposable.add(changesObservable.subscribe(viewModel.changes::onNext))
+        compositeDisposable.add(viewModel.state.subscribe(uiView.updateView()))
+
+        return compositeDisposable
     }
 }
 
-abstract class UIComponentViewModelBase<S : ViewState, C: Change>(
+abstract class UIComponentViewModelBase<S : ViewState, C : Change>(
     initialState: S,
     reducer: Reducer<S, C>
 ) : ViewModel(), UIComponentViewModel<S, C> {
@@ -52,7 +55,7 @@ abstract class UIComponentViewModelBase<S : ViewState, C: Change>(
         get() = _state
 
     init {
-        changes = PublishSubject.create()
+        changes = PublishSubject.create<C>()
 
         changes
             .withLatestFrom(_state)

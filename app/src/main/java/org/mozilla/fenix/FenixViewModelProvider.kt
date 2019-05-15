@@ -10,10 +10,11 @@ import org.mozilla.fenix.mvi.UIComponentViewModelBase
 import org.mozilla.fenix.mvi.UIComponentViewModelProvider
 
 object FenixViewModelProvider {
-    fun <S : ViewState, C : Change, T : UIComponentViewModelBase<S, C>>create(
+    fun <S : ViewState, C : Change, T : UIComponentViewModelBase<S, C>> create(
         fragment: Fragment,
         modelClass: Class<T>,
-        viewModelCreator: () -> T): UIComponentViewModelProvider<S, C> {
+        viewModelCreator: () -> T
+    ): UIComponentViewModelProvider<S, C> {
         val factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -25,7 +26,6 @@ object FenixViewModelProvider {
             override fun fetchViewModel(): T {
                 return ViewModelProviders.of(fragment, factory).get(modelClass)
             }
-
         }
     }
 }
