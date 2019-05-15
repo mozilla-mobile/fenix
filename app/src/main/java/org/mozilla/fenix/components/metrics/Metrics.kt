@@ -242,7 +242,7 @@ interface MetricController {
 
     companion object {
         fun create(services: List<MetricsService>, isTelemetryEnabled: () -> Boolean): MetricController {
-            return if (BuildConfig.TELEMETRY) return ReleaseMetricController(services, isTelemetryEnabled)
+            return if (true) return ReleaseMetricController(services, isTelemetryEnabled)
             else DebugMetricController()
         }
     }

@@ -22,11 +22,19 @@ appservices {
 }
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('/home/hawkinsw/code/firefox/fenix/default.jks')
+            storePassword 'default'
+            keyAlias 'key0'
+            keyPassword 'default'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "org.mozilla.fenix"
-        minSdkVersion Config.minSdkVersion
-        targetSdkVersion Config.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName Config.generateDebugVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -55,10 +63,15 @@ android {
         }
         nightly releaseTemplate >> {
             resValue "bool", "IS_DEBUG", "false"
+            debuggable = true
+            signingConfig signingConfigs.config
         }
         beta releaseTemplate >> {
             applicationIdSuffix ".beta"
             resValue "bool", "IS_DEBUG", "false"
+        }
+        nightly {
+
         }
     }
 
@@ -135,6 +148,7 @@ android.applicationVariants.all { variant ->
 
     buildConfigField 'Boolean', 'COLLECTIONS_ENABLED', (!isReleased).toString()
 
+    project.ext.setProperty("versionName", android.defaultConfig.versionName)
     if (isReleased) {
         versionCode = generatedVersionCode
 
@@ -326,7 +340,8 @@ dependencies {
 
     implementation Deps.mozilla_lib_fetch_httpurlconnection
 
-    armImplementation Gecko.geckoview_nightly_arm
+    //armImplementation Gecko.geckoview_nightly_arm
+    armImplementation "org.mozilla.geckoview:geckoview-default-armeabi-v7a:68.0.20190509134720"
     x86Implementation Gecko.geckoview_nightly_x86
     aarch64Implementation Gecko.geckoview_nightly_aarch64
 
