@@ -22,7 +22,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHold
 import java.lang.IllegalStateException
 
 sealed class AdapterItem {
-    object TabHeader : AdapterItem()
+    data class TabHeader(val hasTabs: Boolean) : AdapterItem()
     object NoTabMessage : AdapterItem()
     data class TabItem(val tab: Tab) : AdapterItem()
     object PrivateBrowsingDescription : AdapterItem()
@@ -35,7 +35,7 @@ sealed class AdapterItem {
 
     val viewType: Int
         get() = when (this) {
-            TabHeader -> TabHeaderViewHolder.LAYOUT_ID
+            is TabHeader -> TabHeaderViewHolder.LAYOUT_ID
             NoTabMessage -> NoTabMessageViewHolder.LAYOUT_ID
             is TabItem -> TabViewHolder.LAYOUT_ID
             SaveTabGroup -> SaveTabGroupViewHolder.LAYOUT_ID
@@ -52,7 +52,7 @@ class SessionControlAdapter(
     private val actionEmitter: Observer<SessionControlAction>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var items: List<AdapterItem> = listOf()
+    private var items: List<AdapterItem> = listOf()
     private lateinit var job: Job
 
     fun reloadData(items: List<AdapterItem>) {
@@ -69,15 +69,10 @@ class SessionControlAdapter(
             NoTabMessageViewHolder.LAYOUT_ID -> NoTabMessageViewHolder(view)
             TabViewHolder.LAYOUT_ID -> TabViewHolder(view, actionEmitter, job)
             SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, actionEmitter)
-            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
-                view,
-                actionEmitter
-            )
+            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, actionEmitter)
             DeleteTabsViewHolder.LAYOUT_ID -> DeleteTabsViewHolder(view, actionEmitter)
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
-            NoCollectionMessageViewHolder.LAYOUT_ID -> NoCollectionMessageViewHolder(
-                view
-            )
+            NoCollectionMessageViewHolder.LAYOUT_ID -> NoCollectionMessageViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, actionEmitter, job)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view, actionEmitter, job)
             else -> throw IllegalStateException()
