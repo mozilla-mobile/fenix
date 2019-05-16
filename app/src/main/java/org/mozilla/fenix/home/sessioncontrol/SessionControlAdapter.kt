@@ -43,7 +43,11 @@ sealed class AdapterItem {
     object CollectionHeader : AdapterItem()
     object NoCollectionMessage : AdapterItem()
     data class CollectionItem(val collection: TabCollection) : AdapterItem()
-    data class TabInCollectionItem(val collection: TabCollection, val tab: ComponentTab, val isLastTab: Boolean) : AdapterItem()
+    data class TabInCollectionItem(
+        val collection: TabCollection,
+        val tab: ComponentTab,
+        val isLastTab: Boolean
+    ) : AdapterItem()
 
     object OnboardingHeader : AdapterItem()
     data class OnboardingSectionHeader(val labelBuilder: (Context) -> String) : AdapterItem()

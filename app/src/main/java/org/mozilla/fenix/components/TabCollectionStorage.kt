@@ -42,7 +42,11 @@ class TabCollectionStorage(private val context: Context, private val sessionMana
     }
 
     fun removeTabFromCollection(tabCollection: TabCollection, tab: Tab) {
-        collectionStorage.removeTabFromCollection(tabCollection, tab)
+        if (tabCollection.tabs.size == 1) {
+            removeCollection(tabCollection)
+        } else {
+            collectionStorage.removeTabFromCollection(tabCollection, tab)
+        }
     }
 
     fun renameCollection(tabCollection: TabCollection, title: String) {

@@ -53,7 +53,8 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat(), Cor
         super.onResume()
         launch(IO) {
             val context = requireContext()
-            sitePermissions = requireNotNull(context.components.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
+            sitePermissions =
+                requireNotNull(context.components.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
             launch(Main) {
                 bindCategoryPhoneFeatures()
             }

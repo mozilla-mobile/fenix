@@ -21,7 +21,6 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.urlToHost
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction

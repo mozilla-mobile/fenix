@@ -23,7 +23,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.ext.urlToHost
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction

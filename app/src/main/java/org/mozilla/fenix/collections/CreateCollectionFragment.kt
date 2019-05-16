@@ -88,6 +88,7 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
         job.cancel()
     }
 
+    @Suppress("ComplexMethod")
     private fun subscribeToActions() {
         getAutoDisposeObservable<CollectionCreationAction>().subscribe {
             when (it) {
@@ -112,7 +113,7 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
 
                     val sessionBundle = mutableListOf<Session>()
                     it.tabs.forEach {
-                        requireComponents.core.sessionManager.findSessionById(it.sessionId)?.let {session ->
+                        requireComponents.core.sessionManager.findSessionById(it.sessionId)?.let { session ->
                             sessionBundle.add(session)
                         }
                     }

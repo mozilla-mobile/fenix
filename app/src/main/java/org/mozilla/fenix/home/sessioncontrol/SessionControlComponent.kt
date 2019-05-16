@@ -16,7 +16,7 @@ import org.mozilla.fenix.mvi.Change
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.tab.collections.TabCollection as ACTabCollection
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
-import org.mozilla.fenix.ext.components 
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.UIComponent

@@ -7,7 +7,6 @@ package org.mozilla.fenix.home
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,6 @@ import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.feature.tab.collections.TabCollectionStorage
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
@@ -83,9 +81,6 @@ class HomeFragment : Fragment(), CoroutineScope {
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    // TODO Remove this stub when we have the a-c version!
-    var storedCollections = mutableListOf<TabCollection>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -195,8 +190,6 @@ class HomeFragment : Fragment(), CoroutineScope {
                     ) ?: arrayListOf()).toList()
                 )
             )
-
-            // TODO: Restore tab collections
         }
     }
 
@@ -330,7 +323,9 @@ class HomeFragment : Fragment(), CoroutineScope {
                     .onNext(SessionControlChange.ExpansionChange(action.collection, false))
             }
             is CollectionAction.Delete -> {
-                storedCollections.find { it.id == action.collection.id }?.let { storedCollections.remove(it) }
+                launch(Dispatchers.IO) {
+                    requireComponents.core.tabCollectionStorage.removeCollection(action.collection)
+                }
             }
             is CollectionAction.AddTab -> {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1575")
@@ -345,13 +340,11 @@ class HomeFragment : Fragment(), CoroutineScope {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1585")
             }
             is CollectionAction.RemoveTab -> {
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1578")
+                launch(Dispatchers.IO) {
+                    requireComponents.core.tabCollectionStorage.removeTabFromCollection(action.collection, action.tab)
+                }
             }
         }
-    }
-
-    private fun emitCollectionChanges(collections: List<TabCollection>) {
-        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(collections))
     }
 
     override fun onPause() {
@@ -401,10 +394,10 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {
         val observer = Observer<List<TabCollection>> {
-            emitCollectionChanges(it)
+            getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it))
         }
         requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
-       return observer
+        return observer
     }
 
     private fun subscribeToSessions(): SessionManager.Observer {
@@ -531,6 +524,5 @@ class HomeFragment : Fragment(), CoroutineScope {
     companion object {
         private const val toolbarPaddingDp = 12f
         private const val KEY_TABS = "tabs"
-        private const val KEY_COLLECTIONS = "collections"
     }
 }

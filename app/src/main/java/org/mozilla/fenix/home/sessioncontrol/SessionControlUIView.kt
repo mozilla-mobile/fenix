@@ -16,7 +16,11 @@ import org.mozilla.fenix.mvi.UIView
 import androidx.recyclerview.widget.ItemTouchHelper
 import org.mozilla.fenix.BuildConfig
 
-private fun normalModeAdapterItems(tabs: List<Tab>, collections: List<TabCollection>, expandedCollections: Set<Long>): List<AdapterItem> {
+private fun normalModeAdapterItems(
+    tabs: List<Tab>,
+    collections: List<TabCollection>,
+    expandedCollections: Set<Long>
+): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
 
@@ -33,7 +37,7 @@ private fun normalModeAdapterItems(tabs: List<Tab>, collections: List<TabCollect
     if (collections.isNotEmpty()) {
 
         // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
-        collections.reversed().map(AdapterItem::CollectionItem).forEach {
+        collections.map(AdapterItem::CollectionItem).forEach {
             items.add(it)
             if (it.collection.isExpanded(expandedCollections)) {
                 items.addAll(collectionTabItems(it.collection))
@@ -58,17 +62,6 @@ private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
     }
 
     return items
-}
-
-private fun addCollectionTabItems(
-    collection: TabCollection,
-    tabs: List<TabCollection>,
-    itemList: MutableList<AdapterItem>
-) {
-    for (tabIndex in 0 until tabs.size) {
-        itemList.add(AdapterItem.TabInCollectionItem
-            (collection, collection.tabs[tabIndex], tabIndex == collection.tabs.size - 1))
-    }
 }
 
 private fun onboardingAdapterItems(): List<AdapterItem> = listOf(
@@ -96,7 +89,7 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
 }
 
-private fun TabCollection.isExpanded(expandedCollections: Set<Long>) : Boolean {
+private fun TabCollection.isExpanded(expandedCollections: Set<Long>): Boolean {
     return expandedCollections.contains(this.id)
 }
 
