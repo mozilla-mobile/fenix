@@ -297,7 +297,10 @@ class HomeFragment : Fragment(), CoroutineScope {
                 Navigation.findNavController(view!!).navigate(directions)
             }
             is TabAction.ShareTabs -> {
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1843")
+                val shareText = requireComponents.core.sessionManager.sessions.joinToString("\n") {
+                    it.url
+                }
+                requireContext().share(shareText)
             }
         }
     }
@@ -338,7 +341,10 @@ class HomeFragment : Fragment(), CoroutineScope {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "2205")
             }
             is CollectionAction.ShareTabs -> {
-                ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "1585")
+                val shareText = action.collection.tabs.joinToString("\n") {
+                    it.url
+                }
+                requireContext().share(shareText)
             }
             is CollectionAction.RemoveTab -> {
                 launch(Dispatchers.IO) {
