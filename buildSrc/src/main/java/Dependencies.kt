@@ -27,6 +27,7 @@ private object Versions {
     const val androidx_lifecycle_savedstate = "1.0.0-alpha01"
     const val androidx_testing = "1.1.0-alpha08"
     const val androidx_core = "1.1.0-rc01"
+    const val androidx_paging = "2.0.0"
     const val androidx_transition = "1.1.0-rc02"
     const val google_material = "1.1.0-alpha07"
 
@@ -127,10 +128,12 @@ object Deps {
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
     const val mozilla_lib_fetch_httpurlconnection = "org.mozilla.components:lib-fetch-httpurlconnection:${Versions.mozilla_android_components}"
+    const val mozilla_ui_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
 
     const val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
     const val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
     const val mozilla_support_rustlog = "org.mozilla.components:support-rustlog:${Versions.mozilla_android_components}"
+    const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
@@ -148,6 +151,7 @@ object Deps {
     const val androidx_lifecycle_viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_viewmodel_ss = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidx_lifecycle_savedstate}"
+    const val androidx_paging = "androidx.paging:paging-runtime:${Versions.androidx_paging}"
     const val androidx_preference = "androidx.preference:preference-ktx:${Versions.androidx_preference}"
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment:${Versions.androidx_navigation}"
