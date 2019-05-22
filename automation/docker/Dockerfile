@@ -54,12 +54,14 @@ RUN sdkmanager --verbose "platform-tools" \
     "extras;google;m2repository"
 
 # Checkout source code
-#RUN git clone https://github.com/mozilla-mobile/fenix.git
-RUN git clone https://github.com/rpappalax/fenix.git -b dockerfile-add-test-deps --single-branch
+RUN git clone https://github.com/mozilla-mobile/fenix.git
 
 # Build project and run gradle tasks once to pull all dependencies
 WORKDIR /opt/fenix
-RUN ./gradlew -PversionName=0.0 --no-daemon assemble test lint
+RUN ./gradlew clean
+RUN ./gradlew --stop 
+#RUN ./gradlew  --no-daemon assembleDebug test lint 
+RUN ./gradlew  -PversionName=0.0 --no-daemon assemble test lint 
 
 # -- Test tools -------------------------------------------------------------------------
 
