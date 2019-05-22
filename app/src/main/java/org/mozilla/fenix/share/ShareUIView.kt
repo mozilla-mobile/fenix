@@ -38,6 +38,8 @@ class ShareUIView(
         }
         intent_handler_recyclerview.adapter = adapter
 
+        account_devices_recyclerview.adapter = AccountDevicesShareAdapter(view.context, actionEmitter)
+
         close_button.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
     }
 

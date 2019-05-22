@@ -39,6 +39,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/send_tab_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="account_header,account_devices_recyclerview,divider_line"/>
+
+            <TextView
+                android:text="@string/share_device_subheader"
+                android:textAllCaps="true"
+                android:singleLine="true"
+                android:textColor="?secondaryText"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/account_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="12dp"/>
+
+            <org.mozilla.fenix.share.AccountDevicesShareRecyclerView
+                android:id="@+id/account_devices_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/account_header"/>
+
+            <View
+                android:id="@+id/divider_line"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?neutralFaded"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/account_devices_recyclerview"/>
+
             <TextView
                 android:text="@string/share_link_subheader"
                 android:textAllCaps="true"
@@ -52,7 +94,7 @@
                 android:layout_marginTop="8dp"
                 android:id="@+id/link_header"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/divider_line"/>
 
             <ProgressBar
                 android:id="@+id/progress_bar"
