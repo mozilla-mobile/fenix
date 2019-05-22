@@ -12,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.component_share.*
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.mvi.UIView
 
@@ -38,7 +39,11 @@ class ShareUIView(
         }
         intent_handler_recyclerview.adapter = adapter
 
-        account_devices_recyclerview.adapter = AccountDevicesShareAdapter(view.context, actionEmitter)
+        if (BuildConfig.SEND_TAB_ENABLED) {
+            account_devices_recyclerview.adapter = AccountDevicesShareAdapter(view.context, actionEmitter)
+        } else {
+            send_tab_group.visibility = View.GONE
+        }
 
         close_button.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
     }
