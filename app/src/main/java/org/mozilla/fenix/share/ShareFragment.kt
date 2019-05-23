@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import kotlinx.android.synthetic.main.component_share.*
 import kotlinx.android.synthetic.main.fragment_share.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,6 +76,9 @@ class ShareFragment : DialogFragment(), CoroutineScope {
                 ShareAction.AddNewDeviceClicked -> {
                     requireComponents.useCases.tabsUseCases.addTab.invoke(ADD_NEW_DEVICES_URL, true)
                 }
+                ShareAction.HideSendTab -> {
+                    send_tab_group.visibility = View.GONE
+                }
                 is ShareAction.ShareAppClicked -> {
                     val intent = Intent(ACTION_SEND).apply {
                         putExtra(EXTRA_TEXT, url)
@@ -91,6 +95,7 @@ class ShareFragment : DialogFragment(), CoroutineScope {
     }
 
     companion object {
+        // TODO Replace this link with the correct one when provided.
         const val ADD_NEW_DEVICES_URL = "https://accounts.firefox.com/connect_another_device"
     }
 }
