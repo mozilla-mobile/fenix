@@ -93,12 +93,12 @@
             android:key="@string/pref_key_rate"
             android:title="@string/preferences_rate" />
         <androidx.preference.Preference
-            android:icon="@drawable/ic_notification"
-            android:key="@string/pref_key_feedback"
-            android:title="@string/preferences_feedback" />
-        <androidx.preference.Preference
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key_about"
             android:title="@string/preferences_about" />
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_info"
+            android:key="@string/pref_key_privacy_policy"
+            android:title="@string/preferences_privacy_policy" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

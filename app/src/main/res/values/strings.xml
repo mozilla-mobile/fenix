@@ -101,6 +101,8 @@
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">About %1$s</string>
+    <!-- Preference linking to the privacy policy -->
+    <string name="preferences_privacy_policy">Privacy Policy</string>
     <!-- Preference for settings related to saved passwords -->
     <string name="preferences_passwords">Passwords</string>
     <!-- Preference for settings related to saved credit cards and addresses -->
@@ -478,10 +480,12 @@
     <!-- Notifications -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Collection deleted</string>
-    <!-- Text shown in snackbar when user deletes a collection -->
+    <!-- Text shown in snackbar when user renames a collection -->
     <string name="snackbar_collection_renamed">Collection renamed</string>
     <!-- Text shown in snackbar when user deletes a tab -->
     <string name="snackbar_tab_deleted">Tab deleted</string>
+    <!-- Text shown in snackbar when user deletes all tabs -->
+    <string name="snackbar_tabs_deleted">Tabs deleted</string>
     <!-- Text for action to undo deleting a tab or collection shown in snackbar -->
     <string name="snackbar_deleted_undo">UNDO</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it

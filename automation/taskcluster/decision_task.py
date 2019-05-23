@@ -72,6 +72,8 @@ def pr_or_push(is_push):
         build_tasks[taskcluster.slugId()] = BUILDER.craft_test_task(variant)
 
     if is_push and SHORT_HEAD_BRANCH == 'master':
+        other_tasks[taskcluster.slugId()] = BUILDER.craft_dependencies_task()
+
         for variant in ('armRaptor', 'aarch64Raptor'):
             assemble_task_id = taskcluster.slugId()
             build_tasks[assemble_task_id] = BUILDER.craft_assemble_task(variant)
