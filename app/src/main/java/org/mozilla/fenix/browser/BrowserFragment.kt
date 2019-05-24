@@ -739,7 +739,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                 super.onLoadingStateChanged(session, loading)
             }
         }
-        getSessionById()?.register(observer)
+        getSessionById()?.register(observer, this)
         return observer
     }
 
@@ -749,7 +749,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                 super.onSessionSelected(session)
                 (activity as HomeActivity).updateThemeForSession(session)
             }
-        }.also { requireComponents.core.sessionManager.register(it) }
+        }.also { requireComponents.core.sessionManager.register(it, this) }
     }
 
     private fun findBookmarkedURL(session: Session?): Boolean {
