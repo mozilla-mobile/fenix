@@ -55,6 +55,7 @@ import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.Mode
 import org.mozilla.fenix.home.sessioncontrol.OnboardingAction
+import org.mozilla.fenix.home.sessioncontrol.OnboardingState
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
@@ -63,7 +64,6 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlViewModel
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.home.sessioncontrol.OnboardingState
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
@@ -77,7 +77,6 @@ import kotlin.math.roundToInt
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
     private val bus = ActionBusFactory.get(this)
-    private var sessionObserver: SessionManager.Observer? = null
     private var tabCollectionObserver: Observer<List<TabCollection>>? = null
 
     private val singleSessionObserver = object : Session.Observer {
@@ -86,6 +85,7 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
             emitSessionChanges()
         }
     }
+    private lateinit var sessionObserver: BrowserSessionsObserver
 
     private var homeMenu: HomeMenu? = null
 
@@ -103,6 +103,10 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+
+        sessionObserver = BrowserSessionsObserver(requireComponents.core.sessionManager, singleSessionObserver) {
+            emitSessionChanges()
+        }
     }
 
     override fun onCreateView(
@@ -260,14 +264,12 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.ModeChange(mode))
 
         emitSessionChanges()
-        sessionObserver = subscribeToSessions()
+        sessionObserver.onStart()
         tabCollectionObserver = subscribeToTabCollections()
     }
 
     override fun onStop() {
-        sessionObserver?.let {
-            requireComponents.core.sessionManager.unregister(it)
-        }
+        sessionObserver.onStop()
         tabCollectionObserver?.let {
             requireComponents.core.tabCollectionStorage.getCollections().removeObserver(it)
         }
@@ -453,9 +455,6 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         homeViewModel?.layoutManagerState =
             sessionControlComponent.view.layoutManager?.onSaveInstanceState()
         homeViewModel?.motionLayoutProgress = homeLayout?.progress ?: 0F
-        sessionObserver?.let {
-            requireComponents.core.sessionManager.unregister(it)
-        }
     }
 
     private fun setupHomeMenu() {
@@ -504,45 +503,6 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
             getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.CollectionsChange(it))
         }
         requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
-        return observer
-    }
-
-    private fun subscribeToSessions(): SessionManager.Observer {
-        val observer = object : SessionManager.Observer {
-            override fun onSessionAdded(session: Session) {
-                super.onSessionAdded(session)
-                session.register(singleSessionObserver, this@HomeFragment)
-                emitSessionChanges()
-            }
-
-            override fun onSessionRemoved(session: Session) {
-                super.onSessionRemoved(session)
-                session.unregister(singleSessionObserver)
-                emitSessionChanges()
-            }
-
-            override fun onSessionSelected(session: Session) {
-                super.onSessionSelected(session)
-                emitSessionChanges()
-            }
-
-            override fun onSessionsRestored() {
-                super.onSessionsRestored()
-                requireComponents.core.sessionManager.sessions.forEach {
-                    it.register(singleSessionObserver, this@HomeFragment)
-                }
-                emitSessionChanges()
-            }
-
-            override fun onAllSessionsRemoved() {
-                super.onAllSessionsRemoved()
-                requireComponents.core.sessionManager.sessions.forEach {
-                    it.unregister(singleSessionObserver)
-                }
-                emitSessionChanges()
-            }
-        }
-        requireComponents.core.sessionManager.register(observer, this)
         return observer
     }
 
@@ -687,5 +647,92 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val toolbarPaddingDp = 12f
         private const val MOTION_LAYOUT_PROGRESS_ROUND_POINT = 0.25f
+    }
+}
+
+/**
+ * Wrapper around sessions manager to obvserve changes in sessions.
+ * Similar to [mozilla.components.browser.session.utils.AllSessionsObserver] but ignores CustomTab sessions.
+ *
+ * Call [onStart] to start receiving updates into [onChanged] callback.
+ * Call [onStop] to stop receiving updates.
+ *
+ * @param manager [SessionManager] instance to subscribe to.
+ * @param observer [Session.Observer] instance that will recieve updates.
+ * @param onChanged callback that will be called when any of [SessionManager.Observer]'s events are fired.
+ */
+private class BrowserSessionsObserver(
+    private val manager: SessionManager,
+    private val observer: Session.Observer,
+    private val onChanged: () -> Unit
+) {
+
+    // TODO This is workaround. Should be removed when [mozilla.components.support.base.observer.ObserverRegistry]
+    // will not allow to subscribe to single session more than once.
+    private val observedSessions = mutableSetOf<Session>()
+
+    /**
+     * Start observing
+     */
+    fun onStart() {
+        manager.register(managerObserver)
+        subscribeToAll()
+    }
+
+    /**
+     * Stop observing (will not receive updates till next [onStop] call)
+     */
+    fun onStop() {
+        manager.unregister(managerObserver)
+        unsubscribeFromAll()
+    }
+
+    private fun subscribeToAll() {
+        manager.sessions.forEach(::subscribeTo)
+    }
+
+    private fun unsubscribeFromAll() {
+        manager.sessions.forEach(::unsubscribeFrom)
+    }
+
+    private fun subscribeTo(session: Session) {
+        if (!observedSessions.contains(session)) {
+            session.register(observer)
+            observedSessions += session
+        }
+    }
+
+    private fun unsubscribeFrom(session: Session) {
+        if (observedSessions.contains(session)) {
+            session.unregister(observer)
+            observedSessions -= session
+        }
+    }
+
+    private val managerObserver = object : SessionManager.Observer {
+
+        override fun onSessionAdded(session: Session) {
+            subscribeTo(session)
+            onChanged()
+        }
+
+        override fun onSessionsRestored() {
+            subscribeToAll()
+            onChanged()
+        }
+
+        override fun onAllSessionsRemoved() {
+            unsubscribeFromAll()
+            onChanged()
+        }
+
+        override fun onSessionRemoved(session: Session) {
+            unsubscribeFrom(session)
+            onChanged()
+        }
+
+        override fun onSessionSelected(session: Session) {
+            onChanged()
+        }
     }
 }
