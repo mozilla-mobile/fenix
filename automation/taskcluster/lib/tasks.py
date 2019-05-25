@@ -634,7 +634,7 @@ def _craft_apk_full_path_from_variant(variant):
     )
 
 
-_SUPPORTED_ARCHITECTURES = ('aarch64', 'arm', 'x86')
+_SUPPORTED_ARCHITECTURES = ('aarch64', 'arm', 'x86', 'x86_64')
 
 
 def get_architecture_and_build_type_from_variant(variant):

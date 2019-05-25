@@ -100,7 +100,7 @@ def pr_or_push(is_push):
 
 
 def release(track, is_staging, version_name):
-    architectures = ['x86', 'arm', 'aarch64']
+    architectures = ['x86', 'x86_64', 'arm', 'aarch64']
     apk_paths = ["public/target.{}.apk".format(arch) for arch in architectures]
 
     build_tasks = {}
