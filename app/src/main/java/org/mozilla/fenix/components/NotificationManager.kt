@@ -15,6 +15,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import mozilla.components.concept.sync.DeviceEvent
+import mozilla.components.concept.sync.TabData
 import org.mozilla.fenix.R
 
 /**
@@ -51,9 +52,10 @@ class NotificationManager(private val context: Context) {
 
             val builder = NotificationCompat.Builder(context, RECEIVE_TABS_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_status_logo)
-                .setContentTitle(tab.title)
+                .setTitle(event, tab)
                 .setContentText(tab.url)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
                 // Explicitly set a priority for <API25 devices.
                 // On newer devices this is inherited from the channel.
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -83,5 +85,22 @@ class NotificationManager(private val context: Context) {
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun NotificationCompat.Builder.setTitle(
+        event: DeviceEvent.TabReceived,
+        tab: TabData
+    ): NotificationCompat.Builder {
+        event.from?.let { device ->
+            setContentTitle(context.getString(R.string.fxa_tab_received_from_notification_name, device.displayName))
+            return this
+        }
+
+        if (tab.title.isEmpty()) {
+            setContentTitle(context.getString(R.string.fxa_tab_received_notification_name))
+        } else {
+            setContentTitle(tab.title)
+        }
+        return this
     }
 }
