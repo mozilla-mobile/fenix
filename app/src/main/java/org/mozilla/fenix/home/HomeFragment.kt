@@ -446,6 +446,7 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
     }
 
     override fun onPause() {
+        invokePendingDeleteJobs()
         super.onPause()
         val homeViewModel = activity?.run {
             ViewModelProviders.of(this).get(HomeScreenViewModel::class.java)
