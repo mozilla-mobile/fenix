@@ -633,10 +633,5 @@ def schedule_task_graph(ordered_groups_of_tasks):
 
 
 def fetch_mozharness_task_id(geckoview_nightly_version):
-    nightly_build_id = geckoview_nightly_version.split('.')[-1]
-    nightly_date = arrow.get(nightly_build_id, 'YYYYMMDDHHmmss')
-
-    raptor_index = 'gecko.v2.mozilla-central.pushdate.{}.{:02}.{:02}.{}.firefox.linux64-debug'.format(
-        nightly_date.year, nightly_date.month, nightly_date.day, nightly_build_id
-    )
-    return taskcluster.Index().findTask(raptor_index)['taskId']
+    index = 'gecko.v2.mozilla-central.geckoview-version.{}.mobile.android-api-16-opt'.format(geckoview_nightly_version)
+    return taskcluster.Index().findTask(index)['taskId']
