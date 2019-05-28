@@ -604,6 +604,7 @@ def _craft_artifacts_from_variant(variant):
         }
     }
 
+
 def schedule_task(queue, taskId, task):
     print("TASK", taskId)
     print(json.dumps(task, indent=4, separators=(',', ': ')))
