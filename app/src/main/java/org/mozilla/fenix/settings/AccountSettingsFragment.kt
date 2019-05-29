@@ -100,11 +100,13 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
             // Current sync state
             updateLastSyncedTimePref(context!!, preferenceSyncNow)
-            if (requireComponents.backgroundServices.syncManager.isSyncRunning()) {
-                preferenceSyncNow.title = getString(R.string.sync_syncing_in_progress)
-                preferenceSyncNow.isEnabled = false
-            } else {
-                preferenceSyncNow.isEnabled = true
+            requireComponents.backgroundServices.syncManager?.let {
+                if (it.isSyncRunning()) {
+                    preferenceSyncNow.title = getString(R.string.sync_syncing_in_progress)
+                    preferenceSyncNow.isEnabled = false
+                } else {
+                    preferenceSyncNow.isEnabled = true
+                }
             }
         }
 
@@ -122,7 +124,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
         // NB: ObserverRegistry will take care of cleaning up internal references to 'observer' and
         // 'owner' when appropriate.
-        requireComponents.backgroundServices.syncManager.register(syncStatusObserver, owner = this, autoPause = true)
+        requireComponents.backgroundServices.syncManager?.register(syncStatusObserver, owner = this, autoPause = true)
     }
 
     private fun getClickListenerForSignOut(): Preference.OnPreferenceClickListener {
@@ -139,7 +141,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
         return Preference.OnPreferenceClickListener {
             // Trigger a sync.
             requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
-            requireComponents.backgroundServices.syncManager.syncNow()
+            requireComponents.backgroundServices.syncManager?.syncNow()
             // Poll for device events.
             launch {
                 accountManager.authenticatedAccount()
