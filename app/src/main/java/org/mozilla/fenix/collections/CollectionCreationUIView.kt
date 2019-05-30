@@ -112,6 +112,8 @@ class CollectionCreationUIView(
 
         when (it.saveCollectionStep) {
             is SaveCollectionStep.SelectTabs -> {
+                view.tab_list.isClickable = true
+
                 back_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectTabs))
                 }
@@ -184,6 +186,8 @@ class CollectionCreationUIView(
                 }
             }
             is SaveCollectionStep.SelectCollection -> {
+                view.tab_list.isClickable = false
+
                 save_button.visibility = View.GONE
 
                 view.bottom_bar_text.text =
@@ -212,6 +216,8 @@ class CollectionCreationUIView(
                     view.context.getString(R.string.create_collection_select_collection)
             }
             is SaveCollectionStep.NameCollection -> {
+                view.tab_list.isClickable = false
+
                 collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), setOf(), true)
                 back_button.setOnClickListener {
                     name_collection_edittext.hideKeyboard()
@@ -250,6 +256,8 @@ class CollectionCreationUIView(
                     view.context.getString(R.string.create_collection_name_collection)
             }
             is SaveCollectionStep.RenameCollection -> {
+                view.tab_list.isClickable = false
+
                 it.selectedTabCollection?.let { tabCollection ->
                     tabCollection.tabs.map { tab ->
                         Tab(
