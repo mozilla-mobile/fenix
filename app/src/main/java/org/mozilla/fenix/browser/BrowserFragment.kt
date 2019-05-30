@@ -44,7 +44,6 @@ import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.ThumbnailsFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
@@ -55,11 +54,11 @@ import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.kotlin.toUri
 import org.mozilla.fenix.BrowsingModeManager
-import org.mozilla.fenix.DefaultThemeManager
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
@@ -200,7 +199,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
         )
 
         val activity = activity as HomeActivity
-        DefaultThemeManager.applyStatusBarTheme(activity.window, activity.themeManager, activity)
+        ThemeManager.applyStatusBarTheme(activity.window, activity.themeManager, activity)
 
         return view
     }
@@ -288,7 +287,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             view = view
         )
 
-        val accentHighContrastColor = DefaultThemeManager.resolveAttribute(R.attr.accentHighContrast, requireContext())
+        val accentHighContrastColor = ThemeManager.resolveAttribute(R.attr.accentHighContrast, requireContext())
 
         sitePermissionsFeature.set(
             feature = SitePermissionsFeature(
@@ -325,7 +324,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                 } else {
                     activity?.exitImmersiveModeIfNeeded()
                     (activity as HomeActivity).let { activity: HomeActivity ->
-                        DefaultThemeManager.applyStatusBarTheme(
+                        ThemeManager.applyStatusBarTheme(
                             activity.window,
                             activity.themeManager,
                             activity
@@ -349,7 +348,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             view = view
         )
 
-        val primaryTextColor = DefaultThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
+        val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
         view.swipeRefresh.setColorSchemeColors(primaryTextColor)
         swipeRefreshFeature.set(
             feature = SwipeRefreshFeature(
