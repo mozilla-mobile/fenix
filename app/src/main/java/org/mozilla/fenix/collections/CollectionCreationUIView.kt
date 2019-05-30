@@ -73,7 +73,7 @@ class CollectionCreationUIView(
         }
 
         view.name_collection_edittext.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && !v.text.toString().isEmpty()) {
+            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotEmpty()) {
                 when (step) {
                     is SaveCollectionStep.NameCollection -> {
                         actionEmitter.onNext(
@@ -218,7 +218,7 @@ class CollectionCreationUIView(
             is SaveCollectionStep.NameCollection -> {
                 view.tab_list.isClickable = false
 
-                collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), setOf(), true)
+                collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), it.selectedTabs, true)
                 back_button.setOnClickListener {
                     name_collection_edittext.hideKeyboard()
                     val handler = Handler()
@@ -267,7 +267,7 @@ class CollectionCreationUIView(
                             tab.title
                         )
                     }.let { tabs ->
-                        collectionCreationTabListAdapter.updateData(tabs, setOf(), true)
+                        collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)
                     }
                 }
 

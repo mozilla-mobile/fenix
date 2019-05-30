@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/collection_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
@@ -44,12 +44,12 @@
             android:minLines="1"
             android:text="The quick brown fox jumped over the lazy dog"
             android:textAppearance="@style/Header16TextStyle"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@id/chevron"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/collection_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="wrap" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/chevron"
