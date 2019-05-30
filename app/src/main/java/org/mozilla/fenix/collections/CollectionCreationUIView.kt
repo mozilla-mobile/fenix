@@ -68,7 +68,7 @@ class CollectionCreationUIView(
             R.layout.component_collection_creation_name_collection
         )
 
-        view.close_icon.apply {
+        view.bottom_bar_icon_button.apply {
             increaseTapArea(increaseButtonByDps)
         }
 
@@ -129,11 +129,14 @@ class CollectionCreationUIView(
                     }
                 }
 
+                view.bottom_button_bar_layout.setOnClickListener(null)
+                view.bottom_button_bar_layout.isClickable = false
+
                 val drawable = view.context.getDrawable(R.drawable.ic_close)
                 drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-                view.close_icon.setImageDrawable(drawable)
+                view.bottom_bar_icon_button.setImageDrawable(drawable)
 
-                view.close_icon.setOnClickListener {
+                view.bottom_bar_icon_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.Close)
                 }
 
@@ -159,7 +162,7 @@ class CollectionCreationUIView(
                     )
                 }
 
-                view.select_tabs_layout_text.text = selectTabsText
+                view.bottom_bar_text.text = selectTabsText
 
                 save_button.setOnClickListener { _ ->
                     if (selectedCollection != null) {
@@ -183,16 +186,16 @@ class CollectionCreationUIView(
             is SaveCollectionStep.SelectCollection -> {
                 save_button.visibility = View.GONE
 
-                view.select_tabs_layout_text.text =
+                view.bottom_bar_text.text =
                     view.context.getString(R.string.create_collection_add_new_collection)
 
                 val drawable = view.context.getDrawable(R.drawable.ic_new)
                 drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-                view.close_icon.setImageDrawable(drawable)
+                view.bottom_bar_icon_button.setImageDrawable(drawable)
+                view.bottom_bar_icon_button.setOnClickListener(null)
 
-                view.close_icon.setOnClickListener(null)
-
-                view.add_tabs_layout.setOnClickListener {
+                view.bottom_button_bar_layout.isClickable = true
+                view.bottom_button_bar_layout.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
                 }
 

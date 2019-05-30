@@ -52,7 +52,7 @@
         android:background="?foundation"
         android:fadingEdgeLength="30dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/add_tabs_layout"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/back_button" />
@@ -90,7 +90,7 @@
         android:fadingEdgeLength="30dp"
         android:requiresFadingEdge="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/add_tabs_layout"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/back_button" />
@@ -107,7 +107,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_tabs_layout"
+        android:id="@+id/bottom_button_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -120,7 +120,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
-            android:id="@+id/close_icon"
+            android:id="@+id/bottom_bar_icon_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -133,7 +133,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/select_tabs_layout_text"
+            android:id="@+id/bottom_bar_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -146,7 +146,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/save_button"
-            app:layout_constraintStart_toEndOf="@id/close_icon"
+            app:layout_constraintStart_toEndOf="@id/bottom_bar_icon_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
