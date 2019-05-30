@@ -429,11 +429,15 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                     is SearchAction.ToolbarLongClicked -> {
                         getSessionById()?.let { session ->
                             session.copyUrl(requireContext())
-                            view?.rootView?.let {
-                                FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
-                                    .setAnchorView(toolbarComponent.uiView.view)
+                            view?.let {
+                                val snackbar = FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
                                     .setText(resources.getString(R.string.url_copied))
-                                    .show()
+
+                                if (!session.isCustomTabSession()) {
+                                    snackbar.anchorView = nestedScrollQuickAction
+                                }
+
+                                snackbar.show()
                             }
                         }
                     }
@@ -519,7 +523,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                                 it.rootView,
                                 Snackbar.LENGTH_LONG
                             )
-                                .setAnchorView(toolbarComponent.uiView.view)
+                                .setAnchorView(nestedScrollQuickAction)
                                 .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
                                     Navigation.findNavController(
                                         requireActivity(),
@@ -695,6 +699,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             viewModel?.selectedTabs = selectedSet
             viewModel?.saveCollectionStep = SaveCollectionStep.SelectCollection
             viewModel?.tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections.reversed()
+            viewModel?.snackbarAnchorView = nestedScrollQuickAction
             view?.let {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()
                 Navigation.findNavController(it).navigate(directions)
