@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -69,9 +70,6 @@ class CollectionCreationUIView(
 
         view.close_icon.apply {
             increaseTapArea(increaseButtonByDps)
-            setOnClickListener {
-                actionEmitter.onNext(CollectionCreationAction.Close)
-            }
         }
 
         view.name_collection_edittext.setOnEditorActionListener { v, actionId, _ ->
@@ -93,10 +91,6 @@ class CollectionCreationUIView(
                 }
             }
             false
-        }
-
-        view.add_collection_button.setOnClickListener {
-            actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
         }
 
         view.tab_list.run {
@@ -134,6 +128,15 @@ class CollectionCreationUIView(
                         actionEmitter.onNext(CollectionCreationAction.SelectAllTapped)
                     }
                 }
+
+                val drawable = view.context.getDrawable(R.drawable.ic_close)
+                drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
+                view.close_icon.setImageDrawable(drawable)
+
+                view.close_icon.setOnClickListener {
+                    actionEmitter.onNext(CollectionCreationAction.Close)
+                }
+
                 TransitionManager.beginDelayedTransition(
                     view.collection_constraint_layout,
                     transition
@@ -178,8 +181,20 @@ class CollectionCreationUIView(
                 }
             }
             is SaveCollectionStep.SelectCollection -> {
-                // Only show selected tabs and hide checkboxes
-                collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), setOf(), true)
+                save_button.visibility = View.GONE
+
+                view.select_tabs_layout_text.text =
+                    view.context.getString(R.string.create_collection_add_new_collection)
+
+                val drawable = view.context.getDrawable(R.drawable.ic_new)
+                drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
+                view.close_icon.setImageDrawable(drawable)
+
+                view.close_icon.setOnClickListener(null)
+
+                view.add_tabs_layout.setOnClickListener {
+                    actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
+                }
 
                 back_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectCollection))
@@ -194,6 +209,7 @@ class CollectionCreationUIView(
                     view.context.getString(R.string.create_collection_select_collection)
             }
             is SaveCollectionStep.NameCollection -> {
+                collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), setOf(), true)
                 back_button.setOnClickListener {
                     name_collection_edittext.hideKeyboard()
                     val handler = Handler()

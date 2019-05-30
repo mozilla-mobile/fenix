@@ -62,13 +62,15 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
                 this,
                 CollectionCreationViewModel::class.java
             ) {
-                CollectionCreationViewModel(CollectionCreationState(
-                    viewModel.tabs,
-                    viewModel.selectedTabs,
-                    viewModel.saveCollectionStep,
-                    viewModel.tabCollections,
-                    viewModel.selectedTabCollection
-                ))
+                CollectionCreationViewModel(
+                    CollectionCreationState(
+                        viewModel.tabs,
+                        viewModel.selectedTabs,
+                        viewModel.saveCollectionStep,
+                        viewModel.tabCollections,
+                        viewModel.selectedTabCollection
+                    )
+                )
             }
         )
         return view
@@ -100,7 +102,13 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
                 is CollectionCreationAction.Close -> dismiss()
                 is CollectionCreationAction.SaveTabsToCollection -> {
                     getManagedEmitter<CollectionCreationChange>()
-                        .onNext(CollectionCreationChange.StepChanged(SaveCollectionStep.SelectCollection))
+                        .onNext(
+                            CollectionCreationChange.StepChanged(
+                                if (viewModel.tabCollections.isEmpty())
+                                    SaveCollectionStep.NameCollection else
+                                    SaveCollectionStep.SelectCollection
+                            )
+                        )
                 }
                 is CollectionCreationAction.AddTabToSelection -> {
                     getManagedEmitter<CollectionCreationChange>()
@@ -189,11 +197,18 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
                 CollectionCreationChange.StepChanged(SaveCollectionStep.SelectTabs)
             )
             SaveCollectionStep.NameCollection -> {
-                getManagedEmitter<CollectionCreationChange>().onNext(
-                    CollectionCreationChange.StepChanged(SaveCollectionStep.SelectCollection)
-                )
+                getManagedEmitter<CollectionCreationChange>()
+                    .onNext(
+                        CollectionCreationChange.StepChanged(
+                            if (viewModel.tabCollections.isEmpty())
+                                SaveCollectionStep.SelectTabs else
+                                SaveCollectionStep.SelectCollection
+                        )
+                    )
             }
-            SaveCollectionStep.RenameCollection -> { dismiss() }
+            SaveCollectionStep.RenameCollection -> {
+                dismiss()
+            }
         }
     }
 }

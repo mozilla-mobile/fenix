@@ -714,8 +714,10 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             viewModel?.tabs = listOf(tabs)
             val selectedSet = mutableSetOf(tabs)
             viewModel?.selectedTabs = selectedSet
-            viewModel?.saveCollectionStep = SaveCollectionStep.SelectCollection
             viewModel?.tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections.reversed()
+            viewModel?.saveCollectionStep =
+                if (viewModel?.tabCollections?.size == 0) SaveCollectionStep.NameCollection else
+                    SaveCollectionStep.SelectCollection
             viewModel?.snackbarAnchorView = nestedScrollQuickAction
             view?.let {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()

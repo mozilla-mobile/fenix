@@ -45,33 +45,7 @@
         android:id="@+id/collections_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/add_collection_button" />
-
-    <TextView
-        android:id="@+id/add_collection_button"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?foundation"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_new"
-        android:drawablePadding="14dp"
-        android:drawableTint="?accent"
-        android:paddingStart="20dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:text="@string/create_collection_add_new_collection"
-        android:textColor="?primaryText"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        tools:targetApi="m" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?neutralFaded"
+        android:alpha="0.0"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
