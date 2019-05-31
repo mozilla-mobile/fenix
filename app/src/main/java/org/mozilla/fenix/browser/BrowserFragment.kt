@@ -62,6 +62,7 @@ import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.collections.getStepForCollectionsSize
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.metrics.Event
@@ -716,8 +717,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             viewModel?.selectedTabs = selectedSet
             viewModel?.tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections.reversed()
             viewModel?.saveCollectionStep =
-                if (viewModel?.tabCollections?.size == 0) SaveCollectionStep.NameCollection else
-                    SaveCollectionStep.SelectCollection
+                viewModel?.tabCollections?.getStepForCollectionsSize() ?: SaveCollectionStep.SelectCollection
             viewModel?.snackbarAnchorView = nestedScrollQuickAction
             view?.let {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()

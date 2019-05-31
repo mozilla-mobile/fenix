@@ -104,9 +104,7 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
                     getManagedEmitter<CollectionCreationChange>()
                         .onNext(
                             CollectionCreationChange.StepChanged(
-                                if (viewModel.tabCollections.isEmpty())
-                                    SaveCollectionStep.NameCollection else
-                                    SaveCollectionStep.SelectCollection
+                                viewModel.tabCollections.getStepForCollectionsSize()
                             )
                         )
                 }
@@ -200,9 +198,7 @@ class CreateCollectionFragment : DialogFragment(), CoroutineScope {
                 getManagedEmitter<CollectionCreationChange>()
                     .onNext(
                         CollectionCreationChange.StepChanged(
-                            if (viewModel.tabCollections.isEmpty())
-                                SaveCollectionStep.SelectTabs else
-                                SaveCollectionStep.SelectCollection
+                            viewModel.tabCollections.getStepForCollectionsSize()
                         )
                     )
             }
