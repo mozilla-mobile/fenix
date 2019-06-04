@@ -56,7 +56,6 @@ class CollectionViewHolder(
 
         collection_overflow_button.run {
             increaseTapArea(buttonIncreaseDps)
-
             setOnClickListener {
                 val location = IntArray(2)
                 it.getLocationInWindow(location)
