@@ -31,7 +31,7 @@ class AboutFragment : Fragment() {
         
         var maybeGecko = " \uD83E\uDD8E "
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
-            maybegecko = " "
+            maybeGecko = " "
         }
         val aboutText = try {
             val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
