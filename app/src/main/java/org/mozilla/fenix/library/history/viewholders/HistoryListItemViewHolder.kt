@@ -15,10 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.IconRequest
-import mozilla.components.browser.menu.BrowserMenu
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getMenuDirectionForLocation
 import org.mozilla.fenix.library.history.HistoryAction
 import org.mozilla.fenix.library.history.HistoryItem
 import org.mozilla.fenix.library.history.HistoryItemMenu
@@ -72,7 +72,7 @@ class HistoryListItemViewHolder(
         menuButton.setOnClickListener {
             historyMenu.menuBuilder.build(view.context).show(
                 anchor = it,
-                orientation = BrowserMenu.Orientation.DOWN)
+                orientation = it.getMenuDirectionForLocation())
         }
     }
 

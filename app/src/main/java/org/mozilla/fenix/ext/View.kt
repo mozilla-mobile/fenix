@@ -7,6 +7,7 @@ package org.mozilla.fenix.ext
 import android.graphics.Rect
 import android.view.TouchDelegate
 import android.view.View
+import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.support.ktx.android.content.res.pxToDp
 
 fun View?.increaseTapArea(extraDps: Int) {
@@ -21,4 +22,12 @@ fun View?.increaseTapArea(extraDps: Int) {
         touchRect.bottom += dips
         parent.touchDelegate = TouchDelegate(touchRect, this)
     }
+}
+
+fun View.getMenuDirectionForLocation(): BrowserMenu.Orientation {
+    val location = IntArray(2)
+    getLocationInWindow(location)
+    return if (location[1] > (rootView.measuredHeight / 2))
+        BrowserMenu.Orientation.UP else
+        BrowserMenu.Orientation.DOWN
 }

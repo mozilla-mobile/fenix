@@ -9,10 +9,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.synthetic.main.tab_header.view.*
-import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.getMenuDirectionForLocation
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabAction
 import org.mozilla.fenix.home.sessioncontrol.onNext
@@ -48,7 +48,7 @@ class TabHeaderViewHolder(
                 setOnClickListener {
                     tabsMenu.menuBuilder
                         .build(view.context)
-                        .show(anchor = it, orientation = BrowserMenu.Orientation.DOWN)
+                        .show(anchor = it, orientation = it.getMenuDirectionForLocation())
                 }
             }
         }

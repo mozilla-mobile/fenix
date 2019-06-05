@@ -20,12 +20,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.icons.IconRequest
-import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getMenuDirectionForLocation
 import org.mozilla.fenix.ext.increaseTapArea
 import kotlin.coroutines.CoroutineContext
 
@@ -176,13 +176,9 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
 
             bookmark_overflow.increaseTapArea(bookmarkOverflowExtraDips)
             bookmark_overflow.setOnClickListener {
-                val location = IntArray(2)
-                it.getLocationInWindow(location)
                 bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                     anchor = it,
-                    orientation = if (location[1] > (it.rootView.measuredHeight / 2))
-                        BrowserMenu.Orientation.UP else
-                        BrowserMenu.Orientation.DOWN
+                    orientation = it.getMenuDirectionForLocation()
                 )
             }
             bookmark_title.text = if (item.title.isNullOrBlank()) item.url else item.title
@@ -317,7 +313,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
                 bookmark_overflow.setOnClickListener {
                     bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                         anchor = it,
-                        orientation = BrowserMenu.Orientation.DOWN
+                        orientation = it.getMenuDirectionForLocation()
                     )
                 }
                 bookmark_layout.setOnLongClickListener(null)
@@ -384,7 +380,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
             bookmark_overflow.setOnClickListener {
                 bookmarkItemMenu.menuBuilder.build(containerView.context).show(
                     anchor = it,
-                    orientation = BrowserMenu.Orientation.DOWN
+                    orientation = it.getMenuDirectionForLocation()
                 )
             }
         }
