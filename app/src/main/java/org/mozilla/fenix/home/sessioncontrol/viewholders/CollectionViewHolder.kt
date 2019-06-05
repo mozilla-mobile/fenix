@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.collection_home_list_row.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
@@ -92,47 +93,49 @@ class CollectionViewHolder(
     }
 
     private fun updateCollectionUI() {
-        view.collection_title.text = collection.title
+        launch(Dispatchers.Main) {
+            view.collection_title.text = collection.title
 
-        val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost().capitalize() }
+            val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost(view.context).capitalize() }
 
-        var tabsDisplayed = 0
-        val tabTitlesList = hostNameList.joinToString(", ") {
-            if (it.length > maxTitleLength) {
-                it.substring(
-                    0,
-                    maxTitleLength
-                ) + "..."
-            } else {
-                tabsDisplayed += 1
-                it
+            var tabsDisplayed = 0
+            val tabTitlesList = hostNameList.joinToString(", ") {
+                if (it.length > maxTitleLength) {
+                    it.substring(
+                        0,
+                        maxTitleLength
+                    ) + "..."
+                } else {
+                    tabsDisplayed += 1
+                    it
+                }
             }
+
+            view.collection_description.text = tabTitlesList
+
+            if (expanded) {
+                (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
+                collection_title.setPadding(0, 0, 0, EXPANDED_PADDING)
+                view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
+                view.collection_description.visibility = View.GONE
+
+                view.chevron.setBackgroundResource(R.drawable.ic_chevron_up)
+            } else {
+                (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = COLLAPSED_MARGIN
+                view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
+                view.collection_description.visibility = View.VISIBLE
+
+                view.chevron.setBackgroundResource(R.drawable.ic_chevron_down)
+            }
+
+            view.collection_icon.setColorFilter(
+                ContextCompat.getColor(
+                    view.context,
+                    getIconColor(collection.id)
+                ),
+                android.graphics.PorterDuff.Mode.SRC_IN
+            )
         }
-
-        view.collection_description.text = tabTitlesList
-
-        if (expanded) {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
-            collection_title.setPadding(0, 0, 0, EXPANDED_PADDING)
-            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
-            view.collection_description.visibility = View.GONE
-
-            view.chevron.setBackgroundResource(R.drawable.ic_chevron_up)
-        } else {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = COLLAPSED_MARGIN
-            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
-            view.collection_description.visibility = View.VISIBLE
-
-            view.chevron.setBackgroundResource(R.drawable.ic_chevron_down)
-        }
-
-        view.collection_icon.setColorFilter(
-            ContextCompat.getColor(
-                view.context,
-                getIconColor(collection.id)
-            ),
-            android.graphics.PorterDuff.Mode.SRC_IN
-        )
     }
 
     private fun handleExpansion(isExpanded: Boolean) {

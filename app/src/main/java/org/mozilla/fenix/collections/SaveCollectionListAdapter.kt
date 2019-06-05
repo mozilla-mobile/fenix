@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.collections_list_item.view.collection_icon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Tab
@@ -81,31 +82,33 @@ class CollectionViewHolder(
 
     fun bind(collection: TabCollection) {
         this.collection = collection
-        view.collection_item.text = collection.title
+        launch(Dispatchers.Main) {
+            view.collection_item.text = collection.title
 
-        val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost().capitalize() }
+            val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost(view.context).capitalize() }
 
-        var tabsDisplayed = 0
-        val tabTitlesList = hostNameList.joinToString(", ") {
-            if (it.length > maxTitleLength) {
-                it.substring(
-                    0,
-                    maxTitleLength
-                ) + "..."
-            } else {
-                tabsDisplayed += 1
-                it
+            var tabsDisplayed = 0
+            val tabTitlesList = hostNameList.joinToString(", ") {
+                if (it.length > maxTitleLength) {
+                    it.substring(
+                        0,
+                        maxTitleLength
+                    ) + "..."
+                } else {
+                    tabsDisplayed += 1
+                    it
+                }
             }
-        }
-        view.collection_description.text = tabTitlesList
+            view.collection_description.text = tabTitlesList
 
-        view.collection_icon.setColorFilter(
-            ContextCompat.getColor(
-                view.context,
-                getIconColor(collection.id)
-            ),
-            android.graphics.PorterDuff.Mode.SRC_IN
-        )
+            view.collection_icon.setColorFilter(
+                ContextCompat.getColor(
+                    view.context,
+                    getIconColor(collection.id)
+                ),
+                android.graphics.PorterDuff.Mode.SRC_IN
+            )
+        }
     }
 
     @Suppress("ComplexMethod", "MagicNumber")
