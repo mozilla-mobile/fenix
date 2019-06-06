@@ -27,12 +27,11 @@ class AboutFragment : Fragment() {
 
         val appName = requireContext().resources.getString(R.string.app_name)
         (activity as AppCompatActivity).title = getString(R.string.preferences_about, appName)
-        
-        
         var maybeGecko = " \uD83E\uDD8E "
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
-            maybeGecko = " "
+            maybeGecko = "GV: "
         }
+
         val aboutText = try {
             val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
             val geckoVersion = PackageInfoCompat.getLongVersionCode(packageInfo).toString() + maybeGecko +
