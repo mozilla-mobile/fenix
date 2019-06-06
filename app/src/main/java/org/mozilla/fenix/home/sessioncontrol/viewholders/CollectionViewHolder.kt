@@ -22,8 +22,8 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.components.description
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
@@ -95,23 +95,7 @@ class CollectionViewHolder(
     private fun updateCollectionUI() {
         launch(Dispatchers.Main) {
             view.collection_title.text = collection.title
-
-            val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost(view.context).capitalize() }
-
-            var tabsDisplayed = 0
-            val tabTitlesList = hostNameList.joinToString(", ") {
-                if (it.length > maxTitleLength) {
-                    it.substring(
-                        0,
-                        maxTitleLength
-                    ) + "..."
-                } else {
-                    tabsDisplayed += 1
-                    it
-                }
-            }
-
-            view.collection_description.text = tabTitlesList
+            view.collection_description.text = collection.description(view.context)
 
             if (expanded) {
                 (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
@@ -148,7 +132,7 @@ class CollectionViewHolder(
 
     @Suppress("ComplexMethod", "MagicNumber")
     private fun getIconColor(id: Long): Int {
-        val sessionColorIndex = (id % 4).toInt()
+        val sessionColorIndex = (id % 5).toInt()
         return when (sessionColorIndex) {
             0 -> R.color.collection_icon_color_violet
             1 -> R.color.collection_icon_color_blue

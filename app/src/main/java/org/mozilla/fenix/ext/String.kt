@@ -7,9 +7,10 @@
 package org.mozilla.fenix.ext
 
 import android.content.Context
-import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import java.net.MalformedURLException
 import java.net.URL
+import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
+import mozilla.components.support.ktx.kotlin.toUri
 
 /**
  * Replaces the keys with the values with the map provided.
@@ -30,6 +31,14 @@ fun String?.getHostFromUrl(): String? = try {
     null
 }
 
+/**
+ * Trim a host's prefix and suffix
+ */
 suspend fun String.urlToTrimmedHost(context: Context): String {
-    return PublicSuffixList(context).stripPublicSuffix(URL(this).host).await().removePrefix("www.")
+    return try {
+        val host = this.toUri().hostWithoutCommonPrefixes ?: return this
+        context.components.publicSuffixList.stripPublicSuffix(host).await()
+    } catch (e: MalformedURLException) {
+        this
+    }
 }

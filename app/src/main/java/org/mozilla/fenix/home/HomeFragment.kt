@@ -87,7 +87,6 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
             super.onTitleChanged(session, title)
-
             emitSessionChanges()
         }
     }
@@ -173,7 +172,6 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
 
         return view
     }
-
 
     private fun restoreLayoutState() {
         val homeViewModel = activity?.run {
@@ -564,25 +562,23 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         val useCases = context?.components?.useCases?.tabsUseCases ?: return
 
         getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
-        deleteAllSessionsJob = {
+
+        val deleteOperation: (suspend () -> Unit) = {
             currentFilteredSessions.forEach {
                 useCases.removeTab.invoke(it)
             }
         }
+
+        deleteAllSessionsJob = deleteOperation
 
         allowUndo(
             view!!, getString(R.string.snackbar_tabs_deleted),
             getString(R.string.snackbar_deleted_undo), {
                 deleteAllSessionsJob = null
                 emitSessionChanges()
-            }
-        ) {
-            deleteAllSessionsJob = {
-                currentFilteredSessions.forEach {
-                    useCases.removeTab.invoke(it)
-                }
-            }
-        }
+            },
+            operation = deleteOperation
+        )
     }
 
     private fun removeTabWithUndo(sessionId: String) {
@@ -610,25 +606,23 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
                 )
             )
 
-            deleteSessionJob = {
+            val deleteOperation: (suspend () -> Unit) = {
                 sessionManager.findSessionById(sessionId)
                     ?.let { session ->
                         sessionManager.remove(session)
                     }
             }
 
+            deleteSessionJob = deleteOperation
+
             allowUndo(
                 view!!, getString(R.string.snackbar_tab_deleted),
                 getString(R.string.snackbar_deleted_undo), {
                     deleteSessionJob = null
                     emitSessionChanges()
-                }
-            ) {
-                sessionManager.findSessionById(sessionId)
-                    ?.let { session ->
-                        sessionManager.remove(session)
-                    }
-            }
+                },
+                operation = deleteOperation
+            )
         }
     }
 
@@ -677,7 +671,7 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
 
         launch(Dispatchers.Main) {
             val tabs = requireComponents.core.sessionManager.sessions.filter { !it.private }
-                .map { Tab(it.id, it.url, it.url.urlToTrimmedHost(), it.title) }
+                .map { Tab(it.id, it.url, it.url.urlToTrimmedHost(context), it.title) }
 
             val viewModel = activity?.run {
                 ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)

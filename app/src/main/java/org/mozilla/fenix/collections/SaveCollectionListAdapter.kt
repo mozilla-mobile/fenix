@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.urlToTrimmedHost
+import org.mozilla.fenix.components.description
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import kotlin.coroutines.CoroutineContext
@@ -84,22 +84,7 @@ class CollectionViewHolder(
         this.collection = collection
         launch(Dispatchers.Main) {
             view.collection_item.text = collection.title
-
-            val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost(view.context).capitalize() }
-
-            var tabsDisplayed = 0
-            val tabTitlesList = hostNameList.joinToString(", ") {
-                if (it.length > maxTitleLength) {
-                    it.substring(
-                        0,
-                        maxTitleLength
-                    ) + "..."
-                } else {
-                    tabsDisplayed += 1
-                    it
-                }
-            }
-            view.collection_description.text = tabTitlesList
+            view.collection_description.text = collection.description(view.context)
 
             view.collection_icon.setColorFilter(
                 ContextCompat.getColor(
@@ -113,7 +98,7 @@ class CollectionViewHolder(
 
     @Suppress("ComplexMethod", "MagicNumber")
     private fun getIconColor(id: Long): Int {
-        return when ((id % 4).toInt()) {
+        return when ((id % 5).toInt()) {
             0 -> R.color.collection_icon_color_violet
             1 -> R.color.collection_icon_color_blue
             2 -> R.color.collection_icon_color_pink
