@@ -484,6 +484,10 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
                         }
                     }
                 }
+                launch {
+                    delay(ANIM_SCROLL_DELAY)
+                    sessionControlComponent.view.smoothScrollToPosition(0)
+                }
             }
             is CollectionAction.ShareTabs -> {
                 val shareTabs = action.collection.tabs.map { ShareTab(it.url, it.title) }
@@ -736,7 +740,7 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
     }
 
     private fun scrollToCollections(addedTabsSize: Int) {
-        launch(Dispatchers.Main) {
+        launch {
             delay(ANIM_SCROLL_DELAY)
             val tabsSize = requireComponents.core.sessionManager.sessions.filter {
                 (activity as HomeActivity).browsingModeManager.isPrivate == it.private
@@ -748,7 +752,7 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
     }
 
     private fun animateTopCollection() {
-        launch(Dispatchers.Main) {
+        launch {
             delay(ANIM_SCROLL_DELAY)
             val tabsSize = requireComponents.core.sessionManager.sessions.filter {
                 (activity as HomeActivity).browsingModeManager.isPrivate == it.private
