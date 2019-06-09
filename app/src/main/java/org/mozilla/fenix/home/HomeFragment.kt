@@ -556,6 +556,28 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         return observer
     }
 
+    private suspend fun sessionsToTabs(
+        sessions: List<Session>,
+        sessionManager: SessionManager,
+        context: Context?,
+        isPrivate: Boolean,
+        sessionId: String? = null
+    ): List<Tab> {
+        var filteredSessions = sessions.filter { isPrivate == it.private }
+        if (sessionId != null) filteredSessions = filteredSessions.filter { it.id != sessionId }
+        return filteredSessions.map {
+            val selected = it == sessionManager.selectedSession
+            Tab(
+                it.id,
+                it.url,
+                it.url.urlToTrimmedHost(context!!),
+                it.title,
+                selected,
+                it.thumbnail
+            )
+        }
+    }
+
     private fun removeAllTabsWithUndo(isPrivate: Boolean) {
         val currentFilteredSessions =
             context?.components?.core?.sessionManager?.sessions?.filter { it.private == isPrivate } ?: return
@@ -589,20 +611,8 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
             getManagedEmitter<SessionControlChange>().onNext(
 
                 SessionControlChange.TabsChange(
-                    sessionManager.sessions
-                        .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }
-                        .filter { it.id != sessionId }
-                        .map {
-                            val selected = it == sessionManager.selectedSession
-                            Tab(
-                                it.id,
-                                it.url,
-                                it.url.urlToTrimmedHost(context!!),
-                                it.title,
-                                selected,
-                                it.thumbnail
-                            )
-                        }
+                    sessionsToTabs(sessionManager.sessions, sessionManager, context,
+                        (activity as HomeActivity).browsingModeManager.isPrivate, sessionId)
                 )
             )
 
@@ -640,19 +650,9 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
 
     private suspend fun getListOfTabs(sessionManager: SessionManager): List<Tab> {
         val context = context ?: return listOf()
-        return sessionManager.sessions
-            .filter { (activity as HomeActivity).browsingModeManager.isPrivate == it.private }
-            .map {
-                val selected = it == sessionManager.selectedSession
-                Tab(
-                    it.id,
-                    it.url,
-                    it.url.urlToTrimmedHost(context),
-                    it.title,
-                    selected,
-                    it.thumbnail
-                )
-            }
+
+        return sessionsToTabs(sessionManager.sessions, sessionManager, context,
+            isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate)
     }
 
     private fun emitAccountChanges() {
@@ -670,8 +670,8 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         val context = context?.let { it } ?: return
 
         launch(Dispatchers.Main) {
-            val tabs = requireComponents.core.sessionManager.sessions.filter { !it.private }
-                .map { Tab(it.id, it.url, it.url.urlToTrimmedHost(context), it.title) }
+            val tabs = sessionsToTabs(requireComponents.core.sessionManager.sessions,
+                requireComponents.core.sessionManager, context, false)
 
             val viewModel = activity?.run {
                 ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
