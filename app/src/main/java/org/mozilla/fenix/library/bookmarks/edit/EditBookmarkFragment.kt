@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.library.bookmarks.edit
 
-import android.content.Context
 import android.content.DialogInterface
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -33,7 +32,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import mozilla.appservices.places.BookmarkRoot
 import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode

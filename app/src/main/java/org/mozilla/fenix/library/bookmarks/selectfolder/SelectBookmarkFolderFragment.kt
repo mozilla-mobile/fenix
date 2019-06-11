@@ -125,7 +125,8 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
         checkIfSignedIn()
 
         launch(IO) {
-            bookmarkNode = withOptionalDesktopFolders(requireComponents.core.bookmarksStorage.getTree(folderGuid!!, true))
+            bookmarkNode =
+                withOptionalDesktopFolders(requireComponents.core.bookmarksStorage.getTree(folderGuid!!, true))
             launch(Main) {
                 (activity as HomeActivity).title = bookmarkNode?.title ?: getString(R.string.library_bookmarks)
                 val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
@@ -143,7 +144,8 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
     }
 
     private suspend fun virtualDesktopFolder(): BookmarkNode? {
-        val rootNode = requireComponents.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, false) ?: return null
+        val rootNode =
+            requireComponents.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, false) ?: return null
         return BookmarkNode(
             type = rootNode.type,
             guid = rootNode.guid,
