@@ -304,6 +304,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
             ) {
                 if (it) {
                     FenixSnackbar.make(view.rootView, Snackbar.LENGTH_SHORT)
+                        .setAnchorView(toolbarComponent.uiView.view)
                         .setText(getString(R.string.full_screen_notification))
                         .show()
                     activity?.enterToImmersiveMode()
