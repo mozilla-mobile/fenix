@@ -402,7 +402,7 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
@@ -418,7 +418,7 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
@@ -435,7 +435,7 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
