@@ -238,6 +238,7 @@ class BrowserFragment : Fragment(), BackHandler, CoroutineScope {
                 requireContext(),
                 sessionManager = sessionManager,
                 sessionId = customTabSessionId,
+                interceptLinkClicks = false,
                 fragmentManager = requireFragmentManager()
             ),
             owner = this,
