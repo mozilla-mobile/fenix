@@ -444,7 +444,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
             mMax = source.readInt()
         }
 
-        internal constructor(superState: Parcelable) : super(superState) {}
+        internal constructor(superState: Parcelable) : super(superState)
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             super.writeToParcel(dest, flags)
