@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.synthetic.main.collections_list_item.view.*
-import kotlinx.android.synthetic.main.collections_list_item.view.collection_description
-import kotlinx.android.synthetic.main.collections_list_item.view.collection_icon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,13 +18,13 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.description
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
 class SaveCollectionListAdapter(
     val actionEmitter: Observer<CollectionCreationAction>
-) : RecyclerView.Adapter<CollectionViewHolder>() {
+) : AdapterWithJob<CollectionViewHolder>() {
 
-    private lateinit var job: Job
     private var tabCollections = listOf<TabCollection>()
     private var selectedTabs: Set<Tab> = setOf()
 
@@ -34,7 +32,7 @@ class SaveCollectionListAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(CollectionViewHolder.LAYOUT_ID, parent, false)
 
-        return CollectionViewHolder(view, actionEmitter, job)
+        return CollectionViewHolder(view, actionEmitter, adapterJob)
     }
 
     override fun onBindViewHolder(holder: CollectionViewHolder, position: Int) {
@@ -49,16 +47,6 @@ class SaveCollectionListAdapter(
     }
 
     override fun getItemCount(): Int = tabCollections.size
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        job = Job()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        job.cancel()
-    }
 
     fun updateData(tabCollections: List<TabCollection>, selectedTabs: Set<Tab>) {
         this.tabCollections = tabCollections
