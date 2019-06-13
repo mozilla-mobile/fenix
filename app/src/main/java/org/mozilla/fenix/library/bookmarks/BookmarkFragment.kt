@@ -266,7 +266,8 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
                                     R.string.bookmark_deletion_snackbar_message,
                                     it.item.url?.urlToTrimmedHost(context)
                                 ),
-                                getString(R.string.bookmark_undo_deletion), { refreshBookmarks() }
+                                getString(R.string.bookmark_undo_deletion),
+                                onCancel = this::refreshBookmarks
                             ) {
                                 context.bookmarkStorage()?.deleteNode(it.item.guid)
                                 metrics()?.track(Event.RemoveBookmark)
@@ -343,7 +344,8 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
 
                 allowUndo(
                     view!!, getString(R.string.bookmark_deletion_multiple_snackbar_message),
-                    getString(R.string.bookmark_undo_deletion), { refreshBookmarks() }
+                    getString(R.string.bookmark_undo_deletion),
+                    onCancel = this::refreshBookmarks
                 ) {
                     deleteSelectedBookmarks(selectedBookmarks)
                     // Since this runs in a coroutine, we can't depend on the fragment still being attached.

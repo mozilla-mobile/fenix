@@ -561,7 +561,8 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         allowUndo(
             view!!,
             getString(R.string.snackbar_tabs_deleted),
-            getString(R.string.snackbar_deleted_undo), {
+            getString(R.string.snackbar_deleted_undo),
+            onCancel = {
                 deleteAllSessionsJob = null
                 emitSessionChanges()
             },
@@ -588,7 +589,8 @@ class HomeFragment : Fragment(), CoroutineScope, AccountObserver {
         allowUndo(
             view!!,
             getString(R.string.snackbar_tab_deleted),
-            getString(R.string.snackbar_deleted_undo), {
+            getString(R.string.snackbar_deleted_undo),
+            onCancel = {
                 pendingSessionDeletion = null
                 emitSessionChanges()
             },
