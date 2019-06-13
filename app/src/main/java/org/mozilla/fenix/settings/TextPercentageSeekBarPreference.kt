@@ -45,7 +45,8 @@ import java.text.NumberFormat
  * preference widget layout or `seekBarPreferenceStyle` attribute.
  *
  *
- * The [SeekBar] within the preference can be defined adjustable or not by setting `adjustable` attribute. If adjustable, the preference will be responsive to DPAD left/right keys.
+ * The [SeekBar] within the preference can be defined adjustable or not by setting `adjustable` attribute.
+ * If adjustable, the preference will be responsive to DPAD left/right keys.
  * Otherwise, it skips those keys.
  *
  *
@@ -132,7 +133,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
     }
 
     /**
-     * Listener reacting to the user pressing DPAD left/right keys if `adjustable` attribute is set to true; it transfers the key presses to the [SeekBar]
+     * Listener reacting to the user pressing DPAD left/right keys if `adjustable` attribute is
+     * set to true; it transfers the key presses to the [SeekBar]
      * to be handled accordingly.
      */
     private val mSeekBarKeyListener = View.OnKeyListener { v, keyCode, event ->
@@ -270,7 +272,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         // to perform the same steps by changing min/max to max/min as following:
         // mMax = a.getInt(...) and setMin(...).
         mMin = a.getInt(R.styleable.SeekBarPreference_min, 0)
-        max = a.getInt(R.styleable.SeekBarPreference_android_max, 100)
+        max = a.getInt(R.styleable.SeekBarPreference_android_max, SEEK_BAR_MAX)
         seekBarIncrement = a.getInt(R.styleable.SeekBarPreference_seekBarIncrement, 0)
         isAdjustable = a.getBoolean(R.styleable.SeekBarPreference_adjustable, true)
         mShowSeekBarValue = a.getBoolean(R.styleable.SeekBarPreference_showSeekBarValue, false)
@@ -390,7 +392,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         if (mExampleTextTextView != null) {
             value = value * STEP_SIZE + MIN_VALUE
             val decimal = value / DECIMAL_CONVERSION
-            val textSize = 16f * decimal
+            val textSize = TEXT_SIZE * decimal
             mExampleTextTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
         }
     }
@@ -476,5 +478,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         private const val STEP_SIZE = 5
         private const val MIN_VALUE = 50
         private const val DECIMAL_CONVERSION = 100f
+        private const val TEXT_SIZE = 16f
+        private const val SEEK_BAR_MAX = 100
+
     }
 }
