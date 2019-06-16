@@ -12,15 +12,30 @@ import org.mozilla.fenix.test.Mockable
  * Provides access to all components.
  */
 @Mockable
-class Components(private val context: Context) {
-    val backgroundServices by lazy {
+class Components(private val context: Context) : IComponents {
+
+    override val backgroundServices by lazy {
         BackgroundServices(context, core.historyStorage, core.bookmarksStorage, utils.notificationManager)
     }
-    val services by lazy { Services(backgroundServices.accountManager) }
-    val core by lazy { Core(context) }
-    val search by lazy { Search(context) }
-    val useCases by lazy { UseCases(context, core.sessionManager, core.engine.settings, search.searchEngineManager) }
-    val utils by lazy { Utilities(context, core.sessionManager, useCases.sessionUseCases, useCases.searchUseCases) }
-    val analytics by lazy { Analytics(context) }
-    val publicSuffixList by lazy { PublicSuffixList(context) }
+    override val services by lazy { Services(backgroundServices.accountManager) }
+    override val core by lazy { Core(context) }
+    override val search by lazy { Search(context) }
+    override val useCases by lazy {
+        UseCases(
+            context,
+            core.sessionManager,
+            core.engine.settings,
+            search.searchEngineManager
+        )
+    }
+    override val utils by lazy {
+        Utilities(
+            context,
+            core.sessionManager,
+            useCases.sessionUseCases,
+            useCases.searchUseCases
+        )
+    }
+    override val analytics by lazy { Analytics(context) }
+    override val publicSuffixList by lazy { PublicSuffixList(context) }
 }

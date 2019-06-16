@@ -128,6 +128,8 @@ class Core(private val context: Context) {
         }
     }
 
+    val wrappedSessionManager: WrappedSessionManager by lazy { RealWrappedSessionManager(sessionManager) }
+
     /**
      * Icons component for loading, caching and processing website icons.
      */

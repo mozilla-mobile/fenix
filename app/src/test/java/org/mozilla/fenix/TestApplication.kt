@@ -5,13 +5,10 @@
 package org.mozilla.fenix
 
 import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.components.TestComponents
+import org.mozilla.fenix.components.UnitTestComponents
 
 class TestApplication : FenixApplication() {
 
     override val components: Components
-        get() = TestComponents(this)
-
-    override fun setupApplication() {
-    }
+        get() = UnitTestComponents(this)
 }

@@ -10,12 +10,12 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.IComponents
 
 /**
  * Get the requireComponents of this application.
  */
-val Fragment.requireComponents: Components
+val Fragment.requireComponents: IComponents
     get() = requireContext().components
 
 fun Fragment.nav(@IdRes id: Int?, directions: NavDirections) {

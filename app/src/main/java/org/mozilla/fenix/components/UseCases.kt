@@ -30,10 +30,14 @@ class UseCases(
      */
     val sessionUseCases by lazy { SessionUseCases(sessionManager) }
 
+    val wrappedSessionUseCases: WrappedSessionUseCases by lazy { RealWrappedSessionUseCases(sessionUseCases) }
+
     /**
      * Use cases that provide tab management.
      */
     val tabsUseCases: TabsUseCases by lazy { TabsUseCases(sessionManager) }
+
+    val wrappedTabsUseCases: WrappedTabsUseCases by lazy { RealWrappedTabsUseCases(tabsUseCases) }
 
     /**
      * Use cases that provide search engine integration.

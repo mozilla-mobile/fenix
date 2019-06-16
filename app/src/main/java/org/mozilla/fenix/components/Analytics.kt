@@ -74,6 +74,8 @@ class Analytics(
         )
     }
 
+    val wrappedCrashReporter: WrappedCrashReporter by lazy { RealWrappedCrashReporter(crashReporter) }
+
     val metrics: MetricController by lazy {
         MetricController.create(
             listOf(

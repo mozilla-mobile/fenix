@@ -35,7 +35,7 @@ import org.mozilla.fenix.BrowsingModeManager
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.IComponents
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getHostFromUrl
 import org.mozilla.fenix.ext.nav
@@ -287,7 +287,7 @@ class HistoryFragment : Fragment(), CoroutineScope by MainScope(), BackHandler {
 
     private suspend fun deleteSelectedHistory(
         selected: List<HistoryItem>,
-        components: Components = requireComponents
+        components: IComponents = requireComponents
     ) {
         val storage = components.core.historyStorage
         for (item in selected) {

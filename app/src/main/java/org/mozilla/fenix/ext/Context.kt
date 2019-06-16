@@ -21,7 +21,7 @@ import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.Log.Priority.WARN
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.IComponents
 
 /**
  * Get the BrowserApplication object from a context.
@@ -32,7 +32,7 @@ val Context.application: FenixApplication
 /**
  * Get the requireComponents of this application.
  */
-val Context.components: Components
+val Context.components: IComponents
     get() = application.components
 
 fun Context.asActivity() = (this as? ContextThemeWrapper)?.baseContext as? Activity

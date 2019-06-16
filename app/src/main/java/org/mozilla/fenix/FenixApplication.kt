@@ -25,6 +25,8 @@ import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.IComponents
+import org.mozilla.fenix.components.TestComponents
 import org.mozilla.fenix.utils.Settings
 import java.io.File
 
@@ -35,12 +37,22 @@ open class FenixApplication : Application() {
     lateinit var experimentLoader: Deferred<Boolean>
     var experimentLoaderComplete: Boolean = false
 
-    open val components by lazy { Components(this) }
+    open val components: IComponents by lazy {
+        if (BuildConfig.IS_TEST_BUILD) {
+            TestComponents()
+        } else {
+            Components(this)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
 
-        setupApplication()
+        if (BuildConfig.IS_TEST_BUILD) {
+            setupTestApplication()
+        } else {
+            setupApplication()
+        }
     }
 
     open fun setupApplication() {
@@ -67,6 +79,8 @@ open class FenixApplication : Application() {
             components.analytics.metrics.start()
         }
     }
+
+    open fun setupTestApplication() {}
 
     private fun registerRxExceptionHandling() {
         RxJavaPlugins.setErrorHandler {

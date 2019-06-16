@@ -8,20 +8,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_crash_reporter.*
-import mozilla.components.browser.session.Session
 import mozilla.components.lib.crash.Crash
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.WrappedCrashRecoveryUseCase
+import org.mozilla.fenix.components.WrappedCrashReporter
+import org.mozilla.fenix.components.WrappedRemoveTabUseCase
+import org.mozilla.fenix.components.WrappedSessionManager
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.hideActionBar
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.utils.Settings
 
+@SuppressWarnings("TooManyFunctions")
 class CrashReporterFragment : Fragment() {
+
+    private lateinit var sessionManager: WrappedSessionManager
+    private lateinit var metricsController: MetricController
+    private lateinit var crashReporter: WrappedCrashReporter
+    private lateinit var crashRecoveryUseCase: WrappedCrashRecoveryUseCase
+    private lateinit var removeTabUseCase: WrappedRemoveTabUseCase
+    private lateinit var navController: () -> NavController
+
+    @VisibleForTesting
+    lateinit var crashReportingEnabled: () -> Boolean
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,52 +46,84 @@ class CrashReporterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val crash = Crash.fromIntent(CrashReporterFragmentArgs.fromBundle(arguments!!).crashIntent)
+        injectDependencies()
 
-        view.findViewById<TextView>(R.id.title).text =
-            getString(R.string.tab_crash_title_2, context!!.getString(R.string.app_name))
+        initUI()
 
-        requireContext().components.analytics.metrics.track(Event.CrashReporterOpened)
-
-        val selectedSession = requireComponents.core.sessionManager.selectedSession
-
-        restore_tab_button.setOnClickListener {
-            selectedSession?.let { session -> closeFragment(true, session, crash) }
-        }
-
-        close_tab_button.setOnClickListener {
-            selectedSession?.let { session -> closeFragment(false, session, crash) }
-        }
+        trackAnalyticsOpen()
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).supportActionBar?.hide()
+        activity?.hideActionBar()
     }
 
-    private fun closeFragment(shouldRestore: Boolean, session: Session, crash: Crash) {
-        submitReportIfNecessary(crash)
+    private fun injectDependencies() {
+        requireComponents.let { components ->
+            sessionManager = components.core.wrappedSessionManager
+            metricsController = components.analytics.metrics
+            crashReporter = components.analytics.wrappedCrashReporter
+            crashRecoveryUseCase = components.useCases.wrappedSessionUseCases.crashRecovery
+            removeTabUseCase = components.useCases.wrappedTabsUseCases.removeTab
+        }
 
-        if (shouldRestore) {
-            requireComponents.useCases.sessionUseCases.crashRecovery.invoke()
-            Navigation.findNavController(view!!).popBackStack()
+        crashReportingEnabled = { Settings.getInstance(context!!).isCrashReportingEnabled }
+        navController = { Navigation.findNavController(requireView()) }
+    }
+
+    private fun initUI() {
+        title.text = getString(R.string.tab_crash_title_2, getString(R.string.app_name))
+
+        restore_tab_button.setOnClickListener {
+            closeFragment(restoreTab = true)
+        }
+        close_tab_button.setOnClickListener {
+            closeFragment(restoreTab = false)
+        }
+    }
+
+    private fun closeFragment(restoreTab: Boolean) {
+        val session = sessionManager.selectedSession ?: return
+
+        val isSubmitted = submitCrashReport()
+        trackAnalyticsClosed(isSubmitted)
+
+        if (restoreTab) {
+            crashRecoveryUseCase.invoke()
+            navigateBack()
         } else {
-            requireComponents.useCases.tabsUseCases.removeTab.invoke(session)
-            requireComponents.useCases.sessionUseCases.crashRecovery.invoke()
-            navigateHome(view!!)
+            removeTabUseCase.invoke(session)
+            crashRecoveryUseCase.invoke()
+            navigateHome()
         }
     }
 
-    private fun submitReportIfNecessary(crash: Crash) {
-        var didSubmitCrashReport = false
-        if (Settings.getInstance(context!!).isCrashReportingEnabled) {
-            requireComponents.analytics.crashReporter.submitReport(crash)
-            didSubmitCrashReport = true
-        }
-        requireContext().components.analytics.metrics.track(Event.CrashReporterClosed(didSubmitCrashReport))
+    private fun submitCrashReport(): Boolean = if (crashReportingEnabled()) {
+        crashReporter.submitReport(getCrashFromArguments())
+        true
+    } else false
+
+    private fun getCrashFromArguments() = Crash.fromIntent(
+        CrashReporterFragmentArgs.fromBundle(arguments!!).crashIntent
+    )
+
+    // Navigation
+
+    private fun navigateBack() {
+        navController().popBackStack()
     }
 
-    private fun navigateHome(fromView: View) {
-        Navigation.findNavController(fromView).popBackStack(R.id.browserFragment, true)
+    private fun navigateHome() {
+        navController().popBackStack(R.id.browserFragment, true)
+    }
+
+    // Analytics
+
+    private fun trackAnalyticsOpen() {
+        metricsController.track(Event.CrashReporterOpened)
+    }
+
+    private fun trackAnalyticsClosed(wasReportSubmitted: Boolean) {
+        metricsController.track(Event.CrashReporterClosed(wasReportSubmitted))
     }
 }

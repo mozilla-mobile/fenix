@@ -3,7 +3,8 @@ package org.mozilla.fenix.components
 import android.content.Context
 import io.mockk.mockk
 
-class TestComponents(private val context: Context) : Components(context) {
+class UnitTestComponents(private val context: Context) : Components(context) {
+
     override val backgroundServices by lazy {
         mockk<BackgroundServices>(relaxed = true)
     }
