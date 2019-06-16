@@ -65,6 +65,10 @@ class ShareFragment : AppCompatDialogFragment(), CoroutineScope {
             }
         )
 
+        view.share_wrapper.setOnClickListener {
+            dismiss()
+        }
+
         return view
     }
 
