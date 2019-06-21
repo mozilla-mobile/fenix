@@ -65,6 +65,7 @@ class TaskBuilder(object):
                 ('sentry_dsn', '.sentry_token'),
                 ('leanplum', '.leanplum_token'),
                 ('adjust', '.adjust_token'),
+                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(build_type)),
             )
         )
 
