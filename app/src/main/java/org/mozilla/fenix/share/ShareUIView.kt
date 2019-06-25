@@ -45,6 +45,7 @@ class ShareUIView(
             send_tab_group.visibility = View.GONE
         }
 
+        container.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
         close_button.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
     }
 
