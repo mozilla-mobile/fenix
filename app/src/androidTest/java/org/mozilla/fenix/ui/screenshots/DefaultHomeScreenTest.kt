@@ -15,6 +15,9 @@ import android.os.SystemClock
 import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.locale.LocaleTestRule
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeUp
+import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.matcher.ViewMatchers.hasFocus
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -37,5 +40,32 @@ class DefaultHomeScreenTest : ScreenshotTest() {
         onView(allOf(withId(R.id.toolbar), isDisplayed()))
         SystemClock.sleep(5000)
         Screengrab.screenshot("home-screen")
+
+        onView(allOf(withId(R.id.privateBrowsingButton))).perform(click())
+        Screengrab.screenshot("private-browsing-menu")
+        onView(allOf(withId(R.id.privateBrowsingButton))).perform(click())
+    }
+
+    @Test
+    fun scrollHomeScreen() {
+        onView(withId(R.id.home_component)).perform(swipeUp())
+        Screengrab.screenshot("home-screen2")
+        SystemClock.sleep(3000)
+
+        onView(withId(R.id.home_component)).perform(swipeUp())
+        Screengrab.screenshot("home-screen3")
+        SystemClock.sleep(3000)
+
+        onView(withId(R.id.finish_button)).perform(click())
+        SystemClock.sleep(3000)
+
+        Screengrab.screenshot("finish-button")
+        SystemClock.sleep(3000)
+
+        onView(withId(R.id.home_component)).perform(swipeDown())
+        SystemClock.sleep(3000)
+
+        onView(withId(R.id.add_tab_button)).perform(click())
+        Screengrab.screenshot("add_tab_button")
     }
 }
