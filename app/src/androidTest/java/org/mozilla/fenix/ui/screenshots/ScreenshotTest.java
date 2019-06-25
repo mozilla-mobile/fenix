@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui.screenshots;
 
 import android.Manifest;
@@ -25,7 +29,6 @@ public abstract class ScreenshotTest {
     final long waitingTime = DateUtils.SECOND_IN_MILLIS * 10;
 
     private Context targetContext;
-    //private SessionLoadedIdlingResource loadingIdlingResource;
 
     UiDevice device;
 
@@ -55,9 +58,6 @@ public abstract class ScreenshotTest {
 
         // Use this to switch between default strategy and HostScreencap strategy
         Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
-        //Screengrab.setDefaultScreenshotStrategy(new HostScreencapScreenshotStrategy(device));
-
-        //device.waitForIdle();
     }
 
     String getString(@StringRes int resourceId) {
@@ -69,7 +69,6 @@ public abstract class ScreenshotTest {
     }
 
     public void takeScreenshotsAfterWait(String filename, int waitingTime) throws InterruptedException {
-
         Thread.sleep(waitingTime);
         Screengrab.screenshot(filename);
     }

@@ -9,7 +9,7 @@ app_apk_path('app/build/outputs/apk/x86/debug/app-x86-debug.apk')
 tests_apk_path('app/build/outputs/apk/androidTest/x86/debug/app-x86-debug-androidTest.apk')
 test_instrumentation_runner 'androidx.test.runner.AndroidJUnitRunner'
 
-locales(['en-US', 'fr-FR', 'it-IT'])
+locales(['en-US', 'fr-FR', 'it-IT', 'de-DE', 'ja', 'ru', 'zh-CN', 'zh-TW', 'ko'])
 
 # clear all previously generated screenshots in your local output directory before creating new ones
 clear_previous_screenshots(true)
