@@ -28,11 +28,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.utils.Settings
 import kotlin.coroutines.CoroutineContext
 
-abstract class SearchEngineListPreference @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : Preference(context, attrs, defStyleAttr), CompoundButton.OnCheckedChangeListener, CoroutineScope {
+abstract class SearchEngineListPreference : Preference, CompoundButton.OnCheckedChangeListener, CoroutineScope {
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -41,7 +37,15 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
 
     protected abstract val itemResId: Int
 
-    init {
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        layoutResource = R.layout.preference_search_engine_chooser
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         layoutResource = R.layout.preference_search_engine_chooser
     }
 
