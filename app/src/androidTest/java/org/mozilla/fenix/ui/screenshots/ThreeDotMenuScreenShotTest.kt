@@ -73,7 +73,7 @@ class ThreeDotMenuScreenShotTest : ScreenshotTest() {
     }
 
     @Test
-    fun settingsAfterScrollTest() {
+    fun settingsAfterScrollMenusTest() {
         homeScreen {
         }.openThreeDotMenu {
         }
@@ -100,7 +100,7 @@ class ThreeDotMenuScreenShotTest : ScreenshotTest() {
     }
 
     @Test
-    fun settingsAfterScroll2Test() {
+    fun settingsScrollToBottomTest() {
         homeScreen {
         }.openThreeDotMenu {
         }
