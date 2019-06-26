@@ -181,7 +181,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private val syncStatusObserver = object : SyncStatusObserver {
-        private val key = context!!.getPreferenceKey(R.string.pref_key_sync_now)
+        private val key: String by lazy { context!!.getPreferenceKey(R.string.pref_key_sync_now) }
 
         override fun onStarted() {
             lifecycleScope.launch {
