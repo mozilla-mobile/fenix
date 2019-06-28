@@ -95,6 +95,40 @@ class HomeFragment : Fragment(), AccountObserver {
 
     private lateinit var sessionObserver: BrowserSessionsObserver
 
+    private val collectionStorageObserver = object : TabCollectionStorage.Observer {
+        override fun onCollectionCreated(title: String, sessions: List<Session>) {
+            super.onCollectionCreated(title, sessions)
+            scrollAndAnimateCollection(sessions.size)
+        }
+
+        override fun onTabsAdded(
+            tabCollection: mozilla.components.feature.tab.collections.TabCollection,
+            sessions: List<Session>
+        ) {
+            super.onTabsAdded(tabCollection, sessions)
+            scrollAndAnimateCollection(sessions.size, tabCollection)
+        }
+
+        override fun onCollectionRenamed(
+            tabCollection: mozilla.components.feature.tab.collections.TabCollection,
+            title: String
+        ) {
+            super.onCollectionRenamed(tabCollection, title)
+            showRenamedSnackbar()
+        }
+    }
+
+    private val preDrawListener = object : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(ANIM_SCROLL_DELAY)
+                restoreLayoutState()
+//                startPostponedEnterTransition()
+            }.invokeOnCompletion { sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(this) }
+            return true
+        }
+    }
+
     private var homeMenu: HomeMenu? = null
 
     private val sessionManager: SessionManager
@@ -162,23 +196,13 @@ class HomeFragment : Fragment(), AccountObserver {
             }
         }
 
-        postponeEnterTransition()
+//        postponeEnterTransition()
 
         ActionBusFactory.get(this).logMergedObservables()
         val activity = activity as HomeActivity
         ThemeManager.applyStatusBarTheme(activity.window, activity.themeManager, activity)
 
-        val listener = object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    delay(ANIM_SCROLL_DELAY)
-                    restoreLayoutState()
-                    startPostponedEnterTransition()
-                }.invokeOnCompletion { sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(this) }
-                return true
-            }
-        }
-        sessionControlComponent.view.viewTreeObserver.addOnPreDrawListener(listener)
+        sessionControlComponent.view.viewTreeObserver.addOnPreDrawListener(preDrawListener)
 
         return view
     }
@@ -267,6 +291,7 @@ class HomeFragment : Fragment(), AccountObserver {
 
     override fun onDestroyView() {
         homeMenu = null
+        sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         super.onDestroyView()
     }
 
@@ -297,9 +322,11 @@ class HomeFragment : Fragment(), AccountObserver {
 
     override fun onStart() {
         super.onStart()
-        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
         sessionObserver.onStart()
         tabCollectionObserver = subscribeToTabCollections()
+
+        // We only want this observer live just before we navigate away to the collection creation screen
+        requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
     }
 
     override fun onStop() {
@@ -474,19 +501,19 @@ class HomeFragment : Fragment(), AccountObserver {
                     restoreSessionId = false
                 )
                 if (tabSnapshot.isEmpty()) {
-                        // We were unable to create a snapshot, so just load the tab instead
-                        (activity as HomeActivity).openToBrowserAndLoad(
-                            searchTermOrURL = action.tab.url,
-                            newTab = true,
-                            from = BrowserDirection.FromHome
-                        )
-                    } else {
-                        requireComponents.core.sessionManager.restore(
-                            tabSnapshot,
-                            true
-                        )
-                        (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
-                    }
+                    // We were unable to create a snapshot, so just load the tab instead
+                    (activity as HomeActivity).openToBrowserAndLoad(
+                        searchTermOrURL = action.tab.url,
+                        newTab = true,
+                        from = BrowserDirection.FromHome
+                    )
+                } else {
+                    requireComponents.core.sessionManager.restore(
+                        tabSnapshot,
+                        true
+                    )
+                    (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+                }
             }
             is CollectionAction.OpenTabs -> {
                 invokePendingDeleteJobs()
@@ -676,6 +703,9 @@ class HomeFragment : Fragment(), AccountObserver {
         viewModel?.saveCollectionStep =
             step ?: viewModel?.getStepForTabsAndCollectionSize() ?: SaveCollectionStep.SelectTabs
 
+        // Only register the observer right before moving to collection creation
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+
         view?.let {
             val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment()
             nav(R.id.homeFragment, directions)
@@ -778,29 +808,6 @@ class HomeFragment : Fragment(), AccountObserver {
                 ?.setListener(listener)?.start()
         }.invokeOnCompletion {
             showSavedSnackbar(addedTabsSize)
-        }
-    }
-
-    private val collectionStorageObserver = object : TabCollectionStorage.Observer {
-        override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            super.onCollectionCreated(title, sessions)
-            scrollAndAnimateCollection(sessions.size)
-        }
-
-        override fun onTabsAdded(
-            tabCollection: mozilla.components.feature.tab.collections.TabCollection,
-            sessions: List<Session>
-        ) {
-            super.onTabsAdded(tabCollection, sessions)
-            scrollAndAnimateCollection(sessions.size, tabCollection)
-        }
-
-        override fun onCollectionRenamed(
-            tabCollection: mozilla.components.feature.tab.collections.TabCollection,
-            title: String
-        ) {
-            super.onCollectionRenamed(tabCollection, title)
-            showRenamedSnackbar()
         }
     }
 
