@@ -121,6 +121,12 @@ class QuickActionUIView(
         view.quick_action_read_appearance.visibility = if (it.readerActive) View.VISIBLE else View.GONE
         view.quick_action_bookmark.isSelected = it.bookmarked
 
+        view.quick_action_bookmark.text = if (it.bookmarked) {
+            view.context.getString(R.string.quick_action_bookmark_edit)
+        } else {
+            view.context.getString(R.string.quick_action_bookmark)
+        }
+
         if (it.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
             quickActionSheet.bounceSheet()
         }
