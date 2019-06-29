@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - #3200 - Adds application-services fretboard feature flags for FxA and Sync.
 
 ### Changed
+- #3424 - Make talkback ignore ImageButton in Collection Selection by removing contentDescription and setting importantForAccessibility=no
 - #2673 - Fixed can't upload files using third party apps from the file manager.
 - #1429 - Updated site permissions ui for MVP
 - #1599 - Fixed a crash creating a bookmark for a custom tab
