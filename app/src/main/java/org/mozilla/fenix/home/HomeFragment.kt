@@ -391,7 +391,7 @@ class HomeFragment : Fragment(), AccountObserver {
             is TabAction.Share -> {
                 invokePendingDeleteJobs()
                 sessionManager.findSessionById(action.sessionId)?.let { session ->
-                    share(session.url)
+                    share(session.url, session.title)
                 }
             }
             is TabAction.CloseAll -> {
@@ -715,10 +715,11 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
+    private fun share(url: String? = null, title: String? = null, tabs: List<ShareTab>? = null) {
         val directions =
             HomeFragmentDirections.actionHomeFragmentToShareFragment(
                 url = url,
+                title = title,
                 tabs = tabs?.toTypedArray()
             )
         nav(R.id.homeFragment, directions)

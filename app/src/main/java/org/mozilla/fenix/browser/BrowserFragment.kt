@@ -520,7 +520,7 @@ class BrowserFragment : Fragment(), BackHandler {
                     is QuickActionAction.SharePressed -> {
                         requireComponents.analytics.metrics.track(Event.QuickActionSheetShareTapped)
                         getSessionById()?.let { session ->
-                            shareUrl(session.url)
+                            shareUrl(session.url, session.title)
                         }
                     }
                     is QuickActionAction.DownloadsPressed -> {
@@ -729,9 +729,7 @@ class BrowserFragment : Fragment(), BackHandler {
                 sessionUseCases.requestDesktopSite.invoke(action.item.isChecked, session)
             }
             ToolbarMenu.Item.Share -> getSessionById()?.let { session ->
-                session.url.apply {
-                    shareUrl(this)
-                }
+                shareUrl(session.url, session.title)
             }
             ToolbarMenu.Item.NewPrivateTab -> {
                 val directions = BrowserFragmentDirections
@@ -951,8 +949,8 @@ class BrowserFragment : Fragment(), BackHandler {
         }
     }
 
-    private fun shareUrl(url: String) {
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(url = url)
+    private fun shareUrl(url: String, title: String) {
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(url = url, title = title)
         nav(R.id.browserFragment, directions)
     }
 

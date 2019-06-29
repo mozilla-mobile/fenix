@@ -6,6 +6,7 @@ package org.mozilla.fenix.share
 
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
+import android.content.Intent.EXTRA_SUBJECT
 import android.content.Intent.EXTRA_TEXT
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
@@ -118,6 +119,10 @@ class ShareFragment : AppCompatDialogFragment() {
                         type = "text/plain"
                         flags = FLAG_ACTIVITY_NEW_TASK
                         setClassName(it.item.packageName, it.item.activityName)
+                    }
+                    if (tabs.size == 1) {
+                        val shareTitle = tabs[0].title
+                        intent.putExtra(EXTRA_SUBJECT, shareTitle)
                     }
                     startActivity(intent)
                     dismiss()

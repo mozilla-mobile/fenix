@@ -118,7 +118,9 @@ class HistoryFragment : Fragment(), BackHandler {
             val selectedHistory = (historyComponent.uiView as HistoryUIView).getSelected()
             when {
                 selectedHistory.size == 1 ->
-                    share(selectedHistory.first().url)
+                    with(selectedHistory.first()) {
+                        share(url, title)
+                    }
                 selectedHistory.size > 1 -> {
                     val shareTabs = selectedHistory.map { ShareTab(it.url, it.title) }
                     share(tabs = shareTabs)
@@ -285,10 +287,11 @@ class HistoryFragment : Fragment(), BackHandler {
         }
     }
 
-    private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
+    private fun share(url: String? = null, title: String? = null, tabs: List<ShareTab>? = null) {
         val directions =
             HistoryFragmentDirections.actionHistoryFragmentToShareFragment(
                 url = url,
+                title = title,
                 tabs = tabs?.toTypedArray()
             )
         nav(R.id.historyFragment, directions)
