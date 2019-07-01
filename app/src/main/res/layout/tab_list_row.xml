@@ -64,10 +64,9 @@
 
         <ImageButton
             android:id="@+id/close_tab_button"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="13dp"
-            android:scaleType="fitCenter"
             android:alpha="0.8"
             android:contentDescription="@string/close_tab"
             android:src="@drawable/ic_close"
