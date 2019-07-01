@@ -103,6 +103,7 @@ class QuickActionUIView(
         }
     }
 
+    @Suppress("ComplexMethod")
     override fun updateView() = Consumer<QuickActionState> {
         view.quick_action_read.apply {
             visibility = if (it.readable) View.VISIBLE else View.GONE
