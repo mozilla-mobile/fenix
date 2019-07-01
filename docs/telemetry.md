@@ -8,7 +8,7 @@ Fenix creates and tries to send a "baseline" ping when the app goes to the backg
 
 ## Metrics ping
 
-Fenix creates and tries to send a "baseline" ping. It is defined inside the [`metrics.yaml`](https://github.com/mozilla-mobile/fenix/blob/master/app/metrics.yaml) file. This ping includes things like wether or not Fenix is currently the default browser.
+Fenix creates and tries to send a "baseline" ping. It is defined inside the [`metrics.yaml`](https://github.com/mozilla-mobile/fenix/blob/master/app/metrics.yaml) file. This ping includes things like whether or not Fenix is currently the default browser.
 
 ## Events
 
@@ -18,10 +18,5 @@ Fenix sends event pings that allows us to measure feature performance. These are
 
 Fenix sends an activation ping once, at startup. Further documentation can be found in the [`activation` ping](activation.md) docs.
 
-## Leanplum Events
-
-| Event           |  Leanplum Key | extras                |
-|-----------------|---------------|-----------------------|
-| OpenedApp       | E_Opened_App  | source*               |
-
-* `source`: The method used to open Fenix (For exmaple: `app_icon`, `custom_tab` or `link`)
+## Leanplum
+See [here](https://github.com/mozilla-mobile/fenix/blob/master/docs/mma.md) for details on Leanplum usage in Firefox Preview.

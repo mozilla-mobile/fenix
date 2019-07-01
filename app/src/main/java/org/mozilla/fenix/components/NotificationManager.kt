@@ -13,6 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
@@ -33,7 +34,7 @@ class NotificationManager(private val context: Context) {
     init {
         // Create the notification channels we are going to use, but only on API 26+ because the NotificationChannel
         // class is new and not in the support library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(
                 RECEIVE_TABS_CHANNEL_ID,
                 // Pick 'high' because this is a user-triggered action that is expected to be part of a continuity flow.
@@ -54,7 +55,10 @@ class NotificationManager(private val context: Context) {
         logger.debug("Showing ${event.entries.size} tab(s) received from deviceID=${event.from?.id}")
         event.entries.forEach { tab ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(tab.url))
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra(RECEIVE_TABS_TAG, true)
+            val pendingIntent: PendingIntent =
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
             val builder = NotificationCompat.Builder(context, RECEIVE_TABS_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_status_logo)
@@ -68,7 +72,7 @@ class NotificationManager(private val context: Context) {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(Notification.DEFAULT_VIBRATE or Notification.DEFAULT_SOUND)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (SDK_INT >= Build.VERSION_CODES.M) {
                 builder.setCategory(Notification.CATEGORY_REMINDER)
             }
 

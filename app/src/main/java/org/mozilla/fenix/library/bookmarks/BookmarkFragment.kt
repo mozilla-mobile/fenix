@@ -7,7 +7,7 @@ package org.mozilla.fenix.library.bookmarks
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,13 +21,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_bookmark.view.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
@@ -55,16 +56,14 @@ import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.utils.allowUndo
-import kotlin.coroutines.CoroutineContext
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserver {
+class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
 
-    private lateinit var job: Job
     private lateinit var bookmarkComponent: BookmarkComponent
     private lateinit var signInComponent: SignInComponent
     var currentRoot: BookmarkNode? = null
-    private val navigation by lazy { Navigation.findNavController(requireView()) }
+    private val navigation by lazy { findNavController() }
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { _, destination, args ->
             if (destination.id != R.id.bookmarkFragment ||
@@ -73,9 +72,8 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
                 getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.ClearSelection)
         }
     lateinit var initialJob: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = Main + job
+    private var pendingBookmarkDeletionJob: (suspend () -> Unit)? = null
+    private var pendingBookmarksToDelete: MutableSet<BookmarkNode> = HashSet()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
@@ -109,7 +107,6 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         activity?.title = getString(R.string.library_bookmarks)
         setHasOptionsMenu(true)
     }
@@ -126,16 +123,17 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
     }
 
     private fun loadInitialBookmarkFolder(currentGuid: String): Job {
-        return launch(IO) {
+        return viewLifecycleOwner.lifecycleScope.launch(IO) {
             currentRoot =
                 context?.bookmarkStorage()?.getTree(currentGuid).withOptionalDesktopFolders(context) as BookmarkNode
 
+            if (!isActive) return@launch
             launch(Main) {
                 getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(currentRoot!!))
 
                 activity?.run {
                     ViewModelProviders.of(this).get(BookmarksSharedViewModel::class.java)
-                }!!.selectedFolder = null
+                }!!.selectedFolder = currentRoot
             }
         }
     }
@@ -148,16 +146,15 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         navigation.removeOnDestinationChangedListener(onDestinationChangedListener)
-        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         when (val mode = (bookmarkComponent.uiView as BookmarkUIView).mode) {
             BookmarkState.Mode.Normal -> {
-                inflater.inflate(R.menu.library_menu, menu)
+                inflater.inflate(R.menu.bookmarks_menu, menu)
             }
             is BookmarkState.Mode.Selecting -> {
                 inflater.inflate(R.menu.bookmarks_select_multi, menu)
@@ -165,7 +162,7 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
                     isVisible = mode.selectedItems.size == 1
                     icon.colorFilter = PorterDuffColorFilter(
                         ContextCompat.getColor(context!!, R.color.white_color),
-                        PorterDuff.Mode.SRC_IN
+                        SRC_IN
                     )
                 }
             }
@@ -256,30 +253,24 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
                         }
                     }
                     is BookmarkAction.Delete -> {
-                        context?.let { context ->
-                            getManagedEmitter<BookmarkChange>()
-                                .onNext(BookmarkChange.Change(currentRoot - it.item.guid))
-
-                            allowUndo(
-                                view!!,
-                                getString(
-                                    R.string.bookmark_deletion_snackbar_message,
-                                    it.item.url?.urlToTrimmedHost(context)
-                                ),
-                                getString(R.string.bookmark_undo_deletion), { refreshBookmarks() }
-                            ) {
-                                context.bookmarkStorage()?.deleteNode(it.item.guid)
-                                metrics()?.track(Event.RemoveBookmark)
-                                refreshBookmarks()
+                        val bookmarkItem = it.item
+                        if (pendingBookmarkDeletionJob == null) {
+                            removeBookmarkWithUndo(bookmarkItem)
+                        } else {
+                            pendingBookmarkDeletionJob?.let {
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    it.invoke()
+                                }.invokeOnCompletion {
+                                    removeBookmarkWithUndo(bookmarkItem)
+                                }
                             }
                         }
                     }
                     is BookmarkAction.SwitchMode -> {
-                        if ((bookmarkComponent.uiView as BookmarkUIView).mode is BookmarkState.Mode.Normal) {
-                            getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.ClearSelection)
-                        }
                         activity?.invalidateOptionsMenu()
                     }
+                    is BookmarkAction.DeselectAll ->
+                        getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.ClearSelection)
                 }
             }
 
@@ -294,12 +285,55 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
             }
     }
 
-    @SuppressWarnings("ComplexMethod")
+    private fun removeBookmarkWithUndo(bookmarkNode: BookmarkNode) {
+        val bookmarkStorage = context.bookmarkStorage()
+        pendingBookmarksToDelete.add(bookmarkNode)
+
+        var bookmarkTree = currentRoot
+        pendingBookmarksToDelete.forEach {
+            bookmarkTree -= it.guid
+        }
+
+        getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(bookmarkTree!!))
+
+        val deleteOperation: (suspend () -> Unit) = {
+            bookmarkStorage?.deleteNode(bookmarkNode.guid)
+            metrics()?.track(Event.RemoveBookmark)
+            pendingBookmarkDeletionJob = null
+            refreshBookmarks()
+        }
+
+        pendingBookmarkDeletionJob = deleteOperation
+
+        lifecycleScope.allowUndo(
+            view!!,
+            getString(
+                R.string.bookmark_deletion_snackbar_message,
+                bookmarkNode.url?.urlToTrimmedHost(context!!) ?: bookmarkNode.title
+            ),
+            getString(R.string.bookmark_undo_deletion),
+            onCancel = {
+                pendingBookmarkDeletionJob = null
+                pendingBookmarksToDelete.remove(bookmarkNode)
+                refreshBookmarks()
+            },
+            operation = deleteOperation
+        )
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.libraryClose -> {
                 navigation
                     .popBackStack(R.id.libraryFragment, true)
+                true
+            }
+            R.id.add_bookmark_folder -> {
+                nav(
+                    R.id.bookmarkFragment,
+                    BookmarkFragmentDirections
+                        .actionBookmarkFragmentToBookmarkAddFolderFragment()
+                )
                 true
             }
             R.id.open_bookmarks_in_new_tabs_multi_select -> {
@@ -339,17 +373,32 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
             }
             R.id.delete_bookmarks_multi_select -> {
                 val selectedBookmarks = getSelectedBookmarks()
-                getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(currentRoot - selectedBookmarks))
+                pendingBookmarksToDelete.addAll(selectedBookmarks)
 
-                allowUndo(
-                    view!!, getString(R.string.bookmark_deletion_multiple_snackbar_message),
-                    getString(R.string.bookmark_undo_deletion), { refreshBookmarks() }
-                ) {
+                var bookmarkTree = currentRoot
+                pendingBookmarksToDelete.forEach {
+                    bookmarkTree -= it.guid
+                }
+                getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(bookmarkTree!!))
+
+                val deleteOperation: (suspend () -> Unit) = {
                     deleteSelectedBookmarks(selectedBookmarks)
+                    pendingBookmarkDeletionJob = null
                     // Since this runs in a coroutine, we can't depend on the fragment still being attached.
                     metrics()?.track(Event.RemoveBookmarks)
                     refreshBookmarks()
                 }
+
+                pendingBookmarkDeletionJob = deleteOperation
+
+                lifecycleScope.allowUndo(
+                    view!!, getString(R.string.bookmark_deletion_multiple_snackbar_message),
+                    getString(R.string.bookmark_undo_deletion), {
+                        pendingBookmarksToDelete.removeAll(selectedBookmarks)
+                        pendingBookmarkDeletionJob = null
+                        refreshBookmarks()
+                    }, operation = deleteOperation
+                )
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -360,7 +409,7 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
 
     override fun onAuthenticated(account: OAuthAccount) {
         getManagedEmitter<SignInChange>().onNext(SignInChange.SignedIn)
-        launch {
+        lifecycleScope.launch {
             refreshBookmarks()
         }
     }
@@ -389,8 +438,27 @@ class BookmarkFragment : Fragment(), CoroutineScope, BackHandler, AccountObserve
     private suspend fun refreshBookmarks() {
         context?.bookmarkStorage()?.getTree(currentRoot!!.guid, false).withOptionalDesktopFolders(context)
             ?.let { node ->
-                getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(node))
+                var rootNode = node
+                pendingBookmarksToDelete.forEach {
+                    rootNode -= it.guid
+                }
+                getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(rootNode))
             }
+    }
+
+    override fun onPause() {
+        invokePendingDeletion()
+        super.onPause()
+    }
+
+    private fun invokePendingDeletion() {
+        pendingBookmarkDeletionJob?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                it.invoke()
+            }.invokeOnCompletion {
+                pendingBookmarkDeletionJob = null
+            }
+        }
     }
 
     private fun BookmarkNode.copyUrl(context: Context) {

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.library.bookmarks
 
-import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -65,20 +65,16 @@ class BookmarkUIView(
             mode = it.mode
             actionEmitter.onNext(BookmarkAction.SwitchMode)
         }
-        bookmarkAdapter.updateData(it.tree, it.mode)
-        when (val modeCopy = mode) {
+        when (val modeCopy = it.mode) {
             is BookmarkState.Mode.Normal -> setUIForNormalMode(it.tree)
-            is BookmarkState.Mode.Selecting -> setUIForSelectingMode(modeCopy)
+            is BookmarkState.Mode.Selecting -> setUIForSelectingMode(it.tree, modeCopy)
         }
     }
 
     override fun onBackPressed(): Boolean {
         return when {
             mode is BookmarkState.Mode.Selecting -> {
-                mode = BookmarkState.Mode.Normal
-                bookmarkAdapter.updateData(tree, mode)
-                setUIForNormalMode(tree)
-                actionEmitter.onNext(BookmarkAction.SwitchMode)
+                actionEmitter.onNext(BookmarkAction.DeselectAll)
                 true
             }
             canGoBack -> {
@@ -94,7 +90,7 @@ class BookmarkUIView(
     private fun setToolbarColors(foreground: Int, background: Int) {
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
         val colorFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(context, foreground), PorterDuff.Mode.SRC_IN
+            ContextCompat.getColor(context, foreground), SRC_IN
         )
         toolbar?.run {
             setBackgroundColor(ContextCompat.getColor(context, background))
@@ -107,8 +103,10 @@ class BookmarkUIView(
     }
 
     private fun setUIForSelectingMode(
+        root: BookmarkNode?,
         mode: BookmarkState.Mode.Selecting
     ) {
+        bookmarkAdapter.updateData(root, mode)
         activity?.title =
             context.getString(R.string.bookmarks_multi_select_title, mode.selectedItems.size)
         setToolbarColors(
@@ -118,6 +116,7 @@ class BookmarkUIView(
     }
 
     private fun setUIForNormalMode(root: BookmarkNode?) {
+        bookmarkAdapter.updateData(root, BookmarkState.Mode.Normal)
         setTitle(root)
         setToolbarColors(
             R.attr.primaryText.getColorIntFromAttr(context!!),

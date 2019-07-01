@@ -69,7 +69,7 @@ class TaskBuilder(object):
 
         capitalized_channel = upper_case_first_letter(channel)
         gradle_commands = (
-            './gradlew --no-daemon -PversionName={} clean test assemble{}'.format(
+            './gradlew --no-daemon -PversionName="{}" clean test assemble{}'.format(
                 version_name, capitalized_channel),
         )
 
@@ -423,19 +423,18 @@ class TaskBuilder(object):
         )
 
     def craft_release_signing_task(
-        self, build_task_id, apk_paths, channel, is_staging, index_channel=None
+        self, build_task_id, apk_paths, channel, is_staging
     ):
-        index_channel = index_channel or channel
         staging_prefix = '.staging' if is_staging else ''
 
         routes = [
             "index.project.mobile.fenix.v2{}.{}.{}.{}.{}.latest".format(
-                staging_prefix, index_channel, self.date.year, self.date.month, self.date.day
+                staging_prefix, channel, self.date.year, self.date.month, self.date.day
             ),
             "index.project.mobile.fenix.v2{}.{}.{}.{}.{}.revision.{}".format(
-                staging_prefix, index_channel, self.date.year, self.date.month, self.date.day, self.commit
+                staging_prefix, channel, self.date.year, self.date.month, self.date.day, self.commit
             ),
-            "index.project.mobile.fenix.v2{}.{}.latest".format(staging_prefix, index_channel),
+            "index.project.mobile.fenix.v2{}.{}.latest".format(staging_prefix, channel),
         ]
 
         capitalized_channel = upper_case_first_letter(channel)
@@ -575,10 +574,10 @@ class TaskBuilder(object):
                 ]],
                 "env": {
                     "EXTRA_MOZHARNESS_CONFIG": json.dumps({
-                        "test_packages_url": "{}/{}/artifacts/public/build/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                        "test_packages_url": "{}/{}/artifacts/public/build/en-US/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
                         "installer_url": apk_url,
                     }),
-                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/mozilla-central",
+                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-beta",
                     "GECKO_HEAD_REV": gecko_revision,
                     "MOZ_AUTOMATION": "1",
                     "MOZ_HIDE_RESULTS_TABLE": "1",
@@ -586,7 +585,7 @@ class TaskBuilder(object):
                     "MOZ_NODE_PATH": "/usr/local/bin/node",
                     "MOZHARNESS_CONFIG": "raptor/android_hw_config.py",
                     "MOZHARNESS_SCRIPT": "raptor_script.py",
-                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/en-US/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
                     "MOZILLA_BUILD_URL": apk_url,
                     "NEED_XVFB": "false",
                     "NO_FAIL_ON_TEST_ERRORS": "1",
@@ -598,7 +597,7 @@ class TaskBuilder(object):
                 },
                 "mounts": [{
                     "content": {
-                        "url": "https://hg.mozilla.org/mozilla-central/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
+                        "url": "https://hg.mozilla.org/releases/mozilla-beta/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
                     },
                     "file": "test-linux.sh",
                 }]
@@ -652,11 +651,8 @@ def schedule_task_graph(ordered_groups_of_tasks):
     return full_task_graph
 
 
-def fetch_mozharness_task_id(geckoview_nightly_version):
-    nightly_build_id = geckoview_nightly_version.split('.')[-1]
-    nightly_date = arrow.get(nightly_build_id, 'YYYYMMDDHHmmss')
-
-    raptor_index = 'gecko.v2.mozilla-central.pushdate.{}.{:02}.{:02}.{}.firefox.linux64-debug'.format(
-        nightly_date.year, nightly_date.month, nightly_date.day, nightly_build_id
+def fetch_mozharness_task_id(geckoview_beta_version):
+    raptor_index = 'gecko.v2.mozilla-beta.geckoview-version.{}.mobile.android-x86_64-beta-opt'.format(
+        geckoview_beta_version
     )
     return taskcluster.Index().findTask(raptor_index)['taskId']

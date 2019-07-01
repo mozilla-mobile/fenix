@@ -16,7 +16,7 @@ private object Versions {
 
     const val androidx_appcompat = "1.1.0-beta01"
     const val androidx_coordinator_layout = "1.1.0-beta01"
-    const val androidx_constraint_layout = "2.0.0-beta1"
+    const val androidx_constraint_layout = "2.0.0-beta2"
     const val androidx_preference = "1.1.0-beta01"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
@@ -26,11 +26,12 @@ private object Versions {
     const val androidx_recyclerview = "1.1.0-alpha06"
     const val androidx_lifecycle_savedstate = "1.0.0-alpha01"
     const val androidx_testing = "1.1.0-alpha08"
+    const val androidx_test_ext = "1.0.0"
     const val androidx_core = "1.1.0-rc01"
     const val androidx_transition = "1.1.0-rc02"
     const val google_material = "1.1.0-alpha07"
 
-    const val mozilla_android_components = "0.56.2"
+    const val mozilla_android_components = "2.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -131,6 +132,7 @@ object Deps {
     const val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
     const val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
     const val mozilla_support_rustlog = "org.mozilla.components:support-rustlog:${Versions.mozilla_android_components}"
+    const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
@@ -139,18 +141,18 @@ object Deps {
     const val leanplum = "com.leanplum:leanplum-core:${Versions.leanplum}"
 
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
-    const val androidx_fragment = "androidx.fragment:fragment:${Versions.androidx_fragment}"
+    const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.androidx_coordinator_layout}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint_layout}"
     const val androidx_legacy = "androidx.legacy:legacy-support-v4:${Versions.androidx_legacy}"
     const val androidx_lifecycle_extensions = "androidx.lifecycle:lifecycle-extensions:${Versions.androidx_lifecycle}"
-    const val androidx_lifecycle_viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
-    const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime:${Versions.androidx_lifecycle}"
+    const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
+    const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_viewmodel_ss = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidx_lifecycle_savedstate}"
     const val androidx_preference = "androidx.preference:preference-ktx:${Versions.androidx_preference}"
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
-    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment:${Versions.androidx_navigation}"
+    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${Versions.androidx_navigation}"
     const val androidx_recyclerview = "androidx.recyclerview:recyclerview:${Versions.androidx_recyclerview}"
     const val androidx_core = "androidx.core:core:${Versions.androidx_core}"
@@ -187,6 +189,7 @@ object Deps {
     const val uiautomator = "com.android.support.test.uiautomator:uiautomator-v18:${Versions.uiautomator}"
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val fragment_testing = "androidx.fragment:fragment-testing:${Versions.androidx_testing}"
+    const val androidx_junit = "androidx.test.ext:junit:${Versions.androidx_test_ext}"
     const val places_forUnitTests = "org.mozilla.appservices:places-forUnitTests:${Versions.mozilla_appservices}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"

@@ -51,11 +51,11 @@ class Core(private val context: Context) {
 
         val runtimeSettings = builder
             .crashHandler(CrashHandlerService::class.java)
+            .useContentProcessHint(true)
             .build()
 
         if (!Settings.getInstance(context).shouldUseAutoSize) {
             runtimeSettings.automaticFontSizeAdjustment = false
-            runtimeSettings.fontInflationEnabled = true
             val fontSize = Settings.getInstance(context).fontSizeFactor
             runtimeSettings.fontSizeFactor = fontSize
         }

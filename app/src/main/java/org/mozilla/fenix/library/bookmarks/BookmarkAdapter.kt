@@ -8,7 +8,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
@@ -31,25 +30,25 @@ import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
 class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkAction>) :
-    AdapterWithJob<RecyclerView.ViewHolder>() {
+    AdapterWithJob<BookmarkAdapter.BookmarkNodeViewHolder>() {
 
     private var tree: List<BookmarkNode> = listOf()
     private var mode: BookmarkState.Mode = BookmarkState.Mode.Normal
-    var selected = setOf<BookmarkNode>()
+    val selected: Set<BookmarkNode>
+        get() = (mode as? BookmarkState.Mode.Selecting)?.selectedItems ?: setOf()
     private var isFirstRun = true
 
     fun updateData(tree: BookmarkNode?, mode: BookmarkState.Mode) {
-        this.tree = tree?.children?.filterNotNull() ?: listOf()
+        this.tree = tree?.children ?: listOf()
         isFirstRun = if (isFirstRun) false else {
             emptyView.visibility = if (this.tree.isEmpty()) View.VISIBLE else View.GONE
             false
         }
         this.mode = mode
-        this.selected = if (mode is BookmarkState.Mode.Selecting) mode.selectedItems else setOf()
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkNodeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bookmark_row, parent, false)
 
         return when (viewType) {
@@ -77,25 +76,12 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
 
     override fun getItemCount(): Int = tree.size
 
-    @SuppressWarnings("ComplexMethod")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-        when (holder) {
-            is BookmarkItemViewHolder -> holder.bind(
-                tree[position],
-                mode,
-                tree[position] in selected
-            )
-            is BookmarkFolderViewHolder -> holder.bind(
-                tree[position],
-                mode,
-                tree[position] in selected
-            )
-            is BookmarkSeparatorViewHolder -> holder.bind(
-                tree[position], mode,
-                tree[position] in selected
-            )
-        }
+    override fun onBindViewHolder(holder: BookmarkNodeViewHolder, position: Int) {
+        holder.bind(
+            tree[position],
+            mode,
+            tree[position] in selected
+        )
     }
 
     open class BookmarkNodeViewHolder(
@@ -242,13 +228,6 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
         BookmarkNodeViewHolder(view, actionEmitter, job, containerView) {
 
         override fun bind(item: BookmarkNode, mode: BookmarkState.Mode, selected: Boolean) {
-
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(bookmark_layout)
-            constraintSet.connect(
-                bookmark_title.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM
-            )
-            constraintSet.applyTo(bookmark_layout)
 
             bookmark_favicon.setImageResource(R.drawable.ic_folder_icon)
             bookmark_favicon.visibility = View.VISIBLE

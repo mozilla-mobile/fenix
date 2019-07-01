@@ -18,6 +18,7 @@ android {
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
         versionName Config.generateDebugVersionName()
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         manifestPlaceholders.isRaptorEnabled = "false"
@@ -39,6 +40,7 @@ android {
             applicationIdSuffix ".debug"
             manifestPlaceholders.isRaptorEnabled = "true"
             resValue "bool", "IS_DEBUG", "true"
+            pseudoLocalesEnabled true
         }
         forPerformanceTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
             manifestPlaceholders.isRaptorEnabled = "true"
@@ -46,6 +48,7 @@ android {
             debuggable true
         }
         nightly releaseTemplate >> {
+            applicationIdSuffix ".nightly"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
         }
         beta releaseTemplate >> {
@@ -257,7 +260,9 @@ android.applicationVariants.all { variant ->
 // -------------------------------------------------------------------------------------------------
 // Feature build flags
 // -------------------------------------------------------------------------------------------------
-    buildConfigField 'Boolean', 'SEND_TAB_ENABLED', (true).toString()
+    // NB: flipping SEND_TAB_ENABLED flag back and worth is currently not well supported and may need hand-holding.
+    // Consult with the android-components peers before changing.
+    buildConfigField 'Boolean', 'SEND_TAB_ENABLED', (buildType == "nightly" || isDebug).toString()
     buildConfigField 'Boolean', 'PULL_TO_REFRESH_ENABLED', (false).toString()
 }
 
@@ -349,7 +354,8 @@ dependencies {
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_recyclerview
-    implementation Deps.androidx_lifecycle_viewmodel_ktx
+    implementation Deps.androidx_lifecycle_runtime
+    implementation Deps.androidx_lifecycle_viewmodel
     implementation Deps.androidx_lifecycle_viewmodel_ss
     implementation Deps.androidx_core
     implementation Deps.androidx_core_ktx
@@ -390,7 +396,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
-    testImplementation Deps.junit
+    testImplementation Deps.mozilla_support_test
+    testImplementation Deps.androidx_junit
     testImplementation Deps.robolectric
     implementation Deps.fragment_testing
     testImplementation Deps.places_forUnitTests
@@ -424,7 +431,7 @@ task printBuildVariants {
 
 task printGeckoviewVersions {
     doLast {
-        println "nightly: " + groovy.json.JsonOutput.toJson(GeckoVersions.nightly_version)
+        println "beta: " + groovy.json.JsonOutput.toJson(GeckoVersions.beta_version)
     }
 }
 
