@@ -1,6 +1,6 @@
-# Firefox Fenix
+# Firefox Preview
 
-Firefox Fenix is a new browser for Android
+Firefox Preview (internal code name: "Fenix") is an all-new browser for Android, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
 ## Getting Involved
 
@@ -12,7 +12,7 @@ Before you attempt to make a contribution please read the [Community Participati
 
 * [View current Issues](https://github.com/mozilla-mobile/fenix/issues), [view current Pull Requests](https://github.com/mozilla-mobile/fenix/pulls), or [file a security issue][sec issue].
 
-* IRC: [#focus (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [view logs](https://mozilla.logbot.info/fenix/)
+* IRC: [#fenix (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [view logs](https://mozilla.logbot.info/fenix/)
 (**We're available Monday-Friday, GMT and PST working hours**).
 
 * [View the Wiki](https://github.com/mozilla-mobile/fenix/wiki).
@@ -51,7 +51,7 @@ ln -s ../../config/pre-push-recommended.sh .git/hooks/pre-push
 ```
 or for Windows run this command with administrative privileges:
 ```sh
-mklink /d .git\hooks\pre-push ..\..\config\pre-push-recommended.sh
+mklink .git\hooks\pre-push ..\..\config\pre-push-recommended.sh
 ```
 
 To push without running the pre-push hook (e.g. doc updates):

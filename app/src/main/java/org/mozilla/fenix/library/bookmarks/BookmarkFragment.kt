@@ -23,11 +23,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_bookmark.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
@@ -62,7 +63,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
     private lateinit var bookmarkComponent: BookmarkComponent
     private lateinit var signInComponent: SignInComponent
     var currentRoot: BookmarkNode? = null
-    private val navigation by lazy { Navigation.findNavController(requireView()) }
+    private val navigation by lazy { findNavController() }
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { _, destination, args ->
             if (destination.id != R.id.bookmarkFragment ||
@@ -122,11 +123,12 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
     }
 
     private fun loadInitialBookmarkFolder(currentGuid: String): Job {
-        return lifecycleScope.launch(IO) {
+        return viewLifecycleOwner.lifecycleScope.launch(IO) {
             currentRoot =
                 context?.bookmarkStorage()?.getTree(currentGuid).withOptionalDesktopFolders(context) as BookmarkNode
 
-            lifecycleScope.launch(Main) {
+            if (!isActive) return@launch
+            launch(Main) {
                 getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(currentRoot!!))
 
                 activity?.run {
@@ -144,8 +146,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         navigation.removeOnDestinationChangedListener(onDestinationChangedListener)
     }
 
@@ -179,7 +181,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
                                 (activity as HomeActivity)
                                     .openToBrowserAndLoad(
                                         searchTermOrURL = url,
-                                        newTab = false,
+                                        newTab = true,
                                         from = BrowserDirection.FromBookmarks
                                     )
                             }
