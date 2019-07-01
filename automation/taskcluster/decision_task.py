@@ -131,6 +131,8 @@ def release(channel, is_staging, version_name):
         signing_task_id,
         apks=apk_paths,
         channel=channel,
+        # TODO until org.mozilla.fenix.nightly is made public, put it on the internally-testable track
+        override_google_play_track=None if channel != "nightly" else "internal",
         is_staging=is_staging,
     )
 
