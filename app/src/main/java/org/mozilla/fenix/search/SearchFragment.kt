@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.ITALIC
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.style.StyleSpan
 import android.view.ContextThemeWrapper
@@ -18,21 +19,30 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
+import kotlinx.android.synthetic.main.search_engine_radio_button.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.feature.qr.QrFeature
+import mozilla.components.lib.state.Store
+import mozilla.components.lib.state.ext.observe
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.kotlin.isUrl
+import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.SearchAction
 import org.mozilla.fenix.components.toolbar.SearchChange
@@ -45,31 +55,21 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
-import org.mozilla.fenix.search.awesomebar.AwesomeBarAction
-import org.mozilla.fenix.search.awesomebar.AwesomeBarChange
-import org.mozilla.fenix.search.awesomebar.AwesomeBarComponent
-import org.mozilla.fenix.search.awesomebar.AwesomeBarState
-import org.mozilla.fenix.search.awesomebar.AwesomeBarUIView
-import org.mozilla.fenix.search.awesomebar.AwesomeBarViewModel
+import org.mozilla.fenix.search.awesomebar.AwesomeBarView
+import org.mozilla.fenix.utils.Settings
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 class SearchFragment : Fragment(), BackHandler {
     private lateinit var toolbarComponent: ToolbarComponent
-    private lateinit var awesomeBarComponent: AwesomeBarComponent
+    private lateinit var awesomeBarView: AwesomeBarView
     private var sessionId: String? = null
     private var isPrivate = false
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private var permissionDidUpdate = false
+    private lateinit var searchStore: SearchStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-// Disabled while awaiting a better solution to #3209
-//        postponeEnterTransition()
-//        sharedElementEnterTransition =
-//            TransitionInflater.from(context).inflateTransition(android.R.transition.move).setDuration(
-//                SHARED_TRANSITION_MS
-//            )
-
         requireComponents.analytics.metrics.track(Event.InteractWithSearchURLArea)
     }
 
@@ -84,6 +84,17 @@ class SearchFragment : Fragment(), BackHandler {
         val session = sessionId?.let { requireComponents.core.sessionManager.findSessionById(it) }
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url ?: ""
+
+        searchStore = Store(
+            SearchState(
+                searchEngineSource = SearchEngineSource.Default(
+                    requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
+                ),
+                showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
+                showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks
+            ),
+            ::searchStateReducer
+        )
 
         toolbarComponent = ToolbarComponent(
             view.toolbar_component_wrapper,
@@ -104,16 +115,14 @@ class SearchFragment : Fragment(), BackHandler {
             it.uiView.view.layoutParams.height = CoordinatorLayout.LayoutParams.MATCH_PARENT
         }
 
-        awesomeBarComponent = AwesomeBarComponent(
+        awesomeBarView = AwesomeBarView(
             view.search_layout,
-            ActionBusFactory.get(this),
-            FenixViewModelProvider.create(
-                this,
-                AwesomeBarViewModel::class.java
-            ) {
-                AwesomeBarViewModel(AwesomeBarState("", false))
-            }
+            ::onURLTapped,
+            ::onSearchTermsTapped,
+            ::onSearchShortcutEngineSelected,
+            ::onSearchEngineSettingsTapped
         )
+
         ActionBusFactory.get(this).logMergedObservables()
         return view
     }
@@ -182,14 +191,22 @@ class SearchFragment : Fragment(), BackHandler {
         view.toolbar_wrapper.clipToOutline = false
 
         search_shortcuts_button.setOnClickListener {
-            val isOpen = (awesomeBarComponent.uiView as AwesomeBarUIView).state?.showShortcutEnginePicker ?: false
-
-            getManagedEmitter<AwesomeBarChange>().onNext(AwesomeBarChange.SearchShortcutEnginePicker(!isOpen))
+            val isOpen = searchStore.state.showShortcutEnginePicker
+            searchStore.dispatch(org.mozilla.fenix.search.SearchAction.SearchShortcutEnginePicker(!isOpen))
 
             if (isOpen) {
                 requireComponents.analytics.metrics.track(Event.SearchShortcutMenuClosed)
             } else {
                 requireComponents.analytics.metrics.track(Event.SearchShortcutMenuOpened)
+            }
+        }
+
+        searchStore.observe(view) {
+            MainScope().launch {
+                awesomeBarView.update(it)
+                updateSearchEngineIcon(it)
+                updateSearchShortuctsIcon(it)
+                updateSearchWithLabel(it)
             }
         }
 
@@ -199,7 +216,6 @@ class SearchFragment : Fragment(), BackHandler {
     override fun onResume() {
         super.onResume()
         subscribeToSearchActions()
-        subscribeToAwesomeBarActions()
 
         if (!permissionDidUpdate) {
             getManagedEmitter<SearchChange>().onNext(SearchChange.ToolbarRequestedFocus)
@@ -251,7 +267,7 @@ class SearchFragment : Fragment(), BackHandler {
                     }
                     is SearchAction.TextChanged -> {
                         getManagedEmitter<SearchChange>().onNext(SearchChange.QueryTextChanged(it.query))
-                        getManagedEmitter<AwesomeBarChange>().onNext(AwesomeBarChange.UpdateQuery(it.query))
+                        searchStore.dispatch(org.mozilla.fenix.search.SearchAction.UpdateQuery(it.query))
                     }
                     is SearchAction.EditingCanceled -> {
                         Navigation.findNavController(toolbar_wrapper).navigateUp()
@@ -260,43 +276,53 @@ class SearchFragment : Fragment(), BackHandler {
             }
     }
 
-    private fun subscribeToAwesomeBarActions() {
-        getAutoDisposeObservable<AwesomeBarAction>()
-            .subscribe {
-                when (it) {
-                    is AwesomeBarAction.URLTapped -> {
-                        (activity as HomeActivity).openToBrowserAndLoad(
-                            searchTermOrURL = it.url,
-                            newTab = sessionId == null,
-                            from = BrowserDirection.FromSearch
-                        )
-                        requireComponents.analytics.metrics.track(Event.EnteredUrl(false))
-                    }
-                    is AwesomeBarAction.SearchTermsTapped -> {
-                        (activity as HomeActivity).openToBrowserAndLoad(
-                            searchTermOrURL = it.searchTerms,
-                            newTab = sessionId == null,
-                            from = BrowserDirection.FromSearch,
-                            engine = it.engine,
-                            forceSearch = true
-                        )
+    private fun onURLTapped(url: String) {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = url,
+            newTab = sessionId == null,
+            from = BrowserDirection.FromSearch
+        )
+        requireComponents.analytics.metrics.track(Event.EnteredUrl(false))
+    }
 
-                        val engine = it.engine ?: requireComponents
-                            .search.searchEngineManager.getDefaultSearchEngine(requireContext())
-                        val event = createSearchEvent(engine, true)
+    private fun onSearchTermsTapped(searchTerms: String) {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = searchTerms,
+            newTab = sessionId == null,
+            from = BrowserDirection.FromSearch,
+            engine = searchStore.state.searchEngineSource.searchEngine,
+            forceSearch = true
+        )
 
-                        requireComponents.analytics.metrics.track(event)
-                    }
-                    is AwesomeBarAction.SearchShortcutEngineSelected -> {
-                        getManagedEmitter<AwesomeBarChange>()
-                            .onNext(AwesomeBarChange.SearchShortcutEngineSelected(it.engine))
-                        getManagedEmitter<SearchChange>()
-                            .onNext(SearchChange.SearchShortcutEngineSelected(it.engine))
+        val event = createSearchEvent(searchStore.state.searchEngineSource.searchEngine, true)
 
-                        requireComponents.analytics.metrics.track(Event.SearchShortcutSelected(it.engine.name))
-                    }
-                }
-            }
+        requireComponents.analytics.metrics.track(event)
+    }
+
+    private fun onSearchShortcutEngineSelected(engine: SearchEngine) {
+        searchStore.dispatch(org.mozilla.fenix.search.SearchAction.SearchShortcutEngineSelected(engine))
+
+        getManagedEmitter<SearchChange>()
+            .onNext(SearchChange.SearchShortcutEngineSelected(engine))
+
+        requireComponents.analytics.metrics.track(Event.SearchShortcutSelected(engine.name))
+    }
+
+    private fun onSearchEngineSettingsTapped() {
+        val directions = SearchFragmentDirections.actionSearchFragmentToSearchEngineFragment()
+        findNavController().navigate(directions)
+    }
+
+    private fun updateSearchEngineIcon(searchState: org.mozilla.fenix.search.SearchState) {
+        val searchIcon = searchState.searchEngineSource.searchEngine.icon
+        val draw = BitmapDrawable(resources, searchIcon)
+        val iconSize = resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
+        draw.setBounds(0, 0, iconSize, iconSize)
+        engine_icon?.backgroundDrawable = draw
+    }
+
+    private fun updateSearchWithLabel(searchState: org.mozilla.fenix.search.SearchState) {
+        search_with_shortcuts.visibility = if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
     }
 
     private fun createSearchEvent(engine: SearchEngine, isSuggestion: Boolean): Event.PerformedSearch {
@@ -311,6 +337,22 @@ class SearchFragment : Fragment(), BackHandler {
             else Event.PerformedSearch.EventSource.Action(engineSource)
 
         return Event.PerformedSearch(source)
+    }
+
+    private fun updateSearchShortuctsIcon(searchState: org.mozilla.fenix.search.SearchState) {
+        with(requireContext()) {
+            val showShortcuts = searchState.showShortcutEnginePicker
+            search_shortcuts_button?.isChecked = showShortcuts
+
+            val color = if (showShortcuts) R.attr.foundation else R.attr.primaryText
+
+            search_shortcuts_button.compoundDrawables[0]?.setTint(
+                ContextCompat.getColor(
+                    this,
+                    ThemeManager.resolveAttribute(color, this)
+                )
+            )
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -331,7 +373,6 @@ class SearchFragment : Fragment(), BackHandler {
     }
 
     companion object {
-        private const val SHARED_TRANSITION_MS = 150L
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
 }
