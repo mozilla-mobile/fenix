@@ -37,9 +37,9 @@ class BrowserToolbarTopBehavior(
     // This implementation is heavily based on this blog article:
     // https://android.jlelse.eu/scroll-your-bottom-navigation-view-away-with-10-lines-of-code-346f1ed40e9e
 
-    internal var shouldSnapAfterScroll: Boolean = false
+    private var shouldSnapAfterScroll: Boolean = false
 
-    internal var snapAnimator: ValueAnimator = ValueAnimator().apply {
+    private var snapAnimator: ValueAnimator = ValueAnimator().apply {
         interpolator = DecelerateInterpolator()
         duration = SNAP_ANIMATION_DURATION
     }

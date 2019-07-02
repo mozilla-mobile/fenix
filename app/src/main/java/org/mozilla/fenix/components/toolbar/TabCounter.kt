@@ -18,7 +18,7 @@ import android.widget.TextView
 import mozilla.components.ui.tabcounter.R
 import java.text.NumberFormat
 
-open class TabCounter @JvmOverloads constructor(
+class TabCounter @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
@@ -171,7 +171,7 @@ open class TabCounter @JvmOverloads constructor(
             text, "alpha",
             ANIM_TEXT_FADEIN_FROM, ANIM_TEXT_FADEIN_TO
         ).setDuration(ANIM_TEXT_FADEIN_DURATION)
-        fadeIn.startDelay = (ANIM_TEXT_FADEIN_DELAY).toLong() // delay 6 frames after fadeOut
+        fadeIn.startDelay = (ANIM_TEXT_FADEIN_DELAY) // delay 6 frames after fadeOut
 
         // Move down on y-axis, from 0 to 4.4 in 66ms, with fadeIn (57~61, 4 frames).
         val moveDown = ObjectAnimator.ofFloat(

@@ -32,13 +32,13 @@ class FindInPageIntegration(
     override fun start() {
         feature.start()
 
-        FindInPageIntegration.launch = this::launch
+        launch = this::launch
     }
 
     override fun stop() {
         feature.stop()
 
-        FindInPageIntegration.launch = null
+        launch = null
     }
 
     override fun onBackPressed(): Boolean {

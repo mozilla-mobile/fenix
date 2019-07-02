@@ -28,7 +28,7 @@ object ExceptionDomains {
             exceptions = (preferences(context)
                 .getString(KEY_DOMAINS, "") ?: "")
                 .split(SEPARATOR)
-                .filter { !it.isEmpty() }
+                .filter { it.isNotEmpty() }
         }
 
         return exceptions ?: listOf()

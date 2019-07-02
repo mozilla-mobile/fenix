@@ -30,7 +30,7 @@ class HomeMenu(
                 R.drawable.ic_settings,
                 ThemeManager.resolveAttribute(R.attr.primaryText, context)
             ) {
-                onItemTapped.invoke(HomeMenu.Item.Settings)
+                onItemTapped.invoke(Item.Settings)
             },
 
             BrowserMenuImageText(
@@ -38,7 +38,7 @@ class HomeMenu(
                 R.drawable.ic_library,
                 ThemeManager.resolveAttribute(R.attr.primaryText, context)
             ) {
-                onItemTapped.invoke(HomeMenu.Item.Library)
+                onItemTapped.invoke(Item.Library)
             },
 
             BrowserMenuDivider(),
@@ -47,7 +47,7 @@ class HomeMenu(
                 R.drawable.ic_help,
                 ThemeManager.resolveAttribute(R.attr.primaryText, context)
             ) {
-                onItemTapped.invoke(HomeMenu.Item.Help)
+                onItemTapped.invoke(Item.Help)
             })
     }
 }

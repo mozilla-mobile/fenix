@@ -72,8 +72,8 @@ class BackgroundServices(
         private val logger = Logger("DeviceEventsObserver")
         override fun onEvents(events: List<DeviceEvent>) {
             logger.info("Received ${events.size} device event(s)")
-            events.filter { it is DeviceEvent.TabReceived }.forEach {
-                notificationManager.showReceivedTabs(it as DeviceEvent.TabReceived)
+            events.filterIsInstance<DeviceEvent.TabReceived>().forEach {
+                notificationManager.showReceivedTabs(it)
             }
         }
     }

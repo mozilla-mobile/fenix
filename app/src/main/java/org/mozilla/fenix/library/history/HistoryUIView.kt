@@ -108,7 +108,7 @@ class HistoryUIView(
     }
 
     private fun themeToolbar(
-        toolbar: androidx.appcompat.widget.Toolbar,
+        toolbar: Toolbar,
         textColor: Int,
         backgroundColor: Int,
         colorFilter: PorterDuffColorFilter? = null

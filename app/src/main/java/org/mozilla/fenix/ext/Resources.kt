@@ -55,7 +55,7 @@ class SpannableStringCreator {
         spanMap.forEach { entry ->
             val range = entry.key
             entry.value.forEach {
-                setSpan(it, range.start, range.endInclusive, SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(it, range.first, range.last, SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
     }

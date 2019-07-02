@@ -107,7 +107,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {
-        blockedByAndroidView = rootView.findViewById<View>(R.id.permissions_blocked_container)
+        blockedByAndroidView = rootView.findViewById(R.id.permissions_blocked_container)
         initSettingsButton(blockedByAndroidView)
     }
 

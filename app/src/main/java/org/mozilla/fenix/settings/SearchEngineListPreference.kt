@@ -34,8 +34,8 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-    protected var searchEngines: List<SearchEngine> = emptyList()
-    protected var searchEngineGroup: RadioGroup? = null
+    private var searchEngines: List<SearchEngine> = emptyList()
+    private var searchEngineGroup: RadioGroup? = null
 
     protected abstract val itemResId: Int
 

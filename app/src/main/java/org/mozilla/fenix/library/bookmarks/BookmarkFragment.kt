@@ -62,7 +62,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
 
     private lateinit var bookmarkComponent: BookmarkComponent
     private lateinit var signInComponent: SignInComponent
-    var currentRoot: BookmarkNode? = null
+    private var currentRoot: BookmarkNode? = null
     private val navigation by lazy { findNavController() }
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { _, destination, args ->
@@ -71,7 +71,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
             )
                 getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.ClearSelection)
         }
-    lateinit var initialJob: Job
+    private lateinit var initialJob: Job
     private var pendingBookmarkDeletionJob: (suspend () -> Unit)? = null
     private var pendingBookmarksToDelete: MutableSet<BookmarkNode> = HashSet()
 

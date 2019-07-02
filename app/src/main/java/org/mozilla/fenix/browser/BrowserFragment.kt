@@ -125,7 +125,7 @@ class BrowserFragment : Fragment(), BackHandler {
     private val customTabsIntegration = ViewBoundFeatureWrapper<CustomTabsIntegration>()
     private var findBookmarkJob: Job? = null
 
-    var customTabSessionId: String? = null
+    private var customTabSessionId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

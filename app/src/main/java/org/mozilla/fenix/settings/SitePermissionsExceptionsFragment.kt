@@ -96,7 +96,7 @@ class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun bindEmptyContainerMess(rootView: View) {
-        emptyContainerMessage = rootView.findViewById<View>(R.id.empty_exception_container)
+        emptyContainerMessage = rootView.findViewById(R.id.empty_exception_container)
     }
 
     private fun bindClearButton(rootView: View) {

@@ -16,7 +16,6 @@ import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.view.*
-import kotlinx.android.synthetic.main.onboarding_privacy_notice.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -33,7 +32,7 @@ class QuickActionUIView(
         .inflate(R.layout.component_quick_action_sheet, container, true)
         .findViewById(R.id.nestedScrollQuickAction) as NestedScrollView
 
-    val quickActionSheet = view.quick_action_sheet as QuickActionSheet
+    private val quickActionSheet = view.quick_action_sheet as QuickActionSheet
 
     init {
         val quickActionSheetBehavior =

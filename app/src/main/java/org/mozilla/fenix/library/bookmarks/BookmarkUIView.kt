@@ -37,7 +37,7 @@ class BookmarkUIView(
 
     var mode: BookmarkState.Mode = BookmarkState.Mode.Normal
         private set
-    var tree: BookmarkNode? = null
+    private var tree: BookmarkNode? = null
         private set
 
     private var canGoBack = false

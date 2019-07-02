@@ -15,6 +15,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
+import kotlin.math.roundToInt
 
 class SwipeToDeleteCallback(
     val actionEmitter: Observer<SessionControlAction>
@@ -130,7 +131,7 @@ class SwipeToDeleteCallback(
         private fun convertDpToPixel(dp: Float): Int {
             val metrics = Resources.getSystem().displayMetrics
             val px = dp * (metrics.densityDpi / DENSITY_CONVERSION)
-            return Math.round(px)
+            return px.roundToInt()
         }
     }
 }

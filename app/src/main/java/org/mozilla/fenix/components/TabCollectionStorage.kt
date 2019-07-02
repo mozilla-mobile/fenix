@@ -93,8 +93,7 @@ class TabCollectionStorage(
 
 fun TabCollection.description(context: Context): String {
     return this.tabs
-        .map { it.url.urlToTrimmedHost(context).capitalize() }
-        .map {
+        .map { it.url.urlToTrimmedHost(context).capitalize() }.joinToString(", ") {
             if (it.length > CollectionViewHolder.maxTitleLength) {
                 it.substring(
                     0,
@@ -103,5 +102,5 @@ fun TabCollection.description(context: Context): String {
             } else {
                 it
             }
-        }.joinToString(", ")
+        }
 }

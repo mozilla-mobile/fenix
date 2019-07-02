@@ -31,38 +31,38 @@ class BookmarkItemMenu(
     val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     private val menuItems by lazy {
-        listOf(
+        listOfNotNull(
             if (item.type in listOf(BookmarkNodeType.ITEM, BookmarkNodeType.FOLDER)) {
                 SimpleBrowserMenuItem(context.getString(R.string.bookmark_menu_edit_button)) {
-                    onItemTapped.invoke(BookmarkItemMenu.Item.Edit)
+                    onItemTapped.invoke(Item.Edit)
                 }
             } else null,
             if (item.type == BookmarkNodeType.ITEM) {
                 SimpleBrowserMenuItem(context.getString(R.string.bookmark_menu_copy_button)) {
-                    onItemTapped.invoke(BookmarkItemMenu.Item.Copy)
+                    onItemTapped.invoke(Item.Copy)
                 }
             } else null,
             if (item.type == BookmarkNodeType.ITEM) {
                 SimpleBrowserMenuItem(context.getString(R.string.bookmark_menu_share_button)) {
-                    onItemTapped.invoke(BookmarkItemMenu.Item.Share)
+                    onItemTapped.invoke(Item.Share)
                 }
             } else null,
             if (item.type == BookmarkNodeType.ITEM) {
                 SimpleBrowserMenuItem(context.getString(R.string.bookmark_menu_open_in_new_tab_button)) {
-                    onItemTapped.invoke(BookmarkItemMenu.Item.OpenInNewTab)
+                    onItemTapped.invoke(Item.OpenInNewTab)
                 }
             } else null,
             if (item.type == BookmarkNodeType.ITEM) {
                 SimpleBrowserMenuItem(context.getString(R.string.bookmark_menu_open_in_private_tab_button)) {
-                    onItemTapped.invoke(BookmarkItemMenu.Item.OpenInPrivateTab)
+                    onItemTapped.invoke(Item.OpenInPrivateTab)
                 }
             } else null,
             SimpleBrowserMenuItem(
                 context.getString(R.string.bookmark_menu_delete_button),
                 textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
             ) {
-                onItemTapped.invoke(BookmarkItemMenu.Item.Delete)
+                onItemTapped.invoke(Item.Delete)
             }
-        ).filterNotNull()
+        )
     }
 }

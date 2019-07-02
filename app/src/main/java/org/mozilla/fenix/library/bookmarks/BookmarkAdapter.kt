@@ -29,7 +29,7 @@ import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
-class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkAction>) :
+class BookmarkAdapter(private val emptyView: View, val actionEmitter: Observer<BookmarkAction>) :
     AdapterWithJob<BookmarkAdapter.BookmarkNodeViewHolder>() {
 
     private var tree: List<BookmarkNode> = listOf()

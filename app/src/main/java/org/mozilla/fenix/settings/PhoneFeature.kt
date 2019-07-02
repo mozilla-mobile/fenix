@@ -87,7 +87,7 @@ enum class PhoneFeature(val id: Int, val androidPermissionsList: Array<String>) 
 
     companion object {
         fun findFeatureBy(permissions: Array<out String>): PhoneFeature? {
-            return PhoneFeature.values().find { feature ->
+            return values().find { feature ->
                 feature.androidPermissionsList.any { permission ->
                     permission == permissions.first()
                 }

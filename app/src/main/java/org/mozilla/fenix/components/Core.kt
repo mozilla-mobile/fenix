@@ -91,7 +91,7 @@ class Core(private val context: Context) {
         GeckoViewFetchClient(context, runtime)
     }
 
-    val sessionStorage: SessionStorage by lazy {
+    private val sessionStorage: SessionStorage by lazy {
         SessionStorage(context, engine = engine)
     }
 

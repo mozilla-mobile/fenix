@@ -30,8 +30,8 @@ class PairFragment : Fragment(), BackHandler {
         super.onViewCreated(view, savedInstanceState)
 
         val instructionsText = view.findViewById(R.id.pair_instructions) as TextView
-        instructionsText.setText(HtmlCompat.fromHtml(getString(R.string.pair_instructions),
-            HtmlCompat.FROM_HTML_MODE_LEGACY))
+        instructionsText.text = HtmlCompat.fromHtml(getString(R.string.pair_instructions),
+            HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         qrFeature.set(
             QrFeature(

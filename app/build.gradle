@@ -9,6 +9,7 @@ apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 import com.android.build.gradle.internal.tasks.AppPreBuildTask
+import groovy.json.JsonOutput
 
 android {
     compileSdkVersion 28
@@ -425,13 +426,13 @@ task printBuildVariants {
             abi: variant.productFlavors.find { it.dimension == 'abi' }.name,
             isSigned: variant.signingReady,
         ]}
-        println "variants: " + groovy.json.JsonOutput.toJson(variantData)
+        println "variants: " + JsonOutput.toJson(variantData)
     }
 }
 
 task printGeckoviewVersions {
     doLast {
-        println "beta: " + groovy.json.JsonOutput.toJson(GeckoVersions.beta_version)
+        println "beta: " + JsonOutput.toJson(GeckoVersions.beta_version)
     }
 }
 

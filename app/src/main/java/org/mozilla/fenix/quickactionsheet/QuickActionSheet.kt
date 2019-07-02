@@ -101,17 +101,17 @@ class QuickActionSheet @JvmOverloads constructor(
         }
 
         override fun performAccessibilityAction(host: View?, action: Int, args: Bundle?): Boolean {
-            when (action) {
+            finalState = when (action) {
                 AccessibilityNodeInfo.ACTION_CLICK -> {
-                    finalState = when (quickActionSheetBehavior.state) {
+                    when (quickActionSheetBehavior.state) {
                         BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_COLLAPSED
                         else -> BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
                 AccessibilityNodeInfo.ACTION_COLLAPSE ->
-                    finalState = BottomSheetBehavior.STATE_COLLAPSED
+                    BottomSheetBehavior.STATE_COLLAPSED
                 AccessibilityNodeInfo.ACTION_EXPAND ->
-                    finalState = BottomSheetBehavior.STATE_EXPANDED
+                    BottomSheetBehavior.STATE_EXPANDED
                 else -> return super.performAccessibilityAction(host, action, args)
             }
 
