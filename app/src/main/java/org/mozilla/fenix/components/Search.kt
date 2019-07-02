@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngineManager
