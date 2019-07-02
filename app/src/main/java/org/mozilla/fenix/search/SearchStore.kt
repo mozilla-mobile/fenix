@@ -20,6 +20,7 @@ sealed class SearchEngineSource {
 
 data class SearchState(
     val query: String = "",
+    val searchTerms: String = "",
     val showShortcutEnginePicker: Boolean = false,
     val searchEngineSource: SearchEngineSource,
     val showSuggestions: Boolean,

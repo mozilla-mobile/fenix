@@ -78,6 +78,7 @@ class SearchFragment : Fragment(), BackHandler {
         searchStore = Store(
             SearchState(
                 query = url,
+                searchTerms = session?.searchTerms ?: "",
                 searchEngineSource = SearchEngineSource.Default(
                     requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
                 ),
@@ -185,6 +186,7 @@ class SearchFragment : Fragment(), BackHandler {
         searchStore.observe(view) {
             MainScope().launch {
                 awesomeBarView.update(it)
+                toolbarView.update(it)
                 updateSearchEngineIcon(it)
                 updateSearchShortuctsIcon(it)
                 updateSearchWithLabel(it)

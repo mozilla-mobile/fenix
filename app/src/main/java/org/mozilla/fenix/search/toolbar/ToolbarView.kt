@@ -33,6 +33,8 @@ class ToolbarView(
         .inflate(R.layout.component_search, container, true)
         .findViewById(R.id.toolbar)
 
+    private var isInitialzied = false
+
     init {
         view.apply {
             editMode()
@@ -72,7 +74,12 @@ class ToolbarView(
     }
 
     fun update(searchState: SearchState) {
-
+        if (!isInitialzied) {
+            view.url = searchState.query
+            view.setSearchTerms(searchState.searchTerms)
+            view.editMode()
+            isInitialzied = true
+        }
     }
 
     companion object {
