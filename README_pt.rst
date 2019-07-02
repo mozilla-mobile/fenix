@@ -1,8 +1,8 @@
-# Firefox Preview
+#Firefox Preview
 
 Firefox Preview (nome do código interno: "Fenix") é um is navegador totalmente novo para Android, baseado no [GeckoView](https://mozilla.github.io/geckoview/) e [Mozilla Android Components](https://mozac.org/).
 
-## Participar
+##Participar
 
 Nós encorajamos você a participar deste projeto de código aberto. Nós adoramos Pull Requests, relatórios de bugs, idéias, revisões de código (de segurança) ou qualquer outro tipo de contribuição positiva.
  
@@ -11,7 +11,7 @@ Antes de tentar fazer uma contribuição por favor leia o [Diretrizes de Partici
 
 * [Guia para Contribuir](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING.md) (**Novos contribuidores começam aqui!**)
 
-* [Ver atuais Issues](https://github.com/mozilla-mobile/fenix/issues), [ver atuais Pull Requests](https://github.com/mozilla-mobile/fenix/pulls), ou [Apresentar um problema de segurança][sec issue].
+*[Ver atuais Issues](https://github.com/mozilla-mobile/fenix/issues), [ver atuais Pull Requests](https://github.com/mozilla-mobile/fenix/pulls), ou [Apresentar um problema de segurança][sec issue].
 
 * IRC: [#fenix (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [ver regitros](https://mozilla.logbot.info/fenix/)
 (**Estamos disponíveis de segunda a sexta, horário de funcionamento GMT e PST**).
@@ -21,7 +21,7 @@ Antes de tentar fazer uma contribuição por favor leia o [Diretrizes de Partici
 **Iniciantes!** - Fiquem atentos para os [Problemas com o rótulo "Good First Issue"](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). Estes são bugs fáceis que foram deixados para os novatos se aventurarem, se envolverem e contribuírem positivamente para o projeto.!
 
 
-## Construir Instruções
+##Construir Instruções
 
 
 1. Clone ou faça Download do repositório:
@@ -40,7 +40,7 @@ Antes de tentar fazer uma contribuição por favor leia o [Diretrizes de Partici
 **armDebug** for ARM
 **x86Debug** for X86
 
-## Pre-push hooks
+##Pre-push hooks
 Para reduzir o tempo de revisão, gostaríamos que todos os pushes executassem testes localmente. 
 Recomendamos que você use nosso pre-push hook fornecido em `config / pre-push-recommended.sh`. 
 Usar esse hook garantirá que seu hook seja atualizado conforme o repositório for alterado. 
@@ -61,7 +61,7 @@ Para fazer o push sem executar o pre-push (por exemplo, atualizações de docume
 git push <remote> --no-verify
 ```
 
-## Licença
+##Licença
 
 
     Este Formulário de Código-Fonte está sujeito aos termos da Licença Pública 
