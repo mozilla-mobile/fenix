@@ -362,6 +362,9 @@ class TaskBuilder(object):
         deadline = taskcluster.fromNow('1 day')
         expires = taskcluster.fromNow(DEFAULT_EXPIRES_IN)
 
+        if self.trust_level == 3:
+            routes.append('tc-treeherder.v2.fenix.{}'.format(self.commit))
+
         return {
             "provisionerId": provisioner_id,
             "workerType": worker_type,
@@ -375,9 +378,7 @@ class TaskBuilder(object):
             "priority": self.tasks_priority,
             "dependencies": [self.task_id] + dependencies,
             "requires": "all-completed",
-            "routes": routes + [
-                "tc-treeherder.v2.fenix.{}".format(self.commit)
-            ],
+            "routes": routes,
             "scopes": scopes,
             "payload": payload,
             "extra": {
@@ -535,7 +536,7 @@ class TaskBuilder(object):
         elif variant.abi == 'arm':
             treeherder_platform = 'android-hw-g5-7-0-arm7-api-16'
         elif variant.abi == 'aarch64':
-            treeherder_platform = 'android-hw-p2-8-0-aarch64'
+            treeherder_platform = 'android-hw-p2-8-0-android-aarch64'
         else:
             raise ValueError('Unsupported architecture "{}"'.format(variant.abi))
 
