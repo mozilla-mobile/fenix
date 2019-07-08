@@ -369,6 +369,7 @@ dependencies {
     implementation Deps.androidx_core
     implementation Deps.androidx_core_ktx
     implementation Deps.androidx_transition
+    implementation Deps.androidx_work_ktx
     implementation Deps.google_material
 
     implementation Deps.autodispose
