@@ -30,9 +30,9 @@ import org.mozilla.fenix.home.sessioncontrol.onNext
 import kotlin.coroutines.CoroutineContext
 
 class TabViewHolder(
-    val view: View,
+    view: View,
     actionEmitter: Observer<SessionControlAction>,
-    val job: Job,
+    private val job: Job,
     override val containerView: View? = view
 ) :
     RecyclerView.ViewHolder(view), LayoutContainer, CoroutineScope {
@@ -109,7 +109,7 @@ class TabViewHolder(
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         const val LAYOUT_ID = R.layout.tab_list_row
         const val buttonIncreaseDps = 12
-        const val favIconBorderRadiusInPx = 8
+        const val favIconBorderRadiusInPx = 4
     }
 }
 

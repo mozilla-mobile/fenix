@@ -19,21 +19,21 @@ import mozilla.components.browser.icons.IconRequest
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
 class CollectionCreationTabListAdapter(
     val actionEmitter: Observer<CollectionCreationAction>
-) : RecyclerView.Adapter<TabViewHolder>() {
+) : AdapterWithJob<TabViewHolder>() {
     private var tabs: List<Tab> = listOf()
     private var selectedTabs: MutableSet<Tab> = mutableSetOf()
-    private lateinit var job: Job
     private var hideCheckboxes = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(TabViewHolder.LAYOUT_ID, parent, false)
 
-        return TabViewHolder(view, job)
+        return TabViewHolder(view, adapterJob)
     }
 
     override fun onBindViewHolder(holder: TabViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -48,6 +48,8 @@ class CollectionCreationTabListAdapter(
                     } else if (checkChanged.shouldBeUnchecked) {
                         holder.view.tab_selected_checkbox.isChecked = false
                     }
+                    holder.view.tab_selected_checkbox.visibility =
+                        if (checkChanged.shouldHideCheckBox) View.GONE else View.VISIBLE
                 }
             }
         }
@@ -70,16 +72,6 @@ class CollectionCreationTabListAdapter(
     }
 
     override fun getItemCount(): Int = tabs.size
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        job = Job()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        job.cancel()
-    }
 
     fun updateData(tabs: List<Tab>, selectedTabs: Set<Tab>, hideCheckboxes: Boolean = false) {
         val diffUtil = DiffUtil.calculateDiff(
@@ -123,14 +115,14 @@ private class TabDiffUtil(
         val shouldBeChecked = newSelected.contains(new[newItemPosition]) && !oldSelected.contains(old[oldItemPosition])
         val shouldBeUnchecked =
             !newSelected.contains(new[newItemPosition]) && oldSelected.contains(old[oldItemPosition])
-        return CheckChanged(shouldBeChecked, shouldBeUnchecked)
+        return CheckChanged(shouldBeChecked, shouldBeUnchecked, newHideCheckboxes)
     }
 
     override fun getOldListSize(): Int = old.size
     override fun getNewListSize(): Int = new.size
 }
 
-data class CheckChanged(val shouldBeChecked: Boolean, val shouldBeUnchecked: Boolean)
+data class CheckChanged(val shouldBeChecked: Boolean, val shouldBeUnchecked: Boolean, val shouldHideCheckBox: Boolean)
 
 class TabViewHolder(
     val view: View,

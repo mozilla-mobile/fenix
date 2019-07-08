@@ -4,7 +4,7 @@ package org.mozilla.fenix.search.awesomebar
    License, v. 2.0. If a copy of the MPL was not distributed with this
    file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -15,6 +15,7 @@ import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.search.SearchEngine
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
@@ -69,7 +70,7 @@ class AwesomeBarUIView(
     }
 
     private val loadUrlUseCase = object : SessionUseCases.LoadUrlUseCase {
-        override fun invoke(url: String) {
+        override fun invoke(url: String, flags: EngineSession.LoadUrlFlags) {
             actionEmitter.onNext(AwesomeBarAction.URLTapped(url))
         }
     }
@@ -93,13 +94,13 @@ class AwesomeBarUIView(
 
     init {
         with(container.context) {
-            val draw = getDrawable(R.drawable.ic_link)
-            draw?.setColorFilter(
-                ContextCompat.getColor(
-                    this,
-                    ThemeManager.resolveAttribute(R.attr.primaryText, this)
-                ), PorterDuff.Mode.SRC_IN
+            val primaryTextColor = ContextCompat.getColor(
+                this,
+                ThemeManager.resolveAttribute(R.attr.primaryText, this)
             )
+
+            val draw = getDrawable(R.drawable.ic_link)
+            draw?.setColorFilter(primaryTextColor, SRC_IN)
             clipboardSuggestionProvider = ClipboardSuggestionProvider(
                 this,
                 loadUrlUseCase,
@@ -128,14 +129,9 @@ class AwesomeBarUIView(
                     components.core.icons
                 )
 
-            if (Settings.getInstance(container.context).showSearchSuggestions()) {
+            if (Settings.getInstance(container.context).showSearchSuggestions) {
                 val searchDrawable = getDrawable(R.drawable.ic_search)
-                searchDrawable?.setColorFilter(
-                    ContextCompat.getColor(
-                        this,
-                        ThemeManager.resolveAttribute(R.attr.primaryText, this)
-                    ), PorterDuff.Mode.SRC_IN
-                )
+                searchDrawable?.setColorFilter(primaryTextColor, SRC_IN)
                 defaultSearchSuggestionProvider =
                     SearchSuggestionProvider(
                         searchEngine = components.search.searchEngineManager.getDefaultSearchEngine(
@@ -171,7 +167,7 @@ class AwesomeBarUIView(
     }
 
     private fun showSuggestionProviders() {
-        if (Settings.getInstance(container.context).showSearchSuggestions()) {
+        if (Settings.getInstance(container.context).showSearchSuggestions) {
             view.addProviders(searchSuggestionProvider!!)
         }
 
@@ -187,7 +183,7 @@ class AwesomeBarUIView(
     }
 
     private fun showSearchSuggestionProvider() {
-        if (Settings.getInstance(container.context).showSearchSuggestions()) {
+        if (Settings.getInstance(container.context).showSearchSuggestions) {
             view.addProviders(searchSuggestionProvider!!)
         }
     }
@@ -199,7 +195,7 @@ class AwesomeBarUIView(
                 ContextCompat.getColor(
                     this,
                     ThemeManager.resolveAttribute(R.attr.primaryText, this)
-                ), PorterDuff.Mode.SRC_IN
+                ), SRC_IN
             )
 
             searchSuggestionFromShortcutProvider =

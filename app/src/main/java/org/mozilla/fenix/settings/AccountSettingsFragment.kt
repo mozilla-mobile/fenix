@@ -6,23 +6,24 @@ package org.mozilla.fenix.settings
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.format.DateUtils
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.forEach
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.ConstellationState
+import mozilla.components.concept.sync.DeviceConstellationObserver
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
-import mozilla.components.concept.sync.DeviceConstellationObserver
 import mozilla.components.concept.sync.SyncStatusObserver
 import mozilla.components.feature.sync.getLastSynced
 import mozilla.components.service.fxa.FxaException
@@ -30,16 +31,12 @@ import mozilla.components.service.fxa.FxaPanicException
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
-import kotlin.Exception
-import kotlin.coroutines.CoroutineContext
 
-class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+class AccountSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var accountManager: FxaAccountManager
 
     // Navigate away from this fragment when we encounter auth problems or logout events.
@@ -47,16 +44,22 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
         override fun onAuthenticated(account: OAuthAccount) {}
 
         override fun onAuthenticationProblems() {
-            launch {
-                Navigation.findNavController(view!!).popBackStack()
+            lifecycleScope.launch {
+                findNavController().popBackStack()
             }
         }
 
         override fun onError(error: Exception) {}
 
         override fun onLoggedOut() {
-            launch {
-                Navigation.findNavController(view!!).popBackStack()
+            lifecycleScope.launch {
+                findNavController().popBackStack()
+
+                // Remove the device name when we log out.
+                context?.let {
+                    val deviceNameKey = it.getPreferenceKey(R.string.pref_key_sync_device_name)
+                    preferenceManager.sharedPreferences.edit().remove(deviceNameKey).apply()
+                }
             }
         }
 
@@ -71,13 +74,11 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         requireComponents.analytics.metrics.track(Event.SyncAccountOpened)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
         requireComponents.analytics.metrics.track(Event.SyncAccountClosed)
     }
 
@@ -100,21 +101,27 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
             // Current sync state
             updateLastSyncedTimePref(context!!, preferenceSyncNow)
-            if (requireComponents.backgroundServices.syncManager.isSyncRunning()) {
-                preferenceSyncNow.title = getString(R.string.sync_syncing_in_progress)
-                preferenceSyncNow.isEnabled = false
-            } else {
-                preferenceSyncNow.isEnabled = true
+            requireComponents.backgroundServices.syncManager?.let {
+                if (it.isSyncRunning()) {
+                    preferenceSyncNow.title = getString(R.string.sync_syncing_in_progress)
+                    preferenceSyncNow.isEnabled = false
+                } else {
+                    preferenceSyncNow.isEnabled = true
+                }
             }
         }
 
         // Device Name
         val deviceConstellation = accountManager.authenticatedAccount()?.deviceConstellation()
         val deviceNameKey = context!!.getPreferenceKey(R.string.pref_key_sync_device_name)
-        findPreference<Preference>(deviceNameKey)?.apply {
+        findPreference<EditTextPreference>(deviceNameKey)?.apply {
             onPreferenceChangeListener = getChangeListenerForDeviceName()
             deviceConstellation?.state()?.currentDevice?.let { device ->
                 summary = device.displayName
+                text = device.displayName
+            }
+            setOnBindEditTextListener { editText ->
+                editText.filters = arrayOf(InputFilter.LengthFilter(DEVICE_NAME_MAX_LENGTH))
             }
         }
 
@@ -122,13 +129,13 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
         // NB: ObserverRegistry will take care of cleaning up internal references to 'observer' and
         // 'owner' when appropriate.
-        requireComponents.backgroundServices.syncManager.register(syncStatusObserver, owner = this, autoPause = true)
+        requireComponents.backgroundServices.syncManager?.register(syncStatusObserver, owner = this, autoPause = true)
     }
 
     private fun getClickListenerForSignOut(): Preference.OnPreferenceClickListener {
         return Preference.OnPreferenceClickListener {
             requireComponents.analytics.metrics.track(Event.SyncAccountSignOut)
-            launch {
+            lifecycleScope.launch {
                 accountManager.logoutAsync().await()
             }
             true
@@ -139,9 +146,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
         return Preference.OnPreferenceClickListener {
             // Trigger a sync.
             requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
-            requireComponents.backgroundServices.syncManager.syncNow()
+            requireComponents.backgroundServices.syncManager?.syncNow()
             // Poll for device events.
-            launch {
+            lifecycleScope.launch {
                 accountManager.authenticatedAccount()
                     ?.deviceConstellation()
                     ?.refreshDeviceStateAsync()
@@ -153,13 +160,20 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
     private fun getChangeListenerForDeviceName(): Preference.OnPreferenceChangeListener {
         return Preference.OnPreferenceChangeListener { _, newValue ->
+            // The network request requires a nonempty string, so don't persist any changes if the user inputs one.
+            if (newValue.toString().trim().isEmpty()) {
+                FenixSnackbar.make(view!!, FenixSnackbar.LENGTH_LONG)
+                    .setText(getString(R.string.empty_device_name_error))
+                    .show()
+                return@OnPreferenceChangeListener false
+            }
             // Optimistically set the device name to what user requested.
             val deviceNameKey = context!!.getPreferenceKey(R.string.pref_key_sync_device_name)
             val preferenceDeviceName = findPreference<Preference>(deviceNameKey)
             preferenceDeviceName?.summary = newValue as String
 
             // This may fail, and we'll have a disparity in the UI until `updateDeviceName` is called.
-            CoroutineScope(Dispatchers.IO).launch {
+            lifecycleScope.launch(IO) {
                 try {
                     accountManager.authenticatedAccount()?.let {
                         it.deviceConstellation().setDeviceNameAsync(newValue)
@@ -170,14 +184,13 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
                     Logger.error("Setting device name failed.", e)
                 }
             }
-
             true
         }
     }
 
     private val syncStatusObserver = object : SyncStatusObserver {
         override fun onStarted() {
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch {
                 val pref = findPreference<Preference>(context!!.getPreferenceKey(R.string.pref_key_sync_now))
                 view?.announceForAccessibility(getString(R.string.sync_syncing_in_progress))
                 pref?.title = getString(R.string.sync_syncing_in_progress)
@@ -189,7 +202,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
         // Sync stopped successfully.
         override fun onIdle() {
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch {
                 val pref = findPreference<Preference>(context!!.getPreferenceKey(R.string.pref_key_sync_now))
                 pref?.let {
                     pref.title = getString(R.string.preferences_sync_now)
@@ -201,7 +214,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
 
         // Sync stopped after encountering a problem.
         override fun onError(error: Exception?) {
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch {
                 val pref = findPreference<Preference>(context!!.getPreferenceKey(R.string.pref_key_sync_now))
                 pref?.let {
                     pref.title = getString(R.string.preferences_sync_now)
@@ -256,5 +269,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), CoroutineScope {
                 DateUtils.getRelativeTimeSpanString(lastSyncTime)
             )
         }
+    }
+
+    companion object {
+        private const val DEVICE_NAME_MAX_LENGTH = 128
     }
 }

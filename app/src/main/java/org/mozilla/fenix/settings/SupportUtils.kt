@@ -26,7 +26,7 @@ object SupportUtils {
     enum class SumoTopic(
         internal val topicStr: String
     ) {
-        HELP("firefox-android-help"),
+        HELP("faq-android"),
         PRIVATE_BROWSING_MYTHS("common-myths-about-private-browsing"),
         YOUR_RIGHTS("your-rights")
     }

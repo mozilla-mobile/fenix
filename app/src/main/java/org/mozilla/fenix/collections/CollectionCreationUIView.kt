@@ -5,6 +5,7 @@ package org.mozilla.fenix.collections
    file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import android.os.Handler
+import android.text.InputFilter
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -81,8 +82,9 @@ class CollectionCreationUIView(
             increaseTapArea(increaseButtonByDps)
         }
 
+        view.name_collection_edittext.filters += InputFilter.LengthFilter(COLLECTION_NAME_MAX_LENGTH)
         view.name_collection_edittext.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotEmpty()) {
+            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotBlank()) {
                 when (step) {
                     is SaveCollectionStep.NameCollection -> {
                         actionEmitter.onNext(
@@ -104,6 +106,7 @@ class CollectionCreationUIView(
 
         view.tab_list.run {
             adapter = collectionCreationTabListAdapter
+            itemAnimator = null
             layoutManager = LinearLayoutManager(container.context, RecyclerView.VERTICAL, true)
         }
 
@@ -205,7 +208,9 @@ class CollectionCreationUIView(
                 val drawable = view.context.getDrawable(R.drawable.ic_new)
                 drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
                 view.bottom_bar_icon_button.setImageDrawable(drawable)
-                view.bottom_bar_icon_button.setOnClickListener(null)
+                view.bottom_bar_icon_button.setOnClickListener {
+                    actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
+                }
 
                 view.bottom_button_bar_layout.isClickable = true
                 view.bottom_button_bar_layout.setOnClickListener {
@@ -346,5 +351,6 @@ class CollectionCreationUIView(
     companion object {
         private const val TRANSITION_DURATION = 200L
         private const val increaseButtonByDps = 16
+        private const val COLLECTION_NAME_MAX_LENGTH = 128
     }
 }

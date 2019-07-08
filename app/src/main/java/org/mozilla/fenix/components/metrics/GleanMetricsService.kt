@@ -93,14 +93,14 @@ private val Event.wrapper
             { ContextMenu.itemTappedKeys.valueOf(it) }
         )
         is Event.CrashReporterOpened -> EventWrapper<NoExtraKeys>(
-            { CrashReporter.opened }
+            { CrashReporter.opened.record(it) }
         )
         is Event.CrashReporterClosed -> EventWrapper(
-            { CrashReporter.closed },
+            { CrashReporter.closed.record(it) },
             { CrashReporter.closedKeys.valueOf(it) }
         )
         is Event.BrowserMenuItemTapped -> EventWrapper(
-            { Events.browserMenuAction },
+            { Events.browserMenuAction.record(it) },
             { Events.browserMenuActionKeys.valueOf(it) }
         )
         is Event.QuickActionSheetOpened -> EventWrapper<NoExtraKeys>(
@@ -154,6 +154,9 @@ private val Event.wrapper
         is Event.AddBookmarkFolder -> EventWrapper<NoExtraKeys>(
             { BookmarksManagement.folderAdd.record(it) }
         )
+        is Event.RemoveBookmarkFolder -> EventWrapper<NoExtraKeys>(
+            { BookmarksManagement.folderRemove.record(it) }
+        )
         is Event.CustomTabsMenuOpened -> EventWrapper<NoExtraKeys>(
             { CustomTab.menu.record(it) }
         )
@@ -185,11 +188,11 @@ private val Event.wrapper
             { Library.closed.record(it) }
         )
         is Event.LibrarySelectedItem -> EventWrapper(
-            { Library.selectedItem },
+            { Library.selectedItem.record(it) },
             { Library.selectedItemKeys.valueOf(it) }
         )
         is Event.ErrorPageVisited -> EventWrapper(
-            { ErrorPage.visitedError },
+            { ErrorPage.visitedError.record(it) },
             { ErrorPage.visitedErrorKeys.valueOf(it) }
         )
         is Event.SyncAuthOpened -> EventWrapper<NoExtraKeys>(
@@ -244,7 +247,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         if (initialized) return
         initialized = true
 
-        starter = CoroutineScope(Dispatchers.Default).launch {
+        starter = CoroutineScope(Dispatchers.IO).launch {
             Glean.registerPings(Pings)
             Glean.initialize(context, Configuration(channel = BuildConfig.BUILD_TYPE))
 

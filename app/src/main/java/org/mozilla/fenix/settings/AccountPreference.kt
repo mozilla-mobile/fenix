@@ -12,13 +12,12 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import org.mozilla.fenix.R
 
-class AccountPreference : Preference {
+class AccountPreference @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : Preference(context, attrs) {
     var displayName: String? = null
     var email: String? = null
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, attributeSetId: Int) : super(context, attrs, attributeSetId)
 
     init {
         layoutResource = R.layout.account_preference

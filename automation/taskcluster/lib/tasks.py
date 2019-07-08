@@ -40,12 +40,13 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, channel, is_staging, version_name):
+    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name, index_channel=None):
+        index_channel = index_channel or build_type
         artifacts = {
             'public/target.{}.apk'.format(arch): {
                 "type": 'file',
                 "path": '/opt/fenix/app/build/outputs/apk/'
-                        '{arch}/{channel}/app-{arch}-{channel}-unsigned.apk'.format(arch=arch, channel=channel),
+                        '{arch}/{build_type}/app-{arch}-{build_type}-unsigned.apk'.format(arch=arch, build_type=build_type),
                 "expires": taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
             }
             for arch in architectures
@@ -54,7 +55,7 @@ class TaskBuilder(object):
         if is_staging:
             secret_index = 'garbage/staging/project/mobile/fenix'
         else:
-            secret_index = 'project/mobile/fenix/{}'.format(channel)
+            secret_index = 'project/mobile/fenix/{}'.format(index_channel)
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
@@ -67,10 +68,10 @@ class TaskBuilder(object):
             )
         )
 
-        capitalized_channel = upper_case_first_letter(channel)
+        capitalized_build_type = upper_case_first_letter(build_type)
         gradle_commands = (
-            './gradlew --no-daemon -PversionName={} clean test assemble{}'.format(
-                version_name, capitalized_channel),
+            './gradlew --no-daemon -PversionName="{}" clean test assemble{}'.format(
+                version_name, capitalized_build_type),
         )
 
         command = ' && '.join(
@@ -85,8 +86,8 @@ class TaskBuilder(object):
         ]
 
         return self._craft_build_ish_task(
-            name='Build {} task'.format(capitalized_channel),
-            description='Build Fenix {} from source code'.format(capitalized_channel),
+            name='Build {} task'.format(capitalized_build_type),
+            description='Build Fenix {} from source code'.format(capitalized_build_type),
             command=command,
             scopes=[
                 "secrets:get:{}".format(secret_index)
@@ -98,7 +99,7 @@ class TaskBuilder(object):
                 'machine': {
                     'platform': 'android-all',
                 },
-                'symbol': '{}-A'.format(channel),
+                'symbol': '{}-A'.format(build_type),
                 'tier': 1,
             },
         )
@@ -361,6 +362,9 @@ class TaskBuilder(object):
         deadline = taskcluster.fromNow('1 day')
         expires = taskcluster.fromNow(DEFAULT_EXPIRES_IN)
 
+        if self.trust_level == 3:
+            routes.append('tc-treeherder.v2.fenix.{}'.format(self.commit))
+
         return {
             "provisionerId": provisioner_id,
             "workerType": worker_type,
@@ -374,9 +378,7 @@ class TaskBuilder(object):
             "priority": self.tasks_priority,
             "dependencies": [self.task_id] + dependencies,
             "requires": "all-completed",
-            "routes": routes + [
-                "tc-treeherder.v2.fenix.{}".format(self.commit)
-            ],
+            "routes": routes,
             "scopes": scopes,
             "payload": payload,
             "extra": {
@@ -534,7 +536,7 @@ class TaskBuilder(object):
         elif variant.abi == 'arm':
             treeherder_platform = 'android-hw-g5-7-0-arm7-api-16'
         elif variant.abi == 'aarch64':
-            treeherder_platform = 'android-hw-p2-8-0-aarch64'
+            treeherder_platform = 'android-hw-p2-8-0-android-aarch64'
         else:
             raise ValueError('Unsupported architecture "{}"'.format(variant.abi))
 
@@ -575,10 +577,10 @@ class TaskBuilder(object):
                 ]],
                 "env": {
                     "EXTRA_MOZHARNESS_CONFIG": json.dumps({
-                        "test_packages_url": "{}/{}/artifacts/public/build/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                        "test_packages_url": "{}/{}/artifacts/public/build/en-US/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
                         "installer_url": apk_url,
                     }),
-                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/mozilla-central",
+                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-beta",
                     "GECKO_HEAD_REV": gecko_revision,
                     "MOZ_AUTOMATION": "1",
                     "MOZ_HIDE_RESULTS_TABLE": "1",
@@ -586,7 +588,7 @@ class TaskBuilder(object):
                     "MOZ_NODE_PATH": "/usr/local/bin/node",
                     "MOZHARNESS_CONFIG": "raptor/android_hw_config.py",
                     "MOZHARNESS_SCRIPT": "raptor_script.py",
-                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/en-US/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
                     "MOZILLA_BUILD_URL": apk_url,
                     "NEED_XVFB": "false",
                     "NO_FAIL_ON_TEST_ERRORS": "1",
@@ -598,7 +600,7 @@ class TaskBuilder(object):
                 },
                 "mounts": [{
                     "content": {
-                        "url": "https://hg.mozilla.org/mozilla-central/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
+                        "url": "https://hg.mozilla.org/releases/mozilla-beta/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
                     },
                     "file": "test-linux.sh",
                 }]
@@ -652,11 +654,8 @@ def schedule_task_graph(ordered_groups_of_tasks):
     return full_task_graph
 
 
-def fetch_mozharness_task_id(geckoview_nightly_version):
-    nightly_build_id = geckoview_nightly_version.split('.')[-1]
-    nightly_date = arrow.get(nightly_build_id, 'YYYYMMDDHHmmss')
-
-    raptor_index = 'gecko.v2.mozilla-central.pushdate.{}.{:02}.{:02}.{}.firefox.linux64-debug'.format(
-        nightly_date.year, nightly_date.month, nightly_date.day, nightly_build_id
+def fetch_mozharness_task_id(geckoview_beta_version):
+    raptor_index = 'gecko.v2.mozilla-beta.geckoview-version.{}.mobile.android-x86_64-beta-opt'.format(
+        geckoview_beta_version
     )
     return taskcluster.Index().findTask(raptor_index)['taskId']

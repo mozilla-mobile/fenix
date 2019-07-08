@@ -65,6 +65,7 @@ sealed class Event {
     object ShareBookmark : Event()
     object CopyBookmark : Event()
     object AddBookmarkFolder : Event()
+    object RemoveBookmarkFolder : Event()
     object RemoveBookmarks : Event()
     object QuickActionSheetOpened : Event()
     object QuickActionSheetClosed : Event()
@@ -234,7 +235,6 @@ sealed class Event {
         get() = null
 }
 
-@Suppress("ComplexMethod")
 private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
     Component.FEATURE_FINDINPAGE to "previous" -> Event.FindInPagePrevious
     Component.FEATURE_FINDINPAGE to "next" -> Event.FindInPageNext

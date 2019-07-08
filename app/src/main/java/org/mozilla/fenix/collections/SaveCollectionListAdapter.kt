@@ -4,6 +4,7 @@ package org.mozilla.fenix.collections
    License, v. 2.0. If a copy of the MPL was not distributed with this
    file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.synthetic.main.collections_list_item.view.*
-import kotlinx.android.synthetic.main.collections_list_item.view.collection_description
-import kotlinx.android.synthetic.main.collections_list_item.view.collection_icon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,13 +19,13 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.description
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
 class SaveCollectionListAdapter(
     val actionEmitter: Observer<CollectionCreationAction>
-) : RecyclerView.Adapter<CollectionViewHolder>() {
+) : AdapterWithJob<CollectionViewHolder>() {
 
-    private lateinit var job: Job
     private var tabCollections = listOf<TabCollection>()
     private var selectedTabs: Set<Tab> = setOf()
 
@@ -34,7 +33,7 @@ class SaveCollectionListAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(CollectionViewHolder.LAYOUT_ID, parent, false)
 
-        return CollectionViewHolder(view, actionEmitter, job)
+        return CollectionViewHolder(view, actionEmitter, adapterJob)
     }
 
     override fun onBindViewHolder(holder: CollectionViewHolder, position: Int) {
@@ -49,16 +48,6 @@ class SaveCollectionListAdapter(
     }
 
     override fun getItemCount(): Int = tabCollections.size
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        job = Job()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        job.cancel()
-    }
 
     fun updateData(tabCollections: List<TabCollection>, selectedTabs: Set<Tab>) {
         this.tabCollections = tabCollections
@@ -89,11 +78,11 @@ class CollectionViewHolder(
                 view.context,
                 getIconColor(collection.id)
             ),
-            android.graphics.PorterDuff.Mode.SRC_IN
+            SRC_IN
         )
     }
 
-    @Suppress("ComplexMethod", "MagicNumber")
+    @Suppress("MagicNumber")
     private fun getIconColor(id: Long): Int {
         return when ((id % 5).toInt()) {
             0 -> R.color.collection_icon_color_violet

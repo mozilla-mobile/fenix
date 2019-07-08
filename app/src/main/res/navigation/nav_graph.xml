@@ -201,12 +201,14 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
+        <action
+            android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
+            app:destination="@id/bookmarkAddFolderFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/bookmarkEditFragment"
         android:name="org.mozilla.fenix.library.bookmarks.edit.EditBookmarkFragment"
-        android:label="@string/edit_bookmark_fragment_title"
         tools:layout="@layout/fragment_edit_bookmark">
         <argument
             android:name="guidToEdit"
@@ -403,7 +405,6 @@
     <dialog
         android:id="@+id/shareFragment"
         android:name="org.mozilla.fenix.share.ShareFragment"
-        android:label="fragment_share"
         tools:layout="@layout/fragment_share" >
         <argument
             android:name="url"
