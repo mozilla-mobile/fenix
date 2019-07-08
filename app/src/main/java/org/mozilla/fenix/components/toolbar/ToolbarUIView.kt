@@ -138,7 +138,9 @@ class ToolbarUIView(
             updateEditingState(newState)
         }
 
-        if (!newState.focused) {
+        if (newState.focused) {
+            view.focus()
+        } else {
             view.clearFocus()
         }
 
