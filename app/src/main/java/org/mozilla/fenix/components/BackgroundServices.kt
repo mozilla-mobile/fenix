@@ -88,7 +88,7 @@ class BackgroundServices(
         emptyList()
     }
 
-    private val defaultDeviceName = context.getString(R.string.app_name) + " on " + Build.MANUFACTURER + " " + Build.MODEL
+    private val defaultDeviceName = context.getString(R.string.default_device_name, context.getString(R.string.app_name), Build.MANUFACTURER, Build.MODEL)
 
     val accountManager = FxaAccountManager(
         context,
