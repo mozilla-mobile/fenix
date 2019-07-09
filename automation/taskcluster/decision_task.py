@@ -153,7 +153,7 @@ def nightly_to_production_app(is_staging, version_name):
     push_tasks = {}
 
     build_task_id = taskcluster.slugId()
-    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, build_type, is_staging, version_name, index_channel='nightly')
+    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, build_type, is_staging, version_name)
 
     signing_task_id = taskcluster.slugId()
     signing_tasks[signing_task_id] = BUILDER.craft_release_signing_task(
