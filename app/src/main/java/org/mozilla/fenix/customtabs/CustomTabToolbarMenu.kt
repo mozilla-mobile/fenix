@@ -117,6 +117,7 @@ class CustomTabToolbarMenu(
                 onItemTapped.invoke(ToolbarMenu.Item.Share)
             },
 
+            // TODO: Add icon R.drawable.ic_desktop
             BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
                 { session?.desktopMode ?: false }, { checked ->
                     onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
