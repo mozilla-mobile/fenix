@@ -18,11 +18,15 @@ import mozilla.components.support.ktx.android.content.res.pxToDp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.search.SearchState
 
+interface ToolbarInteractor {
+    fun onUrlCommitted(url: String)
+    fun onEditingCanceled()
+    fun onTextChanged(text: String)
+}
+
 class ToolbarView(
     private val container: ViewGroup,
-    private val onUrlCommitted: (String) -> Unit,
-    private val onEditingCanceled: () -> Unit,
-    private val onTextChanged: (String) -> Unit,
+    private val interactor: ToolbarInteractor,
     private val historyStorageProvider: () -> HistoryStorage?
 ) : LayoutContainer {
 
@@ -42,7 +46,7 @@ class ToolbarView(
             elevation = resources.pxToDp(TOOLBAR_ELEVATION).toFloat()
 
             setOnUrlCommitListener {
-                onUrlCommitted(it)
+                interactor.onUrlCommitted(it)
                 false
             }
 
@@ -56,16 +60,15 @@ class ToolbarView(
 
             setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
                 override fun onCancelEditing(): Boolean {
-                    onEditingCanceled()
+                    interactor.onEditingCanceled()
                     return false
                 }
                 override fun onTextChanged(text: String) {
                     url = text
-                    this@ToolbarView.onTextChanged(text)
+                    this@ToolbarView.interactor.onTextChanged(text)
                 }
             })
         }
-
 
         ToolbarAutocompleteFeature(view).apply {
             addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })

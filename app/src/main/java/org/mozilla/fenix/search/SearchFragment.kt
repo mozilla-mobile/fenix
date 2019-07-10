@@ -20,14 +20,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.fragment_search.toolbar_wrapper
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import mozilla.components.browser.search.SearchEngine
+import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.Store
 import mozilla.components.lib.state.ext.observe
@@ -35,8 +33,6 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
-import mozilla.components.support.ktx.kotlin.isUrl
-import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -52,11 +48,10 @@ import org.mozilla.fenix.utils.Settings
 class SearchFragment : Fragment(), BackHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
-    private var sessionId: String? = null
-    private var isPrivate = false
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private var permissionDidUpdate = false
     private lateinit var searchStore: SearchStore
+    private lateinit var searchInteractor: SearchInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +63,11 @@ class SearchFragment : Fragment(), BackHandler {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sessionId = SearchFragmentArgs.fromBundle(arguments!!).sessionId
-        isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
+        val session = arguments
+            ?.let(SearchFragmentArgs.Companion::fromBundle)
+            ?.let { it.sessionId }
+            ?.let(requireComponents.core.sessionManager::findSessionById)
 
-        val session = sessionId?.let { requireComponents.core.sessionManager.findSessionById(it) }
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url ?: ""
 
@@ -83,30 +79,16 @@ class SearchFragment : Fragment(), BackHandler {
                     requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
                 ),
                 showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
-                showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks
+                showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks,
+                session = session
             ),
             ::searchStateReducer
         )
 
-        toolbarView = ToolbarView(
-            view.toolbar_component_wrapper,
-            ::onUrlCommitted,
-            { Navigation.findNavController(toolbar_wrapper).navigateUp() },
-            { searchStore.dispatch(SearchAction.UpdateQuery(it)) },
-            {
-                if (Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks) {
-                    requireComponents.core.historyStorage
-                } else null
-            }
-        )
+        searchInteractor = SearchInteractor(activity as HomeActivity, findNavController(), searchStore)
 
-        awesomeBarView = AwesomeBarView(
-            view.search_layout,
-            ::onURLTapped,
-            ::onSearchTermsTapped,
-            ::onSearchShortcutEngineSelected,
-            ::onSearchEngineSettingsTapped
-        )
+        toolbarView = ToolbarView(view.toolbar_component_wrapper, searchInteractor, ::historyStorageProvider)
+        awesomeBarView = AwesomeBarView(view.search_layout, searchInteractor)
 
         return view
     }
@@ -150,7 +132,7 @@ class SearchFragment : Fragment(), BackHandler {
                                 (activity as HomeActivity)
                                     .openToBrowserAndLoad(
                                         searchTermOrURL = result,
-                                        newTab = sessionId == null,
+                                        newTab = searchStore.state.session == null,
                                         from = BrowserDirection.FromSearch
                                     )
                                 dialog.dismiss()
@@ -223,58 +205,6 @@ class SearchFragment : Fragment(), BackHandler {
         }
     }
 
-    private fun onUrlCommitted(url: String) {
-        if (url.isNotBlank()) {
-            (activity as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = url,
-                newTab = sessionId == null,
-                from = BrowserDirection.FromSearch,
-                engine = searchStore.state.searchEngineSource.searchEngine
-            )
-
-            val event = if (url.isUrl()) {
-                Event.EnteredUrl(false)
-            } else {
-                createSearchEvent(searchStore.state.searchEngineSource.searchEngine, false)
-            }
-
-            requireComponents.analytics.metrics.track(event)
-        }
-    }
-
-    private fun onURLTapped(url: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = sessionId == null,
-            from = BrowserDirection.FromSearch
-        )
-        requireComponents.analytics.metrics.track(Event.EnteredUrl(false))
-    }
-
-    private fun onSearchTermsTapped(searchTerms: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = searchTerms,
-            newTab = sessionId == null,
-            from = BrowserDirection.FromSearch,
-            engine = searchStore.state.searchEngineSource.searchEngine,
-            forceSearch = true
-        )
-
-        val event = createSearchEvent(searchStore.state.searchEngineSource.searchEngine, true)
-
-        requireComponents.analytics.metrics.track(event)
-    }
-
-    private fun onSearchShortcutEngineSelected(engine: SearchEngine) {
-        searchStore.dispatch(SearchAction.SearchShortcutEngineSelected(engine))
-        requireComponents.analytics.metrics.track(Event.SearchShortcutSelected(engine.name))
-    }
-
-    private fun onSearchEngineSettingsTapped() {
-        val directions = SearchFragmentDirections.actionSearchFragmentToSearchEngineFragment()
-        findNavController().navigate(directions)
-    }
-
     private fun updateSearchEngineIcon(searchState: SearchState) {
         val searchIcon = searchState.searchEngineSource.searchEngine.icon
         val draw = BitmapDrawable(resources, searchIcon)
@@ -285,20 +215,6 @@ class SearchFragment : Fragment(), BackHandler {
 
     private fun updateSearchWithLabel(searchState: SearchState) {
         search_with_shortcuts.visibility = if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
-    }
-
-    private fun createSearchEvent(engine: SearchEngine, isSuggestion: Boolean): Event.PerformedSearch {
-        val isShortcut = engine != requireComponents.search.searchEngineManager.defaultSearchEngine
-
-        val engineSource =
-            if (isShortcut) Event.PerformedSearch.EngineSource.Shortcut(engine)
-            else Event.PerformedSearch.EngineSource.Default(engine)
-
-        val source =
-            if (isSuggestion) Event.PerformedSearch.EventSource.Suggestion(engineSource)
-            else Event.PerformedSearch.EventSource.Action(engineSource)
-
-        return Event.PerformedSearch(source)
     }
 
     private fun updateSearchShortuctsIcon(searchState: SearchState) {
@@ -332,6 +248,12 @@ class SearchFragment : Fragment(), BackHandler {
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    private fun historyStorageProvider(): HistoryStorage? {
+        return if (Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks) {
+            requireComponents.core.historyStorage
+        } else null
     }
 
     companion object {

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.search
 
 import mozilla.components.browser.search.SearchEngine
+import mozilla.components.browser.session.Session
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
@@ -24,7 +25,8 @@ data class SearchState(
     val showShortcutEnginePicker: Boolean = false,
     val searchEngineSource: SearchEngineSource,
     val showSuggestions: Boolean,
-    val showVisitedSitesBookmarks: Boolean
+    val showVisitedSitesBookmarks: Boolean,
+    val session: Session?
 ) : State
 
 sealed class SearchAction : Action {

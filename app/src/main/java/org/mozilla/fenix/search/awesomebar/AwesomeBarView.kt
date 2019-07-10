@@ -27,12 +27,16 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchState
 
+interface AwesomeBarInteractor {
+    fun onUrlTapped(url: String)
+    fun onSearchTermsTapped(searchTerms: String)
+    fun onSearchShortcutEngineSelected(searchEngine: SearchEngine)
+    fun onClickSearchEngineSettings()
+}
+
 class AwesomeBarView(
     private val container: ViewGroup,
-    private val onUrlTapped: (String) -> Unit,
-    private val onSearchTermsTapped: (String) -> Unit,
-    private val onSearchShortcutEngineSelected: (SearchEngine) -> Unit,
-    private val onClickSearchEngineSettings: () -> Unit
+    val interactor: AwesomeBarInteractor
 ) : LayoutContainer {
     val view: BrowserAwesomeBar = LayoutInflater.from(container.context)
         .inflate(R.layout.component_awesomebar, container, true)
@@ -50,19 +54,19 @@ class AwesomeBarView(
 
     private val loadUrlUseCase = object : SessionUseCases.LoadUrlUseCase {
         override fun invoke(url: String, flags: EngineSession.LoadUrlFlags) {
-            onUrlTapped(url)
+            interactor.onUrlTapped(url)
         }
     }
 
     private val searchUseCase = object : SearchUseCases.SearchUseCase {
         override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
-            onSearchTermsTapped(searchTerms)
+            interactor.onSearchTermsTapped(searchTerms)
         }
     }
 
     private val shortcutSearchUseCase = object : SearchUseCases.SearchUseCase {
         override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
-            onSearchTermsTapped(searchTerms)
+            interactor.onSearchTermsTapped(searchTerms)
         }
     }
 
@@ -122,8 +126,8 @@ class AwesomeBarView(
                 ShortcutsSuggestionProvider(
                     components.search.searchEngineManager,
                     this,
-                    onSearchShortcutEngineSelected,
-                    onClickSearchEngineSettings
+                    interactor::onSearchShortcutEngineSelected,
+                    interactor::onClickSearchEngineSettings
                 )
         }
     }
