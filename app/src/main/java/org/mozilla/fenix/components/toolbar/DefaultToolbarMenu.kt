@@ -131,7 +131,9 @@ class DefaultToolbarMenu(
                 onItemTapped.invoke(ToolbarMenu.Item.Library)
             },
 
-            BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
+            BrowserMenuImageText(
+                context.getString(R.string.browser_menu_desktop_site),
+                R.drawable.ic_desktop,
                 requestDesktopStateProvider, { checked ->
                     onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
                 }),
