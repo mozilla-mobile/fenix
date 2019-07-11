@@ -10,8 +10,14 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
+/**
+ * An alias to make it easier to work with `Store<SearchState, SearchAction>`
+ */
 typealias SearchStore = Store<SearchState, SearchAction>
 
+/**
+ * Wraps a `SearchEngine` to give consumers the context that it was selected as a shortcut
+ */
 sealed class SearchEngineSource {
     abstract val searchEngine: SearchEngine
 
@@ -19,6 +25,9 @@ sealed class SearchEngineSource {
     data class Shortcut(override val searchEngine: SearchEngine) : SearchEngineSource()
 }
 
+/**
+ * The state for the Search Screen
+ */
 data class SearchState(
     val query: String = "",
     val searchTerms: String = "",
@@ -29,12 +38,18 @@ data class SearchState(
     val session: Session?
 ) : State
 
+/**
+ * Actions to dispatch through the `SearchStore` to modify `SearchState` through the reducer.
+ */
 sealed class SearchAction : Action {
     data class SearchShortcutEngineSelected(val engine: SearchEngine) : SearchAction()
     data class SearchShortcutEnginePicker(val show: Boolean) : SearchAction()
     data class UpdateQuery(val query: String) : SearchAction()
 }
 
+/**
+ * The SearchState Reducer.
+ */
 fun searchStateReducer(state: SearchState, action: SearchAction): SearchState {
     return when (action) {
         is SearchAction.SearchShortcutEngineSelected ->
