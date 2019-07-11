@@ -77,7 +77,7 @@ class SearchFragment : Fragment(), BackHandler {
             this,
             SearchState(
                 query = url,
-                searchTerms = session?.searchTerms ?: "",
+                showShortcutEnginePicker = false,
                 searchEngineSource = SearchEngineSource.Default(
                     requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
                 ),

@@ -1,13 +1,11 @@
 package org.mozilla.fenix.search
 
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import mozilla.components.support.test.mock
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class SearchInteractorTest {
-
-    private val searchInteractor = SearchInteractor()
-
     @Test
     fun onUrlCommitted() {
     }
@@ -18,6 +16,25 @@ class SearchInteractorTest {
 
     @Test
     fun onTextChanged() {
+        val store = SearchStore(
+            SearchState(
+                query = "",
+                showShortcutEnginePicker = false,
+                searchEngineSource = SearchEngineSource.Default(mock()),
+                showSuggestions = true,
+                showVisitedSitesBookmarks = true,
+                session = mock()
+            ),
+            ::searchStateReducer
+        )
+
+        val interactor = SearchInteractor(mock(), mock(), store)
+
+        runBlocking {
+            interactor.onTextChanged("test")
+        }
+
+        assertEquals("test", store.state.query)
     }
 
     @Test
