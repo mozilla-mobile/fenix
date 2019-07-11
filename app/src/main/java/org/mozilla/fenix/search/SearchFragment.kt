@@ -33,10 +33,12 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
+import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.components.StateViewModel
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.requireComponents
@@ -71,7 +73,8 @@ class SearchFragment : Fragment(), BackHandler {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url ?: ""
 
-        searchStore = Store(
+        val viewModel = StateViewModel.get(
+            this,
             SearchState(
                 query = url,
                 searchTerms = session?.searchTerms ?: "",
@@ -81,9 +84,15 @@ class SearchFragment : Fragment(), BackHandler {
                 showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
                 showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks,
                 session = session
-            ),
+            )
+        )
+
+        searchStore = Store(
+            viewModel.state,
             ::searchStateReducer
         )
+
+        searchStore.observe(this) { viewModel.update(it) }
 
         searchInteractor = SearchInteractor(activity as HomeActivity, findNavController(), searchStore)
 
