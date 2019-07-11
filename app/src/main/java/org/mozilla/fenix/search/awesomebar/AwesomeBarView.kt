@@ -27,6 +27,9 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchState
 
+/**
+ * Interactor for the AwesomeBarView
+ */
 interface AwesomeBarInteractor {
     fun onUrlTapped(url: String)
     fun onSearchTermsTapped(searchTerms: String)
@@ -34,6 +37,9 @@ interface AwesomeBarInteractor {
     fun onClickSearchEngineSettings()
 }
 
+/**
+ * View that contains and configures the BrowserAwesomeBar
+ */
 class AwesomeBarView(
     private val container: ViewGroup,
     val interactor: AwesomeBarInteractor

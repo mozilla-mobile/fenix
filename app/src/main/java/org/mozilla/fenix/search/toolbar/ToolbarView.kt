@@ -18,12 +18,18 @@ import mozilla.components.support.ktx.android.content.res.pxToDp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.search.SearchState
 
+/**
+ * Interactor for the Toolbar
+ */
 interface ToolbarInteractor {
     fun onUrlCommitted(url: String)
     fun onEditingCanceled()
     fun onTextChanged(text: String)
 }
 
+/**
+ * View that contains and configures the BrowserToolbar to only be used in its editing mode.
+ */
 class ToolbarView(
     private val container: ViewGroup,
     private val interactor: ToolbarInteractor,

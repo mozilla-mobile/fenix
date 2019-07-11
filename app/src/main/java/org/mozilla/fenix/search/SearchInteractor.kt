@@ -7,13 +7,27 @@ package org.mozilla.fenix.search
 import android.content.Context
 import androidx.navigation.NavController
 import mozilla.components.browser.search.SearchEngine
+import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.awesomebar.AwesomeBarInteractor
 import org.mozilla.fenix.search.toolbar.ToolbarInteractor
+
+/**
+ * Helper function to get the MetricController off of context.
+ */
+val Context.metrics: MetricController
+    get() = this.components.analytics.metrics
+
+/**
+ * Helper function to get the SearchEngineManager off of context.
+ */
+val Context.searchEngineManager: SearchEngineManager
+    get() = this.components.search.searchEngineManager
 
 /**
  * Interactor for the search screen
@@ -24,7 +38,6 @@ class SearchInteractor(
     private val navController: NavController,
     private val store: SearchStore
 ) : AwesomeBarInteractor, ToolbarInteractor {
-
     override fun onUrlCommitted(url: String) {
         if (url.isNotBlank()) {
             (context as HomeActivity).openToBrowserAndLoad(
@@ -40,7 +53,7 @@ class SearchInteractor(
                 createSearchEvent(store.state.searchEngineSource.searchEngine, false)
             }
 
-            context.components.analytics.metrics.track(event)
+            context.metrics.track(event)
         }
     }
 
@@ -59,7 +72,7 @@ class SearchInteractor(
             from = BrowserDirection.FromSearch
         )
 
-        context.components.analytics.metrics.track(Event.EnteredUrl(false))
+        context.metrics.track(Event.EnteredUrl(false))
     }
 
     override fun onSearchTermsTapped(searchTerms: String) {
@@ -72,12 +85,12 @@ class SearchInteractor(
         )
 
         val event = createSearchEvent(store.state.searchEngineSource.searchEngine, true)
-        context.components.analytics.metrics.track(event)
+        context.metrics.track(event)
     }
 
     override fun onSearchShortcutEngineSelected(searchEngine: SearchEngine) {
         store.dispatch(SearchAction.SearchShortcutEngineSelected(searchEngine))
-        context.components.analytics.metrics.track(Event.SearchShortcutSelected(searchEngine.name))
+        context.metrics.track(Event.SearchShortcutSelected(searchEngine.name))
     }
 
     override fun onClickSearchEngineSettings() {
@@ -86,7 +99,7 @@ class SearchInteractor(
     }
 
     private fun createSearchEvent(engine: SearchEngine, isSuggestion: Boolean): Event.PerformedSearch {
-        val isShortcut = engine != context.components.search.searchEngineManager.defaultSearchEngine
+        val isShortcut = engine != context.searchEngineManager.defaultSearchEngine
 
         val engineSource =
             if (isShortcut) Event.PerformedSearch.EngineSource.Shortcut(engine)

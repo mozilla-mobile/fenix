@@ -94,7 +94,11 @@ class SearchFragment : Fragment(), BackHandler {
 
         searchStore.observe(this) { viewModel.update(it) }
 
-        searchInteractor = SearchInteractor(activity as HomeActivity, findNavController(), searchStore)
+        searchInteractor = SearchInteractor(
+            activity as HomeActivity,
+            findNavController(),
+            searchStore
+        )
 
         toolbarView = ToolbarView(view.toolbar_component_wrapper, searchInteractor, ::historyStorageProvider)
         awesomeBarView = AwesomeBarView(view.search_layout, searchInteractor)
