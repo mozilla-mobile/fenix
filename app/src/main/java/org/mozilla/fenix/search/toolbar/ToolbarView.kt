@@ -79,7 +79,7 @@ class ToolbarView(
     fun update(searchState: SearchState) {
         if (!isInitialzied) {
             view.url = searchState.query
-            view.setSearchTerms(searchState.searchTerms)
+            view.setSearchTerms(searchState.session?.searchTerms ?: "")
             view.editMode()
             isInitialzied = true
         }

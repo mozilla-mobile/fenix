@@ -27,11 +27,16 @@ sealed class SearchEngineSource {
 
 /**
  * The state for the Search Screen
+ * @property query The current search query string
+ * @property showShortcutEnginePicker Whether or not to show the available search engine view
+ * @property searchEngineSource The current selected search engine with the context of how it was selected
+ * @property showSuggestions Whether or not to show search suggestions for the selected search engine in the AwesomeBar
+ * @property showVisitedSitesBookmarks Whether or not to show history and bookmark suggestions in the AwesomeBar
+ * @property session The current session if available
  */
 data class SearchState(
-    val query: String = "",
-    val searchTerms: String = "",
-    val showShortcutEnginePicker: Boolean = false,
+    val query: String,
+    val showShortcutEnginePicker: Boolean,
     val searchEngineSource: SearchEngineSource,
     val showSuggestions: Boolean,
     val showVisitedSitesBookmarks: Boolean,
