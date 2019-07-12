@@ -100,7 +100,7 @@ class SearchFragment : Fragment(), BackHandler {
             searchStore
         )
 
-        toolbarView = ToolbarView(view.toolbar_component_wrapper, searchInteractor, ::historyStorageProvider)
+        toolbarView = ToolbarView(view.toolbar_component_wrapper, searchInteractor, historyStorageProvider())
         awesomeBarView = AwesomeBarView(view.search_layout, searchInteractor)
 
         return view

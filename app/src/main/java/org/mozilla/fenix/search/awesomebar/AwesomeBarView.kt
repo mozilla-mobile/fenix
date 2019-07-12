@@ -28,12 +28,32 @@ import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchState
 
 /**
- * Interactor for the AwesomeBarView
+ * Interface for the AwesomeBarView Interactor. This interface is implemented by objects that want
+ * to respond to user interaction on the AwesomebarView
  */
 interface AwesomeBarInteractor {
+
+    /**
+     * Called whenever a suggestion containing a URL is tapped
+     * @param url the url the suggestion was providing
+     */
     fun onUrlTapped(url: String)
+
+    /**
+     * Called whenever a search engine suggestion is tapped
+     * @param searchTerms the query contained by the search suggestion
+     */
     fun onSearchTermsTapped(searchTerms: String)
+
+    /**
+     * Called whenever a search engine shortcut is tapped
+     * @param searchEngine the searchEngine that was selected
+     */
     fun onSearchShortcutEngineSelected(searchEngine: SearchEngine)
+
+    /**
+     * Called whenever the "Search Engine Settings" item is tapped
+     */
     fun onClickSearchEngineSettings()
 }
 
@@ -83,12 +103,13 @@ class AwesomeBarView(
                 ThemeManager.resolveAttribute(R.attr.primaryText, this)
             )
 
-            val draw = getDrawable(R.drawable.ic_link)
-            draw?.setColorFilter(primaryTextColor, SRC_IN)
+            val draw = getDrawable(R.drawable.ic_link)!!
+            draw.setColorFilter(primaryTextColor, SRC_IN)
+
             clipboardSuggestionProvider = ClipboardSuggestionProvider(
                 this,
                 loadUrlUseCase,
-                draw!!.toBitmap(),
+                draw.toBitmap(),
                 getString(R.string.awesomebar_clipboard_title)
             )
 
@@ -113,8 +134,8 @@ class AwesomeBarView(
                     components.core.icons
                 )
 
-            val searchDrawable = getDrawable(R.drawable.ic_search)
-            searchDrawable?.setColorFilter(primaryTextColor, SRC_IN)
+            val searchDrawable = getDrawable(R.drawable.ic_search)!!
+            searchDrawable.setColorFilter(primaryTextColor, SRC_IN)
 
             defaultSearchSuggestionProvider =
                 SearchSuggestionProvider(
@@ -125,7 +146,7 @@ class AwesomeBarView(
                     fetchClient = components.core.client,
                     mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                     limit = 3,
-                    icon = searchDrawable?.toBitmap()
+                    icon = searchDrawable.toBitmap()
                 )
 
             shortcutsEnginePickerProvider =

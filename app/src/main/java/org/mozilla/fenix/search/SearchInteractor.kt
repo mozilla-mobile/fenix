@@ -7,27 +7,14 @@ package org.mozilla.fenix.search
 import android.content.Context
 import androidx.navigation.NavController
 import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.searchEngineManager
 import org.mozilla.fenix.search.awesomebar.AwesomeBarInteractor
 import org.mozilla.fenix.search.toolbar.ToolbarInteractor
-
-/**
- * Helper function to get the MetricController off of context.
- */
-val Context.metrics: MetricController
-    get() = this.components.analytics.metrics
-
-/**
- * Helper function to get the SearchEngineManager off of context.
- */
-val Context.searchEngineManager: SearchEngineManager
-    get() = this.components.search.searchEngineManager
 
 /**
  * Interactor for the search screen

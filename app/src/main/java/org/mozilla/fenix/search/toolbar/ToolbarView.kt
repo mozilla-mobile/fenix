@@ -16,14 +16,30 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.res.pxToDp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.search.SearchState
 
 /**
- * Interactor for the Toolbar
+ * Interface for the Toolbar Interactor. This interface is implemented by objects that want
+ * to respond to user interaction on the ToolbarView
  */
 interface ToolbarInteractor {
+
+    /**
+     * Called when a user hits the return key while ToolbarView has focus.
+     * @param url the text inside the ToolbarView when committed
+     */
     fun onUrlCommitted(url: String)
+
+    /**
+     * Called when a removes focus from the ToolbarView
+     */
     fun onEditingCanceled()
+
+    /**
+     * Called whenever the text inside the ToolbarView changes
+     * @param text the current text displayed by ToolbarView
+     */
     fun onTextChanged(text: String)
 }
 
@@ -33,7 +49,7 @@ interface ToolbarInteractor {
 class ToolbarView(
     private val container: ViewGroup,
     private val interactor: ToolbarInteractor,
-    private val historyStorageProvider: () -> HistoryStorage?
+    private val historyStorage: HistoryStorage?
 ) : LayoutContainer {
 
     override val containerView: View?
@@ -43,13 +59,13 @@ class ToolbarView(
         .inflate(R.layout.component_search, container, true)
         .findViewById(R.id.toolbar)
 
-    private var isInitialzied = false
+    private var isInitialized = false
 
     init {
         view.apply {
             editMode()
 
-            elevation = resources.pxToDp(TOOLBAR_ELEVATION).toFloat()
+            elevation = resources.pxToDp(TOOLBAR_ELEVATION_IN_DP).toFloat()
 
             setOnUrlCommitListener {
                 interactor.onUrlCommitted(it)
@@ -58,11 +74,24 @@ class ToolbarView(
 
             background = null
 
-            textColor = ContextCompat.getColor(context, R.color.photonGrey30)
-
             layoutParams.height = CoordinatorLayout.LayoutParams.MATCH_PARENT
 
             hint = context.getString(R.string.search_hint)
+
+            textColor = ContextCompat.getColor(
+                container.context,
+                ThemeManager.resolveAttribute(R.attr.primaryText, container.context)
+            )
+
+            hintColor = ContextCompat.getColor(
+                container.context,
+                ThemeManager.resolveAttribute(R.attr.secondaryText, container.context)
+            )
+
+            suggestionBackgroundColor = ContextCompat.getColor(
+                container.context,
+                R.color.suggestion_highlight_color
+            )
 
             setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
                 override fun onCancelEditing(): Boolean {
@@ -78,20 +107,20 @@ class ToolbarView(
 
         ToolbarAutocompleteFeature(view).apply {
             addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })
-            historyStorageProvider()?.also(::addHistoryStorageProvider)
+            historyStorage?.also(::addHistoryStorageProvider)
         }
     }
 
     fun update(searchState: SearchState) {
-        if (!isInitialzied) {
+        if (!isInitialized) {
             view.url = searchState.query
             view.setSearchTerms(searchState.session?.searchTerms ?: "")
             view.editMode()
-            isInitialzied = true
+            isInitialized = true
         }
     }
 
     companion object {
-        private const val TOOLBAR_ELEVATION = 16
+        private const val TOOLBAR_ELEVATION_IN_DP = 16
     }
 }

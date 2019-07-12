@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.search
 
 import androidx.navigation.NavController
@@ -7,15 +11,13 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
-import org.junit.Assert.assertEquals
-import mozilla.components.support.test.mock
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.searchEngineManager
 
 class SearchInteractorTest {
     @Test
@@ -34,7 +36,7 @@ class SearchInteractorTest {
         every { state.session } returns null
         every { state.searchEngineSource } returns searchEngine
 
-        val interactor = SearchInteractor(context, mock(), store)
+        val interactor = SearchInteractor(context, mockk(), store)
 
         interactor.onUrlCommitted("test")
 
@@ -62,26 +64,12 @@ class SearchInteractorTest {
 
     @Test
     fun onTextChanged() {
-        val store = SearchStore(
-            SearchState(
-                query = "",
-                showShortcutEnginePicker = false,
-                searchEngineSource = SearchEngineSource.Default(mock()),
-                showSuggestions = true,
-                showVisitedSitesBookmarks = true,
-                session = mock()
-            ),
-            ::searchStateReducer
-        )
-
+        val store: SearchStore = mockk(relaxed = true)
         val interactor = SearchInteractor(mockk(), mockk(), store)
 
-        runBlocking {
-            interactor.onTextChanged("test")
-            delay(50)
-        }
+        interactor.onTextChanged("test")
 
-        assertEquals("test", store.state.query)
+        verify { store.dispatch(SearchAction.UpdateQuery("test")) }
     }
 
     @Test
@@ -96,7 +84,7 @@ class SearchInteractorTest {
         every { store.state } returns state
         every { state.session } returns null
 
-        val interactor = SearchInteractor(context, mock(), store)
+        val interactor = SearchInteractor(context, mockk(), store)
 
         interactor.onUrlTapped("test")
 
@@ -139,30 +127,17 @@ class SearchInteractorTest {
 
     @Test
     fun onSearchShortcutEngineSelected() {
-        val context: HomeActivity = mockk()
-        val searchEngine: SearchEngine = mockk(relaxed = true)
-
-        val store = SearchStore(
-            SearchState(
-                query = "",
-                showShortcutEnginePicker = false,
-                searchEngineSource = SearchEngineSource.Default(mock()),
-                showSuggestions = true,
-                showVisitedSitesBookmarks = true,
-                session = mock()
-            ),
-            ::searchStateReducer
-        )
+        val context: HomeActivity = mockk(relaxed = true)
 
         every { context.metrics } returns mockk(relaxed = true)
 
+        val store: SearchStore = mockk(relaxed = true)
         val interactor = SearchInteractor(context, mockk(), store)
+        val searchEngine: SearchEngine = mockk(relaxed = true)
 
-        runBlocking {
-            interactor.onSearchShortcutEngineSelected(searchEngine)
-        }
+        interactor.onSearchShortcutEngineSelected(searchEngine)
 
-        assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
+        verify { store.dispatch(SearchAction.SearchShortcutEngineSelected(searchEngine)) }
     }
 
     @Test
