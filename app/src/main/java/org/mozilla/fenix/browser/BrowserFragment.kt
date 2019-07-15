@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -55,6 +56,7 @@ import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.lib.state.Store
+import mozilla.components.lib.state.ext.observe
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
@@ -65,6 +67,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.collections.getStepForCollectionsSize
@@ -177,7 +180,7 @@ class BrowserFragment : Fragment(), BackHandler {
             ::quickActionSheetStateReducer
         )
 
-        QuickActionView(
+        val quickActionSheetView = QuickActionView(
             view.nestedScrollQuickAction,
 
 // TODO THIS SHIT
@@ -186,7 +189,7 @@ class BrowserFragment : Fragment(), BackHandler {
 
             QuickActionInteractor(
                 context!!,
-                readerViewFeature,
+                DefaultReaderModeController(readerViewFeature),
                 quickActionSheetStore,
                 shareUrl = ::shareUrl,
                 bookmarkTapped = {
@@ -194,6 +197,12 @@ class BrowserFragment : Fragment(), BackHandler {
                 }
             )
         )
+
+        quickActionSheetStore.observe(this) {
+            MainScope().launch {
+                quickActionSheetView.update(it)
+            }
+        }
 
         val activity = activity as HomeActivity
         ThemeManager.applyStatusBarTheme(activity.window, activity.themeManager, activity)

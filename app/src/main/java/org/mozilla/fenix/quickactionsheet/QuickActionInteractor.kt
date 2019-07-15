@@ -7,72 +7,66 @@ package org.mozilla.fenix.quickactionsheet
 import android.content.Context
 import androidx.annotation.CallSuper
 import mozilla.components.browser.session.Session
-import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
 class QuickActionInteractor(
     private val context: Context,
-    private val readerViewFeature: ViewBoundFeatureWrapper<ReaderViewFeature>,
+    private val readerModeController: ReaderModeController,
     private val quickActionStore: QuickActionSheetStore,
     private val shareUrl: (String) -> Unit,
     private val bookmarkTapped: (Session) -> Unit
 ) : QuickActionSheetInteractor {
 
-    private val metrics
-        inline get() = context.components.analytics.metrics
     private val selectedSession
         inline get() = context.components.core.sessionManager.selectedSession
 
     @CallSuper
     override fun onOpened() {
-        metrics.track(Event.QuickActionSheetOpened)
+        context.metrics.track(Event.QuickActionSheetOpened)
     }
 
     @CallSuper
     override fun onClosed() {
-        metrics.track(Event.QuickActionSheetClosed)
+        context.metrics.track(Event.QuickActionSheetClosed)
     }
 
     @CallSuper
     override fun onSharedPressed() {
-        metrics.track(Event.QuickActionSheetShareTapped)
+        context.metrics.track(Event.QuickActionSheetShareTapped)
         selectedSession?.url?.let(shareUrl)
     }
 
     @CallSuper
     override fun onDownloadsPressed() {
-        metrics.track(Event.QuickActionSheetDownloadTapped)
+        context.metrics.track(Event.QuickActionSheetDownloadTapped)
         ItsNotBrokenSnack(context).showSnackbar(issueNumber = "348")
     }
 
     @CallSuper
     override fun onBookmarkPressed() {
-        metrics.track(Event.QuickActionSheetBookmarkTapped)
+        context.metrics.track(Event.QuickActionSheetBookmarkTapped)
         selectedSession?.let(bookmarkTapped)
     }
 
     @CallSuper
     override fun onReadPressed() {
-        metrics.track(Event.QuickActionSheetReadTapped)
-        readerViewFeature.withFeature { feature ->
-            val enabled = selectedSession?.readerMode ?: false
-            if (enabled) {
-                feature.hideReaderView()
-            } else {
-                feature.showReaderView()
-            }
-            quickActionStore.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
+        context.metrics.track(Event.QuickActionSheetReadTapped)
+        val enabled = selectedSession?.readerMode ?: false
+        if (enabled) {
+            readerModeController.hideReaderView()
+        } else {
+            readerModeController.showReaderView()
         }
+        quickActionStore.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
     }
 
     @CallSuper
-    override fun onReadApperancePressed() {
+    override fun onAppearancePressed() {
         // TODO telemetry: https://github.com/mozilla-mobile/fenix/issues/2267
-        readerViewFeature.withFeature { feature ->
-            feature.showControls()
-        }
+        readerModeController.showReaderView()
     }
 }

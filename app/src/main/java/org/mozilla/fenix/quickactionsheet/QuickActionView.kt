@@ -27,7 +27,7 @@ interface QuickActionSheetInteractor {
     fun onDownloadsPressed()
     fun onBookmarkPressed()
     fun onReadPressed()
-    fun onReadApperancePressed()
+    fun onAppearancePressed()
 }
 /**
  * View for the quick action sheet that slides out from the toolbar.
@@ -67,7 +67,7 @@ class QuickActionView(
         view.quick_action_downloads.setOnClickListener(this)
         view.quick_action_bookmark.setOnClickListener(this)
         view.quick_action_read.setOnClickListener(this)
-        view.quick_action_read_appearance.setOnClickListener(this)
+        view.quick_action_appearance.setOnClickListener(this)
     }
 
     /**
@@ -79,7 +79,7 @@ class QuickActionView(
             R.id.quick_action_downloads -> interactor.onDownloadsPressed()
             R.id.quick_action_bookmark -> interactor.onBookmarkPressed()
             R.id.quick_action_read -> interactor.onReadPressed()
-            R.id.quick_action_read_appearance -> interactor.onReadApperancePressed()
+            R.id.quick_action_appearance -> interactor.onAppearancePressed()
             else -> return
         }
         quickActionSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -113,7 +113,7 @@ class QuickActionView(
         )
         notifyReaderModeButton(state.readable)
 
-        view.quick_action_read_appearance.isVisible = state.readerActive
+        view.quick_action_appearance.isVisible = state.readerActive
 
         view.quick_action_bookmark.isSelected = state.bookmarked
         view.quick_action_bookmark.text = view.context.getString(
