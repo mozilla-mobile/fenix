@@ -496,46 +496,23 @@ class HomeFragment : Fragment(), AccountObserver {
             }
             is CollectionAction.OpenTab -> {
                 invokePendingDeleteJobs()
-                val session = action.tab.restore(
+                val snapshot = action.tab.restore(
                     context = context!!,
                     engine = requireComponents.core.engine,
                     tab = action.tab,
                     restoreSessionId = false
                 )
-                if (session == null) {
-                    // We were unable to create a snapshot, so just load the tab instead
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = action.tab.url,
-                        newTab = true,
-                        from = BrowserDirection.FromHome
-                    )
-                } else {
-                    requireComponents.core.sessionManager.add(
-                        session,
-                        true
-                    )
-                    (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
-                }
+                sessionManager.restore(snapshot)
+                (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
             }
             is CollectionAction.OpenTabs -> {
                 invokePendingDeleteJobs()
-                action.collection.tabs.forEach {
-                    val session = it.restore(
-                        context = context!!,
-                        engine = requireComponents.core.engine,
-                        tab = it,
-                        restoreSessionId = false
-                    )
-                    if (session == null) {
-                        // We were unable to create a snapshot, so just load the tab instead
-                        requireComponents.useCases.tabsUseCases.addTab.invoke(it.url)
-                    } else {
-                        requireComponents.core.sessionManager.add(
-                            session,
-                            requireComponents.core.sessionManager.selectedSession == null
-                        )
-                    }
-                }
+                val snapshot = action.collection.restore(
+                    context = context!!,
+                    engine = requireComponents.core.engine,
+                    restoreSessionId = false
+                )
+                sessionManager.restore(snapshot)
                 viewLifecycleOwner.lifecycleScope.launch {
                     delay(ANIM_SCROLL_DELAY)
                     sessionControlComponent.view.smoothScrollToPosition(0)
