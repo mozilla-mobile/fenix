@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol
 
@@ -26,14 +26,6 @@ class SwipeToDeleteCallback(
     ): Boolean {
         // We don't support drag and drop so this method will never be called
         return false
-    }
-
-    override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-        return defaultValue * SWIPE_VELOCITY_MULTIPLIER
-    }
-
-    override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-        return SWIPE_THRESHOLD
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -116,14 +108,14 @@ class SwipeToDeleteCallback(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return if (viewHolder is TabViewHolder || viewHolder is TabInCollectionViewHolder) {
+        return if (recyclerView.hasWindowFocus() &&
+            (viewHolder is TabViewHolder || viewHolder is TabInCollectionViewHolder)
+        ) {
             super.getSwipeDirs(recyclerView, viewHolder)
         } else 0
     }
 
     companion object {
-        const val SWIPE_VELOCITY_MULTIPLIER = 10F
-        const val SWIPE_THRESHOLD = 0.55f
         const val BACKGROUND_CORNER_OFFSET = 40
         const val MARGIN = 32
         const val DENSITY_CONVERSION = 160f

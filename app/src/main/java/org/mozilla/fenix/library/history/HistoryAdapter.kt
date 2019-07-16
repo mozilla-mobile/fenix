@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.history
 
@@ -8,16 +8,16 @@ import android.content.Context
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
-import kotlinx.coroutines.Job
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.history.viewholders.HistoryDeleteButtonViewHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryHeaderViewHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
-import java.lang.IllegalStateException
-import java.util.Date
+import org.mozilla.fenix.utils.AdapterWithJob
 import java.util.Calendar
+import java.util.Date
 
 private sealed class AdapterItem {
     object DeleteButton : AdapterItem()
@@ -96,18 +96,54 @@ private class HistoryList(val history: List<HistoryItem>) {
 
 class HistoryAdapter(
     private val actionEmitter: Observer<HistoryAction>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : AdapterWithJob<RecyclerView.ViewHolder>() {
     private var historyList: HistoryList = HistoryList(emptyList())
     private var mode: HistoryState.Mode = HistoryState.Mode.Normal
-    private lateinit var job: Job
     var selected = listOf<HistoryItem>()
 
     fun updateData(items: List<HistoryItem>, mode: HistoryState.Mode) {
+        val diffUtil = DiffUtil.calculateDiff(
+            HistoryDiffUtil(
+                this.historyList,
+                HistoryList(items),
+                HistoryList(selected),
+                HistoryList((mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()),
+                this.mode,
+                mode
+            )
+        )
+
         this.historyList = HistoryList(items)
         this.mode = mode
         this.selected = if (mode is HistoryState.Mode.Editing) mode.selectedItems else listOf()
 
-        notifyDataSetChanged()
+        diffUtil.dispatchUpdatesTo(this)
+    }
+
+    private class HistoryDiffUtil(
+        val old: HistoryList,
+        val new: HistoryList,
+        val oldSelected: HistoryList,
+        val newSelected: HistoryList,
+        val oldMode: HistoryState.Mode,
+        val newMode: HistoryState.Mode
+    ) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            old.items[oldItemPosition] == new.items[newItemPosition]
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val modesEqual = oldMode::class == newMode::class
+            val isStillSelected =
+                oldSelected.items.contains(old.items[oldItemPosition]) &&
+                        newSelected.items.contains(new.items[newItemPosition])
+            val isStillNotSelected =
+                !oldSelected.items.contains(old.items[oldItemPosition]) &&
+                        !newSelected.items.contains(new.items[newItemPosition])
+            return modesEqual && (isStillSelected || isStillNotSelected)
+        }
+
+        override fun getOldListSize(): Int = old.items.size
+        override fun getNewListSize(): Int = new.items.size
     }
 
     override fun getItemCount(): Int = historyList.items.size
@@ -126,7 +162,7 @@ class HistoryAdapter(
         return when (viewType) {
             HistoryDeleteButtonViewHolder.LAYOUT_ID -> HistoryDeleteButtonViewHolder(view, actionEmitter)
             HistoryHeaderViewHolder.LAYOUT_ID -> HistoryHeaderViewHolder(view)
-            HistoryListItemViewHolder.LAYOUT_ID -> HistoryListItemViewHolder(view, actionEmitter, job)
+            HistoryListItemViewHolder.LAYOUT_ID -> HistoryListItemViewHolder(view, actionEmitter, adapterJob)
             else -> throw IllegalStateException()
         }
     }
@@ -143,15 +179,5 @@ class HistoryAdapter(
                 holder.bind(it.item, mode)
             }
         }
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        job = Job()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        job.cancel()
     }
 }

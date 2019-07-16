@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - #2419 - Adds a deletion state to the history component
 - #1570 - Enables the opening of links by other apps. Disabled in #3359.
 - #3200 - Adds application-services fretboard feature flags for FxA and Sync.
+- #3865 - Added a new nightly icon and app name
 
 ### Changed
 - #3424 - Make talkback ignore ImageButton in Collection Selection by removing contentDescription and setting importantForAccessibility=no
@@ -68,4 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [AC #2725](https://github.com/mozilla-mobile/android-components/issues/2725) Updated tracking protectionPolicy to [recommend](https://github.com/mozilla-mobile/android-components/blob/master/components/concept/engine/src/main/java/mozilla/components/concept/engine/EngineSession.kt#L156)
 - #2789 Custom tabs is not covering the full screen size.
 - #2893, #2673, #2916, #2314: Fix several crashes navigating from external links
+- #3750 - Crash when tapping "Blocked" on Google Maps after disabling location requests
+- #2945 - Fixed "Launches to blank screen and hangs on Nexus 10"
+- #3869 - Creates a SearchLocalizationProvider that sets the region to get the correct default search engine based on a locale
 ### Removed

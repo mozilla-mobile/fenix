@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.quickactionsheet
 
@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.annotation.DrawableRes
+import androidx.core.content.edit
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
@@ -16,7 +18,7 @@ import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.view.*
-import kotlinx.android.synthetic.main.onboarding_privacy_notice.view.*
+import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -103,6 +105,7 @@ class QuickActionUIView(
         }
     }
 
+    @Suppress("ComplexMethod")
     override fun updateView() = Consumer<QuickActionState> {
         view.quick_action_read.apply {
             visibility = if (it.readable) View.VISIBLE else View.GONE
@@ -121,23 +124,30 @@ class QuickActionUIView(
         view.quick_action_read_appearance.visibility = if (it.readerActive) View.VISIBLE else View.GONE
         view.quick_action_bookmark.isSelected = it.bookmarked
 
+        view.quick_action_bookmark.text = if (it.bookmarked) {
+            view.context.getString(R.string.quick_action_bookmark_edit)
+        } else {
+            view.context.getString(R.string.quick_action_bookmark)
+        }
+
         if (it.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
             quickActionSheet.bounceSheet()
         }
     }
 
     private fun updateReaderModeButton(withNotification: Boolean) {
-        if (withNotification) {
+        @DrawableRes
+        val readerTwoStateDrawableId = if (withNotification) {
             quickActionSheet.bounceSheet()
-            val readerTwoStateDrawable = view.context.getDrawable(R.drawable.reader_two_state_with_notification)
-            view.quick_action_read
-                .setCompoundDrawablesWithIntrinsicBounds(null, readerTwoStateDrawable, null, null)
-            Settings.getInstance(view.context).preferences.edit()
-                .putBoolean(view.context.getString(R.string.pref_key_reader_mode_notification), false).apply()
+            Settings.getInstance(view.context).preferences.edit {
+                putBoolean(view.context.getString(R.string.pref_key_reader_mode_notification), false)
+            }
+            R.drawable.reader_two_state_with_notification
         } else {
-            val readerTwoStateDrawable = view.context.getDrawable(R.drawable.reader_two_state)
-            view.quick_action_read
-                .setCompoundDrawablesWithIntrinsicBounds(null, readerTwoStateDrawable, null, null)
+            R.drawable.reader_two_state
         }
+        view.quick_action_read.putCompoundDrawablesRelativeWithIntrinsicBounds(
+            top = view.context.getDrawable(readerTwoStateDrawableId)
+        )
     }
 }

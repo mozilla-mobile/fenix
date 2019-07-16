@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks
 
@@ -23,11 +23,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_bookmark.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
@@ -62,7 +63,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
     private lateinit var bookmarkComponent: BookmarkComponent
     private lateinit var signInComponent: SignInComponent
     var currentRoot: BookmarkNode? = null
-    private val navigation by lazy { Navigation.findNavController(requireView()) }
+    private val navigation by lazy { findNavController() }
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { _, destination, args ->
             if (destination.id != R.id.bookmarkFragment ||
@@ -98,12 +99,6 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         return view
     }
 
-    // Fill out our title map once we have context.
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setRootTitles(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.title = getString(R.string.library_bookmarks)
@@ -112,6 +107,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
 
     override fun onResume() {
         super.onResume()
+        context?.let { setRootTitles(it) }
+
         (activity as? AppCompatActivity)?.supportActionBar?.show()
         checkIfSignedIn()
 
@@ -122,11 +119,12 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
     }
 
     private fun loadInitialBookmarkFolder(currentGuid: String): Job {
-        return lifecycleScope.launch(IO) {
+        return viewLifecycleOwner.lifecycleScope.launch(IO) {
             currentRoot =
                 context?.bookmarkStorage()?.getTree(currentGuid).withOptionalDesktopFolders(context) as BookmarkNode
 
-            lifecycleScope.launch(Main) {
+            if (!isActive) return@launch
+            launch(Main) {
                 getManagedEmitter<BookmarkChange>().onNext(BookmarkChange.Change(currentRoot!!))
 
                 activity?.run {
@@ -144,8 +142,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         navigation.removeOnDestinationChangedListener(onDestinationChangedListener)
     }
 
@@ -179,7 +177,7 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
                                 (activity as HomeActivity)
                                     .openToBrowserAndLoad(
                                         searchTermOrURL = url,
-                                        newTab = false,
+                                        newTab = true,
                                         from = BrowserDirection.FromBookmarks
                                     )
                             }
@@ -219,8 +217,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
                             nav(
                                 R.id.bookmarkFragment,
                                 BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
-                                    this,
-                                    it.item.title
+                                    url = this,
+                                    title = it.item.title
                                 )
                             )
                             metrics()?.track(Event.ShareBookmark)
@@ -296,7 +294,11 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
 
         val deleteOperation: (suspend () -> Unit) = {
             bookmarkStorage?.deleteNode(bookmarkNode.guid)
-            metrics()?.track(Event.RemoveBookmark)
+            when (bookmarkNode.type) {
+                BookmarkNodeType.FOLDER -> metrics()?.track(Event.RemoveBookmarkFolder)
+                BookmarkNodeType.ITEM -> metrics()?.track(Event.RemoveBookmark)
+                else -> { }
+            }
             pendingBookmarkDeletionJob = null
             refreshBookmarks()
         }
@@ -410,9 +412,6 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         lifecycleScope.launch {
             refreshBookmarks()
         }
-    }
-
-    override fun onError(error: Exception) {
     }
 
     override fun onLoggedOut() {

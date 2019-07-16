@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.history
 
@@ -211,7 +211,7 @@ class HistoryFragment : Fragment(), BackHandler {
     private fun openItem(item: HistoryItem) {
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
-            newTab = false,
+            newTab = true,
             from = BrowserDirection.FromHistory
         )
     }
@@ -287,7 +287,10 @@ class HistoryFragment : Fragment(), BackHandler {
 
     private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
         val directions =
-            HistoryFragmentDirections.actionHistoryFragmentToShareFragment(url = url, tabs = tabs?.toTypedArray())
+            HistoryFragmentDirections.actionHistoryFragmentToShareFragment(
+                url = url,
+                tabs = tabs?.toTypedArray()
+            )
         nav(R.id.historyFragment, directions)
     }
 

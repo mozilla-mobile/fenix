@@ -40,12 +40,12 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, channel, is_staging, version_name):
+    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name):
         artifacts = {
-            'public/target.{}.apk'.format(arch): {
+            'public/build/{}/target.apk'.format(arch): {
                 "type": 'file',
                 "path": '/opt/fenix/app/build/outputs/apk/'
-                        '{arch}/{channel}/app-{arch}-{channel}-unsigned.apk'.format(arch=arch, channel=channel),
+                        '{arch}/{build_type}/app-{arch}-{build_type}-unsigned.apk'.format(arch=arch, build_type=build_type),
                 "expires": taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
             }
             for arch in architectures
@@ -54,7 +54,7 @@ class TaskBuilder(object):
         if is_staging:
             secret_index = 'garbage/staging/project/mobile/fenix'
         else:
-            secret_index = 'project/mobile/fenix/{}'.format(channel)
+            secret_index = 'project/mobile/fenix/{}'.format(build_type)
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
@@ -64,13 +64,14 @@ class TaskBuilder(object):
                 ('sentry_dsn', '.sentry_token'),
                 ('leanplum', '.leanplum_token'),
                 ('adjust', '.adjust_token'),
+                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(build_type)),
             )
         )
 
-        capitalized_channel = upper_case_first_letter(channel)
+        capitalized_build_type = upper_case_first_letter(build_type)
         gradle_commands = (
-            './gradlew --no-daemon -PversionName={} clean test assemble{}'.format(
-                version_name, capitalized_channel),
+            './gradlew --no-daemon -PversionName="{}" clean test assemble{}'.format(
+                version_name, capitalized_build_type),
         )
 
         command = ' && '.join(
@@ -85,8 +86,8 @@ class TaskBuilder(object):
         ]
 
         return self._craft_build_ish_task(
-            name='Build {} task'.format(capitalized_channel),
-            description='Build Fenix {} from source code'.format(capitalized_channel),
+            name='Build {} task'.format(capitalized_build_type),
+            description='Build Fenix {} from source code'.format(capitalized_build_type),
             command=command,
             scopes=[
                 "secrets:get:{}".format(secret_index)
@@ -98,7 +99,7 @@ class TaskBuilder(object):
                 'machine': {
                     'platform': 'android-all',
                 },
-                'symbol': '{}-A'.format(channel),
+                'symbol': '{}-A'.format(build_type),
                 'tier': 1,
             },
         )
@@ -361,6 +362,9 @@ class TaskBuilder(object):
         deadline = taskcluster.fromNow('1 day')
         expires = taskcluster.fromNow(DEFAULT_EXPIRES_IN)
 
+        if self.trust_level == 3:
+            routes.append('tc-treeherder.v2.fenix.{}'.format(self.commit))
+
         return {
             "provisionerId": provisioner_id,
             "workerType": worker_type,
@@ -374,9 +378,7 @@ class TaskBuilder(object):
             "priority": self.tasks_priority,
             "dependencies": [self.task_id] + dependencies,
             "requires": "all-completed",
-            "routes": routes + [
-                "tc-treeherder.v2.fenix.{}".format(self.commit)
-            ],
+            "routes": routes,
             "scopes": scopes,
             "payload": payload,
             "extra": {
@@ -409,7 +411,7 @@ class TaskBuilder(object):
             description='Dep-signing variant {}'.format(variant.raw),
             signing_type="dep",
             assemble_task_id=assemble_task_id,
-            apk_paths=["public/target.apk"],
+            apk_paths=[DEFAULT_APK_ARTIFACT_LOCATION],
             routes=routes,
             treeherder={
                 'groupSymbol': variant.build_type,
@@ -534,7 +536,7 @@ class TaskBuilder(object):
         elif variant.abi == 'arm':
             treeherder_platform = 'android-hw-g5-7-0-arm7-api-16'
         elif variant.abi == 'aarch64':
-            treeherder_platform = 'android-hw-p2-8-0-aarch64'
+            treeherder_platform = 'android-hw-p2-8-0-android-aarch64'
         else:
             raise ValueError('Unsupported architecture "{}"'.format(variant.abi))
 

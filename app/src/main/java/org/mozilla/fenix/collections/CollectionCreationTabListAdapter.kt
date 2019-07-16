@@ -1,8 +1,8 @@
-package org.mozilla.fenix.collections
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.collections
 
 import android.view.LayoutInflater
 import android.view.View
@@ -19,21 +19,21 @@ import mozilla.components.browser.icons.IconRequest
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.utils.AdapterWithJob
 import kotlin.coroutines.CoroutineContext
 
 class CollectionCreationTabListAdapter(
     val actionEmitter: Observer<CollectionCreationAction>
-) : RecyclerView.Adapter<TabViewHolder>() {
+) : AdapterWithJob<TabViewHolder>() {
     private var tabs: List<Tab> = listOf()
     private var selectedTabs: MutableSet<Tab> = mutableSetOf()
-    private lateinit var job: Job
     private var hideCheckboxes = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(TabViewHolder.LAYOUT_ID, parent, false)
 
-        return TabViewHolder(view, job)
+        return TabViewHolder(view, adapterJob)
     }
 
     override fun onBindViewHolder(holder: TabViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -72,16 +72,6 @@ class CollectionCreationTabListAdapter(
     }
 
     override fun getItemCount(): Int = tabs.size
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        job = Job()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        job.cancel()
-    }
 
     fun updateData(tabs: List<Tab>, selectedTabs: Set<Tab>, hideCheckboxes: Boolean = false) {
         val diffUtil = DiffUtil.calculateDiff(

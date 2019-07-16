@@ -1,8 +1,8 @@
-package org.mozilla.fenix.collections
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.collections
 
 import android.view.View
 import androidx.lifecycle.ViewModel
@@ -16,6 +16,7 @@ class CreateCollectionViewModel : ViewModel() {
     var tabCollections = listOf<TabCollection>()
     var selectedTabCollection: TabCollection? = null
     var snackbarAnchorView: View? = null
+    var previousFragmentId: Int? = null
 
     fun getStepForTabsAndCollectionSize(): SaveCollectionStep =
         if (tabs.size > 1) SaveCollectionStep.SelectTabs else tabCollections.getStepForCollectionsSize()

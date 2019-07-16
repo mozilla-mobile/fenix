@@ -186,9 +186,9 @@
             app:argType="string" />
         <action
             android:id="@+id/action_bookmarkFragment_to_browserFragment"
+            app:destination="@id/browserFragment"
             app:popUpTo="@id/libraryFragment"
-            app:popUpToInclusive="true"
-            app:destination="@id/browserFragment" />
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_bookmarkFragment_self"
             app:destination="@id/bookmarkFragment" />
@@ -291,8 +291,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_deleteBrowsingDataFragment"
             app:destination="@id/deleteBrowsingDataFragment" />
-        <action android:id="@+id/action_settingsFragment_to_accountProblemFragment"
-                app:destination="@id/accountProblemFragment"/>
+        <action
+            android:id="@+id/action_settingsFragment_to_accountProblemFragment"
+            app:destination="@id/accountProblemFragment" />
     </fragment>
     <fragment
         android:id="@+id/dataChoicesFragment"
@@ -319,7 +320,11 @@
     <fragment
         android:id="@+id/accountSettingsFragment"
         android:name="org.mozilla.fenix.settings.AccountSettingsFragment"
-        android:label="@string/preferences_account_settings" />
+        android:label="@string/preferences_account_settings">
+        <action
+            android:id="@+id/action_accountSettingsFragment_to_signOutFragment"
+            app:destination="@id/signOutFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchEngineFragment"
         android:name="org.mozilla.fenix.settings.SearchEngineFragment"
@@ -335,20 +340,9 @@
             app:popUpTo="@+id/settingsFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_turnOnSyncFragment_to_pairInstructionsFragment"
-            app:destination="@id/pairInstructionsFragment" />
+            android:id="@+id/action_turnOnSyncFragment_to_pairFragment"
+            app:destination="@id/pairFragment" />
     </fragment>
-
-    <dialog
-        android:id="@+id/pairInstructionsFragment"
-        android:name="org.mozilla.fenix.settings.PairInstructionsFragment"
-        android:label="PairInstructionsFragment">
-        <action
-            android:id="@+id/action_pairInstructionsFragment_to_pairFragment"
-            app:destination="@id/pairFragment"
-            app:popUpTo="@+id/pairInstructionsFragment"
-            app:popUpToInclusive="true" />
-    </dialog>
 
     <fragment
         android:id="@+id/pairFragment"
@@ -391,8 +385,7 @@
     <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.DeleteBrowsingDataFragment"
-        android:label="@string/preferences_delete_browsing_data">
-    </fragment>
+        android:label="@string/preferences_delete_browsing_data"></fragment>
     <fragment
         android:id="@+id/exceptionsFragment"
         android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
@@ -405,8 +398,7 @@
     <dialog
         android:id="@+id/shareFragment"
         android:name="org.mozilla.fenix.share.ShareFragment"
-        android:label="fragment_share"
-        tools:layout="@layout/fragment_share" >
+        tools:layout="@layout/fragment_share">
         <argument
             android:name="url"
             android:defaultValue="@null"
@@ -420,8 +412,8 @@
         <argument
             android:name="tabs"
             android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="org.mozilla.fenix.share.ShareTab[]" />
+            app:argType="org.mozilla.fenix.share.ShareTab[]"
+            app:nullable="true" />
         <action
             android:id="@+id/action_shareFragment_to_turnOnSyncFragment"
             app:destination="@+id/turnOnSyncFragment"
@@ -458,9 +450,17 @@
             app:popUpTo="@id/quickSettingsSheetDialogFragment"
             app:popUpToInclusive="true" />
     </dialog>
-    <fragment android:id="@+id/accountProblemFragment" android:name="org.mozilla.fenix.settings.AccountProblemFragment"
-              android:label="AccountProblemFragment">
-        <action android:id="@+id/action_accountProblemFragment_to_browserFragment"
-                app:destination="@id/browserFragment"/>
+    <fragment
+        android:id="@+id/accountProblemFragment"
+        android:name="org.mozilla.fenix.settings.AccountProblemFragment">
+        <action
+            android:id="@+id/action_accountProblemFragment_to_signOutFragment"
+            app:destination="@id/signOutFragment" />
     </fragment>
+    <action
+        android:id="@+id/action_accountProblemFragment_to_browserFragment"
+        app:destination="@id/browserFragment" />
+    <dialog
+        android:id="@+id/signOutFragment"
+        android:name="org.mozilla.fenix.settings.SignOutFragment" />
 </navigation>

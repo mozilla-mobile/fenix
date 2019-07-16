@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix
 
@@ -10,12 +10,14 @@ import android.os.Bundle
 import mozilla.components.browser.session.tab.CustomTabConfig
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.components.NotificationManager.Companion.RECEIVE_TABS_TAG
+import org.mozilla.fenix.customtabs.AuthCustomTabActivity
 import org.mozilla.fenix.customtabs.CustomTabActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.utils.Settings
 
 class IntentReceiverActivity : Activity() {
 
+    @Suppress("ComplexMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,7 +36,11 @@ class IntentReceiverActivity : Activity() {
 
         val openToBrowser = when {
             CustomTabConfig.isCustomTabIntent(SafeIntent(intent)) -> {
-                intent.setClassName(applicationContext, CustomTabActivity::class.java.name)
+                intent.setClassName(
+                    applicationContext,
+                    if (intent.hasExtra(getString(R.string.intent_extra_auth))) AuthCustomTabActivity::class.java.name
+                    else CustomTabActivity::class.java.name
+                )
                 true
             }
             intent.action == Intent.ACTION_VIEW -> {
