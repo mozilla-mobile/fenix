@@ -174,12 +174,14 @@ class BrowserFragment : Fragment(), BackHandler {
                 this,
                 QuickActionViewModel::class.java
             ) {
+                val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
                 QuickActionViewModel(
                     QuickActionState(
                         readable = getSessionById()?.readerable ?: false,
                         bookmarked = findBookmarkedURL(getSessionById()),
                         readerActive = getSessionById()?.readerMode ?: false,
-                        bounceNeeded = false
+                        bounceNeeded = false,
+                        isAppLink = getSessionById()?.let { appLink.invoke(it.url).hasExternalApp() } ?: false
                     )
                 )
             }
@@ -550,6 +552,20 @@ class BrowserFragment : Fragment(), BackHandler {
                             feature.showControls()
                         }
                     }
+                    is QuickActionAction.OpenAppLinkPressed -> {
+                        appLinksFeature.withFeature { feature ->
+                            val getRedirect = requireComponents.useCases.appLinksUseCases.appLinkRedirect
+
+                            val redirect = getSessionById()?.let { session ->
+                                getRedirect.invoke(session.url)
+                            } ?: return@withFeature
+
+                            redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                            val openAppLink = requireComponents.useCases.appLinksUseCases.openAppLink
+                            openAppLink.invoke(redirect)
+                        }
+                    }
                 }
             }
 
@@ -886,6 +902,7 @@ class BrowserFragment : Fragment(), BackHandler {
             override fun onUrlChanged(session: Session, url: String) {
                 super.onUrlChanged(session, url)
                 updateBookmarkState(session)
+                updateAppLinksState(session)
             }
         }
         getSessionById()?.register(observer, this)
@@ -926,6 +943,13 @@ class BrowserFragment : Fragment(), BackHandler {
                     .onNext(QuickActionChange.BookmarkedStateChange(found))
             }
         }
+    }
+
+    private fun updateAppLinksState(session: Session) {
+        val url = session.url
+        val appLinks = requireComponents.useCases.appLinksUseCases.appLinkRedirect
+        getManagedEmitter<QuickActionChange>()
+            .onNext(QuickActionChange.AppLinkStateChange(appLinks.invoke(url).hasExternalApp()))
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
