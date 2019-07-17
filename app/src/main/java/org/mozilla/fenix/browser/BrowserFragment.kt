@@ -489,6 +489,21 @@ class BrowserFragment : Fragment(), BackHandler {
                         trackToolbarItemInteraction(it)
                         handleToolbarItemInteraction(it)
                     }
+                    is SearchAction.ToolbarLongClicked -> {
+                        getSessionById()?.let { session ->
+                            session.copyUrl(requireContext())
+                            view?.let {
+                                val snackbar = FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
+                                    .setText(resources.getString(R.string.url_copied))
+
+                                if (!session.isCustomTabSession()) {
+                                    snackbar.anchorView = nestedScrollQuickAction
+                                }
+
+                                snackbar.show()
+                            }
+                        }
+                    }
                 }
             }
 
