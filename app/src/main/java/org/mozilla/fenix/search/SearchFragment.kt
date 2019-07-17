@@ -19,10 +19,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
@@ -168,7 +168,7 @@ class SearchFragment : Fragment(), BackHandler {
         }
 
         searchStore.observe(view) {
-            MainScope().launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 awesomeBarView.update(it)
                 toolbarView.update(it)
                 updateSearchEngineIcon(it)
