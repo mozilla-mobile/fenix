@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_history.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,7 +40,6 @@ import org.mozilla.fenix.ext.getHostFromUrl
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.share.ShareTab
-import java.util.concurrent.TimeUnit
 
 @SuppressWarnings("TooManyFunctions")
 class HistoryFragment : Fragment(), BackHandler {
@@ -67,7 +65,8 @@ class HistoryFragment : Fragment(), BackHandler {
             ::openItem,
             ::displayDeleteAllDialog,
             ::invalidateOptionsMenu,
-            ::deleteHistoryItems
+            ::deleteHistoryItems,
+            ::loadMoreHistory
         )
         historyView = HistoryView(view.history_layout, historyInteractor)
         return view
@@ -91,7 +90,7 @@ class HistoryFragment : Fragment(), BackHandler {
                 context?.components?.analytics?.metrics?.track(Event.HistoryItemRemoved)
                 storage?.deleteVisit(item.url, item.visitedAt)
             }
-            reloadData()
+            loadInitialHistoryItems()
         }
     }
 
@@ -106,7 +105,7 @@ class HistoryFragment : Fragment(), BackHandler {
             }
         }
 
-        lifecycleScope.launch { reloadData() }
+        viewLifecycleOwner.lifecycleScope.launch { loadInitialHistoryItems() }
     }
 
     override fun onResume() {
@@ -162,9 +161,9 @@ class HistoryFragment : Fragment(), BackHandler {
             val selectedHistory =
                 (historyStore.state.mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()
 
-            lifecycleScope.launch(Main) {
+            viewLifecycleOwner.lifecycleScope.launch(Main) {
                 deleteSelectedHistory(selectedHistory, components)
-                reloadData()
+                loadInitialHistoryItems()
             }
             true
         }
@@ -231,11 +230,11 @@ class HistoryFragment : Fragment(), BackHandler {
                 }
                 setPositiveButton(R.string.history_clear_dialog) { dialog: DialogInterface, _ ->
                     historyStore.dispatch(HistoryAction.EnterDeletionMode)
-                    lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved)
                         requireComponents.core.historyStorage.deleteEverything()
-                        reloadData()
-                        launch(Dispatchers.Main) {
+                        loadInitialHistoryItems()
+                        launch(Main) {
                             historyStore.dispatch(HistoryAction.ExitDeletionMode)
                         }
                     }
@@ -247,22 +246,13 @@ class HistoryFragment : Fragment(), BackHandler {
         }
     }
 
-    private suspend fun reloadData() {
-        val excludeTypes = listOf(
-            VisitType.NOT_A_VISIT,
-            VisitType.DOWNLOAD,
-            VisitType.REDIRECT_TEMPORARY,
-            VisitType.RELOAD,
-            VisitType.EMBED,
-            VisitType.FRAMED_LINK,
-            VisitType.REDIRECT_PERMANENT
-        )
-
-        // Until we have proper pagination, only display a limited set of history to avoid blowing up the UI.
-        // See https://github.com/mozilla-mobile/fenix/issues/1393
-        val sinceTimeMs = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(HISTORY_TIME_DAYS)
-        val items = requireComponents.core.historyStorage
-            .getDetailedVisits(sinceTimeMs, excludeTypes = excludeTypes)
+    private suspend fun loadHistoryItemsPaginated(offset: Long): List<HistoryItem> {
+        return requireComponents.core.historyStorage
+            .getVisitsPaginated(
+                offset = offset,
+                excludeTypes = excludeTypes,
+                count = HISTORY_PAGE_SIZE
+            )
             // We potentially have a large amount of visits, and multiple processing steps.
             // Wrapping iterator in a sequence should make this a little memory-more efficient.
             .asSequence()
@@ -276,9 +266,33 @@ class HistoryFragment : Fragment(), BackHandler {
                 HistoryItem(id, title, item.url, item.visitTime)
             }
             .toList()
+    }
+
+    private fun loadMoreHistory() {
+        lifecycleScope.launch {
+            val items = loadHistoryItemsPaginated(historyStore.state.items.size.toLong())
+            historyView.isLoading = false
+
+            withContext(Main) {
+                historyStore.dispatch(HistoryAction.AddNewItems(items))
+            }
+            if (items.size < HISTORY_PAGE_SIZE) {
+                historyView.isLastPage = true
+            }
+        }
+    }
+
+    private suspend fun loadInitialHistoryItems() {
+        historyView.isLastPage = false
+        val items = loadHistoryItemsPaginated(0)
+        historyView.isLoading = false
 
         withContext(Main) {
             historyStore.dispatch(HistoryAction.Change(items))
+        }
+
+        if (items.size < HISTORY_PAGE_SIZE) {
+            historyView.isLastPage = true
         }
     }
 
@@ -304,6 +318,15 @@ class HistoryFragment : Fragment(), BackHandler {
     }
 
     companion object {
-        private const val HISTORY_TIME_DAYS = 3L
+        private val excludeTypes = listOf(
+            VisitType.NOT_A_VISIT,
+            VisitType.DOWNLOAD,
+            VisitType.REDIRECT_TEMPORARY,
+            VisitType.RELOAD,
+            VisitType.EMBED,
+            VisitType.FRAMED_LINK,
+            VisitType.REDIRECT_PERMANENT
+        )
+        private const val HISTORY_PAGE_SIZE = 12L
     }
 }

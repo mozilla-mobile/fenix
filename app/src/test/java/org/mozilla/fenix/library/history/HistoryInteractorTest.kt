@@ -20,6 +20,7 @@ class HistoryInteractorTest {
             { historyItemReceived = it },
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
         interactor.onHistoryItemOpened(historyItem)
@@ -31,7 +32,7 @@ class HistoryInteractorTest {
         val store: HistoryStore = mockk(relaxed = true)
         val newHistoryItem: HistoryItem = mockk(relaxed = true)
         val interactor =
-            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk())
+            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk(), mockk())
         interactor.onEnterEditMode(newHistoryItem)
         verify { store.dispatch(HistoryAction.EnterEditMode(newHistoryItem)) }
     }
@@ -40,7 +41,7 @@ class HistoryInteractorTest {
     fun onBackPressed() {
         val store: HistoryStore = mockk(relaxed = true)
         val interactor =
-            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk())
+            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk(), mockk())
         interactor.onBackPressed()
         verify { store.dispatch(HistoryAction.ExitEditMode) }
     }
@@ -51,7 +52,7 @@ class HistoryInteractorTest {
         val newHistoryItem: HistoryItem = mockk(relaxed = true)
 
         val interactor =
-            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk())
+            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk(), mockk())
         interactor.onItemAddedForRemoval(newHistoryItem)
         verify { store.dispatch(HistoryAction.AddItemForRemoval(newHistoryItem)) }
     }
@@ -61,7 +62,7 @@ class HistoryInteractorTest {
         val store: HistoryStore = mockk(relaxed = true)
         val newHistoryItem: HistoryItem = mockk(relaxed = true)
         val interactor =
-            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk())
+            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk(), mockk())
         interactor.onItemRemovedForRemoval(newHistoryItem)
         verify { store.dispatch(HistoryAction.RemoveItemForRemoval(newHistoryItem)) }
     }
@@ -74,6 +75,7 @@ class HistoryInteractorTest {
             mockk(),
             mockk(),
             { menuInvalidated = true },
+            mockk(),
             mockk()
         )
         interactor.onModeSwitched()
@@ -87,6 +89,7 @@ class HistoryInteractorTest {
             mockk(),
             mockk(),
             { deleteAllDialogShown = true },
+            mockk(),
             mockk(),
             mockk()
         )
@@ -104,7 +107,8 @@ class HistoryInteractorTest {
                 mockk(),
                 mockk(),
                 mockk(),
-                { itemsToDelete = it }
+                { itemsToDelete = it },
+                mockk()
             )
         interactor.onDeleteOne(historyItem)
         assertEquals(itemsToDelete, listOf(historyItem))
@@ -121,9 +125,20 @@ class HistoryInteractorTest {
                 mockk(),
                 mockk(),
                 mockk(),
-                { itemsToDelete = it }
+                { itemsToDelete = it },
+                mockk()
             )
         interactor.onDeleteSome(listOf(historyItem, newHistoryItem))
         assertEquals(itemsToDelete, listOf(historyItem, newHistoryItem))
+    }
+
+    @Test
+    fun onLoadMoreItems() {
+        var loadNewItems = false
+        val store: HistoryStore = mockk(relaxed = true)
+        val interactor =
+            HistoryInteractor(store, mockk(), mockk(), mockk(), mockk(), { loadNewItems = true })
+        interactor.onLoadMoreItems()
+        assertEquals(true, loadNewItems)
     }
 }

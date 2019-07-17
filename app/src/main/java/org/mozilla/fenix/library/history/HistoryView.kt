@@ -24,12 +24,18 @@ import mozilla.components.support.base.feature.BackHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.getColorIntFromAttr
+import org.mozilla.fenix.library.PaginationScrollListener
 
 /**
  * Interface for the HistoryViewInteractor. This interface is implemented by objects that want
  * to respond to user interaction on the HistoryView
  */
 interface HistoryViewInteractor {
+    /**
+     * Called when we should load more history items in the adapter
+     */
+    fun onLoadMoreItems()
+
     /**
      * Called whenever a history item is tapped to open that history entry in the browser
      * @param item the history item to open in browser
@@ -104,17 +110,35 @@ class HistoryView(
         private set
     private val activity = context?.asActivity()
 
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
+
     init {
         view.history_list.apply {
+            layoutManager = LinearLayoutManager(container.context)
             historyAdapter = HistoryAdapter(interactor)
             adapter = historyAdapter
-            layoutManager = LinearLayoutManager(container.context)
+            addOnScrollListener(object : PaginationScrollListener(layoutManager as LinearLayoutManager) {
+                override fun isLastPage(): Boolean {
+                    return isLastPage
+                }
+
+                override fun isLoading(): Boolean {
+                    return isLoading
+                }
+
+                override fun loadMoreItems() {
+                    isLoading = true
+                    view.progress_bar.visibility = View.VISIBLE
+                    interactor.onLoadMoreItems()
+                }
+            })
         }
     }
 
     fun update(state: HistoryState) {
         view.progress_bar.visibility =
-            if (state.mode is HistoryState.Mode.Deleting) View.VISIBLE else View.GONE
+            if (state.mode is HistoryState.Mode.Deleting || isLoading) View.VISIBLE else View.GONE
 
         if (state.mode != mode) {
             mode = state.mode

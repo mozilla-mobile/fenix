@@ -13,8 +13,13 @@ class HistoryInteractor(
     private val openToBrowser: (item: HistoryItem) -> Unit,
     private val displayDeleteAll: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
-    private val deleteHistoryItems: (List<HistoryItem>) -> Unit
+    private val deleteHistoryItems: (List<HistoryItem>) -> Unit,
+    private val loadMoreHistoryItems: () -> Unit
 ) : HistoryViewInteractor {
+    override fun onLoadMoreItems() {
+        loadMoreHistoryItems.invoke()
+    }
+
     override fun onHistoryItemOpened(item: HistoryItem) {
         openToBrowser(item)
     }

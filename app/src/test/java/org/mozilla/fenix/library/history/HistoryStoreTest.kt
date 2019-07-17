@@ -34,6 +34,16 @@ class HistoryStoreTest {
     }
 
     @Test
+    fun loadMoreItems() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = HistoryStore(initialState)
+
+        store.dispatch(HistoryAction.AddNewItems(listOf(historyItem))).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(listOf(historyItem), store.state.items)
+    }
+
+    @Test
     fun itemAddedForRemoval() = runBlocking {
         val initialState = oneItemEditState()
         val store = HistoryStore(initialState)
