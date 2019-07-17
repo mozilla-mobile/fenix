@@ -214,7 +214,7 @@ class BrowserFragment : Fragment(), BackHandler {
                 feature = FindInPageIntegration(
                     sessionManager = requireComponents.core.sessionManager,
                     sessionId = customTabSessionId,
-                    view = view.findInPageView,
+                    stub = view.stub_find_in_page,
                     engineView = view.engineView,
                     toolbar = toolbar
                 ),
