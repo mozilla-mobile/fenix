@@ -44,7 +44,6 @@ class SearchTest {
         homeScreen {
         }.openSearch {
             clickScanButton()
-            verifyScanPrompt()
             clickDenyPermission()
             clickScanButton()
             clickAllowPermission()
