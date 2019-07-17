@@ -73,38 +73,11 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
     private var mSeekBarValueTextView: TextView? = null
     private var mExampleTextTextView: TextView? = null
     // Whether the SeekBar should respond to the left/right keys
-    /**
-     * Gets whether the [SeekBar] should respond to the left/right keys.
-     *
-     * @return Whether the [SeekBar] should respond to the left/right keys
-     */
-    /**
-     * Sets whether the [SeekBar] should respond to the left/right keys.
-     *
-     * @param adjustable Whether the [SeekBar] should respond to the left/right keys
-     */
     /* synthetic access */ var isAdjustable: Boolean = false
     // Whether to show the SeekBar value TextView next to the bar
     private var mShowSeekBarValue: Boolean = false
     // Whether the SeekBarPreference should continuously save the Seekbar value while it is being
     // dragged.
-    /**
-     * Gets whether the [androidx.preference.SeekBarPreference] should continuously save the [SeekBar] value
-     * while it is being dragged. Note that when the value is true,
-     * [Preference.OnPreferenceChangeListener] will be called continuously as well.
-     *
-     * @return Whether the [androidx.preference.SeekBarPreference] should continuously save the [SeekBar]
-     * value while it is being dragged
-     * @see .setUpdatesContinuously
-     */
-    /**
-     * Sets whether the [androidx.preference.SeekBarPreference] should continuously save the [SeekBar] value
-     * while it is being dragged.
-     *
-     * @param updatesContinuously Whether the [androidx.preference.SeekBarPreference] should continuously save
-     * the [SeekBar] value while it is being dragged
-     * @see .getUpdatesContinuously
-     */
     /* synthetic access */ var updatesContinuously: Boolean = false
     /**
      * Listener reacting to the [SeekBar] changing value by the user
@@ -162,12 +135,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 
     /**
      * Gets the lower bound set on the [SeekBar].
-     *
      * @return The lower bound set
-     */
-    /**
      * Sets the lower bound on the [SeekBar].
-     *
      * @param min The lower bound to set
      */
     var min: Int
@@ -187,13 +156,10 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
      * Returns the amount of increment change via each arrow key click. This value is derived from
      * user's specified increment value if it's not zero. Otherwise, the default value is picked
      * from the default mKeyProgressIncrement value in [android.widget.AbsSeekBar].
-     *
      * @return The amount of increment on the [SeekBar] performed after each user's arrow
      * key press
-     */
-    /**
-     * Sets the increment amount on the [SeekBar] for each arrow key press.
      *
+     * Sets the increment amount on the [SeekBar] for each arrow key press.
      * @param seekBarIncrement The amount to increment or decrement when the user presses an
      * arrow key.
      */
@@ -208,12 +174,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 
     /**
      * Gets the upper bound set on the [SeekBar].
-     *
      * @return The upper bound set
-     */
-    /**
      * Sets the upper bound on the [SeekBar].
-     *
      * @param max The upper bound to set
      */
     var max: Int
@@ -231,13 +193,9 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 
     /**
      * Gets whether the current [SeekBar] value is displayed to the user.
-     *
      * @return Whether the current [SeekBar] value is displayed to the user
      * @see .setShowSeekBarValue
-     */
-    /**
      * Sets whether the current [SeekBar] value is displayed to the user.
-     *
      * @param showSeekBarValue Whether the current [SeekBar] value is displayed to the user
      * @see .getShowSeekBarValue
      */
@@ -250,12 +208,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
 
     /**
      * Gets the current progress of the [SeekBar].
-     *
      * @return The current progress of the [SeekBar]
-     */
-    /**
      * Sets the current progress of the [SeekBar].
-     *
      * @param seekBarValue The current progress of the [SeekBar]
      */
     var value: Int
