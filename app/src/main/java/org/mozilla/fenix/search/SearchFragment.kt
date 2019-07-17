@@ -172,7 +172,7 @@ class SearchFragment : Fragment(), BackHandler {
                 awesomeBarView.update(it)
                 toolbarView.update(it)
                 updateSearchEngineIcon(it)
-                updateSearchShortuctsIcon(it)
+                updateSearchShortcutsIcon(it)
                 updateSearchWithLabel(it)
             }
         }
@@ -219,19 +219,21 @@ class SearchFragment : Fragment(), BackHandler {
         search_with_shortcuts.visibility = if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
     }
 
-    private fun updateSearchShortuctsIcon(searchState: SearchState) {
-        with(requireContext()) {
-            val showShortcuts = searchState.showShortcutEnginePicker
-            search_shortcuts_button?.isChecked = showShortcuts
+    private fun updateSearchShortcutsIcon(searchState: SearchState) {
+        context?.let { context: Context ->
+            search_shortcuts_button?.let {
+                val showShortcuts = searchState.showShortcutEnginePicker
+                it.isChecked = showShortcuts
 
-            val color = if (showShortcuts) R.attr.foundation else R.attr.primaryText
+                val color = if (showShortcuts) R.attr.foundation else R.attr.primaryText
 
-            search_shortcuts_button.compoundDrawables[0]?.setTint(
-                ContextCompat.getColor(
-                    this,
-                    ThemeManager.resolveAttribute(color, this)
+                it.compoundDrawables[0]?.setTint(
+                    ContextCompat.getColor(
+                        context,
+                        ThemeManager.resolveAttribute(color, context)
+                    )
                 )
-            )
+            }
         }
     }
 
