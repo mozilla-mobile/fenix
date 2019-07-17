@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components.toolbar
 
@@ -14,7 +14,8 @@ import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
-import mozilla.components.support.ktx.android.content.res.pxToDp
+import mozilla.components.support.ktx.android.util.dpToFloat
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
@@ -53,7 +54,7 @@ class ToolbarUIView(
                 editMode()
             }
 
-            elevation = resources.pxToDp(TOOLBAR_ELEVATION).toFloat()
+            elevation = TOOLBAR_ELEVATION.dpToFloat(resources.displayMetrics)
 
             setOnUrlCommitListener {
                 actionEmitter.onNext(SearchAction.UrlCommitted(it, sessionId, state?.engine))
@@ -64,7 +65,7 @@ class ToolbarUIView(
                 false
             }
 
-            browserActionMargin = resources.pxToDp(browserActionMarginDp)
+            browserActionMargin = browserActionMarginDp.dpToPx(resources.displayMetrics)
 
             val isCustomTabSession = (session?.isCustomTabSession() == true)
 
@@ -85,11 +86,6 @@ class ToolbarUIView(
                     actionEmitter.onNext(SearchAction.TextChanged(text))
                 }
             })
-
-            setOnUrlLongClickListener {
-                actionEmitter.onNext(SearchAction.ToolbarLongClicked)
-                true
-            }
         }
 
         with(view.context) {
@@ -138,7 +134,9 @@ class ToolbarUIView(
             updateEditingState(newState)
         }
 
-        if (!newState.focused) {
+        if (newState.focused) {
+            view.focus()
+        } else {
             view.clearFocus()
         }
 

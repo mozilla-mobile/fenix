@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home
 
@@ -120,11 +120,13 @@ class HomeFragment : Fragment(), AccountObserver {
 
     private val preDrawListener = object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(ANIM_SCROLL_DELAY)
-                restoreLayoutState()
+            if (view != null) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(ANIM_SCROLL_DELAY)
+                    restoreLayoutState()
 //                startPostponedEnterTransition()
-            }.invokeOnCompletion { sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(this) }
+                }.invokeOnCompletion { sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(this) }
+            }
             return true
         }
     }
@@ -494,13 +496,13 @@ class HomeFragment : Fragment(), AccountObserver {
             }
             is CollectionAction.OpenTab -> {
                 invokePendingDeleteJobs()
-                val tabSnapshot = action.tab.restore(
+                val session = action.tab.restore(
                     context = context!!,
                     engine = requireComponents.core.engine,
                     tab = action.tab,
                     restoreSessionId = false
                 )
-                if (tabSnapshot.isEmpty()) {
+                if (session == null) {
                     // We were unable to create a snapshot, so just load the tab instead
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = action.tab.url,
@@ -508,8 +510,8 @@ class HomeFragment : Fragment(), AccountObserver {
                         from = BrowserDirection.FromHome
                     )
                 } else {
-                    requireComponents.core.sessionManager.restore(
-                        tabSnapshot,
+                    requireComponents.core.sessionManager.add(
+                        session,
                         true
                     )
                     (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
@@ -518,18 +520,18 @@ class HomeFragment : Fragment(), AccountObserver {
             is CollectionAction.OpenTabs -> {
                 invokePendingDeleteJobs()
                 action.collection.tabs.forEach {
-                    val tabSnapshot = it.restore(
+                    val session = it.restore(
                         context = context!!,
                         engine = requireComponents.core.engine,
                         tab = it,
                         restoreSessionId = false
                     )
-                    if (tabSnapshot.isEmpty()) {
+                    if (session == null) {
                         // We were unable to create a snapshot, so just load the tab instead
                         requireComponents.useCases.tabsUseCases.addTab.invoke(it.url)
                     } else {
-                        requireComponents.core.sessionManager.restore(
-                            tabSnapshot,
+                        requireComponents.core.sessionManager.add(
+                            session,
                             requireComponents.core.sessionManager.selectedSession == null
                         )
                     }
@@ -715,7 +717,10 @@ class HomeFragment : Fragment(), AccountObserver {
 
     private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
         val directions =
-            HomeFragmentDirections.actionHomeFragmentToShareFragment(url = url, tabs = tabs?.toTypedArray())
+            HomeFragmentDirections.actionHomeFragmentToShareFragment(
+                url = url,
+                tabs = tabs?.toTypedArray()
+            )
         nav(R.id.homeFragment, directions)
     }
 
@@ -740,10 +745,6 @@ class HomeFragment : Fragment(), AccountObserver {
         emitAccountChanges()
     }
 
-    override fun onError(error: Exception) {
-        emitAccountChanges()
-    }
-
     override fun onLoggedOut() {
         emitAccountChanges()
     }
@@ -753,37 +754,40 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun scrollAndAnimateCollection(tabsAddedToCollectionSize: Int, changedCollection: TabCollection? = null) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val recyclerView = sessionControlComponent.view
-            delay(ANIM_SCROLL_DELAY)
-            val tabsSize = getListOfSessions().size
+        if (view != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val recyclerView = sessionControlComponent.view
+                delay(ANIM_SCROLL_DELAY)
+                val tabsSize = getListOfSessions().size
 
-            var indexOfCollection = tabsSize + NON_TAB_ITEM_NUM
-            changedCollection?.let { changedCollection ->
-                requireComponents.core.tabCollectionStorage.cachedTabCollections.filterIndexed { index, tabCollection ->
-                    if (tabCollection.id == changedCollection.id) {
-                        indexOfCollection = tabsSize + NON_TAB_ITEM_NUM + index
-                        return@filterIndexed true
-                    }
-                    false
+                var indexOfCollection = tabsSize + NON_TAB_ITEM_NUM
+                changedCollection?.let { changedCollection ->
+                    requireComponents.core.tabCollectionStorage.cachedTabCollections
+                        .filterIndexed { index, tabCollection ->
+                            if (tabCollection.id == changedCollection.id) {
+                                indexOfCollection = tabsSize + NON_TAB_ITEM_NUM + index
+                                return@filterIndexed true
+                            }
+                            false
+                        }
                 }
-            }
-            val lastVisiblePosition =
-                (recyclerView.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: 0
-            if (lastVisiblePosition < indexOfCollection) {
-                val onScrollListener = object : RecyclerView.OnScrollListener() {
-                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        super.onScrollStateChanged(recyclerView, newState)
-                        if (newState == SCROLL_STATE_IDLE) {
-                            animateCollection(tabsAddedToCollectionSize, indexOfCollection)
-                            recyclerView.removeOnScrollListener(this)
+                val lastVisiblePosition =
+                    (recyclerView.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: 0
+                if (lastVisiblePosition < indexOfCollection) {
+                    val onScrollListener = object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                            super.onScrollStateChanged(recyclerView, newState)
+                            if (newState == SCROLL_STATE_IDLE) {
+                                animateCollection(tabsAddedToCollectionSize, indexOfCollection)
+                                recyclerView.removeOnScrollListener(this)
+                            }
                         }
                     }
+                    recyclerView.addOnScrollListener(onScrollListener)
+                    recyclerView.smoothScrollToPosition(indexOfCollection)
+                } else {
+                    animateCollection(tabsAddedToCollectionSize, indexOfCollection)
                 }
-                recyclerView.addOnScrollListener(onScrollListener)
-                recyclerView.smoothScrollToPosition(indexOfCollection)
-            } else {
-                animateCollection(tabsAddedToCollectionSize, indexOfCollection)
             }
         }
     }

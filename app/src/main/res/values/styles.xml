@@ -53,18 +53,19 @@
 
     <style name="NormalTheme" parent="NormalThemeBase" />
 
-    <style name="DialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+    <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="dialogCornerRadius">@dimen/tab_corner_radius</item>
         <item name="android:colorBackground">?above</item>
         <item name="colorAccent">?accent</item>
         <item name="android:textColorPrimary">?primaryText</item>
     </style>
 
-    <style name="DialogStyleLight" parent="DialogStyle">
+    <style name="DialogStyleLight" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleLight</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleLight</item>
     </style>
 
-    <style name="DialogStyleDark" parent="DialogStyle">
+    <style name="DialogStyleDark" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleDark</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleDark</item>
     </style>
@@ -208,22 +209,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/CurrentSessionBottomSheetStyle</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetStyle" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
     </style>
 
     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">

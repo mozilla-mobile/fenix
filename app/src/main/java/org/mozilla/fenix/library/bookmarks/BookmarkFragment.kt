@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks
 
@@ -99,12 +99,6 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         return view
     }
 
-    // Fill out our title map once we have context.
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setRootTitles(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.title = getString(R.string.library_bookmarks)
@@ -113,6 +107,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
 
     override fun onResume() {
         super.onResume()
+        context?.let { setRootTitles(it) }
+
         (activity as? AppCompatActivity)?.supportActionBar?.show()
         checkIfSignedIn()
 
@@ -221,8 +217,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
                             nav(
                                 R.id.bookmarkFragment,
                                 BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
-                                    this,
-                                    it.item.title
+                                    url = this,
+                                    title = it.item.title
                                 )
                             )
                             metrics()?.track(Event.ShareBookmark)
@@ -416,9 +412,6 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         lifecycleScope.launch {
             refreshBookmarks()
         }
-    }
-
-    override fun onError(error: Exception) {
     }
 
     override fun onLoggedOut() {

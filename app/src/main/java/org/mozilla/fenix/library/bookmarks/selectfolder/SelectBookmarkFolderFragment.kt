@@ -1,10 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.selectfolder
 
-import android.content.Context
 import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
@@ -56,12 +55,6 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
     private lateinit var signInComponent: SignInComponent
 
-    // Fill out our title map once we have context.
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setRootTitles(context, showMobileRoot = true)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -99,6 +92,9 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
     override fun onResume() {
         super.onResume()
+        context?.let {
+            setRootTitles(it, showMobileRoot = true)
+        }
         (activity as AppCompatActivity).title =
             getString(R.string.bookmark_select_folder_fragment_label)
         (activity as AppCompatActivity).supportActionBar?.show()
@@ -156,9 +152,6 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
     override fun onAuthenticated(account: OAuthAccount) {
         getManagedEmitter<SignInChange>().onNext(SignInChange.SignedIn)
-    }
-
-    override fun onError(error: Exception) {
     }
 
     override fun onLoggedOut() {

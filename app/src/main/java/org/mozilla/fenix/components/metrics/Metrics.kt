@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
@@ -92,6 +93,11 @@ sealed class Event {
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
     object SyncAccountSignOut : Event()
+    object HistoryOpened : Event()
+    object HistoryItemShared : Event()
+    object HistoryItemOpened : Event()
+    object HistoryItemRemoved : Event()
+    object HistoryAllItemsRemoved : Event()
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(

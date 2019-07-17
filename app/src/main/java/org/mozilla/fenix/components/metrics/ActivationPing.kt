@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components.metrics
 
@@ -157,7 +157,7 @@ class ActivationPing(private val context: Context) {
         // Generate the activation_id.
         Activation.activationId.generateAndSet()
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val hashedId = getHashedIdentifier()
             if (hashedId != null) {
                 Logger.info("ActivationPing - generating ping with the hashed id")

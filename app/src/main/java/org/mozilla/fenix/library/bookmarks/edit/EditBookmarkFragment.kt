@@ -1,10 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.edit
 
-import android.content.Context
 import android.content.DialogInterface
 import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
@@ -62,13 +61,12 @@ class EditBookmarkFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_edit_bookmark, container, false)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setRootTitles(context, showMobileRoot = true)
-    }
-
     override fun onResume() {
         super.onResume()
+        context?.let {
+            setRootTitles(it, showMobileRoot = true)
+        }
+
         val activity = activity as? AppCompatActivity
         activity?.supportActionBar?.show()
 

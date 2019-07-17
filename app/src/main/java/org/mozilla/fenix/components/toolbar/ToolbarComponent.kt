@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components.toolbar
 
@@ -82,7 +82,6 @@ sealed class SearchAction : Action {
     data class UrlCommitted(val url: String, val session: String?, val engine: SearchEngine? = null) : SearchAction()
     data class TextChanged(val query: String) : SearchAction()
     object ToolbarClicked : SearchAction()
-    object ToolbarLongClicked : SearchAction()
     data class ToolbarMenuItemTapped(val item: ToolbarMenu.Item) : SearchAction()
     object EditingCanceled : SearchAction()
 }

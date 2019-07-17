@@ -248,6 +248,8 @@
     <string name="quick_action_download">다운로드</string>
     <!-- Button in the browser chrome in the browser to bookmark the current page -->
     <string name="quick_action_bookmark">북마크</string>
+    <!-- Button in the browser chrome in the browser to edit the bookmark of the current page -->
+    <string name="quick_action_bookmark_edit">북마크 편집</string>
     <!-- Button in the browser chrome in the browser to put the the current page in reader mode -->
     <string name="quick_action_read">읽기</string>
     <!-- Button in the browser chrome to exit reader mode -->
@@ -328,11 +330,6 @@
     <string name="collection_rename">모음집 이름 변경</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">열린 탭</string>
-    <!-- Text for the button to delete a single session -->
-    <string name="session_item_delete">삭제</string>
-    <!-- Text to tell the user how many more tabs this session has.
-        The first parameter is a digit that shows the cardinal number of how many additional tabs the session has. -->
-    <string name="session_items_more">사이트 %1$d개…</string>
 
 
     <!-- History -->
@@ -418,6 +415,8 @@
     <string name="bookmarks_multi_select_title">북마크 %1$d개가 선택됨</string>
     <!-- Bookmark editing screen title -->
     <string name="edit_bookmark_fragment_title">북마크 편집</string>
+    <!-- Bookmark folder editing screen title -->
+    <string name="edit_bookmark_folder_fragment_title">폴더 편집</string>
     <!-- Bookmark sign in button message -->
     <string name="bookmark_sign_in_button">동기화된 북마크를 보려면 로그인하십시오</string>
     <!-- Bookmark URL editing field label -->
@@ -594,17 +593,17 @@
     <string name="url_copied">URL 복사됨</string>
 
 
-    <!-- Sample text for accessiblity font size -->
+    <!-- Sample text for accessibility font size -->
     <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</string>
-    <!-- Summary for Accessiblity Text Size Scaling Preference -->
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">웹 사이트의 텍스트를 더 크게 또는 더 작게 함</string>
-    <!-- Title for Accessiblity Text Size Scaling Preference -->
+    <!-- Title for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_font_size_title">글자 크기</string>
 
-    <!-- Title for Accessiblity Text Automatic Size Scaling Preference -->
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size">자동 글꼴 크기 조정</string>
 
-    <!-- Summary for Accessiblity Text Automatic Size Scaling Preference -->
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">글꼴 크기는 Android 설정과 맞춰집니다. 이 곳의 글꼴 크기 관리는 비활성화합니다.</string>
 
     <!-- Title for the Delete browsing data preference -->
@@ -678,9 +677,9 @@
     <string name="onboarding_privacy_notice_header">개인 정보 보호</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">우리는 %s가 무엇을 온라인에서 공유하고 우리와 공유할지 
+    <string name="onboarding_privacy_notice_description">우리는 %s가 무엇을 온라인에서 공유하고 우리와 공유할지
          사용자가 제어할 수 있게 만들었습니다.
-    
+
     </string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">개인 정보 보호 정책 읽기</string>

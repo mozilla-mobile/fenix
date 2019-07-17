@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix
 
@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Deferred
@@ -16,7 +17,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import mozilla.components.concept.fetch.Client
-import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fretboard.Fretboard
 import mozilla.components.service.fretboard.source.kinto.KintoExperimentSource
 import mozilla.components.service.fretboard.storage.flatfile.FlatFileExperimentStorage
@@ -46,23 +46,24 @@ open class FenixApplication : Application() {
     }
 
     open fun setupApplication() {
-        // loadExperiments does things that run in parallel with the rest of setup.
-        // Call the function as early as possible so there's maximum overlap.
-        experimentLoader = loadExperiments()
-
+        setupCrashReporting()
         setDayNightTheme()
         val megazordEnabled = setupMegazord()
         setupLogging(megazordEnabled)
         registerRxExceptionHandling()
-        setupCrashReporting()
+        enableStrictMode()
 
         if (!isMainProcess()) {
             // If this is not the main process then do not continue with the initialization here. Everything that
             // follows only needs to be done in our app's main process and should not be done in other processes like
             // a GeckoView child process or the crash handling process. Most importantly we never want to end up in a
-            // situation where we create a GeckoRuntime from the Gecko child process (
+            // situation where we create a GeckoRuntime from the Gecko child process.
             return
         }
+
+        // We want to call this function as early as possible, but only once and
+        // on the main process, as it uses Gecko to fetch experiments from the server.
+        experimentLoader = loadExperiments()
 
         setupLeakCanary()
         if (Settings.getInstance(this).isTelemetryEnabled) {
@@ -130,17 +131,17 @@ open class FenixApplication : Application() {
     }
 
     private fun loadExperiments(): Deferred<Boolean> {
+        val experimentsFile = File(filesDir, EXPERIMENTS_JSON_FILENAME)
+        val experimentSource = KintoExperimentSource(
+            EXPERIMENTS_BASE_URL,
+            EXPERIMENTS_BUCKET_NAME,
+            EXPERIMENTS_COLLECTION_NAME,
+            components.core.client
+        )
+        // TODO add ValueProvider to keep clientID in sync with Glean when ready
+        fretboard = Fretboard(experimentSource, FlatFileExperimentStorage(experimentsFile))
+
         return GlobalScope.async(Dispatchers.IO) {
-            val experimentsFile = File(filesDir, EXPERIMENTS_JSON_FILENAME)
-            val experimentSource = KintoExperimentSource(
-                EXPERIMENTS_BASE_URL,
-                EXPERIMENTS_BUCKET_NAME,
-                EXPERIMENTS_COLLECTION_NAME,
-                // TODO Switch back to components.core.client (see https://github.com/mozilla-mobile/fenix/issues/1329)
-                HttpURLConnectionClient()
-            )
-            // TODO add ValueProvider to keep clientID in sync with Glean when ready
-            fretboard = Fretboard(experimentSource, FlatFileExperimentStorage(experimentsFile))
             fretboard.loadExperiments()
             Logger.debug("Bucket is ${fretboard.getUserBucket(this@FenixApplication)}")
             Logger.debug("Experiments active: ${fretboard.getExperimentsMap(this@FenixApplication)}")
@@ -235,6 +236,27 @@ open class FenixApplication : Application() {
                     settings.setLightTheme(true)
                 }
             }
+        }
+    }
+
+    private fun enableStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
+            var builder = StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .detectFileUriExposure()
+                .penaltyLog()
+            if (SDK_INT >= Build.VERSION_CODES.O) builder = builder.detectContentUriWithoutPermission()
+            if (SDK_INT >= Build.VERSION_CODES.P) builder = builder.detectNonSdkApiUsage()
+            StrictMode.setVmPolicy(builder.build())
         }
     }
 }

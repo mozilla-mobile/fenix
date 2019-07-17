@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.browser
 
@@ -104,13 +104,11 @@ import java.net.URL
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class BrowserFragment : Fragment(), BackHandler {
-
     private lateinit var toolbarComponent: ToolbarComponent
 
     private var tabCollectionObserver: Observer<List<TabCollection>>? = null
     private var sessionObserver: Session.Observer? = null
     private var sessionManagerObserver: SessionManager.Observer? = null
-    private var pendingOpenInBrowserIntent: Intent? = null
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
@@ -491,21 +489,6 @@ class BrowserFragment : Fragment(), BackHandler {
                         trackToolbarItemInteraction(it)
                         handleToolbarItemInteraction(it)
                     }
-                    is SearchAction.ToolbarLongClicked -> {
-                        getSessionById()?.let { session ->
-                            session.copyUrl(requireContext())
-                            view?.let {
-                                val snackbar = FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
-                                    .setText(resources.getString(R.string.url_copied))
-
-                                if (!session.isCustomTabSession()) {
-                                    snackbar.anchorView = nestedScrollQuickAction
-                                }
-
-                                snackbar.show()
-                            }
-                        }
-                    }
                 }
             }
 
@@ -632,10 +615,6 @@ class BrowserFragment : Fragment(), BackHandler {
         sessionManagerObserver?.let {
             requireComponents.core.sessionManager.unregister(it)
         }
-        pendingOpenInBrowserIntent?.let {
-            startActivity(it)
-            pendingOpenInBrowserIntent = null
-        }
     }
 
     override fun onBackPressed(): Boolean {
@@ -726,7 +705,9 @@ class BrowserFragment : Fragment(), BackHandler {
                 R.id.browserFragment,
                 BrowserFragmentDirections.actionBrowserFragmentToLibraryFragment()
             )
-            is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(action.item.isChecked)
+            is ToolbarMenu.Item.RequestDesktop -> getSessionById()?.let { session ->
+                sessionUseCases.requestDesktopSite.invoke(action.item.isChecked, session)
+            }
             ToolbarMenu.Item.Share -> getSessionById()?.let { session ->
                 session.url.apply {
                     shareUrl(this)
@@ -742,7 +723,7 @@ class BrowserFragment : Fragment(), BackHandler {
                 (BottomSheetBehavior.from(nestedScrollQuickAction as View) as QuickActionSheetBehavior).apply {
                     state = BottomSheetBehavior.STATE_COLLAPSED
                 }
-                FindInPageIntegration.launch?.invoke()
+                findInPageIntegration.get()?.launch()
                 requireComponents.analytics.metrics.track(Event.FindInPageOpened)
             }
             ToolbarMenu.Item.ReportIssue -> getSessionById()?.let { session ->
@@ -768,14 +749,22 @@ class BrowserFragment : Fragment(), BackHandler {
             }
             ToolbarMenu.Item.SaveToCollection -> showSaveToCollection()
             ToolbarMenu.Item.OpenInFenix -> {
-                // To not get a "Display Already Acquired" error we need to force remove the engineView here
-                swipeRefresh?.removeView(engineView as View)
-                pendingOpenInBrowserIntent = Intent(context, IntentReceiverActivity::class.java)
-                pendingOpenInBrowserIntent?.action = Intent.ACTION_VIEW
-                getSessionById()?.customTabConfig = null
+                // Release the session from this view so that it can immediately be rendered by a different view
+                engineView.release()
+
+                // Strip the CustomTabConfig to turn this Session into a regular tab and then select it
                 getSessionById()?.let {
+                    it.customTabConfig = null
                     requireComponents.core.sessionManager.select(it)
                 }
+
+                // Switch to the actual browser which should now display our new selected session
+                startActivity(Intent(context, IntentReceiverActivity::class.java).also {
+                    it.action = Intent.ACTION_VIEW
+                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+
+                // Close this activity since it is no longer displaying any session
                 activity?.finish()
             }
         }
@@ -893,6 +882,7 @@ class BrowserFragment : Fragment(), BackHandler {
             override fun onSessionSelected(session: Session) {
                 super.onSessionSelected(session)
                 (activity as HomeActivity).updateThemeForSession(session)
+                updateBookmarkState(session)
             }
         }.also { requireComponents.core.sessionManager.register(it, this) }
     }
@@ -950,7 +940,7 @@ class BrowserFragment : Fragment(), BackHandler {
     }
 
     private fun shareUrl(url: String) {
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(url)
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(url = url)
         nav(R.id.browserFragment, directions)
     }
 
