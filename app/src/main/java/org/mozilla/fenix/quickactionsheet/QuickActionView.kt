@@ -28,6 +28,7 @@ interface QuickActionSheetInteractor {
     fun onBookmarkPressed()
     fun onReadPressed()
     fun onAppearancePressed()
+    fun onOpenAppLinkPressed()
 }
 /**
  * View for the quick action sheet that slides out from the toolbar.
@@ -68,6 +69,7 @@ class QuickActionView(
         view.quick_action_bookmark.setOnClickListener(this)
         view.quick_action_read.setOnClickListener(this)
         view.quick_action_appearance.setOnClickListener(this)
+        view.quick_action_open_app_link.setOnClickListener(this)
     }
 
     /**
@@ -80,6 +82,7 @@ class QuickActionView(
             R.id.quick_action_bookmark -> interactor.onBookmarkPressed()
             R.id.quick_action_read -> interactor.onReadPressed()
             R.id.quick_action_appearance -> interactor.onAppearancePressed()
+            R.id.quick_action_open_app_link -> interactor.onOpenAppLinkPressed()
             else -> return
         }
         quickActionSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -122,6 +125,10 @@ class QuickActionView(
 
         if (state.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
             quickActionSheet.bounceSheet()
+        }
+
+        view.quick_action_open_app_link.apply {
+            visibility = if (state.isAppLink) View.VISIBLE else View.GONE
         }
     }
 

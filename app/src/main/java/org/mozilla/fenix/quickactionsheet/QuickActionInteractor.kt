@@ -5,20 +5,26 @@
 package org.mozilla.fenix.quickactionsheet
 
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.CallSuper
 import mozilla.components.browser.session.Session
+import mozilla.components.feature.app.links.AppLinksUseCases
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
+/**
+ * Interactor for the QuickActionSheet
+ */
 class QuickActionInteractor(
     private val context: Context,
     private val readerModeController: ReaderModeController,
     private val quickActionStore: QuickActionSheetStore,
     private val shareUrl: (String) -> Unit,
-    private val bookmarkTapped: (Session) -> Unit
+    private val bookmarkTapped: (Session) -> Unit,
+    private val appLinksUseCases: AppLinksUseCases
 ) : QuickActionSheetInteractor {
 
     private val selectedSession
@@ -65,8 +71,19 @@ class QuickActionInteractor(
     }
 
     @CallSuper
+    override fun onOpenAppLinkPressed() {
+        val getRedirect = appLinksUseCases.appLinkRedirect
+        val redirect = selectedSession?.let {
+            getRedirect.invoke(it.url)
+        } ?: return
+
+        redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        appLinksUseCases.openAppLink.invoke(redirect)
+    }
+
+    @CallSuper
     override fun onAppearancePressed() {
         // TODO telemetry: https://github.com/mozilla-mobile/fenix/issues/2267
-        readerModeController.showReaderView()
+        readerModeController.showControls()
     }
 }

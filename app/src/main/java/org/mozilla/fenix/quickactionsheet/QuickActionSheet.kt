@@ -10,27 +10,18 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.R
-import android.os.Bundle
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import mozilla.components.browser.toolbar.BrowserToolbar
-import org.mozilla.fenix.R
 import org.mozilla.fenix.utils.Settings
 
 const val POSITION_SNAP_BUFFER = 1f
@@ -52,11 +43,8 @@ class QuickActionSheet @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        job = Job()
         quickActionSheetBehavior = BottomSheetBehavior.from(quick_action_sheet.parent as View)
                 as QuickActionSheetBehavior
-        handle = findViewById(R.id.quick_action_sheet_handle)
-        linearLayout = findViewById(R.id.quick_action_sheet)
         quickActionSheetBehavior.isHideable = false
         setupHandle()
     }
@@ -79,7 +67,7 @@ class QuickActionSheet @JvmOverloads constructor(
 
     fun bounceSheet() {
         Settings.getInstance(context).incrementAutomaticBounceQuickActionSheetCount()
-        scope.launch(Main) {
+        scope.launch(Dispatchers.Main) {
             delay(BOUNCE_ANIMATION_DELAY_LENGTH)
             quickActionSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             delay(BOUNCE_ANIMATION_PAUSE_LENGTH)

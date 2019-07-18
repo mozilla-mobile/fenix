@@ -13,6 +13,8 @@ import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.feature.app.links.AppLinkRedirect
+import mozilla.components.feature.app.links.AppLinksUseCases
 import org.junit.Test
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.Analytics
@@ -33,6 +35,7 @@ class QuickActionInteractorTest {
             mockk(),
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
 
@@ -50,6 +53,7 @@ class QuickActionInteractorTest {
         val metrics: MetricController = mockk()
         val interactor = QuickActionInteractor(
             context,
+            mockk(),
             mockk(),
             mockk(),
             mockk(),
@@ -76,6 +80,7 @@ class QuickActionInteractorTest {
             mockk(),
             mockk(),
             { selectedSessionUrl = it },
+            mockk(),
             mockk()
         )
 
@@ -110,6 +115,7 @@ class QuickActionInteractorTest {
             mockk(),
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
 
@@ -133,7 +139,8 @@ class QuickActionInteractorTest {
             mockk(),
             mockk(),
             mockk(),
-            { bookmarkedSession = it }
+            { bookmarkedSession = it },
+            mockk()
         )
 
         val components: Components = mockk()
@@ -171,6 +178,7 @@ class QuickActionInteractorTest {
             readerModeController,
             quickActionSheetStore,
             mockk(),
+            mockk(),
             mockk()
         )
 
@@ -198,6 +206,7 @@ class QuickActionInteractorTest {
             readerModeController,
             quickActionSheetStore,
             mockk(),
+            mockk(),
             mockk()
         )
 
@@ -213,7 +222,7 @@ class QuickActionInteractorTest {
     }
 
     @Test
-    fun onReadAppearancePressed() {
+    fun onAppearancePressed() {
         val context: Context = mockk()
         val readerModeController: ReaderModeController = mockk(relaxed = true)
 
@@ -222,11 +231,44 @@ class QuickActionInteractorTest {
             readerModeController,
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
 
         interactor.onAppearancePressed()
 
-        verify { readerModeController.showReaderView() }
+        verify { readerModeController.showControls() }
+    }
+
+    @Test
+    fun onOpenAppLink() {
+        val context: Context = mockk()
+        val session: Session = mockk()
+        val appLinksUseCases: AppLinksUseCases = mockk()
+
+        val interactor = QuickActionInteractor(
+            context,
+            mockk(),
+            mockk(),
+            mockk(),
+            mockk(),
+            appLinksUseCases
+        )
+
+        every { context.components.core.sessionManager.selectedSession } returns session
+        every { session.url } returns "mozilla.org"
+
+        val getAppLinkRedirect: AppLinksUseCases.GetAppLinkRedirect = mockk()
+        val appLinkRedirect: AppLinkRedirect = mockk()
+        val openAppLink: AppLinksUseCases.OpenAppLinkRedirect = mockk(relaxed = true)
+
+        every { appLinksUseCases.appLinkRedirect } returns getAppLinkRedirect
+        every { getAppLinkRedirect.invoke("mozilla.org") } returns appLinkRedirect
+        every { appLinksUseCases.openAppLink } returns openAppLink
+        every { appLinkRedirect.appIntent } returns mockk(relaxed = true)
+
+        interactor.onOpenAppLinkPressed()
+
+        verify { openAppLink.invoke(appLinkRedirect) }
     }
 }
