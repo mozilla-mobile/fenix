@@ -151,7 +151,7 @@ class CreateCollectionFragment : DialogFragment() {
                     dismiss()
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                         requireComponents.core.tabCollectionStorage.renameCollection(it.collection, it.name)
-                        requireComponents.analytics.metrics.track(Event.CollectionRenamed)
+                        context?.components?.analytics?.metrics?.track(Event.CollectionRenamed)
                     }
                 }
             }
