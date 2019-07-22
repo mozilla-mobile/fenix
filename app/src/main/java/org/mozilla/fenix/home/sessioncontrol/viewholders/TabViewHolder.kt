@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
-import mozilla.components.support.ktx.android.content.res.pxToDp
+import mozilla.components.support.ktx.android.util.dpToFloat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
@@ -30,9 +30,9 @@ import org.mozilla.fenix.home.sessioncontrol.onNext
 import kotlin.coroutines.CoroutineContext
 
 class TabViewHolder(
-    val view: View,
+    view: View,
     actionEmitter: Observer<SessionControlAction>,
-    val job: Job,
+    private val job: Job,
     override val containerView: View? = view
 ) :
     RecyclerView.ViewHolder(view), LayoutContainer, CoroutineScope {
@@ -76,7 +76,7 @@ class TabViewHolder(
                     0,
                     view!!.width,
                     view.height,
-                    view.context.resources.pxToDp(favIconBorderRadiusInPx).toFloat()
+                    favIconBorderRadiusInPx.dpToFloat(view.context.resources.displayMetrics)
                 )
             }
         }
@@ -109,7 +109,7 @@ class TabViewHolder(
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         const val LAYOUT_ID = R.layout.tab_list_row
         const val buttonIncreaseDps = 12
-        const val favIconBorderRadiusInPx = 8
+        const val favIconBorderRadiusInPx = 4
     }
 }
 

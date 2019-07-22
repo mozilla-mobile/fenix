@@ -34,11 +34,12 @@ class Analytics(
     val crashReporter: CrashReporter by lazy {
         val services = mutableListOf<CrashReporterService>()
 
-        if (!BuildConfig.SENTRY_TOKEN.isNullOrEmpty()) {
+        if (isSentryEnabled()) {
             val sentryService = SentryService(
                 context,
                 BuildConfig.SENTRY_TOKEN,
                 tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
+                environment = BuildConfig.BUILD_TYPE,
                 sendEventForNativeCrashes = true
             )
 
@@ -84,3 +85,5 @@ class Analytics(
         )
     }
 }
+
+fun isSentryEnabled() = !BuildConfig.SENTRY_TOKEN.isNullOrEmpty()

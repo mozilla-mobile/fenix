@@ -1,10 +1,14 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.search.awesomebar
 
 import android.content.Context
+import androidx.core.graphics.drawable.toBitmap
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.concept.awesomebar.AwesomeBar
-import mozilla.components.support.ktx.android.graphics.drawable.toBitmap
 import org.mozilla.fenix.R
 import java.util.UUID
 
@@ -22,6 +26,10 @@ class ShortcutsSuggestionProvider(
     override val shouldClearSuggestions: Boolean
         get() = false
 
+    private val settingsIcon by lazy {
+        context.getDrawable(R.drawable.ic_settings)?.toBitmap()
+    }
+
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
         val suggestions = mutableListOf<AwesomeBar.Suggestion>()
 
@@ -29,6 +37,7 @@ class ShortcutsSuggestionProvider(
             suggestions.add(
                 AwesomeBar.Suggestion(
                     provider = this,
+                    id = it.identifier,
                     icon = { _, _ ->
                         it.icon
                     },
@@ -42,9 +51,8 @@ class ShortcutsSuggestionProvider(
         suggestions.add(
             AwesomeBar.Suggestion(
                 provider = this,
-                icon = { _, _ ->
-                    context.getDrawable(R.drawable.ic_settings)?.toBitmap()
-                },
+                id = context.getString(R.string.search_shortcuts_engine_settings),
+                icon = { _, _ -> settingsIcon },
                 title = context.getString(R.string.search_shortcuts_engine_settings),
                 onSuggestionClicked = {
                     selectShortcutEngineSettings()

@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.customtabs
 
@@ -9,6 +9,7 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import mozilla.components.browser.menu.item.BrowserMenuSwitch
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -39,7 +40,7 @@ class CustomTabToolbarMenu(
                 session?.canGoBack ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.neutral,
+                R.attr.disabled,
                 context
             ),
             disableInSecondaryState = true
@@ -58,7 +59,7 @@ class CustomTabToolbarMenu(
                 session?.canGoForward ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.neutral,
+                R.attr.disabled,
                 context
             ),
             disableInSecondaryState = true
@@ -114,6 +115,19 @@ class CustomTabToolbarMenu(
                 )
             ) {
                 onItemTapped.invoke(ToolbarMenu.Item.Share)
+            },
+
+            BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
+                { session?.desktopMode ?: false }, { checked ->
+                    onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
+                }),
+
+            BrowserMenuImageText(
+                context.getString(R.string.browser_menu_find_in_page),
+                R.drawable.mozac_ic_search,
+                ThemeManager.resolveAttribute(R.attr.primaryText, context)
+            ) {
+                onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
             },
 
             SimpleBrowserMenuItem(

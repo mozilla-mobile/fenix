@@ -18,6 +18,7 @@ android {
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
         versionName Config.generateDebugVersionName()
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         manifestPlaceholders.isRaptorEnabled = "false"
@@ -39,17 +40,25 @@ android {
             applicationIdSuffix ".debug"
             manifestPlaceholders.isRaptorEnabled = "true"
             resValue "bool", "IS_DEBUG", "true"
+            pseudoLocalesEnabled true
         }
         forPerformanceTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
             manifestPlaceholders.isRaptorEnabled = "true"
             applicationIdSuffix ".performancetest"
             debuggable true
         }
+        nightlyLegacy releaseTemplate >> {
+            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+        }
         nightly releaseTemplate >> {
+            applicationIdSuffix ".nightly"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
         }
         beta releaseTemplate >> {
             applicationIdSuffix ".beta"
+            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+        }
+        production releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
         }
     }
@@ -167,7 +176,12 @@ android.applicationVariants.all { variant ->
             // Append to the task so the first thing it does is run our validation
             prebuildTask.doFirst {
                 if (!project.hasProperty('versionName')) {
-                    throw new RuntimeException("Release builds require the 'versionName' property, e.g.: './gradlew -PversionName=<...> assembleNightly'")
+                    throw new RuntimeException("Release builds require the 'versionName' property to be set.\n" +
+                            "If you're using an IDE, set your build variant to be a \"debug\" type.\n" +
+                            "If you're using the command-line, either build a debug variant instead ('./gradlew assembleDebug')\n" +
+                            "\tor continue building the release build and set the \"versionName\" property ('./gradlew -PversionName=<...> assembleNightly').")
+                    // TODO when Android Studio 3.5.0 is prevalent, we can set the "debug" build type as the default
+                    // https://issuetracker.google.com/issues/36988145#comment59
                 }
             }
         }
@@ -245,12 +259,6 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
         println("X_X")
     }
-
-// -------------------------------------------------------------------------------------------------
-// Feature build flags
-// -------------------------------------------------------------------------------------------------
-    buildConfigField 'Boolean', 'SEND_TAB_ENABLED', (buildType == "nightly" || isDebug).toString()
-    buildConfigField 'Boolean', 'PULL_TO_REFRESH_ENABLED', (false).toString()
 }
 
 androidExtensions {
@@ -264,6 +272,7 @@ dependencies {
     implementation Deps.kotlin_coroutines
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_constraintlayout
+    implementation Deps.androidx_coordinatorlayout
 
     implementation Deps.rxAndroid
     implementation Deps.rxKotlin
@@ -281,15 +290,18 @@ dependencies {
     implementation Deps.leanplum
 
     implementation Deps.mozilla_concept_engine
+    implementation Deps.mozilla_concept_push
     implementation Deps.mozilla_concept_storage
-    implementation Deps.mozilla_concept_toolbar
     implementation Deps.mozilla_concept_sync
+    implementation Deps.mozilla_concept_toolbar
 
     implementation Deps.mozilla_browser_awesomebar
     implementation Deps.mozilla_feature_downloads
     implementation Deps.mozilla_browser_domains
     implementation Deps.mozilla_browser_icons
-    implementation Deps.mozilla_browser_engine_gecko_beta
+    implementation Deps.mozilla_browser_menu
+    implementation Deps.mozilla_browser_engine_gecko_release
+    implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
     implementation Deps.mozilla_browser_storage_sync
     implementation Deps.mozilla_browser_toolbar
@@ -301,10 +313,12 @@ dependencies {
     implementation Deps.mozilla_feature_customtabs
     implementation Deps.mozilla_feature_downloads
     implementation Deps.mozilla_feature_intent
+    implementation Deps.mozilla_feature_media
     implementation Deps.mozilla_feature_prompts
+    implementation Deps.mozilla_feature_push
     implementation Deps.mozilla_feature_qr
+    implementation Deps.mozilla_feature_search
     implementation Deps.mozilla_feature_session
-    implementation Deps.mozilla_feature_sync
     implementation Deps.mozilla_feature_toolbar
     implementation Deps.mozilla_feature_tabs
     implementation Deps.mozilla_feature_findinpage
@@ -318,31 +332,38 @@ dependencies {
 
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog
+    implementation Deps.mozilla_support_utils
 
     implementation Deps.mozilla_ui_colors
     implementation Deps.mozilla_ui_icons
+    implementation Deps.mozilla_ui_publicsuffixlist
 
     implementation Deps.mozilla_lib_crash
+    implementation Deps.mozilla_lib_push_firebase
     debugImplementation Deps.leakcanary
     releaseImplementation Deps.leakcanary_noop
 
     implementation Deps.mozilla_lib_fetch_httpurlconnection
 
-    armImplementation Gecko.geckoview_beta_arm
-    aarch64Implementation Gecko.geckoview_beta_aarch64
-    x86Implementation Gecko.geckoview_beta_x86
-    x86_64Implementation Gecko.geckoview_beta_x86_64
+    armImplementation Gecko.geckoview_release_arm
+    aarch64Implementation Gecko.geckoview_release_aarch64
+    x86Implementation Gecko.geckoview_release_x86
+    x86_64Implementation Gecko.geckoview_release_x86_64
 
     implementation Deps.androidx_legacy
+    implementation Deps.androidx_paging
     implementation Deps.androidx_preference
     implementation Deps.androidx_fragment
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_recyclerview
-    implementation Deps.androidx_lifecycle_viewmodel_ktx
+    implementation Deps.androidx_lifecycle_runtime
+    implementation Deps.androidx_lifecycle_viewmodel
     implementation Deps.androidx_lifecycle_viewmodel_ss
     implementation Deps.androidx_core
+    implementation Deps.androidx_core_ktx
     implementation Deps.androidx_transition
+    implementation Deps.androidx_work_ktx
     implementation Deps.google_material
 
     implementation Deps.autodispose
@@ -356,6 +377,8 @@ dependencies {
 //    androidTestImplementation Deps.tools_espresso_core
 
     androidTestImplementation Deps.uiautomator
+    androidTestImplementation "tools.fastlane:screengrab:1.2.0"
+    androidTestImplementation "br.com.concretesolutions:kappuccino:1.2.1"
 
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -379,7 +402,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
-    testImplementation Deps.junit
+    androidTestImplementation Deps.mockwebserver
+    testImplementation Deps.mozilla_support_test
+    testImplementation Deps.androidx_junit
     testImplementation Deps.robolectric
     implementation Deps.fragment_testing
     testImplementation Deps.places_forUnitTests
@@ -387,9 +412,6 @@ dependencies {
     testImplementation Deps.mockito_core
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
-
-    implementation Deps.glide
-    annotationProcessor Deps.glideAnnotationProcessor
 
     debugImplementation Deps.flipper
     debugImplementation Deps.soLoader
@@ -413,12 +435,10 @@ task printBuildVariants {
 
 task printGeckoviewVersions {
     doLast {
-        println "nightly: " + groovy.json.JsonOutput.toJson(GeckoVersions.nightly_version)
+        println "release: " + groovy.json.JsonOutput.toJson(GeckoVersions.release_version)
     }
 }
 
-// Normally this should use the same version as the glean dependency. But since we are currently using AC snapshots we
-// can't reference a git tag with a specific version here. So we are just using "master" and hoping for the best.
 apply from: 'https://github.com/mozilla-mobile/android-components/raw/master/components/service/glean/scripts/sdk_generator.gradle'
 
 // For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together
@@ -444,7 +464,8 @@ afterEvaluate {
                     }
                 }
                 // Check whether it was already megazorded.
-                if (! dependency.requested.name.endsWith("-withoutLib")) {
+                // Hack: sync15 is pure kotlin, and thus not part of the megazord.
+                if (! dependency.requested.name.endsWith("-withoutLib") && dependency.requested.name != "sync15") {
                     // Use either the -forUnitTests megazord, or the default one.
                     def substitution
                     if (dependency.requested.name.endsWith("-forUnitTests")) {

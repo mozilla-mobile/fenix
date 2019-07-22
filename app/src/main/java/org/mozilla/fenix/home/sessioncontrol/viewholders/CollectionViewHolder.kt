@@ -1,44 +1,36 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.collection_home_list_row.*
 import kotlinx.android.synthetic.main.collection_home_list_row.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.components.description
+import org.mozilla.fenix.ext.getIconColor
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.home.sessioncontrol.onNext
-import kotlin.coroutines.CoroutineContext
 
 class CollectionViewHolder(
     val view: View,
     val actionEmitter: Observer<SessionControlAction>,
-    val job: Job,
     override val containerView: View? = view
 ) :
-    RecyclerView.ViewHolder(view), LayoutContainer, CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
+    RecyclerView.ViewHolder(view), LayoutContainer {
 
     private lateinit var collection: TabCollection
     private var expanded = false
@@ -57,16 +49,9 @@ class CollectionViewHolder(
         collection_overflow_button.run {
             increaseTapArea(buttonIncreaseDps)
             setOnClickListener {
-                val location = IntArray(2)
-                it.getLocationInWindow(location)
                 collectionMenu.menuBuilder
                     .build(view.context)
-                    .show(
-                        anchor = it,
-                        orientation = if (location[1] > (rootView.measuredHeight / 2))
-                            BrowserMenu.Orientation.UP else
-                            BrowserMenu.Orientation.DOWN
-                    )
+                    .show(anchor = it)
             }
         }
 
@@ -77,6 +62,7 @@ class CollectionViewHolder(
             }
         }
 
+        view.clipToOutline = true
         view.setOnClickListener {
             handleExpansion(expanded)
         }
@@ -86,52 +72,26 @@ class CollectionViewHolder(
         this.collection = collection
         this.expanded = expanded
         updateCollectionUI()
-
-        // See #2625 for why we're invalidating
-        view.invalidate()
     }
 
     private fun updateCollectionUI() {
         view.collection_title.text = collection.title
+        view.collection_description.text = collection.description(view.context)
+        val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
 
-        val hostNameList = collection.tabs.map { it.url.urlToTrimmedHost().capitalize() }
-
-        var tabsDisplayed = 0
-        val tabTitlesList = hostNameList.joinToString(", ") {
-            if (it.length > maxTitleLength) {
-                it.substring(
-                    0,
-                    maxTitleLength
-                ) + "..."
-            } else {
-                tabsDisplayed += 1
-                it
-            }
-        }
-
-        view.collection_description.text = tabTitlesList
-
+        view.isActivated = expanded
         if (expanded) {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = 0
+            layoutParams.bottomMargin = 0
             collection_title.setPadding(0, 0, 0, EXPANDED_PADDING)
-            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_top_corners)
             view.collection_description.visibility = View.GONE
-
-            view.chevron.setBackgroundResource(R.drawable.ic_chevron_up)
         } else {
-            (view.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = COLLAPSED_MARGIN
-            view.background = ContextCompat.getDrawable(view.context, R.drawable.rounded_all_corners)
+            layoutParams.bottomMargin = COLLAPSED_MARGIN
             view.collection_description.visibility = View.VISIBLE
-
-            view.chevron.setBackgroundResource(R.drawable.ic_chevron_down)
         }
 
         view.collection_icon.setColorFilter(
-            ContextCompat.getColor(
-                view.context,
-                getIconColor(collection.id)
-            ),
-            android.graphics.PorterDuff.Mode.SRC_IN
+            collection.getIconColor(view.context),
+            SRC_IN
         )
     }
 
@@ -140,19 +100,6 @@ class CollectionViewHolder(
             actionEmitter.onNext(CollectionAction.Collapse(collection))
         } else {
             actionEmitter.onNext(CollectionAction.Expand(collection))
-        }
-    }
-
-    @Suppress("ComplexMethod", "MagicNumber")
-    private fun getIconColor(id: Long): Int {
-        val sessionColorIndex = (id % 4).toInt()
-        return when (sessionColorIndex) {
-            0 -> R.color.collection_icon_color_violet
-            1 -> R.color.collection_icon_color_blue
-            2 -> R.color.collection_icon_color_pink
-            3 -> R.color.collection_icon_color_green
-            4 -> R.color.collection_icon_color_yellow
-            else -> R.color.white_color
         }
     }
 

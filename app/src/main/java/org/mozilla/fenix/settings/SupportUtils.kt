@@ -26,7 +26,7 @@ object SupportUtils {
     enum class SumoTopic(
         internal val topicStr: String
     ) {
-        HELP("firefox-android-help"),
+        HELP("faq-android"),
         PRIVATE_BROWSING_MYTHS("common-myths-about-private-browsing"),
         YOUR_RIGHTS("your-rights")
     }
@@ -47,8 +47,17 @@ object SupportUtils {
     }
 
     fun createCustomTabIntent(context: Context, url: String) = Intent(Intent.ACTION_VIEW).apply {
-        putExtra("android.support.customtabs.extra.TOOLBAR_COLOR", R.attr.foundation.getColorFromAttr(context))
-        putExtra("android.support.customtabs.extra.SESSION", true)
+        putExtra(context.getString(R.string.intent_extra_toolbar_color), R.attr.foundation.getColorFromAttr(context))
+        putExtra(context.getString(R.string.intent_extra_session), true)
+        setClassName(context.applicationContext, IntentReceiverActivity::class.java.name)
+        data = Uri.parse(url)
+        setPackage(context.packageName)
+    }
+
+    fun createAuthCustomTabIntent(context: Context, url: String) = Intent(Intent.ACTION_VIEW).apply {
+        putExtra(context.getString(R.string.intent_extra_toolbar_color), R.attr.foundation.getColorFromAttr(context))
+        putExtra(context.getString(R.string.intent_extra_session), true)
+        putExtra(context.getString(R.string.intent_extra_auth), true)
         setClassName(context.applicationContext, IntentReceiverActivity::class.java.name)
         data = Uri.parse(url)
         setPackage(context.packageName)

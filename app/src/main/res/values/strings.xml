@@ -21,8 +21,8 @@
     <string name="private_browsing_title">You’re in a private session</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_explanation">%1$s clears your search and browsing history when you close your private
-        session. While this doesn’t make you anonymous to websites or your internet service provider, it makes it
+    <string name="private_browsing_placeholder">
+         %1$s clears your search and browsing history when you quit the app or close all private tabs. While this doesn’t make you anonymous to websites or your internet service provider, it makes it
         easier to keep what you do online private from anyone else who uses this device.\n\nCommon myths about private
         browsing
     </string>
@@ -101,8 +101,6 @@
     <!-- Preference linking to about page for Fenix
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="preferences_about">About %1$s</string>
-    <!-- Preference linking to the privacy notice -->
-    <string name="preferences_privacy_notice">Privacy Notice</string>
     <!-- Preference linking to the your rights SUMO page -->
     <string name="preferences_your_rights">Your Rights</string>
     <!-- Preference for settings related to saved passwords -->
@@ -113,6 +111,8 @@
     <string name="preferences_set_as_default_browser">Set as default browser</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Advanced</string>
+    <!-- Preference category for privacy settings -->
+    <string name="preferences_category_privacy">Privacy</string>
     <!-- Preference for advanced site permissions -->
     <string name="preferences_site_permissions">Site permissions</string>
     <!-- Preference for accessibility -->
@@ -133,6 +133,10 @@
     <string name="preferences_language">Language</string>
     <!-- Preference for data choices -->
     <string name="preferences_data_choices">Data choices</string>
+    <!-- Preference for data collection -->
+    <string name="preferences_data_collection">Data collection</string>
+    <!-- Preference linking to the privacy notice -->
+    <string name="preferences_privacy_link">Privacy notice</string>
     <!-- Preference category for developer tools -->
     <string name="developer_tools_category">Developer tools</string>
     <!-- Preference for developers -->
@@ -155,6 +159,8 @@
     <string name="preferences_sign_out">Sign out</string>
     <!-- Preference displays and allows changing current FxA device name -->
     <string name="preferences_sync_device_name">Device name</string>
+    <!-- Text shown when user enters empty device name -->
+    <string name="empty_device_name_error">Device name cannot be empty.</string>
     <!-- Label indicating that sync is in progress -->
     <string name="sync_syncing_in_progress">Syncing…</string>
     <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
@@ -196,6 +202,10 @@
 
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
+    <!-- Preference switch for usage and technical data collection -->
+    <string name="preference_usage_data">Usage and technical data</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make %1$s better</string>
     <!-- Preference switch for crash reporter -->
     <string name="preferences_crash_reporter">Crash reporter</string>
     <!-- Preference switch for Mozilla location service -->
@@ -210,8 +220,6 @@
     <string name="preferences_sync_pair">Scan pairing code in desktop Firefox</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Sign in</string>
-    <!-- Preference for account creation -->
-    <string name="preferences_sync_create_account">Create an account</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Sign in to reconnect</string>
     <!-- Preference for removing FxA account -->
@@ -242,10 +250,14 @@
     <string name="quick_action_download">Download</string>
     <!-- Button in the browser chrome in the browser to bookmark the current page -->
     <string name="quick_action_bookmark">Bookmark</string>
+    <!-- Button in the browser chrome in the browser to edit the bookmark of the current page -->
+    <string name="quick_action_bookmark_edit">Edit Bookmark</string>
     <!-- Button in the browser chrome in the browser to put the the current page in reader mode -->
     <string name="quick_action_read">Read</string>
     <!-- Button in the browser chrome to exit reader mode -->
     <string name="quick_action_read_close">Close</string>
+    <!-- Button in the browser chrome to open the current page in an external app -->
+    <string name="quick_action_open_app_link">Open in App</string>
     <!-- Button in the browser chrome to configure reader mode appearance e.g. the used font type and size -->
     <string name="quick_action_read_appearance">Appearance</string>
     <!-- Content description (not visible, for screen readers etc.): Quick action sheet handle to provide users
@@ -321,11 +333,6 @@
     <string name="collection_rename">Rename collection</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Open tabs</string>
-    <!-- Text for the button to delete a single session -->
-    <string name="session_item_delete">Delete</string>
-    <!-- Text to tell the user how many more tabs this session has.
-        The first parameter is a digit that shows the cardinal number of how many additional tabs the session has. -->
-    <string name="session_items_more">%1$d sites…</string>
 
 
     <!-- History -->
@@ -406,6 +413,8 @@
     <string name="bookmarks_multi_select_title">%1$d selected</string>
     <!-- Bookmark editing screen title -->
     <string name="edit_bookmark_fragment_title">Edit bookmark</string>
+    <!-- Bookmark folder editing screen title -->
+    <string name="edit_bookmark_folder_fragment_title">Edit folder</string>
     <!-- Bookmark sign in button message -->
     <string name="bookmark_sign_in_button">Sign in to see synced bookmarks</string>
     <!-- Bookmark URL editing field label -->
@@ -431,10 +440,10 @@
     <string name="bookmark_deletion_multiple_snackbar_message">Deleting selected bookmarks</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">UNDO</string>
-    <!-- Bookmark deletion confirmation -->
-    <string name="bookmark_deletion_confirmation">Are you sure you want to delete this bookmark?</string>
 
     <!-- Site Permissions -->
+    <!-- Site permissions preferences header -->
+    <string name="permissions_header">Permissions</string>
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Go to Settings</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
@@ -563,16 +572,16 @@
     <string name="full_screen_notification">Entering full screen mode</string>
     <!-- Message for copying the URL via long press on the toolbar -->
     <string name="url_copied">URL copied</string>
-    <!-- Sample text for accessiblity font size -->
+    <!-- Sample text for accessibility font size -->
     <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</string>
-    <!-- Summary for Accessiblity Text Size Scaling Preference -->
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">Make text on websites larger or smaller</string>
-    <!-- Title for Accessiblity Text Size Scaling Preference -->
+    <!-- Title for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_font_size_title">Font Size</string>
 
-    <!-- Title for Accessiblity Text Automatic Size Scaling Preference -->
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size">Automatic Font Sizing</string>
-    <!-- Summary for Accessiblity Text Automatic Size Scaling Preference -->
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Font size will match your Android settings. Disable to manage font size here.</string>
 
     <!-- Title for the Delete browsing data preference -->
@@ -662,4 +671,25 @@
     <string name="onboarding_theme_dark_title">Dark theme</string>
     <!-- Theme setting for light mode -->
     <string name="onboarding_theme_light_title">Light theme</string>
+
+    <!-- Text shown in snackbar when multiple tabs have been sent to device -->
+    <string name="sync_sent_tabs_snackbar">Tabs sent!</string>
+    <!-- Text shown in snackbar when one tab has been sent to device  -->
+    <string name="sync_sent_tab_snackbar">Tab sent!</string>
+    <!-- Title of QR Pairing Fragment -->
+    <string name="sync_scan_code">Scan the code</string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions"><![CDATA[On your computer open Firefox and go to <b>https://firefox.com/pair</b>]]></string>
+    <!-- Text shown for sign in pairing when ready -->
+    <string name="sign_in_ready_for_scan">Ready to scan</string>
+    <!-- Text shown for settings option for sign with pairing -->
+    <string name="sign_in_with_camera">Sign in with your camera</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">Use email instead</string>
+    <!-- Text shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_confirmation_message">Firefox will stop syncing with your account, but won\'t delete any of your browsing data on this device.</string>
+    <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_disconnect">Disconnect</string>
+    <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_cancel">Cancel</string>
 </resources>

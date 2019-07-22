@@ -61,7 +61,6 @@ events:
           * default.suggestion
           * shortcut.action
           * shortcut.suggestion
-
     bugs:
     - 959
     data_reviews:
@@ -128,11 +127,28 @@ events:
     description: >
       A counter of URIs visited by the user in the current session, including page reloads. This does not include background page requests and URIs from embedded pages or private browsing.
     send_in_pings:
-    - metrics
+    - baseline
     bugs:
     - 1301
     data_reviews:
     - https://github.com/mozilla-mobile/fenix/pull/1785
+    notification_emails:
+    - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  preference_toggled:
+    type: event
+    description: >
+      A user toggled a preference switch in settings
+    extra_keys:
+      preference_key:
+        description: "The preference key for the switch preference the user toggled. We currently track:
+          show_search_suggestions, show_visited_sites_bookmarks, remote_debugging, telemetry, tracking_protection"
+      enabled:
+        description: "Whether or not the preference is *now* enabled"
+    bugs:
+    - 975
+    data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/1896
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -313,6 +329,7 @@ quick_action_sheet:
 metrics:
   default_browser:
     type: boolean
+    lifetime: application
     description: >
       Is Fenix the default browser?
     send_in_pings:
@@ -335,6 +352,7 @@ metrics:
       `source` will either be `action` or `suggestion`
     send_in_pings:
     - metrics
+    - baseline
     bugs:
     - 1158
     data_reviews:
@@ -344,6 +362,7 @@ metrics:
     expires: "2019-09-01"
   mozilla_products:
     type: string_list
+    lifetime: application
     description: >
       A list of all the Mozilla products installed on device. We currently scan for: Firefox, Firefox Beta,
        Firefox Aurora, Firefox Nightly, Firefox Fdroid, Firefox Lite, Reference Browser, Reference Browser Debug,
@@ -359,8 +378,9 @@ metrics:
     expires: "2019-09-01"
   default_moz_browser:
     type: string
+    lifetime: application
     description: >
-      The name of the default browser on device if and only if it's a Mozilla owned product, otherwise empty string
+      The name of the default browser on device if and only if it's a Mozilla owned product
     send_in_pings:
     - metrics
     bugs:
@@ -370,22 +390,11 @@ metrics:
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
-  syncing_items:
-    type: string_list
-    description: >
-      The preference keys for the switch preferences the user has enabled to sync with FxA. We currently track:
-      Bookmarks and History.
-    bugs:
-    - 1190
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/2745#issuecomment-494918532
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
 
 search.default_engine:
   code:
     type: string
+    lifetime: application
     description: >
       If the search engine is pre-loaded with Fenix this value
       will be the search engine identifier. If it's a custom search engine
@@ -396,12 +405,13 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
   name:
     type: string
+    lifetime: application
     description: >
       If the search engine is pre-loaded with Fenix this value
       will be the search engine name. If it's a custom search engine
@@ -412,12 +422,13 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
   submission_url:
     type: string
+    lifetime: application
     description: >
       If the search engine is pre-loaded with Fenix this value
       will be he base URL we use to build the search query for the search engine.
@@ -429,7 +440,7 @@ search.default_engine:
     bugs:
     - 800
     data_reviews:
-    - https://github.com/mozilla-mobile/fenix/issues/1607
+    - https://github.com/mozilla-mobile/fenix/pull/1606
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2019-09-01"
@@ -556,6 +567,17 @@ bookmarks_management:
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
+  folder_remove:
+    type: event
+    description: >
+      A user removed a bookmark folder.
+    bugs:
+      - 3174
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3724
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
 
 custom_tab:
   closed:
@@ -592,32 +614,12 @@ custom_tab:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
 
-preferences:
-  preference_toggled:
-    type: event
-    description: >
-      A user toggled a preference switch in settings
-    extra_keys:
-      preference_key:
-        description: "The preference key for the switch preference the user toggled. We currently track: leakcanary,
-        make_default_browser, show_search_suggestions, show_visited_sites_bookmarks, remote_debugging, telemetry,
-        tracking_protection"
-      enabled:
-        description: "Whether or not the preference is *now* enabled"
-    bugs:
-    - 975
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1896
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-
 activation:
   identifier:
     type: string
     lifetime: ping
     description: >
-      An hashed and salted version of the Google Advertising ID from the device.
+      A hashed and salted version of the Google Advertising ID from the device.
       This will never be sent in a ping that also contains the client_id.
     send_in_pings:
     - activation
@@ -847,4 +849,206 @@ sync_account:
     - https://github.com/mozilla-mobile/fenix/pull/2745#issuecomment-494918532
     notification_emails:
     - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
+history:
+  opened:
+    type: event
+    description: >
+      A user opened the history screen
+    bugs:
+      - 2362
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3940
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  removed:
+    type: event
+    description: >
+      A user removed a history item
+    bugs:
+      - 2362
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3940
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  removed_all:
+    type: event
+    description: >
+      A user removed all history items
+    bugs:
+      - 2362
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3940
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  shared:
+    type: event
+    description: >
+      A user shared a history item
+    bugs:
+      - 2362
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3940
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  opened_item:
+    type: event
+    description: >
+      A user opened a history item
+    bugs:
+      - 2362
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3940
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+reader_mode:
+  available:
+    type: event
+    description: >
+      Reader mode is available for the current page
+    bugs:
+      - 2267
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3941
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  opened:
+    type: event
+    description: >
+      A user opened reader mode
+    bugs:
+      - 2267
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3941
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  appearance:
+    type: event
+    description: >
+      A user tapped the appearance button
+    bugs:
+      - 2267
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3941
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
+collections:
+  renamed:
+    type: event
+    description: >
+      A user renamed a collection
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  tab_restored:
+    type: event
+    description: >
+      A user restored a tab from collection tab list
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  all_tabs_restored:
+    type: event
+    description: >
+      A user tapped "open tabs" from collection menu
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  tab_removed:
+    type: event
+    description: >
+      A user tapped remove tab from collection tab list
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  shared:
+    type: event
+    description: >
+      A user tapped share collection
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  removed:
+    type: event
+    description: >
+      A user tapped delete collection from collection menu
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  saved:
+    type: event
+    description: >
+      A user saved a list of tabs to a new collection
+    extra_keys:
+      tabs_open:
+        description: "The number of tabs open in the current session"
+      tabs_selected:
+        description: "The number of tabs added to the collection"
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  tabs_added:
+    type: event
+    description: >
+      A user saved a list of tabs to an existing collection
+    extra_keys:
+      tabs_open:
+        description: "The number of tabs open in the current session"
+      tabs_selected:
+        description: "The number of tabs added to the collection"
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  tab_select_opened:
+    type: event
+    description: >
+      A user opened the select tabs screen (the first step of the collection creation flow)
+    bugs:
+      - 969
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/3935
+    notification_emails:
+      - fenix-core@mozilla.com
     expires: "2020-03-01"

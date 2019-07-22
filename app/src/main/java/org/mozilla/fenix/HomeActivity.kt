@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix
 
@@ -9,13 +9,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.google.android.material.snackbar.Snackbar
+import io.sentry.Sentry
+import io.sentry.event.Breadcrumb
+import io.sentry.event.BreadcrumbBuilder
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -27,21 +32,23 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.settings.AccountProblemFragmentDirections
-import org.mozilla.fenix.settings.PairFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
-import org.mozilla.fenix.settings.TurnOnSyncFragmentDirections
+import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.utils.Settings
 
-@SuppressWarnings("TooManyFunctions")
-open class HomeActivity : AppCompatActivity() {
+@SuppressWarnings("TooManyFunctions", "LargeClass")
+open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback {
     open val isCustomTab = false
     private var sessionObserver: SessionManager.Observer? = null
 
@@ -53,28 +60,30 @@ open class HomeActivity : AppCompatActivity() {
 
     lateinit var browsingModeManager: BrowsingModeManager
 
+    private val onDestinationChangedListener = NavController.OnDestinationChangedListener { _, dest, _ ->
+        val fragmentName = resources.getResourceEntryName(dest.id)
+        Sentry.getContext().recordBreadcrumb(
+            BreadcrumbBuilder()
+                .setCategory("DestinationChanged")
+                .setMessage("Changing to fragment $fragmentName, isCustomTab: $isCustomTab")
+                .setLevel(Breadcrumb.Level.INFO)
+                .build()
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        browsingModeManager = createBrowsingModeManager()
-        themeManager = createThemeManager(when (browsingModeManager.isPrivate) {
-            true -> ThemeManager.Theme.Private
-            false -> ThemeManager.Theme.Normal
-        })
 
-        setTheme(themeManager.currentTheme)
-        ThemeManager.applyStatusBarTheme(window, themeManager, this)
+        components.publicSuffixList.prefetch()
+        setupThemeAndBrowsingMode()
 
         setContentView(R.layout.activity_home)
 
-        // Add ids to this that we don't want to have a toolbar back button
-        val appBarConfiguration = AppBarConfiguration.Builder().build()
-        val navigationToolbar = findViewById<Toolbar>(R.id.navigationToolbar)
-        setSupportActionBar(navigationToolbar)
-        NavigationUI.setupWithNavController(navigationToolbar, navHost.navController, appBarConfiguration)
-        navigationToolbar.setNavigationOnClickListener {
-            onBackPressed()
+        setupToolbarAndNavigation()
+
+        if (Settings.getInstance(this).isTelemetryEnabled && isSentryEnabled()) {
+            navHost.navController.addOnDestinationChangedListener(onDestinationChangedListener)
         }
-        supportActionBar?.hide()
 
         intent
             ?.let { SafeIntent(it) }
@@ -91,8 +100,33 @@ open class HomeActivity : AppCompatActivity() {
         handleOpenedFromExternalSourceIfNecessary(intent)
     }
 
+    private fun setupThemeAndBrowsingMode() {
+        browsingModeManager = createBrowsingModeManager()
+        themeManager = createThemeManager(
+            when (browsingModeManager.isPrivate) {
+                true -> ThemeManager.Theme.Private
+                false -> ThemeManager.Theme.Normal
+            }
+        )
+        setTheme(themeManager.currentTheme)
+        ThemeManager.applyStatusBarTheme(window, themeManager, this)
+    }
+
+    private fun setupToolbarAndNavigation() {
+        // Add ids to this that we don't want to have a toolbar back button
+        val appBarConfiguration = AppBarConfiguration.Builder().build()
+        val navigationToolbar = findViewById<Toolbar>(R.id.navigationToolbar)
+        setSupportActionBar(navigationToolbar)
+        NavigationUI.setupWithNavController(navigationToolbar, navHost.navController, appBarConfiguration)
+        navigationToolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+        supportActionBar?.hide()
+    }
+
     override fun onDestroy() {
         sessionObserver?.let { components.core.sessionManager.unregister(it) }
+        navHost.navController.removeOnDestinationChangedListener(onDestinationChangedListener)
         super.onDestroy()
     }
 
@@ -104,13 +138,15 @@ open class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        CoroutineScope(Dispatchers.Main).launch {
-            // Make sure accountManager is initialized.
-            components.backgroundServices.accountManager.initAsync().await()
-            // If we're authenticated, kick-off a sync and a device state refresh.
-            components.backgroundServices.accountManager.authenticatedAccount()?.let {
-                components.backgroundServices.syncManager.syncNow(startup = true)
-                it.deviceConstellation().refreshDeviceStateAsync().await()
+        lifecycleScope.launch {
+            with(components.backgroundServices) {
+                // Make sure accountManager is initialized.
+                accountManager.initAsync().await()
+                // If we're authenticated, kick-off a sync and a device state refresh.
+                accountManager.authenticatedAccount()?.let {
+                    accountManager.syncNowAsync(startup = true)
+                    it.deviceConstellation().refreshDeviceStateAsync().await()
+                }
             }
         }
     }
@@ -179,39 +215,47 @@ open class HomeActivity : AppCompatActivity() {
 
     @Suppress("ComplexMethod")
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
+        if (sessionObserver == null)
+            sessionObserver = subscribeToSessions()
+
         if (navHost.navController.currentDestination?.id == R.id.browserFragment) return
+        @IdRes var fragmentId: Int? = null
         val directions = if (!navHost.navController.popBackStack(R.id.browserFragment, false)) {
             when (from) {
-                BrowserDirection.FromGlobal -> NavGraphDirections.actionGlobalBrowser(customTabSessionId)
-                BrowserDirection.FromHome ->
+                BrowserDirection.FromGlobal ->
+                    NavGraphDirections.actionGlobalBrowser(customTabSessionId)
+                BrowserDirection.FromHome -> {
+                    fragmentId = R.id.homeFragment
                     HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromSearch ->
+                }
+                BrowserDirection.FromSearch -> {
+                    fragmentId = R.id.searchFragment
                     SearchFragmentDirections.actionSearchFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromSettings ->
+                }
+                BrowserDirection.FromSettings -> {
+                    fragmentId = R.id.settingsFragment
                     SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromBookmarks ->
+                }
+                BrowserDirection.FromBookmarks -> {
+                    fragmentId = R.id.bookmarkFragment
                     BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromBookmarksFolderSelect ->
+                }
+                BrowserDirection.FromBookmarksFolderSelect -> {
+                    fragmentId = R.id.bookmarkSelectFolderFragment
                     SelectBookmarkFolderFragmentDirections
                         .actionBookmarkSelectFolderFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromHistory ->
+                }
+                BrowserDirection.FromHistory -> {
+                    fragmentId = R.id.historyFragment
                     HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromPair ->
-                    PairFragmentDirections.actionPairFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromTurnOnSync ->
-                    TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToBrowserFragment(customTabSessionId)
-                BrowserDirection.FromAccountProblem ->
-                    AccountProblemFragmentDirections.actionAccountProblemFragmentToBrowserFragment(customTabSessionId)
+                }
             }
         } else {
             null
         }
 
-        if (sessionObserver == null)
-            sessionObserver = subscribeToSessions()
-
         directions?.let {
-            navHost.navController.navigate(it)
+            navHost.navController.nav(fragmentId, it)
         }
     }
 
@@ -265,10 +309,12 @@ open class HomeActivity : AppCompatActivity() {
             CustomTabBrowsingModeManager()
         } else {
             DefaultBrowsingModeManager(Settings.getInstance(this).createBrowserModeStorage()) {
-                themeManager.setTheme(when (it.isPrivate()) {
-                    true -> ThemeManager.Theme.Private
-                    false -> ThemeManager.Theme.Normal
-                })
+                themeManager.setTheme(
+                    when (it.isPrivate()) {
+                        true -> ThemeManager.Theme.Private
+                        false -> ThemeManager.Theme.Normal
+                    }
+                )
             }
         }
     }
@@ -313,6 +359,17 @@ open class HomeActivity : AppCompatActivity() {
         }.also { components.core.sessionManager.register(it, this) }
     }
 
+    override fun onTabsShared(tabsSize: Int) {
+        this@HomeActivity.getRootView()?.let {
+            FenixSnackbar.make(it, Snackbar.LENGTH_SHORT).setText(
+                getString(
+                    if (tabsSize == 1) R.string.sync_sent_tab_snackbar else
+                        R.string.sync_sent_tabs_snackbar
+                )
+            ).show()
+        }
+    }
+
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
     }
@@ -320,6 +377,5 @@ open class HomeActivity : AppCompatActivity() {
 
 enum class BrowserDirection {
     FromGlobal, FromHome, FromSearch, FromSettings, FromBookmarks,
-    FromBookmarksFolderSelect, FromHistory, FromPair, FromTurnOnSync,
-    FromAccountProblem
+    FromBookmarksFolderSelect, FromHistory
 }

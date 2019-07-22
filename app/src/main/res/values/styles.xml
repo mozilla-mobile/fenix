@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="NormalThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Android system styling -->
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
@@ -39,9 +39,11 @@
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="shadow">@color/shadow_normal_theme</item>
         <item name="destructive">@color/destructive_normal_theme</item>
+        <item name="disabled">@color/disabled_normal_theme</item>
         <item name="scrimStart">@color/scrimStart_normal_theme</item>
         <item name="scrimEnd">@color/scrimEnd_normal_theme</item>
-
+        <item name="snackbar">@color/snackbar_normal_theme</item>
+        <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_normal_theme</item>
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
         <item name="homeBackground">@color/foundation_normal_theme</item>
@@ -51,18 +53,19 @@
 
     <style name="NormalTheme" parent="NormalThemeBase" />
 
-    <style name="DialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
-        <item name="android:background">?above</item>
+    <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="dialogCornerRadius">@dimen/tab_corner_radius</item>
+        <item name="android:colorBackground">?above</item>
         <item name="colorAccent">?accent</item>
         <item name="android:textColorPrimary">?primaryText</item>
     </style>
 
-    <style name="DialogStyleLight" parent="DialogStyle">
+    <style name="DialogStyleLight" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleLight</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleLight</item>
     </style>
 
-    <style name="DialogStyleDark" parent="DialogStyle">
+    <style name="DialogStyleDark" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleDark</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleDark</item>
     </style>
@@ -77,7 +80,7 @@
 
     <style name="DialogStyleNormal" parent="DialogStyleLight"/>
 
-    <style name="PrivateThemeBase" parent="Theme.AppCompat.NoActionBar">
+    <style name="PrivateThemeBase" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <!-- Android system styling -->
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
@@ -111,8 +114,11 @@
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
         <item name="shadow">@color/shadow_private_theme</item>
         <item name="destructive">@color/destructive_private_theme</item>
+        <item name="disabled">@color/disabled_private_theme</item>
         <item name="scrimStart">@color/scrimStart_private_theme</item>
         <item name="scrimEnd">@color/scrimEnd_private_theme</item>
+        <item name="snackbar">@color/snackbar_private_theme</item>
+        <item name="accentUsedOnDarkBackground">@color/accent_on_dark_background_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -132,6 +138,19 @@
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="ThemeIndependentMaterialGreyButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/grey_button_color</item>
+        <item name="android:textColor">@color/button_text_color</item>
+        <item name="rippleColor">?secondaryText</item>
+    </style>
+
+    <style name="ThemeIndependentMaterialGreyButtonDestructive" parent="ThemeIndependentMaterialGreyButton">
+        <item name="android:textColor">@color/destructive_button_text_color</item>
     </style>
 
     <style name="search_pill" parent="Widget.AppCompat.Button.Borderless">
@@ -190,22 +209,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/CurrentSessionBottomSheetStyle</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetStyle" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
     </style>
 
     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
@@ -272,7 +275,7 @@
         <item name="android:paddingEnd">24dp</item>
         <item name="android:gravity">end|center_vertical</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
-        <item name="android:textColor">?accentBright</item>
+        <item name="android:textColor">?accentUsedOnDarkBackground</item>
     </style>
 
     <style name="OnboardingCardLight">

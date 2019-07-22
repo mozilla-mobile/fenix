@@ -1,17 +1,26 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_firefox_account.view.*
+import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentDirections
 
 class OnboardingFirefoxAccountViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    private val avatarAnonymousDrawable by lazy {
+        AppCompatResources.getDrawable(view.context, R.drawable.ic_onboarding_avatar_anonymous)
+    }
+    private val firefoxAccountsDrawable by lazy {
+        AppCompatResources.getDrawable(view.context, R.drawable.ic_onboarding_firefox_accounts)
+    }
+
     init {
         view.turn_on_sync_button.setOnClickListener {
             val directions = HomeFragmentDirections.actionHomeFragmentToTurnOnSyncFragment()
@@ -31,13 +40,10 @@ class OnboardingFirefoxAccountViewHolder(private val view: View) : RecyclerView.
     }
 
     private fun updateHeaderText(autoSignedIn: Boolean) {
+        val icon = if (autoSignedIn) avatarAnonymousDrawable else firefoxAccountsDrawable
+        view.header_text.putCompoundDrawablesRelativeWithIntrinsicBounds(start = icon)
+
         val appName = view.context.getString(R.string.app_name)
-
-        val icon =
-            if (autoSignedIn) view.context.getDrawable(R.drawable.ic_onboarding_avatar_anonymous)
-            else view.context.getDrawable(R.drawable.ic_onboarding_firefox_accounts)
-
-        view.header_text.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
         view.header_text.text =
             if (autoSignedIn) view.context.getString(R.string.onboarding_firefox_account_auto_signin_header)
             else view.context.getString(R.string.onboarding_firefox_account_header, appName)

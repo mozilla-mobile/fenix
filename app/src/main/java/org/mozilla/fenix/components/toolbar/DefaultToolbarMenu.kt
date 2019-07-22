@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components.toolbar
 
@@ -24,7 +24,7 @@ class DefaultToolbarMenu(
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
 ) : ToolbarMenu {
 
-    override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
+    override val menuBuilder by lazy { BrowserMenuBuilder(menuItems, endOfMenuAlwaysVisible = true) }
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
@@ -38,7 +38,7 @@ class DefaultToolbarMenu(
                 context.components.core.sessionManager.selectedSession?.canGoBack ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.neutral,
+                R.attr.disabled,
                 context
             ),
             disableInSecondaryState = true
@@ -57,7 +57,7 @@ class DefaultToolbarMenu(
                 context.components.core.sessionManager.selectedSession?.canGoForward ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.neutral,
+                R.attr.disabled,
                 context
             ),
             disableInSecondaryState = true
@@ -116,7 +116,7 @@ class DefaultToolbarMenu(
                 highlight = if (hasAccountProblem) {
                     BrowserMenuHighlightableItem.Highlight(
                         imageResource = R.drawable.ic_alert,
-                        backgroundResource = R.color.sync_error_color
+                        backgroundResource = R.color.sync_error_background_color
                     )
                 } else null
             ) {

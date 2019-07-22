@@ -35,21 +35,20 @@
         android:paddingBottom="16dp"
         android:layout_weight="1">
 
-        <TextView android:id="@+id/title"
+        <TextView android:id="@+id/displayName"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textColor="?primaryText"
-                  android:singleLine="true"
                   android:textSize="16sp"
                   android:ellipsize="marquee"
                   android:fadingEdge="horizontal"
                   android:visibility="gone"/>
 
-        <TextView android:id="@+id/summary"
+        <TextView android:id="@+id/email"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_below="@id/title"
-                  android:layout_alignStart="@id/title"
+                  android:layout_below="@id/displayName"
+                  android:layout_alignStart="@id/displayName"
                   android:textColor="?primaryText"
                   android:text="@string/preferences_account_default_name"
                   android:maxLines="4"/>
@@ -61,18 +60,5 @@
                   android:layout_height="wrap_content"
                   android:gravity="center_vertical"
                   android:orientation="vertical"/>
-
-    <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/error_icon"
-        android:src="@drawable/ic_alert"
-        android:padding="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:visibility="gone"/>
 
 </LinearLayout>

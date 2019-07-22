@@ -1,10 +1,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.selectfolder
 
-import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,16 +15,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation
-import kotlinx.android.synthetic.main.fragment_bookmark.view.*
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_select_bookmark_folder.*
 import kotlinx.android.synthetic.main.fragment_select_bookmark_folder.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
@@ -36,7 +32,10 @@ import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setRootTitles
+import org.mozilla.fenix.ext.withOptionalDesktopFolders
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.SignInAction
 import org.mozilla.fenix.library.bookmarks.SignInChange
@@ -46,28 +45,19 @@ import org.mozilla.fenix.library.bookmarks.SignInViewModel
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
-import kotlin.coroutines.CoroutineContext
 
 @SuppressWarnings("TooManyFunctions")
-class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver {
+class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
-    private lateinit var sharedViewModel: BookmarksSharedViewModel
-    private lateinit var job: Job
+    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private var folderGuid: String? = null
     private var bookmarkNode: BookmarkNode? = null
 
     private lateinit var signInComponent: SignInComponent
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         setHasOptionsMenu(true)
-        sharedViewModel = activity?.run {
-            ViewModelProviders.of(this).get(BookmarksSharedViewModel::class.java)
-        }!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -91,7 +81,7 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
             .subscribe {
                 when (it) {
                     is SignInAction.ClickedSignIn -> {
-                        requireComponents.services.accountsAuthFeature.beginAuthentication()
+                        requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
                         view?.let {
                             (activity as HomeActivity).openToBrowser(BrowserDirection.FromBookmarksFolderSelect)
                         }
@@ -102,6 +92,9 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
 
     override fun onResume() {
         super.onResume()
+        context?.let {
+            setRootTitles(it, showMobileRoot = true)
+        }
         (activity as AppCompatActivity).title =
             getString(R.string.bookmark_select_folder_fragment_label)
         (activity as AppCompatActivity).supportActionBar?.show()
@@ -109,8 +102,10 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
         folderGuid = SelectBookmarkFolderFragmentArgs.fromBundle(arguments!!).folderGuid ?: BookmarkRoot.Root.id
         checkIfSignedIn()
 
-        launch(IO) {
-            bookmarkNode = requireComponents.core.bookmarksStorage.getTree(folderGuid!!, true)
+        lifecycleScope.launch(IO) {
+            bookmarkNode =
+                requireComponents.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)
+                    .withOptionalDesktopFolders(context, showMobileRoot = true)
             launch(Main) {
                 (activity as HomeActivity).title = bookmarkNode?.title ?: getString(R.string.library_bookmarks)
                 val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
@@ -127,25 +122,21 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
             ?: getManagedEmitter<SignInChange>().onNext(SignInChange.SignedOut)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val visitedAddBookmark = SelectBookmarkFolderFragmentArgs.fromBundle(arguments!!).visitedAddBookmark
         if (!visitedAddBookmark) {
             inflater.inflate(R.menu.bookmarks_select_folder, menu)
             menu.findItem(R.id.add_folder_button).icon.colorFilter =
-                PorterDuffColorFilter(R.attr.primaryText.getColorFromAttr(context!!), PorterDuff.Mode.SRC_IN)
+                PorterDuffColorFilter(R.attr.primaryText.getColorFromAttr(context!!), SRC_IN)
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_folder_button -> {
-                launch(Main) {
-                    Navigation.findNavController(requireActivity(), R.id.container).navigate(
+                lifecycleScope.launch(Main) {
+                    nav(
+                        R.id.bookmarkSelectFolderFragment,
                         SelectBookmarkFolderFragmentDirections
                             .actionBookmarkSelectFolderFragmentToBookmarkAddFolderFragment()
                     )
@@ -161,9 +152,6 @@ class SelectBookmarkFolderFragment : Fragment(), CoroutineScope, AccountObserver
 
     override fun onAuthenticated(account: OAuthAccount) {
         getManagedEmitter<SignInChange>().onNext(SignInChange.SignedIn)
-    }
-
-    override fun onError(error: Exception) {
     }
 
     override fun onLoggedOut() {

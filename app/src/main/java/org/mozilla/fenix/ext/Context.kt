@@ -17,11 +17,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
+import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.Log.Priority.WARN
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.metrics.MetricController
 
 /**
  * Get the BrowserApplication object from a context.
@@ -35,6 +37,18 @@ val Context.application: FenixApplication
 val Context.components: Components
     get() = application.components
 
+/**
+ * Helper function to get the MetricController off of context.
+ */
+val Context.metrics: MetricController
+    get() = this.components.analytics.metrics
+
+/**
+ * Helper function to get the SearchEngineManager off of context.
+ */
+val Context.searchEngineManager: SearchEngineManager
+    get() = this.components.search.searchEngineManager
+
 fun Context.asActivity() = (this as? ContextThemeWrapper)?.baseContext as? Activity
     ?: this as? Activity
 
@@ -45,7 +59,7 @@ fun Context.getPreferenceKey(@StringRes resourceId: Int): String =
     resources.getString(resourceId)
 
 /**
- *  Shares content via [ACTION_SEND] intent.
+ * Shares content via [ACTION_SEND] intent.
  *
  * @param text the data to be shared  [EXTRA_TEXT]
  * @param subject of the intent [EXTRA_TEXT]
@@ -74,7 +88,7 @@ fun Context.share(text: String, subject: String = ""): Boolean {
 }
 
 /**
- *  Gets the Root View with an activity context
+ * Gets the Root View with an activity context
  *
  * @return ViewGroup? if it is able to get a root view from the context
  */

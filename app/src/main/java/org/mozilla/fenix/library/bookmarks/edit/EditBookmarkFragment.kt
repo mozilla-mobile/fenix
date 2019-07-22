@@ -1,11 +1,11 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.edit
 
 import android.content.DialogInterface
-import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.uber.autodispose.AutoDispose
@@ -27,41 +28,34 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_edit_bookmark.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setRootTitles
+import org.mozilla.fenix.ext.withRootTitle
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
 
-class EditBookmarkFragment : Fragment(), CoroutineScope {
+class EditBookmarkFragment : Fragment() {
 
-    private lateinit var sharedViewModel: BookmarksSharedViewModel
-    private lateinit var job: Job
     private lateinit var guidToEdit: String
+    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private var bookmarkNode: BookmarkNode? = null
     private var bookmarkParent: BookmarkNode? = null
 
-    override val coroutineContext: CoroutineContext
-        get() = Main + job
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         setHasOptionsMenu(true)
-        sharedViewModel = activity?.run {
-            ViewModelProviders.of(this).get(BookmarksSharedViewModel::class.java)
-        }!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -70,22 +64,30 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        (activity as? AppCompatActivity)?.title = getString(R.string.edit_bookmark_fragment_title)
-        (activity as? AppCompatActivity)?.supportActionBar?.show()
+        context?.let {
+            setRootTitles(it, showMobileRoot = true)
+        }
+
+        val activity = activity as? AppCompatActivity
+        activity?.supportActionBar?.show()
 
         guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             bookmarkNode = requireComponents.core.bookmarksStorage.getTree(guidToEdit)
             bookmarkParent = sharedViewModel.selectedFolder
-                ?: bookmarkNode?.parentGuid?.let { requireComponents.core.bookmarksStorage.getTree(it) }
+                ?: bookmarkNode?.parentGuid?.let {
+                    requireComponents.core.bookmarksStorage.getTree(it)
+                }.withRootTitle()
 
             launch(Main) {
                 when (bookmarkNode?.type) {
                     BookmarkNodeType.FOLDER -> {
+                        activity?.title = getString(R.string.edit_bookmark_folder_fragment_title)
                         bookmark_url_edit.visibility = View.GONE
                         bookmark_url_label.visibility = View.GONE
                     }
                     BookmarkNodeType.ITEM -> {
+                        activity?.title = getString(R.string.edit_bookmark_fragment_title)
                     }
                     else -> throw IllegalArgumentException()
                 }
@@ -106,7 +108,8 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
                     bookmark_folder_selector.text = node.title
                     bookmark_folder_selector.setOnClickListener {
                         sharedViewModel.selectedFolder = null
-                        Navigation.findNavController(requireActivity(), R.id.container).navigate(
+                        nav(
+                            R.id.bookmarkEditFragment,
                             EditBookmarkFragmentDirections
                                 .actionBookmarkEditFragmentToBookmarkSelectFolderFragment(null)
                         )
@@ -116,6 +119,12 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
         }
 
         updateBookmarkFromObservableInput()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bookmark_name_edit.hideKeyboard()
+        bookmark_url_edit.hideKeyboard()
     }
 
     private fun updateBookmarkFromObservableInput() {
@@ -135,15 +144,10 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
             }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_edit, menu)
         menu.findItem(R.id.delete_bookmark_button).icon.colorFilter =
-            PorterDuffColorFilter(R.attr.primaryText.getColorFromAttr(context!!), PorterDuff.Mode.SRC_IN)
+            PorterDuffColorFilter(R.attr.primaryText.getColorFromAttr(context!!), SRC_IN)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -164,7 +168,7 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                    launch(IO) {
+                    lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(guidToEdit)
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
                         launch(Main) {
@@ -179,7 +183,7 @@ class EditBookmarkFragment : Fragment(), CoroutineScope {
     }
 
     private fun updateBookmarkNode(pair: Pair<String?, String?>) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             try {
                 requireComponents.let {
                     if (pair != Pair(bookmarkNode?.title, bookmarkNode?.url)) {

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings
 
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +12,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
@@ -23,7 +25,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -35,24 +36,20 @@ import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.nav
 import kotlin.coroutines.CoroutineContext
-import android.graphics.drawable.BitmapDrawable
-import android.widget.ImageView
 
 private const val MAX_ITEMS_PER_PAGE = 50
 
 @SuppressWarnings("TooManyFunctions")
-class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener, CoroutineScope {
+class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener {
     private lateinit var emptyContainerMessage: View
     private lateinit var recyclerView: RecyclerView
     private lateinit var clearButton: Button
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.show()
-        job = Job()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -117,13 +114,8 @@ class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener, Coro
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     private fun deleteAllSitePermissions() {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             requireContext().components.core.permissionStorage.deleteAllSitePermissions()
             launch(Main) {
                 showEmptyListMessage()
@@ -135,7 +127,7 @@ class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener, Coro
         val sitePermissions = view?.tag as SitePermissions
         val directions = SitePermissionsExceptionsFragmentDirections
             .actionSitePermissionsToExceptionsToSitePermissionsDetails(sitePermissions)
-        Navigation.findNavController(requireNotNull(view)).navigate(directions)
+        nav(R.id.sitePermissionsExceptionsFragment, directions)
     }
 }
 

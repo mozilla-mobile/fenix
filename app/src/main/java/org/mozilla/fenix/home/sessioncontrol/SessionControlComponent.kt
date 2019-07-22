@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol
 
@@ -124,7 +124,6 @@ sealed class SessionControlAction : Action {
     data class Tab(val action: TabAction) : SessionControlAction()
     data class Collection(val action: CollectionAction) : SessionControlAction()
     data class Onboarding(val action: OnboardingAction) : SessionControlAction()
-    object ReloadData : SessionControlAction()
 }
 
 fun Observer<SessionControlAction>.onNext(tabAction: TabAction) {
@@ -140,6 +139,8 @@ fun Observer<SessionControlAction>.onNext(onboardingAction: OnboardingAction) {
 }
 
 sealed class SessionControlChange : Change {
+    data class Change(val tabs: List<Tab>, val mode: Mode, val collections: List<TabCollection>) :
+        SessionControlChange()
     data class TabsChange(val tabs: List<Tab>) : SessionControlChange()
     data class ModeChange(val mode: Mode) : SessionControlChange()
     data class CollectionsChange(val collections: List<TabCollection>) : SessionControlChange()
@@ -166,6 +167,11 @@ class SessionControlViewModel(
 
                     state.copy(expandedCollections = newExpandedCollection)
                 }
+                is SessionControlChange.Change -> state.copy(
+                    tabs = change.tabs,
+                    mode = change.mode,
+                    collections = change.collections
+                )
             }
         }
     }

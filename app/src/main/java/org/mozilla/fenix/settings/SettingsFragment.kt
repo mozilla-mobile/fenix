@@ -5,35 +5,37 @@
 package org.mozilla.fenix.settings
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
-import mozilla.components.service.fxa.FxaUnauthorizedException
+import mozilla.components.support.ktx.android.content.hasCamera
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.Experiments
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.R.string.pref_key_about
 import org.mozilla.fenix.R.string.pref_key_accessibility
 import org.mozilla.fenix.R.string.pref_key_account
+import org.mozilla.fenix.R.string.pref_key_account_auth_error
 import org.mozilla.fenix.R.string.pref_key_account_category
 import org.mozilla.fenix.R.string.pref_key_data_choices
 import org.mozilla.fenix.R.string.pref_key_delete_browsing_data
@@ -41,7 +43,7 @@ import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_language
 import org.mozilla.fenix.R.string.pref_key_leakcanary
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
-import org.mozilla.fenix.R.string.pref_key_privacy_notice
+import org.mozilla.fenix.R.string.pref_key_privacy_link
 import org.mozilla.fenix.R.string.pref_key_rate
 import org.mozilla.fenix.R.string.pref_key_remote_debugging
 import org.mozilla.fenix.R.string.pref_key_search_engine_settings
@@ -52,26 +54,15 @@ import org.mozilla.fenix.R.string.pref_key_tracking_protection_settings
 import org.mozilla.fenix.R.string.pref_key_your_rights
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.isInExperiment
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
-import kotlin.coroutines.CoroutineContext
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObserver {
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
-        setupAccountUI()
-        updateSignInVisibility()
-        displayAccountErrorIfNecessary()
-
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
+    private val preferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             try {
                 context?.let {
                     it.components.analytics.metrics.track(
@@ -83,6 +74,26 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
                 // The event is not tracked
             } catch (e: ClassCastException) {
                 // The setting is not a boolean, not tracked
+            }
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Observe account changes to keep the UI up-to-date.
+        requireComponents.backgroundServices.accountManager.register(this, owner = this, autoPause = true)
+
+        // It's important to update the account UI state in onCreate, even though we also call it in onResume, since
+        // that ensures we'll never display an incorrect state in the UI. For example, if user is signed-in, and we
+        // don't perform this call in onCreate, we'll briefly display a "Sign In" preference, which will then get
+        // replaced by the correct account information once this call is ran in onResume shortly after.
+        updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
+
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+
+        if (SDK_INT <= Build.VERSION_CODES.M) {
+            findPreference<DefaultBrowserPreference>(getString(R.string.pref_key_make_default_browser))?.apply {
+                isVisible = false
             }
         }
     }
@@ -127,9 +138,8 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
         aboutPreference?.title = getString(R.string.preferences_about, appName)
 
         setupPreferences()
-        setupAccountUI()
-        updateSignInVisibility()
-        displayAccountErrorIfNecessary()
+
+        updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
     }
 
     @Suppress("ComplexMethod")
@@ -178,11 +188,10 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
                 navigateToAbout()
             }
             resources.getString(pref_key_account) -> {
-                if (requireComponents.backgroundServices.accountManager.accountNeedsReauth()) {
-                    navigateToAccountProblem()
-                } else {
-                    navigateToAccountSettings()
-                }
+                navigateToAccountSettings()
+            }
+            resources.getString(pref_key_account_auth_error) -> {
+                navigateToAccountProblem()
             }
             resources.getString(pref_key_delete_browsing_data) -> {
                 navigateToDeleteBrowsingData()
@@ -190,7 +199,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
             resources.getString(pref_key_theme) -> {
                 navigateToThemeSettings()
             }
-            resources.getString(pref_key_privacy_notice) -> {
+            resources.getString(pref_key_privacy_link) -> {
                 requireContext().apply {
                     val intent = SupportUtils.createCustomTabIntent(this, SupportUtils.PRIVACY_NOTICE_URL)
                     startActivity(intent)
@@ -211,22 +220,26 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
-    }
-
-    private fun setupAccountUI() {
-        val accountManager = requireComponents.backgroundServices.accountManager
-        // Observe account changes to keep the UI up-to-date.
-        accountManager.register(this, owner = this)
-
-        updateAuthState(accountManager.authenticatedAccount())
-        accountManager.accountProfile()?.let { updateAccountProfile(it) }
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     private fun getClickListenerForSignIn(): OnPreferenceClickListener {
         return OnPreferenceClickListener {
-            val directions = SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
-            Navigation.findNavController(view!!).navigate(directions)
+            // Do not navigate to pairing UI if camera not available or pairing is disabled
+            if (context?.hasCamera() == true &&
+                context?.isInExperiment(Experiments.asFeatureFxAPairingDisabled) == false
+            ) {
+                val directions = SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
+                Navigation.findNavController(view!!).navigate(directions)
+            } else {
+                requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
+                // TODO The sign-in web content populates session history,
+                // so pressing "back" after signing in won't take us back into the settings screen, but rather up the
+                // session history stack.
+                // We could auto-close this tab once we get to the end of the authentication process?
+                // Via an interceptor, perhaps.
+                requireComponents.analytics.metrics.track(Event.SyncAuthSignIn)
+            }
             true
         }
     }
@@ -264,7 +277,7 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     }
 
     private fun getClickListenerForMakeDefaultBrowser(): OnPreferenceClickListener {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        return if (SDK_INT >= Build.VERSION_CODES.N) {
             OnPreferenceClickListener {
                 val intent = Intent(
                     Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
@@ -330,116 +343,83 @@ class SettingsFragment : PreferenceFragmentCompat(), CoroutineScope, AccountObse
     }
 
     override fun onAuthenticated(account: OAuthAccount) {
-        updateAuthState(account)
-        updateSignInVisibility()
-    }
-
-    override fun onError(error: Exception) {
-        // TODO we could display some error states in this UI.
-        when (error) {
-            is FxaUnauthorizedException -> {
+        lifecycleScope.launch {
+            context?.let {
+                updateAccountUIState(it, it.components.backgroundServices.accountManager.accountProfile())
             }
         }
     }
 
     override fun onLoggedOut() {
-        updateAuthState()
-        updateSignInVisibility()
+        lifecycleScope.launch {
+            context?.let {
+                updateAccountUIState(it, it.components.backgroundServices.accountManager.accountProfile())
+            }
+        }
     }
 
     override fun onProfileUpdated(profile: Profile) {
-        updateAccountProfile(profile)
+        lifecycleScope.launch {
+            context?.let {
+                updateAccountUIState(it, profile)
+            }
+        }
     }
 
     override fun onAuthenticationProblems() {
-        displayAccountErrorIfNecessary()
+        lifecycleScope.launch {
+            context?.let {
+                updateAccountUIState(it, it.components.backgroundServices.accountManager.accountProfile())
+            }
+        }
     }
 
-    // --- Account UI helpers ---
-    private fun updateAuthState(account: OAuthAccount? = null) {
-        // Cache the user's auth state to improve performance of sign in visibility
-        org.mozilla.fenix.utils.Settings.getInstance(context!!).setHasCachedAccount(account != null)
-    }
-
-    private fun updateSignInVisibility() {
-        val hasCachedAccount = org.mozilla.fenix.utils.Settings.getInstance(context!!).hasCachedAccount
+    /**
+     * Updates the UI to reflect current account state.
+     * Possible conditions are logged-in without problems, logged-out, and logged-in but needs to re-authenticate.
+     */
+    private fun updateAccountUIState(context: Context, profile: Profile?) {
         val preferenceSignIn =
-            findPreference<Preference>(context!!.getPreferenceKey(pref_key_sign_in))
+            findPreference<Preference>(context.getPreferenceKey(pref_key_sign_in))
         val preferenceFirefoxAccount =
-            findPreference<Preference>(context!!.getPreferenceKey(pref_key_account))
+            findPreference<AccountPreference>(context.getPreferenceKey(pref_key_account))
+        val preferenceFirefoxAccountAuthError =
+            findPreference<AccountAuthErrorPreference>(context.getPreferenceKey(pref_key_account_auth_error))
         val accountPreferenceCategory =
-            findPreference<PreferenceCategory>(context!!.getPreferenceKey(pref_key_account_category))
+            findPreference<PreferenceCategory>(context.getPreferenceKey(pref_key_account_category))
 
-        if (hasCachedAccount) {
+        val accountManager = requireComponents.backgroundServices.accountManager
+        val account = accountManager.authenticatedAccount()
+
+        // Signed-in, no problems.
+        if (account != null && !accountManager.accountNeedsReauth()) {
             preferenceSignIn?.isVisible = false
             preferenceSignIn?.onPreferenceClickListener = null
+            preferenceFirefoxAccountAuthError?.isVisible = false
             preferenceFirefoxAccount?.isVisible = true
             accountPreferenceCategory?.isVisible = true
+
+            preferenceFirefoxAccount?.displayName = profile?.displayName
+            preferenceFirefoxAccount?.email = profile?.email
+
+            // Signed-in, need to re-authenticate.
+        } else if (account != null && accountManager.accountNeedsReauth()) {
+            preferenceFirefoxAccount?.isVisible = false
+            preferenceFirefoxAccountAuthError?.isVisible = true
+            accountPreferenceCategory?.isVisible = true
+
+            preferenceSignIn?.isVisible = false
+            preferenceSignIn?.onPreferenceClickListener = null
+
+            preferenceFirefoxAccountAuthError?.email = profile?.email
+
+            // Signed-out.
         } else {
             preferenceSignIn?.isVisible = true
             preferenceSignIn?.onPreferenceClickListener = getClickListenerForSignIn()
             preferenceFirefoxAccount?.isVisible = false
+            preferenceFirefoxAccountAuthError?.isVisible = false
             accountPreferenceCategory?.isVisible = false
-        }
-    }
-
-    private fun updateAccountProfile(profile: Profile) {
-        launch {
-            context?.let { context ->
-                val preferenceFirefoxAccount =
-                    findPreference<AccountPreference>(context.getPreferenceKey(pref_key_account))
-
-                preferenceFirefoxAccount?.title?.setTextColor(
-                    R.attr.primaryText.getColorFromAttr(context)
-                )
-                preferenceFirefoxAccount?.title?.text = profile.displayName.orEmpty()
-                preferenceFirefoxAccount?.title?.visibility =
-                    if (preferenceFirefoxAccount?.title?.text.isNullOrEmpty()) View.GONE else View.VISIBLE
-
-                preferenceFirefoxAccount?.summary?.setTextColor(
-                    R.attr.primaryText.getColorFromAttr(context)
-                )
-                preferenceFirefoxAccount?.summary?.text = profile.email.orEmpty()
-
-                preferenceFirefoxAccount?.icon = ContextCompat.getDrawable(context, R.drawable.ic_shortcuts)
-                preferenceFirefoxAccount?.errorIcon?.visibility = View.GONE
-                preferenceFirefoxAccount?.background?.background = null
-            }
-        }
-    }
-
-    private fun displayAccountErrorIfNecessary() {
-        launch {
-            context?.let { context ->
-                if (!context.components.backgroundServices.accountManager.accountNeedsReauth()) { return@launch }
-
-                val preferenceFirefoxAccount =
-                    findPreference<AccountPreference>(context.getPreferenceKey(pref_key_account))
-
-                preferenceFirefoxAccount?.title?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.sync_error_text_color
-                    )
-                )
-                preferenceFirefoxAccount?.title?.text = context.getString(R.string.preferences_account_sync_error)
-                preferenceFirefoxAccount?.title?.visibility =
-                    if (preferenceFirefoxAccount?.title?.text.isNullOrEmpty()) View.GONE else View.VISIBLE
-
-                preferenceFirefoxAccount?.summary?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.sync_error_text_color
-                    )
-                )
-                preferenceFirefoxAccount?.summary?.text =
-                    context.components.backgroundServices.accountManager.accountProfile()?.email.orEmpty()
-
-                preferenceFirefoxAccount?.icon = ContextCompat.getDrawable(context, R.drawable.ic_account_warning)
-                preferenceFirefoxAccount?.errorIcon?.visibility = View.VISIBLE
-                preferenceFirefoxAccount?.background?.background =
-                    ContextCompat.getDrawable(context, R.color.sync_error_color)
-            }
         }
     }
 }

@@ -1,10 +1,11 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.collections
 
-/* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 import android.os.Handler
+import android.text.InputFilter
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -22,14 +23,20 @@ import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.component_collection_creation.*
 import kotlinx.android.synthetic.main.component_collection_creation.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.UIView
+import kotlin.coroutines.CoroutineContext
 
 class CollectionCreationUIView(
     container: ViewGroup,
@@ -39,7 +46,11 @@ class CollectionCreationUIView(
     container,
     actionEmitter,
     changesObservable
-) {
+), CoroutineScope {
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     override val view = LayoutInflater.from(container.context)
         .inflate(R.layout.component_collection_creation, container, true)
 
@@ -56,6 +67,7 @@ class CollectionCreationUIView(
     private val transition = AutoTransition()
 
     init {
+        job = Job()
         transition.duration = TRANSITION_DURATION
 
         selectTabsConstraints.clone(collection_constraint_layout)
@@ -72,8 +84,9 @@ class CollectionCreationUIView(
             increaseTapArea(increaseButtonByDps)
         }
 
+        view.name_collection_edittext.filters += InputFilter.LengthFilter(COLLECTION_NAME_MAX_LENGTH)
         view.name_collection_edittext.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotEmpty()) {
+            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotBlank()) {
                 when (step) {
                     is SaveCollectionStep.NameCollection -> {
                         actionEmitter.onNext(
@@ -95,6 +108,7 @@ class CollectionCreationUIView(
 
         view.tab_list.run {
             adapter = collectionCreationTabListAdapter
+            itemAnimator = null
             layoutManager = LinearLayoutManager(container.context, RecyclerView.VERTICAL, true)
         }
 
@@ -112,6 +126,8 @@ class CollectionCreationUIView(
 
         when (it.saveCollectionStep) {
             is SaveCollectionStep.SelectTabs -> {
+                view.context.components.analytics.metrics.track(Event.CollectionTabSelectOpened)
+
                 view.tab_list.isClickable = true
 
                 back_button.setOnClickListener {
@@ -196,7 +212,9 @@ class CollectionCreationUIView(
                 val drawable = view.context.getDrawable(R.drawable.ic_new)
                 drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
                 view.bottom_bar_icon_button.setImageDrawable(drawable)
-                view.bottom_bar_icon_button.setOnClickListener(null)
+                view.bottom_bar_icon_button.setOnClickListener {
+                    actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
+                }
 
                 view.bottom_button_bar_layout.isClickable = true
                 view.bottom_button_bar_layout.setOnClickListener {
@@ -263,7 +281,7 @@ class CollectionCreationUIView(
                         Tab(
                             tab.id.toString(),
                             tab.url,
-                            tab.url.urlToTrimmedHost(),
+                            tab.url.urlToTrimmedHost(view.context),
                             tab.title
                         )
                     }.let { tabs ->
@@ -337,5 +355,6 @@ class CollectionCreationUIView(
     companion object {
         private const val TRANSITION_DURATION = 200L
         private const val increaseButtonByDps = 16
+        private const val COLLECTION_NAME_MAX_LENGTH = 128
     }
 }

@@ -1,13 +1,15 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.ext
 
+import android.content.Context
+import androidx.core.net.toUri
+import kotlinx.coroutines.runBlocking
 import java.net.MalformedURLException
 import java.net.URL
+import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 
 /**
  * Replaces the keys with the values with the map provided.
@@ -28,21 +30,16 @@ fun String?.getHostFromUrl(): String? = try {
     null
 }
 
-fun String?.urlToTrimmedHost(): String {
+/**
+ * Trim a host's prefix and suffix
+ */
+fun String.urlToTrimmedHost(context: Context): String {
     return try {
-        val url = URL(this)
-        val firstIndex = url.host.indexOfFirst { it == '.' } + 1
-        val lastIndex = url.host.indexOfLast { it == '.' }
-
-        // Trim all but the title of the website from the hostname. 'www.mozilla.org' becomes 'mozilla'
-        when {
-            firstIndex - 1 == lastIndex -> url.host.substring(0, lastIndex)
-            firstIndex < lastIndex -> url.host.substring(firstIndex, lastIndex)
-            else -> url.host
+        val host = toUri().hostWithoutCommonPrefixes ?: return this
+        runBlocking {
+            context.components.publicSuffixList.stripPublicSuffix(host).await()
         }
     } catch (e: MalformedURLException) {
-        this.getHostFromUrl() ?: ""
-    } catch (e: StringIndexOutOfBoundsException) {
-        this.getHostFromUrl() ?: ""
+        this
     }
 }

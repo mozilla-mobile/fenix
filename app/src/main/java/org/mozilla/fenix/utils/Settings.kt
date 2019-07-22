@@ -1,12 +1,14 @@
-package org.mozilla.fenix.utils
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.utils
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -18,7 +20,10 @@ import java.security.InvalidParameterException
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
  */
 @SuppressWarnings("TooManyFunctions")
-class Settings private constructor(context: Context) {
+class Settings private constructor(
+    context: Context,
+    private val isCrashReportEnabledInBuild: Boolean
+) {
 
     companion object {
         const val autoBounceMaximumCount = 2
@@ -28,9 +33,12 @@ class Settings private constructor(context: Context) {
 
         @JvmStatic
         @Synchronized
-        fun getInstance(context: Context): Settings {
+        fun getInstance(
+            context: Context,
+            isCrashReportEnabledInBuild: Boolean = BuildConfig.CRASH_REPORTING && Config.channel.isReleased
+        ): Settings {
             if (instance == null) {
-                instance = Settings(context.applicationContext)
+                instance = Settings(context.applicationContext, isCrashReportEnabledInBuild)
             }
             return instance ?: throw AssertionError("Instance cleared")
         }
@@ -52,8 +60,8 @@ class Settings private constructor(context: Context) {
         get() = preferences.getString(appContext.getPreferenceKey(R.string.pref_key_search_engine), "") ?: ""
 
     val isCrashReportingEnabled: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_crash_reporter), true) &&
-                BuildConfig.CRASH_REPORTING && Config.channel.isReleased
+        get() = isCrashReportEnabledInBuild &&
+                preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_crash_reporter), true)
 
     val isRemoteDebuggingEnabled: Boolean
         get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_remote_debugging), false)
@@ -152,10 +160,8 @@ class Settings private constructor(context: Context) {
             else -> appContext.getString(R.string.preference_light_theme)
         }
 
-    val hasCachedAccount: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_cached_account), false)
-
-    private val autoBounceQuickActionSheetCount: Int
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val autoBounceQuickActionSheetCount: Int
         get() = (preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action), 0))
 
     fun incrementAutomaticBounceQuickActionSheetCount() {
@@ -171,10 +177,10 @@ class Settings private constructor(context: Context) {
             .apply()
     }
 
-    fun showSearchSuggestions(): Boolean = preferences.getBoolean(
-        appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions),
-        true
-    )
+    val showSearchSuggestions: Boolean
+        get() = preferences.getBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions), true
+        )
 
     fun setSitePermissionsPhoneFeatureCameraAction(action: SitePermissionsRules.Action) {
         preferences.edit()
@@ -227,12 +233,6 @@ class Settings private constructor(context: Context) {
             location = getSitePermissionsPhoneFeatureLocation(),
             camera = getSitePermissionsPhoneFeatureCameraAction()
         )
-    }
-
-    fun setHasCachedAccount(isCached: Boolean) {
-        preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_cached_account), isCached)
-            .apply()
     }
 
     private val SitePermissionsRules.Action.id: Int

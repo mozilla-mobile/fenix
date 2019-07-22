@@ -1,13 +1,13 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.settings.quicksettings
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.support.ktx.kotlin.toUri
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.mvi.ViewState
 import org.mozilla.fenix.mvi.Change

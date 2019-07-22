@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components.toolbar
 
@@ -8,7 +8,6 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.FragmentNavigator
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.runWithSession
@@ -23,6 +22,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.utils.Settings
 
 class ToolbarIntegration(
@@ -57,18 +57,30 @@ class ToolbarIntegration(
                     {
                         toolbar.hideKeyboard()
                         // We need to dynamically add the options here because if you do it in XML it overwrites
-                        val options = NavOptions.Builder().setPopUpTo(R.id.homeFragment, true)
-                            .setEnterAnim(R.anim.fade_in).setExitAnim(R.anim.fade_out).build()
-                        val extras =
-                            FragmentNavigator.Extras.Builder()
-                                .addSharedElement(
-                                    browserLayout,
-                                    "$TAB_ITEM_TRANSITION_NAME${sessionManager.selectedSession?.id}"
-                                )
-                                .build()
+                        val options = NavOptions.Builder().setPopUpTo(R.id.nav_graph, false)
+                            .setEnterAnim(R.anim.fade_in).build()
+                        val extras = null
+// Disabled while awaiting a better solution to #3209
+//                        val extras =
+//                            FragmentNavigator.Extras.Builder()
+//                                .addSharedElement(
+//                                    browserLayout,
+//                                    "$TAB_ITEM_TRANSITION_NAME${sessionManager.selectedSession?.id}"
+//                                )
+//                                .build()
                         val navController = Navigation.findNavController(toolbar)
-                        if (!navController.popBackStack(R.id.homeFragment, false)) {
-                            navController.navigate(R.id.action_browserFragment_to_homeFragment, null, options, extras)
+                        if (!navController.popBackStack(
+                                R.id.homeFragment,
+                                false
+                            )
+                        ) {
+                            navController.nav(
+                                R.id.browserFragment,
+                                R.id.action_browserFragment_to_homeFragment,
+                                null,
+                                options,
+                                extras
+                            )
                         }
                     },
                     isPrivate

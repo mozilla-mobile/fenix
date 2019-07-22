@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
@@ -65,6 +66,7 @@ sealed class Event {
     object ShareBookmark : Event()
     object CopyBookmark : Event()
     object AddBookmarkFolder : Event()
+    object RemoveBookmarkFolder : Event()
     object RemoveBookmarks : Event()
     object QuickActionSheetOpened : Event()
     object QuickActionSheetClosed : Event()
@@ -91,11 +93,24 @@ sealed class Event {
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
     object SyncAccountSignOut : Event()
+    object HistoryOpened : Event()
+    object HistoryItemShared : Event()
+    object HistoryItemOpened : Event()
+    object HistoryItemRemoved : Event()
+    object HistoryAllItemsRemoved : Event()
+    object ReaderModeAvailable : Event()
+    object ReaderModeOpened : Event()
+    object ReaderModeAppearanceOpened : Event()
+    object CollectionRenamed : Event()
+    object CollectionTabRestored : Event()
+    object CollectionAllTabsRestored : Event()
+    object CollectionTabRemoved : Event()
+    object CollectionShared : Event()
+    object CollectionRemoved : Event()
+    object CollectionTabSelectOpened : Event()
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(
-            context.getString(R.string.pref_key_leakcanary),
-            context.getString(R.string.pref_key_make_default_browser),
             context.getString(R.string.pref_key_show_search_suggestions),
             context.getString(R.string.pref_key_show_visited_sites_bookmarks),
             context.getString(R.string.pref_key_remote_debugging),
@@ -105,7 +120,7 @@ sealed class Event {
 
         override val extras: Map<String, String>?
             get() = mapOf(
-                "preferenceKey" to preferenceKey,
+                "preference_key" to preferenceKey,
                 "enabled" to enabled.toString()
             )
 
@@ -116,6 +131,22 @@ sealed class Event {
     }
 
     // Interaction Events
+    data class CollectionSaved(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf(
+                "tabs_open" to tabsOpenCount.toString(),
+                "tabs_selected" to tabsSelectedCount.toString()
+            )
+    }
+
+    data class CollectionTabsAdded(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf(
+                "tabs_open" to tabsOpenCount.toString(),
+                "tabs_selected" to tabsSelectedCount.toString()
+            )
+    }
+
     data class LibrarySelectedItem(val item: String) : Event() {
         override val extras: Map<String, String>?
             get() = mapOf("item" to item)
@@ -123,7 +154,7 @@ sealed class Event {
 
     data class ErrorPageVisited(val errorType: ErrorType) : Event() {
         override val extras: Map<String, String>?
-            get() = mapOf("errorType" to errorType.name)
+            get() = mapOf("error_type" to errorType.name)
     }
 
     data class SearchBarTapped(val source: Source) : Event() {
@@ -172,7 +203,7 @@ sealed class Event {
                 }
 
             val countLabel: String
-                get() = "${source.searchEngine.name.toLowerCase(Locale.ROOT)}.$label"
+                get() = "${source.searchEngine.identifier.toLowerCase(Locale.ROOT)}.$label"
 
             val sourceLabel: String
                 get() = "${source.descriptor}.$label"
@@ -236,21 +267,20 @@ sealed class Event {
         get() = null
 }
 
-@Suppress("ComplexMethod")
 private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
-    Pair(Component.FEATURE_FINDINPAGE, "previous") -> Event.FindInPagePrevious
-    Pair(Component.FEATURE_FINDINPAGE, "next") -> Event.FindInPageNext
-    Pair(Component.FEATURE_FINDINPAGE, "close") -> Event.FindInPageClosed
-    Pair(Component.FEATURE_FINDINPAGE, "input") -> Event.FindInPageSearchCommitted
-    Pair(Component.FEATURE_CONTEXTMENU, "item") -> {
+    Component.FEATURE_FINDINPAGE to "previous" -> Event.FindInPagePrevious
+    Component.FEATURE_FINDINPAGE to "next" -> Event.FindInPageNext
+    Component.FEATURE_FINDINPAGE to "close" -> Event.FindInPageClosed
+    Component.FEATURE_FINDINPAGE to "input" -> Event.FindInPageSearchCommitted
+    Component.FEATURE_CONTEXTMENU to "item" -> {
         metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
     }
 
-    Pair(Component.FEATURE_TOOLBAR, "menu") -> {
+    Component.BROWSER_TOOLBAR to "menu" -> {
         metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened }
     }
-    Pair(Component.FEATURE_CUSTOMTABS, "close") -> Event.CustomTabsClosed
-    Pair(Component.FEATURE_CUSTOMTABS, "action_button") -> Event.CustomTabsActionTapped
+    Component.FEATURE_CUSTOMTABS to "close" -> Event.CustomTabsClosed
+    Component.FEATURE_CUSTOMTABS to "action_button" -> Event.CustomTabsActionTapped
 
     else -> null
 }

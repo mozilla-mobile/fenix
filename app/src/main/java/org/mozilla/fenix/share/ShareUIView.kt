@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.share
 
@@ -12,8 +12,9 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.component_share.*
-import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.mvi.UIView
 
 class ShareUIView(
@@ -39,12 +40,17 @@ class ShareUIView(
         }
         intent_handler_recyclerview.adapter = adapter
 
-        if (BuildConfig.SEND_TAB_ENABLED) {
+        // And authorized
+        if (FeatureFlags.sendTabEnabled &&
+            !view.context.components.backgroundServices.accountManager.accountNeedsReauth()
+        ) {
             account_devices_recyclerview.adapter = AccountDevicesShareAdapter(view.context, actionEmitter)
         } else {
             send_tab_group.visibility = View.GONE
+            account_header.visibility = View.GONE
         }
 
+        container.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
         close_button.setOnClickListener { actionEmitter.onNext(ShareAction.Close) }
     }
 

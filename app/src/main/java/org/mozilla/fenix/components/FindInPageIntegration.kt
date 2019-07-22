@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.runWithSessionIdOrSelected
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.findinpage.FindInPageFeature
@@ -21,6 +22,7 @@ import org.mozilla.fenix.test.Mockable
 @Mockable
 class FindInPageIntegration(
     private val sessionManager: SessionManager,
+    private val sessionId: String? = null,
     private val view: FindInPageView,
     engineView: EngineView,
     private val toolbar: BrowserToolbar
@@ -29,14 +31,10 @@ class FindInPageIntegration(
 
     override fun start() {
         feature.start()
-
-        FindInPageIntegration.launch = this::launch
     }
 
     override fun stop() {
         feature.stop()
-
-        FindInPageIntegration.launch = null
     }
 
     override fun onBackPressed(): Boolean {
@@ -48,21 +46,14 @@ class FindInPageIntegration(
         view.asView().visibility = View.GONE
     }
 
-    private fun launch() {
-        val session = sessionManager.selectedSession ?: return
-
-        toolbar.visibility = View.GONE
-        view.asView().visibility = View.VISIBLE
-        feature.bind(session)
-    }
-
-    companion object {
-        // This is a workaround to let the menu item find this integration and active "Find in Page" mode. That's a bit
-        // ridiculous and there's no need that we create the toolbar menu items at app start time. Instead the
-        // ToolbarIntegration should create them and get the FindInPageIntegration injected as a dependency if the
-        // menu items need them.
-        var launch: (() -> Unit)? = null
-            private set
+    fun launch() {
+        sessionManager.runWithSessionIdOrSelected(sessionId) {
+            if (!it.isCustomTabSession()) {
+                toolbar.visibility = View.GONE
+            }
+            view.asView().visibility = View.VISIBLE
+            feature.bind(it)
+        }
     }
 }
 
@@ -75,7 +66,11 @@ class FindInPageBarBehavior(
     context: Context,
     attrs: AttributeSet
 ) : CoordinatorLayout.Behavior<FindInPageBar>(context, attrs) {
-    override fun layoutDependsOn(parent: CoordinatorLayout, child: FindInPageBar, dependency: View): Boolean {
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: FindInPageBar,
+        dependency: View
+    ): Boolean {
         if (dependency is BrowserToolbar) {
             return true
         }
@@ -83,7 +78,11 @@ class FindInPageBarBehavior(
         return super.layoutDependsOn(parent, child, dependency)
     }
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, child: FindInPageBar, dependency: View): Boolean {
+    override fun onDependentViewChanged(
+        parent: CoordinatorLayout,
+        child: FindInPageBar,
+        dependency: View
+    ): Boolean {
         return if (dependency is BrowserToolbar) {
             repositionFindInPageBar(child, dependency)
             true

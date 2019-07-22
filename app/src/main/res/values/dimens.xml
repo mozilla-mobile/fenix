@@ -7,7 +7,7 @@
     <dimen name="crash_reporter_close_tab_button_bottom_margin">24dp</dimen>
     <dimen name="glyph_button_height">48dp</dimen>
     <dimen name="glyph_button_width">48dp</dimen>
-    <dimen name="mozac_browser_menu_corner_radius">14dp</dimen>
+    <dimen name="mozac_browser_menu_corner_radius">8dp</dimen>
     <dimen name="toolbar_elevation">7dp</dimen>
     <dimen name="library_item_height">56dp</dimen>
     <dimen name="library_item_icon_height">48dp</dimen>
@@ -29,6 +29,7 @@
     <dimen name="phone_feature_label_recommended_text_size">14sp</dimen>
     <dimen name="site_permissions_exceptions_item_text_size">18sp</dimen>
     <dimen name="site_permissions_exceptions_item_height">56dp</dimen>
+    <dimen name="component_collection_creation_list_margin">16dp</dimen>
 
     <!--Quick Settings-->
     <dimen name="quicksettings_item_height">46dp</dimen>
@@ -36,7 +37,7 @@
     <dimen name="onboarding_header_icon_height_width">32dp</dimen>
 
     <!-- Bottom Sheet Fragment card -->
-    <dimen name="bottom_sheet_corner_radius">16dp</dimen>
+    <dimen name="bottom_sheet_corner_radius">8dp</dimen>
     <dimen name="bottom_sheet_top_padding">8dp</dimen>
 
     <!-- Browser Toolbar -->

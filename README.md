@@ -1,6 +1,6 @@
-# Firefox Fenix
+# Firefox Preview
 
-Firefox Fenix is a new browser for Android
+Firefox Preview (internal code name: "Fenix") is an all-new browser for Android, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
 ## Getting Involved
 
@@ -12,10 +12,12 @@ Before you attempt to make a contribution please read the [Community Participati
 
 * [View current Issues](https://github.com/mozilla-mobile/fenix/issues), [view current Pull Requests](https://github.com/mozilla-mobile/fenix/pulls), or [file a security issue][sec issue].
 
-* IRC: [#focus (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [view logs](https://mozilla.logbot.info/fenix/)
+* IRC: [#fenix (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [view logs](https://mozilla.logbot.info/fenix/)
 (**We're available Monday-Friday, GMT and PST working hours**).
 
 * [View the Wiki](https://github.com/mozilla-mobile/fenix/wiki).
+
+* Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
 
 **Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first timers to have a go, get involved and make a positive contribution to the project!
 
@@ -49,9 +51,13 @@ To add it on Mac/Linux, run this command from the project root:
 ```sh
 ln -s ../../config/pre-push-recommended.sh .git/hooks/pre-push
 ```
-or for Windows run this command with administrative priveleges:
+or for Windows run this command using the Command Prompt with administrative privileges:
 ```sh
-mklink /d .git\hooks\pre-push ..\..\config\pre-push-recommended.sh
+mklink .git\hooks\pre-push ..\..\config\pre-push-recommended.sh
+```
+or using PowerShell:
+```sh
+New-Item -ItemType SymbolicLink -Path .git\hooks\pre-push -Value (Resolve-Path config\pre-push-recommended.sh)
 ```
 
 To push without running the pre-push hook (e.g. doc updates):

@@ -40,45 +40,38 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, track, is_staging, version_name):
+    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name):
         artifacts = {
-            'public/target.{}.apk'.format(arch): {
+            'public/build/{}/target.apk'.format(arch): {
                 "type": 'file',
                 "path": '/opt/fenix/app/build/outputs/apk/'
-                        '{arch}/{track}/app-{arch}-{track}-unsigned.apk'.format(arch=arch, track=track),
+                        '{arch}/{build_type}/app-{arch}-{build_type}-unsigned.apk'.format(arch=arch, build_type=build_type),
                 "expires": taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
             }
             for arch in architectures
         }
 
-        def secret_index(name):
-            if is_staging:
-                return 'garbage/staging/project/mobile/fenix/{}'.format(name)
-            elif track == 'nightly':
-                # TODO: Move nightly secrets to "project/mobile/fenix/nightly/..."
-                return 'project/mobile/fenix/{}'.format(name)
-            else:
-                return 'project/mobile/fenix/{}/{}'.format(track, name)
-
-        sentry_secret = secret_index('sentry')
-        leanplum_secret = secret_index('leanplum')
-        adjust_secret = secret_index('adjust')
+        if is_staging:
+            secret_index = 'garbage/staging/project/mobile/fenix'
+        else:
+            secret_index = 'project/mobile/fenix/{}'.format(build_type)
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
-                secret, key, target_file
+                secret_index, key, target_file
             )
-            for secret, key, target_file in (
-                (sentry_secret, 'dsn', '.sentry_token'),
-                (leanplum_secret, 'production', '.leanplum_token'),
-                (adjust_secret, 'adjust', '.adjust_token'),
+            for key, target_file in (
+                ('sentry_dsn', '.sentry_token'),
+                ('leanplum', '.leanplum_token'),
+                ('adjust', '.adjust_token'),
+                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(build_type)),
             )
         )
 
-        capitalized_track = upper_case_first_letter(track)
+        capitalized_build_type = upper_case_first_letter(build_type)
         gradle_commands = (
-            './gradlew --no-daemon -PversionName={} clean test assemble{}'.format(
-                version_name, capitalized_track),
+            './gradlew --no-daemon -PversionName="{}" clean test assemble{}'.format(
+                version_name, capitalized_build_type),
         )
 
         command = ' && '.join(
@@ -93,11 +86,11 @@ class TaskBuilder(object):
         ]
 
         return self._craft_build_ish_task(
-            name='Build {} task'.format(capitalized_track),
-            description='Build Fenix {} from source code'.format(capitalized_track),
+            name='Build {} task'.format(capitalized_build_type),
+            description='Build Fenix {} from source code'.format(capitalized_build_type),
             command=command,
             scopes=[
-                "secrets:get:{}".format(secret) for secret in (sentry_secret, leanplum_secret, adjust_secret)
+                "secrets:get:{}".format(secret_index)
             ],
             artifacts=artifacts,
             routes=routes,
@@ -106,7 +99,7 @@ class TaskBuilder(object):
                 'machine': {
                     'platform': 'android-all',
                 },
-                'symbol': '{}-A'.format(track),
+                'symbol': '{}-A'.format(build_type),
                 'tier': 1,
             },
         )
@@ -369,6 +362,9 @@ class TaskBuilder(object):
         deadline = taskcluster.fromNow('1 day')
         expires = taskcluster.fromNow(DEFAULT_EXPIRES_IN)
 
+        if self.trust_level == 3:
+            routes.append('tc-treeherder.v2.fenix.{}'.format(self.commit))
+
         return {
             "provisionerId": provisioner_id,
             "workerType": worker_type,
@@ -382,9 +378,7 @@ class TaskBuilder(object):
             "priority": self.tasks_priority,
             "dependencies": [self.task_id] + dependencies,
             "requires": "all-completed",
-            "routes": routes + [
-                "tc-treeherder.v2.fenix.{}".format(self.commit)
-            ],
+            "routes": routes,
             "scopes": scopes,
             "payload": payload,
             "extra": {
@@ -417,7 +411,7 @@ class TaskBuilder(object):
             description='Dep-signing variant {}'.format(variant.raw),
             signing_type="dep",
             assemble_task_id=assemble_task_id,
-            apk_paths=["public/target.apk"],
+            apk_paths=[DEFAULT_APK_ARTIFACT_LOCATION],
             routes=routes,
             treeherder={
                 'groupSymbol': variant.build_type,
@@ -431,25 +425,26 @@ class TaskBuilder(object):
         )
 
     def craft_release_signing_task(
-        self, build_task_id, apk_paths, track, is_staging,
+        self, build_task_id, apk_paths, channel, is_staging, index_channel=None
     ):
-        capitalized_track = upper_case_first_letter(track)
+        index_channel = index_channel or channel
         staging_prefix = '.staging' if is_staging else ''
 
         routes = [
             "index.project.mobile.fenix.v2{}.{}.{}.{}.{}.latest".format(
-                staging_prefix, track, self.date.year, self.date.month, self.date.day
+                staging_prefix, index_channel, self.date.year, self.date.month, self.date.day
             ),
             "index.project.mobile.fenix.v2{}.{}.{}.{}.{}.revision.{}".format(
-                staging_prefix, track, self.date.year, self.date.month, self.date.day, self.commit
+                staging_prefix, index_channel, self.date.year, self.date.month, self.date.day, self.commit
             ),
-            "index.project.mobile.fenix.v2{}.{}.latest".format(staging_prefix, track),
+            "index.project.mobile.fenix.v2{}.{}.latest".format(staging_prefix, index_channel),
         ]
 
+        capitalized_channel = upper_case_first_letter(channel)
         return self._craft_signing_task(
-            name="Signing {} task".format(capitalized_track),
-            description="Sign {} builds of Fenix".format(capitalized_track),
-            signing_type="dep" if is_staging else track,
+            name="Signing {} task".format(capitalized_channel),
+            description="Sign {} builds of Fenix".format(capitalized_channel),
+            signing_type="dep" if is_staging else channel,
             assemble_task_id=build_task_id,
             apk_paths=apk_paths,
             routes=routes,
@@ -458,18 +453,18 @@ class TaskBuilder(object):
                 'machine': {
                   'platform': 'android-all',
                 },
-                'symbol': '{}-s'.format(track),
+                'symbol': '{}-s'.format(channel),
                 'tier': 1,
             },
         )
 
     def craft_push_task(
-        self, signing_task_id, apks, track, is_staging=False
+        self, signing_task_id, apks, channel, is_staging=False, override_google_play_track=None
     ):
         payload = {
             "commit": True,
-            "google_play_track": track,
-            "certificate_alias": 'fenix' if is_staging else 'fenix-{}'.format(track),
+            "channel": channel,
+            "certificate_alias": 'fenix' if is_staging else 'fenix-{}'.format(channel),
             "upstreamArtifacts": [
                 {
                     "paths": apks,
@@ -478,6 +473,9 @@ class TaskBuilder(object):
                 }
             ]
         }
+
+        if override_google_play_track:
+            payload['google_play_track'] = override_google_play_track
 
         return self._craft_default_task_definition(
             worker_type='mobile-pushapk-dep-v1' if is_staging else 'mobile-pushapk-v1',
@@ -497,7 +495,7 @@ class TaskBuilder(object):
                 'machine': {
                   'platform': 'android-all',
                 },
-                'symbol': '{}-gp'.format(track),
+                'symbol': '{}-gp'.format(channel),
                 'tier': 1,
             },
         )
@@ -538,7 +536,7 @@ class TaskBuilder(object):
         elif variant.abi == 'arm':
             treeherder_platform = 'android-hw-g5-7-0-arm7-api-16'
         elif variant.abi == 'aarch64':
-            treeherder_platform = 'android-hw-p2-8-0-aarch64'
+            treeherder_platform = 'android-hw-p2-8-0-android-aarch64'
         else:
             raise ValueError('Unsupported architecture "{}"'.format(variant.abi))
 
@@ -579,7 +577,7 @@ class TaskBuilder(object):
                 ]],
                 "env": {
                     "EXTRA_MOZHARNESS_CONFIG": json.dumps({
-                        "test_packages_url": "{}/{}/artifacts/public/build/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                        "test_packages_url": "{}/{}/artifacts/public/build/en-US/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
                         "installer_url": apk_url,
                     }),
                     "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/mozilla-central",
@@ -590,7 +588,7 @@ class TaskBuilder(object):
                     "MOZ_NODE_PATH": "/usr/local/bin/node",
                     "MOZHARNESS_CONFIG": "raptor/android_hw_config.py",
                     "MOZHARNESS_SCRIPT": "raptor_script.py",
-                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
+                    "MOZHARNESS_URL": "{}/{}/artifacts/public/build/en-US/mozharness.zip".format(_DEFAULT_TASK_URL, mozharness_task_id),
                     "MOZILLA_BUILD_URL": apk_url,
                     "NEED_XVFB": "false",
                     "NO_FAIL_ON_TEST_ERRORS": "1",
@@ -656,11 +654,7 @@ def schedule_task_graph(ordered_groups_of_tasks):
     return full_task_graph
 
 
-def fetch_mozharness_task_id(geckoview_nightly_version):
-    nightly_build_id = geckoview_nightly_version.split('.')[-1]
-    nightly_date = arrow.get(nightly_build_id, 'YYYYMMDDHHmmss')
-
-    raptor_index = 'gecko.v2.mozilla-central.pushdate.{}.{:02}.{:02}.{}.firefox.linux64-debug'.format(
-        nightly_date.year, nightly_date.month, nightly_date.day, nightly_build_id
-    )
+def fetch_mozharness_task_id():
+    # We now want to use the latest available raptor
+    raptor_index = 'gecko.v2.mozilla-central.nightly.latest.mobile.android-x86_64-opt'
     return taskcluster.Index().findTask(raptor_index)['taskId']

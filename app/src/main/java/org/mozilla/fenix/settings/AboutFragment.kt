@@ -5,19 +5,22 @@
 package org.mozilla.fenix.settings
 
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.RequiresApi
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.geckoview.BuildConfig as GeckoViewBuildConfig
 
 class AboutFragment : Fragment() {
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_about, container, false)
     }
@@ -25,16 +28,23 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val appName = requireContext().resources.getString(R.string.app_name)
-        (activity as AppCompatActivity).title = getString(R.string.preferences_about, appName)
+        val appName = getString(R.string.app_name)
+        activity?.title = getString(R.string.preferences_about, appName)
 
         val aboutText = try {
             val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            val geckoVersion = PackageInfoCompat.getLongVersionCode(packageInfo).toString() + " \uD83E\uDD8E " +
-                    GeckoViewBuildConfig.MOZ_APP_VERSION + "-" + GeckoViewBuildConfig.MOZ_APP_BUILDID
+            val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+            val componentsVersion = mozilla.components.Build.version
+            val maybeGecko = if (SDK_INT >= Build.VERSION_CODES.N) GECKO_EMOJI else "GV"
+            val geckoVersion = GeckoViewBuildConfig.MOZ_APP_VERSION + "-" + GeckoViewBuildConfig.MOZ_APP_BUILDID
+
             String.format(
-                "%s (Build #%s)",
+                "%s (Build #%s)\n%s: %s\n%s: %s",
                 packageInfo.versionName,
+                versionCode,
+                COMPONENTS_EMOJI,
+                componentsVersion,
+                maybeGecko,
                 geckoVersion
             )
         } catch (e: PackageManager.NameNotFoundException) {
@@ -42,10 +52,16 @@ class AboutFragment : Fragment() {
         }
 
         val buildDate = BuildConfig.BUILD_DATE
-        val content = resources.getString(R.string.about_content, appName)
+        val content = getString(R.string.about_content, appName)
 
         about_text.text = aboutText
         about_content.text = content
         build_date.text = buildDate
+    }
+
+    companion object {
+        private const val COMPONENTS_EMOJI = "\uD83D\uDCE6"
+        @RequiresApi(Build.VERSION_CODES.N)
+        private const val GECKO_EMOJI = "\uD83E\uDD8E"
     }
 }

@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol
 
@@ -108,7 +108,9 @@ class SwipeToDeleteCallback(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return if (viewHolder is TabViewHolder || viewHolder is TabInCollectionViewHolder) {
+        return if (recyclerView.hasWindowFocus() &&
+            (viewHolder is TabViewHolder || viewHolder is TabInCollectionViewHolder)
+        ) {
             super.getSwipeDirs(recyclerView, viewHolder)
         } else 0
     }
@@ -118,7 +120,6 @@ class SwipeToDeleteCallback(
         const val MARGIN = 32
         const val DENSITY_CONVERSION = 160f
 
-        @Suppress("LongParameterList")
         private fun draw(
             background: Drawable,
             icon: Drawable,

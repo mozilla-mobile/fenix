@@ -1,25 +1,26 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.selectfolder
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.bookmark_row.*
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.ktx.android.content.res.pxToDp
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorIntFromAttr
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 
 class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedViewModel) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    RecyclerView.Adapter<SelectBookmarkFolderAdapter.BookmarkFolderViewHolder>() {
 
     private var tree: List<BookmarkNodeWithDepth> = listOf()
 
@@ -28,7 +29,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkFolderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bookmark_row, parent, false)
 
         return when (viewType) {
@@ -48,22 +49,22 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
 
     override fun getItemCount(): Int = tree.size
 
-    @SuppressWarnings("ComplexMethod")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-        when (holder) {
-            is SelectBookmarkFolderAdapter.BookmarkFolderViewHolder -> holder.bind(
-                tree[position],
-                tree[position].node == sharedViewModel.selectedFolder,
-                object : SelectionInterface {
-                    override fun itemSelected(node: BookmarkNode) {
-                        sharedViewModel.selectedFolder = node
-                        notifyDataSetChanged()
+    override fun onBindViewHolder(holder: BookmarkFolderViewHolder, position: Int) {
+        holder.bind(
+            tree[position],
+            tree[position].node == sharedViewModel.selectedFolder,
+            object : SelectionInterface {
+                override fun itemSelected(node: BookmarkNode) {
+                    sharedViewModel.apply {
+                        when (selectedFolder) {
+                            node -> selectedFolder = null
+                            else -> selectedFolder = node
+                        }
                     }
-                })
-            else -> {
+                    notifyDataSetChanged()
+                }
             }
-        }
+        )
     }
 
     interface SelectionInterface {
@@ -79,6 +80,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         init {
             bookmark_favicon.visibility = View.VISIBLE
             bookmark_title.visibility = View.VISIBLE
+            bookmark_url.visibility = View.GONE
             bookmark_separator.visibility = View.GONE
             bookmark_layout.isClickable = true
         }
@@ -91,6 +93,14 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
                     R.attr.neutral.getColorIntFromAttr(containerView!!.context)
                 }
 
+            // Center the bookmark title since we don't have a url
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(bookmark_layout)
+            constraintSet.connect(
+                bookmark_title.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM
+            )
+            constraintSet.applyTo(bookmark_layout)
+
             val backgroundTintList = ContextCompat.getColorStateList(containerView.context, backgroundTint)
             bookmark_favicon.backgroundTintList = backgroundTintList
             val res = if (selected) R.drawable.mozac_ic_check else R.drawable.ic_folder_icon
@@ -100,8 +110,8 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
             bookmark_layout.setOnClickListener {
                 selectionInterface.itemSelected(folder.node)
             }
-            val padding =
-                containerView.resources.pxToDp(dpsToIndent) * (if (folder.depth > maxDepth) maxDepth else folder.depth)
+            val pxToIndent = dpsToIndent.dpToPx(containerView.resources.displayMetrics)
+            val padding = pxToIndent * if (folder.depth > maxDepth) maxDepth else folder.depth
             bookmark_layout.setPadding(padding, 0, 0, 0)
         }
 

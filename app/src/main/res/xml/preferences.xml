@@ -11,17 +11,21 @@
         android:key="@string/pref_key_sign_in"
         android:layout="@layout/sign_in_preference"
         android:summary="@string/preferences_sign_in_description"
-        android:title="@string/preferences_sign_in" />
+        android:title="@string/preferences_sync" />
 
     <androidx.preference.PreferenceCategory
-        android:key = "@string/pref_key_account_category"
+        android:key="@string/pref_key_account_category"
         android:title="@string/preferences_category_account"
         app:iconSpaceReserved="false"
         app:isPreferenceVisible="false">
 
         <org.mozilla.fenix.settings.AccountPreference
-            android:icon="@drawable/ic_shortcuts"
-            android:key="@string/pref_key_account"/>
+            android:icon="@drawable/ic_account"
+            android:key="@string/pref_key_account" />
+
+        <org.mozilla.fenix.settings.AccountAuthErrorPreference
+            android:icon="@drawable/ic_account_warning"
+            android:key="@string/pref_key_account_auth_error"/>
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
@@ -48,7 +52,7 @@
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:title="@string/preferences_category_advanced"
+        android:title="@string/preferences_category_privacy"
         app:iconSpaceReserved="false">
         <androidx.preference.Preference
             android:icon="@drawable/ic_tracking_protection"
@@ -65,7 +69,10 @@
         <androidx.preference.Preference
             android:icon="@drawable/ic_data_collection"
             android:key="@string/pref_key_data_choices"
-            android:title="@string/preferences_data_choices" />
+            android:title="@string/preferences_data_collection" />
+        <androidx.preference.Preference
+            android:key="@string/pref_key_privacy_link"
+            android:title="@string/preferences_privacy_link" />
         <androidx.preference.SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_info"
@@ -99,13 +106,5 @@
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key_about"
             android:title="@string/preferences_about" />
-        <androidx.preference.Preference
-            android:icon="@drawable/ic_info"
-            android:key="@string/pref_key_privacy_notice"
-            android:title="@string/preferences_privacy_notice" />
-        <androidx.preference.Preference
-            android:icon="@drawable/ic_info"
-            android:key="@string/pref_key_your_rights"
-            android:title="@string/preferences_your_rights" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

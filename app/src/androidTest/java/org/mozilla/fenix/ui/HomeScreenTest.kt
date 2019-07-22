@@ -4,29 +4,86 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.test.uiautomator.UiDevice
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+
+import androidx.test.platform.app.InstrumentationRegistry
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
- *  Tests for verifying the presence of home screen elements
+ *  Tests for verifying the presence of home screen and first-run homescreen elements
  *
  */
 
 class HomeScreenTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
+
+    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
+
     @Test
     fun homeScreenItemsTest() {
+        homeScreen { }.dismissOnboarding()
+
         homeScreen {
             verifyHomeScreen()
+            verifyNavigationToolbar()
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
+            verifyOpenTabsHeader()
+            verifyAddTabButton()
+            verifyNoTabsOpenedHeader()
+            verifyNoTabsOpenedText()
+            verifyCollectionsHeader()
+            verifyNoCollectionsHeader()
+            verifyNoCollectionsText()
             verifyHomeToolbar()
             verifyHomeComponent()
+        }
+    }
+
+    @Test
+    fun firstRunHomeScreenItemsTest() {
+        homeScreen {
+            verifyHomeScreen()
+            verifyNavigationToolbar()
+            verifyHomePrivateBrowsingButton()
+            verifyHomeMenu()
+            verifyHomeWordmark()
+
+            verifyWelcomeHeader()
+
+            verifyGetTheMostHeader()
+            verifyAccountsSignInButton()
+            verifyGetToKnowHeader()
+
+            swipeUpToDismissFirstRun()
+
+            verifyChooseThemeHeader()
+            verifyChooseThemeText()
+            verifyLightThemeToggle()
+            verifyLightThemeDescription()
+            verifyDarkThemeToggle()
+            verifyDarkThemeDescription()
+            verifyAutomaticThemeToggle()
+            verifyAutomaticThemeDescription()
+
+            verifyProtectYourselfHeader()
+            verifyTrackingProtectionToggle()
+            verifyProtectYourselfText()
+
+            verifyBrowsePrivatelyHeader()
+            verifyBrowsePrivatelyText()
+            verifyYourPrivacyHeader()
+            verifyYourPrivacyText()
+
+            verifyPrivacyNoticeButton()
+            verifyStartBrowsingButton()
         }
     }
 }
