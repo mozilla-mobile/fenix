@@ -9,6 +9,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.intent.IntentProcessor
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import org.mozilla.fenix.test.Mockable
 
 /**
@@ -39,4 +40,6 @@ class Utilities(
     val notificationManager by lazy {
         NotificationManager(context)
     }
+
+    val publicSuffixList by lazy { PublicSuffixList(context) }
 }
