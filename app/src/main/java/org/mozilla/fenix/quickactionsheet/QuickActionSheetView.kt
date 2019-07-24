@@ -18,24 +18,25 @@ import kotlinx.android.synthetic.main.layout_quick_action_sheet.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.view.*
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.toolbar.BrowserState
 import org.mozilla.fenix.utils.Settings
 
-interface QuickActionSheetInteractor {
-    fun onOpened()
-    fun onClosed()
-    fun onSharedPressed()
-    fun onDownloadsPressed()
-    fun onBookmarkPressed()
-    fun onReadPressed()
-    fun onAppearancePressed()
-    fun onOpenAppLinkPressed()
+interface QuickActionSheetViewInteractor {
+    fun onQuickActionSheetOpened()
+    fun onQuickActionSheetClosed()
+    fun onQuickActionSheetSharePressed()
+    fun onQuickActionSheetDownloadPressed()
+    fun onQuickActionSheetBookmarkPressed()
+    fun onQuickActionSheetReadPressed()
+    fun onQuickActionSheetAppearancePressed()
+    fun onQuickActionSheetOpenLinkPressed()
 }
 /**
  * View for the quick action sheet that slides out from the toolbar.
  */
-class QuickActionView(
+class QuickActionSheetView(
     override val containerView: ViewGroup,
-    private val interactor: QuickActionSheetInteractor
+    private val interactor: QuickActionSheetViewInteractor
 ) : LayoutContainer, View.OnClickListener {
 
     val view: NestedScrollView = LayoutInflater.from(containerView.context)
@@ -51,9 +52,9 @@ class QuickActionView(
                 updateImportantForAccessibility(state)
 
                 if (state == BottomSheetBehavior.STATE_EXPANDED) {
-                    interactor.onOpened()
+                    interactor.onQuickActionSheetOpened()
                 } else if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-                    interactor.onClosed()
+                    interactor.onQuickActionSheetClosed()
                 }
             }
 
@@ -77,12 +78,12 @@ class QuickActionView(
      */
     override fun onClick(button: View) {
         when (button.id) {
-            R.id.quick_action_share -> interactor.onSharedPressed()
-            R.id.quick_action_downloads -> interactor.onDownloadsPressed()
-            R.id.quick_action_bookmark -> interactor.onBookmarkPressed()
-            R.id.quick_action_read -> interactor.onReadPressed()
-            R.id.quick_action_appearance -> interactor.onAppearancePressed()
-            R.id.quick_action_open_app_link -> interactor.onOpenAppLinkPressed()
+            R.id.quick_action_share -> interactor.onQuickActionSheetSharePressed()
+            R.id.quick_action_downloads -> interactor.onQuickActionSheetDownloadPressed()
+            R.id.quick_action_bookmark -> interactor.onQuickActionSheetBookmarkPressed()
+            R.id.quick_action_read -> interactor.onQuickActionSheetReadPressed()
+            R.id.quick_action_appearance -> interactor.onQuickActionSheetAppearancePressed()
+            R.id.quick_action_open_app_link -> interactor.onQuickActionSheetOpenLinkPressed()
             else -> return
         }
         quickActionSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -108,7 +109,7 @@ class QuickActionView(
         }
     }
 
-    fun update(state: QuickActionSheetState) {
+    fun update(state: BrowserState) {
         view.quick_action_read.isVisible = state.readable
         view.quick_action_read.isSelected = state.readerActive
         view.quick_action_read.text = view.context.getString(

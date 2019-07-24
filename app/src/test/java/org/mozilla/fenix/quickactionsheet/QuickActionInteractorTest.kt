@@ -42,7 +42,7 @@ class QuickActionInteractorTest {
         every { context.metrics } returns metrics
         every { metrics.track(Event.QuickActionSheetOpened) } just Runs
 
-        interactor.onOpened()
+        interactor.onQuickActionSheetOpened()
 
         verify { metrics.track(Event.QuickActionSheetOpened) }
     }
@@ -63,7 +63,7 @@ class QuickActionInteractorTest {
         every { context.metrics } returns metrics
         every { metrics.track(Event.QuickActionSheetClosed) } just Runs
 
-        interactor.onClosed()
+        interactor.onQuickActionSheetClosed()
 
         verify { metrics.track(Event.QuickActionSheetClosed) }
     }
@@ -100,7 +100,7 @@ class QuickActionInteractorTest {
         every { core.sessionManager } returns sessionManager
         every { sessionManager.selectedSession } returns session
 
-        interactor.onSharedPressed()
+        interactor.onQuickActionSheetSharePressed()
 
         verify { metrics.track(Event.QuickActionSheetShareTapped) }
         assertEquals("mozilla.org", selectedSessionUrl)
@@ -122,7 +122,7 @@ class QuickActionInteractorTest {
         every { context.metrics } returns metrics
         every { metrics.track(Event.QuickActionSheetDownloadTapped) } just Runs
 
-        interactor.onDownloadsPressed()
+        interactor.onQuickActionSheetDownloadPressed()
 
         verify { metrics.track(Event.QuickActionSheetDownloadTapped) }
     }
@@ -159,7 +159,7 @@ class QuickActionInteractorTest {
         every { core.sessionManager } returns sessionManager
         every { sessionManager.selectedSession } returns session
 
-        interactor.onBookmarkPressed()
+        interactor.onQuickActionSheetBookmarkPressed()
 
         verify { metrics.track(Event.QuickActionSheetBookmarkTapped) }
         assertEquals("mozilla.org", bookmarkedSession?.url)
@@ -187,7 +187,7 @@ class QuickActionInteractorTest {
         every { session.readerMode } returns false
         every { metrics.track(Event.QuickActionSheetReadTapped) } just Runs
 
-        interactor.onReadPressed()
+        interactor.onQuickActionSheetReadPressed()
 
         verify { metrics.track(Event.QuickActionSheetReadTapped) }
         verify { readerModeController.showReaderView() }
@@ -215,7 +215,7 @@ class QuickActionInteractorTest {
         every { session.readerMode } returns true
         every { metrics.track(Event.QuickActionSheetReadTapped) } just Runs
 
-        interactor.onReadPressed()
+        interactor.onQuickActionSheetReadPressed()
 
         verify { metrics.track(Event.QuickActionSheetReadTapped) }
         verify { readerModeController.hideReaderView() }
@@ -235,7 +235,7 @@ class QuickActionInteractorTest {
             mockk()
         )
 
-        interactor.onAppearancePressed()
+        interactor.onQuickActionSheetAppearancePressed()
 
         verify { readerModeController.showControls() }
     }
@@ -267,7 +267,7 @@ class QuickActionInteractorTest {
         every { appLinksUseCases.openAppLink } returns openAppLink
         every { appLinkRedirect.appIntent } returns mockk(relaxed = true)
 
-        interactor.onOpenAppLinkPressed()
+        interactor.onQuickActionSheetOpenLinkPressed()
 
         verify { openAppLink.invoke(appLinkRedirect) }
     }
