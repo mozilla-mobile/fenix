@@ -128,7 +128,7 @@ tasks:
             source: ${repository}/raw/${head_rev}/.taskcluster.yml
       in:
         $flatten:
-          - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]'
+          - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "edited", "synchronize"]'
             then:
               $let:
                 pull_request_title: ${event.pull_request.title}
@@ -148,6 +148,7 @@ tasks:
                           && python automation/taskcluster/decision_task.py pull-request
                       env:
                         GITHUB_PULL_TITLE: ${pull_request_title}
+                        MOBILE_PULL_REQUEST_NUMBER: ${pull_request_number}
                     extra:
                       treeherder:
                         symbol: D-PR

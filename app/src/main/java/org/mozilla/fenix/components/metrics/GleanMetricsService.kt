@@ -1,33 +1,36 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
+import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.utils.Browsers
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CustomTab
+import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.FindInPage
+import org.mozilla.fenix.GleanMetrics.History
+import org.mozilla.fenix.GleanMetrics.Library
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
+import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.QuickActionSheet
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.ext.components
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import mozilla.components.service.glean.BuildConfig
-import mozilla.components.service.glean.config.Configuration
-import org.mozilla.fenix.GleanMetrics.QrScanner
-import org.mozilla.fenix.GleanMetrics.Library
-import org.mozilla.fenix.GleanMetrics.ErrorPage
+import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 
@@ -226,6 +229,42 @@ private val Event.wrapper
             { Events.preferenceToggled.record(it) },
             { Events.preferenceToggledKeys.valueOf(it) }
         )
+        is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
+            { History.opened.record(it) }
+        )
+        is Event.HistoryItemShared -> EventWrapper<NoExtraKeys>(
+            { History.shared.record(it) }
+        )
+        is Event.HistoryItemOpened -> EventWrapper<NoExtraKeys>(
+            { History.openedItem.record(it) }
+        )
+        is Event.HistoryItemRemoved -> EventWrapper<NoExtraKeys>(
+            { History.removed.record(it) }
+        )
+        is Event.HistoryAllItemsRemoved -> EventWrapper<NoExtraKeys>(
+            { History.removedAll.record(it) }
+        )
+        is Event.CollectionRenamed -> EventWrapper<NoExtraKeys>(
+            { Collections.renamed.record(it) }
+        )
+        is Event.CollectionTabRestored -> EventWrapper<NoExtraKeys>(
+            { Collections.tabRestored.record(it) }
+        )
+        is Event.CollectionAllTabsRestored -> EventWrapper<NoExtraKeys>(
+            { Collections.allTabsRestored.record(it) }
+        )
+        is Event.CollectionTabRemoved -> EventWrapper<NoExtraKeys>(
+            { Collections.tabRemoved.record(it) }
+        )
+        is Event.CollectionShared -> EventWrapper<NoExtraKeys>(
+            { Collections.shared.record(it) }
+        )
+        is Event.CollectionRemoved -> EventWrapper<NoExtraKeys>(
+            { Collections.removed.record(it) }
+        )
+        is Event.CollectionTabSelectOpened -> EventWrapper<NoExtraKeys>(
+            { Collections.tabSelectOpened.record(it) }
+        )
 
         // Don't track other events with Glean
         else -> null
@@ -253,7 +292,9 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
             Metrics.apply {
                 defaultBrowser.set(Browsers.all(context).isDefaultBrowser)
-                defaultMozBrowser.set(MozillaProductDetector.getMozillaBrowserDefault(context) ?: "")
+                MozillaProductDetector.getMozillaBrowserDefault(context)?.also {
+                    defaultMozBrowser.set(it)
+                }
                 mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
             }
 

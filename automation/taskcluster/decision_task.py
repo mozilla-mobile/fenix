@@ -15,7 +15,7 @@ import re
 
 import taskcluster
 
-from lib.gradle import get_variants_for_build_type, get_geckoview_versions
+from lib.gradle import get_variants_for_build_type
 from lib.tasks import (
     fetch_mozharness_task_id,
     schedule_task_graph,
@@ -47,7 +47,7 @@ BUILDER = TaskBuilder(
     scheduler_id=os.environ.get('SCHEDULER_ID', 'taskcluster-github'),
     tasks_priority=os.environ.get('TASKS_PRIORITY'),
     date_string=os.environ.get('BUILD_DATE'),
-    trust_level=os.environ.get('TRUST_LEVEL'),
+    trust_level=int(os.environ.get('TRUST_LEVEL')),
 )
 
 
@@ -85,8 +85,7 @@ def raptor(is_staging):
     signing_tasks = {}
     other_tasks = {}
 
-    geckoview_beta_version = get_geckoview_versions()['beta']
-    mozharness_task_id = fetch_mozharness_task_id(geckoview_beta_version)
+    mozharness_task_id = fetch_mozharness_task_id()
     gecko_revision = taskcluster.Queue().task(mozharness_task_id)['payload']['env']['GECKO_HEAD_REV']
 
     for variant in [Variant.from_values(abi, False, 'forPerformanceTest') for abi in ('aarch64', 'arm')]:
@@ -97,7 +96,7 @@ def raptor(is_staging):
 
         all_raptor_craft_functions = [
             BUILDER.craft_raptor_tp6m_cold_task(for_suite=i)
-            for i in range(1, 15)
+            for i in range(1, 27)
         ]
         for craft_function in all_raptor_craft_functions:
             args = (signing_task_id, mozharness_task_id, variant, gecko_revision)
@@ -109,7 +108,7 @@ def raptor(is_staging):
 def release(channel, is_staging, version_name):
     variants = get_variants_for_build_type(channel)
     architectures = [variant.abi for variant in variants]
-    apk_paths = ["public/target.{}.apk".format(arch) for arch in architectures]
+    apk_paths = ["public/build/{}/target.apk".format(arch) for arch in architectures]
 
     build_tasks = {}
     signing_tasks = {}
@@ -146,14 +145,14 @@ def nightly_to_production_app(is_staging, version_name):
     build_type = 'nightlyLegacy'
     variants = get_variants_for_build_type(build_type)
     architectures = [variant.abi for variant in variants]
-    apk_paths = ["public/target.{}.apk".format(arch) for arch in architectures]
+    apk_paths = ["public/build/{}/target.apk".format(arch) for arch in architectures]
 
     build_tasks = {}
     signing_tasks = {}
     push_tasks = {}
 
     build_task_id = taskcluster.slugId()
-    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, build_type, is_staging, version_name, index_channel='nightly')
+    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(architectures, build_type, is_staging, version_name)
 
     signing_task_id = taskcluster.slugId()
     signing_tasks[signing_task_id] = BUILDER.craft_release_signing_task(
@@ -194,6 +193,7 @@ if __name__ == "__main__":
 
     release_parser = subparsers.add_parser('github-release')
     release_parser.add_argument('tag')
+    release_parser.add_argument('--staging', action='store_true')
 
     result = parser.parse_args()
     command = result.command
@@ -214,9 +214,9 @@ if __name__ == "__main__":
         beta_semver = re.compile(r'^v\d+\.\d+\.\d+-beta\.\d+$')
         production_semver = re.compile(r'^v\d+\.\d+\.\d+(-rc\.\d+)?$')
         if beta_semver.match(result.tag):
-            ordered_groups_of_tasks = release('beta', False, version)
+            ordered_groups_of_tasks = release('beta', result.staging, version)
         elif production_semver.match(result.tag):
-            ordered_groups_of_tasks = release('production', False, version)
+            ordered_groups_of_tasks = release('production', result.staging, version)
         else:
             raise ValueError('Github tag must be in semver format and prefixed with a "v", '
                              'e.g.: "v1.0.0-beta.0" (beta), "v1.0.0-rc.0" (production) or "v1.0.0" (production)')

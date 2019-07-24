@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix
 
@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.snackbar.Snackbar
 import io.sentry.Sentry
 import io.sentry.event.Breadcrumb
 import io.sentry.event.BreadcrumbBuilder
@@ -31,23 +32,24 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.settings.AccountProblemFragmentDirections
-import org.mozilla.fenix.settings.PairFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
-import org.mozilla.fenix.settings.TurnOnSyncFragmentDirections
+import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.utils.Settings
 
-@SuppressWarnings("TooManyFunctions")
-open class HomeActivity : AppCompatActivity() {
+@SuppressWarnings("TooManyFunctions", "LargeClass")
+open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback {
     open val isCustomTab = false
     private var sessionObserver: SessionManager.Observer? = null
 
@@ -143,7 +145,7 @@ open class HomeActivity : AppCompatActivity() {
                 accountManager.initAsync().await()
                 // If we're authenticated, kick-off a sync and a device state refresh.
                 accountManager.authenticatedAccount()?.let {
-                    syncManager?.syncNow(startup = true)
+                    accountManager.syncNowAsync(startup = true)
                     it.deviceConstellation().refreshDeviceStateAsync().await()
                 }
             }
@@ -229,15 +231,21 @@ open class HomeActivity : AppCompatActivity() {
                 }
                 BrowserDirection.FromSearch -> {
                     fragmentId = R.id.searchFragment
-                    SearchFragmentDirections.actionSearchFragmentToBrowserFragment(customTabSessionId)
+                    SearchFragmentDirections.actionSearchFragmentToBrowserFragment(
+                        customTabSessionId
+                    )
                 }
                 BrowserDirection.FromSettings -> {
                     fragmentId = R.id.settingsFragment
-                    SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(customTabSessionId)
+                    SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(
+                        customTabSessionId
+                    )
                 }
                 BrowserDirection.FromBookmarks -> {
                     fragmentId = R.id.bookmarkFragment
-                    BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(customTabSessionId)
+                    BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(
+                        customTabSessionId
+                    )
                 }
                 BrowserDirection.FromBookmarksFolderSelect -> {
                     fragmentId = R.id.bookmarkSelectFolderFragment
@@ -246,19 +254,15 @@ open class HomeActivity : AppCompatActivity() {
                 }
                 BrowserDirection.FromHistory -> {
                     fragmentId = R.id.historyFragment
-                    HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(customTabSessionId)
+                    HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(
+                        customTabSessionId
+                    )
                 }
-                BrowserDirection.FromPair -> {
-                    fragmentId = R.id.pairFragment
-                    PairFragmentDirections.actionPairFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromTurnOnSync -> {
-                    fragmentId = R.id.turnOnSyncFragment
-                    TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromAccountProblem -> {
-                    fragmentId = R.id.turnOnSyncFragment
-                    AccountProblemFragmentDirections.actionAccountProblemFragmentToBrowserFragment(customTabSessionId)
+                BrowserDirection.FromExceptions -> {
+                    fragmentId = R.id.exceptionsFragment
+                    ExceptionsFragmentDirections.actionExceptionsFragmentToBrowserFragment(
+                        customTabSessionId
+                    )
                 }
             }
         } else {
@@ -270,7 +274,12 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun load(searchTermOrURL: String, newTab: Boolean, engine: SearchEngine?, forceSearch: Boolean) {
+    private fun load(
+        searchTermOrURL: String,
+        newTab: Boolean,
+        engine: SearchEngine?,
+        forceSearch: Boolean
+    ) {
         val isPrivate = this.browsingModeManager.isPrivate
 
         val loadUrlUseCase = if (newTab) {
@@ -284,7 +293,13 @@ open class HomeActivity : AppCompatActivity() {
         val searchUseCase: (String) -> Unit = { searchTerms ->
             if (newTab) {
                 components.useCases.searchUseCases.newTabSearch
-                    .invoke(searchTerms, Session.Source.USER_ENTERED, true, isPrivate, searchEngine = engine)
+                    .invoke(
+                        searchTerms,
+                        Session.Source.USER_ENTERED,
+                        true,
+                        isPrivate,
+                        searchEngine = engine
+                    )
             } else components.useCases.searchUseCases.defaultSearch.invoke(searchTerms, engine)
         }
 
@@ -370,6 +385,17 @@ open class HomeActivity : AppCompatActivity() {
         }.also { components.core.sessionManager.register(it, this) }
     }
 
+    override fun onTabsShared(tabsSize: Int) {
+        this@HomeActivity.getRootView()?.let {
+            FenixSnackbar.make(it, Snackbar.LENGTH_SHORT).setText(
+                getString(
+                    if (tabsSize == 1) R.string.sync_sent_tab_snackbar else
+                        R.string.sync_sent_tabs_snackbar
+                )
+            ).show()
+        }
+    }
+
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
     }
@@ -377,6 +403,5 @@ open class HomeActivity : AppCompatActivity() {
 
 enum class BrowserDirection {
     FromGlobal, FromHome, FromSearch, FromSettings, FromBookmarks,
-    FromBookmarksFolderSelect, FromHistory, FromPair, FromTurnOnSync,
-    FromAccountProblem
+    FromBookmarksFolderSelect, FromHistory, FromExceptions
 }

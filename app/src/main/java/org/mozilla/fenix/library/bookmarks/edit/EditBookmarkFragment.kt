@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.edit
 
@@ -35,6 +35,7 @@ import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getColorFromAttr
@@ -118,6 +119,12 @@ class EditBookmarkFragment : Fragment() {
         }
 
         updateBookmarkFromObservableInput()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bookmark_name_edit.hideKeyboard()
+        bookmark_url_edit.hideKeyboard()
     }
 
     private fun updateBookmarkFromObservableInput() {

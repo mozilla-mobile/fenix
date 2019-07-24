@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.features
 
 import android.content.Context
@@ -46,7 +50,7 @@ class FirefoxAccountsAuthFeature(
             // UI to the user.
             // It's possible that the underlying problem will go away by the time the tab actually
             // loads, resulting in a confusing experience.
-            val intent = SupportUtils.createCustomTabIntent(context, authUrl)
+            val intent = SupportUtils.createAuthCustomTabIntent(context, authUrl)
             context.startActivity(intent)
         }
     }

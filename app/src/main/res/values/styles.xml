@@ -35,6 +35,7 @@
         <item name="foundation">@color/foundation_normal_theme</item>
         <item name="above">@color/above_normal_theme</item>
         <item name="inset">@color/inset_normal_theme</item>
+        <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="shadow">@color/shadow_normal_theme</item>
@@ -53,18 +54,19 @@
 
     <style name="NormalTheme" parent="NormalThemeBase" />
 
-    <style name="DialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+    <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="dialogCornerRadius">@dimen/tab_corner_radius</item>
         <item name="android:colorBackground">?above</item>
         <item name="colorAccent">?accent</item>
         <item name="android:textColorPrimary">?primaryText</item>
     </style>
 
-    <style name="DialogStyleLight" parent="DialogStyle">
+    <style name="DialogStyleLight" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleLight</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleLight</item>
     </style>
 
-    <style name="DialogStyleDark" parent="DialogStyle">
+    <style name="DialogStyleDark" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleDark</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleDark</item>
     </style>
@@ -109,6 +111,7 @@
         <item name="foundation">@color/foundation_private_theme</item>
         <item name="above">@color/above_private_theme</item>
         <item name="inset">@color/inset_private_theme</item>
+        <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
         <item name="shadow">@color/shadow_private_theme</item>
@@ -122,7 +125,7 @@
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
         <item name="homeBackground">@drawable/private_home_background_gradient</item>
-        <item name="privateBrowsingButtonBackground">@color/accent_private_theme</item>
+        <item name="privateBrowsingButtonBackground">@color/primary_text_private_theme</item>
         <item name="privateBrowsingButtonAccent">@color/above_private_theme</item>
 
     </style>
@@ -208,22 +211,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/CurrentSessionBottomSheetStyle</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
-    </style>
-
-    <style name="CurrentSessionBottomSheetStyle" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/primary_text_normal_theme</item>
-
-        <!-- This doesn't seem to work see https://issuetracker.google.com/issues/120426520 -->
-        <item name="scrimBackground">@drawable/session_sheet_background</item>
     </style>
 
     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">

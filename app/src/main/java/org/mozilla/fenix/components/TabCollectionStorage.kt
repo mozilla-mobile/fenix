@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.components
 
@@ -93,7 +93,7 @@ class TabCollectionStorage(
 
 fun TabCollection.description(context: Context): String {
     return this.tabs
-        .map { it.url.urlToTrimmedHost(context).capitalize() }
+        .map { it.url.urlToTrimmedHost(context) }
         .map {
             if (it.length > CollectionViewHolder.maxTitleLength) {
                 it.substring(

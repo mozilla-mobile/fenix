@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks.addfolder
 
@@ -77,8 +77,9 @@ class AddBookmarkFolderFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.confirm_add_folder_button -> {
-                if (bookmark_add_folder_title_edit.text.isNullOrEmpty()) {
-                    bookmark_add_folder_title_edit.error = getString(R.string.bookmark_empty_title_error)
+                if (bookmark_add_folder_title_edit.text.isNullOrBlank()) {
+                    bookmark_add_folder_title_edit.error =
+                        getString(R.string.bookmark_empty_title_error)
                     return true
                 }
                 lifecycleScope.launch(IO) {

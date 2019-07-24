@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks
 
@@ -217,8 +217,8 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
                             nav(
                                 R.id.bookmarkFragment,
                                 BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
-                                    this,
-                                    it.item.title
+                                    url = this,
+                                    title = it.item.title
                                 )
                             )
                             metrics()?.track(Event.ShareBookmark)
@@ -412,9 +412,6 @@ class BookmarkFragment : Fragment(), BackHandler, AccountObserver {
         lifecycleScope.launch {
             refreshBookmarks()
         }
-    }
-
-    override fun onError(error: Exception) {
     }
 
     override fun onLoggedOut() {

@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -15,10 +14,9 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
-import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 
 class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
@@ -58,19 +56,16 @@ class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
             // session history stack.
             // We could auto-close this tab once we get to the end of the authentication process?
             // Via an interceptor, perhaps.
-            view?.let {
-                (activity as HomeActivity).openToBrowser(BrowserDirection.FromAccountProblem)
-            }
             true
         }
     }
 
     private fun getClickListenerForSignOut(): Preference.OnPreferenceClickListener {
         return Preference.OnPreferenceClickListener {
-            lifecycleScope.launch {
-                requireComponents.backgroundServices.accountManager.logoutAsync().await()
-            }
-            Navigation.findNavController(view!!).popBackStack()
+            nav(
+                R.id.accountProblemFragment,
+                AccountProblemFragmentDirections.actionAccountProblemFragmentToSignOutFragment()
+            )
             true
         }
     }
@@ -83,8 +78,6 @@ class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     override fun onAuthenticationProblems() {}
-
-    override fun onError(error: Exception) {}
 
     // We're told there are no more auth problems since there is no more account; close this fragment.
     override fun onLoggedOut() {
