@@ -25,7 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -339,7 +339,7 @@ class HomeFragment : Fragment(), AccountObserver {
                     return
                 }
                 invokePendingDeleteJobs()
-                showCollectionCreationFragment(action.selectedTabSessionId)
+                saveTabToCollection(action.selectedTabSessionId)
             }
             is TabAction.Select -> {
                 invokePendingDeleteJobs()
@@ -464,16 +464,10 @@ class HomeFragment : Fragment(), AccountObserver {
                 createDeleteCollectionPrompt(action.collection)
             }
             is CollectionAction.AddTab -> {
-                showCollectionCreationFragment(
-                    selectedTabCollection = action.collection,
-                    step = SaveCollectionStep.SelectTabs
-                )
+                updateCollection(action.collection, SaveCollectionStep.SelectTabs)
             }
             is CollectionAction.Rename -> {
-                showCollectionCreationFragment(
-                    selectedTabCollection = action.collection,
-                    step = SaveCollectionStep.RenameCollection
-                )
+                updateCollection(action.collection, SaveCollectionStep.RenameCollection)
             }
             is CollectionAction.OpenTab -> {
                 invokePendingDeleteJobs()
@@ -664,27 +658,19 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun showCollectionCreationFragment(
-        selectedTabId: String? = null,
-        selectedTabCollection: TabCollection? = null,
-        step: SaveCollectionStep? = null
+        setupViewModel: (CreateCollectionViewModel, List<Tab>, List<TabCollection>) -> Unit
     ) {
-        if (findNavController(this).currentDestination?.id == R.id.createCollectionFragment) return
+        if (findNavController().currentDestination?.id == R.id.createCollectionFragment) return
 
-        val tabs = getListOfSessions().toTabs()
-
-        val viewModel = activity?.run {
+        activity?.run {
             ViewModelProviders.of(this).get(CreateCollectionViewModel::class.java)
+        }?.let { viewModel ->
+            val tabs = getListOfSessions().toTabs()
+            val cachedTabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
+            setupViewModel(viewModel, tabs, cachedTabCollections)
+
+            viewModel.previousFragmentId = R.id.homeFragment
         }
-        viewModel?.tabs = tabs
-        val selectedTabs =
-            tabs.find { tab -> tab.sessionId == selectedTabId } ?: if (tabs.size == 1) tabs[0] else null
-        val selectedSet = if (selectedTabs == null) mutableSetOf() else mutableSetOf(selectedTabs)
-        viewModel?.selectedTabs = selectedSet
-        viewModel?.tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections.reversed()
-        viewModel?.selectedTabCollection = selectedTabCollection
-        viewModel?.saveCollectionStep =
-            step ?: viewModel?.getStepForTabsAndCollectionSize() ?: SaveCollectionStep.SelectTabs
-        viewModel?.previousFragmentId = R.id.homeFragment
 
         // Only register the observer right before moving to collection creation
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
@@ -692,6 +678,27 @@ class HomeFragment : Fragment(), AccountObserver {
         view?.let {
             val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment()
             nav(R.id.homeFragment, directions)
+        }
+    }
+
+    private fun saveTabToCollection(selectedTabId: String?) {
+        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
+            viewModel.saveTabToCollection(
+                tabs = tabs,
+                selectedTab = tabs.find { it.sessionId == selectedTabId } ?: if (tabs.size == 1) tabs[0] else null,
+                cachedTabCollections = cachedTabCollections
+            )
+        }
+    }
+
+    private fun updateCollection(selectedTabCollection: TabCollection, step: SaveCollectionStep) {
+        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
+            viewModel.updateCollection(
+                tabs = tabs,
+                saveCollectionStep = step,
+                selectedTabCollection = selectedTabCollection,
+                cachedTabCollections = cachedTabCollections
+            )
         }
     }
 

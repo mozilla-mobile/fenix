@@ -7,6 +7,8 @@ package org.mozilla.fenix.collections
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
@@ -24,28 +26,21 @@ class CollectionCreationTabListAdapter(
     private var hideCheckboxes = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(TabViewHolder.LAYOUT_ID, parent, false)
-
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.collection_tab_list_row, parent, false)
         return TabViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TabViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads)
-        } else {
-            when (payloads[0]) {
-                is CheckChanged -> {
-                    val checkChanged = payloads[0] as CheckChanged
-                    if (checkChanged.shouldBeChecked) {
-                        holder.itemView.tab_selected_checkbox.isChecked = true
-                    } else if (checkChanged.shouldBeUnchecked) {
-                        holder.itemView.tab_selected_checkbox.isChecked = false
-                    }
-                    holder.itemView.tab_selected_checkbox.visibility =
-                        if (checkChanged.shouldHideCheckBox) View.GONE else View.VISIBLE
-                }
+        val checkChanged = payloads.firstOrNull()
+        if (checkChanged is CheckChanged) {
+            if (checkChanged.shouldBeChecked) {
+                holder.itemView.tab_selected_checkbox.isChecked = true
+            } else if (checkChanged.shouldBeUnchecked) {
+                holder.itemView.tab_selected_checkbox.isChecked = false
             }
+            holder.itemView.tab_selected_checkbox.isGone = checkChanged.shouldHideCheckBox
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
         }
     }
 
@@ -120,8 +115,7 @@ data class CheckChanged(val shouldBeChecked: Boolean, val shouldBeUnchecked: Boo
 
 class TabViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    private var tab: Tab? = null
-    private val checkbox = view.tab_selected_checkbox!!
+    private val checkbox = view.tab_selected_checkbox
 
     init {
         view.collection_item_tab.setOnClickListener {
@@ -130,19 +124,14 @@ class TabViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(tab: Tab, isSelected: Boolean, shouldHideCheckBox: Boolean) {
-        this.tab = tab
         itemView.hostname.text = tab.hostname
         itemView.tab_title.text = tab.title
-        checkbox.visibility = if (shouldHideCheckBox) View.INVISIBLE else View.VISIBLE
+        checkbox.isInvisible = shouldHideCheckBox
         itemView.isClickable = !shouldHideCheckBox
         if (checkbox.isChecked != isSelected) {
             checkbox.isChecked = isSelected
         }
 
         itemView.context.components.core.icons.loadIntoView(itemView.favicon_image, tab.url)
-    }
-
-    companion object {
-        const val LAYOUT_ID = R.layout.collection_tab_list_row
     }
 }

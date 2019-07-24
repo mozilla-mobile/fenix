@@ -19,7 +19,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.collections.getStepForCollectionsSize
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -64,10 +63,16 @@ class DefaultBrowserToolbarController(
         trackToolbarItemInteraction(item)
 
         Do exhaustive when (item) {
-            ToolbarMenu.Item.Back -> sessionUseCases.goBack.invoke(currentSession)
-            ToolbarMenu.Item.Forward -> sessionUseCases.goForward.invoke(currentSession)
-            ToolbarMenu.Item.Reload -> sessionUseCases.reload.invoke(currentSession)
-            ToolbarMenu.Item.Stop -> sessionUseCases.stopLoading.invoke(currentSession)
+            // Session use cases
+            ToolbarMenu.Item.Back -> sessionUseCases.goBack(currentSession)
+            ToolbarMenu.Item.Forward -> sessionUseCases.goForward(currentSession)
+            ToolbarMenu.Item.Reload -> sessionUseCases.reload(currentSession)
+            ToolbarMenu.Item.Stop -> sessionUseCases.stopLoading(currentSession)
+            is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(
+                item.isChecked,
+                currentSession
+            )
+            // Navigate to new fragment
             ToolbarMenu.Item.Settings -> navController.nav(
                 R.id.browserFragment,
                 BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
@@ -76,21 +81,28 @@ class DefaultBrowserToolbarController(
                 R.id.browserFragment,
                 BrowserFragmentDirections.actionBrowserFragmentToLibraryFragment()
             )
-            is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(
-                item.isChecked,
-                currentSession
-            )
             ToolbarMenu.Item.Share -> {
-                currentSession.url.apply {
-                    val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(this)
-                    navController.nav(R.id.browserFragment, directions)
-                }
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(currentSession.url)
+                navController.nav(R.id.browserFragment, directions)
+            }
+            // Open new tab
+            ToolbarMenu.Item.NewTab -> {
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
+                navController.nav(R.id.browserFragment, directions)
+                (context as HomeActivity).browsingModeManager.mode = BrowsingModeManager.Mode.Normal
             }
             ToolbarMenu.Item.NewPrivateTab -> {
-                val directions = BrowserFragmentDirections
-                    .actionBrowserFragmentToSearchFragment(null)
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
                 navController.nav(R.id.browserFragment, directions)
                 (context as HomeActivity).browsingModeManager.mode = BrowsingModeManager.Mode.Private
+            }
+            ToolbarMenu.Item.ReportIssue -> {
+                val reportUrl = String.format(BrowserFragment.REPORT_SITE_ISSUE_URL, currentSession.url)
+                context.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
+            }
+            ToolbarMenu.Item.Help -> {
+                val helpUrl = SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.HELP)
+                context.components.useCases.tabsUseCases.addTab.invoke(helpUrl)
             }
             ToolbarMenu.Item.FindInPage -> {
                 (BottomSheetBehavior.from(nestedScrollQuickActionView) as QuickActionSheetBehavior).apply {
@@ -99,42 +111,17 @@ class DefaultBrowserToolbarController(
                 findInPageLauncher()
                 context.components.analytics.metrics.track(Event.FindInPageOpened)
             }
-            ToolbarMenu.Item.ReportIssue -> {
-                currentSession.url.apply {
-                    val reportUrl = String.format(BrowserFragment.REPORT_SITE_ISSUE_URL, this)
-                    context.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
-                }
-            }
-            ToolbarMenu.Item.Help -> {
-                context.components.useCases.tabsUseCases.addTab.invoke(
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.HELP
-                    )
-                )
-            }
-            ToolbarMenu.Item.NewTab -> {
-                val directions = BrowserFragmentDirections
-                    .actionBrowserFragmentToSearchFragment(null)
-                navController.nav(R.id.browserFragment, directions)
-                (context as HomeActivity).browsingModeManager.mode =
-                    BrowsingModeManager.Mode.Normal
-            }
             ToolbarMenu.Item.SaveToCollection -> {
-                currentSession.let {
-                    val tab = it.toTab(context)
-                    viewModel.tabs = listOf(tab)
-                    val selectedSet = mutableSetOf(tab)
-                    viewModel.selectedTabs = selectedSet
-                    viewModel.tabCollections =
-                        context.components.core.tabCollectionStorage.cachedTabCollections.reversed()
-                    viewModel.saveCollectionStep = viewModel.tabCollections.getStepForCollectionsSize()
-                    viewModel.snackbarAnchorView = nestedScrollQuickActionView
-                    viewModel.previousFragmentId = R.id.browserFragment
+                val tab = currentSession.toTab(context)
+                viewModel.saveTabToCollection(
+                    tabs = listOf(tab),
+                    selectedTab = tab,
+                    cachedTabCollections = context.components.core.tabCollectionStorage.cachedTabCollections
+                )
+                viewModel.previousFragmentId = R.id.browserFragment
 
-                    val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()
-                    navController.nav(R.id.browserFragment, directions)
-                }
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()
+                navController.nav(R.id.browserFragment, directions)
             }
             ToolbarMenu.Item.OpenInFenix -> {
                 // Release the session from this view so that it can immediately be rendered by a different view

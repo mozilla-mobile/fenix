@@ -11,8 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -43,8 +45,7 @@ class CollectionCreationUIView(
     actionEmitter,
     changesObservable
 ) {
-
-    override val view = LayoutInflater.from(container.context)
+    override val view: View = LayoutInflater.from(container.context)
         .inflate(R.layout.component_collection_creation, container, true)
 
     var step: SaveCollectionStep = SaveCollectionStep.SelectTabs
@@ -63,36 +64,29 @@ class CollectionCreationUIView(
         transition.duration = TRANSITION_DURATION
 
         selectTabsConstraints.clone(collection_constraint_layout)
-        selectCollectionConstraints.clone(
-            view.context,
-            R.layout.component_collection_creation_select_collection
-        )
-        nameCollectionConstraints.clone(
-            view.context,
-            R.layout.component_collection_creation_name_collection
-        )
+        selectCollectionConstraints.clone(view.context, R.layout.component_collection_creation_select_collection)
+        nameCollectionConstraints.clone(view.context, R.layout.component_collection_creation_name_collection)
 
         view.bottom_bar_icon_button.apply {
             increaseTapArea(increaseButtonByDps)
         }
 
         view.name_collection_edittext.filters += InputFilter.LengthFilter(COLLECTION_NAME_MAX_LENGTH)
-        view.name_collection_edittext.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && v.text.toString().isNotBlank()) {
+        view.name_collection_edittext.setOnEditorActionListener { view, actionId, _ ->
+            val text = view.text.toString()
+            if (actionId == EditorInfo.IME_ACTION_DONE && text.isNotBlank()) {
                 when (step) {
-                    is SaveCollectionStep.NameCollection -> {
-                        actionEmitter.onNext(
-                            CollectionCreationAction.SaveCollectionName(
-                                selectedTabs.toList(),
-                                v.text.toString()
-                            )
-                        )
+                    SaveCollectionStep.NameCollection -> {
+                        CollectionCreationAction.SaveCollectionName(selectedTabs.toList(), text)
                     }
-                    is SaveCollectionStep.RenameCollection -> {
+                    SaveCollectionStep.RenameCollection -> {
                         selectedCollection?.let {
-                            actionEmitter.onNext(CollectionCreationAction.RenameCollection(it, v.text.toString()))
+                            CollectionCreationAction.RenameCollection(it, text)
                         }
                     }
+                    else -> null
+                }?.let { action ->
+                    actionEmitter.onNext(action)
                 }
             }
             false
@@ -116,15 +110,12 @@ class CollectionCreationUIView(
         selectedTabs = it.selectedTabs
         selectedCollection = it.selectedTabCollection
 
+        view.tab_list.isClickable = step == SaveCollectionStep.SelectTabs
+
         when (it.saveCollectionStep) {
-            is SaveCollectionStep.SelectTabs -> {
+            SaveCollectionStep.SelectTabs -> {
                 view.context.components.analytics.metrics.track(Event.CollectionTabSelectOpened)
 
-                view.tab_list.isClickable = true
-
-                back_button.setOnClickListener {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectTabs))
-                }
                 val allSelected = it.selectedTabs.size == it.tabs.size
                 select_all_button.text =
                     if (allSelected)
@@ -139,23 +130,17 @@ class CollectionCreationUIView(
                     }
                 }
 
-                view.bottom_button_bar_layout.setOnClickListener(null)
                 view.bottom_button_bar_layout.isClickable = false
-
-                val drawable = view.context.getDrawable(R.drawable.ic_close)
-                drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-                view.bottom_bar_icon_button.setImageDrawable(drawable)
+                view.bottom_button_bar_layout.setOnClickListener(null)
 
                 view.bottom_bar_icon_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.Close)
                 }
 
-                TransitionManager.beginDelayedTransition(
-                    view.collection_constraint_layout,
-                    transition
+                selectItems(
+                    bottomBarIcon = R.drawable.ic_close,
+                    constraintSet = selectTabsConstraints
                 )
-                val constraint = selectTabsConstraints
-                constraint.applyTo(view.collection_constraint_layout)
 
                 collectionCreationTabListAdapter.updateData(it.tabs, it.selectedTabs)
 
@@ -187,23 +172,14 @@ class CollectionCreationUIView(
                     }
                 }
 
-                save_button.visibility = if (it.selectedTabs.isEmpty()) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
+                save_button.isGone = it.selectedTabs.isEmpty()
             }
-            is SaveCollectionStep.SelectCollection -> {
-                view.tab_list.isClickable = false
-
+            SaveCollectionStep.SelectCollection -> {
                 save_button.visibility = View.GONE
 
                 view.bottom_bar_text.text =
                     view.context.getString(R.string.create_collection_add_new_collection)
 
-                val drawable = view.context.getDrawable(R.drawable.ic_new)
-                drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-                view.bottom_bar_icon_button.setImageDrawable(drawable)
                 view.bottom_bar_icon_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
                 }
@@ -213,61 +189,25 @@ class CollectionCreationUIView(
                     actionEmitter.onNext(CollectionCreationAction.AddNewCollection)
                 }
 
-                back_button.setOnClickListener {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectCollection))
-                }
-                TransitionManager.beginDelayedTransition(
-                    view.collection_constraint_layout,
-                    transition
+                selectItems(
+                    bottomBarIcon = R.drawable.ic_new,
+                    constraintSet = selectCollectionConstraints
                 )
-                val constraint = selectCollectionConstraints
-                constraint.applyTo(view.collection_constraint_layout)
+
                 back_button.text =
                     view.context.getString(R.string.create_collection_select_collection)
             }
-            is SaveCollectionStep.NameCollection -> {
-                view.tab_list.isClickable = false
-
+            SaveCollectionStep.NameCollection -> {
                 collectionCreationTabListAdapter.updateData(it.selectedTabs.toList(), it.selectedTabs, true)
-                back_button.setOnClickListener {
-                    name_collection_edittext.hideKeyboard()
-                    val handler = Handler()
-                    handler.postDelayed({
-                        actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.NameCollection))
-                    }, TRANSITION_DURATION)
-                }
-                transition.addListener(object : Transition.TransitionListener {
-                    override fun onTransitionStart(transition: Transition) {
-                    }
-
-                    override fun onTransitionEnd(transition: Transition) {
-                        view.name_collection_edittext.showKeyboard()
-                        transition.removeListener(this)
-                    }
-
-                    override fun onTransitionCancel(transition: Transition) {}
-                    override fun onTransitionPause(transition: Transition) {}
-                    override fun onTransitionResume(transition: Transition) {}
-                })
-                TransitionManager.beginDelayedTransition(
-                    view.collection_constraint_layout,
-                    transition
-                )
-                val constraint = nameCollectionConstraints
-                constraint.applyTo(view.collection_constraint_layout)
-                name_collection_edittext.setText(
+                editCollectionName(
                     view.context.getString(
                         R.string.create_collection_default_name,
                         it.tabCollections.size + 1
                     )
                 )
-                name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
-                back_button.text =
-                    view.context.getString(R.string.create_collection_name_collection)
+                back_button.text = view.context.getString(R.string.create_collection_name_collection)
             }
-            is SaveCollectionStep.RenameCollection -> {
-                view.tab_list.isClickable = false
-
+            SaveCollectionStep.RenameCollection -> {
                 it.selectedTabCollection?.let { tabCollection ->
                     tabCollection.tabs.map { tab ->
                         Tab(
@@ -281,67 +221,77 @@ class CollectionCreationUIView(
                     }
                 }
 
-                back_button.setOnClickListener {
-                    name_collection_edittext.hideKeyboard()
-                    val handler = Handler()
-                    handler.postDelayed({
-                        actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.RenameCollection))
-                    }, TRANSITION_DURATION)
-                }
-                transition.addListener(object : Transition.TransitionListener {
-                    override fun onTransitionStart(transition: Transition) {
-                    }
-
-                    override fun onTransitionEnd(transition: Transition) {
-                        view.name_collection_edittext.showKeyboard()
-                        transition.removeListener(this)
-                    }
-
-                    override fun onTransitionCancel(transition: Transition) {}
-                    override fun onTransitionPause(transition: Transition) {}
-                    override fun onTransitionResume(transition: Transition) {}
-                })
-                TransitionManager.beginDelayedTransition(
-                    view.collection_constraint_layout,
-                    transition
-                )
-                val constraint = nameCollectionConstraints
-                constraint.applyTo(view.collection_constraint_layout)
-                name_collection_edittext.setText(it.selectedTabCollection?.title)
-                name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
-                back_button.text =
-                    view.context.getString(R.string.create_collection_name_collection)
+                editCollectionName(it.selectedTabCollection?.title)
+                back_button.text = view.context.getString(R.string.create_collection_name_collection)
             }
         }
         collectionSaveListAdapter.updateData(it.tabCollections, it.selectedTabs)
     }
 
     fun onResumed() {
-        if (step == SaveCollectionStep.NameCollection) {
+        if (step == SaveCollectionStep.NameCollection || step == SaveCollectionStep.RenameCollection) {
             view.name_collection_edittext.showKeyboard()
         }
     }
 
-    fun onKey(keyCode: Int, event: KeyEvent?): Boolean {
-        if (event?.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-            when (step) {
-                SaveCollectionStep.SelectTabs -> {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectTabs))
-                }
-                SaveCollectionStep.SelectCollection -> {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.SelectCollection))
-                }
-                SaveCollectionStep.NameCollection -> {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.NameCollection))
-                }
-                SaveCollectionStep.RenameCollection -> {
-                    actionEmitter.onNext(CollectionCreationAction.BackPressed(SaveCollectionStep.RenameCollection))
-                }
-            }
-            return true
+    fun onKey(keyCode: Int, event: KeyEvent): Boolean {
+        return if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+            actionEmitter.onNext(CollectionCreationAction.BackPressed(step))
+            true
         } else {
-            return false
+            false
         }
+    }
+
+    /**
+     * Shared logic for [SaveCollectionStep.SelectTabs] and [SaveCollectionStep.SelectCollection].
+     */
+    private fun selectItems(
+        @DrawableRes bottomBarIcon: Int,
+        constraintSet: ConstraintSet
+    ) {
+        back_button.setOnClickListener {
+            actionEmitter.onNext(CollectionCreationAction.BackPressed(step))
+        }
+
+        val drawable = view.context.getDrawable(bottomBarIcon)
+        drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
+        view.bottom_bar_icon_button.setImageDrawable(drawable)
+
+        TransitionManager.beginDelayedTransition(
+            view.collection_constraint_layout,
+            transition
+        )
+        constraintSet.applyTo(view.collection_constraint_layout)
+    }
+
+    /**
+     * Shared logic for [SaveCollectionStep.NameCollection] and [SaveCollectionStep.RenameCollection].
+     */
+    private fun editCollectionName(initialName: String?) {
+        back_button.setOnClickListener {
+            name_collection_edittext.hideKeyboard()
+            val handler = Handler()
+            handler.postDelayed({
+                actionEmitter.onNext(CollectionCreationAction.BackPressed(step))
+            }, TRANSITION_DURATION)
+        }
+        transition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionEnd(transition: Transition) {
+                view.name_collection_edittext.showKeyboard()
+                transition.removeListener(this)
+            }
+
+            override fun onTransitionStart(transition: Transition) {}
+            override fun onTransitionCancel(transition: Transition) {}
+            override fun onTransitionPause(transition: Transition) {}
+            override fun onTransitionResume(transition: Transition) {}
+        })
+        TransitionManager.beginDelayedTransition(view.collection_constraint_layout, transition)
+        val constraint = nameCollectionConstraints
+        constraint.applyTo(view.collection_constraint_layout)
+        name_collection_edittext.setText(initialName)
+        name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
     }
 
     companion object {

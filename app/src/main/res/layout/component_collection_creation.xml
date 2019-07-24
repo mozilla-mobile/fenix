@@ -81,6 +81,7 @@
         android:layout_marginStart="@dimen/component_collection_creation_list_margin"
         android:layout_marginTop="@dimen/component_collection_creation_list_margin"
         android:layout_marginEnd="@dimen/component_collection_creation_list_margin"
+        tools:listitem="@layout/collection_tab_list_row"
         app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
