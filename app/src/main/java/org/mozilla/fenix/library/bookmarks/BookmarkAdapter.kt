@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.bookmarks
 
@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
@@ -39,13 +40,46 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
     private var isFirstRun = true
 
     fun updateData(tree: BookmarkNode?, mode: BookmarkState.Mode) {
+        val diffUtil = DiffUtil.calculateDiff(
+            BookmarkDiffUtil(
+                this.tree,
+                tree?.children ?: listOf(),
+                this.mode,
+                mode
+            )
+        )
+
         this.tree = tree?.children ?: listOf()
         isFirstRun = if (isFirstRun) false else {
             emptyView.visibility = if (this.tree.isEmpty()) View.VISIBLE else View.GONE
             false
         }
         this.mode = mode
-        notifyDataSetChanged()
+
+        diffUtil.dispatchUpdatesTo(this)
+    }
+
+    private class BookmarkDiffUtil(
+        val old: List<BookmarkNode>,
+        val new: List<BookmarkNode>,
+        val oldMode: BookmarkState.Mode,
+        val newMode: BookmarkState.Mode
+    ) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            old[oldItemPosition].guid == new[newItemPosition].guid
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldSelected = (oldMode as? BookmarkState.Mode.Selecting)?.selectedItems ?: setOf()
+            val newSelected = (newMode as? BookmarkState.Mode.Selecting)?.selectedItems ?: setOf()
+            val modesEqual = oldMode::class == newMode::class
+            val selectedEqual =
+                ((oldSelected.contains(old[oldItemPosition]) && newSelected.contains(new[newItemPosition])) ||
+                        (!oldSelected.contains(old[oldItemPosition]) && !newSelected.contains(new[newItemPosition])))
+            return modesEqual && selectedEqual
+        }
+
+        override fun getOldListSize(): Int = old.size
+        override fun getNewListSize(): Int = new.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkNodeViewHolder {
@@ -228,8 +262,16 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
         BookmarkNodeViewHolder(view, actionEmitter, job, containerView) {
 
         override fun bind(item: BookmarkNode, mode: BookmarkState.Mode, selected: Boolean) {
-
-            bookmark_favicon.setImageResource(R.drawable.ic_folder_icon)
+            containerView?.context?.let {
+                val drawable = it.getDrawable(R.drawable.ic_folder_icon)
+                drawable?.setTint(
+                    ContextCompat.getColor(
+                        it,
+                        R.color.primary_text_light_theme
+                    )
+                )
+                bookmark_favicon.setImageDrawable(drawable)
+            }
             bookmark_favicon.visibility = View.VISIBLE
             bookmark_title.visibility = View.VISIBLE
             bookmark_url.visibility = View.GONE
@@ -330,7 +372,7 @@ class BookmarkAdapter(val emptyView: View, val actionEmitter: Observer<BookmarkA
             bookmark_title.visibility = View.GONE
             bookmark_url.visibility = View.GONE
             bookmark_overflow.increaseTapArea(bookmarkOverflowExtraDips)
-            bookmark_overflow.visibility = View.VISIBLE
+            bookmark_overflow.visibility = View.GONE
             bookmark_separator.visibility = View.VISIBLE
             bookmark_layout.isClickable = false
 

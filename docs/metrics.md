@@ -705,6 +705,192 @@ tracking_protection</td>
 </table>
 </pre>
 
+## history
+
+<pre>
+<table style="width: 100%">
+    <tr>
+        <th>key</th>
+        <th>type</th>
+        <th>description</th>
+        <th>data deview</th>
+        <th>extras</th>
+        <th>expires</th>
+    </tr>
+    <tr>
+        <td>opened</td>
+        <td>event</td>
+        <td>A user opened the history screen</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3940">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>removed</td>
+        <td>event</td>
+        <td>A user removed a history item</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3940">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>removed_all</td>
+        <td>event</td>
+        <td>A user removed all history items</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3940">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>shared</td>
+        <td>event</td>
+        <td>A user shared a history item</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3940">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>opened_item</td>
+        <td>event</td>
+        <td>A user opened a history item</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3940">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+</table>
+</pre>
+
+
+## reader_mode
+
+<pre>
+<table style="width: 100%">
+    <tr>
+        <th>key</th>
+        <th>type</th>
+        <th>description</th>
+        <th>data deview</th>
+        <th>extras</th>
+        <th>expires</th>
+    </tr>
+    <tr>
+        <td>available</td>
+        <td>event</td>
+        <td>Reader mode is available for the current page</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3941">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>opened</td>
+        <td>event</td>
+        <td>A user opened reader mode</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3941">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>appearance</td>
+        <td>event</td>
+        <td>A user tapped the appearance button</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3941">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+</table>
+</pre>
+
+## collections  
+
+<pre>  
+<table style="width: 100%">  
+    <tr>  
+        <th>key</th>  
+        <th>type</th>  
+        <th>description</th>  
+        <th>data deview</th>  
+        <th>extras</th>  
+        <th>expires</th>  
+    </tr>  
+    <tr>  
+        <td>renamed</td>  
+        <td>event</td>  
+        <td>A user renamed a collection</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>tab_restored</td>  
+        <td>event</td>  
+        <td>A user restored a tab from collection tab list</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>all_tabs_restored</td>  
+        <td>event</td>  
+        <td>A user tapped "open tabs" from collection menu</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>tab_removed</td>  
+        <td>event</td>  
+        <td>A user tapped remove tab from collection tab list</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>shared</td>  
+        <td>event</td>  
+        <td>A user tapped share collection</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>removed</td>  
+        <td>event</td>  
+        <td>A user tapped delete collection from collection menu</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>saved</td>  
+        <td>event</td>  
+        <td>A user saved a list of tabs to a new collection</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td>tabs_open: The number of tabs open in the current session
+tabs_selected: The number of tabs added to the collection
+        </td> 
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>tabs_added</td>  
+        <td>event</td>  
+        <td>A user saved a list of tabs to an existing collection</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td>tabs_open: The number of tabs open in the current session
+tabs_selected: The number of tabs added to the collection
+        </td> 
+        <td>2020-03-01</td>  
+    </tr>  
+    <tr>  
+        <td>tab_select_opened</td>  
+        <td>event</td>  
+        <td>A user opened the select tabs screen (the first step of the collection creation flow)</td>  
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/3935">link</a></td>  
+        <td></td>  
+        <td>2020-03-01</td>  
+    </tr>  
+</table>  
+</pre> 
+
 
 ## Metrics
 

@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
@@ -92,6 +93,21 @@ sealed class Event {
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
     object SyncAccountSignOut : Event()
+    object HistoryOpened : Event()
+    object HistoryItemShared : Event()
+    object HistoryItemOpened : Event()
+    object HistoryItemRemoved : Event()
+    object HistoryAllItemsRemoved : Event()
+    object ReaderModeAvailable : Event()
+    object ReaderModeOpened : Event()
+    object ReaderModeAppearanceOpened : Event()
+    object CollectionRenamed : Event()
+    object CollectionTabRestored : Event()
+    object CollectionAllTabsRestored : Event()
+    object CollectionTabRemoved : Event()
+    object CollectionShared : Event()
+    object CollectionRemoved : Event()
+    object CollectionTabSelectOpened : Event()
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(
@@ -115,6 +131,22 @@ sealed class Event {
     }
 
     // Interaction Events
+    data class CollectionSaved(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf(
+                "tabs_open" to tabsOpenCount.toString(),
+                "tabs_selected" to tabsSelectedCount.toString()
+            )
+    }
+
+    data class CollectionTabsAdded(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf(
+                "tabs_open" to tabsOpenCount.toString(),
+                "tabs_selected" to tabsSelectedCount.toString()
+            )
+    }
+
     data class LibrarySelectedItem(val item: String) : Event() {
         override val extras: Map<String, String>?
             get() = mapOf("item" to item)
@@ -171,7 +203,7 @@ sealed class Event {
                 }
 
             val countLabel: String
-                get() = "${source.searchEngine.name.toLowerCase(Locale.ROOT)}.$label"
+                get() = "${source.searchEngine.identifier.toLowerCase(Locale.ROOT)}.$label"
 
             val sourceLabel: String
                 get() = "${source.descriptor}.$label"

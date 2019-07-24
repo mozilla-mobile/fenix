@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix
 
@@ -26,7 +26,6 @@ import java.io.File
 class DebugFenixApplication : FenixApplication() {
 
     override fun onCreate() {
-        super.onCreate()
         SoLoader.init(this, false)
 
         if (FlipperUtils.shouldEnableFlipper(this)) {
@@ -39,6 +38,8 @@ class DebugFenixApplication : FenixApplication() {
                 start()
             }
         }
+
+        super.onCreate()
     }
 
     private var heapDumper: ToggleableHeapDumper? = null

@@ -1,8 +1,8 @@
-package org.mozilla.fenix.collections
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.collections
 
 import android.app.Dialog
 import android.os.Bundle
@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessioncontrol.Tab
@@ -122,6 +123,11 @@ class CreateCollectionFragment : DialogFragment() {
                         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                             context.components.core.tabCollectionStorage.createCollection(it.name, sessionBundle)
                         }
+
+                        context.components.analytics.metrics.track(
+                            Event.CollectionSaved(context.components.core.sessionManager.size, sessionBundle.size)
+                        )
+
                         closeTabsIfNecessary(it.tabs)
                     }
                 }
@@ -133,13 +139,19 @@ class CreateCollectionFragment : DialogFragment() {
                             context.components.core.tabCollectionStorage
                                 .addTabsToCollection(it.collection, sessionBundle)
                         }
+
+                        context.components.analytics.metrics.track(
+                            Event.CollectionTabsAdded(context.components.core.sessionManager.size, sessionBundle.size)
+                        )
+
                         closeTabsIfNecessary(it.tabs)
                     }
                 }
                 is CollectionCreationAction.RenameCollection -> {
                     dismiss()
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                        requireComponents.core.tabCollectionStorage.renameCollection(it.collection, it.name)
+                        context?.components?.core?.tabCollectionStorage?.renameCollection(it.collection, it.name)
+                        context?.components?.analytics?.metrics?.track(Event.CollectionRenamed)
                     }
                 }
             }

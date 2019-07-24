@@ -40,10 +40,9 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name, index_channel=None):
-        index_channel = index_channel or build_type
+    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name):
         artifacts = {
-            'public/target.{}.apk'.format(arch): {
+            'public/build/{}/target.apk'.format(arch): {
                 "type": 'file',
                 "path": '/opt/fenix/app/build/outputs/apk/'
                         '{arch}/{build_type}/app-{arch}-{build_type}-unsigned.apk'.format(arch=arch, build_type=build_type),
@@ -55,7 +54,7 @@ class TaskBuilder(object):
         if is_staging:
             secret_index = 'garbage/staging/project/mobile/fenix'
         else:
-            secret_index = 'project/mobile/fenix/{}'.format(index_channel)
+            secret_index = 'project/mobile/fenix/{}'.format(build_type)
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
@@ -65,6 +64,7 @@ class TaskBuilder(object):
                 ('sentry_dsn', '.sentry_token'),
                 ('leanplum', '.leanplum_token'),
                 ('adjust', '.adjust_token'),
+                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(build_type)),
             )
         )
 
@@ -411,7 +411,7 @@ class TaskBuilder(object):
             description='Dep-signing variant {}'.format(variant.raw),
             signing_type="dep",
             assemble_task_id=assemble_task_id,
-            apk_paths=["public/target.apk"],
+            apk_paths=[DEFAULT_APK_ARTIFACT_LOCATION],
             routes=routes,
             treeherder={
                 'groupSymbol': variant.build_type,
@@ -580,7 +580,7 @@ class TaskBuilder(object):
                         "test_packages_url": "{}/{}/artifacts/public/build/en-US/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
                         "installer_url": apk_url,
                     }),
-                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/releases/mozilla-beta",
+                    "GECKO_HEAD_REPOSITORY": "https://hg.mozilla.org/mozilla-central",
                     "GECKO_HEAD_REV": gecko_revision,
                     "MOZ_AUTOMATION": "1",
                     "MOZ_HIDE_RESULTS_TABLE": "1",
@@ -600,7 +600,7 @@ class TaskBuilder(object):
                 },
                 "mounts": [{
                     "content": {
-                        "url": "https://hg.mozilla.org/releases/mozilla-beta/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
+                        "url": "https://hg.mozilla.org/mozilla-central/raw-file/{}/taskcluster/scripts/tester/test-linux.sh".format(gecko_revision),
                     },
                     "file": "test-linux.sh",
                 }]
@@ -654,8 +654,7 @@ def schedule_task_graph(ordered_groups_of_tasks):
     return full_task_graph
 
 
-def fetch_mozharness_task_id(geckoview_beta_version):
-    raptor_index = 'gecko.v2.mozilla-beta.geckoview-version.{}.mobile.android-x86_64-beta-opt'.format(
-        geckoview_beta_version
-    )
+def fetch_mozharness_task_id():
+    # We now want to use the latest available raptor
+    raptor_index = 'gecko.v2.mozilla-central.nightly.latest.mobile.android-x86_64-opt'
     return taskcluster.Index().findTask(raptor_index)['taskId']

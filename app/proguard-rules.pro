@@ -26,6 +26,11 @@
 -dontwarn com.google.**
 -dontwarn org.mozilla.geckoview.**
 
+# Raptor now writes a *-config.yaml file to specify Gecko runtime settings (e.g. the profile dir). This
+# file gets deserialized into a DebugConfig object, which is why we need to keep this class
+# and its members.
+-keep class org.mozilla.gecko.util.DebugConfig { *; }
+
 ####################################################################################################
 # Kotlinx
 ####################################################################################################
@@ -78,3 +83,7 @@
 
 # Keep methods that are called by MotionLayout
 -keep class org.mozilla.fenix.home.SearchView { *; }
+
+# Keep motionlayout internal methods
+# https://github.com/mozilla-mobile/fenix/issues/2094
+-keep class androidx.constraintlayout.** { *; }

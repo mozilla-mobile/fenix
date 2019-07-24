@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
@@ -26,7 +26,7 @@ class PrivateBrowsingDescriptionViewHolder(
         val resources = view.context.resources
         // Format the description text to include a hyperlink
         val appName = resources.getString(R.string.app_name)
-        view.private_session_description.text = resources.getString(R.string.private_browsing_explanation, appName)
+        view.private_session_description.text = resources.getString(R.string.private_browsing_placeholder, appName)
         val descriptionText = String
             .format(view.private_session_description.text.toString(), System.getProperty("line.separator"))
         val linkStartIndex = descriptionText.indexOf("\n\n") + 2
