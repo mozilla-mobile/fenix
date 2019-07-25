@@ -23,10 +23,9 @@ interface BrowserToolbarViewInteractor {
 class BrowserToolbarView(
     private val container: ViewGroup,
     private val interactor: BrowserToolbarViewInteractor,
-    private val currentSession: Session // TODO: Is this okay to pass to the view?
+    private val currentSession: Session
 ) : LayoutContainer {
 
-    // TODO: Why is this necessary?
     override val containerView: View?
         get() = container
 

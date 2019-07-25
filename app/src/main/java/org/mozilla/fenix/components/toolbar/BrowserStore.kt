@@ -24,8 +24,6 @@ data class BrowserState(
 
 sealed class BrowserAction : Action
 
-// TODO: Ughhh this has to be in the same file as the BrowserAction definition is that fine?
-// TODO: This is because sealed classes have `private init`
 /**
  * Actions to dispatch through the [QuickActionSheetStore] to modify [QuickActionSheetState] through the reducer.
  */
@@ -40,8 +38,8 @@ sealed class QuickActionSheetAction : BrowserAction() {
 /**
  * Reducers for [BrowserStore].
  *
- * A reducer is a function that receives the current [BrowserState] and an [Action] and then returns a new
- * [BrowserState].
+ * A top level reducer that receives the current [BrowserState] and an [Action] and then delegates to the proper child
+ *
  */
 fun browserStateReducer(
     state: BrowserState,
@@ -53,7 +51,6 @@ fun browserStateReducer(
         }
     }
 }
-
 
 /**
  * Reduces [QuickActionSheetAction]s to update [BrowserState].

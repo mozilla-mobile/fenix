@@ -76,8 +76,10 @@ class DefaultBrowserToolbarController(
                 R.id.browserFragment,
                 BrowserFragmentDirections.actionBrowserFragmentToLibraryFragment()
             )
-            is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(item.isChecked, currentSession)
-
+            is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(
+                item.isChecked,
+                currentSession
+            )
             ToolbarMenu.Item.Share -> {
                 currentSession.url.apply {
                     val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(this)
@@ -164,7 +166,12 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.Settings -> Event.BrowserMenuItemTapped.Item.SETTINGS
             ToolbarMenu.Item.Library -> Event.BrowserMenuItemTapped.Item.LIBRARY
             is ToolbarMenu.Item.RequestDesktop ->
-                if (item.isChecked) Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_ON else Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_OFF
+                if (item.isChecked) {
+                    Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_ON
+                } else {
+                    Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_OFF
+                }
+
             ToolbarMenu.Item.NewPrivateTab -> Event.BrowserMenuItemTapped.Item.NEW_PRIVATE_TAB
             ToolbarMenu.Item.FindInPage -> Event.BrowserMenuItemTapped.Item.FIND_IN_PAGE
             ToolbarMenu.Item.ReportIssue -> Event.BrowserMenuItemTapped.Item.REPORT_SITE_ISSUE

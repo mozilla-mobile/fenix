@@ -7,13 +7,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
 import org.junit.Test
 
-import org.junit.Assert.*
-import org.mozilla.fenix.components.Analytics
-import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.components.Core
+import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
@@ -105,41 +101,22 @@ class BrowserInteractorTest {
 
     @Test
     fun onQuickActionSheetSharePressed() {
-        // TODO: I got rid of the shareUrl function passed in so I can't easily test this...?
         val context: Context = mockk()
         val session: Session = mockk()
-        var selectedSessionUrl = ""
-        val metrics: MetricController = mockk()
+        val quickActionSheetController: QuickActionSheetController = mockk(relaxed = true)
 
         val interactor = BrowserInteractor(
             context,
             mockk(),
             mockk(),
-            mockk(),
+            quickActionSheetController,
             mockk(),
             session
         )
 
-        val components: Components = mockk()
-        val core: Core = mockk()
-        val sessionManager: SessionManager = mockk()
-
-        val analytics: Analytics = mockk()
-
-        every { session.url } returns "mozilla.org"
-        every { context.components } returns components
-        every { components.analytics } returns analytics
-        every { metrics.track(Event.QuickActionSheetShareTapped) } just Runs
-        // Since we are mocking components, we must manually define metrics as `analytics.metrics`
-        every { analytics.metrics } returns metrics
-        every { components.core } returns core
-        every { core.sessionManager } returns sessionManager
-        every { sessionManager.selectedSession } returns session
-
         interactor.onQuickActionSheetSharePressed()
 
-        verify { metrics.track(Event.QuickActionSheetShareTapped) }
-        assertEquals("mozilla.org", selectedSessionUrl)
+        verify { quickActionSheetController.handleShare() }
     }
 
     @Test
@@ -165,7 +142,6 @@ class BrowserInteractorTest {
         verify { quickActionSheetController.handleDownload() }
     }
 
-
     @Test
     fun onQuickActionSheetBookmarkPressed() {
         val context: Context = mockk()
@@ -186,7 +162,6 @@ class BrowserInteractorTest {
         verify { quickActionSheetController.handleBookmark() }
     }
 
-    /*
     @Test
     fun onQuickActionSheetReadPressed() {
         val context: Context = mockk()
@@ -196,12 +171,10 @@ class BrowserInteractorTest {
         val browserStore: BrowserStore = mockk(relaxed = true)
         val interactor = BrowserInteractor(
             context,
-            mockk(),
             browserStore,
             mockk(),
+            mockk(),
             readerModeController,
-            mockk(),
-            mockk(),
             session
         )
 
@@ -226,12 +199,10 @@ class BrowserInteractorTest {
 
         val interactor = BrowserInteractor(
             context,
-            mockk(),
             browserStore,
             mockk(),
+            mockk(),
             readerModeController,
-            mockk(),
-            mockk(),
             session
         )
 
@@ -250,34 +221,20 @@ class BrowserInteractorTest {
     fun onQuickActionSheetOpenLinkPressed() {
         val context: Context = mockk()
         val session: Session = mockk()
-        val appLinksUseCases: AppLinksUseCases = mockk()
+        val quickActionSheetController: QuickActionSheetController = mockk(relaxed = true)
 
         val interactor = BrowserInteractor(
             context,
             mockk(),
             mockk(),
+            quickActionSheetController,
             mockk(),
-            mockk(),
-            mockk(),
-            appLinksUseCases,
             session
         )
 
-        every { context.components.core.sessionManager.selectedSession } returns session
-        every { session.url } returns "mozilla.org"
-
-        val getAppLinkRedirect: AppLinksUseCases.GetAppLinkRedirect = mockk()
-        val appLinkRedirect: AppLinkRedirect = mockk()
-        val openAppLink: AppLinksUseCases.OpenAppLinkRedirect = mockk(relaxed = true)
-
-        every { appLinksUseCases.appLinkRedirect } returns getAppLinkRedirect
-        every { getAppLinkRedirect.invoke("mozilla.org") } returns appLinkRedirect
-        every { appLinksUseCases.openAppLink } returns openAppLink
-        every { appLinkRedirect.appIntent } returns mockk(relaxed = true)
-
         interactor.onQuickActionSheetOpenLinkPressed()
 
-        verify { openAppLink.invoke(appLinkRedirect) }
+        verify { quickActionSheetController.handleOpenLink() }
     }
 
     @Test
@@ -291,8 +248,6 @@ class BrowserInteractorTest {
             mockk(),
             mockk(),
             readerModeController,
-            mockk(),
-            mockk(),
             mockk()
         )
 
@@ -300,5 +255,4 @@ class BrowserInteractorTest {
 
         verify { readerModeController.showControls() }
     }
-    */
 }

@@ -5,19 +5,12 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
-import android.content.Intent
-import androidx.navigation.NavController
 import mozilla.components.browser.session.Session
-import mozilla.components.feature.app.links.AppLinksUseCases
-import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.metrics
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetViewInteractor
-import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
 class BrowserInteractor(
     private val context: Context,
@@ -68,7 +61,7 @@ class BrowserInteractor(
     }
 
     override fun onQuickActionSheetOpenLinkPressed() {
-       quickActionSheetController.handleOpenLink()
+        quickActionSheetController.handleOpenLink()
     }
 
     override fun onQuickActionSheetAppearancePressed() {

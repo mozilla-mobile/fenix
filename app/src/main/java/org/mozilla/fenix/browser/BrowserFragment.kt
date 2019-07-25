@@ -80,7 +80,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 import org.mozilla.fenix.utils.Settings
 import java.net.MalformedURLException
