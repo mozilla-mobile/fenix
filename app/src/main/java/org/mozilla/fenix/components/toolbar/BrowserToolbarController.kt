@@ -29,7 +29,7 @@ import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
 
 /**
- * An interface that exposes the hide and show reader view functions of a ReaderViewFeature
+ * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
  */
 interface BrowserToolbarController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)

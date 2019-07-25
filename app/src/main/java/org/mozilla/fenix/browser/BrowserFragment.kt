@@ -760,6 +760,11 @@ class BrowserFragment : Fragment(), BackHandler {
         }
     }
 
+    private fun shareUrl(url: String) {
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(url = url)
+        nav(R.id.browserFragment, directions)
+    }
+
     companion object {
         private const val SHARED_TRANSITION_MS = 200L
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
