@@ -35,7 +35,6 @@ import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -45,6 +44,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.DownloadsFeature
+import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.IntentProcessor
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -85,6 +85,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.components.toolbar.ToolbarUIView
 import org.mozilla.fenix.components.toolbar.ToolbarViewModel
 import org.mozilla.fenix.customtabs.CustomTabsIntegration
+import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.nav
@@ -209,10 +210,11 @@ class BrowserFragment : Fragment(), BackHandler {
 
         downloadsFeature.set(
             feature = DownloadsFeature(
-                requireContext(),
+                requireContext().applicationContext,
                 sessionManager = sessionManager,
                 fragmentManager = childFragmentManager,
                 sessionId = customTabSessionId,
+                downloadManager = FetchDownloadManager(requireContext().applicationContext, DownloadService::class),
                 onNeedToRequestPermissions = { permissions ->
                     requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
                 }),

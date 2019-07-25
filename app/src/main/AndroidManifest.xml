@@ -108,6 +108,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".downloads.DownloadService" />
+
         <service
             android:name=".components.FirebasePush"
             android:exported="false">
