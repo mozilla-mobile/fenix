@@ -79,6 +79,8 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
+import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
+import org.mozilla.fenix.quickactionsheet.QuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 import org.mozilla.fenix.utils.Settings
 import java.net.MalformedURLException
@@ -170,7 +172,6 @@ class BrowserFragment : Fragment(), BackHandler {
 
         browserInteractor = BrowserInteractor(
             context = context!!,
-            navController = findNavController(),
             store = browserStore,
             browserToolbarController = DefaultBrowserToolbarController(
                 context!!,
@@ -181,11 +182,16 @@ class BrowserFragment : Fragment(), BackHandler {
                 currentSession = getSessionById() ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
                 viewModel = viewModel
             ),
+            quickActionSheetController = DefaultQuickActionSheetController(
+                context = context!!,
+                navController = findNavController(),
+                currentSession = getSessionById() ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
+                appLinksUseCases = requireComponents.useCases.appLinksUseCases,
+                bookmarkTapped = {
+                    lifecycleScope.launch { bookmarkTapped(it) }
+                }
+            ),
             readerModeController = DefaultReaderModeController(readerViewFeature),
-            bookmarkTapped = {
-                lifecycleScope.launch { bookmarkTapped(it) }
-            },
-            appLinksUseCases = requireComponents.useCases.appLinksUseCases,
             currentSession = getSessionById() ?: requireComponents.core.sessionManager.selectedSessionOrThrow
         )
 

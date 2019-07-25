@@ -6,15 +6,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.feature.app.links.AppLinkRedirect
-import mozilla.components.feature.app.links.AppLinksUseCases
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
@@ -22,20 +18,19 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.quickactionsheet.QuickActionSheetController
 
 class BrowserInteractorTest {
 
     @Test
     fun onBrowserToolbarClicked() {
         val context: Context = mockk()
-        val controller: BrowserToolbarController = mockk(relaxed = true)
+        val browserToolbarController: BrowserToolbarController = mockk(relaxed = true)
 
         val interactor = BrowserInteractor(
             context,
             mockk(),
-            mockk(),
-            controller,
-            mockk(),
+            browserToolbarController,
             mockk(),
             mockk(),
             mockk()
@@ -43,21 +38,19 @@ class BrowserInteractorTest {
 
         interactor.onBrowserToolbarClicked()
 
-        verify { controller.handleToolbarClick() }
+        verify { browserToolbarController.handleToolbarClick() }
     }
 
     @Test
     fun onBrowserToolbarMenuItemTapped() {
         val context: Context = mockk()
-        val controller: BrowserToolbarController = mockk(relaxed = true)
+        val browserToolbarController: BrowserToolbarController = mockk(relaxed = true)
         val item: ToolbarMenu.Item = mockk()
 
         val interactor = BrowserInteractor(
             context,
             mockk(),
-            mockk(),
-            controller,
-            mockk(),
+            browserToolbarController,
             mockk(),
             mockk(),
             mockk()
@@ -65,7 +58,7 @@ class BrowserInteractorTest {
 
         interactor.onBrowserToolbarMenuItemTapped(item)
 
-        verify { controller.handleToolbarItemInteraction(item) }
+        verify { browserToolbarController.handleToolbarItemInteraction(item) }
     }
 
     @Test
@@ -74,8 +67,6 @@ class BrowserInteractorTest {
         val metrics: MetricController = mockk()
         val interactor = BrowserInteractor(
             context,
-            mockk(),
-            mockk(),
             mockk(),
             mockk(),
             mockk(),
@@ -101,8 +92,6 @@ class BrowserInteractorTest {
             mockk(),
             mockk(),
             mockk(),
-            mockk(),
-            mockk(),
             mockk()
         )
 
@@ -124,8 +113,6 @@ class BrowserInteractorTest {
 
         val interactor = BrowserInteractor(
             context,
-            mockk(),
-            mockk(),
             mockk(),
             mockk(),
             mockk(),
@@ -159,13 +146,13 @@ class BrowserInteractorTest {
     fun onQuickActionSheetDownloadPressed() {
         val context: Context = mockk()
         val metrics: MetricController = mockk()
+        val quickActionSheetController: QuickActionSheetController = mockk(relaxed = true)
+
         val interactor = BrowserInteractor(
             context,
             mockk(),
             mockk(),
-            mockk(),
-            mockk(),
-            mockk(),
+            quickActionSheetController,
             mockk(),
             mockk()
         )
@@ -175,49 +162,31 @@ class BrowserInteractorTest {
 
         interactor.onQuickActionSheetDownloadPressed()
 
-        verify { metrics.track(Event.QuickActionSheetDownloadTapped) }
+        verify { quickActionSheetController.handleDownload() }
     }
+
 
     @Test
     fun onQuickActionSheetBookmarkPressed() {
         val context: Context = mockk()
         val session: Session = mockk()
-        var bookmarkedSession: Session? = null
+        val quickActionSheetController: QuickActionSheetController = mockk(relaxed = true)
 
-        val metrics: MetricController = mockk()
         val interactor = BrowserInteractor(
             context,
             mockk(),
             mockk(),
-            mockk(),
-            mockk(),
-            { bookmarkedSession = it },
+            quickActionSheetController,
             mockk(),
             session
         )
 
-        val components: Components = mockk()
-        val core: Core = mockk()
-        val sessionManager: SessionManager = mockk()
-
-        val analytics: Analytics = mockk()
-
-        every { session.url } returns "mozilla.org"
-        every { context.components } returns components
-        every { components.analytics } returns analytics
-        every { metrics.track(Event.QuickActionSheetBookmarkTapped) } just Runs
-        // Since we are mocking components, we must manually define metrics as `analytics.metrics`
-        every { analytics.metrics } returns metrics
-        every { components.core } returns core
-        every { core.sessionManager } returns sessionManager
-        every { sessionManager.selectedSession } returns session
-
         interactor.onQuickActionSheetBookmarkPressed()
 
-        verify { metrics.track(Event.QuickActionSheetBookmarkTapped) }
-        assertEquals("mozilla.org", bookmarkedSession?.url)
+        verify { quickActionSheetController.handleBookmark() }
     }
 
+    /*
     @Test
     fun onQuickActionSheetReadPressed() {
         val context: Context = mockk()
@@ -331,4 +300,5 @@ class BrowserInteractorTest {
 
         verify { readerModeController.showControls() }
     }
+    */
 }

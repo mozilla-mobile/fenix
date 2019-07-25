@@ -15,17 +15,16 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.quickactionsheet.QuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetViewInteractor
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
 class BrowserInteractor(
     private val context: Context,
-    private val navController: NavController,
     private val store: BrowserStore,
     private val browserToolbarController: BrowserToolbarController,
+    private val quickActionSheetController: QuickActionSheetController,
     private val readerModeController: ReaderModeController,
-    private val bookmarkTapped: (Session) -> Unit,
-    private val appLinksUseCases: AppLinksUseCases,
     private val currentSession: Session
 ) : BrowserToolbarViewInteractor, QuickActionSheetViewInteractor {
 
@@ -46,21 +45,15 @@ class BrowserInteractor(
     }
 
     override fun onQuickActionSheetSharePressed() {
-        context.metrics.track(Event.QuickActionSheetShareTapped)
-        currentSession.url.let {
-            val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(it)
-            navController.nav(R.id.browserFragment, directions)
-        }
+        quickActionSheetController.handleShare()
     }
 
     override fun onQuickActionSheetDownloadPressed() {
-        context.metrics.track(Event.QuickActionSheetDownloadTapped)
-        ItsNotBrokenSnack(context).showSnackbar(issueNumber = "348")
+        quickActionSheetController.handleDownload()
     }
 
     override fun onQuickActionSheetBookmarkPressed() {
-        context.metrics.track(Event.QuickActionSheetBookmarkTapped)
-        currentSession.let(bookmarkTapped)
+        quickActionSheetController.handleBookmark()
     }
 
     override fun onQuickActionSheetReadPressed() {
@@ -75,13 +68,7 @@ class BrowserInteractor(
     }
 
     override fun onQuickActionSheetOpenLinkPressed() {
-        val getRedirect = appLinksUseCases.appLinkRedirect
-        val redirect = currentSession.let {
-            getRedirect.invoke(it.url)
-        }
-
-        redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        appLinksUseCases.openAppLink.invoke(redirect)
+       quickActionSheetController.handleOpenLink()
     }
 
     override fun onQuickActionSheetAppearancePressed() {
