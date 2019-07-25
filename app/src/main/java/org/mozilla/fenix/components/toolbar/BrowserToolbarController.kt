@@ -20,7 +20,6 @@ import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.getStepForCollectionsSize
-import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -40,7 +39,7 @@ interface BrowserToolbarController {
 class DefaultBrowserToolbarController(
     private val context: Context,
     private val navController: NavController,
-    private val findInPageIntegration: () -> FindInPageIntegration?,
+    private val findInPageLauncher: () -> Unit,
     private val nestedScrollQuickActionView: NestedScrollView,
     private val engineView: EngineView,
     private val currentSession: Session,
@@ -58,7 +57,7 @@ class DefaultBrowserToolbarController(
             )
         )
     }
-    // This method triggers the complexity warning. However it's actually not that hard to understand.
+
     @SuppressWarnings("ComplexMethod")
     override fun handleToolbarItemInteraction(item: ToolbarMenu.Item) {
         val sessionUseCases = context.components.useCases.sessionUseCases
@@ -92,13 +91,10 @@ class DefaultBrowserToolbarController(
                 (context as HomeActivity).browsingModeManager.mode = BrowsingModeManager.Mode.Private
             }
             ToolbarMenu.Item.FindInPage -> {
-                // TODO: this one also seems a bit complicated, should a helper method be passed by BrowserFragment?
-                // Tbh my opinion is "NO" since the controller is already one layer of abstraction above the interactor, it feels weird to have it abstracted in a SECOND place.
-                // The BrowserFragment shouldn't care about this!
                 (BottomSheetBehavior.from(nestedScrollQuickActionView) as QuickActionSheetBehavior).apply {
                     state = BottomSheetBehavior.STATE_COLLAPSED
                 }
-                findInPageIntegration()?.launch()
+                findInPageLauncher()
                 context.components.analytics.metrics.track(Event.FindInPageOpened)
             }
             ToolbarMenu.Item.ReportIssue -> {
@@ -123,9 +119,7 @@ class DefaultBrowserToolbarController(
                     BrowsingModeManager.Mode.Normal
             }
             ToolbarMenu.Item.SaveToCollection -> {
-                // TODO: It's possible this should be handled directly here, but it requires ViewModel stuff
-                // TODO: Would have to pass in viewModel
-                currentSession?.let {
+                currentSession.let {
                     val tab = it.toTab(context)
                     viewModel.tabs = listOf(tab)
                     val selectedSet = mutableSetOf(tab)
@@ -160,7 +154,6 @@ class DefaultBrowserToolbarController(
         }
     }
 
-    // This method triggers the complexity warning. However it's actually not that hard to understand.
     @SuppressWarnings("ComplexMethod")
     private fun trackToolbarItemInteraction(item: ToolbarMenu.Item) {
         val eventItem = when (item) {

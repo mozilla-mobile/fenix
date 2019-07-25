@@ -60,29 +60,25 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.collections.SaveCollectionStep
-import org.mozilla.fenix.collections.getStepForCollectionsSize
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.toolbar.BrowserAction
 import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserState
 import org.mozilla.fenix.components.toolbar.BrowserStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
+import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabsIntegration
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 import org.mozilla.fenix.utils.Settings
 import java.net.MalformedURLException
@@ -179,8 +175,7 @@ class BrowserFragment : Fragment(), BackHandler {
             browserToolbarController = DefaultBrowserToolbarController(
                 context!!,
                 findNavController(),
-                // Pass in a reference to the findInPageIntegration rather than its uninitialized value
-                findInPageIntegration = findInPageIntegration::get,
+                findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 nestedScrollQuickActionView = nestedScrollQuickAction,
                     engineView = engineView,
                 currentSession = getSessionById() ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
@@ -386,8 +381,8 @@ class BrowserFragment : Fragment(), BackHandler {
                 if (available) { requireComponents.analytics.metrics.track(Event.ReaderModeAvailable) }
 
                 browserStore.apply {
-                    dispatch(BrowserAction.ReadableStateChange(available))
-                    dispatch(BrowserAction.ReaderActiveStateChange(
+                    dispatch(QuickActionSheetAction.ReadableStateChange(available))
+                    dispatch(QuickActionSheetAction.ReaderActiveStateChange(
                         sessionManager.selectedSession?.readerMode ?: false
                     ))
                 }
@@ -543,7 +538,7 @@ class BrowserFragment : Fragment(), BackHandler {
 
             withContext(Main) {
                 browserStore.dispatch(
-                    BrowserAction.BookmarkedStateChange(bookmarked = true)
+                    QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
                 )
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
 
@@ -695,7 +690,7 @@ class BrowserFragment : Fragment(), BackHandler {
             override fun onLoadingStateChanged(session: Session, loading: Boolean) {
                 if (!loading) {
                     updateBookmarkState(session)
-                    browserStore.dispatch(BrowserAction.BounceNeededChange)
+                    browserStore.dispatch(QuickActionSheetAction.BounceNeededChange)
                 }
             }
 
@@ -735,7 +730,7 @@ class BrowserFragment : Fragment(), BackHandler {
         findBookmarkJob = lifecycleScope.launch(IO) {
             val found = findBookmarkedURL(session)
             withContext(Main) {
-                browserStore.dispatch(BrowserAction.BookmarkedStateChange(found))
+                browserStore.dispatch(QuickActionSheetAction.BookmarkedStateChange(found))
             }
         }
     }
@@ -743,7 +738,7 @@ class BrowserFragment : Fragment(), BackHandler {
     private fun updateAppLinksState(session: Session) {
         val url = session.url
         val appLinks = requireComponents.useCases.appLinksUseCases.appLinkRedirect
-        browserStore.dispatch(BrowserAction.AppLinkStateChange(appLinks.invoke(url).hasExternalApp()))
+        browserStore.dispatch(QuickActionSheetAction.AppLinkStateChange(appLinks.invoke(url).hasExternalApp()))
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {

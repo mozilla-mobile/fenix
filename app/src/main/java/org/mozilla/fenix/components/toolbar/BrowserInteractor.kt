@@ -29,7 +29,6 @@ class BrowserInteractor(
     private val currentSession: Session
 ) : BrowserToolbarViewInteractor, QuickActionSheetViewInteractor {
 
-    // TODO: Is it reasonable for my toolbar interactor to be this "dumb"?
     override fun onBrowserToolbarClicked() {
         browserToolbarController.handleToolbarClick()
     }
@@ -66,13 +65,13 @@ class BrowserInteractor(
 
     override fun onQuickActionSheetReadPressed() {
         context.metrics.track(Event.QuickActionSheetReadTapped)
-        val enabled = currentSession.readerMode ?: false
+        val enabled = currentSession.readerMode
         if (enabled) {
             readerModeController.hideReaderView()
         } else {
             readerModeController.showReaderView()
         }
-        store.dispatch(BrowserAction.ReaderActiveStateChange(!enabled))
+        store.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
     }
 
     override fun onQuickActionSheetOpenLinkPressed() {
