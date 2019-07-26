@@ -22,7 +22,7 @@ import org.mozilla.fenix.search.toolbar.ToolbarInteractor
 
 /**
  * Interactor for the search screen
- * Provides implementations for the AwesomeBarView and BrowserToolbarView??? <- TODO?
+ * Provides implementations for the AwesomeBarView and ToolbarView
  */
 class SearchInteractor(
     private val context: Context,
