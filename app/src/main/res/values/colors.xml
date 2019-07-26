@@ -13,6 +13,7 @@
     <color name="accent_light_theme">#312A65</color>
     <color name="accent_bright_light_theme">#592ACB</color>
     <color name="accent_high_contrast_light_theme">@color/accent_light_theme</color>
+    <color name="tab_ring_light_theme">@color/accent_light_theme</color>
     <color name="neutral_light_theme">@color/photonGrey30</color>
     <color name="neutral_faded_light_theme">@color/photonGrey20</color>
     <color name="shadow_light_theme">#1F000000</color>
@@ -29,13 +30,14 @@
     <!-- Dark theme color palette -->
     <color name="primary_text_dark_theme">#FBFBFE</color>
     <color name="secondary_text_dark_theme">#A7A2B7</color>
-    <color name="contrast_text_dark_theme">@color/primary_text_light_theme</color>
+    <color name="contrast_text_dark_theme">@color/primary_text_dark_theme</color>
     <color name="foundation_dark_theme">#1C1B22</color>
     <color name="inset_dark_theme">#3F3E46</color>
     <color name="above_dark_theme">#32313C</color>
-    <color name="accent_dark_theme">#E6E6EA</color>
+    <color name="accent_dark_theme">#9059FF</color>
     <color name="accent_bright_dark_theme">#592ACB</color>
     <color name="accent_high_contrast_dark_theme">#AB71FF</color>
+    <color name="tab_ring_dark_theme">@color/accent_dark_theme</color>
     <color name="neutral_dark_theme">@color/photonGrey20</color>
     <color name="neutral_faded_dark_theme">#1FEDEDF0</color>
     <color name="shadow_dark_theme">#050505</color>
@@ -52,13 +54,14 @@
     <!-- Private theme color palette -->
     <color name="primary_text_private_theme">#FBFBFE</color>
     <color name="secondary_text_private_theme">#A7A2B7</color>
-    <color name="contrast_text_private_theme">@color/primary_text_light_theme</color>
+    <color name="contrast_text_private_theme">@color/primary_text_private_theme</color>
     <color name="foundation_private_theme">#1D1133</color>
     <color name="inset_private_theme">#362A5C</color>
     <color name="above_private_theme">#291D4F</color>
-    <color name="accent_private_theme">#E6E6EA</color>
-    <color name="accent_bright_private_theme">#AA71FF</color>
+    <color name="accent_private_theme">#9059FF</color>
+    <color name="accent_bright_private_theme">#592ACB</color>
     <color name="accent_high_contrast_private_theme">#AA71FF</color>
+    <color name="tab_ring_private_theme">#F565FF</color>
     <color name="neutral_private_theme">@color/photonGrey20</color>
     <color name="neutral_faded_private_theme">#1FEDEDF0</color>
     <color name="shadow_private_theme">#2B1067</color>
@@ -79,6 +82,7 @@
     <color name="accent_normal_theme">@color/accent_light_theme</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_light_theme</color>
     <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_light_theme</color>
+    <color name="tab_ring_normal_theme">@color/tab_ring_light_theme</color>
     <color name="neutral_normal_theme">@color/neutral_light_theme</color>
     <color name="neutral_faded_normal_theme">@color/neutral_faded_light_theme</color>
     <color name="shadow_normal_theme">@color/shadow_light_theme</color>
@@ -98,6 +102,13 @@
     <color name="collection_icon_color_pink">@color/collection_icon_color_pink_light_theme</color>
     <color name="collection_icon_color_green">@color/collection_icon_color_green_light_theme</color>
     <color name="collection_icon_color_yellow">@color/collection_icon_color_yellow_light_theme</color>
+    <array name="collection_icon_colors">
+        <item>@color/collection_icon_color_violet</item>
+        <item>@color/collection_icon_color_blue</item>
+        <item>@color/collection_icon_color_pink</item>
+        <item>@color/collection_icon_color_green</item>
+        <item>@color/collection_icon_color_yellow</item>
+    </array>
 
     <!-- Library buttons -->
     <color name="library_sessions_icon_background">#B9F0FD</color>
@@ -108,6 +119,9 @@
 
     <color name="library_downloads_icon_background">#D4C1FA</color>
     <color name="library_downloads_icon">#2E2060</color>
+
+    <color name="library_app_links_icon_background">#E0E0E6</color>
+    <color name="library_app_links_icon">#20123A</color>
 
     <color name="bookmarks_icon_background_filled">#C60084</color>
     <color name="bookmarks_icon_filled">#FFB4DB</color>

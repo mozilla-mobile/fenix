@@ -19,14 +19,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
-import mozilla.components.lib.state.Store
 import mozilla.components.lib.state.ext.observe
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
@@ -72,21 +72,20 @@ class SearchFragment : Fragment(), BackHandler {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url ?: ""
 
-        searchStore = StoreProvider.get(
-            this,
-            Store(
+        searchStore = StoreProvider.get(this) {
+            SearchStore(
                 SearchState(
-                query = url,
-                showShortcutEnginePicker = false,
-                searchEngineSource = SearchEngineSource.Default(
-                    requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
-                ),
-                showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
-                showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks,
-                session = session),
-                ::searchStateReducer
+                    query = url,
+                    showShortcutEnginePicker = false,
+                    searchEngineSource = SearchEngineSource.Default(
+                        requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
+                    ),
+                    showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
+                    showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks,
+                    session = session
+                )
             )
-        )
+        }
 
         searchInteractor = SearchInteractor(
             activity as HomeActivity,
@@ -168,12 +167,14 @@ class SearchFragment : Fragment(), BackHandler {
         }
 
         searchStore.observe(view) {
-            MainScope().launch {
-                awesomeBarView.update(it)
-                toolbarView.update(it)
-                updateSearchEngineIcon(it)
-                updateSearchShortuctsIcon(it)
-                updateSearchWithLabel(it)
+            viewLifecycleOwner.lifecycleScope.launch {
+                whenStarted {
+                    awesomeBarView.update(it)
+                    toolbarView.update(it)
+                    updateSearchEngineIcon(it)
+                    updateSearchShortuctsIcon(it)
+                    updateSearchWithLabel(it)
+                }
             }
         }
 
@@ -224,7 +225,7 @@ class SearchFragment : Fragment(), BackHandler {
             val showShortcuts = searchState.showShortcutEnginePicker
             search_shortcuts_button?.isChecked = showShortcuts
 
-            val color = if (showShortcuts) R.attr.foundation else R.attr.primaryText
+            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
 
             search_shortcuts_button.compoundDrawables[0]?.setTint(
                 ContextCompat.getColor(

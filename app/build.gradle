@@ -259,14 +259,6 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
         println("X_X")
     }
-
-// -------------------------------------------------------------------------------------------------
-// Feature build flags
-// -------------------------------------------------------------------------------------------------
-    // NB: flipping SEND_TAB_ENABLED flag back and worth is currently not well supported and may need hand-holding.
-    // Consult with the android-components peers before changing.
-    buildConfigField 'Boolean', 'SEND_TAB_ENABLED', (buildType == "nightly" || isDebug).toString()
-    buildConfigField 'Boolean', 'PULL_TO_REFRESH_ENABLED', (false).toString()
 }
 
 androidExtensions {
@@ -420,9 +412,7 @@ dependencies {
     testImplementation Deps.mockito_core
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
-
-    implementation Deps.glide
-    annotationProcessor Deps.glideAnnotationProcessor
+    testImplementation Deps.assertk
 
     debugImplementation Deps.flipper
     debugImplementation Deps.soLoader
@@ -446,13 +436,17 @@ task printBuildVariants {
 
 task printGeckoviewVersions {
     doLast {
-        println "beta: " + groovy.json.JsonOutput.toJson(GeckoVersions.beta_version)
+        println "release: " + groovy.json.JsonOutput.toJson(GeckoVersions.release_version)
     }
 }
 
-// Normally this should use the same version as the glean dependency. But since we are currently using AC snapshots we
-// can't reference a git tag with a specific version here. So we are just using "master" and hoping for the best.
-apply from: 'https://github.com/mozilla-mobile/android-components/raw/master/components/service/glean/scripts/sdk_generator.gradle'
+def glean_android_components_tag = (
+    Versions.mozilla_android_components.endsWith('-SNAPSHOT') ?
+        'master' :
+        'v' + Versions.mozilla_android_components
+)
+
+apply from: 'https://github.com/mozilla-mobile/android-components/raw/' + glean_android_components_tag + '/components/service/glean/scripts/sdk_generator.gradle'
 
 // For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together
 // into a single "megazord" build, and different megazords are published for different subsets of features.
