@@ -185,11 +185,11 @@ class QuickActionInteractorTest {
         every { context.metrics } returns metrics
         every { context.components.core.sessionManager.selectedSession } returns session
         every { session.readerMode } returns false
-        every { metrics.track(Event.QuickActionSheetReadTapped) } just Runs
+        every { metrics.track(Event.QuickActionSheetOpened) } just Runs
 
         interactor.onReadPressed()
 
-        verify { metrics.track(Event.QuickActionSheetReadTapped) }
+        verify { metrics.track(Event.QuickActionSheetOpened) }
         verify { readerModeController.showReaderView() }
     }
 
@@ -213,27 +213,31 @@ class QuickActionInteractorTest {
         every { context.metrics } returns metrics
         every { context.components.core.sessionManager.selectedSession } returns session
         every { session.readerMode } returns true
-        every { metrics.track(Event.QuickActionSheetReadTapped) } just Runs
+        every { metrics.track(Event.QuickActionSheetClosed) } just Runs
 
         interactor.onReadPressed()
 
-        verify { metrics.track(Event.QuickActionSheetReadTapped) }
+        verify { metrics.track(Event.QuickActionSheetClosed) }
         verify { readerModeController.hideReaderView() }
     }
 
     @Test
     fun onAppearancePressed() {
         val context: Context = mockk()
+        val metrics: MetricController = mockk()
         val readerModeController: ReaderModeController = mockk(relaxed = true)
+        val quickActionSheetStore: QuickActionSheetStore = mockk(relaxed = true)
 
         val interactor = QuickActionInteractor(
             context,
             readerModeController,
-            mockk(),
+            quickActionSheetStore,
             mockk(),
             mockk(),
             mockk()
         )
+        every { context.metrics } returns metrics
+        every { metrics.track(Event.ReaderModeAppearanceOpened) } just Runs
 
         interactor.onAppearancePressed()
 

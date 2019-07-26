@@ -60,11 +60,12 @@ class QuickActionInteractor(
 
     @CallSuper
     override fun onReadPressed() {
-        context.metrics.track(Event.QuickActionSheetReadTapped)
         val enabled = selectedSession?.readerMode ?: false
         if (enabled) {
+            context.metrics.track(Event.QuickActionSheetClosed)
             readerModeController.hideReaderView()
         } else {
+            context.metrics.track(Event.QuickActionSheetOpened)
             readerModeController.showReaderView()
         }
         quickActionStore.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
@@ -83,7 +84,7 @@ class QuickActionInteractor(
 
     @CallSuper
     override fun onAppearancePressed() {
-        // TODO telemetry: https://github.com/mozilla-mobile/fenix/issues/2267
+        context.metrics.track(Event.ReaderModeAppearanceOpened)
         readerModeController.showControls()
     }
 }
