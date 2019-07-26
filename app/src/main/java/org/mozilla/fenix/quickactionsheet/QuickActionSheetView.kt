@@ -110,26 +110,27 @@ class QuickActionSheetView(
     }
 
     fun update(state: BrowserState) {
-        view.quick_action_read.isVisible = state.readable
-        view.quick_action_read.isSelected = state.readerActive
+        val quickActionSheetState = state.quickActionSheetState
+        view.quick_action_read.isVisible = quickActionSheetState.readable
+        view.quick_action_read.isSelected = quickActionSheetState.readerActive
         view.quick_action_read.text = view.context.getString(
-            if (state.readerActive) R.string.quick_action_read_close else R.string.quick_action_read
+            if (quickActionSheetState.readerActive) R.string.quick_action_read_close else R.string.quick_action_read
         )
-        notifyReaderModeButton(state.readable)
+        notifyReaderModeButton(quickActionSheetState.readable)
 
-        view.quick_action_appearance.isVisible = state.readerActive
+        view.quick_action_appearance.isVisible = quickActionSheetState.readerActive
 
-        view.quick_action_bookmark.isSelected = state.bookmarked
+        view.quick_action_bookmark.isSelected = quickActionSheetState.bookmarked
         view.quick_action_bookmark.text = view.context.getString(
-            if (state.bookmarked) R.string.quick_action_bookmark_edit else R.string.quick_action_bookmark
+            if (quickActionSheetState.bookmarked) R.string.quick_action_bookmark_edit else R.string.quick_action_bookmark
         )
 
-        if (state.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
+        if (quickActionSheetState.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
             quickActionSheet.bounceSheet()
         }
 
         view.quick_action_open_app_link.apply {
-            visibility = if (state.isAppLink) View.VISIBLE else View.GONE
+            visibility = if (quickActionSheetState.isAppLink) View.VISIBLE else View.GONE
         }
     }
 

@@ -71,6 +71,7 @@ import org.mozilla.fenix.components.toolbar.BrowserStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
+import org.mozilla.fenix.components.toolbar.QuickActionSheetState
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabsIntegration
 import org.mozilla.fenix.ext.components
@@ -147,11 +148,13 @@ class BrowserFragment : Fragment(), BackHandler {
         browserStore = StoreProvider.get(this) {
             BrowserStore(
                 BrowserState(
-                    readable = getSessionById()?.readerable ?: false,
-                    bookmarked = findBookmarkedURL(getSessionById()),
-                    readerActive = getSessionById()?.readerMode ?: false,
-                    bounceNeeded = false,
-                    isAppLink = getSessionById()?.let { appLink.invoke(it.url).hasExternalApp() } ?: false
+                    quickActionSheetState = QuickActionSheetState(
+                        readable = getSessionById()?.readerable ?: false,
+                        bookmarked = findBookmarkedURL(getSessionById()),
+                        readerActive = getSessionById()?.readerMode ?: false,
+                        bounceNeeded = false,
+                        isAppLink = getSessionById()?.let { appLink.invoke(it.url).hasExternalApp() } ?: false
+                    )
                 )
             )
         }

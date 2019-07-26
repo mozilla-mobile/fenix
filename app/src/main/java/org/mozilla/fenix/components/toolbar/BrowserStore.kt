@@ -9,12 +9,20 @@ class BrowserStore(initialState: BrowserState) :
 
 /**
  * The state for the Browser Screen
+ * @property quickActionSheetState: state of the quick action sheet
+ */
+data class BrowserState(
+    val quickActionSheetState: QuickActionSheetState
+) : State
+
+/**
+ * The state for the QuickActionSheet
  * @property readable Whether or not the current session can display a reader view
  * @property bookmarked Whether or not the current session is already bookmarked
  * @property readerActive Whether or not the current session is in reader mode
  * @property bounceNeeded Whether or not the quick action sheet should bounce
  */
-data class BrowserState(
+data class QuickActionSheetState(
     val readable: Boolean,
     val bookmarked: Boolean,
     val readerActive: Boolean,
@@ -59,15 +67,15 @@ internal object QuickActionSheetStateReducer {
     fun reduce(state: BrowserState, action: QuickActionSheetAction): BrowserState {
         return when (action) {
             is QuickActionSheetAction.BookmarkedStateChange ->
-                state.copy(bookmarked = action.bookmarked)
+                state.copy(quickActionSheetState = state.quickActionSheetState.copy(bookmarked = action.bookmarked))
             is QuickActionSheetAction.ReadableStateChange ->
-                state.copy(readable = action.readable)
+                state.copy(quickActionSheetState = state.quickActionSheetState.copy(readable = action.readable))
             is QuickActionSheetAction.ReaderActiveStateChange ->
-                state.copy(readerActive = action.active)
+                state.copy(quickActionSheetState = state.quickActionSheetState.copy(readerActive = action.active))
             is QuickActionSheetAction.BounceNeededChange ->
-                state.copy(bounceNeeded = true)
+                state.copy(quickActionSheetState = state.quickActionSheetState.copy(bounceNeeded = true))
             is QuickActionSheetAction.AppLinkStateChange -> {
-                state.copy(isAppLink = action.isAppLink)
+                state.copy(quickActionSheetState = state.quickActionSheetState.copy(isAppLink = action.isAppLink))
             }
         }
     }
