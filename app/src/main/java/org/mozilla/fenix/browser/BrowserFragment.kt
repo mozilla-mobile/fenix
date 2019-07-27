@@ -54,6 +54,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
+import mozilla.components.support.ktx.kotlin.toUri
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -180,7 +181,7 @@ class BrowserFragment : Fragment(), BackHandler {
                 findNavController(),
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 nestedScrollQuickActionView = nestedScrollQuickAction,
-                    engineView = engineView,
+                engineView = engineView,
                 currentSession = getSessionById() ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
                 viewModel = viewModel
             ),
@@ -415,48 +416,13 @@ class BrowserFragment : Fragment(), BackHandler {
                 view = view)
         }
 
-        toolbarComponent.setOnSiteSecurityClickedListener {
+        browserToolbarView.view.setOnSiteSecurityClickedListener {
             showQuickSettingsDialog()
         }
 
-        val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
-        quickActionSheetStore = StoreProvider.get(this) {
-            QuickActionSheetStore(
-                QuickActionSheetState(
-                    readable = getSessionById()?.readerable ?: false,
-                    bookmarked = findBookmarkedURL(getSessionById()),
-                    readerActive = getSessionById()?.readerMode ?: false,
-                    bounceNeeded = false,
-                    isAppLink = getSessionById()?.let { appLink.invoke(it.url).hasExternalApp() } ?: false
-                )
-            )
-        }
-
-        val quickActionSheetView = QuickActionView(
-            view.nestedScrollQuickAction,
-
-            QuickActionInteractor(
-                context!!,
-                DefaultReaderModeController(readerViewFeature),
-                quickActionSheetStore,
-                shareUrl = ::shareUrl,
-                bookmarkTapped = {
-                    lifecycleScope.launch { bookmarkTapped(it) }
-                },
-                appLinksUseCases = requireComponents.useCases.appLinksUseCases
-            )
-        )
-
-        consumeFrom(quickActionSheetStore) {
+        consumeFrom(browserStore) {
             quickActionSheetView.update(it)
-
-        browserStore.observe(view) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                whenStarted {
-                    quickActionSheetView.update(it)
-                    browserToolbarView.update(it)
-                }
-            }
+            browserToolbarView.update(it)
         }
     }
 
@@ -763,7 +729,7 @@ class BrowserFragment : Fragment(), BackHandler {
         view?.let { view ->
             FenixSnackbar.make(view, Snackbar.LENGTH_SHORT)
                 .setText(view.context.getString(R.string.create_collection_tab_saved))
-                .setAnchorView(toolbarComponent.uiView.view)
+                .setAnchorView(browserToolbarView.view)
                 .show()
         }
     }

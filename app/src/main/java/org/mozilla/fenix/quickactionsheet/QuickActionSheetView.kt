@@ -122,7 +122,11 @@ class QuickActionSheetView(
 
         view.quick_action_bookmark.isSelected = quickActionSheetState.bookmarked
         view.quick_action_bookmark.text = view.context.getString(
-            if (quickActionSheetState.bookmarked) R.string.quick_action_bookmark_edit else R.string.quick_action_bookmark
+            if (quickActionSheetState.bookmarked) {
+                R.string.quick_action_bookmark_edit
+            } else {
+                R.string.quick_action_bookmark
+            }
         )
 
         if (quickActionSheetState.bounceNeeded && Settings.getInstance(view.context).shouldAutoBounceQuickActionSheet) {
