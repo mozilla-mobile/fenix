@@ -47,7 +47,7 @@ class CollectionCreationUIView(
     actionEmitter,
     changesObservable
 ), CoroutineScope {
-    private lateinit var job: Job
+    private var job: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
@@ -67,7 +67,6 @@ class CollectionCreationUIView(
     private val transition = AutoTransition()
 
     init {
-        job = Job()
         transition.duration = TRANSITION_DURATION
 
         selectTabsConstraints.clone(collection_constraint_layout)
