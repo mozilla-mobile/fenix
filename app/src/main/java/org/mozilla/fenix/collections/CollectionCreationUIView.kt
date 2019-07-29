@@ -184,7 +184,6 @@ class CollectionCreationUIView(
 
                 save_button.setOnClickListener { _ ->
                     if (selectedCollection != null) {
-                        // TODO: Telemetry maybe?
                         actionEmitter.onNext(
                             CollectionCreationAction.SelectCollection(
                                 selectedCollection!!,
@@ -192,7 +191,6 @@ class CollectionCreationUIView(
                             )
                         )
                     } else {
-                        // TODO: Telemetry maybe?
                         actionEmitter.onNext(CollectionCreationAction.SaveTabsToCollection(selectedTabs.toList()))
                     }
                 }
