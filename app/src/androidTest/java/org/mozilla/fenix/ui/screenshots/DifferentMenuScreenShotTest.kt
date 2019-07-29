@@ -31,7 +31,7 @@ import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.swipeToBottom
 
-class ThreeDotMenuScreenShotTest : ScreenshotTest() {
+class DifferentMenuScreenShotTest : ScreenshotTest() {
 
     private lateinit var mockWebServer: MockWebServer
     @Rule @JvmField
