@@ -16,29 +16,29 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.res.pxToDp
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.search.SearchState
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
- * to respond to user interaction on the ToolbarView
+ * to respond to user interaction on the [BrowserToolbarView]
  */
 interface ToolbarInteractor {
 
     /**
-     * Called when a user hits the return key while ToolbarView has focus.
-     * @param url the text inside the ToolbarView when committed
+     * Called when a user hits the return key while [BrowserToolbarView] has focus.
+     * @param url the text inside the [BrowserToolbarView] when committed
      */
     fun onUrlCommitted(url: String)
 
     /**
-     * Called when a removes focus from the ToolbarView
+     * Called when a user removes focus from the [BrowserToolbarView]
      */
     fun onEditingCanceled()
 
     /**
-     * Called whenever the text inside the ToolbarView changes
-     * @param text the current text displayed by ToolbarView
+     * Called whenever the text inside the [BrowserToolbarView] changes
+     * @param text the current text displayed by [BrowserToolbarView]
      */
     fun onTextChanged(text: String)
 }
@@ -79,15 +79,9 @@ class ToolbarView(
 
             hint = context.getString(R.string.search_hint)
 
-            textColor = ContextCompat.getColor(
-                container.context,
-                ThemeManager.resolveAttribute(R.attr.primaryText, container.context)
-            )
+            textColor = container.context.getColorFromAttr(R.attr.primaryText)
 
-            hintColor = ContextCompat.getColor(
-                container.context,
-                ThemeManager.resolveAttribute(R.attr.secondaryText, container.context)
-            )
+            hintColor = container.context.getColorFromAttr(R.attr.secondaryText)
 
             suggestionBackgroundColor = ContextCompat.getColor(
                 container.context,
