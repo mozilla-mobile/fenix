@@ -709,7 +709,11 @@ class BrowserFragment : Fragment(), BackHandler {
                 (activity as HomeActivity).browsingModeManager.mode =
                     BrowsingModeManager.Mode.Normal
             }
-            ToolbarMenu.Item.SaveToCollection -> showSaveToCollection()
+            ToolbarMenu.Item.SaveToCollection -> {
+                requireComponents.analytics.metrics
+                    .track(Event.CollectionSaveButtonPressed(TELEMETRY_BROWSER_IDENITIFIER))
+                showSaveToCollection()
+            }
             ToolbarMenu.Item.OpenInFenix -> {
                 // Release the session from this view so that it can immediately be rendered by a different view
                 engineView.release()
@@ -913,6 +917,7 @@ class BrowserFragment : Fragment(), BackHandler {
     }
 
     companion object {
+        private const val TELEMETRY_BROWSER_IDENITIFIER = "browser"
         private const val SHARED_TRANSITION_MS = 200L
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val KEY_CUSTOM_TAB_SESSION_ID = "custom_tab_session_id"

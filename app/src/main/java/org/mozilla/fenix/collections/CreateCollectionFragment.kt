@@ -117,6 +117,7 @@ class CreateCollectionFragment : DialogFragment() {
                 is CollectionCreationAction.BackPressed -> handleBackPress(backPressFrom = it.backPressFrom)
                 is CollectionCreationAction.SaveCollectionName -> {
                     dismiss()
+                    // TODO: Telemetry maybe?
 
                     context?.let { context ->
                         val sessionBundle = it.tabs.toList().toSessionBundle(context)
@@ -134,6 +135,7 @@ class CreateCollectionFragment : DialogFragment() {
                 is CollectionCreationAction.SelectCollection -> {
                     dismiss()
                     context?.let { context ->
+                        // TODO: Telemetry maybe?
                         val sessionBundle = it.tabs.toList().toSessionBundle(context)
                         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                             context.components.core.tabCollectionStorage
