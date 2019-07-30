@@ -145,7 +145,7 @@ tasks:
                           git fetch ${repository} ${head_branch}
                           && git config advice.detachedHead false
                           && git checkout FETCH_HEAD
-                          && python automation/taskcluster/decision_task.py pull-request
+                          && python automation/taskcluster/decision_task.py raptor
                       env:
                         GITHUB_PULL_TITLE: ${pull_request_title}
                         MOBILE_PULL_REQUEST_NUMBER: ${pull_request_number}
