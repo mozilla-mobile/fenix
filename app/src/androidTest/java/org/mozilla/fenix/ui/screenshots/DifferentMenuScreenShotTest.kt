@@ -3,6 +3,8 @@ package org.mozilla.fenix.ui.screenshots
 import android.os.SystemClock
 import android.widget.ImageView
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
@@ -59,7 +61,6 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
         homeScreen {
         }.openThreeDotMenu { }
         Screengrab.screenshot("three-dot-menu")
-        device.pressBack()
     }
 
     @Test
@@ -88,7 +89,6 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
 
         settingsTp()
         Screengrab.screenshot("settings-tp")
-        device.pressBack()
     }
 
     @Test
@@ -99,16 +99,15 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
             swipeToBottom()
         }
         Screengrab.screenshot("settings-scroll-to-bottom")
-        SystemClock.sleep(TestAssetHelper.waitingTime)
+        SystemClock.sleep(TestAssetHelper.waitingTimeShort)
 
         settingsRemoveData()
         Screengrab.screenshot("settings-delete-browsing-data")
         device.pressBack()
-        SystemClock.sleep(TestAssetHelper.waitingTime)
+        SystemClock.sleep(TestAssetHelper.waitingTimeShort)
 
         settingsTelemetry()
         Screengrab.screenshot("settings-telemetry")
-        device.pressBack()
     }
 
     @Test
@@ -140,6 +139,7 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
         // Enter folder name and save
         addFolderName()
         confirmAddFolderButton()
+        SystemClock.sleep(TestAssetHelper.waitingTimeShort)
 
         // Open folder menu
         bookmarkFolderMenu()
@@ -157,6 +157,39 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
     }
 
     @Test
+    fun collectionMenuTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }
+        device.findObject(UiSelector()
+                .instance(1)
+                .className(ImageView::class.java)).click()
+        // Homescreen with visited tabs
+        device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
+        openTabsMenu()
+        Screengrab.screenshot("open-tabs-menu")
+        device.pressBack()
+        device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
+        Screengrab.screenshot("save-collection-button")
+
+        // Save a collection
+        saveToCollectionButton()
+        Screengrab.screenshot("save-collection-view")
+        device.wait(Until.findObject(By.res("name_collection_edittext")), TestAssetHelper.waitingTimeShort)
+        nameCollectionTextBox().perform(replaceText("CollectionName"),
+                pressImeActionButton())
+
+        // Homescreen after saving one collection
+        device.wait(Until.findObject(By.res("collection_title")), TestAssetHelper.waitingTimeShort)
+        Screengrab.screenshot("saved-tab")
+
+        // Open Collection menu
+        collectionsButton()
+        Screengrab.screenshot("saved-collections-menu")
+    }
+
+    @Test
     fun tabMenuTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         navigationToolbar {
@@ -165,37 +198,18 @@ class DifferentMenuScreenShotTest : ScreenshotTest() {
         device.wait(Until.findObjects(By.res("quick_action_sheet_handle")), TestAssetHelper.waitingTimeShort)
         openQuickActionMenu()
         Screengrab.screenshot("browser-tab-share-bookmark")
+        // Open Browser tab menu
         device.findObject(UiSelector()
                 .instance(2)
                 .className(ImageView::class.java)).click()
         Screengrab.screenshot("browser-tab-menu")
-
+        // Close menu and go back to Homescreen and remove the tab
         device.pressBack()
         device.findObject(UiSelector()
                 .instance(1)
                 .className(ImageView::class.java)).click()
-        // Home screen with visited tabs
-        device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
-        openTabsMenu()
-        Screengrab.screenshot("open-tabs-menu")
-        device.pressBack()
-        device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
-        Screengrab.screenshot("save-collection-button")
-
-        /*
-        // Save tab to Collection -> problem pressing on Enter to get the collection saved
-        saveToCollectionButton()
-        Screengrab.screenshot("save-collection-view")
-
-        // Go back to homescreen after saving one collection
-        mDevice.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
-        Screengrab.screenshot("saved-tab")
-
-        // Open Collection menu
-        collectionsButton()
-        Screengrab.screenshot("saved-collections-menu")
-        pressImeActionButton()
-        */
+        closeTabButton()
+        Screengrab.screenshot("remove-tab")
     }
 }
 
@@ -221,3 +235,5 @@ fun addFolderName() = Espresso.onView(Matchers.allOf(ViewMatchers.withId(R.id.bo
 fun bookmarkFolderMenu() = Espresso.onView(Matchers.allOf(ViewMatchers.withId(R.id.bookmark_overflow))).click()
 fun editBookmarkFolder() = ClickActions.click { text(R.string.bookmark_menu_edit_button) }
 fun deleteBookmarkFolder() = ClickActions.click { text(R.string.bookmark_menu_delete_button) }
+fun nameCollectionTextBox() = Espresso.onView(Matchers.allOf(ViewMatchers.withId(R.id.name_collection_edittext)))
+fun closeTabButton() = Espresso.onView(Matchers.allOf(ViewMatchers.withId(R.id.close_tab_button))).click()
