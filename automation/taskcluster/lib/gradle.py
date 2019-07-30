@@ -19,7 +19,7 @@ def get_variants_for_build_type(build_type):
         raise ValueError("Could not get build variants from gradle")
 
     print("Got variants: {}".format(variants))
-    return [Variant(variant_dict['name'], variant_dict['abi'], variant_dict['isSigned'], variant_dict['buildType'])
+    return [Variant(variant_dict['name'], variant_dict['engine'], variant_dict['isSigned'], variant_dict['buildType'])
             for variant_dict in variants
             if variant_dict['buildType'] == build_type]
 
