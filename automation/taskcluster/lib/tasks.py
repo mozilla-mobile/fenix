@@ -561,6 +561,20 @@ class TaskBuilder(object):
             )
         return craft_function
 
+    def craft_raptor_youtube_playback_task(self, signing_task_id, mozharness_task_id, variant, gecko_revision, force_run_on_64_bit_device=False):
+        return self._craft_raptor_task(
+            signing_task_id,
+            mozharness_task_id,
+            variant,
+            gecko_revision,
+            name_prefix='raptor youtube playback',
+            description='Raptor YouTube Playback on Fenix',
+            test_name='raptor-youtube-playback',
+            job_symbol='ytp',
+            group_symbol='Rap-fenix',
+            force_run_on_64_bit_device=force_run_on_64_bit_device,
+        )
+
     def _craft_raptor_task(
         self,
         signing_task_id,
