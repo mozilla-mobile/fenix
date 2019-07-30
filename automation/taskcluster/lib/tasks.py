@@ -441,15 +441,7 @@ class TaskBuilder(object):
         self, assemble_task_id, variant, is_staging,
     ):
         staging_prefix = '.staging' if is_staging else ''
-        routes = [
-            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.latest.{}".format(
-                staging_prefix, self.date.year, self.date.month, self.date.day, variant.abi
-            ),
-            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.revision.{}.{}".format(
-                staging_prefix, self.date.year, self.date.month, self.date.day, self.commit, variant.abi
-            ),
-            "index.project.mobile.fenix.v2{}.performance-test.latest.{}".format(staging_prefix, variant.abi),
-        ]
+        routes = []
 
         return self._craft_signing_task(
             name='sign: {}'.format(variant.raw),
@@ -560,6 +552,20 @@ class TaskBuilder(object):
                 force_run_on_64_bit_device=force_run_on_64_bit_device,
             )
         return craft_function
+
+    def craft_raptor_youtube_playback_task(self, signing_task_id, mozharness_task_id, variant, gecko_revision, force_run_on_64_bit_device=False):
+        return self._craft_raptor_task(
+            signing_task_id,
+            mozharness_task_id,
+            variant,
+            gecko_revision,
+            name_prefix='raptor youtube playback',
+            description='Raptor YouTube Playback on Fenix',
+            test_name='raptor-youtube-playback',
+            job_symbol='ytp',
+            group_symbol='Rap-fenix',
+            force_run_on_64_bit_device=force_run_on_64_bit_device,
+        )
 
     def _craft_raptor_task(
         self,
