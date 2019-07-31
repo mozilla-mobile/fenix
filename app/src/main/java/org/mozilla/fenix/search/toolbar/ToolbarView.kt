@@ -14,31 +14,31 @@ import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
-import mozilla.components.support.ktx.android.content.res.pxToDp
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.search.SearchState
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
- * to respond to user interaction on the ToolbarView
+ * to respond to user interaction on the [BrowserToolbarView]
  */
 interface ToolbarInteractor {
 
     /**
-     * Called when a user hits the return key while ToolbarView has focus.
-     * @param url the text inside the ToolbarView when committed
+     * Called when a user hits the return key while [BrowserToolbarView] has focus.
+     * @param url the text inside the [BrowserToolbarView] when committed
      */
     fun onUrlCommitted(url: String)
 
     /**
-     * Called when a removes focus from the ToolbarView
+     * Called when a user removes focus from the [BrowserToolbarView]
      */
     fun onEditingCanceled()
 
     /**
-     * Called whenever the text inside the ToolbarView changes
-     * @param text the current text displayed by ToolbarView
+     * Called whenever the text inside the [BrowserToolbarView] changes
+     * @param text the current text displayed by [BrowserToolbarView]
      */
     fun onTextChanged(text: String)
 }
@@ -49,7 +49,8 @@ interface ToolbarInteractor {
 class ToolbarView(
     private val container: ViewGroup,
     private val interactor: ToolbarInteractor,
-    private val historyStorage: HistoryStorage?
+    private val historyStorage: HistoryStorage?,
+    private val isPrivate: Boolean
 ) : LayoutContainer {
 
     override val containerView: View?
@@ -65,7 +66,7 @@ class ToolbarView(
         view.apply {
             editMode()
 
-            elevation = resources.pxToDp(TOOLBAR_ELEVATION_IN_DP).toFloat()
+            elevation = TOOLBAR_ELEVATION_IN_DP.dpToPx(resources.displayMetrics).toFloat()
 
             setOnUrlCommitListener {
                 interactor.onUrlCommitted(it)
@@ -86,6 +87,8 @@ class ToolbarView(
                 container.context,
                 R.color.suggestion_highlight_color
             )
+
+            private = isPrivate
 
             setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
                 override fun onCancelEditing(): Boolean {

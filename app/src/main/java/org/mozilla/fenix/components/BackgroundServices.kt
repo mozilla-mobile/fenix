@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.preference.PreferenceManager
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -47,8 +48,7 @@ import org.mozilla.fenix.test.Mockable
 class BackgroundServices(
     context: Context,
     historyStorage: PlacesHistoryStorage,
-    bookmarkStorage: PlacesBookmarksStorage,
-    notificationManager: NotificationManager
+    bookmarkStorage: PlacesBookmarksStorage
 ) {
     companion object {
         const val CLIENT_ID = "a2270f727f45f648"
@@ -89,47 +89,11 @@ class BackgroundServices(
     val pushService by lazy { FirebasePush() }
 
     val push by lazy {
-        val logger = Logger("AutoPushFeature")
-        AutoPushFeature(context = context, service = pushService, config = pushConfig!!).also {
-            // Notify observers for Services' messages.
-            it.registerForPushMessages(PushType.Services, object : Bus.Observer<PushType, String> {
-                override fun onEvent(type: PushType, message: String) {
-                    accountManager.authenticatedAccount()?.deviceConstellation()
-                        ?.processRawEventAsync(message)
-                }
-            }, ProcessLifecycleOwner.get(), false)
-
-            // Notify observers for subscription changes.
-            it.registerForSubscriptions(object : PushSubscriptionObserver {
-                override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
-                    // Update for only the services subscription.
-                    if (subscription.type == PushType.Services) {
-                        logger.info("New push subscription received for FxA")
-                        accountManager.authenticatedAccount()?.deviceConstellation()
-                            ?.setDevicePushSubscriptionAsync(
-                                DevicePushSubscription(
-                                    endpoint = subscription.endpoint,
-                                    publicKey = subscription.publicKey,
-                                    authKey = subscription.authKey
-                                )
-                            )
-                    }
-                }
-            }, ProcessLifecycleOwner.get(), false)
-
-            // For all the current Fenix users, we need to remove the current push token and
-            // re-subscribe again on the right push server. We should never do this otherwise!
-            // Should be removed after majority of our users are correctly subscribed.
-            // See: https://github.com/mozilla-mobile/fenix/issues/4218
-
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val prefResetSubKey = "reset_broken_push_subscription"
-            if (!preferences.getBoolean(prefResetSubKey, false)) {
-                preferences.edit().putBoolean(prefResetSubKey, true).apply()
-                logger.info("Forcing push registration renewal")
-                it.forceRegistrationRenewal()
-            }
-        }
+        AutoPushFeature(
+            context = context,
+            service = pushService,
+            config = pushConfig!!
+        )
     }
 
     init {
@@ -148,9 +112,19 @@ class BackgroundServices(
         }
     }
 
+    private val defaultDeviceName = context.getString(
+        R.string.default_device_name,
+        context.getString(R.string.app_name),
+        Build.MANUFACTURER,
+        Build.MODEL
+    )
+
     /**
-     * We add an observer to the AccountManager so that we can control when the Firebase service
-     * will start/stop. This is only needed when landing the push service to ensure Firebase works
+     * When we login/logout of FxA, we need to update our push subscriptions to match the newly
+     * logged in account.
+     *
+     * We added the push service to the AccountManager observer so that we can control when the
+     * service will start/stop. Firebase was added when landing the push service to ensure it works
      * as expected without causing any (as many) side effects.
      *
      * In order to use Firebase with Leanplum and other marketing features, we need it always
@@ -160,17 +134,35 @@ class BackgroundServices(
      * of the send-tab/push feature: https://github.com/mozilla-mobile/fenix/issues/4063
      */
     private val accountObserver = object : AccountObserver {
-        override fun onAuthenticationProblems() {}
+        // We want to update our subscriptions only on a fresh sign in.
+        // See https://github.com/mozilla-mobile/android-components/issues/3964
+        @Suppress("MayBeConst") // linter is wrong
+        val prefFreshSignInKey = "fresh_sign_in"
 
+        override fun onAuthenticationProblems() {}
         override fun onProfileUpdated(profile: Profile) {}
 
         override fun onLoggedOut() {
             pushService.stop()
+
+            preferences.edit().putBoolean(prefFreshSignInKey, true).apply()
+            push.unsubscribeForType(PushType.Services)
         }
 
         override fun onAuthenticated(account: OAuthAccount) {
             pushService.start(context)
+
+            if (preferences.getBoolean(prefFreshSignInKey, true)) {
+                preferences.edit().putBoolean(prefFreshSignInKey, false).apply()
+                push.subscribeForType(PushType.Services)
+            }
         }
+    }
+
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(
+            context
+        )
     }
 
     val accountManager = FxaAccountManager(
@@ -185,12 +177,67 @@ class BackgroundServices(
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
     ).also {
-        it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
+        if (FeatureFlags.sendTabEnabled) {
+            it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
 
-        // This should be removed in the future. See comment on `accountObserver`.
-        if (FeatureFlags.sendTabEnabled && pushConfig != null) {
-            it.register(accountObserver)
+            // Enable push if we have the config.
+            if (pushConfig != null) {
+
+                // Register our account observer so we know how to update our push subscriptions.
+                it.register(accountObserver)
+
+                val logger = Logger("AutoPushFeature")
+
+                // Notify observers for Services' messages.
+                push.registerForPushMessages(
+                    PushType.Services,
+                    object : Bus.Observer<PushType, String> {
+                        override fun onEvent(type: PushType, message: String) {
+                            it.authenticatedAccount()?.deviceConstellation()
+                                ?.processRawEventAsync(message)
+                        }
+                    },
+                    ProcessLifecycleOwner.get(),
+                    false
+                )
+
+                // Notify observers for subscription changes.
+                push.registerForSubscriptions(object : PushSubscriptionObserver {
+                    override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
+                        // Update for only the services subscription.
+                        if (subscription.type == PushType.Services) {
+                            logger.info("New push subscription received for FxA")
+                            it.authenticatedAccount()?.deviceConstellation()
+                                ?.setDevicePushSubscriptionAsync(
+                                    DevicePushSubscription(
+                                        endpoint = subscription.endpoint,
+                                        publicKey = subscription.publicKey,
+                                        authKey = subscription.authKey
+                                    )
+                                )
+                        }
+                    }
+                }, ProcessLifecycleOwner.get(), false)
+
+                // For all the current Fenix users, we need to remove the current push token and
+                // re-subscribe again on the right push server. We should never do this otherwise!
+                // Should be removed after majority of our users are correctly subscribed.
+                // See: https://github.com/mozilla-mobile/fenix/issues/4218
+                val prefResetSubKey = "reset_broken_push_subscription"
+                if (!preferences.getBoolean(prefResetSubKey, false)) {
+                    preferences.edit().putBoolean(prefResetSubKey, true).apply()
+                    logger.info("Forcing push registration renewal")
+                    push.forceRegistrationRenewal()
+                }
+            }
         }
         CoroutineScope(Dispatchers.Main).launch { it.initAsync().await() }
+    }
+
+    /**
+     * Provides notification functionality, manages notification channels.
+     */
+    val notificationManager by lazy {
+        NotificationManager(context)
     }
 }
