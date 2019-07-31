@@ -16,14 +16,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_history.*
 import kotlinx.android.synthetic.main.component_history.view.*
-import kotlinx.android.synthetic.main.delete_history_button.*
+import kotlinx.android.synthetic.main.component_history.view.history_list
 import mozilla.components.support.base.feature.BackHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.asActivity
-import org.mozilla.fenix.ext.getColorIntFromAttr
+import org.mozilla.fenix.ext.getColorResFromAttr
 
 /**
  * Interface for the HistoryViewInteractor. This interface is implemented by objects that want
@@ -31,33 +32,19 @@ import org.mozilla.fenix.ext.getColorIntFromAttr
  */
 interface HistoryViewInteractor {
     /**
-     * Called whenever a history item is tapped to open that history entry in the browser
-     * @param item the history item to open in browser
+     * Called when a user taps a history item
      */
-    fun onHistoryItemOpened(item: HistoryItem)
+    fun onItemPress(item: HistoryItem)
 
     /**
-     * Called when a history item is long pressed and edit mode is launched
-     * @param selectedItem the history item to start selected for deletion in edit mode
+     * Called when a user long clicks a user
      */
-    fun onEnterEditMode(selectedItem: HistoryItem)
+    fun onItemLongPress(item: HistoryItem)
 
     /**
      * Called on backpressed to exit edit mode
      */
-    fun onBackPressed()
-
-    /**
-     * Called when a history item is tapped in edit mode and added for removal
-     * @param item the history item to add to selected items for deletion in edit mode
-     */
-    fun onItemAddedForRemoval(item: HistoryItem)
-
-    /**
-     * Called when a selected history item is tapped in edit mode and removed from removal
-     * @param item the history item to remove from the selected items for deletion in edit mode
-     */
-    fun onItemRemovedForRemoval(item: HistoryItem)
+    fun onBackPressed(): Boolean
 
     /**
      * Called when the mode is switched so we can invalidate the menu
@@ -79,7 +66,7 @@ interface HistoryViewInteractor {
      * Called when multiple history items are deleted
      * @param items the history items to delete
      */
-    fun onDeleteSome(items: List<HistoryItem>)
+    fun onDeleteSome(items: Set<HistoryItem>)
 }
 
 /**
@@ -97,18 +84,20 @@ class HistoryView(
     override val containerView: View?
         get() = container
 
-    private val historyAdapter: HistoryAdapter
+    val historyAdapter: HistoryAdapter
     private var items: List<HistoryItem> = listOf()
     private val context = container.context
     var mode: HistoryState.Mode = HistoryState.Mode.Normal
         private set
     private val activity = context?.asActivity()
-
+    private val layoutManager = LinearLayoutManager(container.context)
     init {
+        historyAdapter = HistoryAdapter(interactor)
+
         view.history_list.apply {
-            historyAdapter = HistoryAdapter(interactor)
+            layoutManager = this@HistoryView.layoutManager
             adapter = historyAdapter
-            layoutManager = LinearLayoutManager(container.context)
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
     }
 
@@ -117,17 +106,38 @@ class HistoryView(
             if (state.mode is HistoryState.Mode.Deleting) View.VISIBLE else View.GONE
 
         if (state.mode != mode) {
-            mode = state.mode
             interactor.onModeSwitched()
+            historyAdapter.updateMode(state.mode)
+
+            val oldMode = mode
+            if (oldMode is HistoryState.Mode.Editing) {
+                oldMode.selectedItems.forEach {
+                    historyAdapter.notifyItemChanged(it.id)
+                }
+            }
         }
 
-        (view.history_list.adapter as HistoryAdapter).updateData(state.items, state.mode)
+        (state.mode as? HistoryState.Mode.Editing)?.also {
+            val oldMode = (mode as? HistoryState.Mode.Editing)
+            val unselectedItems = oldMode?.selectedItems?.minus(it.selectedItems) ?: setOf()
+
+            it.selectedItems.union(unselectedItems).forEach { item ->
+                historyAdapter.notifyItemChanged(item.id)
+            }
+        }
 
         items = state.items
-        when (val mode = mode) {
-            is HistoryState.Mode.Normal -> setUIForNormalMode(items.isEmpty())
+        when (val mode = state.mode) {
+            is HistoryState.Mode.Normal -> setUIForNormalMode()
             is HistoryState.Mode.Editing -> setUIForSelectingMode(mode.selectedItems.size)
         }
+
+        mode = state.mode
+    }
+
+    fun updateEmptyState(userHasHistory: Boolean) {
+        history_list.isVisible = userHasHistory
+        history_empty_view.isVisible = !userHasHistory
     }
 
     private fun setUIForSelectingMode(selectedItemSize: Int) {
@@ -135,17 +145,15 @@ class HistoryView(
             context.getString(R.string.history_multi_select_title, selectedItemSize)
         setToolbarColors(
             R.color.white_color,
-            R.attr.accentHighContrast.getColorIntFromAttr(context!!)
+            context!!.getColorResFromAttr(R.attr.accentHighContrast)
         )
     }
 
-    private fun setUIForNormalMode(isEmpty: Boolean) {
+    private fun setUIForNormalMode() {
         activity?.title = context.getString(R.string.library_history)
-        delete_history_button?.isVisible = !isEmpty
-        history_empty_view.isVisible = isEmpty
         setToolbarColors(
-            R.attr.primaryText.getColorIntFromAttr(context!!),
-            R.attr.foundation.getColorIntFromAttr(context)
+            context!!.getColorResFromAttr(R.attr.primaryText),
+            context.getColorResFromAttr(R.attr.foundation)
         )
     }
 
@@ -186,15 +194,6 @@ class HistoryView(
     }
 
     override fun onBackPressed(): Boolean {
-        return when (mode) {
-            is HistoryState.Mode.Editing -> {
-                mode = HistoryState.Mode.Normal
-                historyAdapter.updateData(items, mode)
-                setUIForNormalMode(items.isEmpty())
-                interactor.onBackPressed()
-                true
-            }
-            else -> false
-        }
+        return interactor.onBackPressed()
     }
 }

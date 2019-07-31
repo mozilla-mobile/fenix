@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- #4137 - Adds pagination to the history view
 - #3695 - Made search suggestions for other tabs clickable
 
 ## [1.1.0 and earlier] - 2019-07-23
@@ -76,4 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - #3750 - Crash when tapping "Blocked" on Google Maps after disabling location requests
 - #2945 - Fixed "Launches to blank screen and hangs on Nexus 10"
 - #3869 - Creates a SearchLocalizationProvider that sets the region to get the correct default search engine based on a locale
+- #4192 - Sets keyboard to private mode in private browsing
+- #2142 - Fixed "When launching Fenix, Enable private browsing button is focused instead of Search or address"
 ### Removed
