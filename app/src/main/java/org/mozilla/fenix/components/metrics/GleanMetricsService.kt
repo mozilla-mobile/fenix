@@ -266,11 +266,18 @@ private val Event.wrapper
         is Event.ReaderModeOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.opened.record(it) }
         )
-        is Event.ReaderModeClosed -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.closed.record(it) }
-        )
         is Event.ReaderModeAppearanceOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.appearance.record(it) }
+        )
+        is Event.CollectionTabLongPressed -> EventWrapper<NoExtraKeys>(
+            { Collections.longPress.record(it) }
+        )
+        is Event.CollectionSaveButtonPressed -> EventWrapper(
+            { Collections.saveButton.record(it) },
+            { Collections.saveButtonKeys.valueOf(it) }
+        )
+        is Event.CollectionAddTabPressed -> EventWrapper<NoExtraKeys>(
+            { Collections.addTabButton.record(it) }
         )
 
         // Don't track other events with Glean
