@@ -36,6 +36,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
@@ -52,6 +53,8 @@ import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
+import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.Settings
 import java.net.MalformedURLException
 import java.net.URL
 

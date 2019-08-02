@@ -26,7 +26,6 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
-import org.mozilla.fenix.settings.SupportUtils
 
 /**
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
@@ -43,7 +42,9 @@ class DefaultBrowserToolbarController(
     private val nestedScrollQuickActionView: NestedScrollView,
     private val engineView: EngineView,
     private val currentSession: Session,
-    private val viewModel: CreateCollectionViewModel
+    private val viewModel: CreateCollectionViewModel,
+    private val getSupportUrl: () -> String,
+    private val openInFenixIntent: Intent
 ) : BrowserToolbarController {
 
     override fun handleToolbarClick() {
@@ -106,12 +107,7 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.Help -> {
-                context.components.useCases.tabsUseCases.addTab.invoke(
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.HELP
-                    )
-                )
+                context.components.useCases.tabsUseCases.addTab.invoke(getSupportUrl())
             }
             ToolbarMenu.Item.NewTab -> {
                 val directions = BrowserFragmentDirections
@@ -147,7 +143,7 @@ class DefaultBrowserToolbarController(
                 context.components.core.sessionManager.select(currentSession)
 
                 // Switch to the actual browser which should now display our new selected session
-                context.startActivity(Intent(context, IntentReceiverActivity::class.java).also {
+                context.startActivity(openInFenixIntent.also {
                     it.action = Intent.ACTION_VIEW
                     it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 })
