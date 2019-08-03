@@ -22,8 +22,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.ConstellationState
 import mozilla.components.concept.sync.DeviceConstellationObserver
-import mozilla.components.concept.sync.OAuthAccount
-import mozilla.components.concept.sync.Profile
 import mozilla.components.service.fxa.FxaException
 import mozilla.components.service.fxa.FxaPanicException
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -42,8 +40,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
     // Navigate away from this fragment when we encounter auth problems or logout events.
     private val accountStateObserver = object : AccountObserver {
-        override fun onAuthenticated(account: OAuthAccount) {}
-
         override fun onAuthenticationProblems() {
             lifecycleScope.launch {
                 findNavController().popBackStack()
@@ -61,8 +57,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 }
             }
         }
-
-        override fun onProfileUpdated(profile: Profile) {}
     }
 
     override fun onResume() {
@@ -98,6 +92,14 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         preferenceSyncNow?.let {
             it.onPreferenceClickListener = getClickListenerForSyncNow()
             updateLastSyncedTimePref(context!!, it)
+
+            // Current sync state
+            if (requireComponents.backgroundServices.accountManager.isSyncActive()) {
+                it.title = getString(R.string.sync_syncing_in_progress)
+                it.isEnabled = false
+            } else {
+                it.isEnabled = true
+            }
         }
 
         // Device Name

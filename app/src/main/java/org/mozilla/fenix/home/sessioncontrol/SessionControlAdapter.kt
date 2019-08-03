@@ -11,6 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
@@ -21,15 +22,15 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.SaveTabGroupViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFirefoxAccountViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
-import org.mozilla.fenix.utils.ListAdapterWithJob
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
@@ -49,7 +50,8 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object CollectionHeader : AdapterItem(CollectionHeaderViewHolder.LAYOUT_ID)
     data class CollectionItem(
         val collection: TabCollection,
-        val expanded: Boolean
+        val expanded: Boolean,
+        val sessionHasOpenTabs: Boolean
     ) : AdapterItem(CollectionViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) = other is CollectionItem && collection.id == other.collection.id
     }
@@ -67,9 +69,12 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     ) : AdapterItem(OnboardingSectionHeaderViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) = other is OnboardingSectionHeader && labelBuilder == other.labelBuilder
     }
-    data class OnboardingFirefoxAccount(
+    data class OnboardingManualSignIn(
         val state: OnboardingState
-    ) : AdapterItem(OnboardingFirefoxAccountViewHolder.LAYOUT_ID)
+    ) : AdapterItem(OnboardingManualSignInViewHolder.LAYOUT_ID)
+    data class OnboardingAutomaticSignIn(
+        val state: OnboardingState
+    ) : AdapterItem(OnboardingAutomaticSignInViewHolder.LAYOUT_ID)
     object OnboardingThemePicker : AdapterItem(OnboardingThemePickerViewHolder.LAYOUT_ID)
     object OnboardingTrackingProtection : AdapterItem(OnboardingTrackingProtectionViewHolder.LAYOUT_ID)
     object OnboardingPrivateBrowsing : AdapterItem(OnboardingPrivateBrowsingViewHolder.LAYOUT_ID)
@@ -91,7 +96,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 class SessionControlAdapter(
     private val actionEmitter: Observer<SessionControlAction>
-) : ListAdapterWithJob<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
+) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
 
     // This method triggers the ComplexMethod lint error when in fact it's quite simple.
     @SuppressWarnings("ComplexMethod")
@@ -99,16 +104,17 @@ class SessionControlAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, actionEmitter)
-            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, actionEmitter, adapterJob)
+            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, actionEmitter)
             SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, actionEmitter)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, actionEmitter)
             NoContentMessageViewHolder.LAYOUT_ID -> NoContentMessageViewHolder(view)
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, actionEmitter)
-            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view, actionEmitter, adapterJob)
+            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view, actionEmitter)
             OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
             OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
-            OnboardingFirefoxAccountViewHolder.LAYOUT_ID -> OnboardingFirefoxAccountViewHolder(view)
+            OnboardingAutomaticSignInViewHolder.LAYOUT_ID -> OnboardingAutomaticSignInViewHolder(view)
+            OnboardingManualSignInViewHolder.LAYOUT_ID -> OnboardingManualSignInViewHolder(view)
             OnboardingThemePickerViewHolder.LAYOUT_ID -> OnboardingThemePickerViewHolder(view)
             OnboardingTrackingProtectionViewHolder.LAYOUT_ID -> OnboardingTrackingProtectionViewHolder(view)
             OnboardingPrivateBrowsingViewHolder.LAYOUT_ID -> OnboardingPrivateBrowsingViewHolder(view)
@@ -135,8 +141,8 @@ class SessionControlAdapter(
                 holder.bind(icon, header, description)
             }
             is CollectionViewHolder -> {
-                val (collection, expanded) = item as AdapterItem.CollectionItem
-                holder.bindSession(collection, expanded)
+                val (collection, expanded, sessionHasOpenTabs) = item as AdapterItem.CollectionItem
+                holder.bindSession(collection, expanded, sessionHasOpenTabs)
             }
             is TabInCollectionViewHolder -> {
                 val (collection, tab, isLastTab) = item as AdapterItem.TabInCollectionItem
@@ -145,8 +151,13 @@ class SessionControlAdapter(
             is OnboardingSectionHeaderViewHolder -> holder.bind(
                 (item as AdapterItem.OnboardingSectionHeader).labelBuilder
             )
-            is OnboardingFirefoxAccountViewHolder -> holder.bind(
-                (item as AdapterItem.OnboardingFirefoxAccount).state == OnboardingState.AutoSignedIn
+            is OnboardingManualSignInViewHolder -> holder.bind()
+            is OnboardingAutomaticSignInViewHolder -> holder.bind(
+                (
+                    (
+                        item as AdapterItem.OnboardingAutomaticSignIn
+                    ).state as OnboardingState.SignedOutCanAutoSignIn
+                ).withAccount
             )
         }
     }

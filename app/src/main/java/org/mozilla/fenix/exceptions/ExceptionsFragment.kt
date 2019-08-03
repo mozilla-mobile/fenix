@@ -11,14 +11,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
-import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_exceptions.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import mozilla.components.lib.state.ext.observe
+import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -57,12 +55,8 @@ class ExceptionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        exceptionsStore.observe(view) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                whenStarted {
-                    exceptionsView.update(it)
-                }
-            }
+        consumeFrom(exceptionsStore) {
+            exceptionsView.update(it)
         }
     }
 
@@ -70,9 +64,7 @@ class ExceptionsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(IO) {
             val domains = ExceptionDomains.load(context!!)
             ExceptionDomains.remove(context!!, domains)
-            launch(Main) {
-                view?.let { view -> Navigation.findNavController(view).navigateUp() }
-            }
+            reloadData()
         }
     }
 
@@ -106,10 +98,6 @@ class ExceptionsFragment : Fragment() {
 
         coroutineScope {
             launch(Main) {
-                if (items.isEmpty()) {
-                    view?.let { view: View -> Navigation.findNavController(view).navigateUp() }
-                    return@launch
-                }
                 exceptionsStore.dispatch(ExceptionsAction.Change(items))
             }
         }

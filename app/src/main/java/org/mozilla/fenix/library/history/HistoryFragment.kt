@@ -17,17 +17,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
-import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_history.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import mozilla.components.concept.storage.VisitType
-import mozilla.components.lib.state.ext.observe
+import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BrowsingModeManager
@@ -35,19 +30,20 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.history.createSynchronousPagedHistoryProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getHostFromUrl
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.share.ShareTab
-import java.util.concurrent.TimeUnit
 
 @SuppressWarnings("TooManyFunctions")
-class HistoryFragment : Fragment(), BackHandler {
+class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
     private lateinit var historyStore: HistoryStore
     private lateinit var historyView: HistoryView
     private lateinit var historyInteractor: HistoryInteractor
+    private lateinit var viewModel: HistoryViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,8 +66,11 @@ class HistoryFragment : Fragment(), BackHandler {
             ::deleteHistoryItems
         )
         historyView = HistoryView(view.history_layout, historyInteractor)
+
         return view
     }
+
+    override val selectedItems get() = historyStore.state.mode.selectedItems
 
     private fun invalidateOptionsMenu() {
         activity?.invalidateOptionsMenu()
@@ -80,33 +79,41 @@ class HistoryFragment : Fragment(), BackHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = HistoryViewModel(
+            requireComponents.core.historyStorage.createSynchronousPagedHistoryProvider()
+        )
+
+        viewModel.userHasHistory.observe(this, Observer {
+            historyView.updateEmptyState(it)
+        })
+
         requireComponents.analytics.metrics.track(Event.HistoryOpened)
+
         setHasOptionsMenu(true)
     }
 
-    fun deleteHistoryItems(items: List<HistoryItem>) {
+    private fun deleteHistoryItems(items: Set<HistoryItem>) {
         lifecycleScope.launch {
             val storage = context?.components?.core?.historyStorage
             for (item in items) {
                 context?.components?.analytics?.metrics?.track(Event.HistoryItemRemoved)
                 storage?.deleteVisit(item.url, item.visitedAt)
             }
-            reloadData()
+            viewModel.invalidate()
+            historyStore.dispatch(HistoryAction.ExitDeletionMode)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        historyStore.observe(view) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                whenStarted {
-                    historyView.update(it)
-                }
-            }
+        consumeFrom(historyStore) {
+            historyView.update(it)
         }
 
-        lifecycleScope.launch { reloadData() }
+        viewModel.history.observe(this, Observer {
+            historyView.historyAdapter.submitList(it)
+        })
     }
 
     override fun onResume() {
@@ -120,10 +127,8 @@ class HistoryFragment : Fragment(), BackHandler {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val mode = historyStore.state.mode
         when (mode) {
-            HistoryState.Mode.Normal ->
-                R.menu.library_menu
-            is HistoryState.Mode.Editing ->
-                R.menu.history_select_multi
+            HistoryState.Mode.Normal -> R.menu.library_menu
+            is HistoryState.Mode.Editing -> R.menu.history_select_multi
             else -> null
         }?.let { inflater.inflate(it, menu) }
 
@@ -140,11 +145,10 @@ class HistoryFragment : Fragment(), BackHandler {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.share_history_multi_select -> {
-            val selectedHistory =
-                (historyStore.state.mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()
+            val selectedHistory = historyStore.state.mode.selectedItems
             when {
                 selectedHistory.size == 1 ->
-                    share(selectedHistory.first().url)
+                    share(url = selectedHistory.first().url)
                 selectedHistory.size > 1 -> {
                     val shareTabs = selectedHistory.map { ShareTab(it.url, it.title) }
                     share(tabs = shareTabs)
@@ -153,35 +157,25 @@ class HistoryFragment : Fragment(), BackHandler {
             true
         }
         R.id.libraryClose -> {
-            Navigation.findNavController(requireActivity(), R.id.container)
-                .popBackStack(R.id.libraryFragment, true)
+            close()
             true
         }
         R.id.delete_history_multi_select -> {
-            val components = context?.applicationContext?.components!!
-            val selectedHistory =
-                (historyStore.state.mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()
+            val components = context?.components!!
 
             lifecycleScope.launch(Main) {
-                deleteSelectedHistory(selectedHistory, components)
-                reloadData()
+                deleteSelectedHistory(historyStore.state.mode.selectedItems, components)
+                viewModel.invalidate()
+                historyStore.dispatch(HistoryAction.ExitDeletionMode)
             }
             true
         }
         R.id.open_history_in_new_tabs_multi_select -> {
-            val selectedHistory =
-                (historyStore.state.mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()
-            requireComponents.useCases.tabsUseCases.addTab.let { useCase ->
-                for (selectedItem in selectedHistory) {
-                    requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
-                    useCase.invoke(selectedItem.url)
-                }
+            openItemsInNewTab { selectedItem ->
+                requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+                selectedItem.url
             }
 
-            (activity as HomeActivity).apply {
-                browsingModeManager.mode = BrowsingModeManager.Mode.Normal
-                supportActionBar?.hide()
-            }
             nav(
                 R.id.historyFragment,
                 HistoryFragmentDirections.actionHistoryFragmentToHomeFragment()
@@ -189,13 +183,9 @@ class HistoryFragment : Fragment(), BackHandler {
             true
         }
         R.id.open_history_in_private_tabs_multi_select -> {
-            val selectedHistory =
-                (historyStore.state.mode as? HistoryState.Mode.Editing)?.selectedItems ?: listOf()
-            requireComponents.useCases.tabsUseCases.addPrivateTab.let { useCase ->
-                for (selectedItem in selectedHistory) {
-                    requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
-                    useCase.invoke(selectedItem.url)
-                }
+            openItemsInNewTab(private = true) { selectedItem ->
+                requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
+                selectedItem.url
             }
 
             (activity as HomeActivity).apply {
@@ -213,7 +203,7 @@ class HistoryFragment : Fragment(), BackHandler {
 
     override fun onBackPressed(): Boolean = historyView.onBackPressed()
 
-    fun openItem(item: HistoryItem) {
+    private fun openItem(item: HistoryItem) {
         requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
@@ -234,8 +224,8 @@ class HistoryFragment : Fragment(), BackHandler {
                     lifecycleScope.launch {
                         requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved)
                         requireComponents.core.historyStorage.deleteEverything()
-                        reloadData()
-                        launch(Dispatchers.Main) {
+                        launch(Main) {
+                            viewModel.invalidate()
                             historyStore.dispatch(HistoryAction.ExitDeletionMode)
                         }
                     }
@@ -247,43 +237,8 @@ class HistoryFragment : Fragment(), BackHandler {
         }
     }
 
-    private suspend fun reloadData() {
-        val excludeTypes = listOf(
-            VisitType.NOT_A_VISIT,
-            VisitType.DOWNLOAD,
-            VisitType.REDIRECT_TEMPORARY,
-            VisitType.RELOAD,
-            VisitType.EMBED,
-            VisitType.FRAMED_LINK,
-            VisitType.REDIRECT_PERMANENT
-        )
-
-        // Until we have proper pagination, only display a limited set of history to avoid blowing up the UI.
-        // See https://github.com/mozilla-mobile/fenix/issues/1393
-        val sinceTimeMs = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(HISTORY_TIME_DAYS)
-        val items = requireComponents.core.historyStorage
-            .getDetailedVisits(sinceTimeMs, excludeTypes = excludeTypes)
-            // We potentially have a large amount of visits, and multiple processing steps.
-            // Wrapping iterator in a sequence should make this a little memory-more efficient.
-            .asSequence()
-            .sortedByDescending { it.visitTime }
-            .mapIndexed { id, item ->
-                val title = item.title
-                    ?.takeIf(String::isNotEmpty)
-                    ?: item.url.getHostFromUrl()
-                    ?: item.url
-
-                HistoryItem(id, title, item.url, item.visitTime)
-            }
-            .toList()
-
-        withContext(Main) {
-            historyStore.dispatch(HistoryAction.Change(items))
-        }
-    }
-
     private suspend fun deleteSelectedHistory(
-        selected: List<HistoryItem>,
+        selected: Set<HistoryItem>,
         components: Components = requireComponents
     ) {
         requireComponents.analytics.metrics.track(Event.HistoryItemRemoved)
@@ -301,9 +256,5 @@ class HistoryFragment : Fragment(), BackHandler {
                 tabs = tabs?.toTypedArray()
             )
         nav(R.id.historyFragment, directions)
-    }
-
-    companion object {
-        private const val HISTORY_TIME_DAYS = 3L
     }
 }

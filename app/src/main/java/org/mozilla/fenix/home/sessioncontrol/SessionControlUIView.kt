@@ -47,7 +47,7 @@ private fun normalModeAdapterItems(
 
         // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
         collections.map {
-            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id))
+            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), tabs.isNotEmpty())
         }.forEach {
             items.add(it)
             if (it.expanded) {
@@ -79,17 +79,17 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 
     // Customize FxA items based on where we are with the account state:
     items.addAll(when (onboardingState) {
-        OnboardingState.SignedOut -> {
+        OnboardingState.SignedOutNoAutoSignIn -> {
             listOf(
-                AdapterItem.OnboardingFirefoxAccount(onboardingState)
+                AdapterItem.OnboardingManualSignIn(onboardingState)
             )
         }
-        OnboardingState.AutoSignedIn -> {
+        is OnboardingState.SignedOutCanAutoSignIn -> {
             listOf(
-                AdapterItem.OnboardingFirefoxAccount(onboardingState)
+                AdapterItem.OnboardingAutomaticSignIn(onboardingState)
             )
         }
-        else -> listOf()
+        OnboardingState.SignedIn -> listOf()
     })
 
     items.addAll(listOf(

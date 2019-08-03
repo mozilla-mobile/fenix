@@ -37,11 +37,4 @@ class Utilities(
     val customTabIntentProcessor by lazy {
         CustomTabIntentProcessor(sessionManager, sessionUseCases.loadUrl, context.resources)
     }
-
-    /**
-     * Provides notification functionality, manages notification channels.
-     */
-    val notificationManager by lazy {
-        NotificationManager(context)
-    }
 }

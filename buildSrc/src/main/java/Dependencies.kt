@@ -28,18 +28,19 @@ object Versions {
     const val androidx_testing = "1.1.0-alpha08"
     const val androidx_test_ext = "1.0.0"
     const val androidx_core = "1.1.0-rc02"
-    const val androidx_paging = "2.0.0"
+    const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.1.0"
     const val androidx_work = "2.0.1"
     const val google_material = "1.1.0-alpha07"
 
-    const val mozilla_android_components = "6.0.0-SNAPSHOT"
+    const val mozilla_android_components = "7.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
-    // that we depend on directly for tests, and it's important that it
-    // be kept in sync with the version used by android-components above.
-    const val mozilla_appservices = "0.34.0"
+    // that we depend on directly for the fenix-megazord (and for it's
+    // forUnitTest variant), and it's important that it be kept in
+    // sync with the version used by android-components above.
+    const val mozilla_appservices = "0.36.0"
 
     const val autodispose = "1.1.0"
     const val adjust = "4.11.4"
@@ -48,6 +49,7 @@ object Versions {
     const val junit = "4.12"
     const val mockito = "2.24.5"
     const val mockk = "1.9.kotlin12"
+    const val assertk = "0.19"
     const val flipper = "0.21.0"
     const val soLoader = "0.5.1"
 
@@ -138,6 +140,7 @@ object Deps {
 
     const val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
     const val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
+    const val mozilla_support_rusthttp = "org.mozilla.components:support-rusthttp:${Versions.mozilla_android_components}"
     const val mozilla_support_rustlog = "org.mozilla.components:support-rustlog:${Versions.mozilla_android_components}"
     const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
     const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
@@ -158,7 +161,7 @@ object Deps {
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidx_lifecycle}"
     const val androidx_lifecycle_viewmodel_ss = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidx_lifecycle_savedstate}"
-    const val androidx_paging = "androidx.paging:paging-runtime:${Versions.androidx_paging}"
+    const val androidx_paging = "androidx.paging:paging-runtime-ktx:${Versions.androidx_paging}"
     const val androidx_preference = "androidx.preference:preference-ktx:${Versions.androidx_preference}"
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.androidx_navigation}"
@@ -182,6 +185,7 @@ object Deps {
     const val mockito_core = "org.mockito:mockito-core:${Versions.mockito}"
     const val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
+    const val assertk = "com.willowtreeapps.assertk:assertk-jvm:${Versions.assertk}"
 
     const val flipper = "com.facebook.flipper:flipper:${Versions.flipper}"
     const val flipper_noop = "com.facebook.flipper:flipper-noop:${Versions.flipper}"
@@ -198,7 +202,9 @@ object Deps {
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val fragment_testing = "androidx.fragment:fragment-testing:${Versions.androidx_testing}"
     const val androidx_junit = "androidx.test.ext:junit:${Versions.androidx_test_ext}"
-    const val places_forUnitTests = "org.mozilla.appservices:places-forUnitTests:${Versions.mozilla_appservices}"
+
+    const val fenix_megazord = "org.mozilla.appservices:fenix-megazord:${Versions.mozilla_appservices}"
+    const val fenix_megazord_forUnitTests = "org.mozilla.appservices:fenix-megazord-forUnitTests:${Versions.mozilla_appservices}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
 }
