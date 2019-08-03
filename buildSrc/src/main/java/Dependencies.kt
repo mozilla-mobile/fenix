@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-private object Versions {
+object Versions {
     const val kotlin = "1.3.30"
     const val coroutines = "1.2.1"
     const val android_gradle_plugin = "3.4.1"
@@ -33,7 +33,7 @@ private object Versions {
     const val androidx_work = "2.0.1"
     const val google_material = "1.1.0-alpha07"
 
-    const val mozilla_android_components = "4.0.0-SNAPSHOT"
+    const val mozilla_android_components = "6.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -48,7 +48,7 @@ private object Versions {
     const val junit = "4.12"
     const val mockito = "2.24.5"
     const val mockk = "1.9.kotlin12"
-    const val glide = "4.9.0"
+    const val assertk = "0.19"
     const val flipper = "0.21.0"
     const val soLoader = "0.5.1"
 
@@ -183,9 +183,7 @@ object Deps {
     const val mockito_core = "org.mockito:mockito-core:${Versions.mockito}"
     const val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
-
-    const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
-    const val glideAnnotationProcessor = "com.github.bumptech.glide:compiler:${Versions.glide}"
+    const val assertk = "com.willowtreeapps.assertk:assertk-jvm:${Versions.assertk}"
 
     const val flipper = "com.facebook.flipper:flipper:${Versions.flipper}"
     const val flipper_noop = "com.facebook.flipper:flipper-noop:${Versions.flipper}"

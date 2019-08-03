@@ -24,20 +24,6 @@ def get_variants_for_build_type(build_type):
             if variant_dict['buildType'] == build_type]
 
 
-def get_geckoview_versions():
-    print("Fetching geckoview version from gradle")
-    output = _run_gradle_process('printGeckoviewVersions')
-
-    versions = {}
-    for version_type in ('beta',):
-        version = _extract_content_from_command_output(output, prefix='{}: '.format(version_type))
-        version = version.strip('"')
-        versions[version_type] = version
-        print('Got {} version: "{}"'.format(version_type, version))
-
-    return versions
-
-
 def _run_gradle_process(gradle_command):
     process = subprocess.Popen(["./gradlew", "--no-daemon", "--quiet", gradle_command], stdout=subprocess.PIPE)
     output, err = process.communicate()
