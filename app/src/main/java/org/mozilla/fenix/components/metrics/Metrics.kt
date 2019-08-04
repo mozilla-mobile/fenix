@@ -73,7 +73,6 @@ sealed class Event {
     object QuickActionSheetShareTapped : Event()
     object QuickActionSheetBookmarkTapped : Event()
     object QuickActionSheetDownloadTapped : Event()
-    object QuickActionSheetReadTapped : Event()
     object CustomTabsClosed : Event()
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
@@ -100,6 +99,7 @@ sealed class Event {
     object HistoryAllItemsRemoved : Event()
     object ReaderModeAvailable : Event()
     object ReaderModeOpened : Event()
+    object ReaderModeClosed : Event()
     object ReaderModeAppearanceOpened : Event()
     object CollectionRenamed : Event()
     object CollectionTabRestored : Event()
@@ -108,6 +108,8 @@ sealed class Event {
     object CollectionShared : Event()
     object CollectionRemoved : Event()
     object CollectionTabSelectOpened : Event()
+    object CollectionTabLongPressed : Event()
+    object CollectionAddTabPressed : Event()
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(
@@ -131,6 +133,11 @@ sealed class Event {
     }
 
     // Interaction Events
+    data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
+        override val extras: Map<String, String>?
+            get() = mapOf("from_screen" to fromScreen)
+    }
+
     data class CollectionSaved(val tabsOpenCount: Int, val tabsSelectedCount: Int) : Event() {
         override val extras: Map<String, String>?
             get() = mapOf(

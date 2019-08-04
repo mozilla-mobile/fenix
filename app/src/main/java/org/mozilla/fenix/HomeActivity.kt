@@ -35,6 +35,7 @@ import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
@@ -188,6 +189,17 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
     }
 
     private fun handleOpenedFromExternalSourceIfNecessary(intent: Intent?) {
+        if (intent?.extras?.getBoolean(OPEN_TO_BROWSER_AND_LOAD) == true) {
+            this.intent.putExtra(OPEN_TO_BROWSER_AND_LOAD, false)
+            openToBrowserAndLoad(intent.getStringExtra(
+                IntentReceiverActivity.SPEECH_PROCESSING), true, BrowserDirection.FromGlobal, forceSearch = true)
+            return
+        } else if (intent?.extras?.getBoolean(OPEN_TO_SEARCH) == true) {
+            this.intent.putExtra(OPEN_TO_SEARCH, false)
+            navHost.navController.nav(null, NavGraphDirections.actionGlobalSearch(null, true))
+            return
+        }
+
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER) != true) return
 
         this.intent.putExtra(OPEN_TO_BROWSER, false)
@@ -218,48 +230,64 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         if (sessionObserver == null)
             sessionObserver = subscribeToSessions()
 
-        if (navHost.navController.currentDestination?.id == R.id.browserFragment) return
-        @IdRes var fragmentId: Int? = null
-        val directions = if (!navHost.navController.popBackStack(R.id.browserFragment, false)) {
-            when (from) {
-                BrowserDirection.FromGlobal ->
-                    NavGraphDirections.actionGlobalBrowser(customTabSessionId)
-                BrowserDirection.FromHome -> {
-                    fragmentId = R.id.homeFragment
-                    HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromSearch -> {
-                    fragmentId = R.id.searchFragment
-                    SearchFragmentDirections.actionSearchFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromSettings -> {
-                    fragmentId = R.id.settingsFragment
-                    SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromBookmarks -> {
-                    fragmentId = R.id.bookmarkFragment
-                    BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromBookmarksFolderSelect -> {
-                    fragmentId = R.id.bookmarkSelectFolderFragment
-                    SelectBookmarkFolderFragmentDirections
-                        .actionBookmarkSelectFolderFragmentToBrowserFragment(customTabSessionId)
-                }
-                BrowserDirection.FromHistory -> {
-                    fragmentId = R.id.historyFragment
-                    HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(customTabSessionId)
-                }
-            }
-        } else {
-            null
+        with(navHost.navController) {
+            if (currentDestination?.id == R.id.browserFragment || popBackStack(R.id.browserFragment, false)) return
         }
 
-        directions?.let {
-            navHost.navController.nav(fragmentId, it)
+        @IdRes var fragmentId: Int? = null
+        val directions = when (from) {
+            BrowserDirection.FromGlobal ->
+                NavGraphDirections.actionGlobalBrowser(customTabSessionId)
+            BrowserDirection.FromHome -> {
+                fragmentId = R.id.homeFragment
+                HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId)
+            }
+            BrowserDirection.FromSearch -> {
+                fragmentId = R.id.searchFragment
+                SearchFragmentDirections.actionSearchFragmentToBrowserFragment(
+                    customTabSessionId
+                )
+            }
+            BrowserDirection.FromSettings -> {
+                fragmentId = R.id.settingsFragment
+                SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(
+                    customTabSessionId
+                )
+            }
+            BrowserDirection.FromBookmarks -> {
+                fragmentId = R.id.bookmarkFragment
+                BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(
+                    customTabSessionId
+                )
+            }
+            BrowserDirection.FromBookmarksFolderSelect -> {
+                fragmentId = R.id.bookmarkSelectFolderFragment
+                SelectBookmarkFolderFragmentDirections
+                    .actionBookmarkSelectFolderFragmentToBrowserFragment(customTabSessionId)
+            }
+            BrowserDirection.FromHistory -> {
+                fragmentId = R.id.historyFragment
+                HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(
+                    customTabSessionId
+                )
+            }
+            BrowserDirection.FromExceptions -> {
+                fragmentId = R.id.exceptionsFragment
+                ExceptionsFragmentDirections.actionExceptionsFragmentToBrowserFragment(
+                    customTabSessionId
+                )
+            }
         }
+
+        navHost.navController.nav(fragmentId, directions)
     }
 
-    private fun load(searchTermOrURL: String, newTab: Boolean, engine: SearchEngine?, forceSearch: Boolean) {
+    private fun load(
+        searchTermOrURL: String,
+        newTab: Boolean,
+        engine: SearchEngine?,
+        forceSearch: Boolean
+    ) {
         val isPrivate = this.browsingModeManager.isPrivate
 
         val loadUrlUseCase = if (newTab) {
@@ -273,7 +301,13 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         val searchUseCase: (String) -> Unit = { searchTerms ->
             if (newTab) {
                 components.useCases.searchUseCases.newTabSearch
-                    .invoke(searchTerms, Session.Source.USER_ENTERED, true, isPrivate, searchEngine = engine)
+                    .invoke(
+                        searchTerms,
+                        Session.Source.USER_ENTERED,
+                        true,
+                        isPrivate,
+                        searchEngine = engine
+                    )
             } else components.useCases.searchUseCases.defaultSearch.invoke(searchTerms, engine)
         }
 
@@ -288,11 +322,11 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         var urlLoading: String? = null
 
         override fun onLoadingStateChanged(session: Session, loading: Boolean) {
-            super.onLoadingStateChanged(session, loading)
-
-            if (loading) urlLoading = session.url
-            else if (urlLoading != null && !session.private)
+            if (loading) {
+                urlLoading = session.url
+            } else if (urlLoading != null && !session.private) {
                 components.analytics.metrics.track(Event.UriOpened)
+            }
         }
     }
 
@@ -334,24 +368,20 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
         return object : SessionManager.Observer {
             override fun onAllSessionsRemoved() {
-                super.onAllSessionsRemoved()
                 components.core.sessionManager.sessions.forEach {
                     it.unregister(singleSessionObserver)
                 }
             }
 
             override fun onSessionAdded(session: Session) {
-                super.onSessionAdded(session)
                 session.register(singleSessionObserver, this@HomeActivity)
             }
 
             override fun onSessionRemoved(session: Session) {
-                super.onSessionRemoved(session)
                 session.unregister(singleSessionObserver)
             }
 
             override fun onSessionsRestored() {
-                super.onSessionsRestored()
                 components.core.sessionManager.sessions.forEach {
                     it.register(singleSessionObserver, this@HomeActivity)
                 }
@@ -372,10 +402,12 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
+        const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
+        const val OPEN_TO_SEARCH = "open_to_search"
     }
 }
 
 enum class BrowserDirection {
     FromGlobal, FromHome, FromSearch, FromSettings, FromBookmarks,
-    FromBookmarksFolderSelect, FromHistory
+    FromBookmarksFolderSelect, FromHistory, FromExceptions
 }

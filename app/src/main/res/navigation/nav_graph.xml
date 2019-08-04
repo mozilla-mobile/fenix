@@ -12,8 +12,18 @@
         app:popUpToInclusive="true" />
 
     <action
+        android:id="@+id/action_global_search"
+        app:destination="@id/searchFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true"/>
+
+    <action
         android:id="@+id/action_global_crash_reporter"
         app:destination="@id/crashReporterFragment" />
+
+    <action
+        android:id="@+id/action_global_turn_on_sync"
+        app:destination="@id/turnOnSyncFragment" />
 
     <fragment
         android:id="@+id/homeFragment"
@@ -62,6 +72,11 @@
             android:name="session_id"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="displaySearchShortcuts"
+            android:defaultValue="false"
+            app:argType="boolean"
+            app:nullable="false" />
         <action
             android:id="@+id/action_searchFragment_to_searchEngineFragment"
             app:destination="@id/searchEngineFragment"
@@ -375,11 +390,17 @@
     <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.DeleteBrowsingDataFragment"
-        android:label="@string/preferences_delete_browsing_data"/>
+        android:label="@string/preferences_delete_browsing_data" />
     <fragment
         android:id="@+id/exceptionsFragment"
         android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
-        android:label="@string/preference_exceptions" />
+        android:label="@string/preference_exceptions">
+        <action
+            android:id="@+id/action_exceptionsFragment_to_browserFragment"
+            app:destination="@id/browserFragment"
+            app:popUpTo="@id/settingsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <dialog
         android:id="@+id/createCollectionFragment"
         android:name="org.mozilla.fenix.collections.CreateCollectionFragment"

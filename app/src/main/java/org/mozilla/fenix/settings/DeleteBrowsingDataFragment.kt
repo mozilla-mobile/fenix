@@ -40,30 +40,11 @@ class DeleteBrowsingDataFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sessionObserver = object : SessionManager.Observer {
-            override fun onSessionAdded(session: Session) {
-                super.onSessionAdded(session)
-                updateTabCount()
-            }
-
-            override fun onSessionRemoved(session: Session) {
-                super.onSessionRemoved(session)
-                updateTabCount()
-            }
-
-            override fun onSessionSelected(session: Session) {
-                super.onSessionSelected(session)
-                updateTabCount()
-            }
-
-            override fun onSessionsRestored() {
-                super.onSessionsRestored()
-                updateTabCount()
-            }
-
-            override fun onAllSessionsRemoved() {
-                super.onAllSessionsRemoved()
-                updateTabCount()
-            }
+            override fun onSessionAdded(session: Session) = updateTabCount()
+            override fun onSessionRemoved(session: Session) = updateTabCount()
+            override fun onSessionSelected(session: Session) = updateTabCount()
+            override fun onSessionsRestored() = updateTabCount()
+            override fun onAllSessionsRemoved() = updateTabCount()
         }
 
         requireComponents.core.sessionManager.register(sessionObserver, owner = this)
@@ -167,8 +148,9 @@ class DeleteBrowsingDataFragment : Fragment() {
 
     private fun updateTabCount() {
         view?.open_tabs_item?.apply {
-            val openTabs = requireComponents.core.sessionManager.size
+            val openTabs = requireComponents.core.sessionManager.sessions.size
             subtitleView.text = resources.getString(R.string.preferences_delete_browsing_data_tabs_subtitle, openTabs)
+            isEnabled = openTabs > 0
         }
     }
 
@@ -184,6 +166,7 @@ class DeleteBrowsingDataFragment : Fragment() {
                             R.string.preferences_delete_browsing_data_browsing_data_subtitle,
                             historyCount
                         )
+                    isEnabled = historyCount > 0
                 }
             }
         }
@@ -201,6 +184,7 @@ class DeleteBrowsingDataFragment : Fragment() {
                             R.string.preferences_delete_browsing_data_collections_subtitle,
                             collectionsCount
                         )
+                    isEnabled = collectionsCount > 0
                 }
             }
         }

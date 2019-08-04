@@ -5,25 +5,27 @@ package org.mozilla.fenix.search.awesomebar
    file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import android.graphics.PorterDuff.Mode.SRC_IN
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.search.SearchEngine
+import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.EngineSession
-import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
-import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchState
 
@@ -55,6 +57,11 @@ interface AwesomeBarInteractor {
      * Called whenever the "Search Engine Settings" item is tapped
      */
     fun onClickSearchEngineSettings()
+
+    /**
+     * Called whenever an existing session is selected from the sessionSuggestionProvider
+     */
+    fun onExistingSessionSelected(session: Session)
 }
 
 /**
@@ -96,12 +103,15 @@ class AwesomeBarView(
         }
     }
 
+    private val selectTabUseCase = object : TabsUseCases.SelectTabUseCase {
+        override fun invoke(session: Session) {
+            interactor.onExistingSessionSelected(session)
+        }
+    }
+
     init {
         with(container.context) {
-            val primaryTextColor = ContextCompat.getColor(
-                this,
-                ThemeManager.resolveAttribute(R.attr.primaryText, this)
-            )
+            val primaryTextColor = getColorFromAttr(R.attr.primaryText)
 
             val draw = getDrawable(R.drawable.ic_link)!!
             draw.setColorFilter(primaryTextColor, SRC_IN)
@@ -116,8 +126,9 @@ class AwesomeBarView(
             sessionProvider =
                 SessionSuggestionProvider(
                     components.core.sessionManager,
-                    components.useCases.tabsUseCases.selectTab,
-                    components.core.icons
+                    selectTabUseCase,
+                    components.core.icons,
+                    excludeSelectedSession = true
                 )
 
             historyStorageProvider =
@@ -187,12 +198,7 @@ class AwesomeBarView(
     private fun createSuggestionProviderForEngine(engine: SearchEngine): SearchSuggestionProvider {
         return with(container.context) {
             val draw = getDrawable(R.drawable.ic_search)
-            draw?.setColorFilter(
-                ContextCompat.getColor(
-                    this,
-                    ThemeManager.resolveAttribute(R.attr.primaryText, this)
-                ), SRC_IN
-            )
+            draw?.colorFilter = PorterDuffColorFilter(getColorFromAttr(R.attr.primaryText), SRC_IN)
 
             SearchSuggestionProvider(
                 components.search.searchEngineManager.getDefaultSearchEngine(this, engine.name),

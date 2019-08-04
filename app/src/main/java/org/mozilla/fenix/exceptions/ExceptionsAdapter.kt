@@ -7,11 +7,9 @@ package org.mozilla.fenix.exceptions
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import org.mozilla.fenix.exceptions.viewholders.ExceptionsDeleteButtonViewHolder
 import org.mozilla.fenix.exceptions.viewholders.ExceptionsHeaderViewHolder
 import org.mozilla.fenix.exceptions.viewholders.ExceptionsListItemViewHolder
-import org.mozilla.fenix.utils.AdapterWithJob
 
 private sealed class AdapterItem {
     object DeleteButton : AdapterItem()
@@ -21,6 +19,7 @@ private sealed class AdapterItem {
 
 private class ExceptionsList(val exceptions: List<ExceptionsItem>) {
     val items: List<AdapterItem>
+
     init {
         val items = mutableListOf<AdapterItem>()
         items.add(AdapterItem.Header)
@@ -33,8 +32,8 @@ private class ExceptionsList(val exceptions: List<ExceptionsItem>) {
 }
 
 class ExceptionsAdapter(
-    private val actionEmitter: Observer<ExceptionsAction>
-) : AdapterWithJob<RecyclerView.ViewHolder>() {
+    private val interactor: ExceptionsInteractor
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var exceptionsList: ExceptionsList = ExceptionsList(emptyList())
 
     fun updateData(items: List<ExceptionsItem>) {
@@ -56,9 +55,12 @@ class ExceptionsAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
         return when (viewType) {
-            ExceptionsDeleteButtonViewHolder.LAYOUT_ID -> ExceptionsDeleteButtonViewHolder(view, actionEmitter)
+            ExceptionsDeleteButtonViewHolder.LAYOUT_ID -> ExceptionsDeleteButtonViewHolder(
+                view,
+                interactor
+            )
             ExceptionsHeaderViewHolder.LAYOUT_ID -> ExceptionsHeaderViewHolder(view)
-            ExceptionsListItemViewHolder.LAYOUT_ID -> ExceptionsListItemViewHolder(view, actionEmitter, adapterJob)
+            ExceptionsListItemViewHolder.LAYOUT_ID -> ExceptionsListItemViewHolder(view, interactor)
             else -> throw IllegalStateException()
         }
     }

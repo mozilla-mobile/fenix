@@ -5,152 +5,118 @@
 package org.mozilla.fenix.library.history.viewholders
 
 import android.view.View
-import android.widget.CompoundButton
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.history_list_item.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.menu.BrowserMenu
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryItem
 import org.mozilla.fenix.library.history.HistoryItemMenu
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.library.history.HistoryState
-import kotlin.coroutines.CoroutineContext
 
 class HistoryListItemViewHolder(
     view: View,
-    private val historyInteractor: HistoryInteractor,
-    val job: Job
-) : RecyclerView.ViewHolder(view), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
-
-    private val favicon = view.history_favicon
-    private val title = view.history_title
-    private val url = view.history_url
-    private val menuButton = view.history_item_overflow
+    private val historyInteractor: HistoryInteractor
+) : RecyclerView.ViewHolder(view) {
 
     private var item: HistoryItem? = null
-    private lateinit var historyMenu: HistoryItemMenu
     private var mode: HistoryState.Mode = HistoryState.Mode.Normal
-    private val checkListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
-        if (mode is HistoryState.Mode.Normal) {
-            return@OnCheckedChangeListener
-        }
-
-        item?.apply {
-            if (isChecked) {
-                historyInteractor.onItemAddedForRemoval(this)
-            } else {
-                historyInteractor.onItemRemovedForRemoval(this)
-            }
-        }
-    }
 
     init {
         setupMenu()
 
-        view.setOnLongClickListener {
-            item?.apply {
-                historyInteractor.onEnterEditMode(this)
-            }
-
+        itemView.history_layout.setOnLongClickListener {
+            item?.also(historyInteractor::onItemLongPress)
             true
         }
 
-        menuButton.setOnClickListener {
-            historyMenu.menuBuilder.build(view.context).show(
+        itemView.history_layout.setOnClickListener {
+            item?.also(historyInteractor::onItemPress)
+        }
+
+        itemView.history_layout.iconView.setOnClickListener {
+            item?.apply {
+                historyInteractor.onItemLongPress(this)
+            }
+        }
+
+        itemView.delete_button.setOnClickListener {
+            when (val mode = this.mode) {
+                HistoryState.Mode.Normal -> historyInteractor.onDeleteAll()
+                is HistoryState.Mode.Editing -> historyInteractor.onDeleteSome(mode.selectedItems)
+            }
+        }
+    }
+
+    fun bind(
+        item: HistoryItem,
+        timeGroup: HistoryItemTimeGroup?,
+        showDeleteButton: Boolean,
+        mode: HistoryState.Mode
+    ) {
+        this.item = item
+        this.mode = mode
+
+        itemView.history_layout.titleView.text = item.title
+        itemView.history_layout.urlView.text = item.url
+
+        toggleDeleteButton(showDeleteButton, mode)
+
+        val headerText = timeGroup?.humanReadable(itemView.context)
+        toggleHeader(headerText)
+
+        itemView.history_layout.changeSelected(item in mode.selectedItems)
+        itemView.history_layout.loadFavicon(item.url)
+    }
+
+    private fun toggleHeader(text: String?) {
+        if (text != null) {
+            itemView.header_title.visibility = View.VISIBLE
+            itemView.header_title.text = text
+        } else {
+            itemView.header_title.visibility = View.GONE
+        }
+    }
+
+    private fun toggleDeleteButton(
+        showDeleteButton: Boolean,
+        mode: HistoryState.Mode
+    ) {
+        if (showDeleteButton) {
+            itemView.delete_button.run {
+                visibility = View.VISIBLE
+
+                if (mode === HistoryState.Mode.Deleting || mode.selectedItems.isNotEmpty()) {
+                    isEnabled = false
+                    alpha = DELETE_BUTTON_DISABLED_ALPHA
+                } else {
+                    isEnabled = true
+                    alpha = 1f
+                }
+            }
+        } else {
+            itemView.delete_button.visibility = View.GONE
+        }
+    }
+
+    private fun setupMenu() {
+        val historyMenu = HistoryItemMenu(itemView.context) {
+            when (it) {
+                HistoryItemMenu.Item.Delete -> item?.also(historyInteractor::onDeleteOne)
+            }
+        }
+
+        itemView.history_layout.overflowView.setOnClickListener {
+            historyMenu.menuBuilder.build(itemView.context).show(
                 anchor = it,
                 orientation = BrowserMenu.Orientation.DOWN
             )
         }
     }
 
-    fun bind(item: HistoryItem, mode: HistoryState.Mode) {
-        this.item = item
-        this.mode = mode
-
-        title.text = item.title
-        url.text = item.url
-
-        val selected = when (mode) {
-            is HistoryState.Mode.Editing -> mode.selectedItems.contains(item)
-            else -> false
-        }
-
-        setClickListeners(item, selected)
-
-        if (mode is HistoryState.Mode.Editing) {
-            val backgroundTint =
-                if (selected) {
-                    ThemeManager.resolveAttribute(R.attr.accentHighContrast, itemView.context)
-                } else {
-                    ThemeManager.resolveAttribute(R.attr.neutral, itemView.context)
-                }
-            val backgroundTintList =
-                ContextCompat.getColorStateList(itemView.context, backgroundTint)
-            favicon.backgroundTintList = backgroundTintList
-
-            if (selected) {
-                favicon.setImageResource(R.drawable.mozac_ic_check)
-            } else {
-                updateFavIcon(item.url)
-            }
-        } else {
-            val backgroundTint = ThemeManager.resolveAttribute(R.attr.neutral, itemView.context)
-            val backgroundTintList =
-                ContextCompat.getColorStateList(itemView.context, backgroundTint)
-            favicon.backgroundTintList = backgroundTintList
-            updateFavIcon(item.url)
-        }
-    }
-
-    private fun setupMenu() {
-        this.historyMenu = HistoryItemMenu(itemView.context) {
-            when (it) {
-                is HistoryItemMenu.Item.Delete -> {
-                    item?.apply { historyInteractor.onDeleteOne(this) }
-                }
-            }
-        }
-    }
-
-    private fun updateFavIcon(url: String) {
-        launch(Dispatchers.IO) {
-            val bitmap = favicon.context.components.core.icons
-                .loadIcon(IconRequest(url)).await().bitmap
-            launch(Dispatchers.Main) {
-                favicon.setImageBitmap(bitmap)
-            }
-        }
-    }
-
-    private fun setClickListeners(
-        item: HistoryItem,
-        selected: Boolean
-    ) {
-        itemView.history_layout.setOnClickListener {
-            if (mode == HistoryState.Mode.Normal) {
-                historyInteractor.onHistoryItemOpened(item)
-            } else {
-                if (selected) {
-                    historyInteractor.onItemRemovedForRemoval(item)
-                } else {
-                    historyInteractor.onItemAddedForRemoval(item)
-                }
-            }
-        }
-    }
-
     companion object {
+        const val DELETE_BUTTON_DISABLED_ALPHA = 0.4f
         const val LAYOUT_ID = R.layout.history_list_item
     }
 }

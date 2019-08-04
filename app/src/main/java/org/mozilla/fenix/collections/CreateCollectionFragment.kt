@@ -48,7 +48,7 @@ class CreateCollectionFragment : DialogFragment() {
         }
 
         collectionCreationComponent = CollectionCreationComponent(
-            view.create_collection_wrapper,
+            view.createCollectionWrapper,
             ActionBusFactory.get(this),
             FenixViewModelProvider.create(
                 this,
@@ -150,8 +150,8 @@ class CreateCollectionFragment : DialogFragment() {
                 is CollectionCreationAction.RenameCollection -> {
                     dismiss()
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                        requireComponents.core.tabCollectionStorage.renameCollection(it.collection, it.name)
-                        requireComponents.analytics.metrics.track(Event.CollectionRenamed)
+                        context?.components?.core?.tabCollectionStorage?.renameCollection(it.collection, it.name)
+                        context?.components?.analytics?.metrics?.track(Event.CollectionRenamed)
                     }
                 }
             }

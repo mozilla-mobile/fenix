@@ -17,17 +17,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
-import mozilla.components.lib.state.ext.observe
+import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.hasCamera
@@ -36,9 +32,9 @@ import org.jetbrains.anko.backgroundDrawable
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
@@ -69,6 +65,11 @@ class SearchFragment : Fragment(), BackHandler {
             ?.let { it.sessionId }
             ?.let(requireComponents.core.sessionManager::findSessionById)
 
+        val displaySearchShortcuts = arguments
+            ?.let(SearchFragmentArgs.Companion::fromBundle)
+            ?.let { it.displaySearchShortcuts }
+            ?: false
+
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url ?: ""
 
@@ -76,7 +77,7 @@ class SearchFragment : Fragment(), BackHandler {
             SearchStore(
                 SearchState(
                     query = url,
-                    showShortcutEnginePicker = false,
+                    showShortcutEnginePicker = displaySearchShortcuts,
                     searchEngineSource = SearchEngineSource.Default(
                         requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
                     ),
@@ -93,8 +94,13 @@ class SearchFragment : Fragment(), BackHandler {
             searchStore
         )
 
-        toolbarView = ToolbarView(view.toolbar_component_wrapper, searchInteractor, historyStorageProvider())
         awesomeBarView = AwesomeBarView(view.search_layout, searchInteractor)
+        toolbarView = ToolbarView(
+            view.toolbar_component_wrapper,
+            searchInteractor,
+            historyStorageProvider(),
+            (activity as HomeActivity).browsingModeManager.isPrivate
+        )
 
         return view
     }
@@ -102,7 +108,7 @@ class SearchFragment : Fragment(), BackHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        search_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
+        searchScanButton.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
         layoutComponents(view.search_layout)
 
         qrFeature.set(
@@ -113,7 +119,7 @@ class SearchFragment : Fragment(), BackHandler {
                     requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
                 },
                 onScanResult = { result ->
-                    search_scan_button.isChecked = false
+                    searchScanButton.isChecked = false
                     activity?.let {
                         AlertDialog.Builder(it).apply {
                             val spannable = resources.getSpannable(
@@ -147,7 +153,7 @@ class SearchFragment : Fragment(), BackHandler {
             view = view
         )
 
-        view.search_scan_button.setOnClickListener {
+        view.searchScanButton.setOnClickListener {
             toolbarView.view.clearFocus()
             requireComponents.analytics.metrics.track(Event.QRScannerOpened)
             qrFeature.get()?.scan(R.id.container)
@@ -155,7 +161,7 @@ class SearchFragment : Fragment(), BackHandler {
 
         view.toolbar_wrapper.clipToOutline = false
 
-        search_shortcuts_button.setOnClickListener {
+        searchShortcutsButton.setOnClickListener {
             val isOpen = searchStore.state.showShortcutEnginePicker
             searchStore.dispatch(SearchAction.ShowSearchShortcutEnginePicker(!isOpen))
 
@@ -164,18 +170,16 @@ class SearchFragment : Fragment(), BackHandler {
             } else {
                 requireComponents.analytics.metrics.track(Event.SearchShortcutMenuOpened)
             }
+
+            searchInteractor.turnOnStartedTyping()
         }
 
-        searchStore.observe(view) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                whenStarted {
-                    awesomeBarView.update(it)
-                    toolbarView.update(it)
-                    updateSearchEngineIcon(it)
-                    updateSearchShortuctsIcon(it)
-                    updateSearchWithLabel(it)
-                }
-            }
+        consumeFrom(searchStore) {
+            awesomeBarView.update(it)
+            toolbarView.update(it)
+            updateSearchEngineIcon(it)
+            updateSearchShortuctsIcon(it)
+            updateSearchWithLabel(it)
         }
 
         startPostponedEnterTransition()
@@ -200,7 +204,7 @@ class SearchFragment : Fragment(), BackHandler {
     override fun onBackPressed(): Boolean {
         return when {
             qrFeature.onBackPressed() -> {
-                view?.search_scan_button?.isChecked = false
+                view?.searchScanButton?.isChecked = false
                 toolbarView.view.requestFocus()
                 true
             }
@@ -213,26 +217,21 @@ class SearchFragment : Fragment(), BackHandler {
         val draw = BitmapDrawable(resources, searchIcon)
         val iconSize = resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
         draw.setBounds(0, 0, iconSize, iconSize)
-        search_engine_icon?.backgroundDrawable = draw
+        searchEngineIcon?.backgroundDrawable = draw
     }
 
     private fun updateSearchWithLabel(searchState: SearchState) {
-        search_with_shortcuts.visibility = if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
+        searchWithShortcuts.visibility = if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
     }
 
     private fun updateSearchShortuctsIcon(searchState: SearchState) {
         with(requireContext()) {
             val showShortcuts = searchState.showShortcutEnginePicker
-            search_shortcuts_button?.isChecked = showShortcuts
+            searchShortcutsButton?.isChecked = showShortcuts
 
-            val color = if (showShortcuts) R.attr.foundation else R.attr.primaryText
+            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
 
-            search_shortcuts_button.compoundDrawables[0]?.setTint(
-                ContextCompat.getColor(
-                    this,
-                    ThemeManager.resolveAttribute(color, this)
-                )
-            )
+            searchShortcutsButton.compoundDrawables[0]?.setTint(getColorFromAttr(color))
         }
     }
 
@@ -245,7 +244,7 @@ class SearchFragment : Fragment(), BackHandler {
                     if (context.isPermissionGranted(Manifest.permission.CAMERA)) {
                         permissionDidUpdate = true
                     } else {
-                        view?.search_scan_button?.isChecked = false
+                        view?.searchScanButton?.isChecked = false
                     }
                 }
             }

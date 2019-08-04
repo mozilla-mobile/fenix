@@ -16,7 +16,6 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import kotlinx.android.synthetic.main.fragment_turn_on_sync.view.*
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.OAuthAccount
-import mozilla.components.concept.sync.Profile
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -48,9 +47,9 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_turn_on_sync, container, false)
-        view.sign_in_scan_button.setOnClickListener(getClickListenerForPairing())
-        view.sign_in_email_button.setOnClickListener(getClickListenerForSignIn())
-        view.sign_in_instructions.text = HtmlCompat.fromHtml(
+        view.signInScanButton.setOnClickListener(getClickListenerForPairing())
+        view.signInEmailButton.setOnClickListener(getClickListenerForSignIn())
+        view.signInInstructions.text = HtmlCompat.fromHtml(
             getString(R.string.sign_in_instructions),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
@@ -66,7 +65,6 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             // We could auto-close this tab once we get to the end of the authentication process?
             // Via an interceptor, perhaps.
             requireComponents.analytics.metrics.track(Event.SyncAuthSignIn)
-            true
         }
     }
 
@@ -75,18 +73,12 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             val directions = TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToPairFragment()
             Navigation.findNavController(view!!).navigate(directions)
             requireComponents.analytics.metrics.track(Event.SyncAuthScanPairing)
-
-            true
         }
     }
 
-    override fun onAuthenticated(account: OAuthAccount) {
+    override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
         FenixSnackbar.make(view!!, FenixSnackbar.LENGTH_SHORT)
             .setText(requireContext().getString(R.string.sync_syncing_in_progress))
             .show()
     }
-
-    override fun onAuthenticationProblems() {}
-    override fun onLoggedOut() {}
-    override fun onProfileUpdated(profile: Profile) {}
 }
