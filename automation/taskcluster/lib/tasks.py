@@ -17,6 +17,13 @@ _OFFICIAL_REPO_URL = 'https://github.com/mozilla-mobile/fenix'
 _DEFAULT_TASK_URL = 'https://queue.taskcluster.net/v1/task'
 GOOGLE_PROJECT = "moz-fenix"
 GOOGLE_APPLICATION_CREDENTIALS = '.firebase_token.json'
+# Bug 1558456 - Stop tracking youtube-playback-test on motoG5 for >1080p cases
+TEST_URL_PARAMS = {
+    "urlparams": [
+        "exclude=1,2,9,10,17,18,21,22,26,28,30,32,39,40,47,"
+        "48,55,56,63,64,71,72,79,80,83,84,89,90,95,96",
+    ]
+}
 
 
 class TaskBuilder(object):
@@ -460,7 +467,15 @@ class TaskBuilder(object):
         self, assemble_task_id, variant, is_staging,
     ):
         staging_prefix = '.staging' if is_staging else ''
-        routes = []
+        routes = [
+            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.latest.{}".format(
+                staging_prefix, self.date.year, self.date.month, self.date.day, variant.abi
+            ),
+            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.revision.{}.{}".format(
+                staging_prefix, self.date.year, self.date.month, self.date.day, self.commit, variant.abi
+            ),
+            "index.project.mobile.fenix.v2{}.performance-test.latest.{}".format(staging_prefix, variant.abi),
+        ]
 
         return self._craft_signing_task(
             name='sign: {}'.format(variant.raw),
@@ -616,6 +631,24 @@ class TaskBuilder(object):
 
         apk_url = '{}/{}/artifacts/{}'.format(_DEFAULT_TASK_URL, signing_task_id,
                                                         DEFAULT_APK_ARTIFACT_LOCATION)
+        command = [[
+            "/builds/taskcluster/script.py",
+            "bash",
+            "./test-linux.sh",
+            "--cfg=mozharness/configs/raptor/android_hw_config.py",
+            "--test={}".format(test_name),
+            "--app=fenix",
+            "--binary=org.mozilla.fenix.performancetest",
+            "--activity=org.mozilla.fenix.browser.BrowserPerformanceTestActivity",
+            "--download-symbols=ondemand",
+        ]]
+
+        # Bug 1558456 - Stop tracking youtube-playback-test on motoG5 for >1080p cases
+        if variant.abi == 'arm':
+            params_query = '&'.join(TEST_URL_PARAMS['urlparams'])
+            add_extra_params_option = "--test-url-params={}".format(params_query)
+            command[0].append(add_extra_params_option)
+
         return self._craft_default_task_definition(
             worker_type=worker_type,
             provisioner_id='proj-autophone',
@@ -634,17 +667,7 @@ class TaskBuilder(object):
                     ('workspace/logs', 'logs'),
                     ('workspace/build/blobber_upload_dir', 'test_info'),
                 )],
-                "command": [[
-                    "/builds/taskcluster/script.py",
-                    "bash",
-                    "./test-linux.sh",
-                    "--cfg=mozharness/configs/raptor/android_hw_config.py",
-                    "--test={}".format(test_name),
-                    "--app=fenix",
-                    "--binary=org.mozilla.fenix.performancetest",
-                    "--activity=org.mozilla.fenix.browser.BrowserPerformanceTestActivity",
-                    "--download-symbols=ondemand",
-                ]],
+                "command": command,
                 "env": {
                     "EXTRA_MOZHARNESS_CONFIG": json.dumps({
                         "test_packages_url": "{}/{}/artifacts/public/build/en-US/target.test_packages.json".format(_DEFAULT_TASK_URL, mozharness_task_id),
