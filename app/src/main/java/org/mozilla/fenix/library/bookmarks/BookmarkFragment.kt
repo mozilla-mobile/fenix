@@ -85,12 +85,15 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
             BookmarkStore(BookmarkState(null))
         }
         bookmarkInteractor = BookmarkFragmentInteractor(
-            context!!,
-            findNavController(),
-            bookmarkStore,
-            sharedViewModel,
-            FenixSnackbarPresenter(view),
-            ::deleteMulti
+            bookmarkStore = bookmarkStore,
+            viewModel = sharedViewModel,
+            bookmarksController = DefaultBookmarkController(
+                context = context!!,
+                navController = findNavController(),
+                snackbarPresenter = FenixSnackbarPresenter(view),
+                deleteBookmarkNodes = ::deleteMulti
+            ),
+            metrics = metrics!!
         )
 
         bookmarkView = BookmarkView(view.bookmarkLayout, bookmarkInteractor)
