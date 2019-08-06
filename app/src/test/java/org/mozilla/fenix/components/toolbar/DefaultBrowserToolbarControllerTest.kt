@@ -27,16 +27,19 @@ import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
 class DefaultBrowserToolbarControllerTest {
 
     private var context: HomeActivity = mockk(relaxed = true)
+    private var analytics: Analytics = mockk(relaxed = true)
     private var navController: NavController = mockk(relaxed = true)
     private var findInPageLauncher: () -> Unit = mockk(relaxed = true)
     private val nestedScrollQuickActionView: NestedScrollView = mockk(relaxed = true)
@@ -68,7 +71,8 @@ class DefaultBrowserToolbarControllerTest {
             bottomSheetBehavior = bottomSheetBehavior
         )
 
-        every { context.metrics } returns metrics
+        every { context.components.analytics } returns analytics
+        every { analytics.metrics } returns metrics
         every { context.components.useCases.sessionUseCases } returns sessionUseCases
     }
 
@@ -293,7 +297,9 @@ class DefaultBrowserToolbarControllerTest {
     @Test
     fun handleToolbarSaveToCollectionPress() {
         val item = ToolbarMenu.Item.SaveToCollection
+        val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
         every { context.components.useCases.sessionUseCases } returns sessionUseCases
+        every { context.components.core.tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
 
         controller.handleToolbarItemInteraction(item)
 
@@ -301,7 +307,7 @@ class DefaultBrowserToolbarControllerTest {
         verify { metrics.track(Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)) }
         verify { viewModel.tabs = listOf(currentSessionAsTab) }
         verify { viewModel.selectedTabs = mutableSetOf(currentSessionAsTab) }
-        verify { viewModel.tabCollections = context.components.core.tabCollectionStorage.cachedTabCollections.reversed() }
+        verify { viewModel.tabCollections = cachedTabCollections.reversed() }
         verify { viewModel.saveCollectionStep = SaveCollectionStep.SelectCollection }
         verify { viewModel.snackbarAnchorView = nestedScrollQuickActionView }
         verify { viewModel.previousFragmentId = R.id.browserFragment }

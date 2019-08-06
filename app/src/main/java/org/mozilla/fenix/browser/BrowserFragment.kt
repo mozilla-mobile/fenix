@@ -56,7 +56,6 @@ import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.utils.Settings
 import java.net.MalformedURLException
 import java.net.URL
 
