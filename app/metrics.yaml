@@ -1116,7 +1116,7 @@ collections:
     expires: "2020-03-01"
 
 experiments.metrics:
-  test_experiment_2019_08_05:
+  active_experiment:
     type: string
     description: >
       Records the branch name of the active experiment, if the client is enrolled in the

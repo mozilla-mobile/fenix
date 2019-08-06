@@ -88,7 +88,7 @@ open class FenixApplication : Application() {
         // library to get a list of experiments. It will take effect the second time the
         // application is launched.
         Experiments.withExperiment("fenix-test-2019-08-05") { branchName ->
-            ExperimentsMetrics.testExperiment20190805.set(branchName)
+            ExperimentsMetrics.activeExperiment.set(branchName)
         }
 
         setupLeakCanary()
