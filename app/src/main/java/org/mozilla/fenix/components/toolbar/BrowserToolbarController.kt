@@ -177,6 +177,6 @@ class DefaultBrowserToolbarController(
     }
 
     companion object {
-        private const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
+        internal const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
     }
 }

@@ -17,9 +17,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.component_search.*
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -37,7 +37,6 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
@@ -49,13 +48,11 @@ import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.customtabs.CustomTabsIntegration
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
-import org.mozilla.fenix.settings.SupportUtils
 import java.net.MalformedURLException
 import java.net.URL
 
