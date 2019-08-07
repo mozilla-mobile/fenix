@@ -7,7 +7,9 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <RelativeLayout android:layout_width="256dp"
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_height="50dp"
                     android:background="@drawable/rounded_white_corners"
                     android:layout_gravity="center">
