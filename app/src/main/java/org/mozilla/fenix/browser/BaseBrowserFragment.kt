@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -141,9 +141,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         val sessionManager = requireComponents.core.sessionManager
 
         return getSessionById()?.also { session ->
-            val viewModel = activity!!.run {
-                ViewModelProvider(this).get(CreateCollectionViewModel::class.java)
-            }
+            val viewModel: CreateCollectionViewModel by activityViewModels()
 
             val browserToolbarController = DefaultBrowserToolbarController(
                 context!!,
