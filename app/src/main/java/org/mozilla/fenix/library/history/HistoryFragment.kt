@@ -94,10 +94,11 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
 
     private fun deleteHistoryItems(items: Set<HistoryItem>) {
         lifecycleScope.launch {
-            val storage = context?.components?.core?.historyStorage
-            for (item in items) {
-                context?.components?.analytics?.metrics?.track(Event.HistoryItemRemoved)
-                storage?.deleteVisit(item.url, item.visitedAt)
+            context?.components?.run {
+                for (item in items) {
+                    analytics.metrics.track(Event.HistoryItemRemoved)
+                    core.historyStorage.deleteVisit(item.url, item.visitedAt)
+                }
             }
             viewModel.invalidate()
             historyStore.dispatch(HistoryAction.ExitDeletionMode)
@@ -134,7 +135,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
 
         if (mode is HistoryState.Mode.Editing) {
             menu.findItem(R.id.share_history_multi_select)?.run {
-                isVisible = mode.selectedItems.isNotEmpty()
+                isVisible = true
                 icon.colorFilter = PorterDuffColorFilter(
                     ContextCompat.getColor(context!!, R.color.white_color),
                     SRC_IN
@@ -212,14 +213,14 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
         )
     }
 
-    fun displayDeleteAllDialog() {
+    private fun displayDeleteAllDialog() {
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
-                setMessage(R.string.history_delete_all_dialog)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setMessage(R.string.delete_browsing_data_prompt_message)
+                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
-                setPositiveButton(R.string.history_clear_dialog) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
                     historyStore.dispatch(HistoryAction.EnterDeletionMode)
                     lifecycleScope.launch {
                         requireComponents.analytics.metrics.track(Event.HistoryAllItemsRemoved)

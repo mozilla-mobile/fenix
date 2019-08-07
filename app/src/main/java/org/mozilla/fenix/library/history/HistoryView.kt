@@ -15,21 +15,13 @@ import kotlinx.android.synthetic.main.component_history.view.*
 import mozilla.components.support.base.feature.BackHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibraryPageView
+import org.mozilla.fenix.library.SelectionInteractor
 
 /**
  * Interface for the HistoryViewInteractor. This interface is implemented by objects that want
  * to respond to user interaction on the HistoryView
  */
-interface HistoryViewInteractor {
-    /**
-     * Called when a user taps a history item
-     */
-    fun onItemPress(item: HistoryItem)
-
-    /**
-     * Called when a user long clicks a user
-     */
-    fun onItemLongPress(item: HistoryItem)
+interface HistoryViewInteractor : SelectionInteractor<HistoryItem> {
 
     /**
      * Called on backpressed to exit edit mode
@@ -45,12 +37,6 @@ interface HistoryViewInteractor {
      * Called when delete all is tapped
      */
     fun onDeleteAll()
-
-    /**
-     * Called when one history item is deleted
-     * @param item the history item to delete
-     */
-    fun onDeleteOne(item: HistoryItem)
 
     /**
      * Called when multiple history items are deleted
@@ -121,6 +107,9 @@ class HistoryView(
     fun updateEmptyState(userHasHistory: Boolean) {
         history_list.isVisible = userHasHistory
         history_empty_view.isVisible = !userHasHistory
+        if (!userHasHistory) {
+            history_empty_view.announceForAccessibility(context.getString(R.string.history_empty_message))
+        }
     }
 
     override fun onBackPressed(): Boolean {

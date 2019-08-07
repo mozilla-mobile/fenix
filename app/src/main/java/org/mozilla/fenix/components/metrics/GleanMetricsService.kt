@@ -282,6 +282,14 @@ private val Event.wrapper
         is Event.CollectionRenamePressed -> EventWrapper<NoExtraKeys>(
             { Collections.renameButton.record(it) }
         )
+        is Event.CollectionSaved -> EventWrapper(
+            { Collections.saved.record(it) },
+            { Collections.savedKeys.valueOf(it) }
+        )
+        is Event.CollectionTabsAdded -> EventWrapper(
+            { Collections.tabsAdded.record(it) },
+            { Collections.tabsAddedKeys.valueOf(it) }
+        )
 
         // Don't track other events with Glean
         else -> null

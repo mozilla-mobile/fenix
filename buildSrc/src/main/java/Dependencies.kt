@@ -12,7 +12,9 @@ object Versions {
     const val anko = "0.10.8"
     const val sentry = "1.7.10"
     const val leakcanary = "1.6.3"
-    const val leanplum = "4.3.1"
+    const val leanplum = "5.2.3"
+    const val osslicenses_plugin = "0.9.5"
+    const val osslicenses_library = "17.0.0"
 
     const val androidx_appcompat = "1.1.0-rc01"
     const val androidx_coordinator_layout = "1.1.0-beta01"
@@ -33,7 +35,7 @@ object Versions {
     const val androidx_work = "2.0.1"
     const val google_material = "1.1.0-alpha07"
 
-    const val mozilla_android_components = "7.0.0-SNAPSHOT"
+    const val mozilla_android_components = "8.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -74,6 +76,8 @@ object Deps {
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
     const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
+    const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
+    const val osslicenses_library = "com.google.android.gms:play-services-oss-licenses:${Versions.osslicenses_library}"
 
     const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
     const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
