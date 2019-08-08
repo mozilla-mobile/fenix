@@ -182,7 +182,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 feature = FindInPageIntegration(
                     sessionManager = requireComponents.core.sessionManager,
                     sessionId = customTabSessionId,
-                    view = view.findInPageView,
+                    stub = view.stubFindInPage,
                     engineView = view.engineView,
                     toolbar = toolbar
                 ),
