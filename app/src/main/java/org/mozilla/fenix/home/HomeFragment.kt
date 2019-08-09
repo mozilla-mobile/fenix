@@ -671,7 +671,7 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun getListOfSessions(): List<Session> {
-        val isPrivate = (activity as HomeActivity).browsingModeManager.isPrivate
+        val isPrivate = (activity as? HomeActivity)?.browsingModeManager?.isPrivate ?: false
         val notPendingDeletion: (Session) -> Boolean =
             { it.id != pendingSessionDeletion?.sessionId }
         return sessionManager.filteredSessions(isPrivate, notPendingDeletion)
