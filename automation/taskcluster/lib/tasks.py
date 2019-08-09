@@ -134,8 +134,30 @@ class TaskBuilder(object):
             },
         )
 
-    def craft_assemble_pr_task(self, variant):
+    def craft_assemble_pr_task(self, variant, pr_number = 0):
         assemble_gradle_command = 'assemble{}'.format(variant.for_gradle_command)
+
+        if pr_number != 0 and variant.abi == 'arm':
+            payload = {
+                "$id": "/schemas/github/v1/create-comment.json#",
+                "$schema": "/schemas/common/metaschema.json#",
+                "additionalProperties": False,
+                "description": "Write a new comment on a GitHub Issue or Pull Request.\nFull specification on [GitHub docs](https://developer.github.com/v3/issues/comments/#create-a-comment)\n",
+                "properties": {
+                    "body": {
+                        "description": "ARM32 APK link: {}".format(variant.apk_absolute_path()),
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "body"
+                ],
+                "title": "Create Comment Request",
+                "type": "object"
+            }
+
+            print("PAYLOAD", payload)
+            taskcluster.Github().createComment('mozilla-mobile', 'fenix', pr_number, payload)
 
         return self._craft_clean_gradle_task(
             name='assemble: {}'.format(variant.raw),
@@ -150,7 +172,10 @@ class TaskBuilder(object):
                 },
                 'symbol': 'A',
                 'tier': 1,
-            }
+            },
+            scopes=[
+                'github:create-comment:mozilla-mobile/fenix'
+            ]
         )
 
     def craft_test_pr_task(self, variant, run_coverage=False):

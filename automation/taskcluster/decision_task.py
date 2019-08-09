@@ -30,6 +30,7 @@ from lib.variant import Variant
 REPO_URL = os.environ.get('MOBILE_HEAD_REPOSITORY')
 COMMIT = os.environ.get('MOBILE_HEAD_REV')
 PR_TITLE = os.environ.get('GITHUB_PULL_TITLE', '')
+PR_NUMBER = os.environ.get('MOBILE_PULL_REQUEST_NUMBER', '')
 SHORT_HEAD_BRANCH = os.environ.get('SHORT_HEAD_BRANCH')
 
 # If we see this text inside a pull request title then we will not execute any tasks for this PR.
@@ -63,7 +64,7 @@ def pr():
 
     for variant in get_variants_for_build_type('debug'):
         assemble_task_id = taskcluster.slugId()
-        build_tasks[assemble_task_id] = BUILDER.craft_assemble_pr_task(variant)
+        build_tasks[assemble_task_id] = BUILDER.craft_assemble_pr_task(variant, PR_NUMBER)
         build_tasks[taskcluster.slugId()] = BUILDER.craft_test_pr_task(variant, True)
 
     for craft_function in (
