@@ -7,6 +7,7 @@ package org.mozilla.fenix.components
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewStub
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.runWithSessionIdOrSelected
@@ -15,7 +16,6 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.findinpage.FindInPageFeature
 import mozilla.components.feature.findinpage.view.FindInPageBar
 import mozilla.components.feature.findinpage.view.FindInPageView
-import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import org.mozilla.fenix.test.Mockable
 
@@ -23,36 +23,24 @@ import org.mozilla.fenix.test.Mockable
 class FindInPageIntegration(
     private val sessionManager: SessionManager,
     private val sessionId: String? = null,
-    private val view: FindInPageView,
-    engineView: EngineView,
+    stub: ViewStub,
+    private val engineView: EngineView,
     private val toolbar: BrowserToolbar
-) : LifecycleAwareFeature, BackHandler {
-    private val feature = FindInPageFeature(sessionManager, view, engineView, ::onClose)
-
-    override fun start() {
-        feature.start()
+) : InflationAwareFeature(stub) {
+    override fun onViewInflated(view: View): LifecycleAwareFeature {
+        return FindInPageFeature(sessionManager, view as FindInPageView, engineView) {
+            toolbar.visibility = View.VISIBLE
+            view.visibility = View.GONE
+        }
     }
 
-    override fun stop() {
-        feature.stop()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return feature.onBackPressed()
-    }
-
-    private fun onClose() {
-        toolbar.visibility = View.VISIBLE
-        view.asView().visibility = View.GONE
-    }
-
-    fun launch() {
-        sessionManager.runWithSessionIdOrSelected(sessionId) {
-            if (!it.isCustomTabSession()) {
+    override fun onLaunch(view: View, feature: LifecycleAwareFeature) {
+        sessionManager.runWithSessionIdOrSelected(sessionId) { session ->
+            if (!session.isCustomTabSession()) {
                 toolbar.visibility = View.GONE
             }
-            view.asView().visibility = View.VISIBLE
-            feature.bind(it)
+            view.visibility = View.VISIBLE
+            (feature as FindInPageFeature).bind(session)
         }
     }
 }

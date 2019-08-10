@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.BrowsingModeManager
+import org.mozilla.fenix.BrowsingMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbarPresenter
@@ -52,17 +52,7 @@ class BookmarkFragmentInteractor(
 
     override fun open(item: BookmarkNode) {
         when (item.type) {
-            BookmarkNodeType.ITEM -> {
-                item.url?.let { url ->
-                    activity!!
-                        .openToBrowserAndLoad(
-                            searchTermOrURL = url,
-                            newTab = true,
-                            from = BrowserDirection.FromBookmarks
-                        )
-                }
-                metrics.track(Event.OpenedBookmark)
-            }
+            BookmarkNodeType.ITEM -> openItem(item)
             BookmarkNodeType.FOLDER -> {
                 navController.nav(
                     R.id.bookmarkFragment,
@@ -123,38 +113,40 @@ class BookmarkFragmentInteractor(
     }
 
     override fun openInNewTab(item: BookmarkNode) {
-        require(item.type == BookmarkNodeType.ITEM)
-        item.url?.let { url ->
-            activity?.browsingModeManager?.mode =
-                BrowsingModeManager.Mode.Normal
-            activity?.openToBrowserAndLoad(
-                searchTermOrURL = url,
-                newTab = true,
-                from = BrowserDirection.FromBookmarks
-            )
-            metrics.track(Event.OpenedBookmarkInNewTab)
-        }
+        openItem(item, BrowsingMode.Normal)
     }
 
     override fun openInPrivateTab(item: BookmarkNode) {
+        openItem(item, BrowsingMode.Private)
+    }
+
+    private fun openItem(item: BookmarkNode, tabMode: BrowsingMode? = null) {
         require(item.type == BookmarkNodeType.ITEM)
         item.url?.let { url ->
-            activity?.browsingModeManager?.mode =
-                BrowsingModeManager.Mode.Private
+            tabMode?.let { activity?.browsingModeManager?.mode = it }
             activity?.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = true,
                 from = BrowserDirection.FromBookmarks
             )
-            metrics.track(Event.OpenedBookmarkInPrivateTab)
+            metrics.track(
+                when (tabMode) {
+                    BrowsingMode.Private -> Event.OpenedBookmarkInPrivateTab
+                    BrowsingMode.Normal -> Event.OpenedBookmarkInNewTab
+                    null -> Event.OpenedBookmark
+                }
+            )
         }
     }
 
     override fun delete(nodes: Set<BookmarkNode>) {
+        if (nodes.find { it.type == BookmarkNodeType.SEPARATOR } != null) {
+            throw IllegalStateException("Cannot delete separators")
+        }
         val eventType = when (nodes.singleOrNull()?.type) {
-            BookmarkNodeType.ITEM -> Event.RemoveBookmark
+            BookmarkNodeType.ITEM,
+            BookmarkNodeType.SEPARATOR -> Event.RemoveBookmark
             BookmarkNodeType.FOLDER -> Event.RemoveBookmarkFolder
-            BookmarkNodeType.SEPARATOR -> throw IllegalStateException("Cannot delete separators")
             null -> Event.RemoveBookmarks
         }
         deleteBookmarkNodes(nodes, eventType)

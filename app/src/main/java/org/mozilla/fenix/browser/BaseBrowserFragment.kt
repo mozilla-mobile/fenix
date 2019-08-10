@@ -16,6 +16,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -101,7 +102,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     private var browserInitialized: Boolean = false
     private var initUIJob: Job? = null
 
-    val viewModel: CreateCollectionViewModel by activityViewModels()
+    val viewModel: CreateCollectionViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+    }
 
     @CallSuper
     override fun onCreateView(
@@ -115,7 +118,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         val view = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val activity = activity as HomeActivity
-        ThemeManager.applyStatusBarTheme(activity.window, activity.themeManager, activity)
+        activity.themeManager.applyStatusBarTheme(activity)
 
         val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
         browserStore = StoreProvider.get(this) {
@@ -151,6 +154,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             val browserToolbarController = DefaultBrowserToolbarController(
                 context!!,
                 findNavController(),
+                (activity as HomeActivity).browsingModeManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 nestedScrollQuickActionView = nestedScrollQuickAction,
                 engineView = engineView,
@@ -183,7 +187,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 feature = FindInPageIntegration(
                     sessionManager = requireComponents.core.sessionManager,
                     sessionId = customTabSessionId,
-                    view = view.findInPageView,
+                    stub = view.stubFindInPage,
                     engineView = view.engineView,
                     toolbar = toolbar
                 ),
@@ -302,12 +306,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     } else {
                         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
                         activity?.exitImmersiveModeIfNeeded()
-                        (activity as HomeActivity).let { activity: HomeActivity ->
-                            ThemeManager.applyStatusBarTheme(
-                                activity.window,
-                                activity.themeManager,
-                                activity
-                            )
+                        (activity as? HomeActivity)?.let { activity ->
+                            activity.themeManager.applyStatusBarTheme(activity)
                         }
                         toolbar.visibility = View.VISIBLE
                         nestedScrollQuickAction.visibility = View.VISIBLE
