@@ -571,6 +571,10 @@ class HomeFragment : Fragment(), AccountObserver {
                 }
                 HomeMenu.Item.Help -> {
                     invokePendingDeleteJobs()
+                    if (!onboarding.userHasBeenOnboarded()) {
+                        onboarding.finish()
+                        emitAccountChanges()
+                    }
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getSumoURLForTopic(
                             context!!,
