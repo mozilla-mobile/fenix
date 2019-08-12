@@ -153,7 +153,9 @@ class CollectionCreationUIView(
                 val drawable = view.context.getDrawable(R.drawable.ic_close)
                 drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
                 view.bottom_bar_icon_button.setImageDrawable(drawable)
-
+                view.bottom_bar_icon_button.contentDescription =
+                    view.context.getString(R.string.create_collection_close)
+                view.bottom_bar_icon_button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
                 view.bottom_bar_icon_button.setOnClickListener {
                     actionEmitter.onNext(CollectionCreationAction.Close)
                 }
