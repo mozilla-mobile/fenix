@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - #4137 - Adds pagination to the history view
 - #3695 - Made search suggestions for other tabs clickable
+- #3756 - Mark HTTP sites as insecure
 
 ### Changed
 - Remove forced focus of toolbar on homescreen
