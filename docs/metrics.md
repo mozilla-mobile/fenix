@@ -1061,7 +1061,7 @@ Data that is sent in the activation ping
         <td>active_experiment</td>
         <td>string</td>
         <td>The branch name of the active experiment, if the client is enrolled in the `fenix-test-2019-08-05` experiment.</td>
-        <td><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1543986#c2">link</a></td>
+        <td><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1543986#c4">link</a></td>
         <td></td>
         <td>2019-11-01</td>
     </tr>

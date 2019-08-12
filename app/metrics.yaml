@@ -1127,7 +1127,7 @@ experiments.metrics:
     bugs:
       - 1543986
     data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1543986
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1543986#c4
     notification_emails:
       - mcooper@mozilla.com
     expires: 2019-11-01
