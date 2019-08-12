@@ -29,6 +29,8 @@
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
+            <nav-graph android:value="@navigation/nav_graph"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

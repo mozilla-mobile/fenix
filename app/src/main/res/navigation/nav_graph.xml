@@ -56,6 +56,7 @@
         <action
             android:id="@+id/action_homeFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
+        <deepLink android:id="@+id/deepLink2" app:uri="fenix://home"/>
     </fragment>
 
     <fragment
@@ -168,6 +169,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_bookmarksFragment"
             app:destination="@+id/bookmarkFragment" />
+        <deepLink
+            android:id="@+id/deepLink3"
+            app:uri="fenix://library" />
     </fragment>
 
     <fragment
@@ -304,6 +308,7 @@
         <action
             android:id="@+id/action_settingsFragment_to_accountProblemFragment"
             app:destination="@id/accountProblemFragment" />
+        <deepLink android:id="@+id/deepLink" app:uri="fenix://settings"/>
     </fragment>
     <fragment
         android:id="@+id/dataChoicesFragment"
