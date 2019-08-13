@@ -623,7 +623,8 @@
     <string name="preferences_delete_browsing_data_button">Delete browsing data</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">This will delete all of your browsing data.</string>
+    <string name="delete_browsing_data_prompt_message">This will delete the data you selected.</string>
+
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">Cancel</string>
     <!-- Text for the allow button for the data deletion dialog -->
