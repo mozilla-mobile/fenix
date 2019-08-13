@@ -191,6 +191,36 @@ Here is the list of current Events sent, which can be found here in the code bas
     <td>The user removed a bookmark</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/3632#issuecomment-505135753">#3632</a></td>
   </tr> 
+  <tr>
+    <td>`E_Collection_Created`</td>
+    <td>The user created a new collection</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr> 
+  <tr>
+    <td>`E_Collection_Tab_Opened`</td>
+    <td>The user opened a tab from a previously created collection</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr> 
+  <tr>
+    <td>`E_Sign_In_FxA`</td>
+    <td>The user successfully signed in to FxA</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr> 
+  <tr>
+    <td>`E_Sign_Out_FxA`</td>
+    <td>The user successfully signed out of FxA</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr> 
+  <tr>
+    <td>`E_New_Sign_Up_FxA`</td>
+    <td>The user successfully signed up for a new FxA account</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr>  
+  <tr>
+    <td>`E_Cleared_Private_Data`</td>
+    <td>The user cleared one or many types of private data</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr> 
 </table>
 
 Messages
