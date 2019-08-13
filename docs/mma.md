@@ -141,7 +141,7 @@ User Attributes
   </tr>
   <tr>
     <td>`search_widget_installed`</td>
-    <td>A boolean indicating that the user has at least one search widget is placed on the home screen</td>
+    <td>A boolean indicating that the user has at least one search widget placed on the home screen</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/4694#issuecomment-520591275">#4694</a></td>
   </tr>
 </table>
