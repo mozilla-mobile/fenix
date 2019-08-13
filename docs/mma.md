@@ -223,6 +223,56 @@ Here is the list of current Events sent, which can be found here in the code bas
   </tr> 
 </table>
 
+Deep links
+-------
+Deep links are hooks utilized by marketing to direct users to certain portions of the application through a link. They can also be invoked by other applications or even users
+directly to access specific screens quickly.
+
+Here is the list of current deep links available, which can be found here in the code base: https://github.com/mozilla-mobile/fenix/blob/master/app/src/main/AndroidManifest.xml
+
+<table>
+  <tr>
+    <th>Deep link</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>`fenix://home`</td>
+    <td>Opens to the Fenix home screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings`</td>
+    <td>Opens to the top level settings screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://turn_on_sync`</td>
+    <td>Opens to the turn on sync screen. **Only valid if the user is not signed in to FxA**</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_search_engine`</td>
+    <td>Opens to the search engine settings screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_accessibility`</td>
+    <td>Opens to the accessibility settings screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_delete_browsing_data`</td>
+    <td>Opens to the delete browsing data settings screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://enable_private_browsing`</td>
+    <td>Opens to the Fenix home screen and enables private browsing</td>
+  </tr>
+  <tr>
+    <td>`fenix://open?url={DESIRED_URL}`</td>
+    <td>Creates a new tab, opens to the browser screen and loads the {DESIRED_URL}</td>
+  </tr>
+  <tr>
+    <td>`fenix://make_default_browser`</td>
+    <td>Opens to the Android default apps settings screen. **Only works on Android API >=24**</td>
+  </tr>
+</table>
+
 Messages
 -----------
 Messages are in-app prompts to the user from Leanplum. The user interaction of that prompt will be sent to the Leanplum backend (such as "Accept" or "Show") to track overall engagement with the Message. The Message is downloaded from Leanplum when the Leanplum SDK is initialized at App start, assuming the fulfillment criteria for the Message is met. As mentioned before, the fulfillment criteria is a set of required Events and User Attributes. The fulfillment criteria are set in the Leanplum backend.
