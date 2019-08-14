@@ -35,16 +35,9 @@ import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.isSentryEnabled
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
-import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderFragmentDirections
-import org.mozilla.fenix.library.history.HistoryFragmentDirections
-import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.utils.Settings
 
@@ -61,16 +54,17 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
     lateinit var browsingModeManager: BrowsingModeManager
 
-    private val onDestinationChangedListener = NavController.OnDestinationChangedListener { _, dest, _ ->
-        val fragmentName = resources.getResourceEntryName(dest.id)
-        Sentry.getContext().recordBreadcrumb(
-            BreadcrumbBuilder()
-                .setCategory("DestinationChanged")
-                .setMessage("Changing to fragment $fragmentName, isCustomTab: $isCustomTab")
-                .setLevel(Breadcrumb.Level.INFO)
-                .build()
-        )
-    }
+    private val onDestinationChangedListener =
+        NavController.OnDestinationChangedListener { _, dest, _ ->
+            val fragmentName = resources.getResourceEntryName(dest.id)
+            Sentry.getContext().recordBreadcrumb(
+                BreadcrumbBuilder()
+                    .setCategory("DestinationChanged")
+                    .setMessage("Changing to fragment $fragmentName, isCustomTab: $isCustomTab")
+                    .setLevel(Breadcrumb.Level.INFO)
+                    .build()
+            )
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +101,11 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         val appBarConfiguration = AppBarConfiguration.Builder().build()
         val navigationToolbar = findViewById<Toolbar>(R.id.navigationToolbar)
         setSupportActionBar(navigationToolbar)
-        NavigationUI.setupWithNavController(navigationToolbar, navHost.navController, appBarConfiguration)
+        NavigationUI.setupWithNavController(
+            navigationToolbar,
+            navHost.navController,
+            appBarConfiguration
+        )
         navigationToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -148,7 +146,10 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         attrs: AttributeSet
     ): View? =
         when (name) {
-            EngineView::class.java.name -> components.core.engine.createView(context, attrs).asView()
+            EngineView::class.java.name -> components.core.engine.createView(
+                context,
+                attrs
+            ).asView()
             else -> super.onCreateView(parent, name, context, attrs)
         }
 
@@ -180,8 +181,11 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
     private fun handleOpenedFromExternalSourceIfNecessary(intent: Intent?) {
         if (intent?.extras?.getBoolean(OPEN_TO_BROWSER_AND_LOAD) == true) {
             this.intent.putExtra(OPEN_TO_BROWSER_AND_LOAD, false)
-            openToBrowserAndLoad(intent.getStringExtra(
-                IntentReceiverActivity.SPEECH_PROCESSING), true, BrowserDirection.FromGlobal, forceSearch = true)
+            openToBrowserAndLoad(
+                intent.getStringExtra(
+                    IntentReceiverActivity.SPEECH_PROCESSING
+                ), true, BrowserDirection.FromGlobal, forceSearch = true
+            )
             return
         } else if (intent?.extras?.getBoolean(OPEN_TO_SEARCH) == true) {
             this.intent.putExtra(OPEN_TO_SEARCH, false)
@@ -215,61 +219,20 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         load(searchTermOrURL, newTab, engine, forceSearch)
     }
 
-    @Suppress("ComplexMethod")
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
         if (sessionObserver == null)
             sessionObserver = subscribeToSessions()
 
         with(navHost.navController) {
-            if (currentDestination?.id == R.id.browserFragment || popBackStack(R.id.browserFragment, false)) return
+            if (currentDestination?.id == R.id.browserFragment || popBackStack(
+                    R.id.browserFragment,
+                    false
+                )
+            ) return
         }
 
-        @IdRes var fragmentId: Int? = null
-        val directions = when (from) {
-            BrowserDirection.FromGlobal ->
-                NavGraphDirections.actionGlobalBrowser(customTabSessionId)
-            BrowserDirection.FromHome -> {
-                fragmentId = R.id.homeFragment
-                HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId)
-            }
-            BrowserDirection.FromSearch -> {
-                fragmentId = R.id.searchFragment
-                SearchFragmentDirections.actionSearchFragmentToBrowserFragment(
-                    customTabSessionId
-                )
-            }
-            BrowserDirection.FromSettings -> {
-                fragmentId = R.id.settingsFragment
-                SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(
-                    customTabSessionId
-                )
-            }
-            BrowserDirection.FromBookmarks -> {
-                fragmentId = R.id.bookmarkFragment
-                BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(
-                    customTabSessionId
-                )
-            }
-            BrowserDirection.FromBookmarksFolderSelect -> {
-                fragmentId = R.id.bookmarkSelectFolderFragment
-                SelectBookmarkFolderFragmentDirections
-                    .actionBookmarkSelectFolderFragmentToBrowserFragment(customTabSessionId)
-            }
-            BrowserDirection.FromHistory -> {
-                fragmentId = R.id.historyFragment
-                HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(
-                    customTabSessionId
-                )
-            }
-            BrowserDirection.FromExceptions -> {
-                fragmentId = R.id.exceptionsFragment
-                ExceptionsFragmentDirections.actionExceptionsFragmentToBrowserFragment(
-                    customTabSessionId
-                )
-            }
-        }
-
-        navHost.navController.nav(fragmentId, directions)
+        @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
+        navHost.navController.nav(fragmentId, NavGraphDirections.actionGlobalBrowser(customTabSessionId))
     }
 
     private fun load(
@@ -391,9 +354,4 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
         const val OPEN_TO_SEARCH = "open_to_search"
     }
-}
-
-enum class BrowserDirection {
-    FromGlobal, FromHome, FromSearch, FromSettings, FromBookmarks,
-    FromBookmarksFolderSelect, FromHistory, FromExceptions
 }
