@@ -31,6 +31,7 @@ import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.QuickActionSheet
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
@@ -57,7 +58,7 @@ private class EventWrapper<T : Enum<T>>(
     }
 }
 
-private val Event.wrapper
+private val Event.wrapper: EventWrapper<*>?
     get() = when (this) {
         is Event.OpenedApp -> EventWrapper(
             { Events.appOpened.record(it) },
@@ -77,6 +78,19 @@ private val Event.wrapper
                 Events.performedSearch.record(it)
             },
             { Events.performedSearchKeys.valueOf(it) }
+        )
+        is Event.SearchShortcutMenuOpened -> EventWrapper<NoExtraKeys>(
+            { SearchShortcuts.opened.record(it) }
+        )
+        is Event.SearchShortcutMenuClosed -> EventWrapper<NoExtraKeys>(
+            { SearchShortcuts.closed.record(it) }
+        )
+        is Event.SearchShortcutSelected -> EventWrapper(
+            { SearchShortcuts.selected.record(it) },
+            { SearchShortcuts.selectedKeys.valueOf(it) }
+        )
+        is Event.ReaderModeAvailable -> EventWrapper<NoExtraKeys>(
+            { ReaderMode.available.record(it) }
         )
         is Event.FindInPageOpened -> EventWrapper<NoExtraKeys>(
             { FindInPage.opened.record(it) }
@@ -304,8 +318,13 @@ private val Event.wrapper
             { Collections.renameButton.record(it) }
         )
 
-        // Don't track other events with Glean
-        else -> null
+        // Don't record Leanplum specific events in Glean:
+        is Event.AddBookmark -> { null }
+        is Event.OpenedBookmark -> { null }
+        is Event.OpenedAppFirstRun -> { null }
+        is Event.InteractWithSearchURLArea -> { null }
+        is Event.ClearedPrivateData -> { null }
+        is Event.DismissedOnboarding -> { null }
     }
 
 class GleanMetricsService(private val context: Context) : MetricsService {
