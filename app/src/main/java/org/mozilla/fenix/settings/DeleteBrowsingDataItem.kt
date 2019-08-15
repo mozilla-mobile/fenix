@@ -70,6 +70,5 @@ class DeleteBrowsingDataItem @JvmOverloads constructor(
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
         alpha = if (enabled) ENABLED_ALPHA else DISABLED_ALPHA
-        checkbox.isEnabled = enabled
     }
 }
