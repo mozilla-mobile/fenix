@@ -5,8 +5,6 @@
 package org.mozilla.fenix.library.bookmarks.edit
 
 import android.content.DialogInterface
-import android.graphics.PorterDuff.Mode.SRC_IN
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -41,7 +39,6 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setRootTitles
@@ -153,11 +150,6 @@ class EditBookmarkFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_edit, menu)
-        menu.findItem(R.id.delete_bookmark_button).apply {
-            icon.colorFilter =
-                PorterDuffColorFilter(context!!.getColorFromAttr(R.attr.primaryText), SRC_IN)
-            setContentDescription(this, getString(R.string.bookmark_menu_delete_button))
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
