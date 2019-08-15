@@ -8,7 +8,6 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-
 import androidx.test.platform.app.InstrumentationRegistry
 import org.mozilla.fenix.ui.robots.homeScreen
 
