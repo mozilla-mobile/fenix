@@ -49,7 +49,7 @@ private class EventWrapper<T : Enum<T>>(
 
     fun track(event: Event) {
         val extras = if (keyMapper != null) {
-            event.extras?.mapKeys { keyMapper.invoke(it.key.asCamelCase) }
+            event.extras?.mapKeys { keyMapper.invoke(it.key.toString().asCamelCase) }
         } else {
             null
         }
@@ -318,13 +318,13 @@ private val Event.wrapper: EventWrapper<*>?
             { Collections.renameButton.record(it) }
         )
 
-        // Don't record Leanplum specific events in Glean:
-        is Event.AddBookmark -> { null }
-        is Event.OpenedBookmark -> { null }
-        is Event.OpenedAppFirstRun -> { null }
-        is Event.InteractWithSearchURLArea -> { null }
-        is Event.ClearedPrivateData -> { null }
-        is Event.DismissedOnboarding -> { null }
+        // Don't record other events in Glean:
+        is Event.AddBookmark -> null
+        is Event.OpenedBookmark -> null
+        is Event.OpenedAppFirstRun -> null
+        is Event.InteractWithSearchURLArea -> null
+        is Event.ClearedPrivateData -> null
+        is Event.DismissedOnboarding -> null
     }
 
 class GleanMetricsService(private val context: Context) : MetricsService {

@@ -99,8 +99,12 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
     }
 
     override fun track(event: Event) {
+        val leanplumExtras = event.extras?.map {
+            it.key.toString() to it.value
+        }?.toMap()
+
         event.name?.also {
-            Leanplum.track(it, event.extras)
+            Leanplum.track(it, leanplumExtras)
         }
     }
 
