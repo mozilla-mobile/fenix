@@ -102,6 +102,10 @@ open class FenixApplication : Application() {
         if (FeatureFlags.sendTabEnabled && components.backgroundServices.pushConfig != null) {
             PushProcessor.install(components.backgroundServices.push)
         }
+
+        // In order to prevent user information from leaking to other users always set
+        // privateMode to false on application start.
+        Settings.getInstance(this).setPrivateMode(false)
     }
 
     private fun registerRxExceptionHandling() {
