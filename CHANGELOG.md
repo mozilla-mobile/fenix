@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove forced focus of toolbar on homescreen
 - #4529 - Fixed an issue where the app would sometimes return to a blank toolbar
 - #4427 - Fixed an issue where the app would sometimes return to the home fragment
+- #4067 - Make layout hierarchy more shallow to increase performance.
 
 ### Removed
 
