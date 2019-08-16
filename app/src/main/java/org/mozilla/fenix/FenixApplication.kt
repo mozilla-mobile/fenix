@@ -115,6 +115,10 @@ open class FenixApplication : Application() {
         if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
             runStorageMaintenance()
         }
+
+        // In order to prevent user information from leaking to other users always set
+        // privateMode to false on application start.
+        Settings.getInstance(this).setPrivateMode(false)
     }
 
     private fun runStorageMaintenance() {
