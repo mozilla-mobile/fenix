@@ -40,7 +40,13 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.*
+import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setRootTitles
+import org.mozilla.fenix.ext.withRootTitle
+import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import java.util.concurrent.TimeUnit
 
