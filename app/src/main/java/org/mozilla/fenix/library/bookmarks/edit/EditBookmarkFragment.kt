@@ -38,12 +38,9 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.getColorFromAttr
-import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.setRootTitles
-import org.mozilla.fenix.ext.withRootTitle
+import org.mozilla.fenix.ext.*
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import java.util.concurrent.TimeUnit
 
@@ -175,8 +172,20 @@ class EditBookmarkFragment : Fragment() {
                     lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(guidToEdit)
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
-                        launch(Main) {
+
+                        launch(Main) launchOnMain@{
                             Navigation.findNavController(requireActivity(), R.id.container).popBackStack()
+
+                            val rootView = activity.getRootView() ?: return@launchOnMain
+                            bookmarkNode?.let {
+                                FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
+                                    .setText(
+                                        getString(R.string.bookmark_deletion_snackbar_message,
+                                            it.url?.urlToTrimmedHost(activity) ?: it.title
+                                        )
+                                    )
+                                    .show()
+                            }
                         }
                     }
                     dialog.dismiss()
