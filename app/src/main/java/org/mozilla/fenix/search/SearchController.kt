@@ -42,7 +42,7 @@ class DefaultSearchController(
 
     data class UserTypingCheck(var ranOnTextChanged: Boolean, var userHasTyped: Boolean)
 
-    private val userTypingCheck = UserTypingCheck(false, !store.state.showShortcutEnginePicker)
+    internal val userTypingCheck = UserTypingCheck(false, !store.state.showShortcutEnginePicker)
 
     override fun handleUrlCommitted(url: String) {
         if (url.isNotBlank()) {

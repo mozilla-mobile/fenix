@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
@@ -79,6 +80,7 @@ class DefaultSearchControllerTest {
         verify(inverse = true) {
             store.dispatch(SearchAction.ShowSearchShortcutEnginePicker(false))
         }
+        assertTrue(controller.userTypingCheck.ranOnTextChanged)
     }
 
     @Test
@@ -129,6 +131,14 @@ class DefaultSearchControllerTest {
         controller.handleClickSearchEngineSettings()
 
         verify { navController.navigate(directions) }
+    }
+
+    @Test
+    fun handleTurnOnStartedTyping() {
+        controller.handleTurnOnStartedTyping()
+
+        assertTrue(controller.userTypingCheck.ranOnTextChanged)
+        assertTrue(controller.userTypingCheck.userHasTyped)
     }
 
     @Test
