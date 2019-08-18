@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -18,6 +19,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -31,6 +33,8 @@ class DefaultSearchControllerTest {
     private val defaultSearchEngine: SearchEngine? = mockk(relaxed = true)
     private val session: Session? = mockk(relaxed = true)
     private val searchEngine: SearchEngine = mockk(relaxed = true)
+    private val metrics: MetricController = mockk(relaxed = true)
+    private val sessionManager: SessionManager = mockk(relaxed = true)
 
     private lateinit var controller: DefaultSearchController
 
@@ -40,6 +44,8 @@ class DefaultSearchControllerTest {
         every { context.searchEngineManager.defaultSearchEngine } returns defaultSearchEngine
         every { store.state.session } returns session
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
+        every { context.metrics } returns metrics
+        every { context.components.core.sessionManager } returns sessionManager
 
         controller = DefaultSearchController(
             context = context,
@@ -60,7 +66,7 @@ class DefaultSearchControllerTest {
             from = BrowserDirection.FromSearch,
             engine = searchEngine
         ) }
-        verify { context.metrics.track(Event.EnteredUrl(false)) }
+        verify { metrics.track(Event.EnteredUrl(false)) }
     }
 
     @Test
@@ -94,7 +100,7 @@ class DefaultSearchControllerTest {
             newTab = session == null,
             from = BrowserDirection.FromSearch
         ) }
-        verify { context.metrics.track(Event.EnteredUrl(false)) }
+        verify { metrics.track(Event.EnteredUrl(false)) }
     }
 
     @Test
@@ -116,12 +122,10 @@ class DefaultSearchControllerTest {
     fun handleSearchShortcutEngineSelected() {
         val searchEngine: SearchEngine = mockk(relaxed = true)
 
-        every { searchEngine.name } returns "google"
-
         controller.handleSearchShortcutEngineSelected(searchEngine)
 
         verify { store.dispatch(SearchAction.SearchShortcutEngineSelected(searchEngine)) }
-        verify { context.metrics.track(Event.SearchShortcutSelected("google")) }
+        verify { metrics.track(Event.SearchShortcutSelected(searchEngine.name)) }
     }
 
     @Test
@@ -149,6 +153,6 @@ class DefaultSearchControllerTest {
         controller.handleExistingSessionSelected(session)
 
         verify { navController.nav(R.id.searchFragment, directions) }
-        verify { context.components.core.sessionManager.select(session) }
+        verify { sessionManager.select(session) }
     }
 }
