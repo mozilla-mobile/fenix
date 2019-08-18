@@ -14,16 +14,17 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
-import java.security.InvalidParameterException
+import org.mozilla.fenix.settings.sharedpreferences.PreferencesHolder
+import org.mozilla.fenix.settings.sharedpreferences.booleanPreference
+import org.mozilla.fenix.settings.sharedpreferences.sitePermissionsRulesActionPreference
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
  */
-@SuppressWarnings("TooManyFunctions")
 class Settings private constructor(
     context: Context,
     private val isCrashReportEnabledInBuild: Boolean
-) {
+) : PreferencesHolder {
 
     companion object {
         const val autoBounceMaximumCount = 2
@@ -46,14 +47,13 @@ class Settings private constructor(
 
     private val appContext = context.applicationContext
 
-    val preferences: SharedPreferences =
+    override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var usePrivateMode: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_private_mode), false)
-        set(value) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_private_mode), value)
-            .apply()
+    var usePrivateMode by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_private_mode),
+        default = false
+    )
 
     var defaultSearchEngineName: String
         get() = preferences.getString(appContext.getPreferenceKey(R.string.pref_key_search_engine), "") ?: ""
@@ -65,29 +65,28 @@ class Settings private constructor(
         get() = isCrashReportEnabledInBuild &&
                 preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_crash_reporter), true)
 
-    val isRemoteDebuggingEnabled: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_remote_debugging), false)
+    val isRemoteDebuggingEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
+        default = false
+    )
 
-    val isTelemetryEnabled: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_telemetry), true)
+    val isTelemetryEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_telemetry),
+        default = true
+    )
 
     val shouldAutoBounceQuickActionSheet: Boolean
         get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
 
-    var shouldUseLightTheme: Boolean
-        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_light_theme), false)
-        set(value) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_light_theme), value)
-            .apply()
+    var shouldUseLightTheme by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_light_theme),
+        default = false
+    )
 
-    var shouldUseAutoSize: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
-            true
-        )
-        set(value) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size), value)
-            .apply()
+    var shouldUseAutoSize by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
+        default = true
+    )
 
     var fontSizeFactor: Float
         get() = preferences.getFloat(
@@ -98,41 +97,30 @@ class Settings private constructor(
             .putFloat(appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale), value)
             .apply()
 
-    val shouldShowVisitedSitesBookmarks: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_show_visited_sites_bookmarks),
-            true
-        )
+    val shouldShowVisitedSitesBookmarks by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_visited_sites_bookmarks),
+        default = true
+    )
 
-    val shouldUseDarkTheme: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_dark_theme),
-            false
-        )
+    val shouldUseDarkTheme by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_dark_theme),
+        default = false
+    )
 
-    var shouldFollowDeviceTheme: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
-            false
-        )
-        set(value) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_follow_device_theme), value)
-            .apply()
+    var shouldFollowDeviceTheme by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
+        default = false
+    )
 
-    var shouldUseTrackingProtection: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
-            true
-        )
-        set(value) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_tracking_protection), value)
-            .apply()
+    var shouldUseTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
+        default = true
+    )
 
-    val shouldUseAutoBatteryTheme: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
-            false
-        )
+    val shouldUseAutoBatteryTheme by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
+        default = false
+    )
 
     val themeSettingString: String
         get() = when {
@@ -145,7 +133,7 @@ class Settings private constructor(
 
     @VisibleForTesting(otherwise = PRIVATE)
     internal val autoBounceQuickActionSheetCount: Int
-        get() = (preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action), 0))
+        get() = preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action), 0)
 
     fun incrementAutomaticBounceQuickActionSheetCount() {
         preferences.edit().putInt(
@@ -154,79 +142,42 @@ class Settings private constructor(
         ).apply()
     }
 
-    val showSearchSuggestions: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions), true
-        )
+    val showSearchSuggestions by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions),
+        default = true
+    )
 
-    fun setSitePermissionsPhoneFeatureCameraAction(action: SitePermissionsRules.Action) {
-        preferences.edit()
-            .putInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_camera), action.id)
-            .apply()
-    }
+    var sitePermissionsPhoneFeatureCameraAction by sitePermissionsRulesActionPreference(
+        appContext.getPreferenceKey(R.string.pref_key_phone_feature_camera)
+    )
 
-    fun getSitePermissionsPhoneFeatureCameraAction(): SitePermissionsRules.Action {
-        return preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_camera), 1)
-            .toSitePermissionsRulesAction()
-    }
+    var sitePermissionsPhoneFeatureMicrophoneAction by sitePermissionsRulesActionPreference(
+        appContext.getPreferenceKey(R.string.pref_key_phone_feature_microphone)
+    )
 
-    fun setSitePermissionsPhoneFeatureMicrophoneAction(action: SitePermissionsRules.Action) {
-        preferences.edit()
-            .putInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_microphone), action.id)
-            .apply()
-    }
+    var sitePermissionsPhoneFeatureNotificationAction by sitePermissionsRulesActionPreference(
+        appContext.getPreferenceKey(R.string.pref_key_phone_feature_notification)
+    )
 
-    fun getSitePermissionsPhoneFeatureMicrophoneAction(): SitePermissionsRules.Action {
-        return preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_microphone), 1)
-            .toSitePermissionsRulesAction()
-    }
-
-    fun setSitePermissionsPhoneFeatureNotificationAction(action: SitePermissionsRules.Action) {
-        preferences.edit()
-            .putInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_notification), action.id)
-            .apply()
-    }
-
-    fun getSitePermissionsPhoneFeatureNotificationAction(): SitePermissionsRules.Action {
-        return preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_notification), 1)
-            .toSitePermissionsRulesAction()
-    }
-
-    fun setSitePermissionsPhoneFeatureLocation(action: SitePermissionsRules.Action) {
-        preferences.edit()
-            .putInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_location), action.id)
-            .apply()
-    }
-
-    fun getSitePermissionsPhoneFeatureLocation(): SitePermissionsRules.Action {
-        return preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_phone_feature_location), 1)
-            .toSitePermissionsRulesAction()
-    }
+    var sitePermissionsPhoneFeatureLocation by sitePermissionsRulesActionPreference(
+        appContext.getPreferenceKey(R.string.pref_key_phone_feature_location)
+    )
 
     fun getSitePermissionsCustomSettingsRules(): SitePermissionsRules {
         return SitePermissionsRules(
-            notification = getSitePermissionsPhoneFeatureNotificationAction(),
-            microphone = getSitePermissionsPhoneFeatureMicrophoneAction(),
-            location = getSitePermissionsPhoneFeatureLocation(),
-            camera = getSitePermissionsPhoneFeatureCameraAction()
+            notification = sitePermissionsPhoneFeatureNotificationAction,
+            microphone = sitePermissionsPhoneFeatureMicrophoneAction,
+            location = sitePermissionsPhoneFeatureLocation,
+            camera = sitePermissionsPhoneFeatureCameraAction
         )
     }
 
-    var fxaSignedIn: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), true
-        )
-        set(isSignedIn) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), isSignedIn)
-            .apply()
+    var fxaSignedIn by booleanPreference(appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), default = true)
 
-    var fxaHasSyncedItems: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items), true
-        )
-        set(hasSyncedItems) = preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items), hasSyncedItems)
-            .apply()
+    var fxaHasSyncedItems by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items),
+        default = true
+    )
 
     fun addSearchWidgetInstalled(count: Int) {
         val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
@@ -237,23 +188,5 @@ class Settings private constructor(
     }
 
     val searchWidgetInstalled: Boolean
-        get() = 0 < preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_installed), 0
-        )
-
-    private val SitePermissionsRules.Action.id: Int
-        get() {
-            return when (this) {
-                SitePermissionsRules.Action.BLOCKED -> 0
-                SitePermissionsRules.Action.ASK_TO_ALLOW -> 1
-            }
-        }
-
-    private fun Int.toSitePermissionsRulesAction(): SitePermissionsRules.Action {
-        return when (this) {
-            0 -> SitePermissionsRules.Action.BLOCKED
-            1 -> SitePermissionsRules.Action.ASK_TO_ALLOW
-            else -> throw InvalidParameterException("$this is not a valid SitePermissionsRules.Action")
-        }
-    }
+        get() = 0 < preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_search_widget_installed), 0)
 }
