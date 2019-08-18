@@ -40,13 +40,13 @@ class SettingsTest {
         assertFalse(settings.usePrivateMode)
 
         // When
-        settings.setPrivateMode(true)
+        settings.usePrivateMode = true
 
         // Then
         assertTrue(settings.usePrivateMode)
 
         // When
-        settings.setPrivateMode(false)
+        settings.usePrivateMode = false
 
         // Then
         assertFalse(settings.usePrivateMode)
@@ -59,7 +59,7 @@ class SettingsTest {
         assertEquals("", settings.defaultSearchEngineName)
 
         // When
-        settings.setDefaultSearchEngineByName("Mozilla")
+        settings.defaultSearchEngineName = "Mozilla"
 
         // Then
         assertEquals("Mozilla", settings.defaultSearchEngineName)
@@ -141,7 +141,7 @@ class SettingsTest {
         assertFalse(settings.shouldUseLightTheme)
 
         // When
-        settings.setLightTheme(true)
+        settings.shouldUseLightTheme = true
 
         // Then
         assertTrue(settings.shouldUseLightTheme)
@@ -154,7 +154,7 @@ class SettingsTest {
         assertTrue(settings.shouldUseAutoSize)
 
         // When
-        settings.setAutoSize(false)
+        settings.shouldUseAutoSize = false
 
         // Then
         assertFalse(settings.shouldUseAutoSize)
@@ -167,7 +167,7 @@ class SettingsTest {
         assertEquals(1f, settings.fontSizeFactor)
 
         // When
-        settings.setFontSizeFactor(2f)
+        settings.fontSizeFactor = 2f
 
         // Then
         assertEquals(2f, settings.fontSizeFactor)
@@ -194,7 +194,7 @@ class SettingsTest {
         assertFalse(settings.shouldFollowDeviceTheme)
 
         // When
-        settings.setFollowDeviceTheme(true)
+        settings.shouldFollowDeviceTheme = true
 
         // Then
         assertTrue(settings.shouldFollowDeviceTheme)
@@ -207,7 +207,7 @@ class SettingsTest {
         assertTrue(settings.shouldUseTrackingProtection)
 
         // When
-        settings.setTrackingProtection(false)
+        settings.shouldUseTrackingProtection = false
 
         // Then
         assertFalse(settings.shouldUseTrackingProtection)

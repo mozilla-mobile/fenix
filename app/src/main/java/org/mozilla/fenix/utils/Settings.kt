@@ -49,15 +49,17 @@ class Settings private constructor(
     val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    val usePrivateMode: Boolean
+    var usePrivateMode: Boolean
         get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_private_mode), false)
+        set(value) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_private_mode), value)
+            .apply()
 
-    fun setPrivateMode(newValue: Boolean) {
-        preferences.edit().putBoolean(appContext.getPreferenceKey(R.string.pref_key_private_mode), newValue).apply()
-    }
-
-    val defaultSearchEngineName: String
+    var defaultSearchEngineName: String
         get() = preferences.getString(appContext.getPreferenceKey(R.string.pref_key_search_engine), "") ?: ""
+        set(name) = preferences.edit()
+            .putString(appContext.getPreferenceKey(R.string.pref_key_search_engine), name)
+            .apply()
 
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
@@ -72,40 +74,29 @@ class Settings private constructor(
     val shouldAutoBounceQuickActionSheet: Boolean
         get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
 
-    val shouldUseLightTheme: Boolean
-        get() = preferences.getBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_light_theme),
-            false
-        )
-
-    fun setLightTheme(newValue: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_light_theme),
-            newValue
-        ).apply()
-    }
-
-    fun setAutoSize(newValue: Boolean) {
-        preferences.edit().putBoolean(appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size), newValue)
+    var shouldUseLightTheme: Boolean
+        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_light_theme), false)
+        set(value) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_light_theme), value)
             .apply()
-    }
 
-    val shouldUseAutoSize: Boolean
+    var shouldUseAutoSize: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
             true
         )
-
-    fun setFontSizeFactor(newValue: Float) {
-        preferences.edit().putFloat(appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale), newValue)
+        set(value) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size), value)
             .apply()
-    }
 
-    val fontSizeFactor: Float
+    var fontSizeFactor: Float
         get() = preferences.getFloat(
             appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale),
             1f
         )
+        set(value) = preferences.edit()
+            .putFloat(appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale), value)
+            .apply()
 
     val shouldShowVisitedSitesBookmarks: Boolean
         get() = preferences.getBoolean(
@@ -119,31 +110,23 @@ class Settings private constructor(
             false
         )
 
-    val shouldFollowDeviceTheme: Boolean
+    var shouldFollowDeviceTheme: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
             false
         )
+        set(value) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_follow_device_theme), value)
+            .apply()
 
-    fun setFollowDeviceTheme(newValue: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
-            newValue
-        ).apply()
-    }
-
-    val shouldUseTrackingProtection: Boolean
+    var shouldUseTrackingProtection: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
             true
         )
-
-    fun setTrackingProtection(newValue: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
-            newValue
-        ).apply()
-    }
+        set(value) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_tracking_protection), value)
+            .apply()
 
     val shouldUseAutoBatteryTheme: Boolean
         get() = preferences.getBoolean(
@@ -169,12 +152,6 @@ class Settings private constructor(
             appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action),
             autoBounceQuickActionSheetCount + 1
         ).apply()
-    }
-
-    fun setDefaultSearchEngineByName(name: String) {
-        preferences.edit()
-            .putString(appContext.getPreferenceKey(R.string.pref_key_search_engine), name)
-            .apply()
     }
 
     val showSearchSuggestions: Boolean
@@ -235,27 +212,21 @@ class Settings private constructor(
         )
     }
 
-    fun setFxaSignedIn(isSignedIn: Boolean) {
-        preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), isSignedIn)
-            .apply()
-    }
-
-    val fxaSignedIn: Boolean
+    var fxaSignedIn: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), true
         )
-
-    fun setFxaHasSyncedItems(hasSyncedItems: Boolean) {
-        preferences.edit()
-            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items), hasSyncedItems)
+        set(isSignedIn) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), isSignedIn)
             .apply()
-    }
 
-    val fxaHasSyncedItems: Boolean
+    var fxaHasSyncedItems: Boolean
         get() = preferences.getBoolean(
             appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items), true
         )
+        set(hasSyncedItems) = preferences.edit()
+            .putBoolean(appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items), hasSyncedItems)
+            .apply()
 
     fun addSearchWidgetInstalled(count: Int) {
         val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
