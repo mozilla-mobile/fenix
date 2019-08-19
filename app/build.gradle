@@ -80,21 +80,13 @@ android {
         // |--------------------|---------------|-----------|
         // | debug              | ✅            | ✅       | Both variants for testing and development.
         // | forPerformanceTest | ✅            | ✅       | Both variants unless the perf team only cares about Nightly (TBD).
-        // | fenixNightlyLegacy | ❌            | ✅       | For now GV Beta - the same version we ship with (TBD). Release type will be decommissioned soon.
-        // | fenixNightly       | ❌            | ✅       | For now GV Beta - the same version we ship with (TBD).
+        // | fenixNightlyLegacy | ✅            | ✅       | Release type will be decommissioned soon.
+        // | fenixNightly       | ✅            | ✅       | Built with both, but only the "geckoNightly" one is published to Google Play
         // | fenixBeta          | ❌            | ✅       | Fenix Beta ships with GV Beta
         // | fenixProduction    | ❌            | ✅       | Fenix Production ships with GV Beta
         //
 
         def flavors = flavors*.name.toString().toLowerCase()
-
-        if (buildType.name == 'fenixNightlyLegacy' && flavors.contains("geckonightly")) {
-            setIgnore true
-        }
-
-        if (buildType.name == 'fenixNightly' && flavors.contains("geckonightly")) {
-            setIgnore true
-        }
 
         if (buildType.name == 'fenixBeta' && flavors.contains("geckonightly")) {
             setIgnore true
