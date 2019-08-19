@@ -179,18 +179,18 @@ class EditBookmarkFragment : Fragment() {
                         requireComponents.core.bookmarksStorage.deleteNode(guidToEdit)
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
 
-                        launch(Main) launchOnMain@{
+                        launch(Main) {
                             Navigation.findNavController(requireActivity(), R.id.container).popBackStack()
-
-                            val rootView = activity.getRootView() ?: return@launchOnMain
-                            bookmarkNode?.let {
-                                FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
-                                    .setText(
-                                        getString(R.string.bookmark_deletion_snackbar_message,
-                                            it.url?.urlToTrimmedHost(activity) ?: it.title
+                            activity.getRootView()?.let { rootView ->
+                                bookmarkNode?.let {
+                                    FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
+                                        .setText(
+                                            getString(R.string.bookmark_deletion_snackbar_message,
+                                                it.url?.urlToTrimmedHost(activity) ?: it.title
+                                            )
                                         )
-                                    )
-                                    .show()
+                                        .show()
+                                }
                             }
                         }
                     }
