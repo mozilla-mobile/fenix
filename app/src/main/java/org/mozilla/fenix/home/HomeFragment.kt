@@ -7,13 +7,11 @@ package org.mozilla.fenix.home
 import android.animation.Animator
 import android.content.Context
 import android.content.DialogInterface
-import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +25,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -52,7 +50,6 @@ import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.TOP
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.BrowsingMode
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -83,8 +80,8 @@ import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.share.ShareTab
+import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.allowUndo
-import kotlin.math.roundToInt
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment(), AccountObserver {
@@ -110,21 +107,6 @@ class HomeFragment : Fragment(), AccountObserver {
 
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
             showRenamedSnackbar()
-        }
-    }
-
-    private val preDrawListener = object : ViewTreeObserver.OnPreDrawListener {
-        override fun onPreDraw(): Boolean {
-            if (view != null) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    delay(ANIM_SCROLL_DELAY)
-                    restoreLayoutState()
-                    startPostponedEnterTransition()
-                }.invokeOnCompletion {
-                    sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(this)
-                }
-            }
-            return true
         }
     }
 
@@ -200,24 +182,21 @@ class HomeFragment : Fragment(), AccountObserver {
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
 
-        postponeEnterTransition()
-        sessionControlComponent.view.viewTreeObserver.addOnPreDrawListener(preDrawListener)
-
         return view
-    }
-
-    private fun restoreLayoutState() {
-        val homeViewModel: HomeScreenViewModel by activityViewModels()
-        homeViewModel.layoutManagerState?.also { parcelable ->
-            sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
-        }
-        homeLayout?.progress = homeViewModel.motionLayoutProgress
-        homeViewModel.layoutManagerState = null
     }
 
     @SuppressWarnings("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        FragmentPreDrawManager(this).execute {
+            val homeViewModel: HomeScreenViewModel by activityViewModels()
+            homeViewModel.layoutManagerState?.also { parcelable ->
+                sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
+            }
+            homeLayout?.progress = homeViewModel.motionLayoutProgress
+            homeViewModel.layoutManagerState = null
+        }
 
         setupHomeMenu()
 
@@ -241,7 +220,7 @@ class HomeFragment : Fragment(), AccountObserver {
             )
         }
         view.toolbar.compoundDrawablePadding =
-            (toolbarPaddingDp * Resources.getSystem().displayMetrics.density).roundToInt()
+            view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
         view.toolbar_wrapper.setOnClickListener {
             invokePendingDeleteJobs()
             onboarding.finish()
@@ -254,22 +233,17 @@ class HomeFragment : Fragment(), AccountObserver {
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
-        val isPrivate = browsingModeManager.mode.isPrivate
-
-        privateBrowsingButton.contentDescription =
-            contentDescriptionForPrivateBrowsingButton(isPrivate)
-
-        privateBrowsingButton.setOnClickListener {
+        PrivateBrowsingButtonView(
+            privateBrowsingButton,
+            browsingModeManager
+        ) { newMode ->
             invokePendingDeleteJobs()
-            val invertedMode = BrowsingMode.fromBoolean(!browsingModeManager.mode.isPrivate)
 
             if (onboarding.userHasBeenOnboarded()) {
                 getManagedEmitter<SessionControlChange>().onNext(
-                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(invertedMode))
+                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
                 )
             }
-
-            browsingModeManager.mode = invertedMode
         }
 
         // We need the shadow to be above the components.
@@ -278,7 +252,6 @@ class HomeFragment : Fragment(), AccountObserver {
 
     override fun onDestroyView() {
         homeMenu = null
-        sessionControlComponent.view.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         super.onDestroyView()
     }
 
@@ -336,7 +309,7 @@ class HomeFragment : Fragment(), AccountObserver {
             is TabAction.SaveTabGroup -> {
                 if ((activity as HomeActivity).browsingModeManager.mode.isPrivate) return
                 invokePendingDeleteJobs()
-                showCollectionCreationFragment(action.selectedTabSessionId)
+                saveTabToCollection(action.selectedTabSessionId)
             }
             is TabAction.Select -> {
                 invokePendingDeleteJobs()
@@ -464,16 +437,10 @@ class HomeFragment : Fragment(), AccountObserver {
             }
             is CollectionAction.AddTab -> {
                 requireComponents.analytics.metrics.track(Event.CollectionAddTabPressed)
-                showCollectionCreationFragment(
-                    selectedTabCollection = action.collection,
-                    step = SaveCollectionStep.SelectTabs
-                )
+                updateCollection(action.collection, SaveCollectionStep.SelectTabs)
             }
             is CollectionAction.Rename -> {
-                showCollectionCreationFragment(
-                    selectedTabCollection = action.collection,
-                    step = SaveCollectionStep.RenameCollection
-                )
+                updateCollection(action.collection, SaveCollectionStep.RenameCollection)
                 requireComponents.analytics.metrics.track(Event.CollectionRenamePressed)
             }
             is CollectionAction.OpenTab -> {
@@ -551,12 +518,19 @@ class HomeFragment : Fragment(), AccountObserver {
         homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
     }
 
+    private fun hideOnboardingIfNeeded() {
+        if (!onboarding.userHasBeenOnboarded()) {
+            onboarding.finish()
+            emitModeChanges()
+        }
+    }
+
     private fun setupHomeMenu() {
         homeMenu = HomeMenu(requireContext()) {
             when (it) {
                 HomeMenu.Item.Settings -> {
                     invokePendingDeleteJobs()
-                    onboarding.finish()
+                    hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
                         HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
@@ -564,7 +538,7 @@ class HomeFragment : Fragment(), AccountObserver {
                 }
                 HomeMenu.Item.Library -> {
                     invokePendingDeleteJobs()
-                    onboarding.finish()
+                    hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
                         HomeFragmentDirections.actionHomeFragmentToLibraryFragment()
@@ -572,10 +546,7 @@ class HomeFragment : Fragment(), AccountObserver {
                 }
                 HomeMenu.Item.Help -> {
                     invokePendingDeleteJobs()
-                    if (!onboarding.userHasBeenOnboarded()) {
-                        onboarding.finish()
-                        emitModeChanges()
-                    }
+                    hideOnboardingIfNeeded()
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getSumoURLForTopic(
                             context!!,
@@ -674,27 +645,18 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun showCollectionCreationFragment(
-        selectedTabId: String? = null,
-        selectedTabCollection: TabCollection? = null,
-        step: SaveCollectionStep? = null
+        setupViewModel: (CreateCollectionViewModel, tabs: List<Tab>, cachedTabCollections: List<TabCollection>) -> Unit
     ) {
-        if (findNavController(this).currentDestination?.id == R.id.createCollectionFragment) return
-
-        val tabs = getListOfSessions().toTabs()
+        if (findNavController().currentDestination?.id == R.id.createCollectionFragment) return
 
         val viewModel: CreateCollectionViewModel by activityViewModels {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
         }
-        viewModel.tabs = tabs
-        val selectedTabs =
-            tabs.find { tab -> tab.sessionId == selectedTabId }
-                ?: if (tabs.size == 1) tabs[0] else null
-        val selectedSet = if (selectedTabs == null) mutableSetOf() else mutableSetOf(selectedTabs)
-        viewModel.selectedTabs = selectedSet
-        viewModel.tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections.reversed()
-        viewModel.selectedTabCollection = selectedTabCollection
-        viewModel.saveCollectionStep =
-            step ?: viewModel.getStepForTabsAndCollectionSize()
+
+        val tabs = getListOfSessions().toTabs()
+        val cachedTabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
+        setupViewModel(viewModel, tabs, cachedTabCollections)
+
         viewModel.previousFragmentId = R.id.homeFragment
 
         // Only register the observer right before moving to collection creation
@@ -703,6 +665,27 @@ class HomeFragment : Fragment(), AccountObserver {
         view?.let {
             val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment()
             nav(R.id.homeFragment, directions)
+        }
+    }
+
+    private fun saveTabToCollection(selectedTabId: String?) {
+        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
+            viewModel.saveTabToCollection(
+                tabs = tabs,
+                selectedTab = tabs.find { it.sessionId == selectedTabId } ?: if (tabs.size == 1) tabs[0] else null,
+                cachedTabCollections = cachedTabCollections
+            )
+        }
+    }
+
+    private fun updateCollection(selectedTabCollection: TabCollection, step: SaveCollectionStep) {
+        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
+            viewModel.updateCollection(
+                tabs = tabs,
+                saveCollectionStep = step,
+                selectedTabCollection = selectedTabCollection,
+                cachedTabCollections = cachedTabCollections
+            )
         }
     }
 
@@ -874,7 +857,6 @@ class HomeFragment : Fragment(), AccountObserver {
         private const val TELEMETRY_HOME_IDENITIFIER = "home"
         private const val SHARED_TRANSITION_MS = 200L
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
-        private const val toolbarPaddingDp = 12f
     }
 }
 

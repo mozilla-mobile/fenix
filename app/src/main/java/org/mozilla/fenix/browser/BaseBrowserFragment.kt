@@ -70,7 +70,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
@@ -172,7 +171,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     it.action = Intent.ACTION_VIEW
                     it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                currentSessionAsTab = session.toTab(context!!),
                 bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction)
             )
 
@@ -367,7 +365,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
     @CallSuper
     override fun onSessionSelected(session: Session) {
-        super.onSessionSelected(session)
         if (!browserInitialized) {
             // Initializing a new coroutineScope to avoid ConcurrentModificationException in ObserverRegistry
             // This will be removed when ObserverRegistry is deprecated by browser-state.

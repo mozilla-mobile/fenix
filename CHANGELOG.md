@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - #4488 - Adds ability to show snackbar when deleting bookmark/bookmark folder in edit bookmark fragment
+- #4704 - Adds ability to show a different alpha when no elements available to be deleted for a delete browsing data item
 - #4137 - Adds pagination to the history view
 - #3695 - Made search suggestions for other tabs clickable
+- Custom tabs change the status bar color to match the toolbar color
 
 ### Changed
 - Remove forced focus of toolbar on homescreen
 - #4529 - Fixed an issue where the app would sometimes return to a blank toolbar
 - #4427 - Fixed an issue where the app would sometimes return to the home fragment
+- #4774 - Fixed how the tracking protection and HTTP icon appear in quick settings on Android 5 and 6.
 
 ### Removed
 
