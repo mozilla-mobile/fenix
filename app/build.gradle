@@ -506,17 +506,22 @@ if (project.hasProperty("coverage")) {
 }
 
 // -------------------------------------------------------------------------------------------------
-// Task for printing all build variants to build variants in parallel in automation
+// Task for printing APK information for the requested variant
+// Usage: "./gradlew printVariant -PvariantBuildType=nightly -PvariantEngine=geckoNightly"
 // -------------------------------------------------------------------------------------------------
-task printBuildVariants {
+task printVariant {
     doLast {
-        def variantData = android.applicationVariants.collect { variant -> [
-            name: variant.name,
-            buildType: variant.buildType.name,
-            engine: variant.productFlavors.find { it.dimension == 'engine' }.name,
-            isSigned: variant.signingReady,
-        ]}
-        println "variants: " + groovy.json.JsonOutput.toJson(variantData)
+        def rawVariant = android.applicationVariants.find {
+            it.buildType.name == variantBuildType &&
+                    it.productFlavors.find { it.dimension == 'engine' }.name == variantEngine
+        }
+        println 'variant: ' + groovy.json.JsonOutput.toJson([
+            name: rawVariant.name,
+            apks: rawVariant.variantData.outputScope.apkDatas.collect { [
+                    abi: it.filters.find { it.filterType == 'ABI' }.identifier,
+                    fileName: it.outputFileName,
+            ]}
+        ])
     }
 }
 
