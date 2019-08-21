@@ -20,11 +20,10 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.collections.getStepForCollectionsSize
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 
@@ -43,11 +42,10 @@ class DefaultBrowserToolbarController(
     private val findInPageLauncher: () -> Unit,
     private val nestedScrollQuickActionView: NestedScrollView,
     private val engineView: EngineView,
-    private val currentSession: Session,
+    private val customTabSession: Session?,
     private val viewModel: CreateCollectionViewModel,
     private val getSupportUrl: () -> String,
     private val openInFenixIntent: Intent,
-    private val currentSessionAsTab: Tab,
     private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>
 ) : BrowserToolbarController {
 
@@ -58,7 +56,7 @@ class DefaultBrowserToolbarController(
         navController.nav(
             R.id.browserFragment,
             BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                currentSession.id
+                customTabSession?.id ?: context.components.core.sessionManager.selectedSession?.id
             )
         )
     }
@@ -69,6 +67,7 @@ class DefaultBrowserToolbarController(
     override fun handleToolbarItemInteraction(item: ToolbarMenu.Item) {
         val sessionUseCases = context.components.useCases.sessionUseCases
         trackToolbarItemInteraction(item)
+        val currentSession = customTabSession ?: context.components.core.sessionManager.selectedSession
 
         Do exhaustive when (item) {
             ToolbarMenu.Item.Back -> sessionUseCases.goBack.invoke(currentSession)
@@ -88,7 +87,8 @@ class DefaultBrowserToolbarController(
                 currentSession
             )
             ToolbarMenu.Item.Share -> {
-                currentSession.url.apply {
+                val currentUrl = currentSession?.url
+                currentUrl?.apply {
                     val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(this)
                     navController.nav(R.id.browserFragment, directions)
                 }
@@ -109,7 +109,8 @@ class DefaultBrowserToolbarController(
                 context.components.analytics.metrics.track(Event.FindInPageOpened)
             }
             ToolbarMenu.Item.ReportIssue -> {
-                currentSession.url.apply {
+                val currentUrl = currentSession?.url
+                currentUrl?.apply {
                     val reportUrl = String.format(BrowserFragment.REPORT_SITE_ISSUE_URL, this)
                     context.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
                 }
@@ -121,25 +122,25 @@ class DefaultBrowserToolbarController(
                 context.components.analytics.metrics
                     .track(Event.CollectionSaveButtonPressed(TELEMETRY_BROWSER_IDENTIFIER))
 
-                    viewModel.tabs = listOf(currentSessionAsTab)
-                    val selectedSet = mutableSetOf(currentSessionAsTab)
-                    viewModel.selectedTabs = selectedSet
-                    viewModel.tabCollections =
-                        context.components.core.tabCollectionStorage.cachedTabCollections.reversed()
-                    viewModel.saveCollectionStep = viewModel.tabCollections.getStepForCollectionsSize()
-                    viewModel.snackbarAnchorView = nestedScrollQuickActionView
+                currentSession?.toTab(context)?.let { currentSessionAsTab ->
+                    viewModel.saveTabToCollection(
+                        tabs = listOf(currentSessionAsTab),
+                        selectedTab = currentSessionAsTab,
+                        cachedTabCollections = context.components.core.tabCollectionStorage.cachedTabCollections
+                    )
                     viewModel.previousFragmentId = R.id.browserFragment
 
                     val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()
                     navController.nav(R.id.browserFragment, directions)
+                }
             }
             ToolbarMenu.Item.OpenInFenix -> {
                 // Release the session from this view so that it can immediately be rendered by a different view
                 engineView.release()
 
                 // Strip the CustomTabConfig to turn this Session into a regular tab and then select it
-                currentSession.customTabConfig = null
-                context.components.core.sessionManager.select(currentSession)
+                customTabSession!!.customTabConfig = null
+                context.components.core.sessionManager.select(customTabSession)
 
                 // Switch to the actual browser which should now display our new selected session
                 context.startActivity(openInFenixIntent)

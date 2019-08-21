@@ -11,6 +11,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -28,12 +29,12 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
@@ -69,17 +70,22 @@ class DefaultBrowserToolbarControllerTest {
             findInPageLauncher = findInPageLauncher,
             nestedScrollQuickActionView = nestedScrollQuickActionView,
             engineView = engineView,
-            currentSession = currentSession,
+            customTabSession = null,
             viewModel = viewModel,
             getSupportUrl = getSupportUrl,
             openInFenixIntent = openInFenixIntent,
-            currentSessionAsTab = currentSessionAsTab,
             bottomSheetBehavior = bottomSheetBehavior
         )
+
+        mockkStatic(
+            "org.mozilla.fenix.ext.SessionKt"
+        )
+        every { any<Session>().toTab(any()) } returns currentSessionAsTab
 
         every { context.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
         every { context.components.useCases.sessionUseCases } returns sessionUseCases
+        every { context.components.core.sessionManager.selectedSession } returns currentSession
     }
 
     @Test
@@ -89,10 +95,12 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleToolbarClick()
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify { navController.nav(
-            R.id.browserFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(currentSession.id)
-        ) }
+        verify {
+            navController.nav(
+                R.id.browserFragment,
+                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment("1")
+            )
+        }
     }
 
     @Test
@@ -144,11 +152,14 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
-        verify { navController.nav(
-            R.id.settingsFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
-        ) }
+        verify {
+            navController.nav(
+                R.id.settingsFragment,
+                BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
+            )
+        }
     }
+
     @Test
     fun handleToolbarLibraryPress() {
         val item = ToolbarMenu.Item.Library
@@ -156,10 +167,12 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.LIBRARY)) }
-        verify { navController.nav(
-            R.id.libraryFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
-        ) }
+        verify {
+            navController.nav(
+                R.id.libraryFragment,
+                BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
+            )
+        }
     }
 
     @Test
@@ -248,6 +261,7 @@ class DefaultBrowserToolbarControllerTest {
 
         val item = ToolbarMenu.Item.ReportIssue
 
+        every { currentSession.id } returns "1"
         every { currentSession.url } returns "https://mozilla.org"
         every { context.components.useCases.tabsUseCases } returns tabsUseCases
         every { tabsUseCases.addTab } returns addTabUseCase
@@ -307,11 +321,13 @@ class DefaultBrowserToolbarControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
         verify { metrics.track(Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)) }
-        verify { viewModel.tabs = listOf(currentSessionAsTab) }
-        verify { viewModel.selectedTabs = mutableSetOf(currentSessionAsTab) }
-        verify { viewModel.tabCollections = cachedTabCollections.reversed() }
-        verify { viewModel.saveCollectionStep = SaveCollectionStep.SelectCollection }
-        verify { viewModel.snackbarAnchorView = nestedScrollQuickActionView }
+        verify {
+            viewModel.saveTabToCollection(
+                listOf(currentSessionAsTab),
+                currentSessionAsTab,
+                cachedTabCollections
+            )
+        }
         verify { viewModel.previousFragmentId = R.id.browserFragment }
         verify {
             val directions = BrowserFragmentDirections
@@ -322,6 +338,20 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarOpenInFenixPress() {
+        controller = DefaultBrowserToolbarController(
+            context = context,
+            navController = navController,
+            browsingModeManager = browsingModeManager,
+            findInPageLauncher = findInPageLauncher,
+            nestedScrollQuickActionView = nestedScrollQuickActionView,
+            engineView = engineView,
+            customTabSession = currentSession,
+            viewModel = viewModel,
+            getSupportUrl = getSupportUrl,
+            openInFenixIntent = openInFenixIntent,
+            bottomSheetBehavior = bottomSheetBehavior
+        )
+
         val sessionManager: SessionManager = mockk(relaxed = true)
         val item = ToolbarMenu.Item.OpenInFenix
 
