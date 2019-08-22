@@ -31,6 +31,8 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.GleanMetrics.ExperimentsMetrics
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.session.NotificationSessionObserver
+import org.mozilla.fenix.session.VisibilityLifeCycleCallback
 import org.mozilla.fenix.utils.Settings
 import java.io.File
 
@@ -42,6 +44,9 @@ open class FenixApplication : Application() {
     var experimentLoaderComplete: Boolean = false
 
     open val components by lazy { Components(this) }
+
+    var visibilityLifeCycleCallback: VisibilityLifeCycleCallback? = null
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -106,6 +111,11 @@ open class FenixApplication : Application() {
         if (FeatureFlags.sendTabEnabled && components.backgroundServices.pushConfig != null) {
             PushProcessor.install(components.backgroundServices.push)
         }
+
+        visibilityLifeCycleCallback = VisibilityLifeCycleCallback(this@FenixApplication)
+        registerActivityLifecycleCallbacks(visibilityLifeCycleCallback)
+
+        components.core.sessionManager.register(NotificationSessionObserver(this))
     }
 
     private fun registerRxExceptionHandling() {
