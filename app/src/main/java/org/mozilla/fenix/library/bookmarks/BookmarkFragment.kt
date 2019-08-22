@@ -187,8 +187,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.libraryClose -> {
-                invokePendingDeletion()
-                close()
+                navigate(
+                    BookmarkFragmentDirections
+                        .actionBookmarkFragmentToHomeFragment()
+                )
                 true
             }
             R.id.add_bookmark_folder -> {

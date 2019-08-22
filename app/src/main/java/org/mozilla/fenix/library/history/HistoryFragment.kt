@@ -162,7 +162,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
             true
         }
         R.id.libraryClose -> {
-            close()
+            nav(R.id.historyFragment, HistoryFragmentDirections.actionHistoryFragmentToHomeFragment())
             true
         }
         R.id.delete_history_multi_select -> {
