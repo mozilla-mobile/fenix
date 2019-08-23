@@ -54,7 +54,7 @@ object Versions {
     const val flipper = "0.21.0"
     const val soLoader = "0.5.1"
 
-    const val espresso_version = "3.1.0"
+    const val espresso_version = "3.2.0"
     const val mockwebserver = "3.11.0"
     const val orchestrator = "1.3.0-alpha02"
     const val tools_test_rules = "1.3.0-alpha02"
