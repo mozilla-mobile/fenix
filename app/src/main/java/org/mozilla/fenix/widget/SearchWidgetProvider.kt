@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix
+package org.mozilla.fenix.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -14,16 +14,21 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.Dimension
+import androidx.annotation.Dimension.DP
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.IntentReceiverActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.utils.Settings
 
 class SearchWidgetProvider : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
-        Settings.instance?.addSearchWidgetInstalled(1)
+        Settings.getInstance(context).addSearchWidgetInstalled(1)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        Settings.instance?.addSearchWidgetInstalled(-appWidgetIds.size)
+        Settings.getInstance(context).addSearchWidgetInstalled(-appWidgetIds.size)
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -63,7 +68,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
-    private fun getLayoutSize(dp: Int) = when {
+    private fun getLayoutSize(@Dimension(unit = DP) dp: Int) = when {
         dp >= DP_LARGE -> SearchWidgetProviderSize.LARGE
         dp >= DP_MEDIUM -> SearchWidgetProviderSize.MEDIUM
         dp >= DP_SMALL -> SearchWidgetProviderSize.SMALL
@@ -93,7 +98,8 @@ class SearchWidgetProvider : AppWidgetProvider() {
             .let { intent ->
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 intent.putExtra(HomeActivity.OPEN_TO_SEARCH, true)
-                PendingIntent.getActivity(context, REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getActivity(context,
+                    REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
     }
 
@@ -107,7 +113,8 @@ class SearchWidgetProvider : AppWidgetProvider() {
         val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
 
         return intentSpeech.resolveActivity(context.packageManager)?.let {
-            PendingIntent.getActivity(context, REQUEST_CODE_VOICE, voiceIntent, 0)
+            PendingIntent.getActivity(context,
+                REQUEST_CODE_VOICE, voiceIntent, 0)
         }
     }
 

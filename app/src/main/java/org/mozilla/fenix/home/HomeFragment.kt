@@ -190,7 +190,9 @@ class HomeFragment : Fragment(), AccountObserver {
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
-            val homeViewModel: HomeScreenViewModel by activityViewModels()
+            val homeViewModel: HomeScreenViewModel by activityViewModels {
+                ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+            }
             homeViewModel.layoutManagerState?.also { parcelable ->
                 sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
@@ -303,7 +305,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    @SuppressWarnings("ComplexMethod")
+    @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun handleTabAction(action: TabAction) {
         Do exhaustive when (action) {
             is TabAction.SaveTabGroup -> {
@@ -423,6 +425,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
+    @SuppressWarnings("LongMethod")
     private fun handleCollectionAction(action: CollectionAction) {
         when (action) {
             is CollectionAction.Expand -> {
@@ -513,7 +516,9 @@ class HomeFragment : Fragment(), AccountObserver {
     override fun onPause() {
         invokePendingDeleteJobs()
         super.onPause()
-        val homeViewModel: HomeScreenViewModel by activityViewModels()
+        val homeViewModel: HomeScreenViewModel by activityViewModels {
+            ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+        }
         homeViewModel.layoutManagerState =
             sessionControlComponent.view.layoutManager?.onSaveInstanceState()
         homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
@@ -801,8 +806,8 @@ class HomeFragment : Fragment(), AccountObserver {
                     border?.visibility = View.GONE
                 }
 
-                override fun onAnimationStart(animation: Animator?) {}
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationStart(animation: Animator?) { /* noop */ }
+                override fun onAnimationRepeat(animation: Animator?) { /* noop */ }
                 override fun onAnimationEnd(animation: Animator?) {
                     border?.animate()?.alpha(0.0F)?.setStartDelay(ANIM_ON_SCREEN_DELAY)
                         ?.setDuration(FADE_ANIM_DURATION)
