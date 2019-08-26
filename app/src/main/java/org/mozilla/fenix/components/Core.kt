@@ -170,7 +170,7 @@ class Core(private val context: Context) {
         normalMode: Boolean = Settings.getInstance(context).shouldUseTrackingProtection,
         privateMode: Boolean = true
     ): TrackingProtectionPolicy {
-        val trackingProtectionPolicy = TrackingProtectionPolicy.recommended()
+        val trackingProtectionPolicy = TrackingProtectionPolicy.strict()
 
         return when {
             normalMode && privateMode -> trackingProtectionPolicy
