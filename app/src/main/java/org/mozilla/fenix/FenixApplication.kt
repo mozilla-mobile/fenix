@@ -66,6 +66,8 @@ open class FenixApplication : Application() {
             return
         }
 
+        setupPush()
+
         // Make sure the engine is initialized and ready to use.
         components.core.engine.warmUp()
 
@@ -177,6 +179,13 @@ open class FenixApplication : Application() {
             fretboard.updateExperiments()
             return@async true
         }
+    }
+
+    private fun setupPush() {
+        components
+            .backgroundServices
+            .push
+            .initialize()
     }
 
     private fun setupCrashReporting() {
