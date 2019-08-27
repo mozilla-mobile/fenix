@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.support.utils.ThreadUtils
 
@@ -39,7 +40,7 @@ class SessionNotificationService : Service() {
             ACTION_ERASE -> {
                 components.core.sessionManager.removeAndCloseAllPrivateSessions()
 
-                if (!VisibilityLifeCycleCallback.finishAndRemoveTaskIfInBackground(this)) {
+                if (!VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
                     startActivity(
                         Intent(this, HomeActivity::class.java).apply {
                             this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -66,7 +67,7 @@ class SessionNotificationService : Service() {
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_pbm_notification)
             .setContentTitle(getString(R.string.app_name_private))
-            .setContentText(getString(R.string.notification_delete_text))
+            .setContentText(getString(R.string.notification_pbm_delete_text))
             .setContentIntent(createNotificationIntent())
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .setShowWhen(false)
@@ -75,14 +76,14 @@ class SessionNotificationService : Service() {
             .addAction(
                 NotificationCompat.Action(
                     0,
-                    getString(R.string.notification_action_open),
+                    getString(R.string.notification_pbm_action_open),
                     createOpenActionIntent()
                 )
             )
             .addAction(
                 NotificationCompat.Action(
                     0,
-                    getString(R.string.notification_action_delete_and_open),
+                    getString(R.string.notification_pbm_action_delete_and_open),
                     createOpenAndEraseActionIntent()
                 )
             )
@@ -117,9 +118,9 @@ class SessionNotificationService : Service() {
             return
         }
 
-        val notificationManager = getSystemService(NotificationManager::class.java) ?: return
+        val notificationManager = getSystemService<NotificationManager>() ?: return
 
-        val notificationChannelName = getString(R.string.notification_browsing_session_channel_name)
+        val notificationChannelName = getString(R.string.notification_pbm_channel_name)
 
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID, notificationChannelName, NotificationManager.IMPORTANCE_MIN

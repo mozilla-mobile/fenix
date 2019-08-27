@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.getSystemService
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.GleanMetrics.ExperimentsMetrics
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.session.NotificationSessionObserver
-import org.mozilla.fenix.session.VisibilityLifeCycleCallback
+import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.Settings
 import java.io.File
 
@@ -45,7 +46,7 @@ open class FenixApplication : Application() {
 
     open val components by lazy { Components(this) }
 
-    var visibilityLifeCycleCallback: VisibilityLifeCycleCallback? = null
+    var visibilityLifecycleCallback: VisibilityLifecycleCallback? = null
         private set
 
     override fun onCreate() {
@@ -112,8 +113,8 @@ open class FenixApplication : Application() {
             PushProcessor.install(components.backgroundServices.push)
         }
 
-        visibilityLifeCycleCallback = VisibilityLifeCycleCallback(this@FenixApplication)
-        registerActivityLifecycleCallbacks(visibilityLifeCycleCallback)
+        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
 
         components.core.sessionManager.register(NotificationSessionObserver(this))
     }

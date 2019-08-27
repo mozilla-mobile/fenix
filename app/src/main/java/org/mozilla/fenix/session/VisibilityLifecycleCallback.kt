@@ -17,7 +17,7 @@ import org.mozilla.fenix.FenixApplication
  * Based on this information the current task can be removed if the app is not visible.
  */
 @SuppressWarnings("EmptyFunctionBlock")
-class VisibilityLifeCycleCallback(private val context: Context) :
+class VisibilityLifecycleCallback(private val activityManager: ActivityManager?) :
     Application.ActivityLifecycleCallbacks {
 
     /**
@@ -27,14 +27,12 @@ class VisibilityLifeCycleCallback(private val context: Context) :
 
     private fun finishAndRemoveTaskIfInBackground(): Boolean {
         if (activitiesInStartedState == 0) {
-            val activityManager =
-                context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-                    ?: return false
-
-            for (task in activityManager.appTasks) {
-                task.finishAndRemoveTask()
+            activityManager?.let {
+                for (task in it.appTasks) {
+                    task.finishAndRemoveTask()
+                }
+                return true
             }
-            return true
         }
         return false
     }
@@ -64,7 +62,7 @@ class VisibilityLifeCycleCallback(private val context: Context) :
          */
         internal fun finishAndRemoveTaskIfInBackground(context: Context): Boolean {
             return (context.applicationContext as FenixApplication)
-                .visibilityLifeCycleCallback?.finishAndRemoveTaskIfInBackground() ?: false
+                .visibilityLifecycleCallback?.finishAndRemoveTaskIfInBackground() ?: false
         }
     }
 }
