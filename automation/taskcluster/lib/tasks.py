@@ -141,11 +141,11 @@ class TaskBuilder(object):
             }
         )
 
-    def craft_test_pr_task(self, variant, run_coverage=True):
+    def craft_test_pr_task(self, variant):
         # upload coverage only once, if the variant is arm64
         test_gradle_command = \
             '-Pcoverage jacoco{}TestReport && automation/taskcluster/upload_coverage_report.sh'.format(variant.for_gradle_command) \
-            if (run_coverage and variant.abi == 'aarch64') \
+            if (variant.abi == 'aarch64') \
             else 'test{}UnitTest'.format(variant.for_gradle_command)
 
         return self._craft_clean_gradle_task(
