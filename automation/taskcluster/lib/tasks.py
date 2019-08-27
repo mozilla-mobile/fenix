@@ -46,21 +46,11 @@ class TaskBuilder(object):
         self.date = arrow.get(date_string)
         self.trust_level = trust_level
 
-    def craft_assemble_release_task(self, architectures, build_type, is_staging, version_name):
-        artifacts = {
-            'public/build/{}/target.apk'.format(arch): {
-                "type": 'file',
-                "path": '/opt/fenix/app/build/outputs/apk/'
-                        '{arch}/{build_type}/app-{arch}-{build_type}-unsigned.apk'.format(arch=arch, build_type=build_type),
-                "expires": taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
-            }
-            for arch in architectures
-        }
-
+    def craft_assemble_release_task(self, variant, channel, is_staging, version_name):
         if is_staging:
             secret_index = 'garbage/staging/project/mobile/fenix'
         else:
-            secret_index = 'project/mobile/fenix/{}'.format(build_type)
+            secret_index = 'project/mobile/fenix/{}'.format(channel)
 
         pre_gradle_commands = (
             'python automation/taskcluster/helper/get-secret.py -s {} -k {} -f {}'.format(
@@ -70,11 +60,11 @@ class TaskBuilder(object):
                 ('sentry_dsn', '.sentry_token'),
                 ('leanplum', '.leanplum_token'),
                 ('adjust', '.adjust_token'),
-                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(build_type)),
+                ('firebase', 'app/src/{}/res/values/firebase.xml'.format(variant.build_type)),
             )
         )
 
-        capitalized_build_type = upper_case_first_letter(build_type)
+        capitalized_build_type = upper_case_first_letter(variant.build_type)
         gradle_commands = (
             './gradlew --no-daemon -PversionName="{}" clean test assemble{}'.format(
                 version_name, capitalized_build_type),
@@ -98,14 +88,14 @@ class TaskBuilder(object):
             scopes=[
                 "secrets:get:{}".format(secret_index)
             ],
-            artifacts=artifacts,
+            artifacts=variant.artifacts(),
             routes=routes,
             treeherder={
                 'jobKind': 'build',
                 'machine': {
                     'platform': 'android-all',
                 },
-                'symbol': '{}-A'.format(build_type),
+                'symbol': '{}-A'.format(variant.build_type),
                 'tier': 1,
             },
         )
@@ -115,19 +105,19 @@ class TaskBuilder(object):
             'echo "https://fake@sentry.prod.mozaws.net/368" > .sentry_token',
             'echo "--" > .adjust_token',
             'echo "-:-" > .leanplum_token',
-            './gradlew --no-daemon clean assemble{}'.format(variant.for_gradle_command),
+            './gradlew --no-daemon clean assemble{}'.format(variant.name),
         ))
 
         return self._craft_build_ish_task(
-            name='assemble: {}'.format(variant.raw),
-            description='Building and testing variant {}'.format(variant.raw),
+            name='assemble: {}'.format(variant.name),
+            description='Building and testing variant {}'.format(variant.name),
             command=command,
-            artifacts=_craft_artifacts_from_variant(variant),
+            artifacts=variant.artifacts(),
             treeherder={
                 'groupSymbol': variant.build_type,
                 'jobKind': 'build',
                 'machine': {
-                    'platform': variant.platform,
+                    'platform': 'android-all',
                 },
                 'symbol': 'A',
                 'tier': 1,
@@ -135,49 +125,36 @@ class TaskBuilder(object):
         )
 
     def craft_assemble_pr_task(self, variant):
-        assemble_gradle_command = 'assemble{}'.format(variant.for_gradle_command)
-
         return self._craft_clean_gradle_task(
-            name='assemble: {}'.format(variant.raw),
-            description='Building and testing variant {}'.format(variant.raw),
-            gradle_task=assemble_gradle_command,
-            artifacts=_craft_artifacts_from_variant(variant),
+            name='assemble: {}'.format(variant.name),
+            description='Building and testing variant {}'.format(variant.name),
+            gradle_task='assemble{}'.format(variant.name),
+            artifacts=variant.artifacts(),
             treeherder={
                 'groupSymbol': variant.build_type,
                 'jobKind': 'build',
                 'machine': {
-                  'platform': variant.platform,
+                    'platform': 'android-all',
                 },
                 'symbol': 'A',
                 'tier': 1,
             }
         )
 
-    def craft_test_pr_task(self, variant, run_coverage=False):
-        test_gradle_command = '-Pcoverage jacoco{}TestReport'.format(variant.for_gradle_command) \
-            if (run_coverage and variant.abi == 'aarch64') \
-            else 'test{}UnitTest'.format(variant.for_gradle_command)
-        post_gradle_command = ('automation/taskcluster/upload_coverage_report.sh' if run_coverage else '',)
-
-        if variant.abi == 'aarch64':
-            command = ' && '.join(
-                cmd
-                for commands in ((test_gradle_command,), post_gradle_command)
-                for cmd in commands
-                if cmd
-            )
-        else:
-            command = test_gradle_command
+    def craft_test_pr_task(self, variant):
+        # upload coverage only once, if the variant is arm64
+        test_gradle_command = \
+            '-Pcoverage jacocoGeckoNightlyDebugTestReport && automation/taskcluster/upload_coverage_report.sh'
 
         return self._craft_clean_gradle_task(
-            name='test: {}'.format(variant.raw),
-            description='Building and testing variant {}'.format(variant.raw),
-            gradle_task=command,
+            name='test: {}'.format(variant.name),
+            description='Building and testing variant {}'.format(variant.name),
+            gradle_task=test_gradle_command,
             treeherder={
                 'groupSymbol': variant.build_type,
                 'jobKind': 'test',
                 'machine': {
-                  'platform': variant.platform,
+                  'platform': 'android-all',
                 },
                 'symbol': 'T',
                 'tier': 1,
@@ -202,10 +179,11 @@ class TaskBuilder(object):
         }
 
         gradle_commands = (
-            './gradlew --no-daemon clean assembleArmDebug assembleArmDebugAndroidTest',
+            './gradlew --no-daemon clean assemble assembleAndroidTest',
         )
 
         test_commands = (
+            'automation/taskcluster/androidTest/ui-test.sh aarch64 -1',
             'automation/taskcluster/androidTest/ui-test.sh arm -1',
         )
 
@@ -233,7 +211,7 @@ class TaskBuilder(object):
             name="Upload Release APK to Nimbledroid",
             description='Upload APKs to Nimbledroid for performance measurement and tracking.',
             command=' && '.join([
-                'curl --location "{}/{}/artifacts/public/target.apk" > target.apk'.format(_DEFAULT_TASK_URL, assemble_task_id),
+                'curl --location "{}/{}/artifacts/public/build/armeabi-v7a/geckoNightly/target.apk" > target.apk'.format(_DEFAULT_TASK_URL, assemble_task_id),
                 'python automation/taskcluster/upload_apk_nimbledroid.py',
             ]),
             treeherder={
@@ -491,27 +469,27 @@ class TaskBuilder(object):
     ):
         staging_prefix = '.staging' if is_staging else ''
         routes = [
-            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.latest.{}".format(
-                staging_prefix, self.date.year, self.date.month, self.date.day, variant.abi
+            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.latest".format(
+                staging_prefix, self.date.year, self.date.month, self.date.day
             ),
-            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.revision.{}.{}".format(
-                staging_prefix, self.date.year, self.date.month, self.date.day, self.commit, variant.abi
+            "index.project.mobile.fenix.v2{}.performance-test.{}.{}.{}.revision.{}".format(
+                staging_prefix, self.date.year, self.date.month, self.date.day, self.commit
             ),
-            "index.project.mobile.fenix.v2{}.performance-test.latest.{}".format(staging_prefix, variant.abi),
+            "index.project.mobile.fenix.v2{}.performance-test.latest".format(staging_prefix),
         ]
 
         return self._craft_signing_task(
-            name='sign: {}'.format(variant.raw),
-            description='Dep-signing variant {}'.format(variant.raw),
+            name='sign: {}'.format('forPerformanceTest'),
+            description='Dep-signing variant {}'.format('forPerformanceTest'),
             signing_type="dep",
             assemble_task_id=assemble_task_id,
-            apk_paths=[DEFAULT_APK_ARTIFACT_LOCATION],
+            apk_paths=variant.upstream_artifacts(),
             routes=routes,
             treeherder={
-                'groupSymbol': variant.build_type,
+                'groupSymbol': 'forPerformanceTest',
                 'jobKind': 'other',
                 'machine': {
-                    'platform': variant.platform,
+                    'platform': 'android-all',
                 },
                 'symbol': 'As',
                 'tier': 1,
@@ -553,7 +531,7 @@ class TaskBuilder(object):
         )
 
     def craft_push_task(
-        self, signing_task_id, apks, channel, is_staging=False, override_google_play_track=None
+        self, signing_task_id, apk_paths, channel, is_staging=False, override_google_play_track=None
     ):
         payload = {
             "commit": True,
@@ -561,7 +539,7 @@ class TaskBuilder(object):
             "certificate_alias": 'fenix' if is_staging else 'fenix-{}'.format(channel),
             "upstreamArtifacts": [
                 {
-                    "paths": apks,
+                    "paths": apk_paths,
                     "taskId": signing_task_id,
                     "taskType": "signing"
                 }
@@ -596,12 +574,13 @@ class TaskBuilder(object):
 
     def craft_raptor_tp6m_cold_task(self, for_suite):
 
-        def craft_function(signing_task_id, mozharness_task_id, variant, gecko_revision, force_run_on_64_bit_device=False):
+        def craft_function(signing_task_id, mozharness_task_id, variant_apk, gecko_revision, is_staging, force_run_on_64_bit_device=False):
             return self._craft_raptor_task(
                 signing_task_id,
                 mozharness_task_id,
-                variant,
+                variant_apk,
                 gecko_revision,
+                is_staging,
                 name_prefix='raptor tp6m-cold-{}'.format(for_suite),
                 description='Raptor tp6m cold on Fenix',
                 test_name='raptor-tp6m-cold-{}'.format(for_suite),
@@ -610,13 +589,14 @@ class TaskBuilder(object):
             )
         return craft_function
 
-    def craft_raptor_youtube_playback_task(self, signing_task_id, mozharness_task_id, variant, gecko_revision,
-                                           force_run_on_64_bit_device=False):
+    def craft_raptor_youtube_playback_task(self, signing_task_id, mozharness_task_id, variant_apk, gecko_revision,
+                                           is_staging, force_run_on_64_bit_device=False):
         return self._craft_raptor_task(
             signing_task_id,
             mozharness_task_id,
-            variant,
+            variant_apk,
             gecko_revision,
+            is_staging,
             name_prefix='raptor youtube playback',
             description='Raptor YouTube Playback on Fenix',
             test_name='raptor-youtube-playback',
@@ -629,8 +609,9 @@ class TaskBuilder(object):
         self,
         signing_task_id,
         mozharness_task_id,
-        variant,
+        variant_apk,
         gecko_revision,
+        is_staging,
         name_prefix,
         description,
         test_name,
@@ -638,23 +619,22 @@ class TaskBuilder(object):
         group_symbol=None,
         force_run_on_64_bit_device=False,
     ):
-        worker_type = 'gecko-t-bitbar-gw-perf-p2' if force_run_on_64_bit_device or variant.abi == 'aarch64' else 'gecko-t-bitbar-gw-perf-g5'
+        worker_type = 'gecko-t-bitbar-gw-perf-p2' if force_run_on_64_bit_device or variant_apk.abi == 'arm64-v8a' else 'gecko-t-bitbar-gw-perf-g5'
 
         if force_run_on_64_bit_device:
             treeherder_platform = 'android-hw-p2-8-0-arm7-api-16'
-        elif variant.abi == 'arm':
+        elif variant_apk.abi == 'armeabi-v7a':
             treeherder_platform = 'android-hw-g5-7-0-arm7-api-16'
-        elif variant.abi == 'aarch64':
+        elif variant_apk.abi == 'arm64-v8a':
             treeherder_platform = 'android-hw-p2-8-0-android-aarch64'
         else:
-            raise ValueError('Unsupported architecture "{}"'.format(variant.abi))
+            raise ValueError('Unsupported architecture "{}"'.format(variant_apk.abi))
 
-        task_name = '{}: {} {}'.format(
-            name_prefix, variant.raw, '(on 64-bit-device)' if force_run_on_64_bit_device else ''
+        task_name = '{}: forPerformanceTest {}'.format(
+            name_prefix, '(on 64-bit-device)' if force_run_on_64_bit_device else ''
         )
 
-        apk_url = '{}/{}/artifacts/{}'.format(_DEFAULT_TASK_URL, signing_task_id,
-                                                        DEFAULT_APK_ARTIFACT_LOCATION)
+        apk_url = '{}/{}/artifacts/{}'.format(_DEFAULT_TASK_URL, signing_task_id, variant_apk.taskcluster_path)
         command = [[
             "/builds/taskcluster/script.py",
             "bash",
@@ -667,7 +647,7 @@ class TaskBuilder(object):
             "--download-symbols=ondemand",
         ]]
         # Bug 1558456 - Stop tracking youtube-playback-test on motoG5 for >1080p cases
-        if variant.abi == 'arm' and test_name == 'raptor-youtube-playback':
+        if variant_apk.abi == 'armeabi-v7a' and test_name == 'raptor-youtube-playback':
             params_query = '&'.join(ARM_RAPTOR_URL_PARAMS)
             add_extra_params_option = "--test-url-params={}".format(params_query)
             command[0].append(add_extra_params_option)
@@ -678,7 +658,7 @@ class TaskBuilder(object):
             dependencies=[signing_task_id],
             name=task_name,
             description=description,
-            routes=['notify.email.perftest-alerts@mozilla.com.on-failed'],
+            routes=['notify.email.perftest-alerts@mozilla.com.on-failed'] if not is_staging else [],
             payload={
                 "maxRunTime": 2700,
                 "artifacts": [{
@@ -742,16 +722,6 @@ class TaskBuilder(object):
                 },
             },
         )
-
-
-def _craft_artifacts_from_variant(variant):
-    return {
-        DEFAULT_APK_ARTIFACT_LOCATION: {
-            'type': 'file',
-            'path': variant.apk_absolute_path(),
-            'expires': taskcluster.stringDate(taskcluster.fromNow(DEFAULT_EXPIRES_IN)),
-        }
-    }
 
 
 def schedule_task(queue, taskId, task):

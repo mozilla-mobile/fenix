@@ -38,6 +38,11 @@ class BrowserRobot {
         mDevice.wait(Until.findObject(By.res(expectedText)), TestAssetHelper.waitingTime)
     }
 
+    fun verifyTabCounter(expectedText: String) {
+        onView(withId(R.id.counter_text))
+            .check((matches(withText(containsString(expectedText)))))
+    }
+
     class Transition {
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -48,6 +53,15 @@ class BrowserRobot {
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
         }
+
+        fun openHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.waitForIdle()
+
+            tabsCounter().click()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
     }
 }
 
@@ -57,3 +71,5 @@ fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 }
 
 fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
+
+private fun tabsCounter() = onView(withId(R.id.counter_box))

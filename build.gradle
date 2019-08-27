@@ -18,7 +18,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.0.0.RC9.2")
+    id("io.gitlab.arturbosch.detekt").version("1.0.0-RC16")
 }
 
 allprojects {
@@ -36,6 +36,7 @@ allprojects {
         jcenter()
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental", "-Xskip-runtime-version-check"]
     }
@@ -47,7 +48,7 @@ task clean(type: Delete) {
 
 detekt {
     // The version number is duplicated, please refer to plugins block for more details
-    version = "1.0.0.RC9.2"
+    version = "1.0.0-RC16"
     input = files("$projectDir/app/src", "$projectDir/architecture/src")
     config = files("$projectDir/config/detekt.yml")
     filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
@@ -57,6 +58,9 @@ detekt {
             enabled = true
             destination = file("$projectDir/build/reports/detekt.html")
         }
+        xml {
+            enabled = false
+        }
     }
 }
 
@@ -65,12 +69,12 @@ configurations {
 }
 
 dependencies {
-    ktlint "com.github.shyiko:ktlint:0.31.0"
+    ktlint "com.pinterest:ktlint:0.34.2"
 }
 
 task ktlint(type: JavaExec, group: "verification") {
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
-    main = "com.github.shyiko.ktlint.Main"
+    main = "com.pinterest.ktlint.Main"
     args "app/src/**/*.kt", "architecture/src/**/*.kt"
 }

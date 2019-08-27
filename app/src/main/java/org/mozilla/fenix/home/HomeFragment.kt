@@ -60,6 +60,7 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.Mode
@@ -190,7 +191,9 @@ class HomeFragment : Fragment(), AccountObserver {
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
-            val homeViewModel: HomeScreenViewModel by activityViewModels()
+            val homeViewModel: HomeScreenViewModel by activityViewModels {
+                ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+            }
             homeViewModel.layoutManagerState?.also { parcelable ->
                 sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
@@ -303,7 +306,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    @SuppressWarnings("ComplexMethod")
+    @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun handleTabAction(action: TabAction) {
         Do exhaustive when (action) {
             is TabAction.SaveTabGroup -> {
@@ -346,15 +349,21 @@ class HomeFragment : Fragment(), AccountObserver {
                 }
             }
             is TabAction.CloseAll -> {
-                if (pendingSessionDeletion?.deletionJob == null) removeAllTabsWithUndo(
-                    sessionManager.filteredSessions(action.private)
-                ) else {
+                if (pendingSessionDeletion?.deletionJob == null) {
+                    removeAllTabsWithUndo(
+                        sessionManager.sessionsOfType(private = action.private),
+                        action.private
+                    )
+                } else {
                     pendingSessionDeletion?.deletionJob?.let {
                         viewLifecycleOwner.lifecycleScope.launch {
                             it.invoke()
                         }.invokeOnCompletion {
                             pendingSessionDeletion = null
-                            removeAllTabsWithUndo(sessionManager.filteredSessions(action.private))
+                            removeAllTabsWithUndo(
+                                sessionManager.sessionsOfType(private = action.private),
+                                action.private
+                            )
                         }
                     }
                 }
@@ -374,9 +383,10 @@ class HomeFragment : Fragment(), AccountObserver {
             }
             is TabAction.ShareTabs -> {
                 invokePendingDeleteJobs()
-                val shareTabs = sessionManager.sessions.map {
-                    ShareTab(it.url, it.title, it.id)
-                }
+                val shareTabs = sessionManager
+                    .sessionsOfType(private = (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+                    .map { ShareTab(it.url, it.title, it.id) }
+                    .toList()
                 share(tabs = shareTabs)
             }
         }
@@ -422,6 +432,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
+    @SuppressWarnings("LongMethod")
     private fun handleCollectionAction(action: CollectionAction) {
         when (action) {
             is CollectionAction.Expand -> {
@@ -512,7 +523,9 @@ class HomeFragment : Fragment(), AccountObserver {
     override fun onPause() {
         invokePendingDeleteJobs()
         super.onPause()
-        val homeViewModel: HomeScreenViewModel by activityViewModels()
+        val homeViewModel: HomeScreenViewModel by activityViewModels {
+            ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+        }
         homeViewModel.layoutManagerState =
             sessionControlComponent.view.layoutManager?.onSaveInstanceState()
         homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
@@ -581,7 +594,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    private fun removeAllTabsWithUndo(listOfSessionsToDelete: List<Session>) {
+    private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
         val sessionManager = requireComponents.core.sessionManager
 
         getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
@@ -593,9 +606,15 @@ class HomeFragment : Fragment(), AccountObserver {
         }
         deleteAllSessionsJob = deleteOperation
 
+        val snackbarMessage = if (private) {
+            getString(R.string.snackbar_private_tabs_deleted)
+        } else {
+            getString(R.string.snackbar_tab_deleted)
+        }
+
         viewLifecycleOwner.lifecycleScope.allowUndo(
             view!!,
-            getString(R.string.snackbar_tabs_deleted),
+            snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
                 deleteAllSessionsJob = null
                 emitSessionChanges()
@@ -639,9 +658,9 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun getListOfSessions(): List<Session> {
-        val isPrivate = browsingModeManager.mode.isPrivate
-        val notPendingDeletion = { session: Session -> session.id != pendingSessionDeletion?.sessionId }
-        return sessionManager.filteredSessions(isPrivate, notPendingDeletion)
+        return sessionManager.sessionsOfType(private = browsingModeManager.mode.isPrivate)
+            .filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }
+            .toList()
     }
 
     private fun showCollectionCreationFragment(
@@ -794,8 +813,8 @@ class HomeFragment : Fragment(), AccountObserver {
                     border?.visibility = View.GONE
                 }
 
-                override fun onAnimationStart(animation: Animator?) {}
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationStart(animation: Animator?) { /* noop */ }
+                override fun onAnimationRepeat(animation: Animator?) { /* noop */ }
                 override fun onAnimationEnd(animation: Animator?) {
                     border?.animate()?.alpha(0.0F)?.setStartDelay(ANIM_ON_SCREEN_DELAY)
                         ?.setDuration(FADE_ANIM_DURATION)
@@ -831,15 +850,6 @@ class HomeFragment : Fragment(), AccountObserver {
             val string = view.context.getString(R.string.snackbar_collection_renamed)
             FenixSnackbar.make(view, Snackbar.LENGTH_LONG).setText(string).show()
         }
-    }
-
-    private fun SessionManager.filteredSessions(
-        private: Boolean,
-        sessionFilter: ((Session) -> Boolean)? = null
-    ): List<Session> {
-        return this.sessions
-            .filter { private == it.private }
-            .filter { sessionFilter?.invoke(it) ?: true }
     }
 
     private fun List<Session>.toTabs(): List<Tab> {

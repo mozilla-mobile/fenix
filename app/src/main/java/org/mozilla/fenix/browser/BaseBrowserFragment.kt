@@ -41,6 +41,7 @@ import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
+import mozilla.components.feature.session.WindowFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -52,23 +53,22 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ThemeManager
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserState
 import org.mozilla.fenix.components.toolbar.BrowserStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
+import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.QuickActionSheetState
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
@@ -82,10 +82,11 @@ import org.mozilla.fenix.utils.Settings
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Observer {
     protected lateinit var browserStore: BrowserStore
-    protected lateinit var browserInteractor: BrowserInteractor
+    protected lateinit var browserInteractor: BrowserToolbarViewInteractor
     protected lateinit var browserToolbarView: BrowserToolbarView
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
+    private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
     private val downloadsFeature = ViewBoundFeatureWrapper<DownloadsFeature>()
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
@@ -139,13 +140,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         return view
     }
 
-    @CallSuper
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         browserInitialized = initializeUI(view) != null
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     @CallSuper
     protected open fun initializeUI(view: View): Session? {
         val sessionManager = requireComponents.core.sessionManager
@@ -222,6 +222,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     ),
                     view.engineView
                 ),
+                owner = this,
+                view = view
+            )
+
+            windowFeature.set(
+                feature = WindowFeature(requireComponents.core.sessionManager),
                 owner = this,
                 view = view
             )
@@ -476,7 +482,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     protected abstract fun createBrowserToolbarViewInteractor(
         browserToolbarController: BrowserToolbarController,
         session: Session?
-    ): BrowserInteractor
+    ): BrowserToolbarViewInteractor
+
+    protected abstract fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?)
 
     /**
      * Returns the top and bottom margins.
@@ -516,16 +524,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             }
 
             view?.let {
-                val directions =
-                    BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
-                        sessionId = session.id,
-                        url = session.url,
-                        isSecured = session.securityInfo.secure,
-                        isTrackingProtectionOn = session.trackerBlockingEnabled,
-                        sitePermissions = sitePermissions,
-                        gravity = getAppropriateLayoutGravity()
-                    )
-                nav(R.id.browserFragment, directions)
+                navToQuickSettingsSheet(session, sitePermissions)
             }
         }
     }

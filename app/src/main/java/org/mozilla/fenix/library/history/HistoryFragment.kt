@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
@@ -40,7 +40,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.share.ShareTab
 
-@SuppressWarnings("TooManyFunctions")
+@SuppressWarnings("TooManyFunctions", "LargeClass")
 class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
     private lateinit var historyStore: HistoryStore
     private lateinit var historyView: HistoryView
@@ -60,12 +60,15 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
                 )
             )
         }
-        historyInteractor = HistoryInteractor(
+        val historyController: HistoryController = DefaultHistoryController(
             historyStore,
             ::openItem,
             ::displayDeleteAllDialog,
             ::invalidateOptionsMenu,
             ::deleteHistoryItems
+        )
+        historyInteractor = HistoryInteractor(
+            historyController
         )
         historyView = HistoryView(view.historyLayout, historyInteractor)
 

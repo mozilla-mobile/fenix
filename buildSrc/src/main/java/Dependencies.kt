@@ -4,8 +4,8 @@
 
 object Versions {
     const val kotlin = "1.3.30"
-    const val coroutines = "1.2.1"
-    const val android_gradle_plugin = "3.4.1"
+    const val coroutines = "1.3.0-RC2"
+    const val android_gradle_plugin = "3.5.0"
     const val rxAndroid = "2.1.0"
     const val rxKotlin = "2.3.0"
     const val rxBindings = "3.0.0-alpha2"
@@ -34,7 +34,7 @@ object Versions {
     const val androidx_work = "2.0.1"
     const val google_material = "1.1.0-alpha07"
 
-    const val mozilla_android_components = "9.0.0-SNAPSHOT"
+    const val mozilla_android_components = "10.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -54,13 +54,12 @@ object Versions {
     const val flipper = "0.21.0"
     const val soLoader = "0.5.1"
 
-    const val espresso_core = "2.2.2"
-    const val espresso_version = "3.0.2"
+    const val espresso_version = "3.2.0"
     const val mockwebserver = "3.11.0"
     const val orchestrator = "1.3.0-alpha02"
     const val tools_test_rules = "1.3.0-alpha02"
     const val tools_test_runner = "1.3.0-alpha02"
-    const val uiautomator = "2.1.3"
+    const val uiautomator = "2.2.0"
     const val robolectric = "4.2"
 
     const val google_ads_id_version = "16.0.0"
@@ -194,14 +193,14 @@ object Deps {
     const val flipper_noop = "com.facebook.flipper:flipper-noop:${Versions.flipper}"
     const val soLoader = "com.facebook.soloader:soloader:${Versions.soLoader}"
 
-    const val espresso_contrib = "com.android.support.test.espresso:espresso-contrib:${Versions.espresso_version}"
-    const val espresso_core = "com.android.support.test.espresso:espresso-core:${Versions.espresso_core}"
-    const val espresso_idling_resources = "com.android.support.test.espresso:espresso-idling-resource:${Versions.espresso_version}"
+    const val espresso_contrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso_version}"
+    const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_version}"
+    const val espresso_idling_resources = "androidx.test.espresso:espresso-idling-resource:${Versions.espresso_version}"
     const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebserver}"
     const val orchestrator = "androidx.test:orchestrator:${Versions.orchestrator}"
     const val tools_test_rules = "androidx.test:rules:${Versions.tools_test_rules}"
     const val tools_test_runner = "androidx.test:runner:${Versions.tools_test_runner}"
-    const val uiautomator = "com.android.support.test.uiautomator:uiautomator-v18:${Versions.uiautomator}"
+    const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val androidx_junit = "androidx.test.ext:junit:${Versions.androidx_test_ext}"
     const val androidx_test_core = "androidx.test:core:${Versions.androidx_testing}"

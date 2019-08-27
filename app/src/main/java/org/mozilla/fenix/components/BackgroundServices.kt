@@ -137,18 +137,14 @@ class BackgroundServices(
      */
     private val accountObserver = object : AccountObserver {
         override fun onLoggedOut() {
-            pushService.stop()
-
             push.unsubscribeForType(PushType.Services)
 
             context.components.analytics.metrics.track(Event.SyncAuthSignOut)
 
-            Settings.instance?.fxaSignedIn = false
+            Settings.getInstance(context).fxaSignedIn = false
         }
 
         override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
-            pushService.start(context)
-
             if (newAccount) {
                 context.components.analytics.metrics.track(Event.FXANewSignup)
                 push.subscribeForType(PushType.Services)
@@ -156,7 +152,7 @@ class BackgroundServices(
 
             context.components.analytics.metrics.track(Event.SyncAuthSignIn)
 
-            Settings.instance?.fxaSignedIn = true
+            Settings.getInstance(context).fxaSignedIn = true
         }
     }
 
@@ -178,7 +174,7 @@ class BackgroundServices(
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
     ).also {
-        Settings.instance?.fxaHasSyncedItems = syncConfig?.syncableStores?.isNotEmpty() ?: false
+        Settings.getInstance(context).fxaHasSyncedItems = syncConfig?.syncableStores?.isNotEmpty() ?: false
 
         if (FeatureFlags.sendTabEnabled) {
             it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
