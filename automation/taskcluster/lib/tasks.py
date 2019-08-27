@@ -12,7 +12,6 @@ import taskcluster
 from lib.util import upper_case_first_letter, convert_camel_case_into_kebab_case, lower_case_first_letter
 
 DEFAULT_EXPIRES_IN = '1 year'
-DEFAULT_APK_ARTIFACT_LOCATION = 'public/target.apk'
 _OFFICIAL_REPO_URL = 'https://github.com/mozilla-mobile/fenix'
 _DEFAULT_TASK_URL = 'https://queue.taskcluster.net/v1/task'
 GOOGLE_APPLICATION_CREDENTIALS = '.firebase_token.json'
@@ -627,8 +626,10 @@ class TaskBuilder(object):
             name_prefix, '(on 64-bit-device)' if force_run_on_64_bit_device else ''
         )
 
+        default_apk_artifact_location = 'public/build/{}/geckoNightly/target.apk'.format('armeabi-v7a' if abi == 'arm' else 'arm64-v8a')
+
         apk_url = '{}/{}/artifacts/{}'.format(_DEFAULT_TASK_URL, signing_task_id,
-                                                        DEFAULT_APK_ARTIFACT_LOCATION)
+                                              default_apk_artifact_location)
         command = [[
             "/builds/taskcluster/script.py",
             "bash",
