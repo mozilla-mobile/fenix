@@ -60,7 +60,7 @@ def pr():
     signing_tasks = {}
     other_tasks = {}
 
-    variant = get_variant('forPerformanceTest', 'geckoBeta')
+    variant = get_variant('forPerformanceTest', 'geckoNightly')
     assemble_task_id = taskcluster.slugId()
     build_tasks[assemble_task_id] = BUILDER.craft_assemble_pr_task(variant)
     build_tasks[taskcluster.slugId()] = BUILDER.craft_test_pr_task(variant)
