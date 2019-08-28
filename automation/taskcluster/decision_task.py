@@ -30,6 +30,7 @@ REPO_URL = os.environ.get('MOBILE_HEAD_REPOSITORY')
 COMMIT = os.environ.get('MOBILE_HEAD_REV')
 PR_TITLE = os.environ.get('GITHUB_PULL_TITLE', '')
 SHORT_HEAD_BRANCH = os.environ.get('SHORT_HEAD_BRANCH')
+PR_NUMBER = os.environ.get('MOBILE_PULL_REQUEST_NUMBER', '')
 
 # If we see this text inside a pull request title then we will not execute any tasks for this PR.
 SKIP_TASKS_TRIGGER = '[ci skip]'
@@ -62,7 +63,7 @@ def pr():
 
     variant = get_variant('debug', 'geckoNightly')
     assemble_task_id = taskcluster.slugId()
-    build_tasks[assemble_task_id] = BUILDER.craft_assemble_pr_task(variant)
+    build_tasks[assemble_task_id] = BUILDER.craft_assemble_pr_task(variant, PR_NUMBER)
     build_tasks[taskcluster.slugId()] = BUILDER.craft_test_pr_task(variant)
 
     for craft_function in (
