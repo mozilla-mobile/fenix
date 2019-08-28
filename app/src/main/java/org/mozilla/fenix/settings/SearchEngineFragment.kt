@@ -10,7 +10,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.ext.settings
 
 class SearchEngineFragment : PreferenceFragmentCompat() {
 
@@ -25,14 +25,14 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
         val searchSuggestionsPreference =
             findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_show_search_suggestions))?.apply {
-                isChecked = Settings.getInstance(context).showSearchSuggestions
+                isChecked = context.settings.showSearchSuggestions
             }
 
         searchSuggestionsPreference?.onPreferenceChangeListener = SharedPreferenceUpdater()
 
         val showVisitedSitesBookmarks =
             findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_show_visited_sites_bookmarks))?.apply {
-                isChecked = Settings.getInstance(context).shouldShowVisitedSitesBookmarks
+                isChecked = context.settings.shouldShowVisitedSitesBookmarks
             }
 
         showVisitedSitesBookmarks?.onPreferenceChangeListener = SharedPreferenceUpdater()

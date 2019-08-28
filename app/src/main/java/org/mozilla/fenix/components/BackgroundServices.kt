@@ -38,9 +38,9 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
 import org.mozilla.fenix.test.Mockable
-import org.mozilla.fenix.utils.Settings
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
@@ -143,7 +143,7 @@ class BackgroundServices(
 
             context.components.analytics.metrics.track(Event.SyncAuthSignOut)
 
-            Settings.getInstance(context).fxaSignedIn = false
+            context.settings.fxaSignedIn = false
         }
 
         override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
@@ -156,7 +156,7 @@ class BackgroundServices(
 
             context.components.analytics.metrics.track(Event.SyncAuthSignIn)
 
-            Settings.getInstance(context).fxaSignedIn = true
+            context.settings.fxaSignedIn = true
         }
     }
 
@@ -178,7 +178,7 @@ class BackgroundServices(
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
     ).also {
-        Settings.getInstance(context).fxaHasSyncedItems = syncConfig?.syncableStores?.isNotEmpty() ?: false
+        context.settings.fxaHasSyncedItems = syncConfig?.syncableStores?.isNotEmpty() ?: false
 
         if (FeatureFlags.sendTabEnabled) {
             it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)

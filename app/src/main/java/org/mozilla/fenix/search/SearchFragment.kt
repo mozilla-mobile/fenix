@@ -40,9 +40,9 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
-import org.mozilla.fenix.utils.Settings
 
 @Suppress("TooManyFunctions", "LargeClass")
 class SearchFragment : Fragment(), BackHandler {
@@ -91,8 +91,8 @@ class SearchFragment : Fragment(), BackHandler {
                     showShortcutEnginePicker = displayShortcutEnginePicker,
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
-                    showSuggestions = Settings.getInstance(requireContext()).showSearchSuggestions,
-                    showVisitedSitesBookmarks = Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks,
+                    showSuggestions = requireContext().settings.showSearchSuggestions,
+                    showVisitedSitesBookmarks = requireContext().settings.shouldShowVisitedSitesBookmarks,
                     session = session
                 )
             )
@@ -286,7 +286,7 @@ class SearchFragment : Fragment(), BackHandler {
     }
 
     private fun historyStorageProvider(): HistoryStorage? {
-        return if (Settings.getInstance(requireContext()).shouldShowVisitedSitesBookmarks) {
+        return if (requireContext().settings.shouldShowVisitedSitesBookmarks) {
             requireComponents.core.historyStorage
         } else null
     }
