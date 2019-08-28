@@ -22,6 +22,7 @@ import mozilla.components.support.utils.ThreadUtils
 import org.mozilla.fenix.R
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.sessionsOfType
 
 /**
  * As long as a session is active this service will keep the notification (and our process) alive.
@@ -106,7 +107,7 @@ class SessionNotificationService : Service() {
     private fun createOpenAndEraseActionIntent(): PendingIntent {
         val intent = Intent(this, HomeActivity::class.java)
 
-        intent.putExtra(HomeActivity.EXTRA_NOTIFICATION, true)
+        intent.putExtra(HomeActivity.EXTRA_DELETE_PRIVATE_TABS, true)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         return PendingIntent.getActivity(this, 2, intent, PendingIntent.FLAG_CANCEL_CURRENT)
@@ -134,9 +135,7 @@ class SessionNotificationService : Service() {
     }
 
     private fun SessionManager.removeAndCloseAllPrivateSessions() {
-        this.sessions
-            .filter { it.private }
-            .forEach { components.core.sessionManager.remove(it) }
+        sessionsOfType(private = true).forEach { remove(it) }
     }
 
     override fun onBind(intent: Intent): IBinder? {

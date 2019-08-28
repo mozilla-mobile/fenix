@@ -215,6 +215,6 @@
     <!-- Search Widget -->
     <color name="search_widget_text">#737373</color>
 
-    <!-- PBM Persistent Notification -->
+    <!-- Private Browsing Mode Persistent Notification -->
     <color name="pbm_notification_color">#592ACB</color>
 </resources>

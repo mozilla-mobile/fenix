@@ -8,13 +8,19 @@ import android.content.Context
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.sessionsOfType
+
+/**
+ * This observer starts and stops the service to show a notification
+ * indicating that a private tab is open.
+ */
 
 class NotificationSessionObserver(
     private val context: Context
 ) : SessionManager.Observer {
 
     override fun onSessionRemoved(session: Session) {
-        val privateTabsEmpty = !context.components.core.sessionManager.sessions.any { it.private }
+        val privateTabsEmpty = !context.components.core.sessionManager.sessionsOfType(private = true).none()
 
         if (privateTabsEmpty) {
             SessionNotificationService.stop(context)
