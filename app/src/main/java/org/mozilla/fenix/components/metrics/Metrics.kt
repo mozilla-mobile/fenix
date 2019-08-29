@@ -28,7 +28,6 @@ sealed class Event {
     // Interaction Events
     object OpenedAppFirstRun : Event()
     object InteractWithSearchURLArea : Event()
-    object FXANewSignup : Event()
     object DismissedOnboarding : Event()
     object ClearedPrivateData : Event()
     object SearchShortcutMenuOpened : Event()
@@ -97,6 +96,11 @@ sealed class Event {
     object FindInPageNext : Event()
     object FindInPagePrevious : Event()
     object FindInPageSearchCommitted : Event()
+    object PrivateBrowsingGarbageIconTapped : Event()
+    object PrivateBrowsingSnackbarUndoTapped : Event()
+    object PrivateBrowsingNotificationTapped : Event()
+    object PrivateBrowsingNotificationOpenTapped : Event()
+    object PrivateBrowsingNotificationDeleteAndOpenTapped : Event()
 
     // Interaction events with extras
 

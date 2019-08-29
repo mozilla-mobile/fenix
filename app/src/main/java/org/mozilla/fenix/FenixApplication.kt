@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.getSystemService
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,8 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.GleanMetrics.ExperimentsMetrics
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.session.NotificationSessionObserver
+import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.Settings
 import java.io.File
 
@@ -42,6 +45,9 @@ open class FenixApplication : Application() {
     var experimentLoaderComplete: Boolean = false
 
     open val components by lazy { Components(this) }
+
+    var visibilityLifecycleCallback: VisibilityLifecycleCallback? = null
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -99,6 +105,11 @@ open class FenixApplication : Application() {
         }
 
         setupPush()
+
+        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+
+        components.core.sessionManager.register(NotificationSessionObserver(this))
     }
 
     private fun registerRxExceptionHandling() {
@@ -180,7 +191,7 @@ open class FenixApplication : Application() {
         // Sets the PushFeature as the singleton instance for push messages to go to.
         // We need the push feature setup here to deliver messages in the case where the service
         // starts up the app first.
-        if (FeatureFlags.sendTabEnabled && components.backgroundServices.pushConfig != null) {
+        if (components.backgroundServices.pushConfig != null) {
             val push = components.backgroundServices.push
 
             // Install the AutoPush singleton to receive messages.
