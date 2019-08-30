@@ -43,8 +43,7 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
             components.useCases.sessionUseCases.reload()
             true
         }
-        val settings = requireContext().settings
-        textSizePreference?.isVisible = !settings.shouldUseAutoSize
+        textSizePreference?.isVisible = !requireContext().settings.shouldUseAutoSize
 
         val useAutoSizePreference =
             findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_accessibility_auto_size))
