@@ -23,6 +23,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
@@ -230,8 +231,8 @@ class DefaultBrowserToolbarControllerTest {
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
         verify {
-            val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(currentSession.url)
-            navController.nav(R.id.browserFragment, directions)
+            val directions = NavGraphDirections.actionGlobalShareFragment(currentSession.url)
+            navController.navigate(directions)
         }
     }
 
