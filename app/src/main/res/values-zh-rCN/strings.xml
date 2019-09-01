@@ -633,8 +633,8 @@
 
 
     <!-- Sample text for accessibility font size -->
-    <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. 
-中文字体测试：天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。</string>
+    <string name="accessibility_text_size_sample_text">敏捷的棕色狐狸跳过了懒狗。敏捷的棕色狐狸跳过了懒狗。
+敏捷的棕色狐狸跳过了懒狗。敏捷的棕色狐狸跳过了懒狗。</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">放大或缩小网站上的文字</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->

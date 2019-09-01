@@ -630,7 +630,7 @@
 
 
     <!-- Sample text for accessibility font size -->
-    <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</string>
+    <string name="accessibility_text_size_sample_text">La rapida volpe marrone salta sopra il cane pigro. La rapida volpe marrone salta sopra il cane pigro. La rapida volpe marrone salta sopra il cane pigro.</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">Aumenta o riduci la dimensione del testo dei siti web</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->

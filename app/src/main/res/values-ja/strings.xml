@@ -607,7 +607,7 @@
 
 
     <!-- Sample text for accessibility font size -->
-    <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</string>
+    <string name="accessibility_text_size_sample_text">速い茶色のキツネは怠laな犬を飛び越えます。 速い茶色のキツネは怠laな犬を飛び越えます。速い茶色のキツネは怠laな犬を飛び越えます。 速い茶色のキツネは怠laな犬を飛び越えます。</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">ウェブサイト上のテキストを拡大または縮小します</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->

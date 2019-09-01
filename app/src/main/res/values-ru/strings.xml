@@ -627,7 +627,7 @@
 
 
     <!-- Sample text for accessibility font size -->
-    <string name="accessibility_text_size_sample_text">The quick brown fox jumps over the lazy dog. Съешь же ещё этих мягких французских булок, да выпей чаю. The quick brown fox jumps over the lazy dog. Съешь же ещё этих мягких французских булок, да выпей чаю.</string>
+    <string name="accessibility_text_size_sample_text">Быстрая коричневая лиса прыгает через ленивую собаку. Быстрая коричневая лиса прыгает через ленивую собаку. Быстрая коричневая лиса прыгает через ленивую собаку. Быстрая коричневая лиса прыгает через ленивую собаку.</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_text_size_summary">Увеличение или уменьшение размера шрифта на сайтах</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->
