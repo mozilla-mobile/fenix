@@ -51,7 +51,9 @@ class SearchFragmentStoreTest {
         defaultEngineSource = mockk(),
         showShortcutEnginePicker = false,
         showSuggestions = false,
-        showVisitedSitesBookmarks = false,
+        showClipboardSuggestions = false,
+        showHistorySuggestions = false,
+        showBookmarkSuggestions = false,
         session = null
     )
 }
