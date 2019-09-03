@@ -14,6 +14,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -55,12 +56,24 @@ class ShareFragment : AppCompatDialogFragment() {
                 flags = FLAG_ACTIVITY_NEW_TASK
             }
             val shareAppsActivities = getIntentActivities(shareIntent, context)
-            buildAppsList(shareAppsActivities, context)
+            val filteredShareAppsActivities = filterProviders(shareAppsActivities)
+            buildAppsList(filteredShareAppsActivities, context)
         }
 
         devicesListDeferred = lifecycleScope.async(Dispatchers.IO) {
             val fxaAccountManager = context.components.backgroundServices.accountManager
             buildDeviceList(fxaAccountManager)
+        }
+    }
+
+    // removes google maps intent handler for SendTextToClipboard from providers
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun filterProviders(shareAppsActivities: List<ResolveInfo>?): List<ResolveInfo>? {
+        return shareAppsActivities?.filterNot {
+            it.activityInfo.name.equals(
+                "com.google.android.apps.gmm.sharing.SendTextToClipboardActivity",
+                true) &&
+                    it.activityInfo.packageName.equals("com.google.android.apps.maps", true)
         }
     }
 
