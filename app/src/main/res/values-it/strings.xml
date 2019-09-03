@@ -420,7 +420,7 @@
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_created_snackbar">Segnalibro aggiunto.</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
-    <string name="bookmark_saved_snackbar">Segnalibro salvato</string>
+    <string name="bookmark_saved_snackbar">Segnalibro salvato!</string>
     <!-- Snackbar edit button shown after a bookmark has been created. -->
     <string name="edit_bookmark_snackbar_action">MODIFICA</string>
 
@@ -554,10 +554,10 @@
     <string name="create_collection_save_to_collection_tab_selected">%d scheda selezionata</string>
 
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
-    <string name="create_collection_tabs_saved">Schede salvate.</string>
+    <string name="create_collection_tabs_saved">Schede salvate!</string>
 
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
-    <string name="create_collection_tab_saved">Scheda salvata.</string>
+    <string name="create_collection_tab_saved">Scheda salvata!</string>
 
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Chiudi</string>
@@ -699,7 +699,7 @@
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_header">Benvenuto in %s.</string>
+    <string name="onboarding_header">Benvenuto in %s!</string>
     <!-- text for the Firefox Accounts section header -->
     <string name="onboarding_fxa_section_header">Hai già un account?</string>
     <!-- text for the Firefox Preview feature section header
@@ -761,9 +761,9 @@
     <string name="onboarding_theme_light_title">Tema chiaro</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
-    <string name="sync_sent_tabs_snackbar">Schede inviate.</string>
+    <string name="sync_sent_tabs_snackbar">Schede inviate!</string>
     <!-- Text shown in snackbar when one tab has been sent to device  -->
-    <string name="sync_sent_tab_snackbar">Scheda inviata.</string>
+    <string name="sync_sent_tab_snackbar">Scheda inviata!</string>
     <!-- Title of QR Pairing Fragment -->
     <string name="sync_scan_code">Scansiona il codice</string>
     <!-- Instructions on how to access pairing -->
