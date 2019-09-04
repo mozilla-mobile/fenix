@@ -109,6 +109,19 @@ tracking_protection</td>
         </td>
         <td>2020-03-01</td>
     </tr>
+    <tr>
+       <td>whats_new_tapped</td>
+       <td>event</td>
+       <td>A user opened the "what's new" page button</td>
+       <td><a href="https://github.com/mozilla-mobile/fenix/pull/5090">link</a></td>
+       <td>
+           <table>
+                <tr><td>source</td><td>The location from which the user selected the what's new button. Either 'about' or 'home'</td>
+                </tr>
+            </table>
+        </td>
+        <td>2020-03-01</td>
+    </tr>
 </table>
 </pre>
 
@@ -705,6 +718,22 @@ tracking_protection</td>
         <td>event</td>
         <td>A user pressed the sync now button on the sync account page</td>
         <td><a href="https://github.com/mozilla-mobile/fenix/pull/2745#issuecomment-494918532">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>send_tab</td>
+        <td>event</td>
+        <td>A user sent the current tab to another FxA device</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/5106">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>sign_in_to_send_tab</td>
+        <td>event</td>
+        <td>A user pressed the "sign in to send tab" button inside the share tab menu</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/5106">link</a></td>
         <td></td>
         <td>2020-03-01</td>
     </tr>
