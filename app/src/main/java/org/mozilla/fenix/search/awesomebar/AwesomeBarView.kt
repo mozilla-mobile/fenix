@@ -178,7 +178,7 @@ class AwesomeBarView(
         if (state.showShortcutEnginePicker) {
             view.addProviders(shortcutsEnginePickerProvider)
         } else {
-            if (state.showSuggestions) {
+            if (state.showSearchSuggestions) {
                 view.addProviders(
                     when (state.searchEngineSource) {
                         is SearchEngineSource.Default -> defaultSearchSuggestionProvider

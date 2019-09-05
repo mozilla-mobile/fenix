@@ -91,7 +91,7 @@ class SearchFragment : Fragment(), BackHandler {
                     showShortcutEnginePicker = displayShortcutEnginePicker,
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
-                    showSuggestions = Settings.getInstance(requireContext()).shouldShowSearchSuggestions,
+                    showSearchSuggestions = Settings.getInstance(requireContext()).shouldShowSearchSuggestions,
                     showClipboardSuggestions = Settings.getInstance(requireContext()).shouldShowClipboardSuggestions,
                     showHistorySuggestions = Settings.getInstance(requireContext()).shouldShowHistorySuggestions,
                     showBookmarkSuggestions = Settings.getInstance(requireContext()).shouldShowBookmarkSuggestions,

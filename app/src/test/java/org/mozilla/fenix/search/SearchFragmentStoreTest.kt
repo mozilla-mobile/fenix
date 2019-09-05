@@ -50,7 +50,7 @@ class SearchFragmentStoreTest {
         searchEngineSource = mockk(),
         defaultEngineSource = mockk(),
         showShortcutEnginePicker = false,
-        showSuggestions = false,
+        showSearchSuggestions = false,
         showClipboardSuggestions = false,
         showHistorySuggestions = false,
         showBookmarkSuggestions = false,
