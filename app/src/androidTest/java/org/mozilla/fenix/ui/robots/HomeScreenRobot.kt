@@ -6,7 +6,9 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.net.Uri
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,13 +17,19 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until.findObject
+import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.containsString
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.click
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -71,7 +79,8 @@ class HomeScreenRobot {
     fun verifyPrivateSessionHeader() = assertPrivateSessionHeader()
     fun verifyPrivateSessionMessage(visible: Boolean = true) = assertPrivateSessionMessage(visible)
     fun verifyShareTabsButton(visible: Boolean = true) = assertShareTabsButton(visible)
-    fun verifyCloseTabsButton(visible: Boolean = true) = assertCloseTabsButton(visible)
+    fun verifyGarbageCanButton(visible: Boolean = true) = assertGarbageCanButton(visible)
+    fun verifyCloseTabButton(visible: Boolean = true) = assertCloseTabButton(visible)
 
     fun verifyExistingTabList() = assertExistingTabList()
 
@@ -87,6 +96,7 @@ class HomeScreenRobot {
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        private lateinit var mockWebServer: MockWebServer
 
         fun openThreeDotMenu(interact: ThreeDotMenuRobot.() -> Unit): ThreeDotMenuRobot.Transition {
             mDevice.waitForIdle()
@@ -97,22 +107,43 @@ class HomeScreenRobot {
         }
 
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            mDevice.waitForIdle()
+            mDevice.wait(
+                findObject(By.text("Search or enter address")),
+                TestAssetHelper.waitingTime
+            )
             navigationToolbar().perform(click())
 
             SearchRobot().interact()
             return SearchRobot.Transition()
         }
 
-        fun dismissOnboarding() {
-            openThreeDotMenu { }.openSettings { }.goBack { }
+        fun enterURLAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.wait(
+                findObject(By.text("Search or enter address")),
+                TestAssetHelper.waitingTime
+            )
+            urlBar().click()
+            awesomeBar().perform(
+                ViewActions.replaceText(url.toString()),
+                ViewActions.pressImeActionButton()
+            )
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
 
-        fun addNewTab() {
-            openSearch { }.openBrowser { }.openHomeScreen { }
+        fun dismissOnboarding() {
+            openThreeDotMenu {
+            }.openSettings {
+            }.goBack {
+            }
         }
 
         fun togglePrivateBrowsingMode() {
+            mDevice.wait(
+                findObject(By.res("privateBrowsingButton")),
+                TestAssetHelper.waitingTime
+            )
             onView(ViewMatchers.withResourceName("privateBrowsingButton"))
                 .perform(click())
         }
@@ -127,6 +158,9 @@ class HomeScreenRobot {
     }
 }
 
+private fun urlBar() = onView(ViewMatchers.withId(R.id.toolbar))
+private fun awesomeBar() = onView(ViewMatchers.withId(R.id.mozac_browser_toolbar_edit_url_view))
+
 fun homeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
     HomeScreenRobot().interact()
     return HomeScreenRobot.Transition()
@@ -137,12 +171,17 @@ val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 private fun navigationToolbar() =
     onView(CoreMatchers.allOf(ViewMatchers.withText("Search or enter address")))
 
-private fun assertNavigationToolbar() =
+private fun assertNavigationToolbar() {
+    mDevice.wait(findObject(By.text("Search or enter address")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withText("Search or enter address")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
-private fun assertHomeScreen() = onView(ViewMatchers.withResourceName("homeLayout"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertHomeScreen() {
+    mDevice.wait(findObject(By.res("homeLayout")), waitingTime)
+    onView(ViewMatchers.withResourceName("homeLayout"))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -161,9 +200,11 @@ private fun assertOpenTabsHeader() =
     onView(CoreMatchers.allOf(ViewMatchers.withText("Open tabs")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertAddTabButton() =
+private fun assertAddTabButton() {
+    mDevice.wait(findObject(By.res("add_tab_button")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.add_tab_button), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertNoTabsOpenedHeader() =
     onView(CoreMatchers.allOf(ViewMatchers.withText("No tabs opened")))
@@ -291,9 +332,11 @@ private fun assertStartBrowsingButton() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 // Private mode elements
-private fun assertPrivateSessionHeader() =
+private fun assertPrivateSessionHeader() {
+    mDevice.wait(findObject(By.text("Private session")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withText("Private session")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 const val PRIVATE_SESSION_MESSAGE = "Firefox Preview clears your search and browsing history " +
         "when you quit the app or close all private tabs. While this doesn’t make you anonymous to websites or " +
@@ -306,15 +349,31 @@ private fun assertPrivateSessionMessage(visible: Boolean) =
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else doesNotExist()
         )
 
-private fun assertShareTabsButton(visible: Boolean) =
-    onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.share_tabs_button), isDisplayed()))
-        .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
+private fun assertShareTabsButton(visible: Boolean) {
+    mDevice.wait(findObject(By.res("share_tabs_button")), waitingTime)
+    onView(ViewMatchers.withId(R.id.share_tabs_button))
+        .check(
+            if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else matches(
+                withEffectiveVisibility(Visibility.GONE))
+        )
+}
 
-private fun assertCloseTabsButton(visible: Boolean) =
-    onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.close_tab_button), isDisplayed()))
-        .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
+private fun assertGarbageCanButton(visible: Boolean) {
+    mDevice.wait(findObject(By.res("close_tabs_button")), waitingTime)
+    onView(ViewMatchers.withId(R.id.close_tabs_button))
+        .check(
+            if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else matches(
+                withEffectiveVisibility(Visibility.GONE))
+        )
+}
 
-private fun visibleOrGone(visibility: Boolean) = if (visibility) Visibility.VISIBLE else Visibility.GONE
+private fun assertCloseTabButton(visible: Boolean) {
+    mDevice.wait(findObject(By.res("close_tab_button")), waitingTime)
+    onView(ViewMatchers.withId(R.id.close_tab_button))
+        .check(
+            if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else doesNotExist()
+        )
+}
 
 private fun assertExistingTabList() =
     onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.item_tab)))

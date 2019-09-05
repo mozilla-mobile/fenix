@@ -71,12 +71,14 @@ class BrowserRobot {
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
-    }
-}
 
-fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-    BrowserRobot().interact()
-    return BrowserRobot.Transition()
+        fun goBackToHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.waitForIdle()
+            mDevice.pressBack()
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+    }
 }
 
 private fun dismissOnboardingButton() = onView(ViewMatchers.withId(R.id.close_onboarding))

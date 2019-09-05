@@ -101,8 +101,8 @@ class TabbedBrowsingTest {
             verifyTabCounter("1")
         }.openHomeScreen {
             verifyExistingTabList()
-            verifyShareTabsButton(true)
-            verifyCloseTabsButton(true)
+            verifyShareTabsButton()
+            verifyCloseTabButton()
         }.togglePrivateBrowsingMode()
 
         // Verify private tabs remain in private browsing mode

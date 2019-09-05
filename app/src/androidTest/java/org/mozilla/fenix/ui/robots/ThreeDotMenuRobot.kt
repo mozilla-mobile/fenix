@@ -160,8 +160,11 @@ private fun shareTabButton() = onView(allOf(withText("Share tabs")))
 private fun assertShareTabButton() = shareTabButton()
     .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 private fun shareButton() = onView(allOf(withText("Share")))
-private fun assertShareButton() = shareButton()
-    .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+private fun assertShareButton() {
+    mDevice.wait(Until.findObject(By.text("Share")), waitingTime)
+    shareButton()
+        .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+}
 
 private fun saveCollectionButton() = onView(allOf(withText("Save to collection")))
 private fun assertSaveCollectionButton() = saveCollectionButton()
