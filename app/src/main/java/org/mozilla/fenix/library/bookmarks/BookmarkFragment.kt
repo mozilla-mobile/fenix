@@ -23,6 +23,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_bookmark.view.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.awaitAll
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -275,8 +278,14 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
     }
 
     private suspend fun deleteSelectedBookmarks(selected: Set<BookmarkNode>) {
-        selected.forEach {
-            context?.bookmarkStorage()?.deleteNode(it.guid)
+        CoroutineScope(IO).launch {
+            val tempStorage = context?.bookmarkStorage()
+            val deferreds = selected.map {
+                async {
+                    tempStorage?.deleteNode(it.guid)
+                }
+            }
+            deferreds.awaitAll()
         }
     }
 
