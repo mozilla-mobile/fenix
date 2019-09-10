@@ -54,12 +54,11 @@ import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.settings.AboutFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
-import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback {
+open class HomeActivity : AppCompatActivity() {
 
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
@@ -305,17 +304,6 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
     protected open fun createThemeManager(): ThemeManager {
         return DefaultThemeManager(browsingModeManager.mode, this)
-    }
-
-    override fun onTabsShared(tabsSize: Int) {
-        getRootView()?.let {
-            FenixSnackbar.make(it, Snackbar.LENGTH_SHORT).setText(
-                getString(
-                    if (tabsSize == 1) R.string.sync_sent_tab_snackbar else
-                        R.string.sync_sent_tabs_snackbar
-                )
-            ).show()
-        }
     }
 
     companion object {

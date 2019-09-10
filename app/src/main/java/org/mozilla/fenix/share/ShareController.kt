@@ -124,14 +124,16 @@ class DefaultShareController(
         }
     }
 
-    private fun showSuccess() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun showSuccess() {
         snackbarPresenter.present(
             getSuccessMessage(),
             Snackbar.LENGTH_SHORT
         )
     }
 
-    private fun showFailureWithRetryOption(operation: () -> Unit) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun showFailureWithRetryOption(operation: () -> Unit) {
         snackbarPresenter.present(
             context.getString(R.string.sync_sent_tab_error_snackbar),
             Snackbar.LENGTH_LONG,
@@ -140,7 +142,8 @@ class DefaultShareController(
         )
     }
 
-    private fun getSuccessMessage(): String = with(context) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getSuccessMessage(): String = with(context) {
         when (sharedTabs.size) {
             1 -> getString(R.string.sync_sent_tab_snackbar)
             else -> getString(R.string.sync_sent_tabs_snackbar)
