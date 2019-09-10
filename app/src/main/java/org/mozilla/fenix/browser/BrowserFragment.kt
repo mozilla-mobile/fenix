@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.feature.session.ThumbnailsFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
@@ -42,6 +41,7 @@ import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
@@ -62,7 +62,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     private var quickActionSheetSessionObserver: QuickActionSheetSessionObserver? = null
 
     private val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
-    private val thumbnailsFeature = ViewBoundFeatureWrapper<ThumbnailsFeature>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,29 +87,20 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun initializeUI(view: View): Session? {
-        val sessionManager = requireComponents.core.sessionManager
+        val context = requireContext()
+        val sessionManager = context.components.core.sessionManager
 
         return super.initializeUI(view)?.also {
 
-            thumbnailsFeature.set(
-                feature = ThumbnailsFeature(
-                    requireContext(),
-                    view.engineView,
-                    requireComponents.core.sessionManager
-                ),
-                owner = this,
-                view = view
-            )
-
             readerViewFeature.set(
                 feature = ReaderViewFeature(
-                    requireContext(),
-                    requireComponents.core.engine,
-                    requireComponents.core.sessionManager,
+                    context,
+                    context.components.core.engine,
+                    sessionManager,
                     view.readerViewControlsBar
                 ) { available ->
                     if (available) {
-                        requireComponents.analytics.metrics.track(Event.ReaderModeAvailable)
+                        context.components.analytics.metrics.track(Event.ReaderModeAvailable)
                     }
 
                     browserStore.apply {
@@ -165,16 +155,18 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         browserToolbarController: BrowserToolbarController,
         session: Session?
     ): BrowserToolbarViewInteractor {
+        val context = requireContext()
+
         val interactor = BrowserInteractor(
-            context = context!!,
+            context = context,
             store = browserStore,
             browserToolbarController = browserToolbarController,
             quickActionSheetController = DefaultQuickActionSheetController(
-                context = context!!,
+                context = context,
                 navController = findNavController(),
                 currentSession = getSessionById()
-                    ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
-                appLinksUseCases = requireComponents.useCases.appLinksUseCases,
+                    ?: context.components.core.sessionManager.selectedSessionOrThrow,
+                appLinksUseCases = context.components.useCases.appLinksUseCases,
                 bookmarkTapped = {
                     lifecycleScope.launch { bookmarkTapped(it) }
                 }

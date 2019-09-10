@@ -17,8 +17,8 @@ import kotlinx.android.synthetic.main.layout_quick_action_sheet.*
 import kotlinx.android.synthetic.main.layout_quick_action_sheet.view.*
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.toolbar.BrowserState
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 
 interface QuickActionSheetViewInteractor {
     fun onQuickActionSheetOpened()
@@ -66,12 +66,12 @@ class QuickActionSheetView(
 
         updateImportantForAccessibility(quickActionSheetBehavior.state)
 
-        view.quick_action_share.setOnClickListener(this)
-        view.quick_action_downloads.setOnClickListener(this)
-        view.quick_action_bookmark.setOnClickListener(this)
-        view.quick_action_read.setOnClickListener(this)
-        view.quick_action_appearance.setOnClickListener(this)
-        view.quick_action_open_app_link.setOnClickListener(this)
+        quick_action_share.setOnClickListener(this)
+        quick_action_downloads.setOnClickListener(this)
+        quick_action_bookmark.setOnClickListener(this)
+        quick_action_read.setOnClickListener(this)
+        quick_action_appearance.setOnClickListener(this)
+        quick_action_open_app_link.setOnClickListener(this)
     }
 
     /**
@@ -94,7 +94,7 @@ class QuickActionSheetView(
      * Changes alpha of overlay based on new offset of this sheet within [-1,1] range.
      */
     private fun animateOverlay(offset: Float) {
-        overlay.alpha = (1 - offset)
+        quick_action_overlay.alpha = (1 - offset)
     }
 
     /**
@@ -110,7 +110,7 @@ class QuickActionSheetView(
         }
     }
 
-    fun update(state: BrowserState) {
+    fun update(state: BrowserFragmentState) {
         val quickActionSheetState = state.quickActionSheetState
         view.quick_action_read.isVisible = quickActionSheetState.readable
         view.quick_action_read.isSelected = quickActionSheetState.readerActive

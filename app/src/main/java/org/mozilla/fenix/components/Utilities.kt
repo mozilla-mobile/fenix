@@ -7,7 +7,7 @@ package org.mozilla.fenix.components
 import android.content.Context
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.customtabs.CustomTabIntentProcessor
-import mozilla.components.feature.intent.TabIntentProcessor
+import mozilla.components.feature.intent.processing.TabIntentProcessor
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import org.mozilla.fenix.test.Mockable
@@ -23,13 +23,15 @@ class Utilities(
     private val searchUseCases: SearchUseCases
 ) {
     /**
-     * Provides intent processing functionality for CustomTab, ACTION_VIEW
-     * and ACTION_SEND intents.
+     * Provides intent processing functionality for ACTION_VIEW and ACTION_SEND intents.
      */
     val intentProcessor by lazy {
         TabIntentProcessor(sessionManager, sessionUseCases.loadUrl, searchUseCases.newTabSearch, isPrivate = false)
     }
 
+    /**
+     * Provides intent processing functionality for ACTION_VIEW and ACTION_SEND intents in private tabs.
+     */
     val privateIntentProcessor by lazy {
         TabIntentProcessor(sessionManager, sessionUseCases.loadUrl, searchUseCases.newTabSearch, isPrivate = true)
     }

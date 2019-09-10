@@ -50,7 +50,7 @@ class SearchFragment : Fragment(), BackHandler {
     private lateinit var awesomeBarView: AwesomeBarView
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private var permissionDidUpdate = false
-    private lateinit var searchStore: SearchStore
+    private lateinit var searchStore: SearchFragmentStore
     private lateinit var searchInteractor: SearchInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,14 +85,16 @@ class SearchFragment : Fragment(), BackHandler {
         )
 
         searchStore = StoreProvider.get(this) {
-            SearchStore(
-                SearchState(
+            SearchFragmentStore(
+                SearchFragmentState(
                     query = url,
                     showShortcutEnginePicker = displayShortcutEnginePicker,
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
-                    showSuggestions = requireContext().settings.showSearchSuggestions,
-                    showVisitedSitesBookmarks = requireContext().settings.shouldShowVisitedSitesBookmarks,
+                    showSearchSuggestions = requireContext().settings.shouldShowSearchSuggestions,
+                    showClipboardSuggestions = requireContext().settings.shouldShowClipboardSuggestions,
+                    showHistorySuggestions = requireContext().settings.shouldShowHistorySuggestions,
+                    showBookmarkSuggestions = requireContext().settings.shouldShowBookmarkSuggestions,
                     session = session
                 )
             )
@@ -180,7 +182,7 @@ class SearchFragment : Fragment(), BackHandler {
 
         searchShortcutsButton.setOnClickListener {
             val isOpen = searchStore.state.showShortcutEnginePicker
-            searchStore.dispatch(SearchAction.ShowSearchShortcutEnginePicker(!isOpen))
+            searchStore.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(!isOpen))
 
             if (isOpen) {
                 requireComponents.analytics.metrics.track(Event.SearchShortcutMenuClosed)
@@ -208,10 +210,14 @@ class SearchFragment : Fragment(), BackHandler {
         // The user has the option to go to 'Shortcuts' -> 'Search engine settings' to modify the default search engine.
         // When returning from that settings screen we need to update it to account for any changes.
         val currentDefaultEngine =
-            requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
+            requireComponents.search.searchEngineManager.getDefaultSearchEngine(
+                requireContext(),
+                Settings.getInstance(requireContext()).defaultSearchEngineName
+            )
+
         if (searchStore.state.defaultEngineSource.searchEngine != currentDefaultEngine) {
             searchStore.dispatch(
-                SearchAction.SelectNewDefaultSearchEngine
+                SearchFragmentAction.SelectNewDefaultSearchEngine
                     (currentDefaultEngine)
             )
         }
@@ -240,7 +246,7 @@ class SearchFragment : Fragment(), BackHandler {
         }
     }
 
-    private fun updateSearchEngineIcon(searchState: SearchState) {
+    private fun updateSearchEngineIcon(searchState: SearchFragmentState) {
         val searchIcon = searchState.searchEngineSource.searchEngine.icon
         val draw = BitmapDrawable(resources, searchIcon)
         val iconSize = resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
@@ -248,12 +254,12 @@ class SearchFragment : Fragment(), BackHandler {
         searchEngineIcon?.backgroundDrawable = draw
     }
 
-    private fun updateSearchWithLabel(searchState: SearchState) {
+    private fun updateSearchWithLabel(searchState: SearchFragmentState) {
         searchWithShortcuts.visibility =
             if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
     }
 
-    private fun updateSearchShortuctsIcon(searchState: SearchState) {
+    private fun updateSearchShortuctsIcon(searchState: SearchFragmentState) {
         with(requireContext()) {
             val showShortcuts = searchState.showShortcutEnginePicker
             searchShortcutsButton?.isChecked = showShortcuts
@@ -286,7 +292,7 @@ class SearchFragment : Fragment(), BackHandler {
     }
 
     private fun historyStorageProvider(): HistoryStorage? {
-        return if (requireContext().settings.shouldShowVisitedSitesBookmarks) {
+        return if (requireContext().settings.shouldShowHistorySuggestions) {
             requireComponents.core.historyStorage
         } else null
     }

@@ -4,9 +4,9 @@
 
 package org.mozilla.fenix.components
 
+import GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Bundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -16,21 +16,19 @@ import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.storage.SessionStorage
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.SafeBrowsingCategory
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.Companion.select
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.media.MediaFeature
 import mozilla.components.feature.media.RecordingDevicesNotificationFeature
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.session.HistoryDelegate
-import mozilla.components.lib.crash.handler.CrashHandlerService
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.ext.components
@@ -45,31 +43,6 @@ import java.util.concurrent.TimeUnit
  */
 @Mockable
 class Core(private val context: Context) {
-
-    protected val runtime by lazy {
-        val builder = GeckoRuntimeSettings.Builder()
-
-        testConfig?.let {
-            builder.extras(it)
-                .remoteDebuggingEnabled(true)
-        }
-
-        val runtimeSettings = builder
-            .crashHandler(CrashHandlerService::class.java)
-            .useContentProcessHint(true)
-            .build()
-
-        if (!context.settings.shouldUseAutoSize) {
-            runtimeSettings.automaticFontSizeAdjustment = false
-            val fontSize = context.settings.fontSizeFactor
-            runtimeSettings.fontSizeFactor = fontSize
-        }
-
-        GeckoRuntime.create(context, runtimeSettings)
-    }
-
-    var testConfig: Bundle? = null
-
     /**
      * The browser engine component initialized based on the build
      * configuration (see build variants).
@@ -86,18 +59,25 @@ class Core(private val context: Context) {
             suspendMediaWhenInactive = !FeatureFlags.mediaIntegration
         )
 
-        GeckoEngine(context, defaultSettings, runtime)
+        GeckoEngine(context, defaultSettings, GeckoProvider.getOrCreateRuntime(context))
     }
 
     /**
      * [Client] implementation to be used for code depending on `concept-fetch``
      */
     val client: Client by lazy {
-        GeckoViewFetchClient(context, runtime)
+        GeckoViewFetchClient(context, GeckoProvider.getOrCreateRuntime(context))
     }
 
     val sessionStorage: SessionStorage by lazy {
         SessionStorage(context, engine = engine)
+    }
+
+    /**
+     * The [BrowserStore] holds the global [BrowserState].
+     */
+    val store by lazy {
+        BrowserStore()
     }
 
     /**
@@ -107,7 +87,7 @@ class Core(private val context: Context) {
      * case all sessions/tabs are closed.
      */
     val sessionManager by lazy {
-        SessionManager(engine).also { sessionManager ->
+        SessionManager(engine, store).also { sessionManager ->
             // Install the "icons" WebExtension to automatically load icons for every visited website.
             icons.install(engine, sessionManager)
 
@@ -117,6 +97,7 @@ class Core(private val context: Context) {
 
             // Restore the previous state.
             GlobalScope.launch(Dispatchers.Main) {
+              
                 withContext(Dispatchers.IO) {
                     sessionStorage.restore()
                 }?.let { snapshot ->
@@ -179,10 +160,7 @@ class Core(private val context: Context) {
             normalMode && privateMode -> trackingProtectionPolicy
             normalMode && !privateMode -> trackingProtectionPolicy.forRegularSessionsOnly()
             !normalMode && privateMode -> trackingProtectionPolicy.forPrivateSessionsOnly()
-            else -> select(
-                trackingCategories = arrayOf(TrackingCategory.NONE),
-                safeBrowsingCategories = arrayOf(SafeBrowsingCategory.RECOMMENDED)
-            )
+            else -> TrackingProtectionPolicy.none()
         }
     }
 

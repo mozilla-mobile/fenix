@@ -27,6 +27,7 @@
     <string name="pref_key_theme" translatable="false">pref_key_theme</string>
     <string name="pref_key_leakcanary" translatable="false">pref_key_leakcanary</string>
     <string name="pref_key_remote_debugging" translatable="false">pref_key_remote_debugging</string>
+    <string name="pref_key_experimentation" translatable="false">pref_key_experimentation</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -53,7 +54,9 @@
 
     <!-- Search Settings -->
     <string name="pref_key_show_search_suggestions" translatable="false">pref_key_show_search_suggestions</string>
-    <string name="pref_key_show_visited_sites_bookmarks" translatable="false">pref_key_show_visited_sites_bookmarks</string>
+    <string name="pref_key_show_clipboard_suggestions" translatable="false">pref_key_show_clipboard_suggestions</string>
+    <string name="pref_key_search_browsing_history" translatable="false">pref_key_search_browsing_history</string>
+    <string name="pref_key_search_bookmarks" translatable="false">pref_key_search_bookmarks</string>
 
     <!-- Site Permissions Settings -->
     <string name="pref_key_optimize" translatable="false">pref_key_optimize</string>

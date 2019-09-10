@@ -101,10 +101,23 @@ Private Tab, Share, Report Site Issue, Back/Forward button, Reload Button</td></
         <td>
             <table>
                 <tr><td>preference_key</td><td>The preference key for the switch preference the user toggled. We currently track: leakcanary,
-make_default_browser, show_search_suggestions, show_visited_sites_bookmarks, remote_debugging, telemetry,
+make_default_browser, show_search_suggestions, remote_debugging, telemetry,
 tracking_protection</td>
                 </tr>
                 <tr><td>enabled</td><td>Whether or not the preference is <b>now</b> enabled</td></tr>
+            </table>
+        </td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+       <td>whats_new_tapped</td>
+       <td>event</td>
+       <td>A user opened the "what's new" page button</td>
+       <td><a href="https://github.com/mozilla-mobile/fenix/pull/5090">link</a></td>
+       <td>
+           <table>
+                <tr><td>source</td><td>The location from which the user selected the what's new button. Either 'about' or 'home'</td>
+                </tr>
             </table>
         </td>
         <td>2020-03-01</td>
@@ -654,14 +667,6 @@ tracking_protection</td>
         <td>2020-03-01</td>
     </tr>
     <tr>
-        <td>sign_up</td>
-        <td>event</td>
-        <td> A user signed up for a new FxA account</td>
-        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4816#issuecomment-522643217">link</a></td>
-        <td></td>
-        <td>2020-03-01</td>
-    </tr>
-    <tr>
         <td>scan_pairing</td>
         <td>event</td>
         <td>A user pressed the scan pairing button on the sync authentication page</td>
@@ -713,6 +718,22 @@ tracking_protection</td>
         <td>event</td>
         <td>A user pressed the sync now button on the sync account page</td>
         <td><a href="https://github.com/mozilla-mobile/fenix/pull/2745#issuecomment-494918532">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>send_tab</td>
+        <td>event</td>
+        <td>A user sent the current tab to another FxA device</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/5106">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>sign_in_to_send_tab</td>
+        <td>event</td>
+        <td>A user pressed the "sign in to send tab" button inside the share tab menu</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/5106">link</a></td>
         <td></td>
         <td>2020-03-01</td>
     </tr>
@@ -1105,3 +1126,51 @@ Data that is sent in the activation ping
     </tr>
 </table>
 </pre>
+
+## private_browsing_mode
+
+<pre>
+<table style="width: 100%">
+    <tr>
+        <td>garbage_icon</td>
+        <td>event</td>
+        <td>A user pressed the garbage can icon on the private browsing home page, deleting all private tabs.</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4968">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>snackbar_undo</td>
+        <td>event</td>
+        <td>A user pressed the "undo" button in the snackbar that is shown when the garbage icon is tapped.</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4968">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>notification_tapped</td>
+        <td>event</td>
+        <td>A user pressed the private browsing mode notification itself.</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4968">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>notification_open</td>
+        <td>event</td>
+        <td>A user pressed the private browsing mode notification's "Open" button.</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4968">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+    <tr>
+        <td>notification_delete</td>
+        <td>event</td>
+        <td>A user pressed the private browsing mode notification's "Delete and Open" button.</td>
+        <td><a href="https://github.com/mozilla-mobile/fenix/pull/4968">link</a></td>
+        <td></td>
+        <td>2020-03-01</td>
+    </tr>
+</table>
+</pre>
+

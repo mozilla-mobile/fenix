@@ -28,7 +28,6 @@ sealed class Event {
     // Interaction Events
     object OpenedAppFirstRun : Event()
     object InteractWithSearchURLArea : Event()
-    object FXANewSignup : Event()
     object DismissedOnboarding : Event()
     object ClearedPrivateData : Event()
     object SearchShortcutMenuOpened : Event()
@@ -97,13 +96,17 @@ sealed class Event {
     object FindInPageNext : Event()
     object FindInPagePrevious : Event()
     object FindInPageSearchCommitted : Event()
+    object PrivateBrowsingGarbageIconTapped : Event()
+    object PrivateBrowsingSnackbarUndoTapped : Event()
+    object PrivateBrowsingNotificationTapped : Event()
+    object PrivateBrowsingNotificationOpenTapped : Event()
+    object PrivateBrowsingNotificationDeleteAndOpenTapped : Event()
 
     // Interaction events with extras
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(
             context.getString(R.string.pref_key_show_search_suggestions),
-            context.getString(R.string.pref_key_show_visited_sites_bookmarks),
             context.getString(R.string.pref_key_remote_debugging),
             context.getString(R.string.pref_key_telemetry),
             context.getString(R.string.pref_key_tracking_protection)
@@ -249,7 +252,7 @@ sealed class Event {
         enum class Item {
             SETTINGS, LIBRARY, HELP, DESKTOP_VIEW_ON, DESKTOP_VIEW_OFF, FIND_IN_PAGE, NEW_TAB,
             NEW_PRIVATE_TAB, SHARE, REPORT_SITE_ISSUE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
-            SAVE_TO_COLLECTION
+            SAVE_TO_COLLECTION, ADD_TO_HOMESCREEN
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?

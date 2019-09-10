@@ -25,16 +25,28 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
         val searchSuggestionsPreference =
             findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_show_search_suggestions))?.apply {
-                isChecked = context.settings.showSearchSuggestions
+                isChecked = context.settings.shouldShowSearchSuggestions
             }
 
         searchSuggestionsPreference?.onPreferenceChangeListener = SharedPreferenceUpdater()
 
-        val showVisitedSitesBookmarks =
-            findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_show_visited_sites_bookmarks))?.apply {
-                isChecked = context.settings.shouldShowVisitedSitesBookmarks
+        val showHistorySuggestions =
+            findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_search_browsing_history))?.apply {
+                isChecked = context.settings.shouldShowHistorySuggestions
             }
 
-        showVisitedSitesBookmarks?.onPreferenceChangeListener = SharedPreferenceUpdater()
+        val showBookmarkSuggestions =
+            findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_search_bookmarks))?.apply {
+                isChecked = context.settings.shouldShowBookmarkSuggestions
+            }
+
+        val showClipboardSuggestions =
+            findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_show_clipboard_suggestions))?.apply {
+                isChecked = context.settings.shouldShowClipboardSuggestions
+            }
+
+        showHistorySuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
+        showBookmarkSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
+        showClipboardSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
     }
 }

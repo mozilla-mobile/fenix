@@ -176,10 +176,24 @@ class SettingsTest {
     }
 
     @Test
-    fun shouldShowVisitedSitesBookmarks() {
+    fun shouldShowClipboardSuggestion() {
         // When just created
         // Then
-        assertTrue(settings.shouldShowVisitedSitesBookmarks)
+        assertTrue(settings.shouldShowClipboardSuggestions)
+    }
+
+    @Test
+    fun shouldShowHistorySuggestions() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldShowHistorySuggestions)
+    }
+
+    @Test
+    fun shouldShowBookmarkSuggestions() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldShowBookmarkSuggestions)
     }
 
     @Test
@@ -226,7 +240,7 @@ class SettingsTest {
     fun showSearchSuggestions() {
         // When just created
         // Then
-        assertTrue(settings.showSearchSuggestions)
+        assertTrue(settings.shouldShowSearchSuggestions)
     }
 
     @Test

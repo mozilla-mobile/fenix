@@ -29,12 +29,14 @@ object SupportUtils {
         HELP("faq-android"),
         PRIVATE_BROWSING_MYTHS("common-myths-about-private-browsing"),
         YOUR_RIGHTS("your-rights"),
-        TRACKING_PROTECTION("tracking-protection-firefox-preview")
+        TRACKING_PROTECTION("tracking-protection-firefox-preview"),
+        WHATS_NEW("whats-new-firefox-preview")
     }
 
     fun getSumoURLForTopic(context: Context, topic: SumoTopic): String {
         val escapedTopic = getEncodedTopicUTF8(topic.topicStr)
-        val appVersion = getAppVersion(context)
+        // Remove the whitespace so a search is not triggered:
+        val appVersion = getAppVersion(context).replace(" ", "")
         val osTarget = "Android"
         val langTag = getLanguageTag(Locale.getDefault())
         return "https://support.mozilla.org/1/mobile/$appVersion/$osTarget/$langTag/$escapedTopic"

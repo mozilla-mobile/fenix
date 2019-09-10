@@ -29,7 +29,7 @@ import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.search.SearchEngineSource
-import org.mozilla.fenix.search.SearchState
+import org.mozilla.fenix.search.SearchFragmentState
 
 /**
  * Interface for the AwesomeBarView Interactor. This interface is implemented by objects that want
@@ -152,9 +152,8 @@ class AwesomeBarView(
 
             defaultSearchSuggestionProvider =
                 SearchSuggestionProvider(
-                    searchEngine = components.search.searchEngineManager.getDefaultSearchEngine(
-                        this
-                    ),
+                    context = this,
+                    searchEngineManager = components.search.searchEngineManager,
                     searchUseCase = searchUseCase,
                     fetchClient = components.core.client,
                     mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
@@ -172,26 +171,35 @@ class AwesomeBarView(
         }
     }
 
-    fun update(state: SearchState) {
+    @SuppressWarnings("ComplexMethod")
+    fun update(state: SearchFragmentState) {
         view.removeAllProviders()
 
         if (state.showShortcutEnginePicker) {
             view.addProviders(shortcutsEnginePickerProvider)
         } else {
-            if (state.showSuggestions) {
-                view.addProviders(when (state.searchEngineSource) {
-                    is SearchEngineSource.Default -> defaultSearchSuggestionProvider
-                    is SearchEngineSource.Shortcut -> createSuggestionProviderForEngine(
-                        state.searchEngineSource.searchEngine
-                    )
-                })
+            if (state.showSearchSuggestions) {
+                view.addProviders(
+                    when (state.searchEngineSource) {
+                        is SearchEngineSource.Default -> defaultSearchSuggestionProvider
+                        is SearchEngineSource.Shortcut -> createSuggestionProviderForEngine(
+                            state.searchEngineSource.searchEngine
+                        )
+                    }
+                )
             }
 
-            if (state.showVisitedSitesBookmarks) {
-                view.addProviders(bookmarksStorageSuggestionProvider, historyStorageProvider)
+            if (state.showClipboardSuggestions) {
+                view.addProviders(clipboardSuggestionProvider)
             }
 
-            view.addProviders(clipboardSuggestionProvider)
+            if (state.showHistorySuggestions) {
+                view.addProviders(historyStorageProvider)
+            }
+
+            if (state.showBookmarkSuggestions) {
+                view.addProviders(bookmarksStorageSuggestionProvider)
+            }
 
             if ((container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate == false) {
                 view.addProviders(sessionProvider)

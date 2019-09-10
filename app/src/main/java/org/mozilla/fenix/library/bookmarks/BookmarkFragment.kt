@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -33,6 +34,7 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
@@ -53,12 +55,14 @@ import org.mozilla.fenix.utils.allowUndo
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, AccountObserver {
 
-    private lateinit var bookmarkStore: BookmarkStore
+    private lateinit var bookmarkStore: BookmarkFragmentStore
     private lateinit var bookmarkView: BookmarkView
     private lateinit var signInView: SignInView
     private lateinit var bookmarkInteractor: BookmarkFragmentInteractor
 
-    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
+    private val sharedViewModel: BookmarksSharedViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+    }
 
     var currentRoot: BookmarkNode? = null
     private val navigation by lazy { findNavController() }
@@ -83,7 +87,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
         val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
 
         bookmarkStore = StoreProvider.get(this) {
-            BookmarkStore(BookmarkState(null))
+            BookmarkFragmentStore(BookmarkFragmentState(null))
         }
         bookmarkInteractor = BookmarkFragmentInteractor(
             bookmarkStore = bookmarkStore,
@@ -164,10 +168,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         when (val mode = bookmarkStore.state.mode) {
-            BookmarkState.Mode.Normal -> {
+            BookmarkFragmentState.Mode.Normal -> {
                 inflater.inflate(R.menu.bookmarks_menu, menu)
             }
-            is BookmarkState.Mode.Selecting -> {
+            is BookmarkFragmentState.Mode.Selecting -> {
                 if (mode.selectedItems.any { it.type != BookmarkNodeType.ITEM }) {
                     inflater.inflate(R.menu.bookmarks_select_multi_not_item, menu)
                 } else {
@@ -239,7 +243,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
         return bookmarkView.onBackPressed()
     }
 
-    override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
+    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
         bookmarkInteractor.onSignedIn()
         lifecycleScope.launch {
             refreshBookmarks()

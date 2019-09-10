@@ -16,6 +16,7 @@ import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.push.Bus
 import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceEvent
 import mozilla.components.concept.sync.DeviceEventsObserver
@@ -30,11 +31,11 @@ import mozilla.components.feature.push.PushType
 import mozilla.components.service.fxa.DeviceConfig
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.SyncConfig
+import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.Experiments
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -72,25 +73,25 @@ class BackgroundServices(
         // NB: flipping this flag back and worth is currently not well supported and may need hand-holding.
         // Consult with the android-components peers before changing.
         // See https://github.com/mozilla/application-services/issues/1308
-        capabilities = if (FeatureFlags.sendTabEnabled) {
-            setOf(DeviceCapability.SEND_TAB)
-        } else {
-            emptySet()
-        }
+        capabilities = setOf(DeviceCapability.SEND_TAB)
     )
     // If sync has been turned off on the server then disable syncing.
     private val syncConfig = if (context.isInExperiment(Experiments.asFeatureSyncDisabled)) {
         null
     } else {
-        SyncConfig(setOf("history", "bookmarks"), syncPeriodInMinutes = 240L) // four hours
+        SyncConfig(setOf(SyncEngine.HISTORY, SyncEngine.BOOKMARKS), syncPeriodInMinutes = 240L) // four hours
     }
 
     val pushConfig by lazy {
+        val logger = Logger("PushConfig")
         val projectIdKey = context.getString(R.string.pref_key_push_project_id)
         val resId = context.resources.getIdentifier(projectIdKey, "string", context.packageName)
         if (resId == 0) {
+            logger.warn("No firebase configuration found; cannot support push service.")
             return@lazy null
         }
+
+        logger.debug("Creating push configuration for autopush.")
         val projectId = context.resources.getString(resId)
         PushConfig(projectId)
     }
@@ -107,8 +108,8 @@ class BackgroundServices(
 
     init {
         // Make the "history" and "bookmark" stores accessible to workers spawned by the sync manager.
-        GlobalSyncableStoreProvider.configureStore("history" to historyStorage)
-        GlobalSyncableStoreProvider.configureStore("bookmarks" to bookmarkStorage)
+        GlobalSyncableStoreProvider.configureStore(SyncEngine.HISTORY to historyStorage)
+        GlobalSyncableStoreProvider.configureStore(SyncEngine.BOOKMARKS to bookmarkStorage)
     }
 
     private val deviceEventObserver = object : DeviceEventsObserver {
@@ -137,8 +138,6 @@ class BackgroundServices(
      */
     private val accountObserver = object : AccountObserver {
         override fun onLoggedOut() {
-            pushService.stop()
-
             push.unsubscribeForType(PushType.Services)
 
             context.components.analytics.metrics.track(Event.SyncAuthSignOut)
@@ -146,11 +145,8 @@ class BackgroundServices(
             context.settings.fxaSignedIn = false
         }
 
-        override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
-            pushService.start(context)
-
-            if (newAccount) {
-                context.components.analytics.metrics.track(Event.FXANewSignup)
+        override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+            if (authType != AuthType.Existing) {
                 push.subscribeForType(PushType.Services)
             }
 
@@ -178,61 +174,45 @@ class BackgroundServices(
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
     ).also {
-        context.settings.fxaHasSyncedItems = syncConfig?.syncableStores?.isNotEmpty() ?: false
+       context.settings.fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
 
-        if (FeatureFlags.sendTabEnabled) {
-            it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
+        it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
 
-            // Enable push if we have the config.
-            if (pushConfig != null) {
+        // Enable push if we have the config.
+        if (pushConfig != null) {
 
-                // Register our account observer so we know how to update our push subscriptions.
-                it.register(accountObserver)
+            // Register our account observer so we know how to update our push subscriptions.
+            it.register(accountObserver)
 
-                val logger = Logger("AutoPushFeature")
+            val logger = Logger("AutoPushFeature")
 
-                // Notify observers for Services' messages.
-                push.registerForPushMessages(
-                    PushType.Services,
-                    object : Bus.Observer<PushType, String> {
-                        override fun onEvent(type: PushType, message: String) {
-                            it.authenticatedAccount()?.deviceConstellation()
-                                ?.processRawEventAsync(message)
-                        }
-                    },
-                    ProcessLifecycleOwner.get(),
-                    false
-                )
-
-                // Notify observers for subscription changes.
-                push.registerForSubscriptions(object : PushSubscriptionObserver {
-                    override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
-                        // Update for only the services subscription.
-                        if (subscription.type == PushType.Services) {
-                            logger.info("New push subscription received for FxA")
-                            it.authenticatedAccount()?.deviceConstellation()
-                                ?.setDevicePushSubscriptionAsync(
-                                    DevicePushSubscription(
-                                        endpoint = subscription.endpoint,
-                                        publicKey = subscription.publicKey,
-                                        authKey = subscription.authKey
-                                    )
-                                )
-                        }
+            // Notify observers for Services' messages.
+            push.registerForPushMessages(
+                PushType.Services,
+                object : Bus.Observer<PushType, String> {
+                    override fun onEvent(type: PushType, message: String) {
+                        it.authenticatedAccount()?.deviceConstellation()
+                            ?.processRawEventAsync(message)
                     }
-                }, ProcessLifecycleOwner.get(), false)
+                })
 
-                // For all the current Fenix users, we need to remove the current push token and
-                // re-subscribe again on the right push server. We should never do this otherwise!
-                // Should be removed after majority of our users are correctly subscribed.
-                // See: https://github.com/mozilla-mobile/fenix/issues/4218
-                val prefResetSubKey = "reset_broken_push_subscription"
-                if (!preferences.getBoolean(prefResetSubKey, false)) {
-                    preferences.edit().putBoolean(prefResetSubKey, true).apply()
-                    logger.info("Forcing push registration renewal")
-                    push.forceRegistrationRenewal()
+            // Notify observers for subscription changes.
+            push.registerForSubscriptions(object : PushSubscriptionObserver {
+                override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
+                    // Update for only the services subscription.
+                    if (subscription.type == PushType.Services) {
+                        logger.info("New push subscription received for FxA")
+                        it.authenticatedAccount()?.deviceConstellation()
+                            ?.setDevicePushSubscriptionAsync(
+                                DevicePushSubscription(
+                                    endpoint = subscription.endpoint,
+                                    publicKey = subscription.publicKey,
+                                    authKey = subscription.authKey
+                                )
+                            )
+                    }
                 }
-            }
+            })
         }
         CoroutineScope(Dispatchers.Main).launch { it.initAsync().await() }
     }

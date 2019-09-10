@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.getSystemService
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,8 @@ import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.GleanMetrics.ExperimentsMetrics
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.session.NotificationSessionObserver
+import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import java.io.File
 
 @SuppressLint("Registered")
@@ -42,6 +45,9 @@ open class FenixApplication : Application() {
     var experimentLoaderComplete: Boolean = false
 
     open val components by lazy { Components(this) }
+
+    var visibilityLifecycleCallback: VisibilityLifecycleCallback? = null
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -74,12 +80,14 @@ open class FenixApplication : Application() {
         experimentLoader = loadExperiments()
 
         // Enable the service-experiments component
-        Experiments.initialize(
-            applicationContext,
-            mozilla.components.service.experiments.Configuration(
-                httpClient = lazy(LazyThreadSafetyMode.NONE) { components.core.client }
+        if (this.settings.isExperimentationEnabled) {
+            Experiments.initialize(
+                applicationContext,
+                mozilla.components.service.experiments.Configuration(
+                    httpClient = lazy(LazyThreadSafetyMode.NONE) { components.core.client }
+                )
             )
-        )
+        }
 
         // When the `fenix-test-2019-08-05` experiment is active, record its branch in Glean
         // telemetry. This will be used to validate that the experiment system correctly enrolls
@@ -92,16 +100,16 @@ open class FenixApplication : Application() {
         }
 
         setupLeakCanary()
-        if (settings.isTelemetryEnabled) {
+        if (this.settings.isTelemetryEnabled) {
             components.analytics.metrics.start()
         }
 
-        // Sets the PushFeature as the singleton instance for push messages to go to.
-        // We need the push feature setup here to deliver messages in the case where the service
-        // starts up the app first.
-        if (FeatureFlags.sendTabEnabled && components.backgroundServices.pushConfig != null) {
-            PushProcessor.install(components.backgroundServices.push)
-        }
+        setupPush()
+
+        visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
+        registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
+
+        components.core.sessionManager.register(NotificationSessionObserver(this))
     }
 
     private fun registerRxExceptionHandling() {
@@ -176,6 +184,23 @@ open class FenixApplication : Application() {
             Logger.debug("Experiments active: ${fretboard.getExperimentsMap(this@FenixApplication)}")
             fretboard.updateExperiments()
             return@async true
+        }
+    }
+
+    private fun setupPush() {
+        // Sets the PushFeature as the singleton instance for push messages to go to.
+        // We need the push feature setup here to deliver messages in the case where the service
+        // starts up the app first.
+        if (components.backgroundServices.pushConfig != null) {
+            Logger.info("Push configuration found; initializing autopush..")
+
+            val push = components.backgroundServices.push
+
+            // Install the AutoPush singleton to receive messages.
+            PushProcessor.install(push)
+
+            // Initialize the service. This could potentially be done in a coroutine in the future.
+            push.initialize()
         }
     }
 

@@ -22,12 +22,13 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.metrics.Event
@@ -48,7 +49,6 @@ class DefaultBrowserToolbarControllerTest {
     private val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
     private var navController: NavController = mockk(relaxed = true)
     private var findInPageLauncher: () -> Unit = mockk(relaxed = true)
-    private val nestedScrollQuickActionView: NestedScrollView = mockk(relaxed = true)
     private val engineView: EngineView = mockk(relaxed = true)
     private val currentSession: Session = mockk(relaxed = true)
     private val viewModel: CreateCollectionViewModel = mockk(relaxed = true)
@@ -68,7 +68,6 @@ class DefaultBrowserToolbarControllerTest {
             navController = navController,
             browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
-            nestedScrollQuickActionView = nestedScrollQuickActionView,
             engineView = engineView,
             customTabSession = null,
             viewModel = viewModel,
@@ -212,18 +211,25 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
+    fun handleToolbarAddToHomeScreenPress() {
+        val item = ToolbarMenu.Item.AddToHomeScreen
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN)) }
+    }
+
+    @Test
     fun handleToolbarSharePress() {
         val item = ToolbarMenu.Item.Share
 
         every { currentSession.url } returns "https://mozilla.org"
+        val directions = NavGraphDirections.actionGlobalShareFragment(currentSession.url)
 
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
-        verify {
-            val directions = BrowserFragmentDirections.actionBrowserFragmentToShareFragment(currentSession.url)
-            navController.nav(R.id.browserFragment, directions)
-        }
+        verify { navController.navigate(directions) }
     }
 
     @Test
@@ -343,7 +349,6 @@ class DefaultBrowserToolbarControllerTest {
             navController = navController,
             browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
-            nestedScrollQuickActionView = nestedScrollQuickActionView,
             engineView = engineView,
             customTabSession = currentSession,
             viewModel = viewModel,

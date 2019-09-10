@@ -81,9 +81,6 @@ def push():
     other_tasks = all_tasks[-1]
     other_tasks[taskcluster.slugId()] = BUILDER.craft_ui_tests_task()
 
-    if SHORT_HEAD_BRANCH == 'master':
-        other_tasks[taskcluster.slugId()] = BUILDER.craft_dependencies_task()
-
     return all_tasks
 
 
@@ -101,7 +98,8 @@ def raptor(is_staging):
     signing_task_id = taskcluster.slugId()
     signing_tasks[signing_task_id] = BUILDER.craft_raptor_signing_task(assemble_task_id, variant, is_staging)
 
-    for abi in ('aarch64', 'arm'):
+    for abi in ('armeabi-v7a', 'arm64-v8a'):
+        variant_apk = variant.get_apk(abi)
         all_raptor_craft_functions = [
             BUILDER.craft_raptor_tp6m_cold_task(for_suite=i)
                 for i in range(1, 28)
@@ -109,7 +107,7 @@ def raptor(is_staging):
                 BUILDER.craft_raptor_youtube_playback_task,
             ]
         for craft_function in all_raptor_craft_functions:
-            args = (signing_task_id, mozharness_task_id, abi, gecko_revision)
+            args = (signing_task_id, mozharness_task_id, variant_apk, gecko_revision, is_staging)
             other_tasks[taskcluster.slugId()] = craft_function(*args)
 
     return (build_tasks, signing_tasks, other_tasks)
@@ -147,6 +145,27 @@ def release(channel, engine, is_staging, version_name):
     return (build_tasks, signing_tasks, push_tasks)
 
 
+def release_as_fennec(is_staging, version_name):
+    variant = get_variant('fennecProduction', 'geckoBeta')
+    channel = 'fennec-production'
+
+    build_tasks = {}
+    signing_tasks = {}
+
+    build_task_id = taskcluster.slugId()
+    build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(variant, channel, is_staging, version_name)
+
+    signing_task_id = taskcluster.slugId()
+    signing_tasks[signing_task_id] = BUILDER.craft_release_signing_task(
+        build_task_id,
+        variant.upstream_artifacts(),
+        channel,
+        is_staging,
+    )
+
+    return (build_tasks, signing_tasks)
+
+
 def nightly_to_production_app(is_staging, version_name):
     # Since the Fenix nightly was launched, we've pushed it to the production app "org.mozilla.fenix" on the
     # "nightly" track. We're moving towards having each channel be published to its own app, but we need to
@@ -161,15 +180,15 @@ def nightly_to_production_app(is_staging, version_name):
 
     build_task_id = taskcluster.slugId()
     build_tasks[build_task_id] = BUILDER.craft_assemble_release_task(
-        variant, 'nightlyLegacy', is_staging, version_name)
+        variant, 'nightly-legacy', is_staging, version_name)
 
     signing_task_id = taskcluster.slugId()
     signing_tasks[signing_task_id] = BUILDER.craft_release_signing_task(
         build_task_id,
         taskcluster_apk_paths,
         channel='production',  # Since we're publishing to the "production" app, we need to sign for production
-        index_channel='nightly',
         is_staging=is_staging,
+        publish_to_index=False,
     )
 
     push_task_id = taskcluster.slugId()
@@ -220,9 +239,11 @@ if __name__ == "__main__":
     elif command == 'raptor':
         ordered_groups_of_tasks = raptor(result.staging)
     elif command == 'nightly':
-        nightly_version = datetime.datetime.now().strftime('Nightly %y%m%d %H:%M')
+        now = datetime.datetime.now().strftime('%y%m%d %H:%M')
+        nightly_version = 'Nightly {}'.format(now)
         ordered_groups_of_tasks = release('nightly', 'geckoNightly', result.staging, nightly_version) \
             + nightly_to_production_app(result.staging, nightly_version)
+        ordered_groups_of_tasks += release_as_fennec(result.staging, 'Signed-as-Fennec Nightly {}'.format(now))
     elif command == 'github-release':
         version = result.tag[1:]  # remove prefixed "v"
         beta_semver = re.compile(r'^v\d+\.\d+\.\d+-beta\.\d+$')

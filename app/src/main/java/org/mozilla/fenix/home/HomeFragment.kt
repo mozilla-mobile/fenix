@@ -41,6 +41,7 @@ import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.feature.tab.collections.TabCollection
@@ -60,6 +61,7 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.Mode
@@ -81,7 +83,9 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.share.ShareTab
 import org.mozilla.fenix.utils.FragmentPreDrawManager
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.allowUndo
+import org.mozilla.fenix.whatsnew.WhatsNew
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment(), AccountObserver {
@@ -205,8 +209,10 @@ class HomeFragment : Fragment(), AccountObserver {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val iconSize = resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
 
-            val searchEngine =
-                requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext())
+            val searchEngine = requireComponents.search.searchEngineManager.getDefaultSearchEngineAsync(
+                requireContext(),
+                Settings.getInstance(requireContext()).defaultSearchEngineName
+            )
             val searchIcon = BitmapDrawable(resources, searchEngine.icon)
             searchIcon.setBounds(0, 0, iconSize, iconSize)
 
@@ -294,7 +300,7 @@ class HomeFragment : Fragment(), AccountObserver {
         Do exhaustive when (action) {
             is OnboardingAction.Finish -> {
                 onboarding.finish()
-
+                homeLayout?.progress = 0F
                 val mode = currentMode(context!!)
                 getManagedEmitter<SessionControlChange>().onNext(
                     SessionControlChange.ModeChange(
@@ -348,16 +354,21 @@ class HomeFragment : Fragment(), AccountObserver {
                 }
             }
             is TabAction.CloseAll -> {
-                if (pendingSessionDeletion?.deletionJob == null) removeAllTabsWithUndo(
-                    sessionManager.filteredSessions(action.private),
-                    action.private
-                ) else {
+                if (pendingSessionDeletion?.deletionJob == null) {
+                    removeAllTabsWithUndo(
+                        sessionManager.sessionsOfType(private = action.private),
+                        action.private
+                    )
+                } else {
                     pendingSessionDeletion?.deletionJob?.let {
                         viewLifecycleOwner.lifecycleScope.launch {
                             it.invoke()
                         }.invokeOnCompletion {
                             pendingSessionDeletion = null
-                            removeAllTabsWithUndo(sessionManager.filteredSessions(action.private), action.private)
+                            removeAllTabsWithUndo(
+                                sessionManager.sessionsOfType(private = action.private),
+                                action.private
+                            )
                         }
                     }
                 }
@@ -377,9 +388,10 @@ class HomeFragment : Fragment(), AccountObserver {
             }
             is TabAction.ShareTabs -> {
                 invokePendingDeleteJobs()
-                val shareTabs = sessionManager.sessions.map {
-                    ShareTab(it.url, it.title, it.id)
-                }
+                val shareTabs = sessionManager
+                    .sessionsOfType(private = (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+                    .map { ShareTab(it.url, it.title) }
+                    .toList()
                 share(tabs = shareTabs)
             }
         }
@@ -562,6 +574,19 @@ class HomeFragment : Fragment(), AccountObserver {
                         from = BrowserDirection.FromHome
                     )
                 }
+                HomeMenu.Item.WhatsNew -> {
+                    invokePendingDeleteJobs()
+                    hideOnboardingIfNeeded()
+                    WhatsNew.userViewedWhatsNew(context!!)
+                    (activity as HomeActivity).openToBrowserAndLoad(
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            context!!,
+                            SupportUtils.SumoTopic.WHATS_NEW
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromHome
+                    )
+                }
             }
         }
     }
@@ -587,7 +612,7 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    private fun removeAllTabsWithUndo(listOfSessionsToDelete: List<Session>, private: Boolean) {
+    private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
         val sessionManager = requireComponents.core.sessionManager
 
         getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
@@ -609,6 +634,9 @@ class HomeFragment : Fragment(), AccountObserver {
             view!!,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
+                if (private) {
+                    requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
+                }
                 deleteAllSessionsJob = null
                 emitSessionChanges()
             },
@@ -651,9 +679,9 @@ class HomeFragment : Fragment(), AccountObserver {
     }
 
     private fun getListOfSessions(): List<Session> {
-        val isPrivate = browsingModeManager.mode.isPrivate
-        val notPendingDeletion = { session: Session -> session.id != pendingSessionDeletion?.sessionId }
-        return sessionManager.filteredSessions(isPrivate, notPendingDeletion)
+        return sessionManager.sessionsOfType(private = browsingModeManager.mode.isPrivate)
+            .filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }
+            .toList()
     }
 
     private fun showCollectionCreationFragment(
@@ -734,8 +762,8 @@ class HomeFragment : Fragment(), AccountObserver {
         }
     }
 
-    override fun onAuthenticated(account: OAuthAccount, newAccount: Boolean) {
-        if (newAccount) {
+    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        if (authType != AuthType.Existing) {
             view?.let {
                 FenixSnackbar.make(it, Snackbar.LENGTH_SHORT).setText(
                     it.context.getString(R.string.onboarding_firefox_account_sync_is_on)
@@ -843,15 +871,6 @@ class HomeFragment : Fragment(), AccountObserver {
             val string = view.context.getString(R.string.snackbar_collection_renamed)
             FenixSnackbar.make(view, Snackbar.LENGTH_LONG).setText(string).show()
         }
-    }
-
-    private fun SessionManager.filteredSessions(
-        private: Boolean,
-        sessionFilter: ((Session) -> Boolean)? = null
-    ): List<Session> {
-        return this.sessions
-            .filter { private == it.private }
-            .filter { sessionFilter?.invoke(it) ?: true }
     }
 
     private fun List<Session>.toTabs(): List<Tab> {

@@ -26,10 +26,10 @@ display_help() {
     echo
     echo "Examples:"
     echo "To run UI tests on ARM device shard (1 test / shard)"
-    echo "$ ui-test.sh arm -1"
+    echo "$ ui-test.sh arm64-v8a -1"
     echo
     echo "To run UI tests on X86 device (on 3 shards)"
-    echo "$ ui-test.sh feature x86 3"
+    echo "$ ui-test.sh x86 3"
     echo
 }
 
@@ -40,16 +40,15 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
-device_type="$1"  # arm | x86
+device_type="$1"  # arm64-v8a | armeabi-v7a | x86_64 | x86
 if [[ ! -z "$2" ]]; then
     num_shards=$2
 fi
 
 JAVA_BIN="/usr/bin/java"
 PATH_TEST="./automation/taskcluster/androidTest"
+PATH_APK="./app/build/outputs/apk/geckoNightly/debug"
 FLANK_BIN="/build/test-tools/flank.jar"
-FLANK_CONF_ARM="${PATH_TEST}/flank-arm.yml"
-FLANK_CONF_X86="${PATH_TEST}/flank-x86.yml"
 
 echo
 echo "RETRIEVE SERVICE ACCT TOKEN"
@@ -69,22 +68,20 @@ gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS
 echo
 echo
 
-# From now on disable exiting on error. If the tests fail we want to continue
+# Disable exiting on error. If the tests fail we want to continue
 # and try to download the artifacts. We will exit with the actual error code later.
 set +e
 
-if [[ "${device_type,,}" == "x86" ]]
-then
-    deviceType="X86"
-    flank_template="$FLANK_CONF_X86"
+if [[ "${device_type}" =~ ^(arm64-v8a|armeabi-v7a|x86_64|x86)$ ]]; then
+    APK_APP="${PATH_APK}/app-geckoNightly-${device_type}-debug.apk"
+    flank_template="${PATH_TEST}/flank-${device_type}.yml"
+    echo "device_type: ${device_type}"
 else
-    deviceType="Arm"
-    flank_template="$FLANK_CONF_ARM"
+    echo "NOT FOUND"
+    exitcode=1
 fi
 
-APK_APP="./app/build/outputs/apk/${deviceType,,}/debug/app-${deviceType,,}-debug.apk"
-APK_TEST="./app/build/outputs/apk/androidTest/${deviceType,,}/debug/app-${deviceType,,}-debug-androidTest.apk"
-
+APK_TEST="./app/build/outputs/apk/androidTest/geckoNightly/debug/app-geckoNightly-debug-androidTest.apk"
 
 # function to exit script with exit code from test run.
 # (Only 0 if all test executions passed)

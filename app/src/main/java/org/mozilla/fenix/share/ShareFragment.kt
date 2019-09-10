@@ -4,36 +4,66 @@
 
 package org.mozilla.fenix.share
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
-import android.content.Intent.EXTRA_TEXT
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_share.view.*
-import mozilla.components.concept.sync.DeviceEventOutgoing
-import mozilla.components.concept.sync.OAuthAccount
-import org.mozilla.fenix.FenixViewModelProvider
-import org.mozilla.fenix.HomeActivity
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.DeviceCapability
+import mozilla.components.concept.sync.DeviceType
+import mozilla.components.feature.sendtab.SendTabUseCases
+import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.getAutoDisposeObservable
+import org.mozilla.fenix.share.listadapters.AppShareOption
+import org.mozilla.fenix.share.listadapters.SyncShareOption
 
+@Suppress("TooManyFunctions")
 class ShareFragment : AppCompatDialogFragment() {
     interface TabsSharedCallback {
         fun onTabsShared(tabsSize: Int)
     }
 
-    private lateinit var component: ShareComponent
-    private var tabs: Array<ShareTab> = emptyArray()
+    private lateinit var shareInteractor: ShareInteractor
+    private lateinit var shareCloseView: ShareCloseView
+    private lateinit var shareToAccountDevicesView: ShareToAccountDevicesView
+    private lateinit var shareToAppsView: ShareToAppsView
+    private lateinit var appsListDeferred: Deferred<List<AppShareOption>>
+    private lateinit var devicesListDeferred: Deferred<List<SyncShareOption>>
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        // Start preparing the data as soon as we have a valid Context
+        appsListDeferred = lifecycleScope.async(Dispatchers.IO) {
+            val shareIntent = Intent(ACTION_SEND).apply {
+                type = "text/plain"
+                flags = FLAG_ACTIVITY_NEW_TASK
+            }
+            val shareAppsActivities = getIntentActivities(shareIntent, context)
+            buildAppsList(shareAppsActivities, context)
+        }
+
+        devicesListDeferred = lifecycleScope.async(Dispatchers.IO) {
+            val fxaAccountManager = context.components.backgroundServices.accountManager
+            buildDeviceList(fxaAccountManager)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,96 +81,89 @@ class ShareFragment : AppCompatDialogFragment() {
             throw IllegalStateException("URL and tabs cannot both be null.")
         }
 
-        tabs = args.tabs ?: arrayOf(ShareTab(args.url!!, args.title ?: ""))
+        val tabs = args.tabs?.toList() ?: listOf(ShareTab(args.url!!, args.title ?: ""))
+        val accountManager = requireComponents.backgroundServices.accountManager
 
-        component = ShareComponent(
-            view.shareWrapper,
-            ActionBusFactory.get(this),
-            FenixViewModelProvider.create(
-                this,
-                ShareUIViewModel::class.java
-            ) {
-                ShareUIViewModel(ShareState)
-            }
+        shareInteractor = ShareInteractor(
+            DefaultShareController(
+                fragment = this,
+                sharedTabs = tabs,
+                navController = findNavController(),
+                sendTabUseCases = SendTabUseCases(accountManager),
+                dismiss = ::dismiss
+            )
         )
+
+        if (isSharingToDevicesAvailable(requireContext().applicationContext)) {
+            shareToAccountDevicesView = ShareToAccountDevicesView(view.devicesShareLayout, shareInteractor)
+        } else {
+            view.devicesShareGroup.visibility = View.GONE
+        }
+        shareCloseView = ShareCloseView(view.closeSharingLayout, shareInteractor)
+        shareToAppsView = ShareToAppsView(view.appsShareLayout, shareInteractor)
 
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        subscribeToActions()
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    @SuppressWarnings("ComplexMethod")
-    private fun subscribeToActions() {
-        getAutoDisposeObservable<ShareAction>().subscribe {
-            when (it) {
-                ShareAction.Close -> {
-                    dismiss()
-                }
-                ShareAction.SignInClicked -> {
-                    val directions =
-                        ShareFragmentDirections.actionShareFragmentToTurnOnSyncFragment()
-                    nav(R.id.shareFragment, directions)
-                    dismiss()
-                }
-                ShareAction.AddNewDeviceClicked -> {
-                    context?.let {
-                        AlertDialog.Builder(it).apply {
-                            setMessage(R.string.sync_connect_device_dialog)
-                            setPositiveButton(R.string.sync_confirmation_button) { dialog, _ -> dialog.cancel() }
-                            create()
-                        }.show()
-                    }
-                }
-                is ShareAction.ShareDeviceClicked -> {
-                    val authAccount =
-                        requireComponents.backgroundServices.accountManager.authenticatedAccount()
-                    authAccount?.run {
-                        sendSendTab(this, it.device.id, tabs)
-                    }
-                    dismiss()
-                }
-                is ShareAction.SendAllClicked -> {
-                    val authAccount =
-                        requireComponents.backgroundServices.accountManager.authenticatedAccount()
-                    authAccount?.run {
-                        it.devices.forEach { device ->
-                            sendSendTab(this, device.id, tabs)
-                        }
-                    }
-                    dismiss()
-                }
-                is ShareAction.ShareAppClicked -> {
-
-                    val shareText = tabs.joinToString("\n") { tab -> tab.url }
-
-                    val intent = Intent(ACTION_SEND).apply {
-                        putExtra(EXTRA_TEXT, shareText)
-                        type = "text/plain"
-                        flags = FLAG_ACTIVITY_NEW_TASK
-                        setClassName(it.item.packageName, it.item.activityName)
-                    }
-                    startActivity(intent)
-                    dismiss()
-                }
-            }
+        lifecycleScope.launch {
+            val devicesShareOptions = devicesListDeferred.await()
+            shareToAccountDevicesView.setSharetargets(devicesShareOptions)
+            val appsToShareTo = appsListDeferred.await()
+            shareToAppsView.setSharetargets(appsToShareTo)
         }
     }
 
-    private fun sendSendTab(account: OAuthAccount, deviceId: String, tabs: Array<ShareTab>) {
-        account.run {
-            tabs.forEach { tab ->
-                deviceConstellation().sendEventToDeviceAsync(
-                    deviceId,
-                    DeviceEventOutgoing.SendTab(tab.title, tab.url)
-                )
+    private fun isSharingToDevicesAvailable(context: Context) =
+        !context.components.backgroundServices.accountManager.accountNeedsReauth()
+
+    private fun getIntentActivities(shareIntent: Intent, context: Context): List<ResolveInfo>? {
+        return context.packageManager.queryIntentActivities(shareIntent, 0)
+    }
+
+    private fun buildAppsList(intentActivities: List<ResolveInfo>?, context: Context): List<AppShareOption> {
+        return intentActivities?.map { resolveInfo ->
+            AppShareOption(
+                resolveInfo.loadLabel(context.packageManager).toString(),
+                resolveInfo.loadIcon(context.packageManager),
+                resolveInfo.activityInfo.packageName,
+                resolveInfo.activityInfo.name
+            )
+        } ?: emptyList()
+    }
+
+    private fun buildDeviceList(accountManager: FxaAccountManager): List<SyncShareOption> {
+        val list = mutableListOf<SyncShareOption>()
+
+        if (accountManager.authenticatedAccount() == null) {
+            list.add(SyncShareOption.SignIn)
+            return list
+        }
+
+        accountManager.authenticatedAccount()?.deviceConstellation()?.state()?.otherDevices?.let { devices ->
+            val shareableDevices = devices.filter { it.capabilities.contains(DeviceCapability.SEND_TAB) }
+
+            if (shareableDevices.isEmpty()) {
+                list.add(SyncShareOption.AddNewDevice)
+            }
+
+            val shareOptions = shareableDevices.map {
+                when (it.deviceType) {
+                    DeviceType.MOBILE -> SyncShareOption.Mobile(it.displayName, it)
+                    else -> SyncShareOption.Desktop(it.displayName, it)
+                }
+            }
+            list.addAll(shareOptions)
+
+            if (shareableDevices.size > 1) {
+                list.add(SyncShareOption.SendAll(shareableDevices))
             }
         }
-        (activity as? HomeActivity)?.onTabsShared(tabs.size)
+        return list
     }
 }
 
 @Parcelize
-data class ShareTab(val url: String, val title: String, val sessionId: String? = null) : Parcelable
+data class ShareTab(val url: String, val title: String) : Parcelable

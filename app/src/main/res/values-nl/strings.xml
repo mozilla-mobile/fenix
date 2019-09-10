@@ -221,6 +221,8 @@
     <string name="preferences_usage_data_description">Deelt gegevens over prestaties, gebruik, hardware en aanpassingen van uw browser met Mozilla om %1$s te helpen verbeteren</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Experimenten</string>
+    <!-- Summary for experiments preferences -->
+    <string name="preference_experiments_summary">Hiermee kan Mozilla gegevens installeren en verzamelen voor experimentele functies</string>
     <!-- Preference switch for crash reporter -->
     <string name="preferences_crash_reporter">Crashreporter</string>
     <!-- Preference switch for Mozilla location service -->
@@ -636,6 +638,8 @@
     <string name="preferences_delete_browsing_data_cookies">Cookies</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">U wordt bij de meeste websites afgemeld</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">Gebufferde afbeeldingen en bestanden</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Maakt opslagruimte vrij</string>
     <!-- Title for the site permissions item in Delete browsing data -->
@@ -815,4 +819,9 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-bibliotheken</string>
+
+    <!-- Content description of the tab counter toolbar button when one tab is open -->
+    <string name="tab_counter_content_description_one_tab">1 tabblad</string>
+    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
+    <string name="tab_counter_content_description_multi_tab">%d tabbladen</string>
 </resources>

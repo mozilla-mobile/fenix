@@ -31,16 +31,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.session.intent.EXTRA_SESSION_ID
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
+import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
+import mozilla.components.feature.session.WindowFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -52,13 +53,12 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.toolbar.BrowserState
-import org.mozilla.fenix.components.toolbar.BrowserStore
+import org.mozilla.fenix.components.toolbar.BrowserFragmentState
+import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
@@ -72,6 +72,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Base fragment extended by [BrowserFragment].
@@ -80,11 +81,12 @@ import org.mozilla.fenix.settings.SupportUtils
  */
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Observer {
-    protected lateinit var browserStore: BrowserStore
+    protected lateinit var browserStore: BrowserFragmentStore
     protected lateinit var browserInteractor: BrowserToolbarViewInteractor
     protected lateinit var browserToolbarView: BrowserToolbarView
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
+    private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
     private val downloadsFeature = ViewBoundFeatureWrapper<DownloadsFeature>()
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
@@ -120,8 +122,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
         val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
         browserStore = StoreProvider.get(this) {
-            BrowserStore(
-                BrowserState(
+            BrowserFragmentStore(
+                BrowserFragmentState(
                     quickActionSheetState = QuickActionSheetState(
                         readable = getSessionById()?.readerable ?: false,
                         bookmarked = false,
@@ -146,28 +148,28 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     @Suppress("ComplexMethod", "LongMethod")
     @CallSuper
     protected open fun initializeUI(view: View): Session? {
-        val sessionManager = requireComponents.core.sessionManager
+        val context = requireContext()
+        val sessionManager = context.components.core.sessionManager
 
         return getSessionById()?.also { session ->
 
             val browserToolbarController = DefaultBrowserToolbarController(
-                context!!,
+                context,
                 findNavController(),
                 (activity as HomeActivity).browsingModeManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
-                nestedScrollQuickActionView = nestedScrollQuickAction,
                 engineView = engineView,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 viewModel = viewModel,
                 getSupportUrl = {
                     SupportUtils.getSumoURLForTopic(
-                        context!!,
+                        context,
                         SupportUtils.SumoTopic.HELP
                     )
                 },
-                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).also {
-                    it.action = Intent.ACTION_VIEW
-                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
+                    action = Intent.ACTION_VIEW
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
                 bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction)
             )
@@ -191,7 +193,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             findInPageIntegration.set(
                 feature = FindInPageIntegration(
-                    sessionManager = requireComponents.core.sessionManager,
+                    sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     stub = view.stubFindInPage,
                     engineView = view.engineView,
@@ -210,8 +212,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     requireFragmentManager(),
                     sessionManager,
                     FenixContextMenuCandidate.defaultCandidates(
-                        requireContext(),
-                        requireComponents.useCases.tabsUseCases,
+                        context,
+                        context.components.useCases.tabsUseCases,
                         view,
                         FenixSnackbarDelegate(
                             view,
@@ -224,14 +226,20 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 view = view
             )
 
+            windowFeature.set(
+                feature = WindowFeature(sessionManager),
+                owner = this,
+                view = view
+            )
+
             downloadsFeature.set(
                 feature = DownloadsFeature(
-                    requireContext().applicationContext,
+                    context.applicationContext,
                     sessionManager = sessionManager,
                     fragmentManager = childFragmentManager,
                     sessionId = customTabSessionId,
                     downloadManager = FetchDownloadManager(
-                        requireContext().applicationContext,
+                        context.applicationContext,
                         DownloadService::class
                     ),
                     onNeedToRequestPermissions = { permissions ->
@@ -243,7 +251,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             appLinksFeature.set(
                 feature = AppLinksFeature(
-                    requireContext(),
+                    context,
                     sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     interceptLinkClicks = true,
@@ -278,11 +286,11 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             )
 
             val accentHighContrastColor =
-                ThemeManager.resolveAttribute(R.attr.accentHighContrast, requireContext())
+                ThemeManager.resolveAttribute(R.attr.accentHighContrast, context)
 
             sitePermissionsFeature.set(
                 feature = SitePermissionsFeature(
-                    context = requireContext(),
+                    context = context,
                     sessionManager = sessionManager,
                     fragmentManager = requireFragmentManager(),
                     promptsStyling = SitePermissionsFeature.PromptsStyling(
@@ -340,12 +348,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             @Suppress("ConstantConditionIf")
             if (FeatureFlags.pullToRefreshEnabled) {
                 val primaryTextColor =
-                    ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
+                    ThemeManager.resolveAttribute(R.attr.primaryText, context)
                 view.swipeRefresh.setColorSchemeColors(primaryTextColor)
                 swipeRefreshFeature.set(
                     feature = SwipeRefreshFeature(
-                        requireComponents.core.sessionManager,
-                        requireComponents.useCases.sessionUseCases.reload,
+                        sessionManager,
+                        context.components.useCases.sessionUseCases.reload,
                         view.swipeRefresh,
                         customTabSessionId
                     ),
@@ -363,6 +371,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
     @CallSuper
     override fun onSessionSelected(session: Session) {
+        (activity as HomeActivity).updateThemeForSession(session)
         if (!browserInitialized) {
             // Initializing a new coroutineScope to avoid ConcurrentModificationException in ObserverRegistry
             // This will be removed when ObserverRegistry is deprecated by browser-state.
@@ -464,9 +473,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getSessionById()?.let { session ->
-            if (session.source == Session.Source.ACTION_VIEW) requireComponents.core.sessionManager.remove(
-                session
-            )
+            if (session.source == Session.Source.ACTION_VIEW) {
+                requireComponents.core.sessionManager.remove(session)
+            }
         }
         return false
     }

@@ -106,7 +106,7 @@ events:
     extra_keys:
       preference_key:
         description: "The preference key for the switch preference the user toggled. We currently track:
-          show_search_suggestions, show_visited_sites_bookmarks, remote_debugging, telemetry, tracking_protection"
+          show_search_suggestions, remote_debugging, telemetry, tracking_protection"
       enabled:
         description: "Whether or not the preference is *now* enabled"
     bugs:
@@ -115,6 +115,20 @@ events:
     - https://github.com/mozilla-mobile/fenix/pull/1896
     notification_emails:
     - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  whats_new_tapped:
+    type: event
+    description: >
+        A user opened the "what's new" page button
+    extra_keys:
+      source:
+        description: "The location from which the user selected the what's new button. Either 'about' or 'home'"
+    bugs:
+      - 5021
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/5090
+    notification_emails:
+      - fenix-core@mozilla.com
     expires: "2020-03-01"
 
 search_shortcuts:
@@ -795,17 +809,6 @@ sync_auth:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
-  sign_up:
-    type: event
-    description: >
-      A user signed up for a new FxA account
-    bugs:
-      - 4421
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/4816
-    notification_emails:
-      - fenix-core@mozilla.com
-    expires: "2020-03-01"
   scan_pairing:
     type: event
     description: >
@@ -862,6 +865,28 @@ sync_account:
     - https://github.com/mozilla-mobile/fenix/pull/2745#issuecomment-494918532
     notification_emails:
     - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  send_tab:
+    type: event
+    description: >
+      A user sent the current tab to another FxA device
+    bugs:
+      - 4908
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/5106
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  sign_in_to_send_tab:
+    type: event
+    description: >
+      A user pressed the "sign in to send tab" button inside the share tab menu
+    bugs:
+      - 4908
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/5106
+    notification_emails:
+      - fenix-core@mozilla.com
     expires: "2020-03-01"
 
 history:
@@ -1149,6 +1174,65 @@ search_widget:
       - 4457
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/4714
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
+private_browsing_mode:
+  garbage_icon:
+    type: event
+    description: >
+      A user pressed the garbage can icon on the private browsing home page,
+      deleting all private tabs.
+    bugs:
+      - 4658
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/4968
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  snackbar_undo:
+    type: event
+    description: >
+      A user pressed the "undo" button in the snackbar that is shown when the garbage icon is
+      tapped.
+    bugs:
+      - 4658
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/4968
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  notification_tapped:
+    type: event
+    description: >
+      A user pressed the private browsing mode notification itself.
+    bugs:
+      - 4658
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/4968
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  notification_open:
+    type: event
+    description: >
+      A user pressed the private browsing mode notification's "Open" button.
+    bugs:
+      - 4658
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/4968
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  notification_delete:
+    type: event
+    description: >
+      A user pressed the private browsing mode notification's "Delete and Open" button.
+    bugs:
+      - 4658
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/4968
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
