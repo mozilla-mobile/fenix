@@ -55,7 +55,7 @@ class BackgroundServices(
 ) {
     companion object {
         const val CLIENT_ID = "a2270f727f45f648"
-        const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+        const val REDIRECT_URL = "https://sessioncode.dev.lcip.org/oauth/success/$CLIENT_ID"
     }
 
     fun defaultDeviceName(context: Context): String = context.getString(
@@ -65,7 +65,7 @@ class BackgroundServices(
         Build.MODEL
     )
 
-    private val serverConfig = ServerConfig.release(CLIENT_ID, REDIRECT_URL)
+    private val serverConfig = ServerConfig("https://sessioncode.dev.lcip.org", CLIENT_ID, REDIRECT_URL)
     private val deviceConfig = DeviceConfig(
         name = defaultDeviceName(context),
         type = DeviceType.MOBILE,
@@ -172,7 +172,7 @@ class BackgroundServices(
         // unless we explicitly specify it below.
         // This is a good example of an information leak at the API level.
         // See https://github.com/mozilla-mobile/android-components/issues/3732
-        setOf("https://identity.mozilla.com/apps/oldsync")
+        setOf("https://identity.mozilla.com/apps/oldsync", "https://identity.mozilla.com/tokens/session")
     ).also {
         Settings.getInstance(context).fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
 
