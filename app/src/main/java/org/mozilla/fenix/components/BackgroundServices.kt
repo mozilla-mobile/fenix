@@ -174,13 +174,11 @@ class BackgroundServices(
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
     ).also {
-       context.settings.fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
-
+        context.settings.fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
         it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
 
         // Enable push if we have the config.
         if (pushConfig != null) {
-
             // Register our account observer so we know how to update our push subscriptions.
             it.register(accountObserver)
 

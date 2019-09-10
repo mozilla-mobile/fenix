@@ -34,8 +34,6 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
-import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoRuntimeSettings
 import java.util.concurrent.TimeUnit
 
 /**
@@ -97,7 +95,6 @@ class Core(private val context: Context) {
 
             // Restore the previous state.
             GlobalScope.launch(Dispatchers.Main) {
-              
                 withContext(Dispatchers.IO) {
                     sessionStorage.restore()
                 }?.let { snapshot ->

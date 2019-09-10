@@ -212,7 +212,7 @@ class SearchFragment : Fragment(), BackHandler {
         val currentDefaultEngine =
             requireComponents.search.searchEngineManager.getDefaultSearchEngine(
                 requireContext(),
-                Settings.getInstance(requireContext()).defaultSearchEngineName
+                requireContext().settings.defaultSearchEngineName
             )
 
         if (searchStore.state.defaultEngineSource.searchEngine != currentDefaultEngine) {
