@@ -56,7 +56,7 @@ Note: Both Android SDK and NDK are required.
   git clone https://github.com/mozilla-mobile/fenix
   ```
 
-2. Import the project into Android Studio **or** build on the command line:
+2. **Import** the project into Android Studio **or** build on the command line:
 
   ```shell
   ./gradlew clean app:assembleGeckoBetaDebug
@@ -64,9 +64,22 @@ Note: Both Android SDK and NDK are required.
   
   Use app:assembleGeckoNightlyDebug to build with the Gecko Nightly version instead.
 
-3. Make sure to select the correct build variant in Android Studio:
-**geckoBetaDebug** for the beta version of the Gecko engine
-**geckoNightlyDebug** for the nightly version of the Gecko engine
+3. Make sure to select the correct build variant in Android Studio. See the next section.
+
+### Guide to Build Variants
+We have a lot of build variants. Each variant is composed of two flavors. One flavor is the version of Gecko to use and the other describes 
+which app id and settings to use. Here is a description of what each means:
+
+**geckoBeta** (recommended) uses the Beta variant of the Gecko rendering engine, which corresponds to the next version of Gecko which will go to production
+**geckoNightly** uses the Nightly variant of the Gecko rendering engine, which is the version which will arrive after beta and is less stable
+
+**debug** uses debug symbols and debug signing, adds tools like LeakCanary for troubleshooting, and does not strip unused or wasteful code
+**fenixNightly** is a release build with nightly signing which uses the org.mozilla.fenix.nightly app id for nightly releases to Google Play
+**fenixNightlyLegacy** is a release build with release signing which uses the org.mozilla.fenix production app id along with nightly logos, which we're trying to phase out
+**fenixBeta** is a release build with beta signing which uses the org.mozilla.fenix.beta app id for beta releases to Google Play
+**fenixProduction** is a release build with release signing which uses the org.mozilla.fenix app id for production relases to Google Play
+**fennecProduction** is an experimental build with release signing which uses the org.mozilla.firefox app id and supports upgrading the older Firefox
+**forPerformanceTest** is a release build with the debuggable flag set and test activities enabled for running Raptor performance tests
 
 ## Pre-push hooks
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
