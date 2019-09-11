@@ -48,6 +48,7 @@ Before you attempt to make a contribution please read the [Community Participati
 
 ## Build Instructions
 
+Note: Both Android SDK and NDK are required.
 
 1. Clone or Download the repository:
 
@@ -58,12 +59,14 @@ Before you attempt to make a contribution please read the [Community Participati
 2. Import the project into Android Studio **or** build on the command line:
 
   ```shell
-  ./gradlew clean app:assembleArmDebug
+  ./gradlew clean app:assembleGeckoBetaDebug
   ```
+  
+  Use app:assembleGeckoNightlyDebug to build with the Gecko Nightly version instead.
 
 3. Make sure to select the correct build variant in Android Studio:
-**armDebug** for ARM
-**x86Debug** for X86
+**geckoBetaDebug** for the beta version of the Gecko engine
+**geckoNightlyDebug** for the nightly version of the Gecko engine
 
 ## Pre-push hooks
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
