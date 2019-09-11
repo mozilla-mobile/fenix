@@ -34,6 +34,8 @@ import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
  */
 interface BrowserToolbarController {
+    fun handleToolbarPaste(text: String)
+    fun handleToolbarPasteAndGo(text: String)
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
     fun handleToolbarClick()
 }
@@ -50,6 +52,21 @@ class DefaultBrowserToolbarController(
     private val openInFenixIntent: Intent,
     private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>
 ) : BrowserToolbarController {
+
+    override fun handleToolbarPaste(text: String) {
+        navController.nav(
+            R.id.browserFragment,
+            BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                sessionId = customTabSession?.id ?: context.components.core.sessionManager.selectedSession?.id,
+                pastedText = text
+            )
+        )
+    }
+
+    override fun handleToolbarPasteAndGo(text: String) {
+        context.components.core.sessionManager.selectedSession?.searchTerms = ""
+        context.components.useCases.sessionUseCases.loadUrl(text)
+    }
 
     override fun handleToolbarClick() {
         context.components.analytics.metrics.track(
@@ -101,12 +118,16 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.NewTab -> {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = null
+                )
                 navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Normal
             }
             ToolbarMenu.Item.NewPrivateTab -> {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = null
+                )
                 navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Private
             }

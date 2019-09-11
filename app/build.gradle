@@ -329,6 +329,7 @@ dependencies {
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
+    testImplementation Deps.kotlin_coroutines_test
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_constraintlayout
     implementation Deps.androidx_coordinatorlayout
@@ -424,6 +425,8 @@ dependencies {
 
     implementation Deps.autodispose
 
+    implementation Deps.lottie
+
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
 
@@ -449,6 +452,9 @@ dependencies {
 
     androidTestImplementation Deps.androidx_test_core
     androidTestImplementation Deps.espresso_idling_resources
+    debugImplementation (Deps.androidx_fragment_testing) {
+        exclude group: 'androidx.test', module: 'core'
+    }
 
     androidTestImplementation Deps.tools_test_runner
     androidTestImplementation Deps.tools_test_rules

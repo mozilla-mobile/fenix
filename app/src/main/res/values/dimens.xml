@@ -32,8 +32,12 @@
     <dimen name="site_permissions_exceptions_item_height">56dp</dimen>
     <dimen name="component_collection_creation_list_margin">16dp</dimen>
 
+    <dimen name="context_menu_height">48dp</dimen>
+    <dimen name="context_menu_x_offset">8dp</dimen>
+
     <!--Quick Settings-->
     <dimen name="quicksettings_item_height">46dp</dimen>
+    <dimen name="tracking_protection_item_height">48dp</dimen>
 
     <dimen name="design_quick_action_sheet_peek_height_min">64dp</dimen>
 
@@ -51,4 +55,7 @@
     <dimen name="sign_in_button_padding">10dp</dimen>
     <dimen name="sign_in_button_margin_top">32dp</dimen>
     <dimen name="sign_in_button_margin">16dp</dimen>
+
+    <!-- ETP Onboarding Popup -->
+    <dimen name="etp_onboarding_popup_width">256dp</dimen>
 </resources>

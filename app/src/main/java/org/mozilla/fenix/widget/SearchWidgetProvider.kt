@@ -19,7 +19,8 @@ import androidx.annotation.Dimension.DP
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
+import org.mozilla.fenix.ext.settings
 import android.os.Build
 import androidx.appcompat.widget.AppCompatDrawableManager
 import androidx.core.graphics.drawable.toBitmap
@@ -28,11 +29,11 @@ import androidx.core.graphics.drawable.toBitmap
 class SearchWidgetProvider : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
-        Settings.getInstance(context).addSearchWidgetInstalled(1)
+        context.settings.addSearchWidgetInstalled(1)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        Settings.getInstance(context).addSearchWidgetInstalled(-appWidgetIds.size)
+        context.settings.addSearchWidgetInstalled(-appWidgetIds.size)
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -101,7 +102,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
         return Intent(context, HomeActivity::class.java)
             .let { intent ->
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.putExtra(HomeActivity.OPEN_TO_SEARCH, true)
+                intent.putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
                 PendingIntent.getActivity(context,
                     REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }

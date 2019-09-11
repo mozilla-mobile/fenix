@@ -48,12 +48,14 @@
         <item name="toolbarStartGradient">@color/toolbar_start_gradient_normal_theme</item>
         <item name="toolbarCenterGradient">@color/toolbar_center_gradient_normal_theme</item>
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_normal_theme</item>
+        <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
         <item name="homeBackground">@color/foundation_normal_theme</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
+        <item name="shieldLottieFile">@raw/shield_json</item>
     </style>
 
     <style name="NormalTheme" parent="NormalThemeBase" />
@@ -128,13 +130,14 @@
         <item name="toolbarStartGradient">@color/toolbar_start_gradient_private_theme</item>
         <item name="toolbarCenterGradient">@color/toolbar_center_gradient_private_theme</item>
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
+        <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
         <item name="homeBackground">@drawable/private_home_background_gradient</item>
         <item name="privateBrowsingButtonBackground">@color/primary_text_private_theme</item>
         <item name="privateBrowsingButtonAccent">@color/above_private_theme</item>
-
+        <item name="shieldLottieFile">@raw/shield_json_dark</item>
     </style>
 
     <style name="Mozac.Browser.Menu" parent="" tools:ignore="UnusedResources">
@@ -271,6 +274,7 @@
         <item name="android:textColor">@color/state_list_text_color</item>
         <item name="android:textSize">14sp</item>
         <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_alignParentStart">true</item>
     </style>

@@ -13,6 +13,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -88,6 +89,35 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
+    fun handleBrowserToolbarPaste() {
+        every { currentSession.id } returns "1"
+
+        val pastedText = "Mozilla"
+        controller.handleToolbarPaste(pastedText)
+
+        verify {
+            navController.nav(
+                R.id.browserFragment,
+                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = currentSession.id,
+                    pastedText = pastedText
+                )
+            )
+        }
+    }
+
+    @Test
+    fun handleBrowserToolbarPasteAndGo() {
+        val pastedText = "Mozilla"
+
+        controller.handleToolbarPasteAndGo(pastedText)
+        verifyOrder {
+            currentSession.searchTerms = ""
+            sessionUseCases.loadUrl(pastedText)
+        }
+    }
+
+    @Test
     fun handleToolbarClick() {
         every { currentSession.id } returns "1"
 
@@ -97,7 +127,9 @@ class DefaultBrowserToolbarControllerTest {
         verify {
             navController.nav(
                 R.id.browserFragment,
-                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment("1")
+                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = "1"
+                )
             )
         }
     }
@@ -243,7 +275,7 @@ class DefaultBrowserToolbarControllerTest {
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.NEW_PRIVATE_TAB)) }
         verify {
             val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(null)
+                .actionBrowserFragmentToSearchFragment(sessionId = null)
             navController.nav(R.id.browserFragment, directions)
         }
         verify { browsingModeManager.mode = BrowsingMode.Private }
@@ -310,7 +342,7 @@ class DefaultBrowserToolbarControllerTest {
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.NEW_TAB)) }
         verify {
             val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(null)
+                .actionBrowserFragmentToSearchFragment(sessionId = null)
             navController.nav(R.id.browserFragment, directions)
         }
         verify { browsingModeManager.mode = BrowsingMode.Normal }
@@ -337,7 +369,7 @@ class DefaultBrowserToolbarControllerTest {
         verify { viewModel.previousFragmentId = R.id.browserFragment }
         verify {
             val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(null)
+                .actionBrowserFragmentToSearchFragment(sessionId = null)
             navController.nav(R.id.browserFragment, directions)
         }
     }

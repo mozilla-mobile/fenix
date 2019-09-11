@@ -242,6 +242,12 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SyncAccountSyncNow -> EventWrapper<NoExtraKeys>(
             { SyncAccount.syncNow.record(it) }
         )
+        is Event.SignInToSendTab -> EventWrapper<NoExtraKeys>(
+            { SyncAccount.signInToSendTab.record(it) }
+        )
+        is Event.SendTab -> EventWrapper<NoExtraKeys>(
+            { SyncAccount.sendTab.record(it) }
+        )
         is Event.PreferenceToggled -> EventWrapper(
             { Events.preferenceToggled.record(it) },
             { Events.preferenceToggledKeys.valueOf(it) }
@@ -329,6 +335,10 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.PrivateBrowsingNotificationDeleteAndOpenTapped -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingMode.notificationDelete.record(it) }
+        )
+        is Event.WhatsNewTapped -> EventWrapper(
+            { Events.whatsNewTapped.record(it) },
+            { Events.whatsNewTappedKeys.valueOf(it) }
         )
 
         // Don't record other events in Glean:

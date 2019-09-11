@@ -37,6 +37,7 @@ import org.mozilla.fenix.R.string.pref_key_accessibility
 import org.mozilla.fenix.R.string.pref_key_account
 import org.mozilla.fenix.R.string.pref_key_account_auth_error
 import org.mozilla.fenix.R.string.pref_key_account_category
+import org.mozilla.fenix.R.string.pref_key_add_private_browsing_shortcut
 import org.mozilla.fenix.R.string.pref_key_data_choices
 import org.mozilla.fenix.R.string.pref_key_delete_browsing_data
 import org.mozilla.fenix.R.string.pref_key_help
@@ -52,10 +53,12 @@ import org.mozilla.fenix.R.string.pref_key_site_permissions
 import org.mozilla.fenix.R.string.pref_key_theme
 import org.mozilla.fenix.R.string.pref_key_tracking_protection_settings
 import org.mozilla.fenix.R.string.pref_key_your_rights
+import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -119,7 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
         trackingProtectionPreference?.summary = context?.let {
-            if (org.mozilla.fenix.utils.Settings.getInstance(it).shouldUseTrackingProtection) {
+            if (it.settings.shouldUseTrackingProtection) {
                 getString(R.string.tracking_protection_on)
             } else {
                 getString(R.string.tracking_protection_off)
@@ -129,7 +132,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         val themesPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_theme))
         themesPreference?.summary = context?.let {
-            org.mozilla.fenix.utils.Settings.getInstance(it).themeSettingString
+            it.settings.themeSettingString
         }
 
         val aboutPreference = findPreference<Preference>(getPreferenceKey(R.string.pref_key_about))
@@ -141,7 +144,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             resources.getString(pref_key_search_engine_settings) -> {
@@ -152,6 +155,9 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             }
             resources.getString(pref_key_site_permissions) -> {
                 navigateToSitePermissions()
+            }
+            resources.getString(pref_key_add_private_browsing_shortcut) -> {
+                PrivateShortcutCreateManager.createPrivateShortcut(requireContext())
             }
             resources.getString(pref_key_accessibility) -> {
                 navigateToAccessibility()
@@ -200,7 +206,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             }
             resources.getString(pref_key_privacy_link) -> {
                 requireContext().let { context ->
-                    val intent = SupportUtils.createCustomTabIntent(context, SupportUtils.PRIVACY_NOTICE_URL)
+                    val intent = SupportUtils.createCustomTabIntent(context, SupportUtils.getPrivacyNoticeUrl())
                     startActivity(intent)
                 }
             }
@@ -249,7 +255,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         }
 
         preferenceRemoteDebugging?.setOnPreferenceChangeListener { preference, newValue ->
-            org.mozilla.fenix.utils.Settings.getInstance(preference.context).preferences.edit()
+        preference.context.settings.preferences.edit()
                 .putBoolean(preference.key, newValue as Boolean).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true

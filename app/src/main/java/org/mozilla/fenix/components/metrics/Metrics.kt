@@ -71,6 +71,8 @@ sealed class Event {
     object SyncAccountOpened : Event()
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
+    object SendTab : Event()
+    object SignInToSendTab : Event()
     object HistoryOpened : Event()
     object HistoryItemShared : Event()
     object HistoryItemOpened : Event()
@@ -128,6 +130,12 @@ sealed class Event {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB }
         override val extras: Map<Events.appOpenedKeys, String>?
             get() = hashMapOf(Events.appOpenedKeys.source to source.name)
+    }
+
+    data class WhatsNewTapped(val source: Source) : Event() {
+        enum class Source { ABOUT, HOME }
+        override val extras: Map<Events.whatsNewTappedKeys, String>?
+            get() = hashMapOf(Events.whatsNewTappedKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {

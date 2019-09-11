@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.share
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
 import android.content.Intent.EXTRA_TEXT
@@ -16,6 +17,8 @@ import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.sendtab.SendTabUseCases
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -25,6 +28,7 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
  * Delegated by View Interactors, handles container business logic and operates changes on it.
  */
 interface ShareController {
+    fun handleReauth()
     fun handleShareClosed()
     fun handleShareToApp(app: AppShareOption)
     fun handleAddNewDevice()
@@ -43,12 +47,19 @@ interface ShareController {
  * @param dismiss - callback signalling sharing can be closed.
  */
 class DefaultShareController(
+    private val context: Context,
     private val fragment: Fragment,
     private val sharedTabs: List<ShareTab>,
     private val sendTabUseCases: SendTabUseCases,
     private val navController: NavController,
     private val dismiss: () -> Unit
 ) : ShareController {
+    override fun handleReauth() {
+        val directions = ShareFragmentDirections.actionShareFragmentToAccountProblemFragment()
+        navController.nav(R.id.shareFragment, directions)
+        dismiss()
+    }
+
     override fun handleShareClosed() {
         dismiss()
     }
@@ -73,6 +84,7 @@ class DefaultShareController(
     }
 
     override fun handleShareToDevice(device: Device) {
+        context.metrics.track(Event.SendTab)
         sendTabUseCases.sendToDeviceAsync(device.id, sharedTabs.toTabData())
         (fragment.activity as ShareFragment.TabsSharedCallback).onTabsShared(sharedTabs.size)
         dismiss()
@@ -85,6 +97,7 @@ class DefaultShareController(
     }
 
     override fun handleSignIn() {
+        context.metrics.track(Event.SignInToSendTab)
         val directions = ShareFragmentDirections.actionShareFragmentToTurnOnSyncFragment()
         navController.nav(R.id.shareFragment, directions)
         dismiss()

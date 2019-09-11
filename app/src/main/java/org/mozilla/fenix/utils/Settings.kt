@@ -4,19 +4,24 @@
 
 package org.mozilla.fenix.utils
 
+import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
+import mozilla.components.support.ktx.android.content.PreferencesHolder
+import mozilla.components.support.ktx.android.content.booleanPreference
+import mozilla.components.support.ktx.android.content.floatPreference
+import mozilla.components.support.ktx.android.content.intPreference
+import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.settings.sharedpreferences.PreferencesHolder
-import org.mozilla.fenix.settings.sharedpreferences.booleanPreference
 import java.security.InvalidParameterException
 
 /**
@@ -26,12 +31,14 @@ class Settings private constructor(
     context: Context,
     private val isCrashReportEnabledInBuild: Boolean
 ) : PreferencesHolder {
-
     companion object {
         const val autoBounceMaximumCount = 2
+        const val trackingProtectionOnboardingMaximumCount = 2
         const val FENIX_PREFERENCES = "fenix_preferences"
         private const val BLOCKED_INT = 0
         private const val ASK_TO_ALLOW_INT = 1
+        private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
+        private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
 
         private fun actionToInt(action: SitePermissionsRules.Action) = when (action) {
             SitePermissionsRules.Action.BLOCKED -> BLOCKED_INT
@@ -70,15 +77,17 @@ class Settings private constructor(
         default = false
     )
 
-    var defaultSearchEngineName: String
-        get() = preferences.getString(appContext.getPreferenceKey(R.string.pref_key_search_engine), "") ?: ""
-        set(name) = preferences.edit()
-            .putString(appContext.getPreferenceKey(R.string.pref_key_search_engine), name)
-            .apply()
+    var defaultSearchEngineName by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_engine),
+        default = ""
+    )
 
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
-                preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_crash_reporter), true)
+                preferences.getBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
+                    true
+                )
 
     val isRemoteDebuggingEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
@@ -95,6 +104,12 @@ class Settings private constructor(
         default = true
     )
 
+    private var trackingProtectionOnboardingShownThisSession = false
+
+    val shouldShowTrackingProtectionOnboarding: Boolean
+        get() = trackingProtectionOnboardingCount < trackingProtectionOnboardingMaximumCount &&
+                !trackingProtectionOnboardingShownThisSession
+
     val shouldAutoBounceQuickActionSheet: Boolean
         get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
 
@@ -108,14 +123,10 @@ class Settings private constructor(
         default = true
     )
 
-    var fontSizeFactor: Float
-        get() = preferences.getFloat(
-            appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale),
-            1f
-        )
-        set(value) = preferences.edit()
-            .putFloat(appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale), value)
-            .apply()
+    var fontSizeFactor by floatPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_font_scale),
+        default = 1f
+    )
 
     val shouldShowHistorySuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_browsing_history),
@@ -152,6 +163,11 @@ class Settings private constructor(
         default = false
     )
 
+    val useStrictTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict),
+        false
+    )
+
     val themeSettingString: String
         get() = when {
             shouldFollowDeviceTheme -> appContext.getString(R.string.preference_follow_device_theme)
@@ -162,8 +178,10 @@ class Settings private constructor(
         }
 
     @VisibleForTesting(otherwise = PRIVATE)
-    internal val autoBounceQuickActionSheetCount: Int
-        get() = preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action), 0)
+    internal val autoBounceQuickActionSheetCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action),
+        default = 0
+    )
 
     fun incrementAutomaticBounceQuickActionSheetCount() {
         preferences.edit().putInt(
@@ -177,10 +195,27 @@ class Settings private constructor(
         default = true
     )
 
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val trackingProtectionOnboardingCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
+        0
+    )
+
+    fun incrementTrackingProtectionOnboardingCount() {
+        trackingProtectionOnboardingShownThisSession = true
+        preferences.edit().putInt(
+            appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
+            trackingProtectionOnboardingCount + 1
+        ).apply()
+    }
+
     fun getSitePermissionsPhoneFeatureAction(feature: PhoneFeature) =
         intToAction(preferences.getInt(feature.getPreferenceKey(appContext), ASK_TO_ALLOW_INT))
 
-    fun setSitePermissionsPhoneFeatureAction(feature: PhoneFeature, value: SitePermissionsRules.Action) {
+    fun setSitePermissionsPhoneFeatureAction(
+        feature: PhoneFeature,
+        value: SitePermissionsRules.Action
+    ) {
         preferences.edit().putInt(feature.getPreferenceKey(appContext), actionToInt(value)).apply()
     }
 
@@ -193,7 +228,10 @@ class Settings private constructor(
         )
     }
 
-    var fxaSignedIn by booleanPreference(appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in), default = true)
+    var fxaSignedIn by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in),
+        default = true
+    )
 
     var fxaHasSyncedItems by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items),
@@ -209,5 +247,41 @@ class Settings private constructor(
     }
 
     val searchWidgetInstalled: Boolean
-        get() = 0 < preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_search_widget_installed), 0)
+        get() = 0 < preferences.getInt(
+            appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
+            0
+        )
+
+    fun incrementNumTimesPrivateModeOpened() {
+        preferences.edit().putInt(
+            appContext.getPreferenceKey(R.string.pref_key_private_mode_opened),
+            numTimesPrivateModeOpened + 1
+        ).apply()
+    }
+
+    private var showedPrivateModeContextualFeatureRecommender by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_showed_private_mode_cfr),
+        default = false
+    )
+
+    private val numTimesPrivateModeOpened: Int
+        get() = preferences.getInt(appContext.getPreferenceKey(R.string.pref_key_private_mode_opened), 0)
+
+    val showPrivateModeContextualFeatureRecommender: Boolean
+        get() {
+            val focusInstalled = MozillaProductDetector
+                .getInstalledMozillaProducts(appContext as Application)
+                .contains(MozillaProductDetector.MozillaProducts.FOCUS.productName)
+
+            val showCondition =
+                (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_INSTALLED && focusInstalled) ||
+                (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED && !focusInstalled)
+
+            if (showCondition && !showedPrivateModeContextualFeatureRecommender) {
+                showedPrivateModeContextualFeatureRecommender = true
+                return true
+            }
+
+            return false
+        }
 }
