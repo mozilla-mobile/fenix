@@ -4,13 +4,18 @@
 
 package org.mozilla.fenix.trackingprotection
 
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.content.blocking.Tracker
 import org.junit.Test
 
 class TrackingProtectionStoreTest {
+
+    val session: Session = mockk(relaxed = true)
+
 
     private val initialState = defaultState()
     private val store = TrackingProtectionStore(initialState)
@@ -127,6 +132,7 @@ class TrackingProtectionStoreTest {
     }
 
     private fun defaultState(): TrackingProtectionState = TrackingProtectionState(
+        session = session,
         url = "www.mozilla.org",
         isTrackingProtectionEnabled = true,
         listTrackers = listOf(),
@@ -135,6 +141,7 @@ class TrackingProtectionStoreTest {
     )
 
     private fun detailsState(): TrackingProtectionState = TrackingProtectionState(
+        session = session,
         url = "www.mozilla.org",
         isTrackingProtectionEnabled = true,
         listTrackers = listOf(),
