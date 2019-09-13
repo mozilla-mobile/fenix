@@ -16,6 +16,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 
@@ -37,6 +38,8 @@ class NavigationToolbarRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuRobot.() -> Unit): ThreeDotMenuRobot.Transition {
+            org.mozilla.fenix.ui.robots.mDevice.wait(Until.findObject(By.res("close_onboarding")), TestAssetHelper.waitingTime)
+            dismissOnboardingButton().click()
             mDevice.wait(Until.findObject(By.text("Menu")), waitingTime)
             threeDotButton().click()
 
@@ -60,6 +63,7 @@ fun navigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationTo
     return NavigationToolbarRobot.Transition()
 }
 
+private fun dismissOnboardingButton() = onView(ViewMatchers.withId(R.id.close_onboarding))
 private fun urlBar() = onView(ViewMatchers.withId(R.id.toolbar))
 private fun awesomeBar() = onView(ViewMatchers.withId(R.id.mozac_browser_toolbar_edit_url_view))
 private fun threeDotButton() = onView(ViewMatchers.withContentDescription("Menu"))

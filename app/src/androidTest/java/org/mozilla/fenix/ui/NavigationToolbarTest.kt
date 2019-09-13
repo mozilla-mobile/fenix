@@ -77,6 +77,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            dismissTrackingOnboarding()
             verifyPageContent(defaultWebPage.content)
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(nextWebPage.url) {
@@ -101,6 +102,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(refreshWebPage.url) {
+            dismissTrackingOnboarding()
             verifyPageContent("DEFAULT")
         }
 
@@ -120,6 +122,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            dismissTrackingOnboarding()
             verifyPageContent(defaultWebPage.content)
         }
     }
@@ -130,6 +133,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loremIpsumWebPage.url) {
+            dismissTrackingOnboarding()
             verifyPageContent(loremIpsumWebPage.content)
         }
 
