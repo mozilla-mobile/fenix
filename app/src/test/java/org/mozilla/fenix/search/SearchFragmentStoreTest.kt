@@ -13,10 +13,11 @@ import org.junit.Test
 
 class SearchFragmentStoreTest {
 
+    private val initialState = emptyDefaultState()
+    private val store = SearchFragmentStore(initialState)
+
     @Test
     fun updateQuery() = runBlocking {
-        val initialState = emptyDefaultState()
-        val store = SearchFragmentStore(initialState)
         val query = "test query"
 
         store.dispatch(SearchFragmentAction.UpdateQuery(query)).join()
@@ -26,8 +27,6 @@ class SearchFragmentStoreTest {
 
     @Test
     fun selectSearchShortcutEngine() = runBlocking {
-        val initialState = emptyDefaultState()
-        val store = SearchFragmentStore(initialState)
         val searchEngine: SearchEngine = mockk()
 
         store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)).join()
@@ -37,9 +36,6 @@ class SearchFragmentStoreTest {
 
     @Test
     fun showSearchShortcutEnginePicker() = runBlocking {
-        val initialState = emptyDefaultState()
-        val store = SearchFragmentStore(initialState)
-
         store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)).join()
         assertNotSame(initialState, store.state)
         assertEquals(true, store.state.showShortcutEnginePicker)

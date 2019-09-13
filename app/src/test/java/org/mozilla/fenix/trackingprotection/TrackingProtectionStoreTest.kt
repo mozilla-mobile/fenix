@@ -11,11 +11,13 @@ import mozilla.components.concept.engine.content.blocking.Tracker
 import org.junit.Test
 
 class TrackingProtectionStoreTest {
+
+    private val initialState = defaultState()
+    private val store = TrackingProtectionStore(initialState)
+    private val tracker = Tracker("url", listOf())
+
     @Test
     fun enterDetailsMode() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-
         store.dispatch(
             TrackingProtectionAction.EnterDetailsMode(
                 TrackingProtectionCategory.FINGERPRINTERS,
@@ -45,9 +47,6 @@ class TrackingProtectionStoreTest {
 
     @Test
     fun trackerBlockingChanged() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-
         store.dispatch(TrackingProtectionAction.TrackerBlockingChanged(false)).join()
         assertNotSame(initialState, store.state)
         assertEquals(
@@ -62,10 +61,6 @@ class TrackingProtectionStoreTest {
 
     @Test
     fun trackerListChanged() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-        val tracker = Tracker("url", listOf())
-
         store.dispatch(TrackingProtectionAction.TrackerListChange(listOf(tracker))).join()
         assertNotSame(initialState, store.state)
         assertEquals(
@@ -76,10 +71,6 @@ class TrackingProtectionStoreTest {
 
     @Test
     fun trackerLoadedListChanged() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-        val tracker = Tracker("url", listOf())
-
         store.dispatch(TrackingProtectionAction.TrackerLoadedListChange(listOf(tracker))).join()
         assertNotSame(initialState, store.state)
         assertEquals(
@@ -90,9 +81,6 @@ class TrackingProtectionStoreTest {
 
     @Test
     fun urlChanged() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-
         store.dispatch(TrackingProtectionAction.UrlChange("newURL")).join()
         assertNotSame(initialState, store.state)
         assertEquals(
@@ -103,10 +91,6 @@ class TrackingProtectionStoreTest {
 
     @Test
     fun onChange() = runBlocking {
-        val initialState = defaultState()
-        val store = TrackingProtectionStore(initialState)
-        val tracker = Tracker("url", listOf())
-
         store.dispatch(
             TrackingProtectionAction.Change(
                 "newURL",

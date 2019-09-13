@@ -9,13 +9,7 @@ import android.content.Intent
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.verify
-import io.mockk.verifyOrder
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -74,6 +68,9 @@ class DefaultBrowserToolbarControllerTest {
 
     private lateinit var controller: DefaultBrowserToolbarController
 
+    private val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
+        mockk(relaxed = true)
+
     @Before
     fun setUp() {
         Dispatchers.setMain(mainThreadSurrogate)
@@ -106,12 +103,15 @@ class DefaultBrowserToolbarControllerTest {
         every { analytics.metrics } returns metrics
         every { context.components.useCases.sessionUseCases } returns sessionUseCases
         every { context.components.core.sessionManager.selectedSession } returns currentSession
+
+        every { currentSession.id } returns "1"
+        every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
+        every { currentSession.url } returns "https://mozilla.org"
+
     }
 
     @Test
     fun handleBrowserToolbarPaste() {
-        every { currentSession.id } returns "1"
-
         val pastedText = "Mozilla"
         controller.handleToolbarPaste(pastedText)
 
@@ -145,8 +145,6 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarClick() {
-        every { currentSession.id } returns "1"
-
         controller.handleToolbarClick()
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
@@ -183,8 +181,6 @@ class DefaultBrowserToolbarControllerTest {
     @Test
     fun handleToolbarReloadPress() {
         val item = ToolbarMenu.Item.Reload
-
-        every { context.components.useCases.sessionUseCases } returns sessionUseCases
 
         controller.handleToolbarItemInteraction(item)
 
@@ -234,11 +230,7 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarRequestDesktopOnPress() {
-        val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
-            mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(true)
-
-        every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
         controller.handleToolbarItemInteraction(item)
 
@@ -253,11 +245,7 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarRequestDesktopOffPress() {
-        val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
-            mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(false)
-
-        every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
         controller.handleToolbarItemInteraction(item)
 
@@ -283,7 +271,6 @@ class DefaultBrowserToolbarControllerTest {
     fun handleToolbarSharePress() {
         val item = ToolbarMenu.Item.Share
 
-        every { currentSession.url } returns "https://mozilla.org"
         val directions = NavGraphDirections.actionGlobalShareFragment(currentSession.url)
 
         controller.handleToolbarItemInteraction(item)
@@ -327,8 +314,6 @@ class DefaultBrowserToolbarControllerTest {
 
         val item = ToolbarMenu.Item.ReportIssue
 
-        every { currentSession.id } returns "1"
-        every { currentSession.url } returns "https://mozilla.org"
         every { context.components.useCases.tabsUseCases } returns tabsUseCases
         every { tabsUseCases.addTab } returns addTabUseCase
 
@@ -385,7 +370,6 @@ class DefaultBrowserToolbarControllerTest {
     fun handleToolbarSaveToCollectionPress() {
         val item = ToolbarMenu.Item.SaveToCollection
         val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
-        every { context.components.useCases.sessionUseCases } returns sessionUseCases
         every { context.components.core.tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
 
         controller.handleToolbarItemInteraction(item)

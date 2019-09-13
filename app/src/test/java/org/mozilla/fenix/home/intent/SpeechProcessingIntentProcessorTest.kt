@@ -24,12 +24,13 @@ import org.robolectric.annotation.Config
 @Config(application = TestApplication::class)
 class SpeechProcessingIntentProcessorTest {
 
+    private val activity: HomeActivity = mockk()
+    private val navController: NavController = mockk()
+    private val out: Intent = mockk()
+    private val processor = SpeechProcessingIntentProcessor(activity)
+
     @Test
     fun `do not process blank intents`() {
-        val activity: HomeActivity = mockk()
-        val navController: NavController = mockk()
-        val out: Intent = mockk()
-        val processor = SpeechProcessingIntentProcessor(activity)
         processor.process(Intent(), navController, out)
 
         verify { activity wasNot Called }
@@ -39,13 +40,9 @@ class SpeechProcessingIntentProcessorTest {
 
     @Test
     fun `do not process when open extra is false`() {
-        val activity: HomeActivity = mockk()
-        val navController: NavController = mockk()
-        val out: Intent = mockk()
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false)
         }
-        val processor = SpeechProcessingIntentProcessor(activity)
         processor.process(intent, navController, out)
 
         verify { activity wasNot Called }
@@ -56,7 +53,6 @@ class SpeechProcessingIntentProcessorTest {
     @Test
     fun `process when open extra is true`() {
         val activity: HomeActivity = mockk(relaxed = true)
-        val navController: NavController = mockk()
         val out: Intent = mockk(relaxed = true)
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)

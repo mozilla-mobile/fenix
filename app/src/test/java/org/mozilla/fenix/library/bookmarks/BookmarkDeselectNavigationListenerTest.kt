@@ -35,6 +35,13 @@ class BookmarkDeselectNavigationListenerTest {
         children = null
     )
 
+    private val destination: NavDestination = mockk()
+    private val arguments = BookmarkFragmentArgs(currentRoot = "mock-guid").toBundle()
+
+    private val viewModel: BookmarksSharedViewModel = mockk()
+    private val interactor: BookmarkViewInteractor = mockk(relaxed = true)
+    private val listener = BookmarkDeselectNavigationListener(mockk(), viewModel, interactor)
+
     @Test
     fun `add listener on resume and remove on destroy`() {
         val navController: NavController = mockk(relaxed = true)
@@ -49,10 +56,8 @@ class BookmarkDeselectNavigationListenerTest {
 
     @Test
     fun `deselect when navigating to a different fragment`() {
-        val destination: NavDestination = mockk()
         every { destination.id } returns R.id.homeFragment
 
-        val interactor: BookmarkViewInteractor = mockk(relaxed = true)
         val listener = BookmarkDeselectNavigationListener(mockk(), mockk(), interactor)
 
         listener.onDestinationChanged(mockk(), destination, mockk())
@@ -61,13 +66,7 @@ class BookmarkDeselectNavigationListenerTest {
 
     @Test
     fun `deselect when navigating to a different folder`() {
-        val arguments = BookmarkFragmentArgs(currentRoot = "mock-guid").toBundle()
-        val destination: NavDestination = mockk()
         every { destination.id } returns R.id.bookmarkFragment
-
-        val viewModel: BookmarksSharedViewModel = mockk()
-        val interactor: BookmarkViewInteractor = mockk(relaxed = true)
-        val listener = BookmarkDeselectNavigationListener(mockk(), viewModel, interactor)
 
         every { viewModel.selectedFolder } returns null
         listener.onDestinationChanged(mockk(), destination, arguments)
@@ -80,16 +79,11 @@ class BookmarkDeselectNavigationListenerTest {
 
     @Test
     fun `do not deselect when navigating to the same folder`() {
-        val arguments = BookmarkFragmentArgs(currentRoot = "mock-guid").toBundle()
-        val destination: NavDestination = mockk()
         every { destination.id } returns R.id.bookmarkFragment
-
-        val viewModel: BookmarksSharedViewModel = mockk()
-        val interactor: BookmarkViewInteractor = mockk(relaxed = true)
-        val listener = BookmarkDeselectNavigationListener(mockk(), viewModel, interactor)
-
         every { viewModel.selectedFolder } returns basicNode.copy(guid = "mock-guid")
+
         listener.onDestinationChanged(mockk(), destination, arguments)
+
         verify(exactly = 0) { interactor.onAllBookmarksDeselected() }
     }
 }

@@ -15,12 +15,13 @@ import org.mozilla.fenix.settings.account.LastSyncTime
 
 class AccountSettingsFragmentStoreTest {
 
+    private val initialState = AccountSettingsFragmentState()
+    private val store = AccountSettingsFragmentStore(initialState)
+    private val duration = 1L
+    private val deviceName = "testing"
+
     @Test
     fun syncFailed() = runBlocking {
-        val initialState = AccountSettingsFragmentState()
-        val store = AccountSettingsFragmentStore(initialState)
-        val duration = 1L
-
         store.dispatch(AccountSettingsFragmentAction.SyncFailed(duration)).join()
         assertNotSame(initialState, store.state)
         assertEquals(LastSyncTime.Failed(duration), store.state.lastSyncedDate)
@@ -28,10 +29,6 @@ class AccountSettingsFragmentStoreTest {
 
     @Test
     fun syncEnded() = runBlocking {
-        val initialState = AccountSettingsFragmentState()
-        val store = AccountSettingsFragmentStore(initialState)
-        val duration = 1L
-
         store.dispatch(AccountSettingsFragmentAction.SyncEnded(duration)).join()
         assertNotSame(initialState, store.state)
         assertEquals(LastSyncTime.Success(duration), store.state.lastSyncedDate)
@@ -39,10 +36,6 @@ class AccountSettingsFragmentStoreTest {
 
     @Test
     fun signOut() = runBlocking {
-        val initialState = AccountSettingsFragmentState()
-        val store = AccountSettingsFragmentStore(initialState)
-        val deviceName = "testing"
-
         store.dispatch(AccountSettingsFragmentAction.UpdateDeviceName(deviceName)).join()
         assertNotSame(initialState, store.state)
         assertEquals(deviceName, store.state.deviceName)

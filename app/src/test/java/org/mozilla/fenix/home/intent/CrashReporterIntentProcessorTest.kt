@@ -23,10 +23,11 @@ import org.robolectric.annotation.Config
 @Config(application = TestApplication::class)
 class CrashReporterIntentProcessorTest {
 
+    private val out: Intent = mockk()
+
     @Test
     fun `do not process blank intents`() {
         val navController: NavController = mockk()
-        val out: Intent = mockk()
         CrashReporterIntentProcessor().process(Intent(), navController, out)
 
         verify { navController wasNot Called }
@@ -36,7 +37,6 @@ class CrashReporterIntentProcessorTest {
     @Test
     fun `process crash intents`() {
         val navController: NavController = mockk(relaxed = true)
-        val out: Intent = mockk()
         val intent = Intent().apply {
             putExtra("mozilla.components.lib.crash.CRASH", mockk<Bundle>())
         }

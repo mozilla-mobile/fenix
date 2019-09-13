@@ -13,6 +13,11 @@ import org.mockito.Mockito.verify
 import java.lang.ref.WeakReference
 
 class InflationAwareFeatureTest {
+
+    private val stub: ViewStub = mock()
+    private val inflationFeature: InflationAwareFeature = spy(TestableInflationAwareFeature(stub))
+    private val innerFeature: LifecycleAwareFeature = mock()
+
     @Test
     fun `stub inflates if no feature or view exists`() {
         val stub: ViewStub = mock()
@@ -26,25 +31,18 @@ class InflationAwareFeatureTest {
 
     @Test
     fun `stub immediately launches if the feature is available`() {
-        val stub: ViewStub = mock()
-        val feature: InflationAwareFeature = spy(TestableInflationAwareFeature(stub))
+        inflationFeature.feature = mock()
+        inflationFeature.view = WeakReference(mock())
 
-        feature.feature = mock()
-        feature.view = WeakReference(mock())
-
-        feature.launch()
+        inflationFeature.launch()
 
         verify(stub, never()).setOnInflateListener(any())
         verify(stub, never()).inflate()
-        verify(feature).onLaunch(any(), any())
+        verify(inflationFeature).onLaunch(any(), any())
     }
 
     @Test
     fun `feature calls stop if created`() {
-        val stub: ViewStub = mock()
-        val inflationFeature: InflationAwareFeature = spy(TestableInflationAwareFeature(stub))
-        val innerFeature: LifecycleAwareFeature = mock()
-
         inflationFeature.stop()
 
         verify(innerFeature, never()).stop()
@@ -58,8 +56,6 @@ class InflationAwareFeatureTest {
 
     @Test
     fun `start should be delegated to the inner feature`() {
-        val inflationFeature: InflationAwareFeature = spy(TestableInflationAwareFeature(mock()))
-        val innerFeature: LifecycleAwareFeature = mock()
         inflationFeature.feature = innerFeature
 
         inflationFeature.start()
@@ -69,9 +65,6 @@ class InflationAwareFeatureTest {
 
     @Test
     fun `if feature has implemented BackHandler invoke it`() {
-        val stub: ViewStub = mock()
-        val inflationFeature: InflationAwareFeature = spy(TestableInflationAwareFeature(stub))
-        val innerFeature: LifecycleAwareFeature = mock()
         val backHandlerFeature = object : LifecycleAwareFeature, BackHandler {
             override fun onBackPressed() = true
 

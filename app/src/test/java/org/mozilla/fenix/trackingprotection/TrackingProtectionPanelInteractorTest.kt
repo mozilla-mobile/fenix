@@ -6,17 +6,16 @@ package org.mozilla.fenix.trackingprotection
 
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Test
-
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class TrackingProtectionPanelInteractorTest {
 
+    private val store: TrackingProtectionStore = mockk(relaxed = true)
+    private val interactor = TrackingProtectionPanelInteractor(store, mockk(), mockk())
+
     @Test
     fun openDetails() {
-        val store: TrackingProtectionStore = mockk(relaxed = true)
-        val interactor =
-            TrackingProtectionPanelInteractor(store, mockk(), mockk())
         interactor.openDetails(TrackingProtectionCategory.FINGERPRINTERS, true)
         verify {
             store.dispatch(
@@ -54,9 +53,6 @@ class TrackingProtectionPanelInteractorTest {
 
     @Test
     fun onBackPressed() {
-        val store: TrackingProtectionStore = mockk(relaxed = true)
-        val interactor =
-            TrackingProtectionPanelInteractor(store, mockk(), mockk())
         interactor.onBackPressed()
         verify { store.dispatch(TrackingProtectionAction.ExitDetailsMode) }
     }

@@ -47,6 +47,11 @@ class BrowserInteractorTest {
         )
         every { context.metrics } returns metrics
         every { context.components.core.sessionManager.selectedSession } returns session
+
+        every { metrics.track(Event.QuickActionSheetOpened) } just Runs
+        every { metrics.track(Event.QuickActionSheetClosed) } just Runs
+
+
     }
 
     @Test
@@ -82,8 +87,6 @@ class BrowserInteractorTest {
 
     @Test
     fun onQuickActionSheetOpened() {
-        every { metrics.track(Event.QuickActionSheetOpened) } just Runs
-
         interactor.onQuickActionSheetOpened()
 
         verify { metrics.track(Event.QuickActionSheetOpened) }
@@ -91,8 +94,6 @@ class BrowserInteractorTest {
 
     @Test
     fun onQuickActionSheetClosed() {
-        every { metrics.track(Event.QuickActionSheetClosed) } just Runs
-
         interactor.onQuickActionSheetClosed()
 
         verify { metrics.track(Event.QuickActionSheetClosed) }
@@ -124,7 +125,6 @@ class BrowserInteractorTest {
     @Test
     fun onQuickActionSheetReadPressed() {
         every { session.readerMode } returns false
-        every { metrics.track(Event.QuickActionSheetOpened) } just Runs
 
         interactor.onQuickActionSheetReadPressed()
 
@@ -135,7 +135,6 @@ class BrowserInteractorTest {
     @Test
     fun onQuickActionSheetReadPressedWithActiveReaderMode() {
         every { session.readerMode } returns true
-        every { metrics.track(Event.QuickActionSheetClosed) } just Runs
 
         interactor.onQuickActionSheetReadPressed()
 

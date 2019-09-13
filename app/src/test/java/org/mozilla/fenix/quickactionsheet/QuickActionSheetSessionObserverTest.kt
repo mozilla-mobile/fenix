@@ -25,25 +25,21 @@ import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 @ObsoleteCoroutinesApi
 class QuickActionSheetSessionObserverTest {
 
-    private lateinit var components: Components
-    private lateinit var appLinkRedirect: AppLinksUseCases.GetAppLinkRedirect
-    private lateinit var store: BrowserFragmentStore
-    private lateinit var dispatch: (QuickActionSheetAction) -> Unit
+    private val components: Components = mockk(relaxed = true)
+    private val appLinkRedirect: AppLinksUseCases.GetAppLinkRedirect = mockk(relaxed = true)
+    private val store: BrowserFragmentStore = mockk(relaxed = true)
+    private val dispatch: (QuickActionSheetAction) -> Unit = { store.dispatch(it) }
+
+    private val session: Session = mockk()
+    private val observer = spyk(QuickActionSheetSessionObserver(mockk(), components, dispatch))
 
     @Before
     fun setup() {
-        components = mockk(relaxed = true)
-        appLinkRedirect = mockk(relaxed = true)
-        store = mockk(relaxed = true)
-        dispatch = { store.dispatch(it) }
-
         every { components.useCases.appLinksUseCases.appLinkRedirect } returns appLinkRedirect
     }
 
     @Test
     fun `onLoadingStateChanged dispatches BounceNeededChange and updates bookmark button`() {
-        val session: Session = mockk()
-        val observer = spyk(QuickActionSheetSessionObserver(mockk(), components, dispatch))
         every { observer.updateBookmarkState(session) } just Runs
 
         observer.onLoadingStateChanged(session, true)
@@ -57,10 +53,9 @@ class QuickActionSheetSessionObserverTest {
     @Test
     fun `onUrlChanged updates bookmark and app link buttons`() {
         val url = "https://example.com"
-        val session: Session = mockk()
+
         every { session.url } returns url
 
-        val observer = spyk(QuickActionSheetSessionObserver(mockk(), components, dispatch))
         every { observer.updateBookmarkState(session) } just Runs
         every { appLinkRedirect.invoke(url) } returns AppLinkRedirect(mockk(), "", false)
 
