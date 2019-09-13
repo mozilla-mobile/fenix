@@ -51,12 +51,6 @@ PATH_APK="./app/build/outputs/apk/geckoNightly/debug"
 FLANK_BIN="/build/test-tools/flank.jar"
 
 echo
-echo "DOWNLOAD STABLE FLANK"
-# TBD: this needs to be updated in Dockerfile
-URL_FLANK_BIN="https://github.com/TestArmada/flank/releases/download/v7.0.1/flank.jar"
-wget "https:${URL_FLANK_BIN}" -O ${TEST_TOOLS}/flank.jar && chmod +x ${TEST_TOOLS}/flank.jar
-
-echo
 echo "RETRIEVE SERVICE ACCT TOKEN"
 echo
 python automation/taskcluster/helper/get-secret.py --json -s project/mobile/fenix/firebase -k firebaseToken  -f $GOOGLE_APPLICATION_CREDENTIALS
