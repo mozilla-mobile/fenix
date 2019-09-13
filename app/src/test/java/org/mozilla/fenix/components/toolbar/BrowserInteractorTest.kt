@@ -50,8 +50,6 @@ class BrowserInteractorTest {
 
         every { metrics.track(Event.QuickActionSheetOpened) } just Runs
         every { metrics.track(Event.QuickActionSheetClosed) } just Runs
-
-
     }
 
     @Test

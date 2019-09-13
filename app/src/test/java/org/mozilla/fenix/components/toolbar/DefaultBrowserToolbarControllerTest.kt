@@ -9,7 +9,13 @@ import android.content.Intent
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -107,7 +113,6 @@ class DefaultBrowserToolbarControllerTest {
         every { currentSession.id } returns "1"
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
         every { currentSession.url } returns "https://mozilla.org"
-
     }
 
     @Test

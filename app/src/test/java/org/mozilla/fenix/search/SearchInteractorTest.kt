@@ -34,7 +34,7 @@ class SearchInteractorTest {
     private val searchEngine = SearchEngineSource.Default(mockk())
 
     @Before
-    fun setUp(){
+    fun setUp() {
         every { context.metrics } returns mockk(relaxed = true)
         every { context.searchEngineManager } returns searchEngineManager
         every { context.openToBrowserAndLoad(any(), any(), any(), any(), any(), any()) } just Runs
