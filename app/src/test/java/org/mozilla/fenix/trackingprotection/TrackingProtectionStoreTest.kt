@@ -14,8 +14,7 @@ import org.junit.Test
 
 class TrackingProtectionStoreTest {
 
-    val session: Session = mockk(relaxed = true)
-
+    private val session: Session = mockk(relaxed = true)
 
     private val initialState = defaultState()
     private val store = TrackingProtectionStore(initialState)
