@@ -11,13 +11,9 @@ import org.junit.Before
 import org.junit.After
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import okhttp3.mockwebserver.MockWebServer
-import org.mozilla.fenix.ui.robots.PRIVATE_SESSION_MESSAGE
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
@@ -135,7 +131,7 @@ class HomeScreenTest {
         // browse to mock web page so tab elements appear
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.goBackToHomeScreen {
-            verifyPrivateSessionHeader()
+//            verifyPrivateSessionHeader()
             verifyAddTabButton()
             verifyShareTabsButton(visible = true)
             verifyGarbageCanButton(visible = true)
