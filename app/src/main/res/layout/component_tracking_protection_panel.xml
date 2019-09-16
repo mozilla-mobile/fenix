@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
             android:text="@string/preference_enhanced_tracking_protection"
+            app:layout_constraintBottom_toTopOf="@id/blocking_header"
             app:layout_constraintTop_toBottomOf="@id/url"
             app:switchDescription="@string/etp_panel_on"
             app:switchIcon="@drawable/ic_tracking_protection"
@@ -44,6 +45,7 @@
             android:text="@string/enhanced_tracking_protection_blocked"
             android:textColor="?attr/primaryText"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tracking_protection" />
 
@@ -54,6 +56,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:drawableStart="@drawable/ic_cookies"
             android:text="@string/etp_cookies_title"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/blocking_header" />
 
         <TextView
@@ -63,6 +66,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:drawableStart="@drawable/ic_fingerprinters"
             android:text="@string/etp_fingerprinters_title"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/cross_site_tracking" />
 
         <TextView
@@ -72,6 +76,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:drawableStart="@drawable/ic_cryptominers"
             android:text="@string/etp_cryptominers_title"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters" />
 
         <TextView
@@ -81,6 +86,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:drawableStart="@drawable/ic_social_media_trackers"
             android:text="@string/etp_social_media_trackers_title"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/cryptominers" />
 
         <TextView
@@ -90,6 +96,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:drawableStart="@drawable/ic_tracking_content"
             android:text="@string/etp_tracking_content_title"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/social_media_trackers" />
 
         <TextView
@@ -165,9 +172,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            app:drawableStartCompat="@drawable/ic_settings"
             android:paddingEnd="24dp"
             android:text="@string/etp_settings"
+            app:drawableStartCompat="@drawable/ic_settings"
             app:layout_constraintTop_toBottomOf="@id/line_divider" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
