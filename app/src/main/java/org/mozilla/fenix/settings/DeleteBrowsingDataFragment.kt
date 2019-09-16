@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.android.synthetic.main.app_share_list_item.*
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.*
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.view.*
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +95,7 @@ class DeleteBrowsingDataFragment : Fragment() {
     private fun askToDelete() {
         context?.let {
             AlertDialog.Builder(it).apply {
-                setMessage(R.string.delete_browsing_data_prompt_message_3)
+                setMessage(context.getString(R.string.delete_browsing_data_prompt_message_3, appName))
 
                 setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { it: DialogInterface, _ ->
                     it.cancel()
