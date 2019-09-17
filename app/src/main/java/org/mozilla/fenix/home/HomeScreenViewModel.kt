@@ -6,8 +6,10 @@ package org.mozilla.fenix.home
 
 import android.os.Parcelable
 import androidx.lifecycle.ViewModel
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
 class HomeScreenViewModel : ViewModel() {
     var layoutManagerState: Parcelable? = null
     var motionLayoutProgress = 0F
+    var mode: BrowsingMode? = null
 }

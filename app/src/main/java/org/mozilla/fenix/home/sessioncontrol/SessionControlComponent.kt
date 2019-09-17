@@ -70,8 +70,10 @@ fun List<Tab>.toSessionBundle(context: Context): MutableList<Session> {
 sealed class OnboardingState {
     // Signed out, without an option to auto-login using a shared FxA account.
     object SignedOutNoAutoSignIn : OnboardingState()
+
     // Signed out, with an option to auto-login into a shared FxA account.
     data class SignedOutCanAutoSignIn(val withAccount: ShareableAccount) : OnboardingState()
+
     // Signed in.
     object SignedIn : OnboardingState()
 }
@@ -148,38 +150,44 @@ fun Observer<SessionControlAction>.onNext(onboardingAction: OnboardingAction) {
 sealed class SessionControlChange : Change {
     data class Change(val tabs: List<Tab>, val mode: Mode, val collections: List<TabCollection>) :
         SessionControlChange()
+
     data class TabsChange(val tabs: List<Tab>) : SessionControlChange()
-    data class ModeChange(val mode: Mode) : SessionControlChange()
+    data class ModeChange(val mode: Mode, val tabs: List<Tab>? = null) : SessionControlChange()
     data class CollectionsChange(val collections: List<TabCollection>) : SessionControlChange()
-    data class ExpansionChange(val collection: TabCollection, val expand: Boolean) : SessionControlChange()
+    data class ExpansionChange(val collection: TabCollection, val expand: Boolean) :
+        SessionControlChange()
 }
 
 class SessionControlViewModel(
     initialState: SessionControlState
 ) : UIComponentViewModelBase<SessionControlState, SessionControlChange>(initialState, reducer) {
     companion object {
-        val reducer: (SessionControlState, SessionControlChange) -> SessionControlState = { state, change ->
-            when (change) {
-                is SessionControlChange.CollectionsChange -> state.copy(collections = change.collections)
-                is SessionControlChange.TabsChange -> state.copy(tabs = change.tabs)
-                is SessionControlChange.ModeChange -> state.copy(mode = change.mode)
-                is SessionControlChange.ExpansionChange -> {
-                    val newExpandedCollection = state.expandedCollections.toMutableSet()
+        val reducer: (SessionControlState, SessionControlChange) -> SessionControlState =
+            { state, change ->
+                when (change) {
+                    is SessionControlChange.CollectionsChange -> state.copy(collections = change.collections)
+                    is SessionControlChange.TabsChange -> state.copy(tabs = change.tabs)
+                    is SessionControlChange.ModeChange -> state.copy(
+                        mode = change.mode,
+                        tabs = change.tabs ?: emptyList()
+                    )
+                    is SessionControlChange.ExpansionChange -> {
+                        val newExpandedCollection = state.expandedCollections.toMutableSet()
 
-                    if (change.expand) {
-                        newExpandedCollection.add(change.collection.id)
-                    } else {
-                        newExpandedCollection.remove(change.collection.id)
+                        if (change.expand) {
+                            newExpandedCollection.add(change.collection.id)
+                        } else {
+                            newExpandedCollection.remove(change.collection.id)
+                        }
+
+                        state.copy(expandedCollections = newExpandedCollection)
                     }
-
-                    state.copy(expandedCollections = newExpandedCollection)
+                    is SessionControlChange.Change -> state.copy(
+                        tabs = change.tabs,
+                        mode = change.mode,
+                        collections = change.collections
+                    )
                 }
-                is SessionControlChange.Change -> state.copy(
-                    tabs = change.tabs,
-                    mode = change.mode,
-                    collections = change.collections
-                )
             }
-        }
     }
 }

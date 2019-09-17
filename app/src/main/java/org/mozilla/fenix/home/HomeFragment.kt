@@ -216,6 +216,9 @@ class HomeFragment : Fragment(), AccountObserver {
             homeViewModel.layoutManagerState?.also { parcelable ->
                 sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
+            if (homeViewModel.mode != null && homeViewModel.mode != browsingModeManager.mode) {
+                emitModeChanges()
+            }
             homeLayout?.progress = homeViewModel.motionLayoutProgress
             homeViewModel.layoutManagerState = null
         }
@@ -272,7 +275,10 @@ class HomeFragment : Fragment(), AccountObserver {
 
             if (onboarding.userHasBeenOnboarded()) {
                 getManagedEmitter<SessionControlChange>().onNext(
-                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
+                    SessionControlChange.ModeChange(
+                        Mode.fromBrowsingMode(newMode),
+                        getListOfSessions(newMode).toTabs()
+                    )
                 )
             }
         }
@@ -581,6 +587,7 @@ class HomeFragment : Fragment(), AccountObserver {
         homeViewModel.layoutManagerState =
             sessionControlComponent.view.layoutManager?.onSaveInstanceState()
         homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
+        homeViewModel.mode = browsingModeManager.mode
     }
 
     private fun recommendPrivateBrowsingShortcut() {
@@ -751,10 +758,10 @@ class HomeFragment : Fragment(), AccountObserver {
         )
     }
 
-    private fun getListOfSessions(): List<Session> {
-        return sessionManager.sessionsOfType(private = browsingModeManager.mode.isPrivate)
-            .filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }
-            .toList()
+    private fun getListOfSessions(newMode: BrowsingMode? = null): List<Session> {
+        return sessionManager.sessionsOfType(
+            private = newMode?.isPrivate ?: browsingModeManager.mode.isPrivate
+        ).filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }.toList()
     }
 
     private fun showCollectionCreationFragment(
@@ -785,7 +792,8 @@ class HomeFragment : Fragment(), AccountObserver {
         showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
             viewModel.saveTabToCollection(
                 tabs = tabs,
-                selectedTab = tabs.find { it.sessionId == selectedTabId } ?: if (tabs.size == 1) tabs[0] else null,
+                selectedTab = tabs.find { it.sessionId == selectedTabId }
+                    ?: if (tabs.size == 1) tabs[0] else null,
                 cachedTabCollections = cachedTabCollections
             )
         }
