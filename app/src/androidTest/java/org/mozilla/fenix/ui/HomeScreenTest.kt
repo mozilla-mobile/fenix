@@ -131,7 +131,7 @@ class HomeScreenTest {
         // browse to mock web page so tab elements appear
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.goBackToHomeScreen {
-//            verifyPrivateSessionHeader()
+            verifyPrivateSessionHeader()
             verifyAddTabButton()
             verifyShareTabsButton(visible = true)
             verifyGarbageCanButton(visible = true)
