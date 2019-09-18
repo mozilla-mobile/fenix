@@ -17,10 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.*
 import androidx.test.uiautomator.Until.findObject
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers
@@ -108,7 +105,7 @@ class HomeScreenRobot {
 
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.wait(
-                findObject(By.text("Search or enter address")),
+                Until.findObject(By.text("Search or enter address")),
                 TestAssetHelper.waitingTime
             )
             navigationToolbar().perform(click())
@@ -119,7 +116,7 @@ class HomeScreenRobot {
 
         fun enterURLAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.wait(
-                findObject(By.text("Search or enter address")),
+                Until.findObject(By.text("Search or enter address")),
                 TestAssetHelper.waitingTime
             )
             urlBar().click()
@@ -172,13 +169,13 @@ private fun navigationToolbar() =
     onView(CoreMatchers.allOf(ViewMatchers.withText("Search or enter address")))
 
 private fun assertNavigationToolbar() {
-    mDevice.wait(findObject(By.text("Search or enter address")), waitingTime)
+    mDevice.wait(Until.findObject(By.text("Search or enter address")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withText("Search or enter address")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertHomeScreen() {
-    mDevice.wait(findObject(By.res("homeLayout")), waitingTime)
+    mDevice.wait(Until.findObject(By.res("homeLayout")), waitingTime)
     onView(ViewMatchers.withResourceName("homeLayout"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -201,7 +198,7 @@ private fun assertOpenTabsHeader() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertAddTabButton() {
-    mDevice.wait(findObject(By.res("add_tab_button")), waitingTime)
+    mDevice.wait(Until.findObject(By.res("add_tab_button")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.add_tab_button), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -333,7 +330,7 @@ private fun assertStartBrowsingButton() =
 
 // Private mode elements
 private fun assertPrivateSessionHeader() {
-    mDevice.wait(findObject(By.text("Private session")), waitingTime)
+    mDevice.wait(Until.findObject(By.text("Private session")), waitingTime)
     onView(CoreMatchers.allOf(ViewMatchers.withText("Private session")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -350,7 +347,7 @@ private fun assertPrivateSessionMessage(visible: Boolean) =
         )
 
 private fun assertShareTabsButton(visible: Boolean) {
-    mDevice.wait(findObject(By.res("share_tabs_button")), waitingTime)
+    mDevice.wait(Until.findObject(By.res("share_tabs_button")), waitingTime)
     onView(ViewMatchers.withId(R.id.share_tabs_button))
         .check(
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else matches(
@@ -359,7 +356,7 @@ private fun assertShareTabsButton(visible: Boolean) {
 }
 
 private fun assertGarbageCanButton(visible: Boolean) {
-    mDevice.wait(findObject(By.res("close_tabs_button")), waitingTime)
+    mDevice.wait(Until.findObject(By.res("close_tabs_button")), waitingTime)
     onView(ViewMatchers.withId(R.id.close_tabs_button))
         .check(
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else matches(
@@ -368,7 +365,7 @@ private fun assertGarbageCanButton(visible: Boolean) {
 }
 
 private fun assertCloseTabButton(visible: Boolean) {
-    mDevice.wait(findObject(By.res("close_tab_button")), waitingTime)
+    mDevice.wait(Until.findObject(By.res("close_tab_button")), waitingTime)
     onView(ViewMatchers.withId(R.id.close_tab_button))
         .check(
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else doesNotExist()
