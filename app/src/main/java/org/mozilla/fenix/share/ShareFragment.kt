@@ -115,9 +115,7 @@ class ShareFragment : AppCompatDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_share, container, false)
         val args = ShareFragmentArgs.fromBundle(arguments!!)
-        if (args.url == null && args.tabs.isNullOrEmpty()) {
-            throw IllegalStateException("URL and tabs cannot both be null.")
-        }
+        check(!(args.url == null && args.tabs.isNullOrEmpty())) { "URL and tabs cannot both be null." }
 
         val tabs = args.tabs?.toList() ?: listOf(ShareTab(args.url!!, args.title.orEmpty()))
         val accountManager = requireComponents.backgroundServices.accountManager
@@ -136,7 +134,19 @@ class ShareFragment : AppCompatDialogFragment() {
         view.shareWrapper.setOnClickListener { shareInteractor.onShareClosed() }
         shareToAccountDevicesView =
             ShareToAccountDevicesView(view.devicesShareLayout, shareInteractor)
-        shareCloseView = ShareCloseView(view.closeSharingLayout, shareInteractor)
+
+        if (args.url != null && args.tabs == null) {
+            // If sharing one tab from the browser fragment, show it.
+            // If URL is set and tabs is null, we assume the browser is visible, since navigation
+            // does not tell us the back stack state.
+            view.closeSharingLayout.alpha = SHOW_PAGE_ALPHA
+            view.shareWrapper.setOnClickListener { shareInteractor.onShareClosed() }
+        } else {
+            // Otherwise, show a list of tabs to share.
+            view.closeSharingLayout.alpha = 1.0f
+            shareCloseView = ShareCloseView(view.closeSharingLayout, shareInteractor)
+            shareCloseView.setTabs(tabs)
+        }
         shareToAppsView = ShareToAppsView(view.appsShareLayout, shareInteractor)
 
         return view
@@ -213,6 +223,10 @@ class ShareFragment : AppCompatDialogFragment() {
             }
         }
         return list
+    }
+
+    companion object {
+        private const val SHOW_PAGE_ALPHA = 0.6f
     }
 }
 

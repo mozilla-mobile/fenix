@@ -169,7 +169,7 @@ private fun assertSaveCollectionButton() = saveCollectionButton()
 
 private fun findInPageButton() = onView(allOf(withText("Find in page")))
 private fun assertFindInPageButton() = findInPageButton()
-private fun ShareDialogTitle() = onView(allOf(withText("Send and Share"), withResourceName("closeButton")))
+private fun ShareDialogTitle() = onView(allOf(withText("Share"), withResourceName("closeButton")))
 private fun assertShareDialogTitle() = ShareDialogTitle()
     .check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
