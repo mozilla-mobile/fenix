@@ -29,6 +29,7 @@ import mozilla.components.feature.media.MediaFeature
 import mozilla.components.feature.media.RecordingDevicesNotificationFeature
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.session.HistoryDelegate
+import mozilla.components.feature.webcompat.WebCompatFeature
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.ext.components
@@ -58,7 +59,9 @@ class Core(private val context: Context) {
             suspendMediaWhenInactive = !FeatureFlags.mediaIntegration
         )
 
-        GeckoEngine(context, defaultSettings, GeckoProvider.getOrCreateRuntime(context))
+        GeckoEngine(context, defaultSettings, GeckoProvider.getOrCreateRuntime(context)).also {
+            WebCompatFeature.install(it)
+        }
     }
 
     /**
