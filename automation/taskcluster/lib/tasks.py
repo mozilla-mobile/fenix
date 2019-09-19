@@ -197,7 +197,6 @@ class TaskBuilder(object):
 
         test_commands = (
             'automation/taskcluster/androidTest/ui-test.sh arm64-v8a -1',
-            'automation/taskcluster/androidTest/ui-test.sh armeabi-v7a -1',
         )
 
         command = ' && '.join(
