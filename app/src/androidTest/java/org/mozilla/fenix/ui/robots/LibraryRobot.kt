@@ -62,6 +62,11 @@ class LibraryRobot {
         }
     }
 }
+
+private fun libraryMenu(interact: LibraryRobot.() -> Unit): LibraryRobot.Transition {
+    LibraryRobot().interact()
+    return LibraryRobot.Transition()
+}
 private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))
 private fun closeButton() = onView(withId(R.id.libraryClose))
 private fun bookmarksButton() = onView(allOf(withText("Bookmarks")))
