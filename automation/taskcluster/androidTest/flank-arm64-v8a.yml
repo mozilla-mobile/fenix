@@ -35,7 +35,7 @@ gcloud:
 
   device:
    - model: walleye 
-     version: 25
+     version: 26
    - model: walleye 
      version: 28
 
