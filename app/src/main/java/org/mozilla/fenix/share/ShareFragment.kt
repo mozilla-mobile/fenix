@@ -139,12 +139,12 @@ class ShareFragment : AppCompatDialogFragment() {
             // If sharing one tab from the browser fragment, show it.
             // If URL is set and tabs is null, we assume the browser is visible, since navigation
             // does not tell us the back stack state.
-            view.closeSharingLayout.alpha = SHOW_PAGE_ALPHA
+            view.closeSharingScrim.alpha = SHOW_PAGE_ALPHA
             view.shareWrapper.setOnClickListener { shareInteractor.onShareClosed() }
         } else {
             // Otherwise, show a list of tabs to share.
-            view.closeSharingLayout.alpha = 1.0f
-            shareCloseView = ShareCloseView(view.closeSharingLayout, shareInteractor)
+            view.closeSharingScrim.alpha = 1.0f
+            shareCloseView = ShareCloseView(view.closeSharingContent, shareInteractor)
             shareCloseView.setTabs(tabs)
         }
         shareToAppsView = ShareToAppsView(view.appsShareLayout, shareInteractor)
@@ -226,7 +226,7 @@ class ShareFragment : AppCompatDialogFragment() {
     }
 
     companion object {
-        private const val SHOW_PAGE_ALPHA = 0.6f
+        const val SHOW_PAGE_ALPHA = 0.6f
     }
 }
 
