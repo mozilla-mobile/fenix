@@ -135,10 +135,11 @@ class DefaultShareController(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun showFailureWithRetryOption(operation: () -> Unit) {
         snackbarPresenter.present(
-            context.getString(R.string.sync_sent_tab_error_snackbar),
-            Snackbar.LENGTH_LONG,
-            operation,
-            context.getString(R.string.sync_sent_tab_error_snackbar_action)
+            text = context.getString(R.string.sync_sent_tab_error_snackbar),
+            length = Snackbar.LENGTH_LONG,
+            action = operation,
+            actionName = context.getString(R.string.sync_sent_tab_error_snackbar_action),
+            isError = true
         )
     }
 

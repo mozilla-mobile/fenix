@@ -127,7 +127,7 @@ class ShareControllerTest {
         verifyOrder {
             metrics.track(Event.SendTab)
             sendTabUseCases.sendToDeviceAsync(capture(deviceId), capture(tabsShared))
-            // dismiss() is also to be called, but atm cannot test it in a coroutine.
+            // dismiss() is also to be called, but at the moment cannot test it in a coroutine.
         }
         assertAll {
             assertThat(deviceId.isCaptured).isTrue()
@@ -150,7 +150,7 @@ class ShareControllerTest {
 
         verifyOrder {
             sendTabUseCases.sendToAllAsync(capture(tabsShared))
-            // dismiss() is also to be called, but atm cannot test it in a coroutine.
+            // dismiss() is also to be called, but at the moment cannot test it in a coroutine.
         }
         assertAll {
             // SendTabUseCases should send a the `shareTabs` mapped to tabData
@@ -216,6 +216,7 @@ class ShareControllerTest {
         val timeoutSlot = slot<Int>()
         val operationSlot = slot<() -> Unit>()
         val retryMesageSlot = slot<String>()
+        val isFailureSlot = slot<Boolean>()
 
         controller.showFailureWithRetryOption(operation)
 
@@ -224,7 +225,8 @@ class ShareControllerTest {
                 capture(messageSlot),
                 capture(timeoutSlot),
                 capture(operationSlot),
-                capture(retryMesageSlot)
+                capture(retryMesageSlot),
+                capture(isFailureSlot)
             )
         }
         assertAll {
@@ -232,11 +234,13 @@ class ShareControllerTest {
             assertThat(timeoutSlot.isCaptured).isTrue()
             assertThat(operationSlot.isCaptured).isTrue()
             assertThat(retryMesageSlot.isCaptured).isTrue()
+            assertThat(isFailureSlot.isCaptured).isTrue()
 
             assertThat(messageSlot.captured).isEqualTo(expectedMessage)
             assertThat(timeoutSlot.captured).isEqualTo(expectedTimeout)
             assertThat { operationSlot.captured }.isSuccess().isSameAs(operation)
             assertThat(retryMesageSlot.captured).isEqualTo(expectedRetryMessage)
+            assertThat(isFailureSlot.captured).isEqualTo(true)
         }
     }
 
