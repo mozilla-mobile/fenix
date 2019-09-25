@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import mozilla.components.feature.sitepermissions.SitePermissions
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.Change
@@ -19,7 +20,6 @@ import org.mozilla.fenix.mvi.UIView
 import org.mozilla.fenix.mvi.ViewState
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.toggle
-import org.mozilla.fenix.utils.Settings
 
 class QuickSettingsComponent(
     private val container: ViewGroup,
@@ -46,18 +46,24 @@ class QuickSettingsComponent(
     ): SitePermissions {
 
         return if (sitePermissions == null) {
-            val settings = Settings.getInstance(context)
+            val settings = context.settings()
             val origin = requireNotNull(url.toUri().host)
-            var location = settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION).toStatus()
-            var camera = settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA).toStatus()
-            var microphone = settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.MICROPHONE).toStatus()
-            var notification = settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.NOTIFICATION).toStatus()
+            var location =
+                settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION).toStatus()
+            var camera =
+                settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA).toStatus()
+            var microphone =
+                settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.MICROPHONE).toStatus()
+            var notification =
+                settings.getSitePermissionsPhoneFeatureAction(PhoneFeature.NOTIFICATION).toStatus()
 
             when (featurePhone) {
                 PhoneFeature.CAMERA -> camera = camera.toggle()
                 PhoneFeature.LOCATION -> location = location.toggle()
                 PhoneFeature.MICROPHONE -> microphone = microphone.toggle()
                 PhoneFeature.NOTIFICATION -> notification = notification.toggle()
+                PhoneFeature.AUTOPLAY -> { // not supported by GV or A-C yet
+                }
             }
             context.components.core.permissionStorage
                 .addSitePermissionException(origin, location, notification, microphone, camera)
@@ -105,45 +111,58 @@ sealed class QuickSettingsChange : Change {
         val sitePermissions: SitePermissions?
     ) : QuickSettingsChange()
 
-    data class PermissionGranted(val phoneFeature: PhoneFeature, val sitePermissions: SitePermissions?) :
+    data class PermissionGranted(
+        val phoneFeature: PhoneFeature,
+        val sitePermissions: SitePermissions?
+    ) :
         QuickSettingsChange()
 
     data class PromptRestarted(val sitePermissions: SitePermissions?) : QuickSettingsChange()
-    data class Stored(val phoneFeature: PhoneFeature, val sitePermissions: SitePermissions?) : QuickSettingsChange()
+    data class Stored(val phoneFeature: PhoneFeature, val sitePermissions: SitePermissions?) :
+        QuickSettingsChange()
 }
 
 class QuickSettingsViewModel(
     initialState: QuickSettingsState
 ) : UIComponentViewModelBase<QuickSettingsState, QuickSettingsChange>(initialState, reducer) {
     companion object {
-        val reducer: (QuickSettingsState, QuickSettingsChange) -> QuickSettingsState = { state, change ->
-            when (change) {
-                is QuickSettingsChange.Change -> {
-                    state.copy(
-                        mode = QuickSettingsState.Mode.Normal(
-                            change.url,
-                            change.isSecured,
-                            change.isTrackingProtectionOn,
-                            change.sitePermissions
+        val reducer: (QuickSettingsState, QuickSettingsChange) -> QuickSettingsState =
+            { state, change ->
+                when (change) {
+                    is QuickSettingsChange.Change -> {
+                        state.copy(
+                            mode = QuickSettingsState.Mode.Normal(
+                                change.url,
+                                change.isSecured,
+                                change.isTrackingProtectionOn,
+                                change.sitePermissions
+                            )
                         )
-                    )
-                }
-                is QuickSettingsChange.PermissionGranted -> {
-                    state.copy(
-                        mode = QuickSettingsState.Mode.ActionLabelUpdated(change.phoneFeature, change.sitePermissions)
-                    )
-                }
-                is QuickSettingsChange.PromptRestarted -> {
-                    state.copy(
-                        mode = QuickSettingsState.Mode.CheckPendingFeatureBlockedByAndroid(change.sitePermissions)
-                    )
-                }
-                is QuickSettingsChange.Stored -> {
-                    state.copy(
-                        mode = QuickSettingsState.Mode.ActionLabelUpdated(change.phoneFeature, change.sitePermissions)
-                    )
+                    }
+                    is QuickSettingsChange.PermissionGranted -> {
+                        state.copy(
+                            mode = QuickSettingsState.Mode.ActionLabelUpdated(
+                                change.phoneFeature,
+                                change.sitePermissions
+                            )
+                        )
+                    }
+                    is QuickSettingsChange.PromptRestarted -> {
+                        state.copy(
+                            mode = QuickSettingsState.Mode.CheckPendingFeatureBlockedByAndroid(
+                                change.sitePermissions
+                            )
+                        )
+                    }
+                    is QuickSettingsChange.Stored -> {
+                        state.copy(
+                            mode = QuickSettingsState.Mode.ActionLabelUpdated(
+                                change.phoneFeature,
+                                change.sitePermissions
+                            )
+                        )
+                    }
                 }
             }
-        }
     }
 }

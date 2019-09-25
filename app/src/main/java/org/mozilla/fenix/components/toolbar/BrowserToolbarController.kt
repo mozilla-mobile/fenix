@@ -5,9 +5,9 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +16,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragment
@@ -29,38 +30,63 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
+import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 
 /**
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
  */
 interface BrowserToolbarController {
+    fun handleToolbarPaste(text: String)
+    fun handleToolbarPasteAndGo(text: String)
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
     fun handleToolbarClick()
 }
 
 class DefaultBrowserToolbarController(
-    private val context: Context,
+    private val activity: Activity,
     private val navController: NavController,
     private val browsingModeManager: BrowsingModeManager,
     private val findInPageLauncher: () -> Unit,
-    private val nestedScrollQuickActionView: NestedScrollView,
     private val engineView: EngineView,
     private val customTabSession: Session?,
     private val viewModel: CreateCollectionViewModel,
     private val getSupportUrl: () -> String,
     private val openInFenixIntent: Intent,
-    private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>
+    private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>,
+    private val scope: LifecycleCoroutineScope
 ) : BrowserToolbarController {
 
+    private val currentSession
+        get() = customTabSession ?: activity.components.core.sessionManager.selectedSession
+
+    override fun handleToolbarPaste(text: String) {
+        navController.nav(
+            R.id.browserFragment,
+            BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                sessionId = currentSession?.id,
+                pastedText = text
+            )
+        )
+    }
+
+    override fun handleToolbarPasteAndGo(text: String) {
+        if (text.isUrl()) {
+            activity.components.core.sessionManager.selectedSession?.searchTerms = ""
+            activity.components.useCases.sessionUseCases.loadUrl.invoke(text)
+            return
+        }
+
+        activity.components.core.sessionManager.selectedSession?.searchTerms = text
+        activity.components.useCases.searchUseCases.defaultSearch.invoke(text)
+    }
+
     override fun handleToolbarClick() {
-        context.components.analytics.metrics.track(
+        activity.components.analytics.metrics.track(
             Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)
         )
         navController.nav(
             R.id.browserFragment,
-            BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                customTabSession?.id ?: context.components.core.sessionManager.selectedSession?.id
-            )
+            BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(currentSession?.id)
         )
     }
 
@@ -68,9 +94,8 @@ class DefaultBrowserToolbarController(
     @ObsoleteCoroutinesApi
     @SuppressWarnings("ComplexMethod", "LongMethod")
     override fun handleToolbarItemInteraction(item: ToolbarMenu.Item) {
-        val sessionUseCases = context.components.useCases.sessionUseCases
+        val sessionUseCases = activity.components.useCases.sessionUseCases
         trackToolbarItemInteraction(item)
-        val currentSession = customTabSession ?: context.components.core.sessionManager.selectedSession
 
         Do exhaustive when (item) {
             ToolbarMenu.Item.Back -> sessionUseCases.goBack.invoke(currentSession)
@@ -91,7 +116,14 @@ class DefaultBrowserToolbarController(
             )
             ToolbarMenu.Item.AddToHomeScreen -> {
                 MainScope().launch {
-                    context.components.useCases.webAppUseCases.addToHomescreen()
+                    with(activity.components.useCases.webAppUseCases) {
+                        if (isInstallable()) {
+                            addToHomescreen()
+                        } else {
+                            val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateShortcutFragment()
+                            navController.navigate(directions)
+                        }
+                    }
                 }
             }
             ToolbarMenu.Item.Share -> {
@@ -102,39 +134,43 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.NewTab -> {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = null
+                )
                 navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Normal
             }
             ToolbarMenu.Item.NewPrivateTab -> {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(null)
+                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                    sessionId = null
+                )
                 navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Private
             }
             ToolbarMenu.Item.FindInPage -> {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 findInPageLauncher()
-                context.components.analytics.metrics.track(Event.FindInPageOpened)
+                activity.components.analytics.metrics.track(Event.FindInPageOpened)
             }
             ToolbarMenu.Item.ReportIssue -> {
                 val currentUrl = currentSession?.url
                 currentUrl?.apply {
                     val reportUrl = String.format(BrowserFragment.REPORT_SITE_ISSUE_URL, this)
-                    context.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
+                    activity.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
                 }
             }
             ToolbarMenu.Item.Help -> {
-                context.components.useCases.tabsUseCases.addTab.invoke(getSupportUrl())
+                activity.components.useCases.tabsUseCases.addTab.invoke(getSupportUrl())
             }
             ToolbarMenu.Item.SaveToCollection -> {
-                context.components.analytics.metrics
+                activity.components.analytics.metrics
                     .track(Event.CollectionSaveButtonPressed(TELEMETRY_BROWSER_IDENTIFIER))
 
-                currentSession?.toTab(context)?.let { currentSessionAsTab ->
+                currentSession?.toTab(activity)?.let { currentSessionAsTab ->
                     viewModel.saveTabToCollection(
                         tabs = listOf(currentSessionAsTab),
                         selectedTab = currentSessionAsTab,
-                        cachedTabCollections = context.components.core.tabCollectionStorage.cachedTabCollections
+                        cachedTabCollections = activity.components.core.tabCollectionStorage.cachedTabCollections
                     )
                     viewModel.previousFragmentId = R.id.browserFragment
 
@@ -148,14 +184,15 @@ class DefaultBrowserToolbarController(
 
                 // Strip the CustomTabConfig to turn this Session into a regular tab and then select it
                 customTabSession!!.customTabConfig = null
-                context.components.core.sessionManager.select(customTabSession)
+                activity.components.core.sessionManager.select(customTabSession)
 
                 // Switch to the actual browser which should now display our new selected session
-                context.startActivity(openInFenixIntent)
+                activity.startActivity(openInFenixIntent)
 
                 // Close this activity since it is no longer displaying any session
-                (context as Activity).finish()
+                activity.finish()
             }
+            ToolbarMenu.Item.Quit -> deleteAndQuit(activity, scope)
         }
     }
 
@@ -184,9 +221,10 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.Share -> Event.BrowserMenuItemTapped.Item.SHARE
             ToolbarMenu.Item.SaveToCollection -> Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION
             ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
+            ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
         }
 
-        context.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))
+        activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))
     }
 
     companion object {

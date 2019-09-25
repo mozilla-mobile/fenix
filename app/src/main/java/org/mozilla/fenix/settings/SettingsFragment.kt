@@ -22,6 +22,7 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -29,6 +30,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -37,25 +39,33 @@ import org.mozilla.fenix.R.string.pref_key_accessibility
 import org.mozilla.fenix.R.string.pref_key_account
 import org.mozilla.fenix.R.string.pref_key_account_auth_error
 import org.mozilla.fenix.R.string.pref_key_account_category
+import org.mozilla.fenix.R.string.pref_key_add_private_browsing_shortcut
 import org.mozilla.fenix.R.string.pref_key_data_choices
 import org.mozilla.fenix.R.string.pref_key_delete_browsing_data
+import org.mozilla.fenix.R.string.pref_key_delete_browsing_data_on_quit_preference
 import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_language
+import org.mozilla.fenix.R.string.pref_key_launch_links_in_private_mode
 import org.mozilla.fenix.R.string.pref_key_leakcanary
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
 import org.mozilla.fenix.R.string.pref_key_privacy_link
 import org.mozilla.fenix.R.string.pref_key_rate
 import org.mozilla.fenix.R.string.pref_key_remote_debugging
-import org.mozilla.fenix.R.string.pref_key_search_engine_settings
+import org.mozilla.fenix.R.string.pref_key_search_settings
 import org.mozilla.fenix.R.string.pref_key_sign_in
 import org.mozilla.fenix.R.string.pref_key_site_permissions
 import org.mozilla.fenix.R.string.pref_key_theme
 import org.mozilla.fenix.R.string.pref_key_tracking_protection_settings
 import org.mozilla.fenix.R.string.pref_key_your_rights
+import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.account.AccountAuthErrorPreference
+import org.mozilla.fenix.settings.account.AccountPreference
 import org.mozilla.fenix.utils.ItsNotBrokenSnack
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -95,6 +105,14 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
                 isVisible = false
             }
         }
+
+        if (FeatureFlags.deleteDataOnQuit) {
+            findPreference<Preference>(
+                getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit_preference)
+            )?.apply {
+                isVisible = true
+            }
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -110,16 +128,10 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             findPreference<DefaultBrowserPreference>(getPreferenceKey(R.string.pref_key_make_default_browser))
         defaultBrowserPreference?.updateSwitch()
 
-        val searchEnginePreference =
-            findPreference<Preference>(getPreferenceKey(R.string.pref_key_search_engine_settings))
-        searchEnginePreference?.summary = context?.let {
-            requireComponents.search.searchEngineManager.getDefaultSearchEngine(it).name
-        }
-
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
         trackingProtectionPreference?.summary = context?.let {
-            if (org.mozilla.fenix.utils.Settings.getInstance(it).shouldUseTrackingProtection) {
+            if (it.settings().shouldUseTrackingProtection) {
                 getString(R.string.tracking_protection_on)
             } else {
                 getString(R.string.tracking_protection_off)
@@ -128,9 +140,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
         val themesPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_theme))
-        themesPreference?.summary = context?.let {
-            org.mozilla.fenix.utils.Settings.getInstance(it).themeSettingString
-        }
+        themesPreference?.summary = context?.settings()?.themeSettingString
 
         val aboutPreference = findPreference<Preference>(getPreferenceKey(R.string.pref_key_about))
         val appName = getString(R.string.app_name)
@@ -141,17 +151,22 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            resources.getString(pref_key_search_engine_settings) -> {
+            resources.getString(pref_key_search_settings) -> {
                 navigateToSearchEngineSettings()
             }
             resources.getString(pref_key_tracking_protection_settings) -> {
+                requireContext().metrics.track(Event.TrackingProtectionSettings)
                 navigateToTrackingProtectionSettings()
             }
             resources.getString(pref_key_site_permissions) -> {
                 navigateToSitePermissions()
+            }
+            resources.getString(pref_key_add_private_browsing_shortcut) -> {
+                requireContext().metrics.track(Event.PrivateBrowsingCreateShortcut)
+                PrivateShortcutCreateManager.createPrivateShortcut(requireContext())
             }
             resources.getString(pref_key_accessibility) -> {
                 navigateToAccessibility()
@@ -195,12 +210,15 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             resources.getString(pref_key_delete_browsing_data) -> {
                 navigateToDeleteBrowsingData()
             }
+            resources.getString(pref_key_delete_browsing_data_on_quit_preference) -> {
+                navigateToDeleteBrowsingDataOnQuit()
+            }
             resources.getString(pref_key_theme) -> {
                 navigateToThemeSettings()
             }
             resources.getString(pref_key_privacy_link) -> {
                 requireContext().let { context ->
-                    val intent = SupportUtils.createCustomTabIntent(context, SupportUtils.PRIVACY_NOTICE_URL)
+                    val intent = SupportUtils.createCustomTabIntent(context, SupportUtils.getPrivacyNoticeUrl())
                     startActivity(intent)
                 }
             }
@@ -233,10 +251,19 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         val makeDefaultBrowserKey = getPreferenceKey(pref_key_make_default_browser)
         val leakKey = getPreferenceKey(pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(pref_key_remote_debugging)
+        val preferenceAlwaysOpenInPrivateModeKey = getPreferenceKey(
+            pref_key_launch_links_in_private_mode
+        )
 
         val preferenceMakeDefaultBrowser = findPreference<Preference>(makeDefaultBrowserKey)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
+        val preferenceAlwaysOpenInPrivateMode = findPreference<SwitchPreference>(preferenceAlwaysOpenInPrivateModeKey)
+
+        preferenceAlwaysOpenInPrivateMode?.setOnPreferenceClickListener {
+            requireContext().settings().alwaysOpenInPrivateMode = !requireContext().settings().alwaysOpenInPrivateMode
+            true
+        }
 
         preferenceMakeDefaultBrowser?.onPreferenceClickListener =
             getClickListenerForMakeDefaultBrowser()
@@ -249,7 +276,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         }
 
         preferenceRemoteDebugging?.setOnPreferenceChangeListener { preference, newValue ->
-            org.mozilla.fenix.utils.Settings.getInstance(preference.context).preferences.edit()
+        preference.context.settings().preferences.edit()
                 .putBoolean(preference.key, newValue as Boolean).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true
@@ -324,6 +351,12 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToDeleteBrowsingData() {
         val directions = SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataFragment()
+        Navigation.findNavController(view!!).navigate(directions)
+    }
+
+    private fun navigateToDeleteBrowsingDataOnQuit() {
+        val directions =
+            SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataOnQuitFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 

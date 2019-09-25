@@ -4,7 +4,9 @@
 
 import android.content.Context
 import android.os.Bundle
+import mozilla.components.browser.engine.gecko.glean.GeckoAdapter
 import mozilla.components.lib.crash.handler.CrashHandlerService
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
@@ -33,6 +35,8 @@ object GeckoProvider {
         val runtimeSettings = builder
             .crashHandler(CrashHandlerService::class.java)
             .useContentProcessHint(true)
+            .telemetryDelegate(GeckoAdapter())
+            .debugLogging(BuildConfig.DEBUG)
             .build()
 
         if (!Settings.getInstance(context).shouldUseAutoSize) {

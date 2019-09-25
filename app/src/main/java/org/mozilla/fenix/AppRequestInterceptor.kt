@@ -12,26 +12,26 @@ import mozilla.components.concept.engine.request.RequestInterceptor
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionDomains
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.utils.Settings
-import java.net.MalformedURLException
-import java.net.URL
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.tryGetHostFromUrl
 
 class AppRequestInterceptor(private val context: Context) : RequestInterceptor {
     override fun onLoadRequest(session: EngineSession, uri: String): RequestInterceptor.InterceptionResponse? {
-        val host = try {
-            URL(uri).host
-        } catch (e: MalformedURLException) {
-            uri
-        }
+        val host = uri.tryGetHostFromUrl()
 
         adjustTrackingProtection(host, context, session)
-        // Accounts uses interception to check for a "success URL" in the sign-in flow to finalize authentication.
-        return context.components.services.accountsAuthFeature.interceptor.onLoadRequest(session, uri)
+
+        // WebChannel-driven authentication does not require a separate redirect interceptor.
+        return if (context.isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
+            context.components.services.accountsAuthFeature.interceptor.onLoadRequest(session, uri)
+        } else {
+            null
+        }
     }
 
     private fun adjustTrackingProtection(host: String, context: Context, session: EngineSession) {
-        val trackingProtectionException = ExceptionDomains.load(context).contains(host)
-        val trackingProtectionEnabled = Settings.getInstance(context).shouldUseTrackingProtection
+        val trackingProtectionException = ExceptionDomains(context).load().contains(host)
+        val trackingProtectionEnabled = context.settings().shouldUseTrackingProtection
         if (trackingProtectionException || !trackingProtectionEnabled) {
             session.disableTrackingProtection()
         } else {

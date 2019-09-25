@@ -6,8 +6,11 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
+import com.airbnb.lottie.LottieCompositionFactory
+import com.airbnb.lottie.LottieDrawable
 import androidx.navigation.fragment.FragmentNavigator
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.session.SessionManager
@@ -20,11 +23,12 @@ import mozilla.components.feature.toolbar.ToolbarPresenter
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.theme.ThemeManager
 
 class ToolbarIntegration(
     context: Context,
@@ -51,6 +55,32 @@ class ToolbarIntegration(
                 if (isCustomTab) {
                     renderStyle = ToolbarFeature.RenderStyle.RegistrableDomain
                     return@run
+                }
+
+                val task = LottieCompositionFactory
+                    .fromRawRes(
+                        context,
+                        ThemeManager.resolveAttribute(R.attr.shieldLottieFile, context)
+                    )
+                task.addListener { result ->
+                    val lottieDrawable = LottieDrawable()
+                    lottieDrawable.composition = result
+                    toolbar.displayTrackingProtectionIcon =
+                        context.settings().shouldUseTrackingProtection && FeatureFlags.etpCategories
+                    toolbar.displaySeparatorView =
+                        context.settings().shouldUseTrackingProtection && FeatureFlags.etpCategories
+
+                    toolbar.setTrackingProtectionIcons(
+                        iconOnNoTrackersBlocked = AppCompatResources.getDrawable(
+                            context,
+                            R.drawable.ic_tracking_protection_enabled
+                        )!!,
+                        iconOnTrackersBlocked = lottieDrawable,
+                        iconDisabledForSite = AppCompatResources.getDrawable(
+                            context,
+                            R.drawable.ic_tracking_protection_disabled
+                        )!!
+                    )
                 }
 
                 val tabsAction = TabCounterToolbarButton(
@@ -90,7 +120,7 @@ class ToolbarIntegration(
 
         ToolbarAutocompleteFeature(toolbar).apply {
             addDomainProvider(domainAutocompleteProvider)
-            if (Settings.getInstance(context).shouldShowVisitedSitesBookmarks) {
+            if (context.settings().shouldShowHistorySuggestions) {
                 addHistoryStorageProvider(historyStorage)
             }
         }

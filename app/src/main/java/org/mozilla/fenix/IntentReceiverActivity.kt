@@ -8,22 +8,29 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import mozilla.components.feature.intent.processing.TabIntentProcessor
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.customtabs.AuthCustomTabActivity
-import org.mozilla.fenix.customtabs.CustomTabActivity
+import org.mozilla.fenix.customtabs.AuthCustomTabActivity.Companion.EXTRA_AUTH_CUSTOM_TAB
+import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 
+/**
+ * Processes incoming intents and sends them to the corresponding activity.
+ */
 class IntentReceiverActivity : Activity() {
 
     // Holds the intent that initially started this activity
     // so that it can persist through the speech activity.
     private var previousIntent: Intent? = null
 
-    @Suppress("ComplexMethod")
+    @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,51 +39,78 @@ class IntentReceiverActivity : Activity() {
             return
         }
 
-        val isPrivate = Settings.getInstance(this).usePrivateMode
-
         MainScope().launch {
             // The intent property is nullable, but the rest of the code below
             // assumes it is not. If it's null, then we make a new one and open
             // the HomeActivity.
             val intent = intent?.let { Intent(intent) } ?: Intent()
-
-            val intentProcessors = listOf(
-                components.utils.customTabIntentProcessor,
-                if (isPrivate) components.utils.privateIntentProcessor else components.utils.intentProcessor
-            )
-
-            if (intent.getBooleanExtra(SPEECH_PROCESSING, false)) {
-                previousIntent = intent
-                displaySpeechRecognizer()
-            } else {
-                intentProcessors.any { it.process(intent) }
-                setIntentActivity(intent)
-
-                startActivity(intent)
-
-                finish()
-            }
+            processIntent(intent)
         }
     }
 
-    private fun setIntentActivity(intent: Intent) {
+    suspend fun processIntent(intent: Intent) {
+        val tabIntentProcessor = if (settings().alwaysOpenInPrivateMode) {
+            components.intentProcessors.privateIntentProcessor
+        } else {
+            components.intentProcessors.intentProcessor
+        }
+
+        val intentProcessors =
+            components.intentProcessors.externalAppIntentProcessors + tabIntentProcessor
+
+        if (intent.getBooleanExtra(SPEECH_PROCESSING, false)) {
+            previousIntent = intent
+            displaySpeechRecognizer()
+        } else {
+            intentProcessors.any { it.process(intent) }
+            setIntentActivity(intent, tabIntentProcessor)
+
+            startActivity(intent)
+
+            finish()
+        }
+    }
+
+    /**
+     * Sets the activity that this [intent] will launch.
+     */
+    private fun setIntentActivity(intent: Intent, tabIntentProcessor: TabIntentProcessor) {
         val openToBrowser = when {
-            components.utils.customTabIntentProcessor.matches(intent) -> {
-                val activityClass = if (intent.hasExtra(getString(R.string.intent_extra_auth))) {
+            components.intentProcessors.externalAppIntentProcessors.any { it.matches(intent) } -> {
+                // TODO this needs to change: https://github.com/mozilla-mobile/fenix/issues/5225
+                val activityClass = if (intent.hasExtra(EXTRA_AUTH_CUSTOM_TAB)) {
                     AuthCustomTabActivity::class
                 } else {
-                    CustomTabActivity::class
+                    ExternalAppBrowserActivity::class
                 }
                 intent.setClassName(applicationContext, activityClass.java.name)
                 true
             }
-            intent.action == Intent.ACTION_VIEW || intent.action == Intent.ACTION_SEND -> {
+            tabIntentProcessor.matches(intent) -> {
                 intent.setClassName(applicationContext, HomeActivity::class.java.name)
                 // This Intent was launched from history (recent apps). Android will redeliver the
                 // original Intent (which might be a VIEW intent). However if there's no active browsing
                 // session then we do not want to re-process the Intent and potentially re-open a website
                 // from a session that the user already "erased".
                 intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+            }
+            intent.action == ACTION_OPEN_TAB || intent.action == ACTION_OPEN_PRIVATE_TAB -> {
+                intent.setClassName(applicationContext, HomeActivity::class.java.name)
+                val startPrivateMode = (intent.action == ACTION_OPEN_PRIVATE_TAB)
+                if (startPrivateMode) {
+                    intent.putExtra(
+                        HomeActivity.OPEN_TO_SEARCH,
+                        StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_PRIVATE_TAB
+                    )
+                } else {
+                    intent.putExtra(
+                        HomeActivity.OPEN_TO_SEARCH,
+                        StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_TAB
+                    )
+                }
+                intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, startPrivateMode)
+                intent.flags = intent.flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                true
             }
             else -> {
                 intent.setClassName(applicationContext, HomeActivity::class.java.name)
@@ -120,8 +154,10 @@ class IntentReceiverActivity : Activity() {
     }
 
     companion object {
-        private const val SPEECH_REQUEST_CODE = 0
+        const val SPEECH_REQUEST_CODE = 0
         const val SPEECH_PROCESSING = "speech_processing"
         const val PREVIOUS_INTENT = "previous_intent"
+        const val ACTION_OPEN_TAB = "org.mozilla.fenix.OPEN_TAB"
+        const val ACTION_OPEN_PRIVATE_TAB = "org.mozilla.fenix.OPEN_PRIVATE_TAB"
     }
 }

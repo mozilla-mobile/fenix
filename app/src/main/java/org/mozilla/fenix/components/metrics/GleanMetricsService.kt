@@ -5,9 +5,8 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.components.service.glean.BuildConfig
@@ -28,6 +27,7 @@ import org.mozilla.fenix.GleanMetrics.Library
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
+import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.QuickActionSheet
 import org.mozilla.fenix.GleanMetrics.ReaderMode
@@ -36,6 +36,8 @@ import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
+import org.mozilla.fenix.GleanMetrics.Tab
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.ext.components
 
 private class EventWrapper<T : Enum<T>>(
@@ -224,14 +226,26 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SyncAuthSignIn -> EventWrapper<NoExtraKeys>(
             { SyncAuth.signIn.record(it) }
         )
+        is Event.SyncAuthSignUp -> EventWrapper<NoExtraKeys>(
+            { SyncAuth.signUp.record(it) }
+        )
+        is Event.SyncAuthPaired -> EventWrapper<NoExtraKeys>(
+            { SyncAuth.paired.record(it) }
+        )
+        is Event.SyncAuthOtherExternal -> EventWrapper<NoExtraKeys>(
+            { SyncAuth.otherExternal.record(it) }
+        )
+        is Event.SyncAuthFromShared -> EventWrapper<NoExtraKeys>(
+            { SyncAuth.autoLogin.record(it) }
+        )
+        is Event.SyncAuthRecovered -> EventWrapper<NoExtraKeys>(
+            { SyncAuth.recovered.record(it) }
+        )
         is Event.SyncAuthSignOut -> EventWrapper<NoExtraKeys>(
             { SyncAuth.signOut.record(it) }
         )
         is Event.SyncAuthScanPairing -> EventWrapper<NoExtraKeys>(
             { SyncAuth.scanPairing.record(it) }
-        )
-        is Event.SyncAuthCreateAccount -> EventWrapper<NoExtraKeys>(
-            { SyncAuth.createAccount.record(it) }
         )
         is Event.SyncAccountOpened -> EventWrapper<NoExtraKeys>(
             { SyncAccount.opened.record(it) }
@@ -241,6 +255,12 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.SyncAccountSyncNow -> EventWrapper<NoExtraKeys>(
             { SyncAccount.syncNow.record(it) }
+        )
+        is Event.SignInToSendTab -> EventWrapper<NoExtraKeys>(
+            { SyncAccount.signInToSendTab.record(it) }
+        )
+        is Event.SendTab -> EventWrapper<NoExtraKeys>(
+            { SyncAccount.sendTab.record(it) }
         )
         is Event.PreferenceToggled -> EventWrapper(
             { Events.preferenceToggled.record(it) },
@@ -330,7 +350,53 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PrivateBrowsingNotificationDeleteAndOpenTapped -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingMode.notificationDelete.record(it) }
         )
-
+        is Event.PrivateBrowsingCreateShortcut -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.createShortcut.record(it) }
+        )
+        is Event.PrivateBrowsingAddShortcutCFR -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.cfrAddShortcut.record(it) }
+        )
+        is Event.PrivateBrowsingCancelCFR -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.cfrCancel.record(it) }
+        )
+        is Event.PrivateBrowsingPinnedShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.pinnedShortcutPriv.record(it) }
+        )
+        is Event.PrivateBrowsingStaticShortcutTab -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.staticShortcutTab.record(it) }
+        )
+        is Event.PrivateBrowsingStaticShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
+            { PrivateBrowsingShortcut.staticShortcutPriv.record(it) }
+        )
+        is Event.WhatsNewTapped -> EventWrapper(
+            { Events.whatsNewTapped.record(it) },
+            { Events.whatsNewTappedKeys.valueOf(it) }
+        )
+        is Event.TabMediaPlay -> EventWrapper<NoExtraKeys>(
+            { Tab.mediaPlay.record(it) }
+        )
+        is Event.TabMediaPause -> EventWrapper<NoExtraKeys>(
+            { Tab.mediaPause.record(it) }
+        )
+        is Event.TrackingProtectionTrackerList -> EventWrapper<NoExtraKeys>(
+            { TrackingProtection.etpTrackerList.record(it) }
+        )
+        is Event.TrackingProtectionIconPressed -> EventWrapper<NoExtraKeys>(
+            { TrackingProtection.etpShield.record(it) }
+        )
+        is Event.TrackingProtectionSettingsPanel -> EventWrapper<NoExtraKeys>(
+            { TrackingProtection.panelSettings.record(it) }
+        )
+        is Event.TrackingProtectionSettings -> EventWrapper<NoExtraKeys>(
+            { TrackingProtection.etpSettings.record(it) }
+        )
+        is Event.TrackingProtectionException -> EventWrapper<NoExtraKeys>(
+            { TrackingProtection.exceptionAdded.record(it) }
+        )
+        is Event.TrackingProtectionSettingChanged -> EventWrapper(
+            { TrackingProtection.etpSettingChanged.record(it) },
+            { TrackingProtection.etpSettingChangedKeys.valueOf(it) }
+        )
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
         is Event.OpenedBookmark -> null
@@ -356,32 +422,36 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         if (initialized) return
         initialized = true
 
-        starter = CoroutineScope(Dispatchers.IO).launch {
+        starter = MainScope().launch {
             Glean.registerPings(Pings)
             Glean.initialize(context, Configuration(channel = BuildConfig.BUILD_TYPE))
 
-            Metrics.apply {
-                defaultBrowser.set(Browsers.all(context).isDefaultBrowser)
-                MozillaProductDetector.getMozillaBrowserDefault(context)?.also {
-                    defaultMozBrowser.set(it)
-                }
-                mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
-            }
-
-            SearchDefaultEngine.apply {
-                val defaultEngine = context
-                    .components
-                    .search
-                    .searchEngineManager
-                    .defaultSearchEngine ?: return@apply
-
-                code.set(defaultEngine.identifier)
-                name.set(defaultEngine.name)
-                submissionUrl.set(defaultEngine.buildSearchUrl(""))
-            }
-
-            activationPing.checkAndSend()
+            setStartupMetrics()
         }
+    }
+
+    internal fun setStartupMetrics() {
+        Metrics.apply {
+            defaultBrowser.set(Browsers.all(context).isDefaultBrowser)
+            MozillaProductDetector.getMozillaBrowserDefault(context)?.also {
+                defaultMozBrowser.set(it)
+            }
+            mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
+        }
+
+        SearchDefaultEngine.apply {
+            val defaultEngine = context
+                .components
+                .search
+                .searchEngineManager
+                .defaultSearchEngine ?: return@apply
+
+            code.set(defaultEngine.identifier)
+            name.set(defaultEngine.name)
+            submissionUrl.set(defaultEngine.buildSearchUrl(""))
+        }
+
+        activationPing.checkAndSend()
     }
 
     override fun stop() {

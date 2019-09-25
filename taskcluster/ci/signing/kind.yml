@@ -1,0 +1,55 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: fenix_taskgraph.loader.single_dep:loader
+
+transforms:
+    - fenix_taskgraph.transforms.single_dep:transforms
+    - fenix_taskgraph.transforms.signing:transforms
+    - taskgraph.transforms.task:transforms
+
+kind-dependencies:
+    - build
+
+job-template:
+    description: Sign Fenix
+    worker-type:
+        by-build-type:
+            (fennec-production|nightly|nightly-legacy|production):
+                by-level:
+                    '3': signing
+                    default: dep-signing
+            default: dep-signing
+    worker:
+        signing-type:
+            by-build-type:
+                fennec-production:
+                    by-level:
+                        '3': fennec-production-signing
+                        default: dep-signing
+                nightly:
+                    by-level:
+                        '3': nightly-signing
+                        default: dep-signing
+                nightly-legacy:
+                    by-level:
+                        '3': production-signing
+                        default: dep-signing
+                performance-test: dep-signing
+                production:
+                    by-level:
+                        '3': production-signing
+                        default: dep-signing
+                default: dep-signing
+    index:
+        by-build-type:
+            (fennec-production|nightly|performance-test|production):
+                type: signing
+            default: {}
+    run-on-tasks-for: []
+    treeherder:
+        job-symbol: Bs
+        kind: build
+        platform: android-all/opt
+        tier: 2

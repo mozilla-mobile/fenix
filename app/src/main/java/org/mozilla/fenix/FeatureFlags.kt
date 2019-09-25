@@ -4,6 +4,9 @@ package org.mozilla.fenix
  * A single source for setting feature flags that are mostly based on build type.
  */
 object FeatureFlags {
+    // lazy is used to suppress "Condition is always 'true'" warnings when using the flags.
+    // https://github.com/mozilla-mobile/fenix/pull/4077#issuecomment-511964072
+
     // A convenience flag for production builds.
     private val production by lazy { BuildConfig.BUILD_TYPE == "fenixProduction" }
     // A convenience flag for beta builds.
@@ -36,4 +39,20 @@ object FeatureFlags {
      * https://github.com/mozilla-mobile/fenix/issues/4431
      */
     const val mediaIntegration = true
+
+    /**
+     * Displays the categories blocked by ETP in a panel in the toolbar
+     */
+    val etpCategories = nightly or debug
+
+    /**
+     * Granular data deletion provides additional choices on the Delete Browsing Data
+     * setting screen for cookies, cached images and files, and site permissions.
+     */
+    val granularDataDeletion = nightly or debug
+
+    /**
+     * Gives option in Settings to Delete Browsing Data on new menu option Quit
+     */
+    val deleteDataOnQuit = nightly or debug
 }

@@ -315,6 +315,21 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'LEANPLUM_TOKEN', 'null'
         println("X_X")
     }
+
+// -------------------------------------------------------------------------------------------------
+// Digital Asset Links: Read token from local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Digital Asset Links token: ")
+
+    try {
+        def token = new File("${rootDir}/.digital_asset_links_token").text.trim()
+        buildConfigField 'String', 'DIGITAL_ASSET_LINKS_TOKEN', '"' + token + '"'
+        println "(Added from .digital_asset_links_token file)"
+    } catch (FileNotFoundException ignored) {
+        buildConfigField 'String', 'DIGITAL_ASSET_LINKS_TOKEN', 'null'
+        println("X_X")
+    }
 }
 
 androidExtensions {
@@ -329,6 +344,7 @@ dependencies {
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
+    testImplementation Deps.kotlin_coroutines_test
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_constraintlayout
     implementation Deps.androidx_coordinatorlayout
@@ -386,6 +402,7 @@ dependencies {
     implementation Deps.mozilla_feature_readerview
     implementation Deps.mozilla_feature_tab_collections
     implementation Deps.mozilla_feature_sendtab
+    implementation Deps.mozilla_feature_webcompat
 
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_fretboard
@@ -424,6 +441,8 @@ dependencies {
 
     implementation Deps.autodispose
 
+    implementation Deps.lottie
+
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
 
@@ -460,6 +479,7 @@ dependencies {
     androidTestImplementation Deps.mockwebserver
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.androidx_junit
+    testImplementation Deps.androidx_work_testing
     testImplementation (Deps.robolectric) {
         exclude group: 'org.apache.maven'
     }
@@ -486,10 +506,6 @@ dependencies {
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
     testImplementation Deps.assertk
-
-    debugImplementation Deps.flipper
-    debugImplementation Deps.soLoader
-    releaseImplementation Deps.flipper_noop
 }
 
 if (project.hasProperty("raptor")) {
@@ -534,21 +550,20 @@ if (project.hasProperty("coverage")) {
 
 // -------------------------------------------------------------------------------------------------
 // Task for printing APK information for the requested variant
-// Usage: "./gradlew printVariant -PvariantBuildType=nightly -PvariantEngine=geckoNightly"
+// Usage: "./gradlew printVariants
 // -------------------------------------------------------------------------------------------------
-task printVariant {
+task printVariants {
     doLast {
-        def rawVariant = android.applicationVariants.find {
-            it.buildType.name == variantBuildType &&
-                    it.productFlavors.find { it.dimension == 'engine' }.name == variantEngine
-        }
-        println 'variant: ' + groovy.json.JsonOutput.toJson([
-            name: rawVariant.name,
-            apks: rawVariant.variantData.outputScope.apkDatas.collect { [
-                    abi: it.filters.find { it.filterType == 'ABI' }.identifier,
-                    fileName: it.outputFileName,
-            ]}
-        ])
+        def variants = android.applicationVariants.collect {[
+            apks: it.variantData.outputScope.apkDatas.collect {[
+                abi: it.filters.find { it.filterType == 'ABI' }.identifier,
+                fileName: it.outputFileName,
+            ]},
+            build_type: it.buildType.name,
+            engine: it.productFlavors.find { it.dimension == 'engine' }.name,
+            name: it.name,
+        ]}
+        println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
     }
 }
 
@@ -558,6 +573,9 @@ def glean_android_components_tag = (
         'v' + Versions.mozilla_android_components
 )
 
+// Generate markdown docs for the collected metrics.
+ext.gleanGenerateMarkdownDocs = true
+ext.gleanDocsDirectory = "$rootDir/docs"
 apply from: 'https://github.com/mozilla-mobile/android-components/raw/' + glean_android_components_tag + '/components/service/glean/scripts/sdk_generator.gradle'
 
 // For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together

@@ -31,18 +31,19 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
+import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.isSentryEnabled
+import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.SentryBreadcrumbsRecorder
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
@@ -55,10 +56,10 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.settings.AboutFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
+import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.Settings
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback {
@@ -85,6 +86,8 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setPrivateModeIfNecessary()
+
         components.publicSuffixList.prefetch()
         setupThemeAndBrowsingMode()
 
@@ -92,10 +95,9 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
         setupToolbarAndNavigation()
 
-        if (Settings.getInstance(this).isTelemetryEnabled) {
-            if (isSentryEnabled()) {
-                lifecycle.addObserver(SentryBreadcrumbsRecorder(navHost.navController, ::getSentryBreadcrumbMessage))
-            }
+        if (settings().isTelemetryEnabled) {
+            lifecycle.addObserver(BreadcrumbsRecorder(components.analytics.crashReporter,
+                navHost.navController, ::getBreadcrumbMessage))
 
             intent
                 ?.toSafeIntent()
@@ -154,7 +156,7 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         super.onBackPressed()
     }
 
-    protected open fun getSentryBreadcrumbMessage(destination: NavDestination): String {
+    protected open fun getBreadcrumbMessage(destination: NavDestination): String {
         val fragmentName = resources.getResourceEntryName(destination.id)
         return "Changing to fragment $fragmentName, isCustomTab: false"
     }
@@ -165,6 +167,20 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
             intent.isLauncherIntent -> Event.OpenedApp.Source.APP_ICON
             intent.action == Intent.ACTION_VIEW -> Event.OpenedApp.Source.LINK
             else -> null
+        }
+    }
+
+    /**
+     * External sources such as 3rd party links and shortcuts use this function to enter
+     * private mode directly before the content view is created.
+     */
+    private fun setPrivateModeIfNecessary() {
+        intent?.toSafeIntent()?.let {
+            if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
+                val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
+                settings().usePrivateMode = startPrivateMode
+                intent.removeExtra(PRIVATE_BROWSING_MODE)
+            }
         }
     }
 
@@ -205,7 +221,7 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
         if (sessionObserver == null)
-            sessionObserver = subscribeToSessions()
+            sessionObserver = UriOpenedObserver(this)
 
         if (navHost.navController.alreadyOnDestination(R.id.browserFragment)) return
         @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
@@ -236,6 +252,10 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
             )
         BrowserDirection.FromAbout ->
             AboutFragmentDirections.actionAboutFragmentToBrowserFragment(customTabSessionId)
+        BrowserDirection.FromTrackingProtection ->
+            TrackingProtectionFragmentDirections.actionTrackingProtectionFragmentToBrowserFragment(
+            customTabSessionId
+        )
     }
 
     private fun load(
@@ -281,50 +301,13 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
     }
 
     protected open fun createBrowsingModeManager(): BrowsingModeManager {
-        return DefaultBrowsingModeManager(Settings.getInstance(this)) { mode ->
+        return DefaultBrowsingModeManager(settings()) { mode ->
             themeManager.currentTheme = mode
         }
     }
 
     protected open fun createThemeManager(): ThemeManager {
         return DefaultThemeManager(browsingModeManager.mode, this)
-    }
-
-    @Suppress("ComplexMethod")
-    private fun subscribeToSessions(): SessionManager.Observer {
-        val singleSessionObserver = object : Session.Observer {
-            var urlLoading: String? = null
-
-            override fun onLoadingStateChanged(session: Session, loading: Boolean) {
-                if (loading) {
-                    urlLoading = session.url
-                } else if (urlLoading != null && !session.private) {
-                    components.analytics.metrics.track(Event.UriOpened)
-                }
-            }
-        }
-
-        return object : SessionManager.Observer {
-            override fun onAllSessionsRemoved() {
-                components.core.sessionManager.sessions.forEach {
-                    it.unregister(singleSessionObserver)
-                }
-            }
-
-            override fun onSessionAdded(session: Session) {
-                session.register(singleSessionObserver, this@HomeActivity)
-            }
-
-            override fun onSessionRemoved(session: Session) {
-                session.unregister(singleSessionObserver)
-            }
-
-            override fun onSessionsRestored() {
-                components.core.sessionManager.sessions.forEach {
-                    it.register(singleSessionObserver, this@HomeActivity)
-                }
-            }
-        }.also { components.core.sessionManager.register(it, this) }
     }
 
     override fun onTabsShared(tabsSize: Int) {
@@ -342,6 +325,7 @@ open class HomeActivity : AppCompatActivity(), ShareFragment.TabsSharedCallback 
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
         const val OPEN_TO_SEARCH = "open_to_search"
+        const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
     }

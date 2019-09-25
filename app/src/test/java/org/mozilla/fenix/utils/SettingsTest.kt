@@ -18,6 +18,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.ext.clearAndCommit
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.PhoneFeature
 import org.robolectric.annotation.Config
 
@@ -30,8 +32,7 @@ class SettingsTest {
 
     @Before
     fun setUp() {
-        settings = Settings.getInstance(testContext)
-            .apply(Settings::clear)
+        settings = testContext.settings().apply(Settings::clear)
     }
 
     @Test
@@ -54,6 +55,70 @@ class SettingsTest {
     }
 
     @Test
+    fun alwaysOpenInPrivateMode() {
+        // When just created
+        // Then
+        assertFalse(settings.alwaysOpenInPrivateMode)
+
+        // When
+        settings.alwaysOpenInPrivateMode = true
+
+        // Then
+        assertTrue(settings.alwaysOpenInPrivateMode)
+
+        // When
+        settings.alwaysOpenInPrivateMode = false
+
+        // Then
+        assertFalse(settings.usePrivateMode)
+    }
+
+    @Test
+    fun clearDataOnQuit() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldDeleteBrowsingDataOnQuit)
+
+        // When
+        settings.shouldDeleteBrowsingDataOnQuit = true
+
+        // Then
+        assertTrue(settings.shouldDeleteBrowsingDataOnQuit)
+
+        // When
+        settings.shouldDeleteBrowsingDataOnQuit = false
+
+        // Then
+        assertFalse(settings.shouldDeleteBrowsingDataOnQuit)
+    }
+
+    @Test
+    fun clearAnyDataOnQuit() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldDeleteAnyDataOnQuit())
+
+        // When
+        settings.setDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.TABS, true)
+
+        // Then
+        assertTrue(settings.shouldDeleteAnyDataOnQuit())
+
+        // When
+        settings.setDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.PERMISSIONS, true)
+
+        // Then
+        assertTrue(settings.shouldDeleteAnyDataOnQuit())
+
+        // When
+        settings.setDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.TABS, false)
+        settings.setDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.PERMISSIONS, false)
+
+        // Then
+        assertFalse(settings.shouldDeleteAnyDataOnQuit())
+    }
+
+    @Test
     fun defaultSearchEngineName() {
         // When just created
         // Then
@@ -70,7 +135,7 @@ class SettingsTest {
     fun isCrashReportingEnabled_enabledInBuild() {
         // When
         clearExistingInstance()
-        val settings = Settings.getInstance(testContext, isCrashReportEnabledInBuild = true)
+        val settings = testContext.settings(true)
             .apply(Settings::clear)
 
         // Then
@@ -81,7 +146,7 @@ class SettingsTest {
     fun isCrashReportingEnabled_disabledInBuild() {
         // When
         clearExistingInstance()
-        val settings = Settings.getInstance(testContext, isCrashReportEnabledInBuild = false)
+        val settings = testContext.settings(false)
             .apply(Settings::clear)
 
         // Then
@@ -175,10 +240,24 @@ class SettingsTest {
     }
 
     @Test
-    fun shouldShowVisitedSitesBookmarks() {
+    fun shouldShowClipboardSuggestion() {
         // When just created
         // Then
-        assertTrue(settings.shouldShowVisitedSitesBookmarks)
+        assertTrue(settings.shouldShowClipboardSuggestions)
+    }
+
+    @Test
+    fun shouldShowHistorySuggestions() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldShowHistorySuggestions)
+    }
+
+    @Test
+    fun shouldShowBookmarkSuggestions() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldShowBookmarkSuggestions)
     }
 
     @Test
@@ -215,6 +294,13 @@ class SettingsTest {
     }
 
     @Test
+    fun shouldUseTrackingProtectionStrict() {
+        // When
+        // Then
+        assertTrue(settings.useStrictTrackingProtection)
+    }
+
+    @Test
     fun shouldUseAutoBatteryTheme() {
         // When just created
         // Then
@@ -225,7 +311,7 @@ class SettingsTest {
     fun showSearchSuggestions() {
         // When just created
         // Then
-        assertTrue(settings.showSearchSuggestions)
+        assertTrue(settings.shouldShowSearchSuggestions)
     }
 
     @Test

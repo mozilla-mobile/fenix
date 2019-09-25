@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.library.bookmarks.selectfolder
 
-import android.graphics.PorterDuff.Mode.SRC_IN
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_select_bookmark_folder.*
 import kotlinx.android.synthetic.main.fragment_select_bookmark_folder.view.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,12 +31,11 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.setRootTitles
-import org.mozilla.fenix.ext.withOptionalDesktopFolders
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
+import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.bookmarks.SignInView
 
 @SuppressWarnings("TooManyFunctions")
@@ -78,7 +76,6 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
     override fun onResume() {
         super.onResume()
-        context?.let { setRootTitles(it, showMobileRoot = true) }
         activity?.title = getString(R.string.bookmark_select_folder_fragment_label)
         (activity as? AppCompatActivity)?.supportActionBar?.show()
 
@@ -87,8 +84,10 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
 
         lifecycleScope.launch(Main) {
             bookmarkNode = withContext(IO) {
-                requireComponents.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)
-                    .withOptionalDesktopFolders(context, showMobileRoot = true)
+                val context = requireContext()
+                context.components.core.bookmarksStorage
+                    .getTree(BookmarkRoot.Root.id, recursive = true)
+                    ?.let { DesktopFolders(context, showMobileRoot = true).withOptionalDesktopFolders(it) }
             }
             activity?.title = bookmarkNode?.title ?: getString(R.string.library_bookmarks)
             val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
@@ -105,11 +104,9 @@ class SelectBookmarkFolderFragment : Fragment(), AccountObserver {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val visitedAddBookmark = SelectBookmarkFolderFragmentArgs.fromBundle(arguments!!).visitedAddBookmark
-        if (!visitedAddBookmark) {
+        val args: SelectBookmarkFolderFragmentArgs by navArgs()
+        if (!args.visitedAddBookmark) {
             inflater.inflate(R.menu.bookmarks_select_folder, menu)
-            menu.findItem(R.id.add_folder_button).icon.colorFilter =
-                PorterDuffColorFilter(context!!.getColorFromAttr(R.attr.primaryText), SRC_IN)
         }
     }
 

@@ -5,17 +5,14 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
-import kotlinx.android.parcel.Parcelize
 import mozilla.components.browser.session.Session
-import mozilla.components.service.fxa.sharing.ShareableAccount
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import mozilla.components.feature.media.state.MediaState
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.Change
@@ -47,15 +44,14 @@ class SessionControlComponent(
     }
 }
 
-@Parcelize
 data class Tab(
     val sessionId: String,
     val url: String,
     val hostname: String,
     val title: String,
     val selected: Boolean? = null,
-    val thumbnail: Bitmap? = null
-) : Parcelable
+    var mediaState: MediaState? = null
+)
 
 fun List<Tab>.toSessionBundle(context: Context): MutableList<Session> {
     val sessionBundle = mutableListOf<Session>()
@@ -64,33 +60,7 @@ fun List<Tab>.toSessionBundle(context: Context): MutableList<Session> {
             sessionBundle.add(session)
         }
     }
-
     return sessionBundle
-}
-
-/**
- * Describes various onboarding states.
- */
-sealed class OnboardingState {
-    // Signed out, without an option to auto-login using a shared FxA account.
-    object SignedOutNoAutoSignIn : OnboardingState()
-    // Signed out, with an option to auto-login into a shared FxA account.
-    data class SignedOutCanAutoSignIn(val withAccount: ShareableAccount) : OnboardingState()
-    // Signed in.
-    object SignedIn : OnboardingState()
-}
-
-sealed class Mode {
-    object Normal : Mode()
-    object Private : Mode()
-    data class Onboarding(val state: OnboardingState) : Mode()
-
-    companion object {
-        fun fromBrowsingMode(browsingMode: BrowsingMode) = when (browsingMode) {
-            BrowsingMode.Normal -> Normal
-            BrowsingMode.Private -> Private
-        }
-    }
 }
 
 data class SessionControlState(
@@ -110,6 +80,8 @@ sealed class TabAction : Action {
     data class Select(val tabView: View, val sessionId: String) : TabAction()
     data class Close(val sessionId: String) : TabAction()
     data class Share(val sessionId: String) : TabAction()
+    data class PauseMedia(val sessionId: String) : TabAction()
+    data class PlayMedia(val sessionId: String) : TabAction()
     object PrivateBrowsingLearnMore : TabAction()
 }
 

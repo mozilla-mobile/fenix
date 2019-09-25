@@ -1,21 +1,33 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.components.toolbar
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.support.ktx.android.util.dpToFloat
 import mozilla.components.support.ktx.android.util.dpToPx
+import org.jetbrains.anko.dimen
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.theme.ThemeManager
 
 interface BrowserToolbarViewInteractor {
+    fun onBrowserToolbarPaste(text: String)
+    fun onBrowserToolbarPasteAndGo(text: String)
     fun onBrowserToolbarClicked()
     fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
 }
@@ -39,9 +51,50 @@ class BrowserToolbarView(
     val toolbarIntegration: ToolbarIntegration
 
     init {
+        val isCustomTabSession = customTabSession != null
+
+        view.setOnUrlLongClickListener {
+            val clipboard = view.context.components.clipboardHandler
+            val customView = LayoutInflater.from(view.context).inflate(R.layout.browser_toolbar_popup_window, null)
+            val popupWindow = PopupWindow(customView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                view.context.dimen(R.dimen.context_menu_height),
+                true
+            )
+
+            val selectedSession = container.context.components.core.sessionManager.selectedSession
+
+            popupWindow.elevation = view.context.dimen(R.dimen.mozac_browser_menu_elevation).toFloat()
+
+            customView.paste.isVisible = !clipboard.text.isNullOrEmpty() && !isCustomTabSession
+            customView.paste_and_go.isVisible = !clipboard.text.isNullOrEmpty() && !isCustomTabSession
+
+            customView.copy.setOnClickListener {
+                popupWindow.dismiss()
+                if (isCustomTabSession) {
+                    clipboard.text = customTabSession?.url
+                } else {
+                    clipboard.text = selectedSession?.url
+                }
+            }
+
+            customView.paste.setOnClickListener {
+                popupWindow.dismiss()
+                interactor.onBrowserToolbarPaste(clipboard.text!!)
+            }
+
+            customView.paste_and_go.setOnClickListener {
+                popupWindow.dismiss()
+                interactor.onBrowserToolbarPasteAndGo(clipboard.text!!)
+            }
+
+            popupWindow.showAsDropDown(view, view.context.dimen(R.dimen.context_menu_x_offset), 0, Gravity.START)
+
+            true
+        }
+
         with(container.context) {
             val sessionManager = components.core.sessionManager
-            val isCustomTabSession = customTabSession != null
 
             view.apply {
                 elevation = TOOLBAR_ELEVATION.dpToFloat(resources.displayMetrics)

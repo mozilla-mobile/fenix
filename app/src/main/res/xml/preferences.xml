@@ -19,11 +19,11 @@
         app:iconSpaceReserved="false"
         app:isPreferenceVisible="false">
 
-        <org.mozilla.fenix.settings.AccountPreference
+        <org.mozilla.fenix.settings.account.AccountPreference
             android:icon="@drawable/ic_account"
             android:key="@string/pref_key_account" />
 
-        <org.mozilla.fenix.settings.AccountAuthErrorPreference
+        <org.mozilla.fenix.settings.account.AccountAuthErrorPreference
             android:icon="@drawable/ic_account_warning"
             android:key="@string/pref_key_account_auth_error"/>
     </androidx.preference.PreferenceCategory>
@@ -33,8 +33,8 @@
         app:iconSpaceReserved="false">
         <androidx.preference.Preference
             android:icon="@drawable/ic_search"
-            android:key="@string/pref_key_search_engine_settings"
-            android:title="@string/preferences_search_engine" />
+            android:key="@string/pref_key_search_settings"
+            android:title="@string/preferences_search" />
 
         <androidx.preference.Preference
             android:icon="@drawable/ic_customize"
@@ -57,7 +57,15 @@
         <androidx.preference.Preference
             android:icon="@drawable/ic_tracking_protection_enabled"
             android:key="@string/pref_key_tracking_protection_settings"
-            android:title="@string/preferences_tracking_protection" />
+            android:title="@string/preference_enhanced_tracking_protection" />
+        <androidx.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_launch_links_in_private_mode"
+            android:title="@string/preferences_launch_links_in_private_mode" />
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_private_browsing"
+            android:key="@string/pref_key_add_private_browsing_shortcut"
+            android:title="@string/preferences_add_private_browsing_shortcut"/>
         <androidx.preference.Preference
             android:icon="@drawable/ic_permission"
             android:key="@string/pref_key_site_permissions"
@@ -66,6 +74,11 @@
             android:icon="@drawable/ic_delete"
             android:key="@string/pref_key_delete_browsing_data"
             android:title="@string/preferences_delete_browsing_data" />
+        <androidx.preference.Preference
+            app:isPreferenceVisible="false"
+            android:icon="@drawable/ic_exit"
+            android:key="@string/pref_key_delete_browsing_data_on_quit_preference"
+            android:title="@string/preferences_delete_browsing_data_on_quit" />
         <androidx.preference.Preference
             android:icon="@drawable/ic_data_collection"
             android:key="@string/pref_key_data_choices"

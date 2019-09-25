@@ -16,6 +16,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.appservices.Megazord
 import mozilla.components.concept.push.PushProcessor
@@ -32,9 +33,9 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.GleanMetrics.ExperimentsMetrics
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
-import org.mozilla.fenix.utils.Settings
 import java.io.File
 
 @SuppressLint("Registered")
@@ -80,7 +81,7 @@ open class FenixApplication : Application() {
         experimentLoader = loadExperiments()
 
         // Enable the service-experiments component
-        if (Settings.getInstance(this).isExperimentationEnabled) {
+        if (settings().isExperimentationEnabled) {
             Experiments.initialize(
                 applicationContext,
                 mozilla.components.service.experiments.Configuration(
@@ -100,7 +101,7 @@ open class FenixApplication : Application() {
         }
 
         setupLeakCanary()
-        if (Settings.getInstance(this).isTelemetryEnabled) {
+        if (settings().isTelemetryEnabled) {
             components.analytics.metrics.start()
         }
 
@@ -110,13 +111,24 @@ open class FenixApplication : Application() {
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
 
         components.core.sessionManager.register(NotificationSessionObserver(this))
+
+        if ((System.currentTimeMillis() - this.settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
+            runStorageMaintenance()
+        }
+    }
+
+    private fun runStorageMaintenance() {
+        GlobalScope.launch(Dispatchers.IO) {
+            // Bookmarks and history storage sit on top of the same db file so we only need to
+            // run maintenance on one - arbitrarily using bookmarks.
+            components.core.bookmarksStorage.runMaintenance()
+        }
+        this.settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
     }
 
     private fun registerRxExceptionHandling() {
         RxJavaPlugins.setErrorHandler {
-            it.cause?.run {
-                throw this
-            } ?: throw it
+            throw it.cause ?: it
         }
     }
 
@@ -191,14 +203,14 @@ open class FenixApplication : Application() {
         // Sets the PushFeature as the singleton instance for push messages to go to.
         // We need the push feature setup here to deliver messages in the case where the service
         // starts up the app first.
-        if (components.backgroundServices.pushConfig != null) {
-            val push = components.backgroundServices.push
+        components.backgroundServices.push?.let { autoPushFeature ->
+            Logger.info("AutoPushFeature is configured, initializing it...")
 
             // Install the AutoPush singleton to receive messages.
-            PushProcessor.install(push)
+            PushProcessor.install(autoPushFeature)
 
             // Initialize the service. This could potentially be done in a coroutine in the future.
-            push.initialize()
+            autoPushFeature.initialize()
         }
     }
 
@@ -236,7 +248,7 @@ open class FenixApplication : Application() {
     @SuppressLint("WrongConstant")
     // Suppressing erroneous lint warning about using MODE_NIGHT_AUTO_BATTERY, a likely library bug
     private fun setDayNightTheme() {
-        val settings = Settings.getInstance(this)
+        val settings = this.settings()
         when {
             settings.shouldUseLightTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
@@ -290,9 +302,14 @@ open class FenixApplication : Application() {
                 .detectActivityLeaks()
                 .detectFileUriExposure()
                 .penaltyLog()
-            if (SDK_INT >= Build.VERSION_CODES.O) builder = builder.detectContentUriWithoutPermission()
+            if (SDK_INT >= Build.VERSION_CODES.O) builder =
+                builder.detectContentUriWithoutPermission()
             if (SDK_INT >= Build.VERSION_CODES.P) builder = builder.detectNonSdkApiUsage()
             StrictMode.setVmPolicy(builder.build())
         }
+    }
+
+    companion object {
+        private const val ONE_DAY_MILLIS = 24 * 60 * 60 * 1000
     }
 }

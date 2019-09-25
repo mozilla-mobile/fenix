@@ -4,18 +4,23 @@
 
 package org.mozilla.fenix.share
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
 import android.content.Intent.EXTRA_TEXT
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import androidx.annotation.VisibleForTesting
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import com.google.android.material.snackbar.Snackbar
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.sendtab.SendTabUseCases
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -25,6 +30,7 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
  * Delegated by View Interactors, handles container business logic and operates changes on it.
  */
 interface ShareController {
+    fun handleReauth()
     fun handleShareClosed()
     fun handleShareToApp(app: AppShareOption)
     fun handleAddNewDevice()
@@ -43,12 +49,19 @@ interface ShareController {
  * @param dismiss - callback signalling sharing can be closed.
  */
 class DefaultShareController(
+    private val context: Context,
     private val fragment: Fragment,
     private val sharedTabs: List<ShareTab>,
     private val sendTabUseCases: SendTabUseCases,
     private val navController: NavController,
     private val dismiss: () -> Unit
 ) : ShareController {
+    override fun handleReauth() {
+        val directions = ShareFragmentDirections.actionShareFragmentToAccountProblemFragment()
+        navController.nav(R.id.shareFragment, directions)
+        dismiss()
+    }
+
     override fun handleShareClosed() {
         dismiss()
     }
@@ -60,19 +73,26 @@ class DefaultShareController(
             flags = FLAG_ACTIVITY_NEW_TASK
             setClassName(app.packageName, app.activityName)
         }
-        fragment.startActivity(intent)
+
+        try {
+            fragment.startActivity(intent)
+        } catch (e: SecurityException) {
+            context.getRootView()?.let {
+                FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
+                    .setText(context.getString(R.string.share_error_snackbar))
+                    .show()
+            }
+        }
         dismiss()
     }
 
     override fun handleAddNewDevice() {
-        AlertDialog.Builder(fragment.requireContext()).apply {
-            setMessage(R.string.sync_connect_device_dialog)
-            setPositiveButton(R.string.sync_confirmation_button) { dialog, _ -> dialog.cancel() }
-            create()
-        }.show()
+        val directions = ShareFragmentDirections.actionShareFragmentToAddNewDeviceFragment()
+        navController.navigate(directions)
     }
 
     override fun handleShareToDevice(device: Device) {
+        context.metrics.track(Event.SendTab)
         sendTabUseCases.sendToDeviceAsync(device.id, sharedTabs.toTabData())
         (fragment.activity as ShareFragment.TabsSharedCallback).onTabsShared(sharedTabs.size)
         dismiss()
@@ -85,6 +105,7 @@ class DefaultShareController(
     }
 
     override fun handleSignIn() {
+        context.metrics.track(Event.SignInToSendTab)
         val directions = ShareFragmentDirections.actionShareFragmentToTurnOnSyncFragment()
         navController.nav(R.id.shareFragment, directions)
         dismiss()

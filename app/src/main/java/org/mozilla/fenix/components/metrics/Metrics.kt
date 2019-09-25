@@ -20,6 +20,7 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Library
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
 import java.util.Locale
 
@@ -64,13 +65,19 @@ sealed class Event {
     object LibraryClosed : Event()
     object SyncAuthOpened : Event()
     object SyncAuthClosed : Event()
+    object SyncAuthSignUp : Event()
     object SyncAuthSignIn : Event()
     object SyncAuthSignOut : Event()
     object SyncAuthScanPairing : Event()
-    object SyncAuthCreateAccount : Event()
+    object SyncAuthPaired : Event()
+    object SyncAuthRecovered : Event()
+    object SyncAuthOtherExternal : Event()
+    object SyncAuthFromShared : Event()
     object SyncAccountOpened : Event()
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
+    object SendTab : Event()
+    object SignInToSendTab : Event()
     object HistoryOpened : Event()
     object HistoryItemShared : Event()
     object HistoryItemOpened : Event()
@@ -101,13 +108,25 @@ sealed class Event {
     object PrivateBrowsingNotificationTapped : Event()
     object PrivateBrowsingNotificationOpenTapped : Event()
     object PrivateBrowsingNotificationDeleteAndOpenTapped : Event()
+    object PrivateBrowsingCreateShortcut : Event()
+    object PrivateBrowsingAddShortcutCFR : Event()
+    object PrivateBrowsingCancelCFR : Event()
+    object PrivateBrowsingPinnedShortcutPrivateTab : Event()
+    object PrivateBrowsingStaticShortcutTab : Event()
+    object PrivateBrowsingStaticShortcutPrivateTab : Event()
+    object TabMediaPlay : Event()
+    object TabMediaPause : Event()
+    object TrackingProtectionTrackerList : Event()
+    object TrackingProtectionIconPressed : Event()
+    object TrackingProtectionSettingsPanel : Event()
+    object TrackingProtectionSettings : Event()
+    object TrackingProtectionException : Event()
 
     // Interaction events with extras
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
         private val switchPreferenceTelemetryAllowList = listOf(
             context.getString(R.string.pref_key_show_search_suggestions),
-            context.getString(R.string.pref_key_show_visited_sites_bookmarks),
             context.getString(R.string.pref_key_remote_debugging),
             context.getString(R.string.pref_key_telemetry),
             context.getString(R.string.pref_key_tracking_protection)
@@ -125,10 +144,22 @@ sealed class Event {
         }
     }
 
+    data class TrackingProtectionSettingChanged(val setting: Setting) : Event() {
+        enum class Setting { STRICT, STANDARD }
+        override val extras: Map<TrackingProtection.etpSettingChangedKeys, String>?
+            get() = hashMapOf(TrackingProtection.etpSettingChangedKeys.etpSetting to setting.name)
+    }
+
     data class OpenedApp(val source: Source) : Event() {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB }
         override val extras: Map<Events.appOpenedKeys, String>?
             get() = hashMapOf(Events.appOpenedKeys.source to source.name)
+    }
+
+    data class WhatsNewTapped(val source: Source) : Event() {
+        enum class Source { ABOUT, HOME }
+        override val extras: Map<Events.whatsNewTappedKeys, String>?
+            get() = hashMapOf(Events.whatsNewTappedKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
@@ -253,7 +284,7 @@ sealed class Event {
         enum class Item {
             SETTINGS, LIBRARY, HELP, DESKTOP_VIEW_ON, DESKTOP_VIEW_OFF, FIND_IN_PAGE, NEW_TAB,
             NEW_PRIVATE_TAB, SHARE, REPORT_SITE_ISSUE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
-            SAVE_TO_COLLECTION, ADD_TO_HOMESCREEN
+            SAVE_TO_COLLECTION, ADD_TO_HOMESCREEN, QUIT
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?

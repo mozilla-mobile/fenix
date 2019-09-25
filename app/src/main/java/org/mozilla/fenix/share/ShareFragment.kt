@@ -9,6 +9,9 @@ import android.content.Intent
 import android.content.Intent.ACTION_SEND
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.ResolveInfo
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -45,9 +48,15 @@ class ShareFragment : AppCompatDialogFragment() {
     private lateinit var shareToAppsView: ShareToAppsView
     private lateinit var appsListDeferred: Deferred<List<AppShareOption>>
     private lateinit var devicesListDeferred: Deferred<List<SyncShareOption>>
+    private var connectivityManager: ConnectivityManager? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkRequest = NetworkRequest.Builder().build()
+        connectivityManager?.registerNetworkCallback(networkRequest, networkCallback)
 
         // Start preparing the data as soon as we have a valid Context
         appsListDeferred = lifecycleScope.async(Dispatchers.IO) {
@@ -70,6 +79,35 @@ class ShareFragment : AppCompatDialogFragment() {
         setStyle(STYLE_NO_TITLE, R.style.ShareDialogStyle)
     }
 
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onLost(network: Network?) {
+            reloadDevices()
+        }
+
+        override fun onAvailable(network: Network?) {
+            reloadDevices()
+        }
+    }
+
+    private fun reloadDevices() {
+        context?.let {
+            val fxaAccountManager = it.components.backgroundServices.accountManager
+            lifecycleScope.launch {
+                val refreshDevicesAsync =
+                    fxaAccountManager.authenticatedAccount()?.deviceConstellation()
+                        ?.refreshDevicesAsync()
+                refreshDevicesAsync?.await()
+                val devicesShareOptions = buildDeviceList(fxaAccountManager)
+                shareToAccountDevicesView.setSharetargets(devicesShareOptions)
+            }
+        }
+    }
+
+    override fun onDetach() {
+        connectivityManager?.unregisterNetworkCallback(networkCallback)
+        super.onDetach()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -81,11 +119,12 @@ class ShareFragment : AppCompatDialogFragment() {
             throw IllegalStateException("URL and tabs cannot both be null.")
         }
 
-        val tabs = args.tabs?.toList() ?: listOf(ShareTab(args.url!!, args.title ?: ""))
+        val tabs = args.tabs?.toList() ?: listOf(ShareTab(args.url!!, args.title.orEmpty()))
         val accountManager = requireComponents.backgroundServices.accountManager
 
         shareInteractor = ShareInteractor(
             DefaultShareController(
+                context = requireContext(),
                 fragment = this,
                 sharedTabs = tabs,
                 navController = findNavController(),
@@ -94,11 +133,9 @@ class ShareFragment : AppCompatDialogFragment() {
             )
         )
 
-        if (isSharingToDevicesAvailable(requireContext().applicationContext)) {
-            shareToAccountDevicesView = ShareToAccountDevicesView(view.devicesShareLayout, shareInteractor)
-        } else {
-            view.devicesShareGroup.visibility = View.GONE
-        }
+        view.shareWrapper.setOnClickListener { shareInteractor.onShareClosed() }
+        shareToAccountDevicesView =
+            ShareToAccountDevicesView(view.devicesShareLayout, shareInteractor)
         shareCloseView = ShareCloseView(view.closeSharingLayout, shareInteractor)
         shareToAppsView = ShareToAppsView(view.appsShareLayout, shareInteractor)
 
@@ -116,14 +153,14 @@ class ShareFragment : AppCompatDialogFragment() {
         }
     }
 
-    private fun isSharingToDevicesAvailable(context: Context) =
-        !context.components.backgroundServices.accountManager.accountNeedsReauth()
-
     private fun getIntentActivities(shareIntent: Intent, context: Context): List<ResolveInfo>? {
         return context.packageManager.queryIntentActivities(shareIntent, 0)
     }
 
-    private fun buildAppsList(intentActivities: List<ResolveInfo>?, context: Context): List<AppShareOption> {
+    private fun buildAppsList(
+        intentActivities: List<ResolveInfo>?,
+        context: Context
+    ): List<AppShareOption> {
         return intentActivities?.map { resolveInfo ->
             AppShareOption(
                 resolveInfo.loadLabel(context.packageManager).toString(),
@@ -131,19 +168,33 @@ class ShareFragment : AppCompatDialogFragment() {
                 resolveInfo.activityInfo.packageName,
                 resolveInfo.activityInfo.name
             )
-        } ?: emptyList()
+        }.orEmpty()
     }
 
+    @Suppress("ReturnCount")
     private fun buildDeviceList(accountManager: FxaAccountManager): List<SyncShareOption> {
         val list = mutableListOf<SyncShareOption>()
+
+        val activeNetwork = connectivityManager?.activeNetworkInfo
+        if (activeNetwork?.isConnected != true) {
+            list.add(SyncShareOption.Offline)
+            return list
+        }
 
         if (accountManager.authenticatedAccount() == null) {
             list.add(SyncShareOption.SignIn)
             return list
         }
 
-        accountManager.authenticatedAccount()?.deviceConstellation()?.state()?.otherDevices?.let { devices ->
-            val shareableDevices = devices.filter { it.capabilities.contains(DeviceCapability.SEND_TAB) }
+        if (accountManager.accountNeedsReauth()) {
+            list.add(SyncShareOption.Reconnect)
+            return list
+        }
+
+        accountManager.authenticatedAccount()?.deviceConstellation()?.state()
+            ?.otherDevices?.let { devices ->
+            val shareableDevices =
+                devices.filter { it.capabilities.contains(DeviceCapability.SEND_TAB) }
 
             if (shareableDevices.isEmpty()) {
                 list.add(SyncShareOption.AddNewDevice)

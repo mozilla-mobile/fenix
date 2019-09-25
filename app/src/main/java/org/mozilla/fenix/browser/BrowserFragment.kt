@@ -4,13 +4,19 @@
 
 package org.mozilla.fenix.browser
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.RadioButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.view.*
+import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,11 +34,12 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.feature.session.ThumbnailsFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.jetbrains.anko.dimen
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
@@ -42,8 +50,11 @@ import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -62,7 +73,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     private var quickActionSheetSessionObserver: QuickActionSheetSessionObserver? = null
 
     private val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
-    private val thumbnailsFeature = ViewBoundFeatureWrapper<ThumbnailsFeature>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,29 +98,19 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun initializeUI(view: View): Session? {
-        val sessionManager = requireComponents.core.sessionManager
+        val context = requireContext()
+        val sessionManager = context.components.core.sessionManager
 
         return super.initializeUI(view)?.also {
-
-            thumbnailsFeature.set(
-                feature = ThumbnailsFeature(
-                    requireContext(),
-                    view.engineView,
-                    requireComponents.core.sessionManager
-                ),
-                owner = this,
-                view = view
-            )
-
             readerViewFeature.set(
                 feature = ReaderViewFeature(
-                    requireContext(),
-                    requireComponents.core.engine,
-                    requireComponents.core.sessionManager,
+                    context,
+                    context.components.core.engine,
+                    sessionManager,
                     view.readerViewControlsBar
                 ) { available ->
                     if (available) {
-                        requireComponents.analytics.metrics.track(Event.ReaderModeAvailable)
+                        context.components.analytics.metrics.track(Event.ReaderModeAvailable)
                     }
 
                     browserStore.apply {
@@ -149,11 +149,30 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         ).also { observer ->
             getSessionById()?.register(observer, this, autoPause = true)
         }
+        getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
+    }
+
+    private val toolbarSessionObserver = object : Session.Observer {
+        override fun onLoadingStateChanged(session: Session, loading: Boolean) {
+            if (!loading &&
+                shouldShowTrackingProtectionOnboarding(session)
+            ) {
+                showTrackingProtectionOnboarding()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        getSessionById()?.let { quickActionSheetSessionObserver?.updateBookmarkState(it) }
+        getSessionById()?.let {
+            /**
+             * The session mode may be changed if the user is originally in Normal Mode and then
+             * opens a 3rd party link in Private Browsing Mode. Hence, we update the theme here.
+             * This fixes issue #5254.
+             */
+            (activity as HomeActivity).updateThemeForSession(it)
+            quickActionSheetSessionObserver?.updateBookmarkState(it)
+        }
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
@@ -165,16 +184,18 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         browserToolbarController: BrowserToolbarController,
         session: Session?
     ): BrowserToolbarViewInteractor {
+        val context = requireContext()
+
         val interactor = BrowserInteractor(
-            context = context!!,
+            context = context,
             store = browserStore,
             browserToolbarController = browserToolbarController,
             quickActionSheetController = DefaultQuickActionSheetController(
-                context = context!!,
+                context = context,
                 navController = findNavController(),
                 currentSession = getSessionById()
-                    ?: requireComponents.core.sessionManager.selectedSessionOrThrow,
-                appLinksUseCases = requireComponents.useCases.appLinksUseCases,
+                    ?: context.components.core.sessionManager.selectedSessionOrThrow,
+                appLinksUseCases = context.components.useCases.appLinksUseCases,
                 bookmarkTapped = {
                     lifecycleScope.launch { bookmarkTapped(it) }
                 }
@@ -189,14 +210,26 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
-            sessionId = session.id,
-            url = session.url,
-            isSecured = session.securityInfo.secure,
-            isTrackingProtectionOn = session.trackerBlockingEnabled,
-            sitePermissions = sitePermissions,
-            gravity = getAppropriateLayoutGravity()
-        )
+        val directions =
+            BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
+                sessionId = session.id,
+                url = session.url,
+                isSecured = session.securityInfo.secure,
+                isTrackingProtectionOn = session.trackerBlockingEnabled,
+                sitePermissions = sitePermissions,
+                gravity = getAppropriateLayoutGravity()
+            )
+        nav(R.id.browserFragment, directions)
+    }
+
+    override fun navToTrackingProtectionPanel(session: Session) {
+        val directions =
+            BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                sessionId = session.id,
+                url = session.url,
+                trackingProtectionEnabled = session.trackerBlockingEnabled,
+                gravity = getAppropriateLayoutGravity()
+            )
         nav(R.id.browserFragment, directions)
     }
 
@@ -317,7 +350,62 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         }
     }
 
+    private fun showTrackingProtectionOnboarding() {
+        if (!FeatureFlags.etpCategories) {
+            return
+        }
+        context?.let {
+            val layout = LayoutInflater.from(it)
+                .inflate(R.layout.tracking_protection_onboarding_popup, null)
+            layout.onboarding_message.text =
+                it.getString(R.string.etp_onboarding_message, getString(R.string.app_name))
+
+            val trackingOnboarding = PopupWindow(
+                layout,
+                it.dimen(R.dimen.tp_onboarding_width),
+                WindowManager.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                isOutsideTouchable = true
+                isFocusable = true
+                elevation = view!!.resources.getDimension(R.dimen.mozac_browser_menu_elevation)
+                animationStyle = R.style.Mozac_Browser_Menu_Animation_OverflowMenuBottom
+            }
+
+            val closeButton = layout.findViewById<ImageView>(R.id.close_onboarding)
+            closeButton.increaseTapArea(BUTTON_INCREASE_DPS)
+            closeButton.setOnClickListener {
+                trackingOnboarding.dismiss()
+            }
+
+            val tpIcon =
+                browserToolbarView
+                    .view
+                    .findViewById<AppCompatImageView>(R.id.mozac_browser_toolbar_tracking_protection_icon_view)
+
+            // Measure layout view
+            val spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            layout.measure(spec, spec)
+
+            val containerHeight = layout.measuredHeight
+
+            val xOffset = it.dimen(R.dimen.tp_onboarding_x_offset)
+
+            // Positioning the popup above the tp anchor.
+            val yOffset = -containerHeight - (browserToolbarView.view.height / THREE * 2)
+
+            trackingOnboarding.showAsDropDown(tpIcon, xOffset, yOffset)
+            it.settings().incrementTrackingProtectionOnboardingCount()
+        }
+    }
+
+    private fun shouldShowTrackingProtectionOnboarding(session: Session) =
+        context?.settings()?.shouldShowTrackingProtectionOnboarding ?: false &&
+                session.trackerBlockingEnabled && session.trackersBlocked.isNotEmpty()
+
     companion object {
+        private const val THREE = 3
+        private const val BUTTON_INCREASE_DPS = 12
         private const val SHARED_TRANSITION_MS = 200L
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         const val REPORT_SITE_ISSUE_URL =

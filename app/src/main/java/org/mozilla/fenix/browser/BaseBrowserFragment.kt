@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.DownloadsFeature
@@ -49,15 +50,16 @@ import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
+import org.mozilla.fenix.Experiments
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
@@ -69,10 +71,13 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.isInExperiment
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Base fragment extended by [BrowserFragment].
@@ -96,6 +101,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
+    private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
 
     var customTabSessionId: String? = null
 
@@ -148,30 +154,32 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     @Suppress("ComplexMethod", "LongMethod")
     @CallSuper
     protected open fun initializeUI(view: View): Session? {
-        val sessionManager = requireComponents.core.sessionManager
+        val context = requireContext()
+        val sessionManager = context.components.core.sessionManager
+        val store = context.components.core.store
 
         return getSessionById()?.also { session ->
 
             val browserToolbarController = DefaultBrowserToolbarController(
-                context!!,
+                requireActivity(),
                 findNavController(),
                 (activity as HomeActivity).browsingModeManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
-                nestedScrollQuickActionView = nestedScrollQuickAction,
                 engineView = engineView,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 viewModel = viewModel,
                 getSupportUrl = {
                     SupportUtils.getSumoURLForTopic(
-                        context!!,
+                        context,
                         SupportUtils.SumoTopic.HELP
                     )
                 },
-                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).also {
-                    it.action = Intent.ACTION_VIEW
-                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
+                    action = Intent.ACTION_VIEW
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction)
+                bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction),
+                scope = lifecycleScope
             )
 
             browserInteractor =
@@ -193,7 +201,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             findInPageIntegration.set(
                 feature = FindInPageIntegration(
-                    sessionManager = requireComponents.core.sessionManager,
+                    sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     stub = view.stubFindInPage,
                     engineView = view.engineView,
@@ -207,39 +215,47 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 showQuickSettingsDialog()
             }
 
+            browserToolbarView.view.setOnTrackingProtectionClickedListener {
+                context.metrics.track(Event.TrackingProtectionIconPressed)
+                showTrackingProtectionPanel()
+            }
+
             contextMenuFeature.set(
                 feature = ContextMenuFeature(
-                    requireFragmentManager(),
-                    sessionManager,
-                    FenixContextMenuCandidate.defaultCandidates(
-                        requireContext(),
-                        requireComponents.useCases.tabsUseCases,
+                    fragmentManager = requireFragmentManager(),
+                    store = store,
+                    candidates = FenixContextMenuCandidate.defaultCandidates(
+                        context,
+                        context.components.useCases.tabsUseCases,
+                        context.components.useCases.contextMenuUseCases,
                         view,
                         FenixSnackbarDelegate(
                             view,
                             if (getSessionById()?.isCustomTabSession() == true) null else nestedScrollQuickAction
                         )
                     ),
-                    view.engineView
+                    engineView = view.engineView,
+                    useCases = context.components.useCases.contextMenuUseCases
                 ),
                 owner = this,
                 view = view
             )
 
             windowFeature.set(
-                feature = WindowFeature(requireComponents.core.sessionManager),
+                feature = WindowFeature(sessionManager),
                 owner = this,
                 view = view
             )
 
             downloadsFeature.set(
                 feature = DownloadsFeature(
-                    requireContext().applicationContext,
-                    sessionManager = sessionManager,
+                    context.applicationContext,
+                    store = store,
+                    useCases = context.components.useCases.downloadUseCases,
                     fragmentManager = childFragmentManager,
-                    sessionId = customTabSessionId,
+                    customTabId = customTabSessionId,
                     downloadManager = FetchDownloadManager(
-                        requireContext().applicationContext,
+                        context.applicationContext,
                         DownloadService::class
                     ),
                     onNeedToRequestPermissions = { permissions ->
@@ -251,7 +267,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             appLinksFeature.set(
                 feature = AppLinksFeature(
-                    requireContext(),
+                    context,
                     sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     interceptLinkClicks = true,
@@ -286,11 +302,11 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             )
 
             val accentHighContrastColor =
-                ThemeManager.resolveAttribute(R.attr.accentHighContrast, requireContext())
+                ThemeManager.resolveAttribute(R.attr.accentHighContrast, context)
 
             sitePermissionsFeature.set(
                 feature = SitePermissionsFeature(
-                    context = requireContext(),
+                    context = context,
                     sessionManager = sessionManager,
                     fragmentManager = requireFragmentManager(),
                     promptsStyling = SitePermissionsFeature.PromptsStyling(
@@ -331,15 +347,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                         toolbar.visibility = View.VISIBLE
                         nestedScrollQuickAction.visibility = View.VISIBLE
                     }
-                    view.swipeRefresh.apply {
-                        val (topMargin, bottomMargin) = if (inFullScreen) 0 to 0 else getEngineMargins()
-                        (layoutParams as CoordinatorLayout.LayoutParams).setMargins(
-                            0,
-                            topMargin,
-                            0,
-                            bottomMargin
-                        )
-                    }
+                    updateLayoutMargins(inFullScreen)
                 },
                 owner = this,
                 view = view
@@ -348,12 +356,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             @Suppress("ConstantConditionIf")
             if (FeatureFlags.pullToRefreshEnabled) {
                 val primaryTextColor =
-                    ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
+                    ThemeManager.resolveAttribute(R.attr.primaryText, context)
                 view.swipeRefresh.setColorSchemeColors(primaryTextColor)
                 swipeRefreshFeature.set(
                     feature = SwipeRefreshFeature(
-                        requireComponents.core.sessionManager,
-                        requireComponents.useCases.sessionUseCases.reload,
+                        sessionManager,
+                        context.components.useCases.sessionUseCases.reload,
                         view.swipeRefresh,
                         customTabSessionId
                     ),
@@ -365,12 +373,27 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 view.swipeRefresh.setOnChildScrollUpCallback { _, _ -> true }
             }
 
+            if (!requireContext().isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
+                webchannelIntegration.set(
+                    feature = FxaWebChannelFeature(
+                        requireContext(),
+                        customTabSessionId,
+                        requireComponents.core.engine,
+                        requireComponents.core.sessionManager,
+                        requireComponents.backgroundServices.accountManager
+                    ),
+                    owner = this,
+                    view = view
+                )
+            }
+
             (activity as HomeActivity).updateThemeForSession(session)
         }
     }
 
     @CallSuper
     override fun onSessionSelected(session: Session) {
+        (activity as HomeActivity).updateThemeForSession(session)
         if (!browserInitialized) {
             // Initializing a new coroutineScope to avoid ConcurrentModificationException in ObserverRegistry
             // This will be removed when ObserverRegistry is deprecated by browser-state.
@@ -472,9 +495,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getSessionById()?.let { session ->
-            if (session.source == Session.Source.ACTION_VIEW) requireComponents.core.sessionManager.remove(
-                session
-            )
+            if (session.source == Session.Source.ACTION_VIEW) {
+                requireComponents.core.sessionManager.remove(session)
+            }
         }
         return false
     }
@@ -486,6 +509,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
     protected abstract fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?)
 
+    protected abstract fun navToTrackingProtectionPanel(session: Session)
+
     /**
      * Returns the top and bottom margins.
      */
@@ -496,11 +521,18 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
      */
     protected abstract fun getAppropriateLayoutGravity(): Int
 
+    protected fun updateLayoutMargins(inFullScreen: Boolean) {
+        view?.swipeRefresh?.apply {
+            val (topMargin, bottomMargin) = if (inFullScreen) 0 to 0 else getEngineMargins()
+            (layoutParams as CoordinatorLayout.LayoutParams).setMargins(0, topMargin, 0, bottomMargin)
+        }
+    }
+
     /**
      * Updates the site permissions rules based on user settings.
      */
     private fun assignSitePermissionsRules() {
-        val settings = Settings.getInstance(requireContext())
+        val settings = requireContext().settings()
 
         val rules: SitePermissionsRules = settings.getSitePermissionsCustomSettingsRules()
 
@@ -526,6 +558,13 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             view?.let {
                 navToQuickSettingsSheet(session, sitePermissions)
             }
+        }
+    }
+
+    private fun showTrackingProtectionPanel() {
+        val session = getSessionById() ?: return
+        view?.let {
+            navToTrackingProtectionPanel(session)
         }
     }
 

@@ -16,7 +16,6 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
-import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
@@ -80,7 +79,6 @@ class AwesomeBarView(
     override val containerView: View?
         get() = container
 
-    private val clipboardSuggestionProvider: ClipboardSuggestionProvider
     private val sessionProvider: SessionSuggestionProvider
     private val historyStorageProvider: HistoryStorageSuggestionProvider
     private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
@@ -117,13 +115,6 @@ class AwesomeBarView(
 
             val draw = getDrawable(R.drawable.ic_link)!!
             draw.setColorFilter(primaryTextColor, SRC_IN)
-
-            clipboardSuggestionProvider = ClipboardSuggestionProvider(
-                this,
-                loadUrlUseCase,
-                draw.toBitmap(),
-                getString(R.string.awesomebar_clipboard_title)
-            )
 
             sessionProvider =
                 SessionSuggestionProvider(
@@ -171,26 +162,31 @@ class AwesomeBarView(
         }
     }
 
+    @SuppressWarnings("ComplexMethod")
     fun update(state: SearchFragmentState) {
         view.removeAllProviders()
 
         if (state.showShortcutEnginePicker) {
             view.addProviders(shortcutsEnginePickerProvider)
         } else {
-            if (state.showSuggestions) {
-                view.addProviders(when (state.searchEngineSource) {
-                    is SearchEngineSource.Default -> defaultSearchSuggestionProvider
-                    is SearchEngineSource.Shortcut -> createSuggestionProviderForEngine(
-                        state.searchEngineSource.searchEngine
-                    )
-                })
+            if (state.showSearchSuggestions) {
+                view.addProviders(
+                    when (state.searchEngineSource) {
+                        is SearchEngineSource.Default -> defaultSearchSuggestionProvider
+                        is SearchEngineSource.Shortcut -> createSuggestionProviderForEngine(
+                            state.searchEngineSource.searchEngine
+                        )
+                    }
+                )
             }
 
-            if (state.showVisitedSitesBookmarks) {
-                view.addProviders(bookmarksStorageSuggestionProvider, historyStorageProvider)
+            if (state.showHistorySuggestions) {
+                view.addProviders(historyStorageProvider)
             }
 
-            view.addProviders(clipboardSuggestionProvider)
+            if (state.showBookmarkSuggestions) {
+                view.addProviders(bookmarksStorageSuggestionProvider)
+            }
 
             if ((container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate == false) {
                 view.addProviders(sessionProvider)

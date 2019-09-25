@@ -22,6 +22,7 @@ out/
 # Gradle files
 .gradle/
 build/
+!taskcluster/ci/build
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -81,6 +82,7 @@ gen-external-apklibs
 # Token files
 .leanplum_token
 .adjust_token
+.digital_asset_links_token
 
 
 # Python Byte-compiled / optimized / DLL files

@@ -3,11 +3,12 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
     <string name="pref_key_make_default_browser" translatable="false">pref_key_make_default_browser</string>
-    <string name="pref_key_search_engine_settings" translatable="false">pref_key_search_engine_settings</string>
+    <string name="pref_key_search_settings" translatable="false">pref_key_search_settings</string>
     <string name="pref_key_search_engine" translatable="false">pref_key_search_engine</string>
     <string name="pref_key_passwords" translatable="false">pref_key_passwords</string>
     <string name="pref_key_credit_cards_addresses" translatable="false">pref_key_credit_cards_addresses</string>
     <string name="pref_key_site_permissions" translatable="false">pref_key_site_permissions</string>
+    <string name="pref_key_add_private_browsing_shortcut" translatable="false">pref_key_add_private_browsing_shortcut</string>
     <string name="pref_key_accessibility" translatable="false">pref_key_accessibility</string>
     <string name="pref_key_accessibility_auto_size" translatable="false">pref_key_accessibility_auto_size</string>
     <string name="pref_key_accessibility_font_scale" translatable="false">pref_key_accessibility_font_scale</string>
@@ -15,6 +16,16 @@
     <string name="pref_key_data_choices" translatable="false">pref_key_data_choices</string>
     <string name="pref_key_privacy_link" translatable="false">pref_key_privacy_link</string>
     <string name="pref_key_delete_browsing_data" translatable="false">pref_key_delete_browsing_data</string>
+    <string name="pref_key_delete_browsing_data_on_quit_preference" translatable="false">pref_key_delete_browsing_data_on_quit_preference</string>
+    <string name="pref_key_delete_browsing_data_on_quit" translatable="false">pref_key_delete_browsing_data_on_quit</string>
+    <string name="pref_key_delete_open_tabs_on_quit" translatable="false">pref_key_delete_open_tabs_on_quit</string>
+    <string name="pref_key_delete_browsing_history_on_quit" translatable="false">pref_key_delete_browsing_history_on_quit</string>
+    <string name="pref_key_delete_cookies_on_quit" translatable="false">pref_key_delete_cookies_on_quit</string>
+    <string name="pref_key_delete_caches_on_quit" translatable="false">pref_key_delete_caches_on_quit</string>
+    <string name="pref_key_delete_permissions_on_quit" translatable="false">pref_key_delete_permissions_on_quit</string>
+    <string name="pref_key_delete_browsing_data_on_quit_categories" translatable="false">pref_key_delete_browsing_data_on_quit_categories</string>
+
+    <string name="pref_key_last_maintenance" translatable="false">pref_key_last_maintenance</string>
     <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
     <string name="pref_key_feedback" translatable="false">pref_key_feedback</string>
@@ -28,6 +39,8 @@
     <string name="pref_key_leakcanary" translatable="false">pref_key_leakcanary</string>
     <string name="pref_key_remote_debugging" translatable="false">pref_key_remote_debugging</string>
     <string name="pref_key_experimentation" translatable="false">pref_key_experimentation</string>
+    <string name="pref_key_showed_private_mode_cfr" translatable="false">pref_key_showed_private_mode_cfr</string>
+    <string name="pref_key_private_mode_opened" translatable="false">pref_key_private_mode_opened</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -45,7 +58,6 @@
     <string name="pref_key_cached_account" translatable="false">pref_key_cached_account</string>
     <string name="pref_key_sync_pair" translatable="false">pref_key_sync_pair</string>
     <string name="pref_key_sync_sign_in" translatable="false">pref_key_sync_sign_in</string>
-    <string name="pref_key_sync_create_account" translatable="false">pref_key_sync_create_account</string>
     <string name="pref_key_sync_problem" translatable="false">pref_key_sync_problem</string>
     <string name="pref_key_push_project_id" translatable="false">project_id</string>
     <string name="pref_key_fxa_signed_in" translatable="false">pref_key_fxa_signed_in</string>
@@ -54,13 +66,16 @@
 
     <!-- Search Settings -->
     <string name="pref_key_show_search_suggestions" translatable="false">pref_key_show_search_suggestions</string>
-    <string name="pref_key_show_visited_sites_bookmarks" translatable="false">pref_key_show_visited_sites_bookmarks</string>
+    <string name="pref_key_show_clipboard_suggestions" translatable="false">pref_key_show_clipboard_suggestions</string>
+    <string name="pref_key_search_browsing_history" translatable="false">pref_key_search_browsing_history</string>
+    <string name="pref_key_search_bookmarks" translatable="false">pref_key_search_bookmarks</string>
 
     <!-- Site Permissions Settings -->
     <string name="pref_key_optimize" translatable="false">pref_key_optimize</string>
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>
     <string name="pref_key_recommended_settings" translatable="false">pref_key_recommended_settings</string>
     <string name="pref_key_custom_settings" translatable="false">pref_key_custom_settings</string>
+    <string name="pref_key_browser_feature_autoplay" translatable="false">pref_key_browser_feature_autoplay</string>
     <string name="pref_key_phone_feature_camera" translatable="false">pref_key_phone_feature_camera</string>
     <string name="pref_key_phone_feature_location" translatable="false">pref_key_phone_feature_location</string>
     <string name="pref_key_phone_feature_microphone" translatable="false">pref_key_phone_feature_microphone</string>
@@ -75,9 +90,16 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Tracking Protection Settings -->
+    <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>
     <string name="pref_key_tracking_protection_settings" translatable="false">pref_key_tracking_protection_settings</string>
     <string name="pref_key_tracking_protection" translatable="false">pref_key_tracking_protection</string>
     <string name="pref_key_tracking_protection_exceptions" translatable="false">pref_key_tracking_protection_exceptions</string>
+    <string name="pref_key_tracking_protection_standard" translatable="false">pref_key_tracking_protection_standard</string>
+    <string name="pref_key_tracking_protection_strict" translatable="false">pref_key_tracking_protection_strict</string>
+    <string name="pref_key_tracking_protection_onboarding" translatable="false">pref_key_tracking_protection_onboarding</string>
+
+    <!-- Privacy Settings -->
+    <string name="pref_key_launch_links_in_private_mode" translatable="false">pref_key_launch_links_in_private_mode</string>
 
     <!-- Quick Action Sheet -->
     <string name="pref_key_bounce_quick_action" translatable="false">pref_key_bounce_quick_action</string>

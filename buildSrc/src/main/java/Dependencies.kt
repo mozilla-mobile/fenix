@@ -4,7 +4,7 @@
 
 object Versions {
     const val kotlin = "1.3.30"
-    const val coroutines = "1.3.0-RC2"
+    const val coroutines = "1.3.1"
     const val android_gradle_plugin = "3.5.0"
     const val newest_r8 = "ceaee94e172c6c057cc05e646f5324853fc5d4c5"
     const val rxAndroid = "2.1.0"
@@ -17,32 +17,32 @@ object Versions {
     const val osslicenses_plugin = "0.9.5"
     const val osslicenses_library = "17.0.0"
 
-    const val androidx_appcompat = "1.1.0-rc01"
+    const val androidx_appcompat = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0-beta01"
     const val androidx_constraint_layout = "2.0.0-beta2"
-    const val androidx_preference = "1.1.0-rc01"
+    const val androidx_preference = "1.1.0"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
-    const val androidx_lifecycle = "2.2.0-alpha03"
-    const val androidx_fragment = "1.2.0-alpha02"
-    const val androidx_navigation = "2.2.0-alpha01"
-    const val androidx_recyclerview = "1.1.0-beta01"
+    const val androidx_lifecycle = "2.2.0-alpha04"
+    const val androidx_fragment = "1.2.0-alpha03"
+    const val androidx_navigation = "2.2.0-alpha02"
+    const val androidx_recyclerview = "1.1.0-beta04"
     const val androidx_testing = "1.2.1-alpha02"
     const val androidx_test_ext = "1.0.0"
-    const val androidx_core = "1.2.0-alpha03"
+    const val androidx_core = "1.2.0-alpha04"
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.1.0"
     const val androidx_work = "2.0.1"
-    const val google_material = "1.1.0-alpha07"
+    const val google_material = "1.1.0-alpha10"
 
-    const val mozilla_android_components = "12.0.0-SNAPSHOT"
+    const val mozilla_android_components = "14.0.1"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
     // that we depend on directly for the fenix-megazord (and for it's
     // forUnitTest variant), and it's important that it be kept in
     // sync with the version used by android-components above.
-    const val mozilla_appservices = "0.38.1"
+    const val mozilla_appservices = "0.39.1"
 
     const val autodispose = "1.1.0"
     const val adjust = "4.11.4"
@@ -52,8 +52,6 @@ object Versions {
     const val mockito = "2.24.5"
     const val mockk = "1.9.kotlin12"
     const val assertk = "0.19"
-    const val flipper = "0.21.0"
-    const val soLoader = "0.5.1"
 
     const val espresso_version = "3.2.0"
     const val mockwebserver = "3.11.0"
@@ -61,9 +59,11 @@ object Versions {
     const val tools_test_rules = "1.3.0-alpha02"
     const val tools_test_runner = "1.3.0-alpha02"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.2"
+    const val robolectric = "4.2.1"
 
     const val google_ads_id_version = "16.0.0"
+
+    const val airbnb_lottie = "3.0.7"
 }
 
 @Suppress("unused")
@@ -73,6 +73,7 @@ object Deps {
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
     const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
@@ -131,6 +132,7 @@ object Deps {
     const val mozilla_feature_readerview = "org.mozilla.components:feature-readerview:${Versions.mozilla_android_components}"
     const val mozilla_feature_tab_collections = "org.mozilla.components:feature-tab-collections:${Versions.mozilla_android_components}"
     const val mozilla_feature_sendtab = "org.mozilla.components:feature-sendtab:${Versions.mozilla_android_components}"
+    const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
 
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"
     const val mozilla_service_fretboard = "org.mozilla.components:service-fretboard:${Versions.mozilla_android_components}"
@@ -178,6 +180,7 @@ object Deps {
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.androidx_core}"
     const val androidx_transition = "androidx.transition:transition:${Versions.androidx_transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_work}"
+    const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
 
     const val autodispose = "com.uber.autodispose:autodispose:${Versions.autodispose}"
@@ -193,10 +196,6 @@ object Deps {
     const val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
     const val assertk = "com.willowtreeapps.assertk:assertk-jvm:${Versions.assertk}"
-
-    const val flipper = "com.facebook.flipper:flipper:${Versions.flipper}"
-    const val flipper_noop = "com.facebook.flipper:flipper-noop:${Versions.flipper}"
-    const val soLoader = "com.facebook.soloader:soloader:${Versions.soLoader}"
 
     const val espresso_contrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso_version}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_version}"
@@ -214,4 +213,6 @@ object Deps {
     const val fenix_megazord_forUnitTests = "org.mozilla.appservices:fenix-megazord-forUnitTests:${Versions.mozilla_appservices}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
+
+    const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 }

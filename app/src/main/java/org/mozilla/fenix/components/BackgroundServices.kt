@@ -5,13 +5,10 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
-import android.preference.PreferenceManager
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.ProcessLifecycleOwner
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.push.Bus
@@ -38,10 +35,12 @@ import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.Experiments
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
 import org.mozilla.fenix.test.Mockable
-import org.mozilla.fenix.utils.Settings
+import java.util.FormatFlagsConversionMismatchException
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
@@ -49,23 +48,38 @@ import org.mozilla.fenix.utils.Settings
  */
 @Mockable
 class BackgroundServices(
-    context: Context,
+    private val context: Context,
     historyStorage: PlacesHistoryStorage,
     bookmarkStorage: PlacesBookmarksStorage
 ) {
     companion object {
         const val CLIENT_ID = "a2270f727f45f648"
-        const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+
+        fun redirectUrl(context: Context) = if (context.isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
+            "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+        } else {
+            "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
+        }
     }
 
-    fun defaultDeviceName(context: Context): String = context.getString(
-        R.string.default_device_name,
-        context.getString(R.string.app_name),
-        Build.MANUFACTURER,
-        Build.MODEL
-    )
+    // // A malformed string is causing crashes.
+    // This will be removed when the string is fixed. See #5552
+    fun defaultDeviceName(context: Context): String = try {
+            context.getString(
+                R.string.default_device_name,
+                context.getString(R.string.app_name),
+                Build.MANUFACTURER,
+                Build.MODEL
+            )
+        } catch (ex: FormatFlagsConversionMismatchException) {
+            "%s on %s %s".format(
+                context.getString(R.string.app_name),
+                Build.MANUFACTURER,
+                Build.MODEL
+            )
+        }
 
-    private val serverConfig = ServerConfig.release(CLIENT_ID, REDIRECT_URL)
+    private val serverConfig = ServerConfig.release(CLIENT_ID, redirectUrl(context))
     private val deviceConfig = DeviceConfig(
         name = defaultDeviceName(context),
         type = DeviceType.MOBILE,
@@ -76,31 +90,16 @@ class BackgroundServices(
         capabilities = setOf(DeviceCapability.SEND_TAB)
     )
     // If sync has been turned off on the server then disable syncing.
-    private val syncConfig = if (context.isInExperiment(Experiments.asFeatureSyncDisabled)) {
+    @VisibleForTesting(otherwise = PRIVATE)
+    val syncConfig = if (context.isInExperiment(Experiments.asFeatureSyncDisabled)) {
         null
     } else {
         SyncConfig(setOf(SyncEngine.HISTORY, SyncEngine.BOOKMARKS), syncPeriodInMinutes = 240L) // four hours
     }
 
-    val pushConfig by lazy {
-        val projectIdKey = context.getString(R.string.pref_key_push_project_id)
-        val resId = context.resources.getIdentifier(projectIdKey, "string", context.packageName)
-        if (resId == 0) {
-            return@lazy null
-        }
-        val projectId = context.resources.getString(resId)
-        PushConfig(projectId)
-    }
+    private val pushService by lazy { FirebasePush() }
 
-    val pushService by lazy { FirebasePush() }
-
-    val push by lazy {
-        AutoPushFeature(
-            context = context,
-            service = pushService,
-            config = pushConfig!!
-        )
-    }
+    val push by lazy { makePushConfig()?.let { makePush(it) } }
 
     init {
         // Make the "history" and "bookmark" stores accessible to workers spawned by the sync manager.
@@ -112,53 +111,52 @@ class BackgroundServices(
         private val logger = Logger("DeviceEventsObserver")
         override fun onEvents(events: List<DeviceEvent>) {
             logger.info("Received ${events.size} device event(s)")
-            events.filter { it is DeviceEvent.TabReceived }.forEach {
-                notificationManager.showReceivedTabs(it as DeviceEvent.TabReceived)
+            events.filterIsInstance<DeviceEvent.TabReceived>().forEach {
+                notificationManager.showReceivedTabs(it)
             }
         }
     }
 
-    /**
-     * When we login/logout of FxA, we need to update our push subscriptions to match the newly
-     * logged in account.
-     *
-     * We added the push service to the AccountManager observer so that we can control when the
-     * service will start/stop. Firebase was added when landing the push service to ensure it works
-     * as expected without causing any (as many) side effects.
-     *
-     * In order to use Firebase with Leanplum and other marketing features, we need it always
-     * running so we cannot leave this code in place when we implement those features.
-     *
-     * We should have this removed when we are more confident
-     * of the send-tab/push feature: https://github.com/mozilla-mobile/fenix/issues/4063
-     */
-    private val accountObserver = object : AccountObserver {
-        override fun onLoggedOut() {
-            push.unsubscribeForType(PushType.Services)
+    private val telemetryAccountObserver = TelemetryAccountObserver(
+        context,
+        context.components.analytics.metrics
+    )
 
-            context.components.analytics.metrics.track(Event.SyncAuthSignOut)
+    private val pushAccountObserver by lazy { push?.let { PushAccountObserver(it) } }
 
-            Settings.getInstance(context).fxaSignedIn = false
-        }
+    val accountManager = makeAccountManager(context, serverConfig, deviceConfig, syncConfig)
 
-        override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-            if (authType != AuthType.Existing) {
-                push.subscribeForType(PushType.Services)
-            }
-
-            context.components.analytics.metrics.track(Event.SyncAuthSignIn)
-
-            Settings.getInstance(context).fxaSignedIn = true
-        }
-    }
-
-    private val preferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(
-            context
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun makePush(pushConfig: PushConfig): AutoPushFeature {
+        return AutoPushFeature(
+            context = context,
+            service = pushService,
+            config = pushConfig
         )
     }
 
-    val accountManager = FxaAccountManager(
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun makePushConfig(): PushConfig? {
+        val logger = Logger("PushConfig")
+        val projectIdKey = context.getString(R.string.pref_key_push_project_id)
+        val resId = context.resources.getIdentifier(projectIdKey, "string", context.packageName)
+        if (resId == 0) {
+            logger.warn("No firebase configuration found; cannot support push service.")
+            return null
+        }
+
+        logger.debug("Creating push configuration for autopush.")
+        val projectId = context.resources.getString(resId)
+        return PushConfig(projectId)
+    }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun makeAccountManager(
+        context: Context,
+        serverConfig: ServerConfig,
+        deviceConfig: DeviceConfig,
+        syncConfig: SyncConfig?
+    ) = FxaAccountManager(
         context,
         serverConfig,
         deviceConfig,
@@ -169,36 +167,38 @@ class BackgroundServices(
         // This is a good example of an information leak at the API level.
         // See https://github.com/mozilla-mobile/android-components/issues/3732
         setOf("https://identity.mozilla.com/apps/oldsync")
-    ).also {
-        Settings.getInstance(context).fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
+    ).also { accountManager ->
+        // TODO this needs to change once we have a SyncManager
+        context.settings().fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false
+        accountManager.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
 
-        it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), false)
+        // Register a telemetry account observer to keep track of FxA auth metrics.
+        accountManager.register(telemetryAccountObserver)
 
-        // Enable push if we have the config.
-        if (pushConfig != null) {
-
-            // Register our account observer so we know how to update our push subscriptions.
-            it.register(accountObserver)
+        // Enable push if it's configured.
+        push?.let { autoPushFeature ->
+            // Register the push account observer so we know how to update our push subscriptions.
+            accountManager.register(pushAccountObserver!!)
 
             val logger = Logger("AutoPushFeature")
 
             // Notify observers for Services' messages.
-            push.registerForPushMessages(
+            autoPushFeature.registerForPushMessages(
                 PushType.Services,
                 object : Bus.Observer<PushType, String> {
                     override fun onEvent(type: PushType, message: String) {
-                        it.authenticatedAccount()?.deviceConstellation()
+                        accountManager.authenticatedAccount()?.deviceConstellation()
                             ?.processRawEventAsync(message)
                     }
                 })
 
             // Notify observers for subscription changes.
-            push.registerForSubscriptions(object : PushSubscriptionObserver {
+            autoPushFeature.registerForSubscriptions(object : PushSubscriptionObserver {
                 override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
                     // Update for only the services subscription.
                     if (subscription.type == PushType.Services) {
                         logger.info("New push subscription received for FxA")
-                        it.authenticatedAccount()?.deviceConstellation()
+                        accountManager.authenticatedAccount()?.deviceConstellation()
                             ?.setDevicePushSubscriptionAsync(
                                 DevicePushSubscription(
                                     endpoint = subscription.endpoint,
@@ -210,7 +210,7 @@ class BackgroundServices(
                 }
             })
         }
-        CoroutineScope(Dispatchers.Main).launch { it.initAsync().await() }
+        accountManager.initAsync()
     }
 
     /**
@@ -218,5 +218,76 @@ class BackgroundServices(
      */
     val notificationManager by lazy {
         NotificationManager(context)
+    }
+}
+
+@VisibleForTesting(otherwise = PRIVATE)
+class TelemetryAccountObserver(
+    private val context: Context,
+    private val metricController: MetricController
+) : AccountObserver {
+    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        when (authType) {
+            // User signed-in into an existing FxA account.
+            AuthType.Signin ->
+                metricController.track(Event.SyncAuthSignIn)
+
+            // User created a new FxA account.
+            AuthType.Signup ->
+                metricController.track(Event.SyncAuthSignUp)
+
+            // User paired to an existing account via QR code scanning.
+            AuthType.Pairing ->
+                metricController.track(Event.SyncAuthPaired)
+
+            // User signed-in into an FxA account shared from another locally installed app
+            // (e.g. Fennec).
+            AuthType.Shared ->
+                metricController.track(Event.SyncAuthFromShared)
+
+            // Account Manager recovered a broken FxA auth state, without direct user involvement.
+            AuthType.Recovered ->
+                metricController.track(Event.SyncAuthRecovered)
+
+            // User signed-in into an FxA account via unknown means.
+            // Exact mechanism identified by the 'action' param.
+            is AuthType.OtherExternal ->
+                metricController.track(Event.SyncAuthOtherExternal)
+        }
+        // Used by Leanplum as a context variable.
+        context.settings().fxaSignedIn = true
+    }
+
+    override fun onLoggedOut() {
+        metricController.track(Event.SyncAuthSignOut)
+        // Used by Leanplum as a context variable.
+        context.settings().fxaSignedIn = false
+    }
+}
+
+/**
+ * When we login/logout of FxA, we need to update our push subscriptions to match the newly
+ * logged in account.
+ *
+ * We added the push service to the AccountManager observer so that we can control when the
+ * service will start/stop. Firebase was added when landing the push service to ensure it works
+ * as expected without causing any (as many) side effects.
+ *
+ * In order to use Firebase with Leanplum and other marketing features, we need it always
+ * running so we cannot leave this code in place when we implement those features.
+ *
+ * We should have this removed when we are more confident
+ * of the send-tab/push feature: https://github.com/mozilla-mobile/fenix/issues/4063
+ */
+@VisibleForTesting(otherwise = PRIVATE)
+class PushAccountObserver(private val push: AutoPushFeature) : AccountObserver {
+    override fun onLoggedOut() {
+        push.unsubscribeForType(PushType.Services)
+    }
+
+    override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        if (authType != AuthType.Existing) {
+            push.subscribeForType(PushType.Services)
+        }
     }
 }
