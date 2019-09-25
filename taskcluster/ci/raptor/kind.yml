@@ -20,7 +20,7 @@ job-defaults:
         by-abi:
             armeabi-v7a: t-bitbar-gw-perf-g5
             arm64-v8a: t-bitbar-gw-perf-p2
-    run-on-tasks-for: []
+    run-on-tasks-for: [github-pull-request]
     treeherder:
         kind: test
         tier: 2
