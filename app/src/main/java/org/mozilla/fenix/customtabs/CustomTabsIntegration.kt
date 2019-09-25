@@ -5,23 +5,16 @@
 package org.mozilla.fenix.customtabs
 
 import android.app.Activity
-import android.view.Gravity
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
-import com.airbnb.lottie.LottieCompositionFactory
-import com.airbnb.lottie.LottieDrawable
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.feature.customtabs.CustomTabsToolbarFeature
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.LifecycleAwareFeature
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.theme.ThemeManager
 
 class CustomTabsIntegration(
     sessionManager: SessionManager,
@@ -34,9 +27,6 @@ class CustomTabsIntegration(
 ) : LifecycleAwareFeature, BackHandler {
 
     init {
-        // Remove toolbar shadow
-        toolbar.elevation = 0f
-
         // Reduce margin height of EngineView from the top for the toolbar
         engineLayout.run {
             (layoutParams as CoordinatorLayout.LayoutParams).apply {
@@ -45,40 +35,8 @@ class CustomTabsIntegration(
             }
         }
 
-        // Make the toolbar go to the top.
-        toolbar.run {
-            (layoutParams as CoordinatorLayout.LayoutParams).apply {
-                gravity = Gravity.TOP
-            }
-        }
-
         // Hide the Quick Action Bar.
         quickActionbar.visibility = View.GONE
-
-        val task = LottieCompositionFactory
-            .fromRawRes(
-                activity,
-                ThemeManager.resolveAttribute(R.attr.shieldLottieFile, activity)
-            )
-        task.addListener { result ->
-            val lottieDrawable = LottieDrawable()
-            lottieDrawable.composition = result
-            toolbar.displayTrackingProtectionIcon =
-                activity.settings().shouldUseTrackingProtection && FeatureFlags.etpCategories
-            toolbar.displaySeparatorView = false
-
-            toolbar.setTrackingProtectionIcons(
-                iconOnNoTrackersBlocked = AppCompatResources.getDrawable(
-                    activity,
-                    R.drawable.ic_tracking_protection_enabled
-                )!!,
-                iconOnTrackersBlocked = lottieDrawable,
-                iconDisabledForSite = AppCompatResources.getDrawable(
-                    activity,
-                    R.drawable.ic_tracking_protection_disabled
-                )!!
-            )
-        }
     }
 
     private val customTabToolbarMenu by lazy {

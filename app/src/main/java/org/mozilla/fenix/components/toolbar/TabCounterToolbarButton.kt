@@ -20,10 +20,11 @@ import java.lang.ref.WeakReference
  */
 class TabCounterToolbarButton(
     private val sessionManager: SessionManager,
-    private val showTabs: () -> Unit,
-    private val isPrivate: Boolean
+    private val isPrivate: Boolean,
+    private val showTabs: () -> Unit
 ) : Toolbar.Action {
-    private var reference: WeakReference<TabCounter> = WeakReference<TabCounter>(null)
+
+    private var reference = WeakReference<TabCounter?>(null)
 
     override fun createView(parent: ViewGroup): View {
         sessionManager.register(sessionManagerObserver, view = parent)
@@ -34,9 +35,7 @@ class TabCounterToolbarButton(
                 showTabs.invoke()
             }
 
-            val count = sessionManager.sessions.count {
-                it.private == isPrivate
-            }
+            val count = sessionManager.sessionsOfType(private = isPrivate).count()
 
             contentDescription = getDescriptionForTabCount(context, count)
 
@@ -65,9 +64,9 @@ class TabCounterToolbarButton(
     private fun updateCount() {
         val count = sessionManager.sessionsOfType(private = isPrivate).count()
 
-        reference.get()?.let {
-            it.contentDescription = getDescriptionForTabCount(it.context, count)
-            it.setCountWithAnimation(count)
+        reference.get()?.apply {
+            contentDescription = getDescriptionForTabCount(context, count)
+            setCountWithAnimation(count)
         }
     }
 
@@ -79,20 +78,9 @@ class TabCounterToolbarButton(
     }
 
     private val sessionManagerObserver = object : SessionManager.Observer {
-        override fun onSessionAdded(session: Session) {
-            updateCount()
-        }
-
-        override fun onSessionRemoved(session: Session) {
-            updateCount()
-        }
-
-        override fun onSessionsRestored() {
-            updateCount()
-        }
-
-        override fun onAllSessionsRemoved() {
-            updateCount()
-        }
+        override fun onSessionAdded(session: Session) = updateCount()
+        override fun onSessionRemoved(session: Session) = updateCount()
+        override fun onSessionsRestored() = updateCount()
+        override fun onAllSessionsRemoved() = updateCount()
     }
 }

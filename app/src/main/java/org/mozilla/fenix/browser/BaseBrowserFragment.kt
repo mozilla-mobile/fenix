@@ -60,14 +60,13 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.toolbar.BaseBrowserToolbarView
+import org.mozilla.fenix.components.toolbar.BaseToolbarIntegration
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
-import org.mozilla.fenix.components.toolbar.BrowserToolbarView
-import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.QuickActionSheetState
-import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
@@ -87,8 +86,7 @@ import org.mozilla.fenix.theme.ThemeManager
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Observer {
     protected lateinit var browserStore: BrowserFragmentStore
-    protected lateinit var browserInteractor: BrowserToolbarViewInteractor
-    protected lateinit var browserToolbarView: BrowserToolbarView
+    protected lateinit var browserToolbarView: BaseBrowserToolbarView
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
@@ -97,7 +95,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
-    private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
+    private val toolbarIntegration = ViewBoundFeatureWrapper<BaseToolbarIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
@@ -182,15 +180,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 scope = lifecycleScope
             )
 
-            browserInteractor =
-                createBrowserToolbarViewInteractor(
-                    browserToolbarController,
-                    customTabSessionId?.let { sessionManager.findSessionById(it) })
-
-            browserToolbarView = BrowserToolbarView(
-                container = view.browserLayout,
-                interactor = browserInteractor,
-                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
+            browserToolbarView = createBrowserToolbarView(
+                view.browserLayout,
+                browserToolbarController
             )
 
             toolbarIntegration.set(
@@ -502,10 +494,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         return false
     }
 
-    protected abstract fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor
+    protected abstract fun createBrowserToolbarView(
+        container: ViewGroup,
+        browserToolbarController: BrowserToolbarController
+    ): BaseBrowserToolbarView
 
     protected abstract fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?)
 

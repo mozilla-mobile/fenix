@@ -6,6 +6,7 @@ package org.mozilla.fenix.customtabs
 
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.component_search.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.CustomTabBrowserToolbarView
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -49,7 +51,9 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                         activity,
                         view.nestedScrollQuickAction,
                         view.swipeRefresh,
-                        onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) }
+                        onItemTapped = {
+                            browserToolbarView.interactor.onBrowserToolbarMenuItemTapped(it)
+                        }
                     ),
                     owner = this,
                     view = view)
@@ -90,10 +94,14 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
         return customTabsIntegration.onBackPressed() || super.removeSessionIfNeeded()
     }
 
-    override fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ) = BrowserToolbarInteractor(browserToolbarController)
+    override fun createBrowserToolbarView(
+        container: ViewGroup,
+        browserToolbarController: BrowserToolbarController
+    ) = CustomTabBrowserToolbarView(
+        container,
+        BrowserToolbarInteractor(browserToolbarController),
+        sessionId = customTabSessionId
+    )
 
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
         val directions = ExternalAppBrowserFragmentDirections

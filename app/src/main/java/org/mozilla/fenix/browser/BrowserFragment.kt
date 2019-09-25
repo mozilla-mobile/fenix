@@ -48,7 +48,7 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
-import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
+import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
@@ -180,10 +180,10 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         return readerViewFeature.onBackPressed() || super.onBackPressed()
     }
 
-    override fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor {
+    override fun createBrowserToolbarView(
+        container: ViewGroup,
+        browserToolbarController: BrowserToolbarController
+    ): BrowserToolbarView {
         val context = requireContext()
 
         val interactor = BrowserInteractor(
@@ -201,12 +201,15 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                 }
             ),
             readerModeController = DefaultReaderModeController(readerViewFeature),
-            currentSession = session
+            currentSession = getSessionById()
         )
 
-        quickActionSheetView = QuickActionSheetView(view!!.nestedScrollQuickAction, interactor)
+        quickActionSheetView = QuickActionSheetView(requireView().nestedScrollQuickAction, interactor)
 
-        return interactor
+        return BrowserToolbarView(
+            container = container,
+            interactor = interactor
+        )
     }
 
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
