@@ -11,6 +11,8 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +58,8 @@ open class FenixApplication : Application() {
     }
 
     open fun setupApplication() {
+        handleInstallReferrer()
+
         setupCrashReporting()
         setDayNightTheme()
 
@@ -100,7 +104,7 @@ open class FenixApplication : Application() {
         }
 
         setupLeakCanary()
-        if (this.settings.isTelemetryEnabled) {
+        if (true) {
             components.analytics.metrics.start()
         }
 
@@ -292,5 +296,44 @@ open class FenixApplication : Application() {
             if (SDK_INT >= Build.VERSION_CODES.P) builder = builder.detectNonSdkApiUsage()
             StrictMode.setVmPolicy(builder.build())
         }
+    }
+
+    private fun handleInstallReferrer() {
+        Logger.debug("Sawyer installlll")
+        // TODO: Only do this on first launch: Intent.ACTION_PACKAGE_FIRST_LAUNCH
+        val referrerClient = InstallReferrerClient.newBuilder(this).build()
+
+        referrerClient.startConnection(object : InstallReferrerStateListener {
+
+            override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                when (responseCode) {
+                    InstallReferrerClient.InstallReferrerResponse.OK -> {
+                        // Connection established
+                        val installReferrerResponse = referrerClient.installReferrer
+                        installReferrerResponse.installReferrer
+
+                        Logger.debug("Sawyer " + installReferrerResponse.installReferrer)
+                    }
+                    InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
+                        // API not available on the current Play Store app
+                        Logger.debug("Sawyer feature not supported")
+                    }
+                    InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE -> {
+                        // Connection could not be established
+                        Logger.debug("Sawyer service unavailable")
+                    }
+                    else -> {
+                        Logger.debug("Sawyer ELSE: " + responseCode)
+                    }
+                }
+            }
+
+            override fun onInstallReferrerServiceDisconnected() {
+                // TODO: Restart the connection
+
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
+        })
     }
 }

@@ -94,3 +94,6 @@
 # Keep motionlayout internal methods
 # https://github.com/mozilla-mobile/fenix/issues/2094
 -keep class androidx.constraintlayout.** { *; }
+
+# Keep install referrer methods
+-keep public class com.android.installreferrer.** { *; }

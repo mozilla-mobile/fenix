@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import android.util.Log
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.support.base.Component
@@ -12,7 +13,6 @@ import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.facts.FactProcessor
 import mozilla.components.support.base.facts.Facts
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.CrashReporter
@@ -315,8 +315,8 @@ interface MetricController {
 
     companion object {
         fun create(services: List<MetricsService>, isTelemetryEnabled: () -> Boolean): MetricController {
-            return if (BuildConfig.TELEMETRY) return ReleaseMetricController(services, isTelemetryEnabled)
-            else DebugMetricController()
+            Log.d("Sawyer", "Creating debug...")
+            return ReleaseMetricController(services, isTelemetryEnabled)
         }
     }
 }
@@ -352,8 +352,9 @@ private class ReleaseMetricController(
     }
 
     override fun start() {
-        if (!isTelemetryEnabled.invoke() || initialized) { return }
+       // if (!isTelemetryEnabled.invoke() || initialized) { return }
 
+        Log.d("Sawyer", "starting each service...")
         services.forEach { it.start() }
         initialized = true
     }

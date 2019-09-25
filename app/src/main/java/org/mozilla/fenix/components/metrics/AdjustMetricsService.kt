@@ -11,11 +11,10 @@ import android.util.Log
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.LogLevel
-import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.Config
 
 class AdjustMetricsService(private val application: Application) : MetricsService {
     override fun start() {
+        /*
         if ((BuildConfig.ADJUST_TOKEN.isNullOrEmpty())) {
             Log.i(LOGTAG, "No adjust token defined")
 
@@ -26,15 +25,21 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
             return
         }
 
+         */
+
+        Log.d("Sawyer", "starting adjust!")
+
+        val adjustToken = "ABCDEFGHIJKL"
         val config = AdjustConfig(
             application,
-            BuildConfig.ADJUST_TOKEN,
-            AdjustConfig.ENVIRONMENT_PRODUCTION,
+            adjustToken,
+            AdjustConfig.ENVIRONMENT_SANDBOX,
             true
         )
 
-        config.setLogLevel(LogLevel.SUPRESS)
+        //config.setLogLevel(LogLevel.SUPRESS)
 
+        config.setLogLevel(LogLevel.VERBOSE)
         Adjust.onCreate(config)
         Adjust.setEnabled(true)
         application.registerActivityLifecycleCallbacks(AdjustLifecycleCallbacks())

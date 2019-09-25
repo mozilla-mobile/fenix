@@ -8,6 +8,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
@@ -19,7 +20,6 @@ import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -75,13 +75,14 @@ class Analytics(
     }
 
     val metrics: MetricController by lazy {
+        Log.d("Sawyer", "creating metrics")
         MetricController.create(
             listOf(
                 GleanMetricsService(context),
                 LeanplumMetricsService(context as Application),
                 AdjustMetricsService(context)
             ),
-            isTelemetryEnabled = { context.settings.isTelemetryEnabled }
+            isTelemetryEnabled = { true }
         )
     }
 }
