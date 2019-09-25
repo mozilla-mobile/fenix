@@ -25,15 +25,6 @@
         android:theme="@style/NormalTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute">
-        <receiver
-            android:name="com.adjust.sdk.AdjustReferrerReceiver"
-            android:permission="android.permission.INSTALL_PACKAGES"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".HomeActivity"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"

@@ -39,6 +39,15 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
 
         //config.setLogLevel(LogLevel.SUPRESS)
 
+        // TODO: Set on attribute
+        config.setOnAttributionChangedListener {
+            Log.d("Sawyer", "it changed!: " + it.campaign)
+        }
+
+        config.setOnEventTrackingSucceededListener {
+            Log.d("Sawyer", "Event success callback called!")
+        }
+
         config.setLogLevel(LogLevel.VERBOSE)
         Adjust.onCreate(config)
         Adjust.setEnabled(true)
