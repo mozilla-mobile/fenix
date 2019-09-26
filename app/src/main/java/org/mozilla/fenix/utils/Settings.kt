@@ -82,6 +82,13 @@ class Settings private constructor(
         default = ""
     )
 
+    /**
+     * Warning: when possible, prefer to set this via [BrowsingModeManager].
+     *
+     * [BrowsingModeManager] defines a callback to be hit whenever this setting changes. For
+     * example, setting this value directly at the wrong time could cause the private theme to
+     * not be applied.
+     */
     var usePrivateMode by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_private_mode),
         default = false

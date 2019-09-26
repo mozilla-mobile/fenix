@@ -116,9 +116,7 @@ open class FenixApplication : Application() {
             runStorageMaintenance()
         }
 
-        // In order to prevent user information from leaking to other users always set
-        // privateMode to false on application start.
-        Settings.getInstance(this).setPrivateMode(false)
+        maybeClearPrivateMode()
     }
 
     private fun runStorageMaintenance() {
@@ -128,6 +126,16 @@ open class FenixApplication : Application() {
             components.core.bookmarksStorage.runMaintenance()
         }
         settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
+    }
+
+    /**
+     * Clears private mode. This is done in order to avoid leaking the fact that
+     * private mode was in use during the previous session.
+     */
+    private fun maybeClearPrivateMode() {
+        // This needs to be called before the theme is set. No BrowsingModeManager is available
+        // at this point, which is why this is set directly
+        if (!settings().alwaysOpenInPrivateMode) settings().usePrivateMode = false
     }
 
     private fun registerRxExceptionHandling() {
