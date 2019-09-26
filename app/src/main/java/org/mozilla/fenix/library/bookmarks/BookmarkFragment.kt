@@ -91,7 +91,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler, Accou
         bookmarkView = BookmarkView(view.bookmarkLayout, bookmarkInteractor)
         signInView = SignInView(view.bookmarkLayout, bookmarkInteractor)
 
-        viewLifecycleOwner.lifecycle.addObserver(
+        lifecycle.addObserver(
             BookmarkDeselectNavigationListener(
                 findNavController(),
                 sharedViewModel,
