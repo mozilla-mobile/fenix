@@ -9,6 +9,7 @@ import android.app.Application
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import io.reactivex.plugins.RxJavaPlugins
@@ -36,6 +37,7 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
+import org.mozilla.fenix.utils.Settings
 import java.io.File
 
 @SuppressLint("Registered")
@@ -132,10 +134,11 @@ open class FenixApplication : Application() {
      * Clears private mode. This is done in order to avoid leaking the fact that
      * private mode was in use during the previous session.
      */
-    private fun maybeClearPrivateMode() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun maybeClearPrivateMode(settings: Settings = settings()) {
         // This needs to be called before the theme is set. No BrowsingModeManager is available
         // at this point, which is why this is set directly
-        if (!settings().alwaysOpenInPrivateMode) settings().usePrivateMode = false
+        if (!settings.alwaysOpenInPrivateMode) settings.usePrivateMode = false
     }
 
     private fun registerRxExceptionHandling() {
