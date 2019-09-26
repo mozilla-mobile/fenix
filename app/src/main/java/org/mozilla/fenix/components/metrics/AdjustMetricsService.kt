@@ -48,10 +48,15 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
             Log.d("Sawyer", "Event success callback called!")
         }
 
+
+
         config.setLogLevel(LogLevel.VERBOSE)
         Adjust.onCreate(config)
         Adjust.setEnabled(true)
         application.registerActivityLifecycleCallbacks(AdjustLifecycleCallbacks())
+
+        Log.d("Sawyer", "attribution: " + Adjust.getAttribution())
+
     }
 
     override fun stop() {
