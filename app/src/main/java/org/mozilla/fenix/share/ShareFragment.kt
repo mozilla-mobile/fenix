@@ -168,7 +168,7 @@ class ShareFragment : AppCompatDialogFragment() {
                 resolveInfo.activityInfo.packageName,
                 resolveInfo.activityInfo.name
             )
-        }.orEmpty()
+        }?.filter { it.packageName != context.packageName }.orEmpty()
     }
 
     @Suppress("ReturnCount")
