@@ -8,6 +8,7 @@ import android.content.Context
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.support.base.Component
+import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.facts.FactProcessor
 import mozilla.components.support.base.facts.Facts
@@ -116,6 +117,8 @@ sealed class Event {
     object PrivateBrowsingStaticShortcutPrivateTab : Event()
     object TabMediaPlay : Event()
     object TabMediaPause : Event()
+    object NotificationMediaPlay : Event()
+    object NotificationMediaPause : Event()
     object TrackingProtectionTrackerList : Event()
     object TrackingProtectionIconPressed : Event()
     object TrackingProtectionSettingsPanel : Event()
@@ -312,6 +315,17 @@ private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
     Component.FEATURE_CUSTOMTABS to "close" -> Event.CustomTabsClosed
     Component.FEATURE_CUSTOMTABS to "action_button" -> Event.CustomTabsActionTapped
 
+    Component.FEATURE_MEDIA to "notification" -> {
+        when (action) {
+            Action.PLAY -> {
+                Event.NotificationMediaPlay
+            }
+            Action.PAUSE -> {
+                Event.NotificationMediaPause
+            }
+            else -> null
+        }
+    }
     else -> null
 }
 
