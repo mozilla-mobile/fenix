@@ -25,7 +25,6 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.initBlockedByAndroidView
@@ -50,38 +49,25 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         settings = requireContext().settings()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(
-            R.layout.fragment_manage_site_permissions_feature_phone,
-            container,
-            false
-        )
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val rootView = inflater.inflate(R.layout.fragment_manage_site_permissions_feature_phone, container, false)
 
-        initFirstRadio(rootView)
-        initSecondRadio(rootView)
+        initAskToAllowRadio(rootView)
+        initBlockRadio(rootView)
         bindBlockedByAndroidContainer(rootView)
 
         return rootView
     }
-
     override fun onResume() {
         super.onResume()
         initBlockedByAndroidView(phoneFeature, blockedByAndroidView)
     }
 
-    private fun initFirstRadio(rootView: View) {
+    private fun initAskToAllowRadio(rootView: View) {
         val radio = rootView.findViewById<RadioButton>(R.id.ask_to_allow_radio)
-        val askToAllowText = when (phoneFeature) {
-            PhoneFeature.AUTOPLAY -> getString(R.string.preference_option_autoplay_blocked)
-            else -> getString(R.string.preference_option_phone_feature_ask_to_allow)
-        }
+        val askToAllowText = getString(R.string.preference_option_phone_feature_ask_to_allow)
         val recommendedText = getString(R.string.phone_feature_recommended)
-        val recommendedTextSize =
-            resources.getDimensionPixelSize(R.dimen.phone_feature_label_recommended_text_size)
+        val recommendedTextSize = resources.getDimensionPixelSize(R.dimen.phone_feature_label_recommended_text_size)
         val recommendedSpannable = SpannableString(recommendedText)
 
         recommendedSpannable.setSpan(
@@ -103,16 +89,10 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             append(recommendedSpannable)
             this
         }
-        val expectedAction = if (phoneFeature == PhoneFeature.AUTOPLAY) BLOCKED else ASK_TO_ALLOW
         radio.setOnClickListener {
-            if (phoneFeature == PhoneFeature.AUTOPLAY) {
-                settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY, expectedAction)
-                requireComponents.core.engine.settings.allowAutoplayMedia = false
-            } else {
-                saveActionInSettings(expectedAction)
-            }
+            saveActionInSettings(ASK_TO_ALLOW)
         }
-        radio.restoreState(expectedAction)
+        radio.restoreState(ASK_TO_ALLOW)
     }
 
     private fun RadioButton.restoreState(action: SitePermissionsRules.Action) {
@@ -122,22 +102,12 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         }
     }
 
-    private fun initSecondRadio(rootView: View) {
+    private fun initBlockRadio(rootView: View) {
         val radio = rootView.findViewById<RadioButton>(R.id.block_radio)
-        radio.text = when (phoneFeature) {
-            PhoneFeature.AUTOPLAY -> getString(R.string.preference_option_autoplay_allowed)
-            else -> getString(R.string.preference_option_phone_feature_blocked)
-        }
-        val expectedAction = if (phoneFeature == PhoneFeature.AUTOPLAY) ASK_TO_ALLOW else BLOCKED
         radio.setOnClickListener {
-            if (phoneFeature == PhoneFeature.AUTOPLAY) {
-                settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY, expectedAction)
-                requireComponents.core.engine.settings.allowAutoplayMedia = true
-            } else {
-                saveActionInSettings(expectedAction)
-            }
+            saveActionInSettings(BLOCKED)
         }
-        radio.restoreState(expectedAction)
+        radio.restoreState(BLOCKED)
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {

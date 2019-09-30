@@ -11,7 +11,6 @@ import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
-import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.support.ktx.android.content.PreferencesHolder
 import mozilla.components.support.ktx.android.content.booleanPreference
 import mozilla.components.support.ktx.android.content.floatPreference
@@ -44,14 +43,14 @@ class Settings private constructor(
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
 
-        private fun actionToInt(action: Action) = when (action) {
-            Action.BLOCKED -> BLOCKED_INT
-            Action.ASK_TO_ALLOW -> ASK_TO_ALLOW_INT
+        private fun actionToInt(action: SitePermissionsRules.Action) = when (action) {
+            SitePermissionsRules.Action.BLOCKED -> BLOCKED_INT
+            SitePermissionsRules.Action.ASK_TO_ALLOW -> ASK_TO_ALLOW_INT
         }
 
         private fun intToAction(action: Int) = when (action) {
-            BLOCKED_INT -> Action.BLOCKED
-            ASK_TO_ALLOW_INT -> Action.ASK_TO_ALLOW
+            BLOCKED_INT -> SitePermissionsRules.Action.BLOCKED
+            ASK_TO_ALLOW_INT -> SitePermissionsRules.Action.ASK_TO_ALLOW
             else -> throw InvalidParameterException("$action is not a valid SitePermissionsRules.Action")
         }
 
@@ -93,10 +92,10 @@ class Settings private constructor(
 
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
-            preferences.getBoolean(
-                appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
-                true
-            )
+                preferences.getBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
+                    true
+                )
 
     val isRemoteDebuggingEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
@@ -113,15 +112,11 @@ class Settings private constructor(
         default = true
     )
 
-    val isAutoPlayEnabled = getSitePermissionsPhoneFeatureAction(
-        PhoneFeature.AUTOPLAY, Action.BLOCKED
-    ) != Action.BLOCKED
-
     private var trackingProtectionOnboardingShownThisSession = false
 
     val shouldShowTrackingProtectionOnboarding: Boolean
         get() = trackingProtectionOnboardingCount < trackingProtectionOnboardingMaximumCount &&
-            !trackingProtectionOnboardingShownThisSession
+                !trackingProtectionOnboardingShownThisSession
 
     val shouldAutoBounceQuickActionSheet: Boolean
         get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
@@ -237,15 +232,12 @@ class Settings private constructor(
         ).apply()
     }
 
-    fun getSitePermissionsPhoneFeatureAction(
-        feature: PhoneFeature,
-        default: Action = Action.ASK_TO_ALLOW
-    ) =
-        intToAction(preferences.getInt(feature.getPreferenceKey(appContext), actionToInt(default)))
+    fun getSitePermissionsPhoneFeatureAction(feature: PhoneFeature) =
+        intToAction(preferences.getInt(feature.getPreferenceKey(appContext), ASK_TO_ALLOW_INT))
 
     fun setSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
-        value: Action
+        value: SitePermissionsRules.Action
     ) {
         preferences.edit().putInt(feature.getPreferenceKey(appContext), actionToInt(value)).apply()
     }
@@ -314,7 +306,7 @@ class Settings private constructor(
 
             val showCondition =
                 (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_INSTALLED && focusInstalled) ||
-                    (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED && !focusInstalled)
+                        (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED && !focusInstalled)
 
             if (showCondition && !showedPrivateModeContextualFeatureRecommender) {
                 showedPrivateModeContextualFeatureRecommender = true
