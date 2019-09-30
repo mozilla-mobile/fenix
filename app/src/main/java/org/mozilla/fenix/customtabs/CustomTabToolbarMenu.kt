@@ -10,6 +10,7 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.menu.item.BrowserMenuSwitch
+import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -117,12 +118,14 @@ class CustomTabToolbarMenu(
                 onItemTapped.invoke(ToolbarMenu.Item.Share)
             },
 
-            // TODO: Add icon R.drawable.ic_desktop
-            BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
-                { session?.desktopMode ?: false }, { checked ->
+            BrowserMenuImageSwitch(
+               R.drawable.ic_desktop, 
+               context.getString(R.string.browser_menu_desktop_site),
+               { session?.desktopMode ?: false }, { checked ->
                     onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
-                }),
+             }),
 
+       
             BrowserMenuImageText(
                 context.getString(R.string.browser_menu_find_in_page),
                 R.drawable.mozac_ic_search,
