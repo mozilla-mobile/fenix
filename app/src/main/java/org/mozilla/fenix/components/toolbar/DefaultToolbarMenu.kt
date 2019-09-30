@@ -11,6 +11,7 @@ import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.menu.item.BrowserMenuSwitch
+import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ThemeManager
@@ -131,11 +132,13 @@ class DefaultToolbarMenu(
                 onItemTapped.invoke(ToolbarMenu.Item.Library)
             },
 
-            // TODO: Add icon R.drawable.ic_desktop
-            BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
+            BrowserMenuImageSwitch(
+               R.drawable.ic_desktop, 
+               context.getString(R.string.browser_menu_desktop_site),
                 requestDesktopStateProvider, { checked ->
                     onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
-                }),
+                }
+            ),
 
             BrowserMenuImageText(
                 context.getString(R.string.browser_menu_find_in_page),
