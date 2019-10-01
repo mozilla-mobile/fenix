@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_new"
+            app:srcCompat="@drawable/ic_new"
             android:tint="?neutral"
             android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -42,7 +42,7 @@
             android:layout_height="24dp"
             android:elevation="10dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/pause_with_background"
+            app:srcCompat="@drawable/pause_with_background"
             android:visibility="gone"
             app:layout_constraintCircleAngle="45"
             app:layout_constraintCircleRadius="28dp"
@@ -84,7 +84,7 @@
                 android:layout_height="48dp"
                 android:alpha="0.8"
                 android:contentDescription="@string/close_tab"
-                android:src="@drawable/ic_close"
+                app:srcCompat="@drawable/ic_close"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>

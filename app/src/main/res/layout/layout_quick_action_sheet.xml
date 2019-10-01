@@ -27,7 +27,7 @@
         android:background="@null"
         android:contentDescription="@string/quick_action_sheet_handle"
         android:paddingTop="7dp"
-        android:src="@drawable/ic_drawer_pull_tab"
+        app:srcCompat="@drawable/ic_drawer_pull_tab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/quick_action_sheet_faded_handle" />
