@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tint="?primaryText"
-            app:srcCompat="@drawable/ic_link"
+            android:src="@drawable/ic_link"
             android:importantForAccessibility="no"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -153,7 +153,7 @@
             android:id="@+id/searchScanButton"
             style="@style/search_pill"
             android:layout_marginEnd="8dp"
-            android:drawableStart="@drawable/ic_qr"
+            app:drawableStartCompat="@drawable/ic_qr"
             android:textOff="@string/search_scan_button"
             android:textOn="@string/search_scan_button" />
     </LinearLayout>

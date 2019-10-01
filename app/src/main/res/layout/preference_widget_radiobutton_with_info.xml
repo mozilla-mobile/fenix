@@ -26,7 +26,7 @@
         android:focusable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:drawableStart="?android:attr/listChoiceIndicatorSingle" />
+        app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
 
     <TextView
         android:id="@+id/title"

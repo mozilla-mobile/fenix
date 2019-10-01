@@ -16,7 +16,7 @@
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:drawableStart="@drawable/mozac_ic_back"
+        app:drawableStartCompat="@drawable/mozac_ic_back"
         android:drawablePadding="8dp"
         android:drawableTint="@color/neutral_text"
         android:gravity="start|center_vertical"

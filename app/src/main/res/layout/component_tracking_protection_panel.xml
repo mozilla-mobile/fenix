@@ -55,7 +55,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cookies"
+            app:drawableStartCompat="@drawable/ic_cookies"
             android:text="@string/etp_cookies_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/blocking_header" />
@@ -65,7 +65,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_fingerprinters"
+            app:drawableStartCompat="@drawable/ic_fingerprinters"
             android:text="@string/etp_fingerprinters_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/cross_site_tracking" />
@@ -75,7 +75,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cryptominers"
+            app:drawableStartCompat="@drawable/ic_cryptominers"
             android:text="@string/etp_cryptominers_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters" />
@@ -85,7 +85,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_social_media_trackers"
+            app:drawableStartCompat="@drawable/ic_social_media_trackers"
             android:text="@string/etp_social_media_trackers_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/cryptominers" />
@@ -95,7 +95,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_tracking_content"
+            app:drawableStartCompat="@drawable/ic_tracking_content"
             android:text="@string/etp_tracking_content_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/social_media_trackers" />
@@ -116,7 +116,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_fingerprinters"
+            app:drawableStartCompat="@drawable/ic_fingerprinters"
             android:text="@string/etp_fingerprinters_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/not_blocking_header" />
@@ -126,7 +126,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cryptominers"
+            app:drawableStartCompat="@drawable/ic_cryptominers"
             android:text="@string/etp_cryptominers_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters_loaded" />
@@ -136,7 +136,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_social_media_trackers"
+            app:drawableStartCompat="@drawable/ic_social_media_trackers"
             android:text="@string/etp_social_media_trackers_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/cryptominers_loaded" />
@@ -146,7 +146,7 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_tracking_content"
+            app:drawableStartCompat="@drawable/ic_tracking_content"
             android:text="@string/etp_tracking_content_title"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/social_media_trackers_loaded" />
