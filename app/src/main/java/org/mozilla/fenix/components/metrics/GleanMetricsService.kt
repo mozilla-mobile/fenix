@@ -9,9 +9,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
+import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.utils.Browsers
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
@@ -431,7 +433,11 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         // can handle events being recorded before it's initialized.
         starter = MainScope().launch {
             Glean.registerPings(Pings)
-            Glean.initialize(context, Configuration(channel = BuildConfig.BUILD_TYPE))
+            Glean.initialize(context,
+                Configuration(channel = BuildConfig.BUILD_TYPE,
+                    httpClient = ConceptFetchHttpUploader(
+                        lazy { GeckoViewFetchClient(context) }
+                    )))
         }
 
         setStartupMetrics()
