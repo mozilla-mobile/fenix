@@ -12,7 +12,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
+import org.mozilla.fenix.home.intent.StartInPrivateModeProcessor
 import java.util.UUID
 
 /**
@@ -32,10 +32,7 @@ object PrivateShortcutCreateManager {
                 action = Intent.ACTION_VIEW
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
-                putExtra(
-                    HomeActivity.OPEN_TO_SEARCH,
-                    StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT
-                )
+                putExtra(StartInPrivateModeProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT, true)
             })
             .build()
         val homeScreenIntent = Intent(Intent.ACTION_MAIN)
