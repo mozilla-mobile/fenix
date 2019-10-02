@@ -19,8 +19,8 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.ext.clearAndCommit
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.robolectric.annotation.Config
 
 @ObsoleteCoroutinesApi
@@ -244,6 +244,13 @@ class SettingsTest {
         // When just created
         // Then
         assertTrue(settings.shouldShowClipboardSuggestions)
+    }
+
+    @Test
+    fun shouldShowSearchShortcuts() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldShowSearchShortcuts)
     }
 
     @Test

@@ -31,7 +31,6 @@ interface SearchController {
     fun handleSearchTermsTapped(searchTerms: String)
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
-    fun handleTurnOnStartedTyping()
     fun handleExistingSessionSelected(session: Session)
 }
 
@@ -102,10 +101,6 @@ class DefaultSearchController(
     override fun handleClickSearchEngineSettings() {
         val directions = SearchFragmentDirections.actionSearchFragmentToSearchEngineFragment()
         navController.navigate(directions)
-    }
-
-    override fun handleTurnOnStartedTyping() {
-       // TODO: Remove this
     }
 
     override fun handleExistingSessionSelected(session: Session) {

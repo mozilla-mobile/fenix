@@ -78,10 +78,6 @@ class SearchFragment : Fragment(), BackHandler {
             ?.let(SearchFragmentArgs.Companion::fromBundle)
             ?.let { it.pastedText }
 
-        val displayShortcutEnginePicker = arguments
-            ?.let(SearchFragmentArgs.Companion::fromBundle)
-            ?.let { it.showShortcutEnginePicker } ?: false
-
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url.orEmpty()
         val currentSearchEngine = SearchEngineSource.Default(
@@ -92,11 +88,10 @@ class SearchFragment : Fragment(), BackHandler {
             SearchFragmentStore(
                 SearchFragmentState(
                     query = url,
-                    showShortcutEnginePicker = displayShortcutEnginePicker,
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
                     showSearchSuggestions = requireContext().settings().shouldShowSearchSuggestions,
-                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts,
+                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts && url.isEmpty(),
                     showClipboardSuggestions = requireContext().settings().shouldShowClipboardSuggestions,
                     showHistorySuggestions = requireContext().settings().shouldShowHistorySuggestions,
                     showBookmarkSuggestions = requireContext().settings().shouldShowBookmarkSuggestions,
@@ -135,7 +130,6 @@ class SearchFragment : Fragment(), BackHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO: Hide shortcut suggestions if needed
         searchScanButton.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
         layoutComponents(view.search_layout)
 
@@ -263,7 +257,7 @@ class SearchFragment : Fragment(), BackHandler {
 
     private fun updateSearchWithLabel(searchState: SearchFragmentState) {
         search_with_shortcuts.visibility =
-            if (searchState.showShortcutEnginePicker && searchState.showSearchShortcuts) View.VISIBLE else View.GONE
+            if (searchState.showSearchShortcuts) View.VISIBLE else View.GONE
     }
 
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {

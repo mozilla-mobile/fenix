@@ -235,7 +235,6 @@ class Settings private constructor(
         default = true
     )
 
-
     @VisibleForTesting(otherwise = PRIVATE)
     internal val trackingProtectionOnboardingCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
