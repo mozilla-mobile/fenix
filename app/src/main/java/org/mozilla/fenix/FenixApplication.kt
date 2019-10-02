@@ -9,7 +9,6 @@ import android.app.Application
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
-import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import io.reactivex.plugins.RxJavaPlugins
@@ -118,6 +117,8 @@ open class FenixApplication : Application() {
             runStorageMaintenance()
         }
 
+        // This needs to be called before the theme is set. No BrowsingModeManager is available
+        // at this point, which is why this is set directly
         maybeClearPrivateMode()
     }
 
@@ -134,10 +135,7 @@ open class FenixApplication : Application() {
      * Clears private mode. This is done in order to avoid leaking the fact that
      * private mode was in use during the previous session.
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun maybeClearPrivateMode(settings: Settings = settings()) {
-        // This needs to be called before the theme is set. No BrowsingModeManager is available
-        // at this point, which is why this is set directly
         if (!settings.alwaysOpenInPrivateMode) settings.usePrivateMode = false
     }
 
