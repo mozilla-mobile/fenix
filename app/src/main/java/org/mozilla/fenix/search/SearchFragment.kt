@@ -38,7 +38,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -97,6 +96,7 @@ class SearchFragment : Fragment(), BackHandler {
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
                     showSearchSuggestions = requireContext().settings().shouldShowSearchSuggestions,
+                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts,
                     showClipboardSuggestions = requireContext().settings().shouldShowClipboardSuggestions,
                     showHistorySuggestions = requireContext().settings().shouldShowHistorySuggestions,
                     showBookmarkSuggestions = requireContext().settings().shouldShowBookmarkSuggestions,
@@ -135,6 +135,7 @@ class SearchFragment : Fragment(), BackHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // TODO: Hide shortcut suggestions if needed
         searchScanButton.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
         layoutComponents(view.search_layout)
 
@@ -188,19 +189,6 @@ class SearchFragment : Fragment(), BackHandler {
 
         view.toolbar_wrapper.clipToOutline = false
 
-        searchShortcutsButton.setOnClickListener {
-            val isOpen = searchStore.state.showShortcutEnginePicker
-            searchStore.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(!isOpen))
-
-            if (isOpen) {
-                requireComponents.analytics.metrics.track(Event.SearchShortcutMenuClosed)
-            } else {
-                requireComponents.analytics.metrics.track(Event.SearchShortcutMenuOpened)
-            }
-
-            searchInteractor.turnOnStartedTyping()
-        }
-
         fill_link_from_clipboard.setOnClickListener {
             (activity as HomeActivity)
                 .openToBrowserAndLoad(
@@ -214,7 +202,6 @@ class SearchFragment : Fragment(), BackHandler {
             awesomeBarView.update(it)
             toolbarView.update(it)
             updateSearchEngineIcon(it)
-            updateSearchShortuctsIcon(it)
             updateSearchWithLabel(it)
             updateClipboardSuggestion(it, requireContext().components.clipboardHandler.url)
         }
@@ -276,28 +263,17 @@ class SearchFragment : Fragment(), BackHandler {
 
     private fun updateSearchWithLabel(searchState: SearchFragmentState) {
         search_with_shortcuts.visibility =
-            if (searchState.showShortcutEnginePicker) View.VISIBLE else View.GONE
+            if (searchState.showShortcutEnginePicker && searchState.showSearchShortcuts) View.VISIBLE else View.GONE
     }
 
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
-        val shouldBeVisible =
+        val visibility =
             if (searchState.showClipboardSuggestions && searchState.query.isEmpty() && !clipboardUrl.isNullOrEmpty())
             View.VISIBLE else View.GONE
 
-        fill_link_from_clipboard.visibility = shouldBeVisible
-        divider_line.visibility = shouldBeVisible
+        fill_link_from_clipboard.visibility = visibility
+        divider_line.visibility = visibility
         clipboard_url.text = clipboardUrl
-    }
-
-    private fun updateSearchShortuctsIcon(searchState: SearchFragmentState) {
-        with(requireContext()) {
-            val showShortcuts = searchState.showShortcutEnginePicker
-            searchShortcutsButton?.isChecked = showShortcuts
-
-            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
-
-            searchShortcutsButton.compoundDrawables[0]?.setTint(getColorFromAttr(color))
-        }
     }
 
     override fun onRequestPermissionsResult(

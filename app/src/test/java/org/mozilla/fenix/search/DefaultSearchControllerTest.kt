@@ -137,13 +137,6 @@ class DefaultSearchControllerTest {
         verify { navController.navigate(directions) }
     }
 
-    @Test
-    fun handleTurnOnStartedTyping() {
-        controller.handleTurnOnStartedTyping()
-
-        assertTrue(controller.userTypingCheck.ranOnTextChanged)
-        assertTrue(controller.userTypingCheck.userHasTyped)
-    }
 
     @Test
     fun handleExistingSessionSelected() {

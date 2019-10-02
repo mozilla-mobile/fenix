@@ -37,6 +37,7 @@ sealed class SearchEngineSource {
  * @property searchEngineSource The current selected search engine with the context of how it was selected
  * @property defaultEngineSource The current default search engine source
  * @property showSearchSuggestions Whether or not to show search suggestions from the search engine in the AwesomeBar
+ * @property showSearchShortcuts Whether or not to show search shortcuts in the AwesomeBar
  * @property showClipboardSuggestions Whether or not to show clipboard suggestion in the AwesomeBar
  * @property showHistorySuggestions Whether or not to show history suggestions in the AwesomeBar
  * @property showBookmarkSuggestions Whether or not to show the bookmark suggestion in the AwesomeBar
@@ -49,6 +50,7 @@ data class SearchFragmentState(
     val searchEngineSource: SearchEngineSource,
     val defaultEngineSource: SearchEngineSource.Default,
     val showSearchSuggestions: Boolean,
+    val showSearchShortcuts: Boolean,
     val showClipboardSuggestions: Boolean,
     val showHistorySuggestions: Boolean,
     val showBookmarkSuggestions: Boolean,
