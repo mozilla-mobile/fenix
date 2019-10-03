@@ -1,16 +1,20 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ext
 
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.mozilla.fenix.TestApplication
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import android.util.Log
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import android.util.Log
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.TestApplication
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @ObsoleteCoroutinesApi
 @RunWith(RobolectricTestRunner::class)

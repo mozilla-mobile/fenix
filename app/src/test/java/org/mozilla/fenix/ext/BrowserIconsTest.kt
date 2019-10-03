@@ -1,18 +1,22 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ext
 
-import mozilla.components.support.test.robolectric.testContext
 import android.widget.ImageView
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import io.mockk.verify
 import io.mockk.spyk
+import io.mockk.verify
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
-import mozilla.components.browser.icons.BrowserIcons
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.junit.runner.RunWith
 
 @ObsoleteCoroutinesApi
 @RunWith(RobolectricTestRunner::class)

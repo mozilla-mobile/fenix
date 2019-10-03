@@ -1,18 +1,22 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ext
 
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.mozilla.fenix.TestApplication
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertEquals
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import android.app.Activity
 import android.view.View
 import android.view.WindowManager
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.TestApplication
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.Config
 
 @ObsoleteCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
