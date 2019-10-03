@@ -375,3 +375,7 @@ style:
     active: true
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/androidTest/**"
     excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
+
+mozilla-rules:
+  AbsentOrWrongFileLicense:
+    active: true
