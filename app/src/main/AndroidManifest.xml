@@ -123,6 +123,7 @@
                 android:resource="@mipmap/ic_launcher" />
         </activity>
 
+        <!-- Launch in private mode alias -->
         <activity-alias
             android:name="org.mozilla.fenix.alias.IntentReceiverActivity"
             android:label="@string/app_name_private"

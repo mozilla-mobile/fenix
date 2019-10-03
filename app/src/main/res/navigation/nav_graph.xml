@@ -590,6 +590,6 @@
         android:label="AddNewDeviceFragment" />
     <fragment
         android:id="@+id/defaultBrowserFragment"
-        android:name="org.mozilla.fenix.settings.DefaultBrowserFragment"
+        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment"
         android:label="DefaultBrowserFragment" />
 </navigation>

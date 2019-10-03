@@ -122,7 +122,9 @@ class IntentReceiverActivity : Activity() {
     }
 
     companion object {
+        // This constant must match the metadata from the private activity-alias
         const val LAUNCH_PRIVATE_LINK = "org.mozilla.fenix.LAUNCH_PRIVATE_LINK"
+
         const val ACTION_OPEN_TAB = "org.mozilla.fenix.OPEN_TAB"
         const val ACTION_OPEN_PRIVATE_TAB = "org.mozilla.fenix.OPEN_PRIVATE_TAB"
     }

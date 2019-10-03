@@ -22,9 +22,9 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 
 /**
- * Lets the user toggle telemetry on/off.
+ * Lets the user control their default browser preferences
  */
-class DefaultBrowserFragment : PreferenceFragmentCompat() {
+class DefaultBrowserSettingsFragment : PreferenceFragmentCompat() {
 
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->

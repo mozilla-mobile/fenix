@@ -130,13 +130,12 @@ open class HomeActivity : AppCompatActivity() {
         // We do this on a separate thread to alleviate performance issues
         val weakReferenceContext = WeakReference(this)
         lifecycleScope.launch {
-            weakReferenceContext.get()?.let {
-                if (!Browsers.all(it).isDefaultBrowser) {
-                    it.settings().preferences
-                        .edit()
-                        .putBoolean(it.getString(R.string.pref_key_open_links_in_a_private_tab), false)
-                        .apply()
-                }
+            val context = weakReferenceContext.get() ?: return@launch
+            if (!Browsers.all(context).isDefaultBrowser) {
+                context.settings().preferences
+                    .edit()
+                    .putBoolean(context.getString(R.string.pref_key_open_links_in_a_private_tab), false)
+                    .apply()
             }
         }
     }
