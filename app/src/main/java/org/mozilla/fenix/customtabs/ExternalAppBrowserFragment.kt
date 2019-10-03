@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.browser.session.Session
+import mozilla.components.feature.customtabs.CustomTabWindowFeature
 import mozilla.components.feature.pwa.ext.trustedOrigins
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
@@ -33,6 +34,7 @@ import org.mozilla.fenix.ext.requireComponents
 class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
 
     private val customTabsIntegration = ViewBoundFeatureWrapper<CustomTabsIntegration>()
+    private val windowFeature = ViewBoundFeatureWrapper<CustomTabWindowFeature>()
     private val hideToolbarFeature = ViewBoundFeatureWrapper<WebAppHideToolbarFeature>()
 
     override fun initializeUI(view: View): Session? {
@@ -43,7 +45,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
             customTabSessionId?.let { customTabSessionId ->
                 customTabsIntegration.set(
                     feature = CustomTabsIntegration(
-                        requireComponents.core.sessionManager,
+                        components.core.sessionManager,
                         toolbar,
                         customTabSessionId,
                         activity,
@@ -53,6 +55,16 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                     ),
                     owner = this,
                     view = view)
+
+                windowFeature.set(
+                    feature = CustomTabWindowFeature(
+                        activity.applicationContext,
+                        components.core.sessionManager,
+                        customTabSessionId
+                    ),
+                    owner = this,
+                    view = view
+                )
 
                 hideToolbarFeature.set(
                     feature = WebAppHideToolbarFeature(
