@@ -9,7 +9,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
@@ -436,7 +435,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             Glean.initialize(context,
                 Configuration(channel = BuildConfig.BUILD_TYPE,
                     httpClient = ConceptFetchHttpUploader(
-                        lazy { GeckoViewFetchClient(context) }
+                        lazy(LazyThreadSafetyMode.NONE) { context.components.core.client }
                     )))
         }
 
