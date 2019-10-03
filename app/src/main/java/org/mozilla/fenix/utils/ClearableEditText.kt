@@ -12,6 +12,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
@@ -47,7 +48,7 @@ class ClearableEditText @JvmOverloads constructor(
     override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
         val drawable = if (shouldShowClearButton(lengthAfter)) {
-            context.getDrawable(R.drawable.ic_clear)?.apply {
+            ContextCompat.getDrawable(context, R.drawable.ic_clear)?.apply {
                 colorFilter = PorterDuffColorFilter(context.getColorFromAttr(R.attr.primaryText), SRC_IN)
             }
         } else {

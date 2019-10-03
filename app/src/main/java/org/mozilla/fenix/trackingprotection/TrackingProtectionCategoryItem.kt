@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.withStyledAttributes
 import kotlinx.android.synthetic.main.tracking_protection_category.view.*
 import org.mozilla.fenix.R
@@ -30,7 +31,7 @@ class TrackingProtectionCategoryItem @JvmOverloads constructor(
                 R.styleable.TrackingProtectionCategory_categoryItemIcon,
                 R.drawable.ic_cryptominers
             )
-            switchIcon?.background = resources.getDrawable(id, context.theme)
+            switchIcon?.background = ResourcesCompat.getDrawable(resources, id, context.theme)
             switchItemTitle?.text = resources.getString(
                 getResourceId(
                     R.styleable.TrackingProtectionCategory_categoryItemTitle,

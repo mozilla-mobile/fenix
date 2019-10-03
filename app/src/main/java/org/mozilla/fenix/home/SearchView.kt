@@ -8,15 +8,17 @@ import android.content.Context
 import android.graphics.drawable.TransitionDrawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import org.mozilla.fenix.R
 
 class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     private val lightDrawable =
-        resources.getDrawable(R.drawable.home_search_background_normal, context.theme)
+        ResourcesCompat.getDrawable(resources, R.drawable.home_search_background_normal, context.theme)
     private val darkDrawable =
-        resources.getDrawable(R.drawable.home_search_background_dark, context.theme)
+        ResourcesCompat.getDrawable(resources, R.drawable.home_search_background_dark, context.theme)
     private val darkNoBorderDrawable =
-        resources.getDrawable(R.drawable.home_search_background_dark_no_border, context.theme)
+        ResourcesCompat.getDrawable(resources, R.drawable.home_search_background_dark_no_border, context.theme)
 
     private val lightToDark = TransitionDrawable(arrayOf(lightDrawable, darkDrawable))
     private val darkToNoBorder = TransitionDrawable(arrayOf(darkDrawable, darkNoBorderDrawable))

@@ -116,7 +116,7 @@ class QuickSettingsUIView(
             drawableTint = R.color.photonRed50
         }
 
-        val icon = context.getDrawable(drawableId)
+        val icon = ContextCompat.getDrawable(context, drawableId)
         icon?.setTint(ContextCompat.getColor(context, drawableTint))
         security_info.setText(stringId)
         security_info.putCompoundDrawablesRelativeWithIntrinsicBounds(start = icon)

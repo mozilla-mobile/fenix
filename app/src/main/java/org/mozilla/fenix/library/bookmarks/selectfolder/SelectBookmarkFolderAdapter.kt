@@ -69,7 +69,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
 
         fun bind(folder: BookmarkNodeWithDepth, selected: Boolean, onSelect: (BookmarkNode) -> Unit) {
             view.changeSelected(selected)
-            view.iconView.image = containerView.context.getDrawable(R.drawable.ic_folder_icon)?.apply {
+            view.iconView.image = ContextCompat.getDrawable(containerView.context, R.drawable.ic_folder_icon)?.apply {
                 setTint(ContextCompat.getColor(containerView.context, R.color.primary_text_light_theme))
             }
             view.titleView.text = folder.node.title

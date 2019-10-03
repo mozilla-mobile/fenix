@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -153,7 +154,7 @@ class QuickActionSheetView(
         }
 
         view.quick_action_read.putCompoundDrawablesRelativeWithIntrinsicBounds(
-            top = view.context.getDrawable(readerTwoStateDrawableRes)
+            top = ContextCompat.getDrawable(view.context, readerTwoStateDrawableRes)
         )
     }
 }
