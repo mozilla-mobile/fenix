@@ -1,26 +1,14 @@
-
-## Context
-
-- prev arch
-  - optimized for flexibility
-  - this made it difficult to learn
-
-
-## Decision
-
-- new architecture follows same general flow
-- general reduction in complexity
-- see `differences from previous architecture` for more in depth description of changes made to reduce complexity
-
-
 ## Architecture Overview
 
+### Unidirectional data flow
 - unidirectional data flow
   - _very_ short description of what this means (a few sentences)
   - link to better description
   - roughly analagous to (list other common implementations)
     - there are differences between them, but they share the same underlying concept
+    - note that we have many smaller stores, instead of one big one
 
+### Important objects
 - description of individual object types
   - for each one:
     - description
@@ -52,6 +40,7 @@
         - send Action to Store
         - route to new Fragment
           - optionally including data passed as intent extras
+        - update some third party code (e.g., trigger FxA login, or use an AC use case)
     - Interactor
       - fragment:interactor == 1:1+
       - interactor:controller == 1:0+
@@ -66,7 +55,7 @@
       - defines mapping of state -> UI
       - updates views whenever a new state obj is received
   
-
+### Important notes
 - controller changes can happen either as an update to the store, or by routing to a new fragment + store
 - communication between stores only happens via transactions 
 - stores & reducers are persisted across configuration changes (via Arch Components VM), but created / destroyed during fragment transactions
@@ -76,8 +65,9 @@
 
 ## Simplified Example
 
-(this might be overkill / out of scope? reading through a fully fleshed out section of the code base is hard. might 
-be good to include this in order to onboard contributors and new devs in a simpler context)
+(this will be a lot of work, but imo worth it. reading through a fully fleshed out section of the 
+code base is hard. including this will help to onboard contributors and new devs in a simpler 
+context)
 
 - simple, drawn example
 - text message app
@@ -87,28 +77,9 @@ be good to include this in order to onboard contributors and new devs in a simpl
     - selecting a conversation routes to a new screen
   - when on conversation screen
     - backing out routes to a new screen + sends an extra to update 'unread' status for the conversation
-     
-    
-    
-## Differences from previous architecture
-
-- same basic concept
-  - makes the migration much easier
-- action -> change was very flexible, but usually unnecessary
-  - added complexity
-  - distinction was removed
-- Rx 
-  - slowed startup
-  - forced people to learn a strange new API
-  - included custom, homemade concepts like `ManagedEmitter`s
-- Many Rx / event things were changed to simpler Kotlin
-  - Fragment calls methods on Interactor instead of sending events
-  - Rx subscription + disposal is replaced by consumeFrom
-    - This sets up an observer and automatically disconnects it when the view is destroyed
-    - Client code only handles updates, which can be written imperatively
 
 
-## Consequences
+## Known Limitations
 
 - how to handle certain things is not defined in current architecture
   - how do we update state from outside of the activity lifecycle (i.e., when no store is active)?
@@ -119,6 +90,3 @@ be good to include this in order to onboard contributors and new devs in a simpl
   - anything that involves changing screens goes through a different state update flow
     - handled by passing values to a new fragment
  
-
-
-
