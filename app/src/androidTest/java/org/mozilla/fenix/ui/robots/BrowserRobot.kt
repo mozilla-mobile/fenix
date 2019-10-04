@@ -21,6 +21,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.verifyToolbarUrl
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -32,21 +33,15 @@ class BrowserRobot {
     }
 
     fun verifyHelpUrl() {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val redirectUrl = "https://support.mozilla.org/"
-        mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
-            TestAssetHelper.waitingTime)
-        onView(withId(R.id.mozac_browser_toolbar_url_view))
-            .check(matches(withText(containsString(redirectUrl))))
+
+        verifyToolbarUrl(redirectUrl)
     }
 
     fun verifyWhatsNewURL() {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val redirectUrl = "https://support.mozilla.org/"
-        mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
-            TestAssetHelper.waitingTime)
-        onView(withId(R.id.mozac_browser_toolbar_url_view))
-            .check(matches(withText(containsString(redirectUrl))))
+
+        verifyToolbarUrl(redirectUrl)
     }
 
     /* Asserts that the text within DOM element with ID="testContent" has the given text, i.e.

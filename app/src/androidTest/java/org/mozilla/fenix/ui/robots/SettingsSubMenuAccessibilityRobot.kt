@@ -12,7 +12,7 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.hamcrest.CoreMatchers
+import org.mozilla.fenix.helpers.TestHelper
 
 /**
  * Implementation of Robot Pattern for the settings Accessibility sub menu.
@@ -26,7 +26,7 @@ class SettingsSubMenuAccessibilityRobot {
 
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
             mDevice.waitForIdle()
-            goBackButton().perform(ViewActions.click())
+            TestHelper.clickGoBackButton().perform(ViewActions.click())
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -41,6 +41,3 @@ private fun assertAutomaticFontSizing() {
     Espresso.onView(ViewMatchers.withText(strFont))
         .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
-
-private fun goBackButton() =
-    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))

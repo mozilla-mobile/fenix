@@ -14,7 +14,6 @@ import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -159,5 +158,3 @@ fun searchScreen(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     SearchRobot().interact()
     return SearchRobot.Transition()
 }
-
-private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))

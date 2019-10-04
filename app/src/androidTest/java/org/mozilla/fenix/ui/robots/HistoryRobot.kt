@@ -18,6 +18,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -59,8 +60,9 @@ class HistoryRobot {
     }
 
     class Transition {
+
         fun goBack(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
-            goBackButton().click()
+            TestHelper.clickGoBackButton()
 
             HistoryRobot().interact()
             return HistoryRobot.Transition()

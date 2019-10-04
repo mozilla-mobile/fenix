@@ -10,7 +10,6 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiDevice
@@ -20,6 +19,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -38,7 +38,7 @@ class LibraryRobot {
         fun goBack(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 
             mDevice.waitForIdle()
-            goBackButton().perform(click())
+            TestHelper.clickGoBackButton()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -69,7 +69,6 @@ class LibraryRobot {
     }
 }
 
-private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))
 private fun closeButton() = onView(withId(R.id.libraryClose))
 private fun bookmarksButton() = onView(allOf(withText("Bookmarks")))
 private fun historyButton() = onView(allOf(withText("History")))

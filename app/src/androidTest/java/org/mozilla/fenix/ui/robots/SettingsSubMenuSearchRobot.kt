@@ -7,13 +7,12 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.hamcrest.CoreMatchers
+import org.mozilla.fenix.helpers.TestHelper
 
 /**
  * Implementation of Robot Pattern for the settings search sub menu.
@@ -31,7 +30,7 @@ class SettingsSubMenuSearchRobot {
 
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
             mDevice.waitForIdle()
-            goBackButton().perform(ViewActions.click())
+            TestHelper.clickGoBackButton()
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -64,6 +63,3 @@ private fun assertSearchBrowsingHistory() = onView(ViewMatchers.withText("Search
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 private fun assertSearchBookmarks() = onView(ViewMatchers.withText("Search bookmarks"))
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
-private fun goBackButton() =
-    onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
