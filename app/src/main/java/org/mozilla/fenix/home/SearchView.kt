@@ -8,7 +8,6 @@ import android.content.Context
 import android.graphics.drawable.TransitionDrawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import org.mozilla.fenix.R
 
