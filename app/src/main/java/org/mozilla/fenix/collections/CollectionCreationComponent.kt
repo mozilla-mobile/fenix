@@ -31,13 +31,14 @@ data class CollectionCreationState(
     val selectedTabCollection: TabCollection? = null
 ) : ViewState
 
+// TODO consolidate Action and Change into one type
 sealed class CollectionCreationChange : Change {
     data class TabListChange(val tabs: List<Tab>) : CollectionCreationChange()
     object AddAllTabs : CollectionCreationChange()
     object RemoveAllTabs : CollectionCreationChange()
     data class TabAdded(val tab: Tab) : CollectionCreationChange()
     data class TabRemoved(val tab: Tab) : CollectionCreationChange()
-    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationChange()
+    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationChange() // TODO kdoc this. preferably rename it too
     data class CollectionSelected(val collection: TabCollection) : CollectionCreationChange()
 }
 
