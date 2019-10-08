@@ -104,7 +104,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 intent.putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
                 PendingIntent.getActivity(context,
-                    REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    R.integer.REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
     }
 
@@ -117,7 +117,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
         val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
 
         return intentSpeech.resolveActivity(context.packageManager)?.let {
-            PendingIntent.getActivity(context, REQUEST_CODE_VOICE, voiceIntent, 0)
+            PendingIntent.getActivity(context, R.integer.REQUEST_CODE_VOICE, voiceIntent, 0)
         }
     }
 
@@ -178,8 +178,8 @@ class SearchWidgetProvider : AppWidgetProvider() {
         private const val DP_SMALL = 100
         private const val DP_MEDIUM = 192
         private const val DP_LARGE = 256
-        private const val REQUEST_CODE_NEW_TAB = 0
-        private const val REQUEST_CODE_VOICE = 1
+        // private const val REQUEST_CODE_NEW_TAB = 0
+        //  private const val REQUEST_CODE_VOICE = 1
     }
 }
 

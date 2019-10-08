@@ -138,7 +138,7 @@ class SearchFragment : Fragment(), BackHandler {
                 requireContext(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
+                    requestPermissions(permissions, R.integer.REQUEST_CODE_CAMERA_PERMISSIONS)
                 },
                 onScanResult = { result ->
                     searchScanButton.isChecked = false
@@ -263,7 +263,7 @@ class SearchFragment : Fragment(), BackHandler {
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val visibility =
             if (searchState.showClipboardSuggestions && searchState.query.isEmpty() && !clipboardUrl.isNullOrEmpty())
-            View.VISIBLE else View.GONE
+                View.VISIBLE else View.GONE
 
         fill_link_from_clipboard.visibility = visibility
         divider_line.visibility = visibility
@@ -276,7 +276,7 @@ class SearchFragment : Fragment(), BackHandler {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
+            R.integer.REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
 
                 context?.let { context: Context ->
@@ -299,6 +299,6 @@ class SearchFragment : Fragment(), BackHandler {
 
     companion object {
         private const val SHARED_TRANSITION_MS = 200L
-        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        //private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
 }

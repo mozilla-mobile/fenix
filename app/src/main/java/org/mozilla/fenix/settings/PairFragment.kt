@@ -33,7 +33,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
                 requireContext(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
+                    requestPermissions(permissions, R.integer.REQUEST_CODE_CAMERA_PERMISSIONS)
                 },
                 onScanResult = { pairingUrl ->
                     requireComponents.services.accountsAuthFeature.beginPairingAuthentication(
@@ -65,7 +65,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
     }
 
     companion object {
-        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        //private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
 
     override fun onRequestPermissionsResult(
@@ -74,7 +74,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
+            R.integer.REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
             }
         }

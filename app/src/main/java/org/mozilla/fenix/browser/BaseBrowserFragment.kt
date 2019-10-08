@@ -260,7 +260,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                         DownloadService::class
                     ),
                     onNeedToRequestPermissions = { permissions ->
-                        requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
+                        requestPermissions(permissions, R.integer.REQUEST_CODE_DOWNLOAD_PERMISSIONS)
                     }),
                 owner = this,
                 view = view
@@ -285,7 +285,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     sessionId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
                     onNeedToRequestPermissions = { permissions ->
-                        requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
+                        requestPermissions(permissions, R.integer.REQUEST_CODE_PROMPT_PERMISSIONS)
                     }),
                 owner = this,
                 view = view
@@ -318,7 +318,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     ),
                     sessionId = customTabSessionId
                 ) { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_APP_PERMISSIONS)
+                    requestPermissions(permissions, R.integer.REQUEST_CODE_APP_PERMISSIONS)
                 },
                 owner = this,
                 view = view
@@ -477,9 +477,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         grantResults: IntArray
     ) {
         val feature: PermissionsFeature? = when (requestCode) {
-            REQUEST_CODE_DOWNLOAD_PERMISSIONS -> downloadsFeature.get()
-            REQUEST_CODE_PROMPT_PERMISSIONS -> promptsFeature.get()
-            REQUEST_CODE_APP_PERMISSIONS -> sitePermissionsFeature.get()
+            R.integer.REQUEST_CODE_DOWNLOAD_PERMISSIONS -> downloadsFeature.get()
+            R.integer.REQUEST_CODE_PROMPT_PERMISSIONS -> promptsFeature.get()
+            R.integer.REQUEST_CODE_APP_PERMISSIONS -> sitePermissionsFeature.get()
             else -> null
         }
         feature?.onPermissionsResult(permissions, grantResults)
@@ -585,8 +585,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
     companion object {
         private const val KEY_CUSTOM_TAB_SESSION_ID = "custom_tab_session_id"
-        private const val REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
-        private const val REQUEST_CODE_PROMPT_PERMISSIONS = 2
-        private const val REQUEST_CODE_APP_PERMISSIONS = 3
+        //private const val R.id.REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
+        //private const val REQUEST_CODE_PROMPT_PERMISSIONS = 2
+        //private const val REQUEST_CODE_APP_PERMISSIONS = 3
     }
 }
