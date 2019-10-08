@@ -40,7 +40,7 @@
         - send Action to Store
         - route to new Fragment
           - optionally including data passed as intent extras
-        - update some third party code (e.g., trigger FxA login, or use an AC use case)
+        - update some third party code (e.g., trigger FxA login, use an AC use case, forward a back press to Android, etc)
     - Interactor
       - fragment:interactor == 1:1+
       - interactor:controller == 1:0+
@@ -89,4 +89,12 @@ context)
 - state update / routing change distinction is sometimes fuzzy
   - anything that involves changing screens goes through a different state update flow
     - handled by passing values to a new fragment
- 
+- reducer / controller responsibilities can become muddied
+  - state updates need to go through the store, android calls need to happen in controller
+    - what happens if code needs to conditionally do either?
+      - it is forced to do that logic in the controller
+      - we would prefer to keep as much logic as possible in the reducer
+- most interactors do nothing except forward to controllers
+  - these can still provide some value in making changes that add extra dependencies simpler
+  - most of the time though, this layer does not seem to be useful
+
