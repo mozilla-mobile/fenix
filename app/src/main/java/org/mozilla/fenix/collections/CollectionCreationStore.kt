@@ -5,9 +5,17 @@
 package org.mozilla.fenix.collections
 
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.lib.state.Action
+import mozilla.components.lib.state.State
+import mozilla.components.lib.state.Store
 import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.mvi.Change
-import org.mozilla.fenix.mvi.ViewState
+
+class CollectionCreationStore(
+    initialState: CollectionCreationState
+) : Store<CollectionCreationState, CollectionCreationAction>(
+    initialState,
+    ::collectionCreationReducer
+)
 
 enum class SaveCollectionStep {
     SelectTabs,
@@ -22,16 +30,22 @@ data class CollectionCreationState(
     val saveCollectionStep: SaveCollectionStep = SaveCollectionStep.SelectTabs,
     val tabCollections: List<TabCollection> = emptyList(),
     val selectedTabCollection: TabCollection? = null
-) : ViewState
+) : State
 
 // any actions that don't map to a change will be handled in the controller, and don't need a LibState Action
-// TODO update these to LibState Action
-sealed class CollectionCreationChange : Change {
-    data class TabListChange(val tabs: List<Tab>) : CollectionCreationChange()
-    object AddAllTabs : CollectionCreationChange()
-    object RemoveAllTabs : CollectionCreationChange()
-    data class TabAdded(val tab: Tab) : CollectionCreationChange()
-    data class TabRemoved(val tab: Tab) : CollectionCreationChange()
-    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationChange() // TODO kdoc this. preferably rename it too
-    data class CollectionSelected(val collection: TabCollection) : CollectionCreationChange()
+sealed class CollectionCreationAction : Action {
+    data class TabListChange(val tabs: List<Tab>) : CollectionCreationAction() // TODO kdoc
+    object AddAllTabs : CollectionCreationAction()
+    object RemoveAllTabs : CollectionCreationAction()
+    data class TabAdded(val tab: Tab) : CollectionCreationAction()
+    data class TabRemoved(val tab: Tab) : CollectionCreationAction()
+    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationAction() // TODO kdoc (and possibly rename)
+    data class CollectionSelected(val collection: TabCollection) : CollectionCreationAction()
+}
+
+private fun collectionCreationReducer(
+    prevState: CollectionCreationState,
+    action: CollectionCreationAction
+): CollectionCreationState = when (action) {
+    else -> TODO()
 }
