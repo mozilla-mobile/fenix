@@ -18,7 +18,7 @@ import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
 class SaveCollectionListAdapter(
-    val actionEmitter: Observer<CollectionCreationAction>
+    private val interactor: CollectionViewInteractor
 ) : RecyclerView.Adapter<CollectionViewHolder>() {
 
     private var tabCollections = listOf<TabCollection>()
@@ -35,8 +35,7 @@ class SaveCollectionListAdapter(
         val collection = tabCollections[position]
         holder.bind(collection)
         holder.itemView.setOnClickListener {
-            val action = CollectionCreationAction.SelectCollection(collection, selectedTabs.toList())
-            actionEmitter.onNext(action)
+            interactor.selectCollection(collection, selectedTabs.toList())
         }
     }
 
