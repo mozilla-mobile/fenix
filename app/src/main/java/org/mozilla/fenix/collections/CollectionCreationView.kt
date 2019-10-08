@@ -71,6 +71,14 @@ interface CollectionViewInteractor {
      * todo
      */
     fun addNewCollection()
+    /**
+     * todo
+     */
+    fun addTabToSelection(tab: Tab)
+    /**
+     * todo
+     */
+    fun removeTabFromSelection(tab: Tab)
 }
 
 @SuppressWarnings("LargeClass")

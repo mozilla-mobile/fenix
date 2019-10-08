@@ -19,7 +19,7 @@ import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.Tab
 
 class CollectionCreationTabListAdapter(
-    val actionEmitter: Observer<CollectionCreationAction>
+    private val interactor: CollectionViewInteractor
 ) : RecyclerView.Adapter<TabViewHolder>() {
     private var tabs: List<Tab> = listOf()
     private var selectedTabs: MutableSet<Tab> = mutableSetOf()
@@ -54,14 +54,13 @@ class CollectionCreationTabListAdapter(
         val tab = tabs[position]
         val isSelected = selectedTabs.contains(tab)
         holder.itemView.tab_selected_checkbox.setOnCheckedChangeListener { _, isChecked ->
-            val action = if (isChecked) {
+            if (isChecked) {
                 selectedTabs.add(tab)
-                CollectionCreationAction.AddTabToSelection(tab)
+                interactor.addTabToSelection(tab)
             } else {
                 selectedTabs.remove(tab)
-                CollectionCreationAction.RemoveTabFromSelection(tab)
+                interactor.removeTabFromSelection(tab)
             }
-            actionEmitter.onNext(action)
         }
         holder.bind(tab, isSelected, hideCheckboxes)
     }
