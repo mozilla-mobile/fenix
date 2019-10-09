@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_collection.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,6 +25,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.toSessionBundle
 import org.mozilla.fenix.mvi.ActionBusFactory
@@ -48,11 +50,27 @@ class CreateCollectionFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_collection, container, false)
+        val args : CreateCollectionFragmentArgs by navArgs()
+
+        val sessionManager = requireComponents.core.sessionManager
+        val tabs = args.tabIds
+            ?.mapNotNull { sessionManager.findSessionById(it) }
+            ?.map { it.toTab(view.context) }
+            ?: emptyList()
+        val selectedTabs = args.selectedTabIds
+            ?.mapNotNull { sessionManager.findSessionById(it) }
+            ?.map { it.toTab(view.context) }
+            ?.toSet()
+            ?: emptySet()
 
         collectionCreationStore = StoreProvider.get(this) {
             CollectionCreationStore(
                 CollectionCreationState(
-                    // TODO initial state
+                    previousFragmentId = args.previousFragmentId,
+                    tabs = tabs,
+                    selectedTabs = selectedTabs,
+                    saveCollectionStep = args.saveCollectionStep,
+                    tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
                 )
             )
         }
@@ -67,8 +85,22 @@ class CreateCollectionFragment : DialogFragment() {
                 viewLifecycleOwner.lifecycleScope
             )
         )
+        collectionCreationView = CollectionCreationView(view.createCollectionWrapper, collectionViewInteractor)
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        consumeFrom(collectionCreationStore) { newState ->
+            collectionCreationView.update(newState)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        collectionCreationView.onResumed()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -77,11 +109,5 @@ class CreateCollectionFragment : DialogFragment() {
             collectionCreationView.onKey(keyCode, event)
         }
         return dialog
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        collectionCreationView.onResumed()
     }
 }

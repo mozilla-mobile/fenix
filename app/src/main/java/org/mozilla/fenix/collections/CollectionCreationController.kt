@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -189,7 +190,7 @@ class DefaultCollectionCreationController(
 
     private fun closeTabsIfNecessary(tabs: List<Tab>, sessionManager: SessionManager, tabsUseCases: TabsUseCases) {
         // Only close the tabs if the user is not on the BrowserFragment
-//        if (state.previousFragmentId == R.id.browserFragment) { return } // TODO
+        if (store.state.previousFragmentId == R.id.browserFragment) { return }
         tabs.asSequence()
             .mapNotNull { tab -> sessionManager.findSessionById(tab.sessionId) }
             .forEach { session -> tabsUseCases.removeTab(session) }

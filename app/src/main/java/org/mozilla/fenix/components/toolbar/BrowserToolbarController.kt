@@ -33,6 +33,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -189,8 +190,10 @@ class DefaultBrowserToolbarController(
                     )
                     viewModel.previousFragmentId = R.id.browserFragment
 
-                    val directions =
-                        BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment()
+                    val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment( // TODO fix me
+                        previousFragmentId = R.id.browserFragment,
+                        saveCollectionStep = SaveCollectionStep.NameCollection // TODO FIX ME
+                    )
                     navController.nav(R.id.browserFragment, directions)
                 }
             }

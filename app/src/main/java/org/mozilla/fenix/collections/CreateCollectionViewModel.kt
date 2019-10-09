@@ -8,8 +8,9 @@ import androidx.lifecycle.ViewModel
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
+// TODO this entire class will be removed in a later commit
 class CreateCollectionViewModel : ViewModel() {
-    var state = CollectionCreationState()
+    var state = CollectionCreationState(0)
         private set
 
     var previousFragmentId: Int? = null
@@ -20,13 +21,17 @@ class CreateCollectionViewModel : ViewModel() {
         selectedTabCollection: TabCollection,
         cachedTabCollections: List<TabCollection>
     ) {
-        state = CollectionCreationState(
-            tabs = tabs,
-            selectedTabs = if (tabs.size == 1) setOf(tabs.first()) else emptySet(),
-            tabCollections = cachedTabCollections.reversed(),
-            selectedTabCollection = selectedTabCollection,
-            saveCollectionStep = saveCollectionStep
-        )
+        println(tabs +
+                saveCollectionStep +
+                selectedTabCollection +
+                cachedTabCollections)
+//        state = CollectionCreationState(
+//            tabs = tabs,
+//            selectedTabs = if (tabs.size == 1) setOf(tabs.first()) else emptySet(),
+//            tabCollections = cachedTabCollections.reversed(),
+//            selectedTabCollection = selectedTabCollection,
+//            saveCollectionStep = saveCollectionStep
+//        )
     }
 
     fun saveTabToCollection(
@@ -34,17 +39,20 @@ class CreateCollectionViewModel : ViewModel() {
         selectedTab: Tab?,
         cachedTabCollections: List<TabCollection>
     ) {
-        val tabCollections = cachedTabCollections.reversed()
-        state = CollectionCreationState(
-            tabs = tabs,
-            selectedTabs = selectedTab?.let { setOf(it) } ?: emptySet(),
-            tabCollections = tabCollections,
-            selectedTabCollection = null,
-            saveCollectionStep = when {
-                tabs.size > 1 -> SaveCollectionStep.SelectTabs
-                tabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
-                else -> SaveCollectionStep.NameCollection
-            }
-        )
+        println(tabs +
+                selectedTab +
+                cachedTabCollections)
+//        val tabCollections = cachedTabCollections.reversed()
+//        state = CollectionCreationState(
+//            tabs = tabs,
+//            selectedTabs = selectedTab?.let { setOf(it) } ?: emptySet(),
+//            tabCollections = tabCollections,
+//            selectedTabCollection = null,
+//            saveCollectionStep = when {
+//                tabs.size > 1 -> SaveCollectionStep.SelectTabs
+//                tabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+//                else -> SaveCollectionStep.NameCollection
+//            }
+//        )
     }
 }
