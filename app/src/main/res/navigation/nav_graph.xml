@@ -468,7 +468,26 @@
         android:id="@+id/createCollectionFragment"
         android:name="org.mozilla.fenix.collections.CreateCollectionFragment"
         android:label="fragment_create_collection"
-        tools:layout="@layout/fragment_create_collection" />
+        tools:layout="@layout/fragment_create_collection" >
+        <argument
+            android:name="tabIds"
+            android:defaultValue="@null"
+            app:argType="string[]"
+            app:nullable="true" />
+        <argument
+            android:name="selectedTabIds"
+            android:defaultValue="@null"
+            app:argType="string[]"
+            app:nullable="true" />
+        <argument
+            android:name="previousFragmentId"
+            app:argType="reference"
+            app:nullable="false" />
+        <argument
+            android:name="saveCollectionStep"
+            app:argType="org.mozilla.fenix.collections.SaveCollectionStep"
+            app:nullable="false" />
+    </dialog>
     <dialog
             android:id="@+id/createShortcutFragment"
             android:name="org.mozilla.fenix.shortcut.CreateShortcutFragment"
