@@ -45,7 +45,7 @@ object Versions {
     const val mozilla_appservices = "0.40.0"
 
     const val autodispose = "1.1.0"
-    const val adjust = "4.11.4"
+    const val adjust = "4.18.3"
     const val installreferrer = "1.0"
 
     const val junit = "4.12"
