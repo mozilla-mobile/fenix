@@ -46,12 +46,12 @@ sealed class CollectionCreationAction : Action {
 private fun collectionCreationReducer(
     prevState: CollectionCreationState,
     action: CollectionCreationAction
-): CollectionCreationState = when (change) {
-    is CollectionCreationChange.AddAllTabs -> state.copy(selectedTabs = state.tabs.toSet())
-    is CollectionCreationChange.RemoveAllTabs -> state.copy(selectedTabs = emptySet())
-    is CollectionCreationChange.TabListChange -> state.copy(tabs = change.tabs)
-    is CollectionCreationChange.TabAdded -> state.copy(selectedTabs = state.selectedTabs + change.tab)
-    is CollectionCreationChange.TabRemoved -> state.copy(selectedTabs = state.selectedTabs - change.tab)
-    is CollectionCreationChange.StepChanged -> state.copy(saveCollectionStep = change.saveCollectionStep)
-    is CollectionCreationChange.CollectionSelected -> state.copy(selectedTabCollection = change.collection)
+): CollectionCreationState = when (action) {
+    is CollectionCreationAction.AddAllTabs -> prevState.copy(selectedTabs = prevState.tabs.toSet())
+    is CollectionCreationAction.RemoveAllTabs -> prevState.copy(selectedTabs = emptySet())
+    is CollectionCreationAction.TabListChange -> prevState.copy(tabs = action.tabs)
+    is CollectionCreationAction.TabAdded -> prevState.copy(selectedTabs = prevState.selectedTabs + action.tab)
+    is CollectionCreationAction.TabRemoved -> prevState.copy(selectedTabs = prevState.selectedTabs - action.tab)
+    is CollectionCreationAction.StepChanged -> prevState.copy(saveCollectionStep = action.saveCollectionStep)
+    is CollectionCreationAction.CollectionSelected -> prevState.copy(selectedTabCollection = action.collection)
 }
