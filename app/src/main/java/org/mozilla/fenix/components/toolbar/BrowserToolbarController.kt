@@ -182,19 +182,17 @@ class DefaultBrowserToolbarController(
                 activity.components.analytics.metrics
                     .track(Event.CollectionSaveButtonPressed(TELEMETRY_BROWSER_IDENTIFIER))
 
-                currentSession?.toTab(activity)?.let { currentSessionAsTab ->
-                    viewModel.saveTabToCollection(
-                        tabs = listOf(currentSessionAsTab),
-                        selectedTab = currentSessionAsTab,
-                        cachedTabCollections = activity.components.core.tabCollectionStorage.cachedTabCollections
-                    )
-                    viewModel.previousFragmentId = R.id.browserFragment
-
-                    val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment( // TODO fix me
+                val currentSession = currentSession
+                if (currentSession != null) {
+                    val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
                         previousFragmentId = R.id.browserFragment,
-                        saveCollectionStep = SaveCollectionStep.NameCollection // TODO FIX ME
+                        tabIds = arrayOf(currentSession.id),
+                        selectedTabIds = arrayOf(currentSession.id),
+                        saveCollectionStep = SaveCollectionStep.SelectCollection
                     )
                     navController.nav(R.id.browserFragment, directions)
+                } else {
+                    // TODO I _THINK_ this shouldn't happen. log to telemetry
                 }
             }
             ToolbarMenu.Item.OpenInFenix -> {
