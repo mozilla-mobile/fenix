@@ -138,7 +138,7 @@ class SearchFragment : Fragment(), BackHandler {
                 requireContext(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, R.integer.REQUEST_CODE_CAMERA_PERMISSIONS)
+                    requestPermissions(permissions, R.id.request_code_camera_permissions)
                 },
                 onScanResult = { result ->
                     searchScanButton.isChecked = false
@@ -276,7 +276,7 @@ class SearchFragment : Fragment(), BackHandler {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            R.integer.REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
+            R.id.request_code_camera_permissions -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
 
                 context?.let { context: Context ->
@@ -299,6 +299,5 @@ class SearchFragment : Fragment(), BackHandler {
 
     companion object {
         private const val SHARED_TRANSITION_MS = 200L
-        //private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
 }
