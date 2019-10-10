@@ -77,6 +77,14 @@ class SettingsRobot {
             return BrowserRobot.Transition()
         }
 
+        fun clickOnRateButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+
+            mDevice.waitForIdle()
+            rateButton().perform(ViewActions.click())
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -161,4 +169,9 @@ private fun goBackButton() = onView(CoreMatchers.allOf(ViewMatchers.withContentD
 private fun helpButton() : ViewInteraction {
     TestHelper.scrollToElementByText("Help")
     return onView(ViewMatchers.withText("Help"))
+}
+
+private fun rateButton() : ViewInteraction {
+    TestHelper.scrollToElementByText("Rate on Google Play")
+    return onView(ViewMatchers.withText("Rate on Google Play"))
 }

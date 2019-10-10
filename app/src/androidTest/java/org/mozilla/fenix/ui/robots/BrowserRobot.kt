@@ -22,21 +22,24 @@ import org.mozilla.fenix.helpers.click
 
 class BrowserRobot {
 
-    fun verifyHelpUrl() {
+    fun verifyUrl(redirectUrl: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        val redirectUrl = "https://support.mozilla.org/"
+
         mDevice.wait(Until.findObject(By.res("mozac_browser_toolbar_url_view")), TestAssetHelper.waitingTime)
         onView(withId(R.id.mozac_browser_toolbar_url_view))
                 .check(matches(withText(containsString(redirectUrl))))
     }
 
-    fun verifyWhatsNewURL() {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        val redirectUrl = "https://support.mozilla.org/"
+    fun verifyHelpUrl() {
+        verifyUrl("https://support.mozilla.org/")
+    }
 
-        mDevice.wait(Until.findObject(By.res("mozac_browser_toolbar_url_view")), TestAssetHelper.waitingTime)
-        onView(withId(R.id.mozac_browser_toolbar_url_view))
-                .check(matches(withText(containsString(redirectUrl))))
+    fun verifyWhatsNewURL() {
+        verifyUrl("https://support.mozilla.org/")
+    }
+
+    fun verifyRateOnGooglePlayURL() {
+        verifyUrl("https://play.google.com/store/")
     }
 
     /* Asserts that the text within DOM element with ID="testContent" has the given text, i.e.

@@ -73,13 +73,18 @@ class SettingsAboutTest {
         }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyRateOnGooglePlayRedirect() {
         // Open 3dot (main) menu
         // Select settings
         // Click on "Rate on Google Play"
         // Verify Android "Open with Google Play Store" sub menu
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.clickOnRateButton{
+            verifyRateOnGooglePlayURL()
+        }
     }
 
     @Ignore("This is a stub test, ignore for now")
