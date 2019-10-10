@@ -20,7 +20,6 @@ import androidx.core.view.forEach
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.library_site_item.view.*
-import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.getColorFromAttr
