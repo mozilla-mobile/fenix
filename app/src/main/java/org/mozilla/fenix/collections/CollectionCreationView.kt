@@ -31,60 +31,56 @@ import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
-/**
- * TODO
- */
-interface CollectionViewInteractor {
+interface CollectionCreationInteractor {
+
+    fun onNewCollectionNameSaved(tabs: List<Tab>, name: String)
+
+    fun onCollectionRenamed(collection: TabCollection, name: String)
+
     /**
-     * todo
+     * Called when either the physical back button, or the back arrow are clicked.
+     *
+     * Note that this is not called when the close button on the snackbar is clicked. See [close].
      */
-    fun saveCollectionName(tabs: List<Tab>, name: String)
+    fun onBackPressed(fromStep: SaveCollectionStep)
+
     /**
-     * todo
-     */
-    fun renameCollection(collection: TabCollection, name: String)
-    /**
-     * todo
-     */
-    fun backPressed(fromStep: SaveCollectionStep)
-    /**
-     * todo
+     * Called when a user hits 'Select All' from the 'Select Tabs' step. This affects which tabs
+     * have been 'selected' to be saved into a collection.
      */
     fun selectAllTapped()
+
     /**
-     * todo
+     * Called when a user hits 'Deselect All' from the 'Select Tabs' step. This affects which tabs
+     * have been 'selected' to be saved into a collection.
      */
     fun deselectAllTapped()
+
     /**
-     * todo
+     * Called when a user hits the close button on the snackbar.
+     *
+     * Note that this is not called when the back arrow is clicked. See [onBackPressed].
      */
     fun close()
-    /**
-     * todo
-     */
+
     fun selectCollection(collection: TabCollection, tabs: List<Tab>)
+
     /**
-     * todo
+     * Called when the user decides to save tabs to the currently selected session.
      */
     fun saveTabsToCollection(tabs: List<Tab>)
-    /**
-     * todo
-     */
+
     fun addNewCollection()
-    /**
-     * todo
-     */
+
     fun addTabToSelection(tab: Tab)
-    /**
-     * todo
-     */
+
     fun removeTabFromSelection(tab: Tab)
 }
 
 @SuppressWarnings("LargeClass")
 class CollectionCreationView(
     override val containerView: ViewGroup,
-    private val interactor: CollectionViewInteractor
+    private val interactor: CollectionCreationInteractor
 ) : LayoutContainer {
     val view: View = LayoutInflater.from(containerView.context) // TODO View type?
         .inflate(R.layout.component_collection_creation, containerView, true)
@@ -124,9 +120,9 @@ class CollectionCreationView(
             if (actionId == EditorInfo.IME_ACTION_DONE && text.isNotBlank()) {
                 when (step) {
                     SaveCollectionStep.NameCollection -> 
-                        interactor.saveCollectionName(selectedTabs.toList(), text)
+                        interactor.onNewCollectionNameSaved(selectedTabs.toList(), text)
                     SaveCollectionStep.RenameCollection -> 
-                        selectedCollection?.let { interactor.renameCollection(it, text) }
+                        selectedCollection?.let { interactor.onCollectionRenamed(it, text) }
                     // TODO if shouldn't be possible to reach the other states, let's log that to telemetry
                     else -> { /* noop (TODO else branch will hopefully be replaced with above mentioned telemetry calls) */ }
                 }
@@ -160,7 +156,7 @@ class CollectionCreationView(
             view.tab_list.isClickable = true
 
             back_button.setOnClickListener {
-                interactor.backPressed(SaveCollectionStep.SelectTabs)
+                interactor.onBackPressed(SaveCollectionStep.SelectTabs)
             }
             val allSelected = state.selectedTabs.size == state.tabs.size
             select_all_button.text =
@@ -245,7 +241,7 @@ class CollectionCreationView(
             }
 
             back_button.setOnClickListener {
-                interactor.backPressed(SaveCollectionStep.SelectCollection)
+                interactor.onBackPressed(SaveCollectionStep.SelectCollection)
             }
             TransitionManager.beginDelayedTransition(
                 view.collection_constraint_layout,
@@ -264,7 +260,7 @@ class CollectionCreationView(
                 name_collection_edittext.hideKeyboard()
                 val handler = Handler()
                 handler.postDelayed({
-                    interactor.backPressed(SaveCollectionStep.NameCollection)
+                    interactor.onBackPressed(SaveCollectionStep.NameCollection)
                 }, TRANSITION_DURATION)
             }
             transition.addListener(object : Transition.TransitionListener {
@@ -321,7 +317,7 @@ class CollectionCreationView(
                 name_collection_edittext.hideKeyboard()
                 val handler = Handler()
                 handler.postDelayed({
-                    interactor.backPressed(SaveCollectionStep.RenameCollection)
+                    interactor.onBackPressed(SaveCollectionStep.RenameCollection)
                 }, TRANSITION_DURATION)
             }
             transition.addListener(object : Transition.TransitionListener {
@@ -362,7 +358,7 @@ class CollectionCreationView(
 
     fun onKey(keyCode: Int, event: KeyEvent?): Boolean {
         return if (event?.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-            interactor.backPressed(step)
+            interactor.onBackPressed(step)
             true
         } else {
             false

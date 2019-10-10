@@ -11,35 +11,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_collection.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.state.ext.consumeFrom
-import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.toSessionBundle
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.getAutoDisposeObservable
-import org.mozilla.fenix.mvi.getManagedEmitter
 
 @ExperimentalCoroutinesApi
 class CreateCollectionFragment : DialogFragment() {
     private lateinit var collectionCreationView: CollectionCreationView
     private lateinit var collectionCreationStore: CollectionCreationStore
-    private lateinit var collectionViewInteractor: CollectionViewInteractor
+    private lateinit var collectionCreationInteractor: CollectionCreationInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +61,7 @@ class CreateCollectionFragment : DialogFragment() {
                 )
             )
         }
-        collectionViewInteractor = CollectionCreationInteractor(
+        collectionCreationInteractor = DefaultCollectionCreationInteractor(
             DefaultCollectionCreationController(
                 collectionCreationStore,
                 ::dismiss,
@@ -83,7 +72,7 @@ class CreateCollectionFragment : DialogFragment() {
                 viewLifecycleOwner.lifecycleScope
             )
         )
-        collectionCreationView = CollectionCreationView(view.createCollectionWrapper, collectionViewInteractor)
+        collectionCreationView = CollectionCreationView(view.createCollectionWrapper, collectionCreationInteractor)
 
         return view
     }
