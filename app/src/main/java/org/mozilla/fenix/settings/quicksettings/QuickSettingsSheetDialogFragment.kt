@@ -46,8 +46,6 @@ import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.settings.PhoneFeature
 import com.google.android.material.R as MaterialR
 
-//private const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4
-
 @ObsoleteCoroutinesApi
 @SuppressWarnings("TooManyFunctions")
 class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
@@ -151,7 +149,7 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun arePermissionsGranted(requestCode: Int, grantResults: IntArray) =
-        requestCode == R.integer.REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }
+        requestCode == R.id.request_code_quick_settings_permissions && grantResults.all { it == PERMISSION_GRANTED }
 
     private fun toggleTrackingProtection(context: Context, url: String) {
         val host = url.tryGetHostFromUrl()
@@ -168,7 +166,7 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
             .subscribe {
                 when (it) {
                     is QuickSettingsAction.SelectBlockedByAndroid -> {
-                        requestPermissions(it.permissions, R.integer.REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS)
+                        requestPermissions(it.permissions, R.id.request_code_quick_settings_permissions)
                     }
                     is QuickSettingsAction.SelectTrackingProtectionSettings -> {
                         val directions =
