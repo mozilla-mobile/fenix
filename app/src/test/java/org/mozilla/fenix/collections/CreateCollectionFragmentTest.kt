@@ -61,7 +61,14 @@ class CreateCollectionFragmentTest {
 
     @Test
     fun `creation dialog shows and can be dismissed`() {
-        val fragment = createAddedTestFragment { CreateCollectionFragment() }
+        val fragment = createAddedTestFragment {
+            CreateCollectionFragment().apply {
+                arguments = CreateCollectionFragmentArgs(
+                    // Fragment crashes if navArgs is null
+                    null, null, 0, SaveCollectionStep.SelectTabs
+                ).toBundle()
+            }
+        }
 
         assertThat(fragment.dialog).isNotNull()
         assertThat(fragment.requireDialog().isShowing).isTrue()
