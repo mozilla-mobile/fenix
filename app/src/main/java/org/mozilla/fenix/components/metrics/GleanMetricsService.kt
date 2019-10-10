@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
+import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.utils.Browsers
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
@@ -83,12 +84,6 @@ private val Event.wrapper: EventWrapper<*>?
                 Events.performedSearch.record(it)
             },
             { Events.performedSearchKeys.valueOf(it) }
-        )
-        is Event.SearchShortcutMenuOpened -> EventWrapper<NoExtraKeys>(
-            { SearchShortcuts.opened.record(it) }
-        )
-        is Event.SearchShortcutMenuClosed -> EventWrapper<NoExtraKeys>(
-            { SearchShortcuts.closed.record(it) }
         )
         is Event.SearchShortcutSelected -> EventWrapper(
             { SearchShortcuts.selected.record(it) },
@@ -430,12 +425,21 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         if (initialized) return
         initialized = true
 
+        // We have to initialize Glean *on* the main thread, because it registers lifecycle
+        // observers. However, the activation ping must be sent *off* of the main thread,
+        // because it calls Google ad APIs that must be called *off* of the main thread.
+        // These two things actually happen in parallel, but that should be ok because Glean
+        // can handle events being recorded before it's initialized.
         starter = MainScope().launch {
             Glean.registerPings(Pings)
-            Glean.initialize(context, Configuration(channel = BuildConfig.BUILD_TYPE))
-
-            setStartupMetrics()
+            Glean.initialize(context,
+                Configuration(channel = BuildConfig.BUILD_TYPE,
+                    httpClient = ConceptFetchHttpUploader(
+                        lazy(LazyThreadSafetyMode.NONE) { context.components.core.client }
+                    )))
         }
+
+        setStartupMetrics()
     }
 
     internal fun setStartupMetrics() {

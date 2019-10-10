@@ -12,8 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.provider.Settings
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -22,7 +20,6 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -30,7 +27,6 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -45,7 +41,6 @@ import org.mozilla.fenix.R.string.pref_key_delete_browsing_data
 import org.mozilla.fenix.R.string.pref_key_delete_browsing_data_on_quit_preference
 import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_language
-import org.mozilla.fenix.R.string.pref_key_launch_links_in_private_mode
 import org.mozilla.fenix.R.string.pref_key_leakcanary
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
 import org.mozilla.fenix.R.string.pref_key_privacy_link
@@ -101,17 +96,8 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
 
         if (SDK_INT <= Build.VERSION_CODES.M) {
-            findPreference<DefaultBrowserPreference>(getPreferenceKey(R.string.pref_key_make_default_browser))?.apply {
-                isVisible = false
-            }
-        }
-
-        if (FeatureFlags.deleteDataOnQuit) {
-            findPreference<Preference>(
-                getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit_preference)
-            )?.apply {
-                isVisible = true
-            }
+            findPreference<Preference>(getPreferenceKey(pref_key_make_default_browser))?.isVisible =
+                false
         }
     }
 
@@ -124,9 +110,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
         (activity as AppCompatActivity).title = getString(R.string.settings_title)
         (activity as AppCompatActivity).supportActionBar?.show()
-        val defaultBrowserPreference =
-            findPreference<DefaultBrowserPreference>(getPreferenceKey(R.string.pref_key_make_default_browser))
-        defaultBrowserPreference?.updateSwitch()
 
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
@@ -174,6 +157,9 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             resources.getString(pref_key_language) -> {
                 // TODO #220
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "220")
+            }
+            resources.getString(pref_key_make_default_browser) -> {
+                navigateToDefaultBrowserFragment()
             }
             resources.getString(pref_key_data_choices) -> {
                 navigateToDataChoices()
@@ -248,25 +234,11 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     private fun setupPreferences() {
-        val makeDefaultBrowserKey = getPreferenceKey(pref_key_make_default_browser)
         val leakKey = getPreferenceKey(pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(pref_key_remote_debugging)
-        val preferenceAlwaysOpenInPrivateModeKey = getPreferenceKey(
-            pref_key_launch_links_in_private_mode
-        )
 
-        val preferenceMakeDefaultBrowser = findPreference<Preference>(makeDefaultBrowserKey)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
-        val preferenceAlwaysOpenInPrivateMode = findPreference<SwitchPreference>(preferenceAlwaysOpenInPrivateModeKey)
-
-        preferenceAlwaysOpenInPrivateMode?.setOnPreferenceClickListener {
-            requireContext().settings().alwaysOpenInPrivateMode = !requireContext().settings().alwaysOpenInPrivateMode
-            true
-        }
-
-        preferenceMakeDefaultBrowser?.onPreferenceClickListener =
-            getClickListenerForMakeDefaultBrowser()
 
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
@@ -280,25 +252,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
                 .putBoolean(preference.key, newValue as Boolean).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true
-        }
-    }
-
-    private val defaultClickListener = OnPreferenceClickListener { preference ->
-        Toast.makeText(context, "${preference.title} Clicked", Toast.LENGTH_SHORT).show()
-        true
-    }
-
-    private fun getClickListenerForMakeDefaultBrowser(): OnPreferenceClickListener {
-        return if (SDK_INT >= Build.VERSION_CODES.N) {
-            OnPreferenceClickListener {
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
-                )
-                startActivity(intent)
-                true
-            }
-        } else {
-            defaultClickListener
         }
     }
 
@@ -325,6 +278,11 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToAccessibility() {
         val directions = SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
+        Navigation.findNavController(view!!).navigate(directions)
+    }
+
+    private fun navigateToDefaultBrowserFragment() {
+        val directions = SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 

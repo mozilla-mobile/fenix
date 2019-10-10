@@ -36,8 +36,6 @@ sealed class Event {
     object InteractWithSearchURLArea : Event()
     object DismissedOnboarding : Event()
     object ClearedPrivateData : Event()
-    object SearchShortcutMenuOpened : Event()
-    object SearchShortcutMenuClosed : Event()
     object AddBookmark : Event()
     object RemoveBookmark : Event()
     object OpenedBookmark : Event()
@@ -136,7 +134,10 @@ sealed class Event {
             context.getString(R.string.pref_key_show_search_suggestions),
             context.getString(R.string.pref_key_remote_debugging),
             context.getString(R.string.pref_key_telemetry),
-            context.getString(R.string.pref_key_tracking_protection)
+            context.getString(R.string.pref_key_tracking_protection),
+            context.getString(R.string.pref_key_search_bookmarks),
+            context.getString(R.string.pref_key_search_browsing_history),
+            context.getString(R.string.pref_key_show_clipboard_suggestions)
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>?

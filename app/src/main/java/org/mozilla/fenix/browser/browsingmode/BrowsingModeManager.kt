@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.browser.browsingmode
 
-import org.mozilla.fenix.utils.Settings
-
 /**
  * Enum that represents whether or not private browsing is active.
  */
@@ -31,14 +29,18 @@ interface BrowsingModeManager {
     var mode: BrowsingMode
 }
 
+/**
+ * Wraps a [BrowsingMode] and executes a callback whenever [mode] is updated.
+ */
 class DefaultBrowsingModeManager(
-    private val settings: Settings,
+    private var _mode: BrowsingMode,
     private val modeDidChange: (BrowsingMode) -> Unit
 ) : BrowsingModeManager {
+
     override var mode: BrowsingMode
-        get() = BrowsingMode.fromBoolean(settings.usePrivateMode)
+        get() = _mode
         set(value) {
-            settings.usePrivateMode = value.isPrivate
+            _mode = value
             modeDidChange(value)
         }
 }

@@ -98,10 +98,6 @@
             android:name="session_id"
             app:argType="string"
             app:nullable="true" />
-        <argument
-            android:name="showShortcutEnginePicker"
-            android:defaultValue="false"
-            app:argType="boolean" />
         <action
             android:id="@+id/action_searchFragment_to_searchEngineFragment"
             app:destination="@id/searchEngineFragment"
@@ -202,10 +198,8 @@
         android:id="@+id/externalAppBrowserFragment"
         android:name="org.mozilla.fenix.customtabs.ExternalAppBrowserFragment"
         tools:layout="@layout/fragment_browser">
-        <argument
-            android:name="activeSessionId"
-            app:argType="string"
-            app:nullable="true" />
+        <argument android:name="activeSessionId" app:argType="string" app:nullable="true" />
+        <argument android:name="webAppManifest" app:argType="string" app:nullable="true"/>
         <action
             android:id="@+id/action_externalAppBrowserFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
@@ -365,6 +359,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_deleteBrowsingDataOnQuitFragment"
             app:destination="@id/deleteBrowsingDataOnQuitFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_defaultBrowserFragment"
+            app:destination="@id/defaultBrowserFragment" />
     </fragment>
     <fragment
         android:id="@+id/dataChoicesFragment"
@@ -589,4 +586,8 @@
         android:id="@+id/addNewDeviceFragment"
         android:name="org.mozilla.fenix.share.AddNewDeviceFragment"
         android:label="AddNewDeviceFragment" />
+    <fragment
+        android:id="@+id/defaultBrowserFragment"
+        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment"
+        android:label="DefaultBrowserFragment" />
 </navigation>

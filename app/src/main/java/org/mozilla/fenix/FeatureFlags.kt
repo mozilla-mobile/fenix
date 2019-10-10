@@ -46,9 +46,10 @@ object FeatureFlags {
     val etpCategories = nightly or debug
 
     /**
-     * Granular data deletion provides additional choices on the Delete Browsing Data
-     * setting screen for cookies, cached images and files, and site permissions.
+     * Gives option in Settings to disable auto play media
      */
+    val autoPlayMedia = nightly or debug
+
     val granularDataDeletion = nightly or debug
 
     /**
@@ -57,7 +58,7 @@ object FeatureFlags {
     val deleteDataOnQuit = nightly or debug
 
     /**
-     * Gives option in Settings to disable auto play media
+     * Allows Progressive Web Apps to be installed to the device home screen.
      */
-    val autoPlayMedia = nightly or debug
+    val progressiveWebApps = nightly or debug
 }

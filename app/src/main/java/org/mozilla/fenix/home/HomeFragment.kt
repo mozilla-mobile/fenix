@@ -6,6 +6,7 @@ package org.mozilla.fenix.home
 
 import android.animation.Animator
 import android.content.DialogInterface
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -93,6 +94,7 @@ import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.share.ShareTab
 import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.allowUndo
@@ -107,6 +109,10 @@ class HomeFragment : Fragment() {
 
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
+            if (deleteAllSessionsJob == null) emitSessionChanges()
+        }
+
+        override fun onIconChanged(session: Session, icon: Bitmap?) {
             if (deleteAllSessionsJob == null) emitSessionChanges()
         }
     }
@@ -251,8 +257,7 @@ class HomeFragment : Fragment() {
             invokePendingDeleteJobs()
             onboarding.finish()
             val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null,
-                showShortcutEnginePicker = true
+                sessionId = null
             )
             val extras =
                 FragmentNavigator.Extras.Builder()
@@ -265,8 +270,7 @@ class HomeFragment : Fragment() {
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null,
-                showShortcutEnginePicker = true
+                sessionId = null
             )
             nav(R.id.homeFragment, directions)
         }
@@ -677,6 +681,12 @@ class HomeFragment : Fragment() {
                         ),
                         newTab = true,
                         from = BrowserDirection.FromHome
+                    )
+                }
+                HomeMenu.Item.Quit -> activity?.let { activity ->
+                    deleteAndQuit(
+                        activity,
+                        lifecycleScope
                     )
                 }
             }

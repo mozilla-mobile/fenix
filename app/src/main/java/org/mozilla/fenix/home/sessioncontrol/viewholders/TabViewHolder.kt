@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -16,6 +17,7 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.support.ktx.android.util.dpToFloat
+import org.jetbrains.anko.imageBitmap
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -92,7 +94,7 @@ class TabViewHolder(
         updateTab(tab)
         updateTitle(tab.title)
         updateHostname(tab.hostname)
-        updateFavIcon(tab.url)
+        updateFavIcon(tab.url, tab.icon)
         updateSelected(tab.selected ?: false)
         updatePlayPauseButton(tab.mediaState ?: MediaState.None)
         item_tab.transitionName = "$TAB_ITEM_TRANSITION_NAME${tab.sessionId}"
@@ -129,8 +131,12 @@ class TabViewHolder(
         hostname.text = text
     }
 
-    internal fun updateFavIcon(url: String) {
-        favicon_image.context.components.core.icons.loadIntoView(favicon_image, url)
+    internal fun updateFavIcon(url: String, icon: Bitmap?) {
+        if (icon == null) {
+            favicon_image.context.components.core.icons.loadIntoView(favicon_image, url)
+        } else {
+            favicon_image.imageBitmap = icon
+        }
     }
 
     internal fun updateSelected(selected: Boolean) {
