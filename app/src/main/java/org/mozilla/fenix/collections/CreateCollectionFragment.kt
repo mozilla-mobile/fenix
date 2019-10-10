@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,8 @@ import kotlinx.android.synthetic.main.fragment_create_collection.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.R
@@ -53,15 +56,10 @@ class CreateCollectionFragment : DialogFragment() {
         val args : CreateCollectionFragmentArgs by navArgs()
 
         val sessionManager = requireComponents.core.sessionManager
-        val tabs = args.tabIds
-            ?.mapNotNull { sessionManager.findSessionById(it) }
-            ?.map { it.toTab(view.context) }
-            ?: emptyList()
-        val selectedTabs = args.selectedTabIds
-            ?.mapNotNull { sessionManager.findSessionById(it) }
-            ?.map { it.toTab(view.context) }
-            ?.toSet()
-            ?: emptySet()
+        val publicSuffixList = requireComponents.publicSuffixList
+        val tabs = sessionManager.getTabs(args.tabIds, publicSuffixList)
+        val selectedTabs = sessionManager.getTabs(args.selectedTabIds, publicSuffixList)
+            .toSet()
 
         collectionCreationStore = StoreProvider.get(this) {
             CollectionCreationStore(
@@ -110,4 +108,12 @@ class CreateCollectionFragment : DialogFragment() {
         }
         return dialog
     }
+}
+
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+fun SessionManager.getTabs(tabIds: Array<String>?, publicSuffixList: PublicSuffixList): List<Tab> {
+    return tabIds
+        ?.mapNotNull { this.findSessionById(it) }
+        ?.map { it.toTab(publicSuffixList) }
+        ?: emptyList()
 }
