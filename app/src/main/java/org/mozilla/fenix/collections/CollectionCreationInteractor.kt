@@ -7,6 +7,52 @@ package org.mozilla.fenix.collections
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
+interface CollectionCreationInteractor {
+
+    fun onNewCollectionNameSaved(tabs: List<Tab>, name: String)
+
+    fun onCollectionRenamed(collection: TabCollection, name: String)
+
+    /**
+     * Called when either the physical back button, or the back arrow are clicked.
+     *
+     * Note that this is not called when the close button on the snackbar is clicked. See [close].
+     */
+    fun onBackPressed(fromStep: SaveCollectionStep)
+
+    /**
+     * Called when a user hits 'Select All' from the 'Select Tabs' step. This affects which tabs
+     * have been 'selected' to be saved into a collection.
+     */
+    fun selectAllTapped()
+
+    /**
+     * Called when a user hits 'Deselect All' from the 'Select Tabs' step. This affects which tabs
+     * have been 'selected' to be saved into a collection.
+     */
+    fun deselectAllTapped()
+
+    /**
+     * Called when a user hits the close button on the snackbar.
+     *
+     * Note that this is not called when the back arrow is clicked. See [onBackPressed].
+     */
+    fun close()
+
+    fun selectCollection(collection: TabCollection, tabs: List<Tab>)
+
+    /**
+     * Called when the user decides to save tabs to the currently selected session.
+     */
+    fun saveTabsToCollection(tabs: List<Tab>)
+
+    fun addNewCollection()
+
+    fun addTabToSelection(tab: Tab)
+
+    fun removeTabFromSelection(tab: Tab)
+}
+
 class DefaultCollectionCreationInteractor(
     private val controller: CollectionCreationController
 ) : CollectionCreationInteractor {
