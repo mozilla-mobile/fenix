@@ -25,7 +25,7 @@ import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.Tab
 
 @ExperimentalCoroutinesApi
-class CreateCollectionFragment : DialogFragment() {
+class CollectionCreationFragment : DialogFragment() {
     private lateinit var collectionCreationView: CollectionCreationView
     private lateinit var collectionCreationStore: CollectionCreationStore
     private lateinit var collectionCreationInteractor: CollectionCreationInteractor
@@ -42,7 +42,7 @@ class CreateCollectionFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_collection, container, false)
-        val args : CreateCollectionFragmentArgs by navArgs()
+        val args : CollectionCreationFragmentArgs by navArgs()
 
         val sessionManager = requireComponents.core.sessionManager
         val publicSuffixList = requireComponents.publicSuffixList

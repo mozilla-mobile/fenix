@@ -36,7 +36,7 @@ class CollectionCreationView(
     override val containerView: ViewGroup,
     private val interactor: CollectionCreationInteractor
 ) : LayoutContainer {
-    val view: View = LayoutInflater.from(containerView.context) // TODO View type?
+    val view: View = LayoutInflater.from(containerView.context)
         .inflate(R.layout.component_collection_creation, containerView, true)
 
     private val collectionCreationTabListAdapter = CollectionCreationTabListAdapter(interactor)

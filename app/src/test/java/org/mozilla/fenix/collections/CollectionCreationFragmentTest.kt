@@ -40,7 +40,7 @@ private const val SESSION_ID_BAD_2 = "definitely not a real session id"
 @ObsoleteCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
-class CreateCollectionFragmentTest {
+class CollectionCreationFragmentTest {
 
     @MockK private lateinit var sessionManager: SessionManager
     @MockK private lateinit var publicSuffixList: PublicSuffixList
@@ -62,7 +62,7 @@ class CreateCollectionFragmentTest {
     @Test
     fun `creation dialog shows and can be dismissed`() {
         val fragment = createAddedTestFragment {
-            CreateCollectionFragment().apply {
+            CollectionCreationFragment().apply {
                 arguments = CreateCollectionFragmentArgs(
                     // Fragment crashes if navArgs is null
                     null, null, 0, SaveCollectionStep.SelectTabs

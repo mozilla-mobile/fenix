@@ -804,7 +804,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCollectionCreationFragment(step: SaveCollectionStep, selectedTabIds: Array<String>? = null) {
-        if (findNavController().currentDestination?.id == R.id.createCollectionFragment) return
+        if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
 
         val storage = requireComponents.core.tabCollectionStorage
         // Only register the observer right before moving to collection creation
