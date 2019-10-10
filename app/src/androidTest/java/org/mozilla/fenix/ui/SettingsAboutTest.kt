@@ -59,13 +59,18 @@ class SettingsAboutTest {
     }
 
     // ABOUT
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyHelpRedirect() {
         // Open 3dot (main) menu
         // Select settings
         // Click on "Help"
         // Verify redirect to: https://support.mozilla.org/
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.clickOnHelpButton{
+            verifyHelpUrl()
+        }
     }
 
     @Ignore("This is a stub test, ignore for now")

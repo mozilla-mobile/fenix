@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
@@ -66,6 +67,16 @@ class SettingsRobot {
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
+
+        fun clickOnHelpButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+
+            mDevice.waitForIdle()
+            helpButton().perform(ViewActions.click())
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
     }
 }
 
@@ -146,3 +157,8 @@ private fun assertAboutFirefoxPreview() = onView(ViewMatchers.withText("About Fi
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun goBackButton() = onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
+
+private fun helpButton() : ViewInteraction {
+    TestHelper.scrollToElementByText("Help")
+    return onView(ViewMatchers.withText("Help"))
+}
