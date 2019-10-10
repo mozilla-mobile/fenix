@@ -53,6 +53,9 @@ interface CollectionCreationInteractor {
     fun removeTabFromSelection(tab: Tab)
 }
 
+/**
+ * Forwards all method calls to their equivalents in [CollectionCreationController].
+ */
 class DefaultCollectionCreationInteractor(
     private val controller: CollectionCreationController
 ) : CollectionCreationInteractor {

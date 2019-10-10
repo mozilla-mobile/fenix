@@ -17,59 +17,46 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.toSessionBundle
 
-/**
- * TODO
- */
 interface CollectionCreationController {
-    /**
-     * todo
-     */
+
     fun saveCollectionName(tabs: List<Tab>, name: String)
-    /**
-     * todo
-     */
+
     fun renameCollection(collection: TabCollection, name: String)
+
     /**
-     * todo
+     * See [CollectionCreationInteractor.onBackPressed]
      */
     fun backPressed(fromStep: SaveCollectionStep)
+
     /**
-     * todo
+     * See [CollectionCreationInteractor.selectAllTapped]
      */
     fun selectAllTapped()
+
     /**
-     * todo
+     * See [CollectionCreationInteractor.deselectAllTapped]
      */
     fun deselectAllTapped()
+
     /**
-     * todo
+     * See [CollectionCreationInteractor.close]
      */
     fun close()
-    /**
-     * todo
-     */
+
     fun selectCollection(collection: TabCollection, tabs: List<Tab>)
+
     /**
-     * todo
+     * See [CollectionCreationInteractor.saveTabsToCollection]
      */
     fun saveTabsToCollection(tabs: List<Tab>)
-    /**
-     * todo
-     */
+
     fun addNewCollection()
-    /**
-     * todo
-     */
+
     fun addTabToSelection(tab: Tab)
-    /**
-     * todo
-     */
+
     fun removeTabFromSelection(tab: Tab)
 }
 
-/**
- * TODO
- */
 class DefaultCollectionCreationController(
     private val store: CollectionCreationStore,
     private val dismiss: () -> Unit,
