@@ -40,7 +40,6 @@ import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.collections.CreateCollectionViewModel
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -67,7 +66,6 @@ class DefaultBrowserToolbarControllerTest {
     private var findInPageLauncher: () -> Unit = mockk(relaxed = true)
     private val engineView: EngineView = mockk(relaxed = true)
     private val currentSession: Session = mockk(relaxed = true)
-    private val viewModel: CreateCollectionViewModel = mockk(relaxed = true)
     private val getSupportUrl: () -> String = { "https://supportUrl.org" }
     private val openInFenixIntent: Intent = mockk(relaxed = true)
     private val currentSessionAsTab: Tab = mockk(relaxed = true)
@@ -95,7 +93,6 @@ class DefaultBrowserToolbarControllerTest {
             engineView = engineView,
             adjustBackgroundAndNavigate = adjustBackgroundAndNavigate,
             customTabSession = null,
-            viewModel = viewModel,
             getSupportUrl = getSupportUrl,
             openInFenixIntent = openInFenixIntent,
             bottomSheetBehavior = bottomSheetBehavior,
