@@ -14,7 +14,7 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/toolbar_and_qab_height">
+        app:layout_behavior="mozilla.components.feature.session.behavior.EngineViewBottomBehavior">
 
         <mozilla.components.concept.engine.EngineView
             android:id="@+id/engineView"
