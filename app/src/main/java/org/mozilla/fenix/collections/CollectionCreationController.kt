@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("TooManyFunctions")
+
 package org.mozilla.fenix.collections
 
 import kotlinx.coroutines.CoroutineScope
@@ -120,7 +122,7 @@ class DefaultCollectionCreationController(
         closeTabsIfNecessary(tabs, sessionManager, tabsUseCases)
     }
 
-    override fun saveTabsToCollection(tabs: List<Tab>) { //TODO most of this should live in the reducer
+    override fun saveTabsToCollection(tabs: List<Tab>) { // TODO most of this should live in the reducer
         store.dispatch(CollectionCreationAction.StepChanged(
             saveCollectionStep = if (store.state.tabCollections.isEmpty()) {
                 SaveCollectionStep.NameCollection
@@ -151,9 +153,9 @@ class DefaultCollectionCreationController(
         }
     }
 
-    private fun stepBack( // TODO feels like this should live in the reducer
+    private fun stepBack(
         backFromStep: SaveCollectionStep
-    ): SaveCollectionStep? {
+    ): SaveCollectionStep? { // TODO feels like this should live in the reducer
         return when (backFromStep) {
             SaveCollectionStep.SelectTabs, SaveCollectionStep.RenameCollection -> null
             SaveCollectionStep.SelectCollection -> if (store.state.tabs.size <= 1) {

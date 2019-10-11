@@ -73,12 +73,15 @@ class CollectionCreationView(
             val text = view.text.toString()
             if (actionId == EditorInfo.IME_ACTION_DONE && text.isNotBlank()) {
                 when (step) {
-                    SaveCollectionStep.NameCollection -> 
+                    SaveCollectionStep.NameCollection ->
                         interactor.onNewCollectionNameSaved(selectedTabs.toList(), text)
-                    SaveCollectionStep.RenameCollection -> 
+                    SaveCollectionStep.RenameCollection ->
                         selectedCollection?.let { interactor.onCollectionRenamed(it, text) }
                     // TODO if shouldn't be possible to reach the other states, let's log that to telemetry
-                    else -> { /* noop (TODO else branch will hopefully be replaced with above mentioned telemetry calls) */ }
+                    else -> {
+                        /* noop */
+                        // TODO else branch will hopefully be replaced with above mentioned telemetry calls
+                    }
                 }
             }
             false
@@ -95,15 +98,16 @@ class CollectionCreationView(
             layoutManager = LinearLayoutManager(containerView.context, RecyclerView.VERTICAL, true)
         }
     }
-    
+
+    @SuppressWarnings("ComplexMethod") // TODO break this up before merging
     fun update(state: CollectionCreationState) {
-        
+
         fun cacheState() {
             step = state.saveCollectionStep
             selectedTabs = state.selectedTabs
             selectedCollection = state.selectedTabCollection
         }
-        
+
         fun updateForSelectTabs() {
             view.context.components.analytics.metrics.track(Event.CollectionTabSelectOpened)
 
@@ -291,9 +295,9 @@ class CollectionCreationView(
                 transition
             )
         }
-        
+
         cacheState()
-        
+
         when (step) {
             SaveCollectionStep.SelectTabs -> updateForSelectTabs()
             SaveCollectionStep.SelectCollection -> updateForSelectCollection()

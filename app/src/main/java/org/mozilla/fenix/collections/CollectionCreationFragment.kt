@@ -42,13 +42,16 @@ class CollectionCreationFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_collection, container, false)
-        val args : CollectionCreationFragmentArgs by navArgs()
+        val args: CollectionCreationFragmentArgs by navArgs()
 
         val sessionManager = requireComponents.core.sessionManager
         val publicSuffixList = requireComponents.publicSuffixList
         val tabs = sessionManager.getTabs(args.tabIds, publicSuffixList)
         val selectedTabs = sessionManager.getTabs(args.selectedTabIds, publicSuffixList)
             .toSet()
+        val tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
+        val selectedTabCollection = args.selectedTabCollectionId
+            .let { id -> tabCollections.firstOrNull { it.id == id } }
 
         collectionCreationStore = StoreProvider.get(this) {
             CollectionCreationStore(
@@ -57,7 +60,8 @@ class CollectionCreationFragment : DialogFragment() {
                     tabs = tabs,
                     selectedTabs = selectedTabs,
                     saveCollectionStep = args.saveCollectionStep,
-                    tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
+                    tabCollections = tabCollections,
+                    selectedTabCollection = selectedTabCollection
                 )
             )
         }

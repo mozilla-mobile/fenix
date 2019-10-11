@@ -35,12 +35,14 @@ data class CollectionCreationState(
 
 // any actions that don't map to a change will be handled in the controller, and don't need a LibState Action
 sealed class CollectionCreationAction : Action {
-    data class TabListChange(val tabs: List<Tab>) : CollectionCreationAction() // TODO kdoc
+    // TODO kdoc
+    data class TabListChange(val tabs: List<Tab>) : CollectionCreationAction()
     object AddAllTabs : CollectionCreationAction()
     object RemoveAllTabs : CollectionCreationAction()
     data class TabAdded(val tab: Tab) : CollectionCreationAction()
     data class TabRemoved(val tab: Tab) : CollectionCreationAction()
-    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationAction() // TODO kdoc (and possibly rename)
+    // TODO kdoc (and possibly rename)
+    data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationAction()
     data class CollectionSelected(val collection: TabCollection) : CollectionCreationAction()
 }
 

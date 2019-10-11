@@ -514,10 +514,16 @@ class HomeFragment : Fragment() {
             }
             is CollectionAction.AddTab -> {
                 requireComponents.analytics.metrics.track(Event.CollectionAddTabPressed)
-                showCollectionCreationFragment(SaveCollectionStep.SelectTabs)
+                showCollectionCreationFragment(
+                    step = SaveCollectionStep.SelectTabs,
+                    selectedTabCollectionId = action.collection.id
+                )
             }
             is CollectionAction.Rename -> {
-                showCollectionCreationFragment(SaveCollectionStep.RenameCollection)
+                showCollectionCreationFragment(
+                    step = SaveCollectionStep.RenameCollection,
+                    selectedTabCollectionId = action.collection.id
+                )
                 requireComponents.analytics.metrics.track(Event.CollectionRenamePressed)
             }
             is CollectionAction.OpenTab -> {
@@ -803,7 +809,11 @@ class HomeFragment : Fragment() {
             .toList()
     }
 
-    private fun showCollectionCreationFragment(step: SaveCollectionStep, selectedTabIds: Array<String>? = null) {
+    private fun showCollectionCreationFragment(
+        step: SaveCollectionStep,
+        selectedTabIds: Array<String>? = null,
+        selectedTabCollectionId: Long? = null
+    ) {
         if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
 
         val storage = requireComponents.core.tabCollectionStorage
@@ -816,7 +826,8 @@ class HomeFragment : Fragment() {
                 tabIds = tabIds,
                 previousFragmentId = R.id.homeFragment,
                 saveCollectionStep = step,
-                selectedTabIds = selectedTabIds
+                selectedTabIds = selectedTabIds,
+                selectedTabCollectionId = selectedTabCollectionId ?: -1
             )
             nav(R.id.homeFragment, directions)
         }
@@ -834,7 +845,6 @@ class HomeFragment : Fragment() {
 
         showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
     }
-
 
     private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
         val directions =
