@@ -7,7 +7,7 @@ Firefox Preview (internal code name: "Fenix") is an all-new browser for Android,
 
 ## I want to open a Pull Request!
 
-We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
+We encourage you to participate in this open-source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
 
 Since we are a small team, however, **we do not have the bandwidth to review unsolicited PRs**. Please follow our [Pull Request guidelines](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING_code.md#creating-a-pull-request), or **we may close the PR**.
 
@@ -16,11 +16,11 @@ To make it easier to review, we have these PR requirements:
 * Every PR must have **exactly** one issue associated with it.
 * Write a clear explanation of what the code is doing when opening the pull request, and optionally add comments to the PR.
 * Make sure there are tests - or ask for help on how the code should be tested in the Issue!
-* Keep PRs small and to the point. For extra code-health changes, either file a separate issue, or make it a separate PR that can be easily reviewed.
+* Keep PRs small and to the point. For extra code-health changes, either file a separate issue or make it a separate PR that can be easily reviewed.
 * Use micro-commits. This makes it easier and faster to review.
 * Add a screenshot for UX changes (this is part of the PR checklist)
 
-As a small team, we have to prioritize our work, and reviewing PRs takes time. We receive lots of PRs every day, so if you can keep your PRs small, it helps our small team review and merge code faster, minimizing stale code.
+As a small team, we have to prioritize our work, and reviewing PRs takes time. We receive lots of PRs every day, so if you can keep your PRs small, it helps our small team review and merges code faster, minimizing stale code.
 
 
 Keep in mind that the team is very overloaded, so PRs sometimes wait
@@ -31,7 +31,7 @@ try to popularize it by getting other users to comment and share their point of 
 
 ## Getting Involved
 
-Before you attempt to make a contribution please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
+Before you attempt to contribute please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
 
 * [Guide to Contributing](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING.md) (**New contributors start here!**)
 
@@ -44,7 +44,7 @@ Before you attempt to make a contribution please read the [Community Participati
 
 * Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
 
-**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first timers to have a go, get involved and make a positive contribution to the project!
+**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first-timers to have a go, get involved and make a positive contribution to the project!
 
 ## Build Instructions
 
@@ -62,13 +62,12 @@ Note: Both Android SDK and NDK are required.
   ./gradlew clean app:assembleGeckoBetaDebug
   ```
   
-  Use app:assembleGeckoNightlyDebug to build with the Gecko Nightly version instead.
+  Use an app:assembleGeckoNightlyDebug to build with the Gecko Nightly version instead.
 
 3. Make sure to select the correct build variant in Android Studio. See the next section.
 
 ### Guide to Build Variants
-We have a lot of build variants. Each variant is composed of two flavors. One flavor is the version of Gecko to use and the other describes 
-which app id and settings to use. Here is a description of what each means:
+We have a lot of build variants. Each variant is composed of two flavors. One flavor is the version of Gecko to use and the other describes which app id and settings to use. Here is a description of what each means:
 
 - **geckoBeta** (recommended) uses the Beta variant of the Gecko rendering engine, which corresponds to the next version of Gecko which will go to production
 - **geckoNightly** uses the Nightly variant of the Gecko rendering engine, which is the version which will arrive after beta and is less stable
@@ -76,7 +75,7 @@ which app id and settings to use. Here is a description of what each means:
 <br />
 <br />
 
-- **debug** uses debug symbols and debug signing, adds tools like LeakCanary for troubleshooting, and does not strip unused or wasteful code
+- **debug** uses debug symbols and debug signing adds tools like LeakCanary for troubleshooting and does not strip unused or wasteful code
 - **fenixNightly** is a release build with nightly signing which uses the org.mozilla.fenix.nightly app id for nightly releases to Google Play
 - **fenixBeta** is a release build with beta signing which uses the org.mozilla.fenix.beta app id for beta releases to Google Play
 - **fenixProduction** is a release build with release signing which uses the org.mozilla.fenix app id for production releases to Google Play
