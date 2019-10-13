@@ -12,11 +12,15 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.uiautomator.By.text
+import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.click
 
 /**
  * Implementation of Robot Pattern for the settings menu.
@@ -36,6 +40,18 @@ class SettingsRobot {
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
+
+        fun openAboutMenu(interact: AboutRobot.() -> Unit): AboutRobot.Transition {
+            swipeToBottom()
+            mDevice.wait(
+                Until.findObject(text("R.string.preferences_about")),
+                TestAssetHelper.waitingTime
+            )
+            aboutButton().click()
+
+            AboutRobot().interact()
+            return AboutRobot.Transition()
+        }
     }
 }
 
@@ -51,5 +67,7 @@ private fun assertPrivacyHeading() = onView(ViewMatchers.withText("Privacy"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun goBackButton() = onView(CoreMatchers.allOf(withContentDescription("Navigate up")))
-
-fun swipeToBottom() = onView(ViewMatchers.withId(R.id.recycler_view)).perform(ViewActions.swipeUp())
+private val appName = InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.app_name)
+private val aboutAppHeading = "About $appName"
+private fun aboutButton() = onView(ViewMatchers.withText(aboutAppHeading))
+private fun swipeToBottom() = onView(ViewMatchers.withId(R.id.recycler_view)).perform(ViewActions.swipeUp())
