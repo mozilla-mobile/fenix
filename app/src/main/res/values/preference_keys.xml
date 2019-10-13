@@ -65,6 +65,7 @@
     <string name="pref_key_search_widget_installed" translatable="false">pref_key_search_widget_installed</string>
 
     <!-- Search Settings -->
+    <string name="pref_key_show_search_shortcuts" translatable="false">pref_key_show_search_shortcuts</string>
     <string name="pref_key_show_search_suggestions" translatable="false">pref_key_show_search_suggestions</string>
     <string name="pref_key_show_clipboard_suggestions" translatable="false">pref_key_show_clipboard_suggestions</string>
     <string name="pref_key_search_browsing_history" translatable="false">pref_key_search_browsing_history</string>
@@ -99,11 +100,11 @@
     <string name="pref_key_tracking_protection_onboarding" translatable="false">pref_key_tracking_protection_onboarding</string>
 
     <!-- Privacy Settings -->
-    <string name="pref_key_launch_links_in_private_mode" translatable="false">pref_key_launch_links_in_private_mode</string>
+    <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
 
     <!-- Quick Action Sheet -->
     <string name="pref_key_bounce_quick_action" translatable="false">pref_key_bounce_quick_action</string>
     <string name="pref_key_reader_mode_notification" translatable="false">pref_key_reader_mode_notification</string>
-
     <string name="pref_key_adjust_campaign" translatable="false">pref_key_adjust_campaign</string>
+    <string name="pref_key_testing_stage" translatable="false">pref_key_testing_stage</string>
 </resources>

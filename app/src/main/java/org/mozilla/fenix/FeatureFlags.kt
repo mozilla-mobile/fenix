@@ -11,9 +11,9 @@ object FeatureFlags {
     private val production by lazy { BuildConfig.BUILD_TYPE == "fenixProduction" }
     // A convenience flag for beta builds.
     private val beta by lazy { BuildConfig.BUILD_TYPE == "fenixBeta" }
-    // A convenience flag for the nightly build and (legacy) nightly channel in Google Play.
+    // A convenience flag for the nightly build in Google Play.
     private val nightly by lazy {
-        BuildConfig.BUILD_TYPE == "fenixNightly" || BuildConfig.BUILD_TYPE == "fenixNightlyLegacy"
+        BuildConfig.BUILD_TYPE == "fenixNightly"
     }
     // A convenience flag for debug builds.
     private val debug by lazy { BuildConfig.BUILD_TYPE == "debug" }
@@ -46,9 +46,10 @@ object FeatureFlags {
     val etpCategories = nightly or debug
 
     /**
-     * Granular data deletion provides additional choices on the Delete Browsing Data
-     * setting screen for cookies, cached images and files, and site permissions.
+     * Gives option in Settings to disable auto play media
      */
+    val autoPlayMedia = nightly or debug
+
     val granularDataDeletion = nightly or debug
 
     /**
@@ -57,7 +58,7 @@ object FeatureFlags {
     val deleteDataOnQuit = nightly or debug
 
     /**
-     * Gives option in Settings to disable auto play media
+     * Allows Progressive Web Apps to be installed to the device home screen.
      */
-    val autoPlayMedia = nightly or debug
+    val progressiveWebApps = nightly or debug
 }

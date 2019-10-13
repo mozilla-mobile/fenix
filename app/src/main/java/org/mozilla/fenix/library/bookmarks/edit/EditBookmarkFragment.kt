@@ -5,15 +5,11 @@
 package org.mozilla.fenix.library.bookmarks.edit
 
 import android.content.DialogInterface
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -42,7 +38,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -51,7 +46,10 @@ import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import java.util.concurrent.TimeUnit
 
-class EditBookmarkFragment : Fragment() {
+/**
+ * Menu to edit the name, URL, and location of a bookmark item.
+ */
+class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
     private lateinit var guidToEdit: String
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels {
@@ -63,10 +61,6 @@ class EditBookmarkFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_edit_bookmark, container, false)
     }
 
     override fun onResume() {
@@ -150,9 +144,6 @@ class EditBookmarkFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_edit, menu)
-        val textColor = requireContext().getColorFromAttr(R.attr.primaryText)
-        menu.findItem(R.id.delete_bookmark_button).icon.colorFilter =
-            PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -13,11 +13,14 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.component_search.*
@@ -74,6 +77,7 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
@@ -149,7 +153,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         browserInitialized = initializeUI(view) != null
     }
 
@@ -167,7 +170,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 findNavController(),
                 (activity as HomeActivity).browsingModeManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
+                browserLayout = view.browserLayout,
                 engineView = engineView,
+                swipeRefresh = swipeRefresh,
+                adjustBackgroundAndNavigate = ::adjustBackgroundAndNavigate,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 viewModel = viewModel,
                 getSupportUrl = {
@@ -282,7 +288,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             promptsFeature.set(
                 feature = PromptFeature(
                     fragment = this,
-                    sessionManager = sessionManager,
+                    store = store,
                     sessionId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
                     onNeedToRequestPermissions = { permissions ->
@@ -391,6 +397,20 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             }
 
             (activity as HomeActivity).updateThemeForSession(session)
+        }
+    }
+
+    private fun adjustBackgroundAndNavigate(directions: NavDirections) {
+        context?.let {
+            engineView.captureThumbnail { bitmap ->
+                lifecycleScope.launch {
+                    whenStarted {
+                        swipeRefresh?.background = bitmap?.toDrawable(it.resources)
+                        engineView?.asView()?.visibility = View.GONE
+                        findNavController().nav(R.id.browserFragment, directions)
+                    }
+                }
+            }
         }
     }
 
@@ -510,7 +530,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         session: Session?
     ): BrowserToolbarViewInteractor
 
-    protected abstract fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?)
+    protected abstract fun navToQuickSettingsSheet(
+        session: Session,
+        sitePermissions: SitePermissions?
+    )
 
     protected abstract fun navToTrackingProtectionPanel(session: Session)
 
@@ -527,7 +550,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     protected fun updateLayoutMargins(inFullScreen: Boolean) {
         view?.swipeRefresh?.apply {
             val (topMargin, bottomMargin) = if (inFullScreen) 0 to 0 else getEngineMargins()
-            (layoutParams as CoordinatorLayout.LayoutParams).setMargins(0, topMargin, 0, bottomMargin)
+            (layoutParams as CoordinatorLayout.LayoutParams).setMargins(
+                0,
+                topMargin,
+                0,
+                bottomMargin
+            )
         }
     }
 

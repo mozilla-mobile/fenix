@@ -78,7 +78,6 @@ which app id and settings to use. Here is a description of what each means:
 
 - **debug** uses debug symbols and debug signing, adds tools like LeakCanary for troubleshooting, and does not strip unused or wasteful code
 - **fenixNightly** is a release build with nightly signing which uses the org.mozilla.fenix.nightly app id for nightly releases to Google Play
-- **fenixNightlyLegacy** is a release build with release signing which uses the org.mozilla.fenix production app id along with nightly logos, which we're trying to phase out
 - **fenixBeta** is a release build with beta signing which uses the org.mozilla.fenix.beta app id for beta releases to Google Play
 - **fenixProduction** is a release build with release signing which uses the org.mozilla.fenix app id for production releases to Google Play
 - **fennecProduction** is an experimental build with release signing which uses the org.mozilla.firefox app id and supports upgrading the older Firefox. **WARNING** Pre-production versions of this may result in data loss.
@@ -107,6 +106,29 @@ To push without running the pre-push hook (e.g. doc updates):
 ```sh
 git push <remote> --no-verify
 ```
+
+## local.properties helpers
+There are multiple helper flags available via `local.properties` that will help speed up local development workflow
+when working across multiple layers of the dependency stack - specifically, with android-components, geckoview or application-services.
+
+### android-components auto-publication workflow
+Specify a relative path to your local `android-components` checkout via `autoPublish.android-components.dir`.
+
+If enabled, during a Fenix build android-components will be compiled and locally published if it has been modified,
+and published versions of android-components modules will be automatically used instead of whatever is declared in Dependencies.kt.
+
+### application-services composite builds
+Specify a relative path to your local `application-services` checkout via `substitutions.application-services.dir`.
+
+If enabled, a multi-project gradle build will be configured, and any application-services dependency will be substituted
+for the local version. Any changes to `application-services` will be automatically included in Fenix builds.
+
+### GeckoView
+Specify a relative path to your local `mozilla-central` checkout via `dependencySubstitutions.geckoviewTopsrcdir`,
+and optional a path to m-c object directory via `dependencySubstitutions.geckoviewTopobjdir`.
+
+If these are configured, local builds of GeckoView will be used instead of what's configured in Dependencies.kt.
+For more details, see https://mozilla.github.io/geckoview/contributor/geckoview-quick-start#include-geckoview-as-a-dependency
 
 ## License
 
