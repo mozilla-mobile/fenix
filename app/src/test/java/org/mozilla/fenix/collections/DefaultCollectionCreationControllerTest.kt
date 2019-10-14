@@ -88,7 +88,4 @@ class DefaultCollectionCreationControllerTest {
 
         assertEquals(SaveCollectionStep.SelectCollection, controller.stepBack(SaveCollectionStep.NameCollection))
     }
-
-
-
 }

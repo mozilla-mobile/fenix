@@ -63,9 +63,10 @@ class CollectionCreationFragmentTest {
     fun `creation dialog shows and can be dismissed`() {
         val fragment = createAddedTestFragment {
             CollectionCreationFragment().apply {
-                arguments = CreateCollectionFragmentArgs(
+                arguments = CollectionCreationFragmentArgs(
                     // Fragment crashes if navArgs is null
-                    null, null, 0, SaveCollectionStep.SelectTabs
+                    previousFragmentId = 0,
+                    saveCollectionStep = SaveCollectionStep.SelectTabs
                 ).toBundle()
             }
         }
