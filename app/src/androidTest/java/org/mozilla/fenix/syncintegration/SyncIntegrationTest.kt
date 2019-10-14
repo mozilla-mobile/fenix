@@ -46,9 +46,6 @@ class SyncIntegrationTest {
         }.openHistory { }
         historyAfterSyncIsShown()
     }
-    /* These tests will be running in the future
-    // once the test above runs successfully and
-    // the environment is stable
 
     // Bookmark item Desktop -> Fenix
     @Test
@@ -61,6 +58,10 @@ class SyncIntegrationTest {
         }.openBookmarks { }
         bookmarkAfterSyncIsShown()
     }
+
+    /* These tests will be running in the future
+    // once the test above runs successfully and
+    // the environment is stable
 
     // History item Fenix -> Desktop
     @Test
@@ -109,7 +110,7 @@ class SyncIntegrationTest {
     }
 
     fun tapOnSignIn() {
-        mDevice.wait(Until.findObjects(By.text("Sign in")), TestAssetHelper.waitingTime)
+        mDevice.wait(Until.findObjects(By.text("Sign in")), TestAssetHelper.waitingTimeShort)
         // Let's tap on enter, sometimes depending on the device the sign in button is
         // hidden by the keyboard
         mDevice.pressEnter()
@@ -137,14 +138,8 @@ class SyncIntegrationTest {
     }
 
     fun tapReturnToPreviousApp() {
-        mDevice.wait(Until.findObjects(By.text("Connected")), TestAssetHelper.waitingTime)
-
-        val settingsLabel = mDevice.wait(Until.findObject(By.text("Settings")), TestAssetHelper.waitingTime)
-        settingsLabel.isClickable()
-
-        mDevice.wait(Until.findObjects(By.desc("Navigate up")), TestAssetHelper.waitingTime)
-        val backButton = mDevice.findObject(By.desc("Navigate up"))
-        backButton.click()
+        sleep(TestAssetHelper.waitingTime)
+        mDevice.pressBack()
     }
 
     fun signInFxSync() {
@@ -158,7 +153,7 @@ class SyncIntegrationTest {
         typeEmail()
         tapOnContinueButton()
         typePassowrd()
-        sleep(TestAssetHelper.waitingTime)
+        sleep(TestAssetHelper.waitingTimeShort)
         tapOnSignIn()
     }
 }
