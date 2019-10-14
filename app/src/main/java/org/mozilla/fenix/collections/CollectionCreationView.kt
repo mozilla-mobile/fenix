@@ -99,213 +99,216 @@ class CollectionCreationView(
         }
     }
 
-    @SuppressWarnings("ComplexMethod") // TODO break this up before merging
     fun update(state: CollectionCreationState) {
 
-        fun cacheState() {
-            step = state.saveCollectionStep
-            selectedTabs = state.selectedTabs
-            selectedCollection = state.selectedTabCollection
-        }
-
-        fun updateForSelectTabs() {
-            view.context.components.analytics.metrics.track(Event.CollectionTabSelectOpened)
-
-            view.tab_list.isClickable = true
-
-            back_button.setOnClickListener {
-                interactor.onBackPressed(SaveCollectionStep.SelectTabs)
-            }
-            val allSelected = state.selectedTabs.size == state.tabs.size
-            select_all_button.text =
-                if (allSelected) view.context.getString(R.string.create_collection_deselect_all)
-                else view.context.getString(R.string.create_collection_select_all)
-
-            view.select_all_button.setOnClickListener {
-                if (allSelected) interactor.deselectAllTapped()
-                else interactor.selectAllTapped()
-            }
-
-            view.bottom_button_bar_layout.setOnClickListener(null)
-            view.bottom_button_bar_layout.isClickable = false
-
-            val drawable = view.context.getDrawable(R.drawable.ic_close)
-            drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-            view.bottom_bar_icon_button.setImageDrawable(drawable)
-            view.bottom_bar_icon_button.contentDescription =
-                view.context.getString(R.string.create_collection_close)
-            view.bottom_bar_icon_button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
-            view.bottom_bar_icon_button.setOnClickListener {
-                interactor.close()
-            }
-
-            TransitionManager.beginDelayedTransition(
-                view.collection_constraint_layout,
-                transition
-            )
-            val constraint = selectTabsConstraints
-            constraint.applyTo(view.collection_constraint_layout)
-
-            collectionCreationTabListAdapter.updateData(state.tabs, state.selectedTabs)
-
-            back_button.text = view.context.getString(R.string.create_collection_select_tabs)
-
-            val selectTabsText = if (state.selectedTabs.isEmpty()) {
-                view.context.getString(R.string.create_collection_save_to_collection_empty)
-            } else {
-                view.context.getString(
-                    if (state.selectedTabs.size == 1)
-                        R.string.create_collection_save_to_collection_tab_selected else
-                        R.string.create_collection_save_to_collection_tabs_selected,
-                    state.selectedTabs.size
-                )
-            }
-
-            view.bottom_bar_text.text = selectTabsText
-
-            save_button.setOnClickListener { _ ->
-                if (selectedCollection != null) {
-                    interactor.selectCollection(
-                        collection = selectedCollection!!,
-                        tabs = state.selectedTabs.toList()
-                    )
-                } else {
-                    interactor.saveTabsToCollection(tabs = selectedTabs.toList())
-                }
-            }
-
-            save_button.visibility = if (state.selectedTabs.isEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-        }
-        fun updateForSelectCollection() {
-            view.tab_list.isClickable = false
-
-            save_button.visibility = View.GONE
-
-            view.bottom_bar_text.text =
-                view.context.getString(R.string.create_collection_add_new_collection)
-
-            val drawable = view.context.getDrawable(R.drawable.ic_new)
-            drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
-            view.bottom_bar_icon_button.setImageDrawable(drawable)
-            view.bottom_bar_icon_button.contentDescription = null
-            view.bottom_bar_icon_button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            view.bottom_button_bar_layout.isClickable = true
-            view.bottom_button_bar_layout.setOnClickListener {
-                interactor.addNewCollection()
-            }
-
-            back_button.setOnClickListener {
-                interactor.onBackPressed(SaveCollectionStep.SelectCollection)
-            }
-            TransitionManager.beginDelayedTransition(
-                view.collection_constraint_layout,
-                transition
-            )
-            val constraint = selectCollectionConstraints
-            constraint.applyTo(view.collection_constraint_layout)
-            back_button.text =
-                view.context.getString(R.string.create_collection_select_collection)
-        }
-        fun updateForNameCollection() {
-            view.tab_list.isClickable = false
-
-            collectionCreationTabListAdapter.updateData(state.selectedTabs.toList(), state.selectedTabs, true)
-            back_button.setOnClickListener {
-                name_collection_edittext.hideKeyboard()
-                val handler = Handler()
-                handler.postDelayed({
-                    interactor.onBackPressed(SaveCollectionStep.NameCollection)
-                }, TRANSITION_DURATION)
-            }
-            transition.addListener(object : Transition.TransitionListener {
-                override fun onTransitionStart(transition: Transition) { /* noop */ }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    view.name_collection_edittext.showKeyboard()
-                    transition.removeListener(this)
-                }
-
-                override fun onTransitionCancel(transition: Transition) { /* noop */ }
-                override fun onTransitionPause(transition: Transition) { /* noop */ }
-                override fun onTransitionResume(transition: Transition) { /* noop */ }
-            })
-            TransitionManager.beginDelayedTransition(
-                view.collection_constraint_layout,
-                transition
-            )
-            val constraint = nameCollectionConstraints
-            constraint.applyTo(view.collection_constraint_layout)
-            name_collection_edittext.setText(
-                view.context.getString(
-                    R.string.create_collection_default_name,
-                    state.tabCollections.size + 1
-                )
-            )
-            name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
-            back_button.text =
-                view.context.getString(R.string.create_collection_name_collection)
-        }
-        fun updateForRenameCollection() {
-            view.tab_list.isClickable = false
-
-            state.selectedTabCollection?.let { tabCollection ->
-                tabCollection.tabs.map { tab ->
-                    Tab(
-                        tab.id.toString(),
-                        tab.url,
-                        tab.url.urlToTrimmedHost(view.context),
-                        tab.title
-                    )
-                }.let { tabs ->
-                    collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)
-                }
-            }
-            val constraint = nameCollectionConstraints
-            constraint.applyTo(view.collection_constraint_layout)
-            name_collection_edittext.setText(state.selectedTabCollection?.title)
-            name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
-
-            back_button.text =
-                view.context.getString(R.string.collection_rename)
-            back_button.setOnClickListener {
-                name_collection_edittext.hideKeyboard()
-                val handler = Handler()
-                handler.postDelayed({
-                    interactor.onBackPressed(SaveCollectionStep.RenameCollection)
-                }, TRANSITION_DURATION)
-            }
-            transition.addListener(object : Transition.TransitionListener {
-                override fun onTransitionStart(transition: Transition) { /* noop */ }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    view.name_collection_edittext.showKeyboard()
-                    transition.removeListener(this)
-                }
-
-                override fun onTransitionCancel(transition: Transition) { /* noop */ }
-                override fun onTransitionPause(transition: Transition) { /* noop */ }
-                override fun onTransitionResume(transition: Transition) { /* noop */ }
-            })
-            TransitionManager.beginDelayedTransition(
-                view.collection_constraint_layout,
-                transition
-            )
-        }
-
-        cacheState()
+        cacheState(state)
 
         when (step) {
-            SaveCollectionStep.SelectTabs -> updateForSelectTabs()
+            SaveCollectionStep.SelectTabs -> updateForSelectTabs(state)
             SaveCollectionStep.SelectCollection -> updateForSelectCollection()
-            SaveCollectionStep.NameCollection -> updateForNameCollection()
-            SaveCollectionStep.RenameCollection -> updateForRenameCollection()
+            SaveCollectionStep.NameCollection -> updateForNameCollection(state)
+            SaveCollectionStep.RenameCollection -> updateForRenameCollection(state)
         }
 
         collectionSaveListAdapter.updateData(state.tabCollections, state.selectedTabs)
+    }
+
+    private fun cacheState(state: CollectionCreationState) {
+        step = state.saveCollectionStep
+        selectedTabs = state.selectedTabs
+        selectedCollection = state.selectedTabCollection
+    }
+
+    @SuppressWarnings("ComplexMethod")
+    private fun updateForSelectTabs(state: CollectionCreationState) {
+        view.context.components.analytics.metrics.track(Event.CollectionTabSelectOpened)
+
+        view.tab_list.isClickable = true
+
+        back_button.setOnClickListener {
+            interactor.onBackPressed(SaveCollectionStep.SelectTabs)
+        }
+        val allSelected = state.selectedTabs.size == state.tabs.size
+        select_all_button.text =
+            if (allSelected) view.context.getString(R.string.create_collection_deselect_all)
+            else view.context.getString(R.string.create_collection_select_all)
+
+        view.select_all_button.setOnClickListener {
+            if (allSelected) interactor.deselectAllTapped()
+            else interactor.selectAllTapped()
+        }
+
+        view.bottom_button_bar_layout.setOnClickListener(null)
+        view.bottom_button_bar_layout.isClickable = false
+
+        val drawable = view.context.getDrawable(R.drawable.ic_close)
+        drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
+        view.bottom_bar_icon_button.setImageDrawable(drawable)
+        view.bottom_bar_icon_button.contentDescription =
+            view.context.getString(R.string.create_collection_close)
+        view.bottom_bar_icon_button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        view.bottom_bar_icon_button.setOnClickListener {
+            interactor.close()
+        }
+
+        TransitionManager.beginDelayedTransition(
+            view.collection_constraint_layout,
+            transition
+        )
+        val constraint = selectTabsConstraints
+        constraint.applyTo(view.collection_constraint_layout)
+
+        collectionCreationTabListAdapter.updateData(state.tabs, state.selectedTabs)
+
+        back_button.text = view.context.getString(R.string.create_collection_select_tabs)
+
+        val selectTabsText = if (state.selectedTabs.isEmpty()) {
+            view.context.getString(R.string.create_collection_save_to_collection_empty)
+        } else {
+            view.context.getString(
+                if (state.selectedTabs.size == 1)
+                    R.string.create_collection_save_to_collection_tab_selected else
+                    R.string.create_collection_save_to_collection_tabs_selected,
+                state.selectedTabs.size
+            )
+        }
+
+        view.bottom_bar_text.text = selectTabsText
+
+        save_button.setOnClickListener { _ ->
+            if (selectedCollection != null) {
+                interactor.selectCollection(
+                    collection = selectedCollection!!,
+                    tabs = state.selectedTabs.toList()
+                )
+            } else {
+                interactor.saveTabsToCollection(tabs = selectedTabs.toList())
+            }
+        }
+
+        save_button.visibility = if (state.selectedTabs.isEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+    }
+
+    private fun updateForSelectCollection() {
+        view.tab_list.isClickable = false
+
+        save_button.visibility = View.GONE
+
+        view.bottom_bar_text.text =
+            view.context.getString(R.string.create_collection_add_new_collection)
+
+        val drawable = view.context.getDrawable(R.drawable.ic_new)
+        drawable?.setTint(ContextCompat.getColor(view.context, R.color.photonWhite))
+        view.bottom_bar_icon_button.setImageDrawable(drawable)
+        view.bottom_bar_icon_button.contentDescription = null
+        view.bottom_bar_icon_button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        view.bottom_button_bar_layout.isClickable = true
+        view.bottom_button_bar_layout.setOnClickListener {
+            interactor.addNewCollection()
+        }
+
+        back_button.setOnClickListener {
+            interactor.onBackPressed(SaveCollectionStep.SelectCollection)
+        }
+        TransitionManager.beginDelayedTransition(
+            view.collection_constraint_layout,
+            transition
+        )
+        val constraint = selectCollectionConstraints
+        constraint.applyTo(view.collection_constraint_layout)
+        back_button.text =
+            view.context.getString(R.string.create_collection_select_collection)
+    }
+
+    private fun updateForNameCollection(state: CollectionCreationState) {
+        view.tab_list.isClickable = false
+
+        collectionCreationTabListAdapter.updateData(state.selectedTabs.toList(), state.selectedTabs, true)
+        back_button.setOnClickListener {
+            name_collection_edittext.hideKeyboard()
+            val handler = Handler()
+            handler.postDelayed({
+                interactor.onBackPressed(SaveCollectionStep.NameCollection)
+            }, TRANSITION_DURATION)
+        }
+        transition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionStart(transition: Transition) { /* noop */ }
+
+            override fun onTransitionEnd(transition: Transition) {
+                view.name_collection_edittext.showKeyboard()
+                transition.removeListener(this)
+            }
+
+            override fun onTransitionCancel(transition: Transition) { /* noop */ }
+            override fun onTransitionPause(transition: Transition) { /* noop */ }
+            override fun onTransitionResume(transition: Transition) { /* noop */ }
+        })
+        TransitionManager.beginDelayedTransition(
+            view.collection_constraint_layout,
+            transition
+        )
+        val constraint = nameCollectionConstraints
+        constraint.applyTo(view.collection_constraint_layout)
+        name_collection_edittext.setText(
+            view.context.getString(
+                R.string.create_collection_default_name,
+                state.tabCollections.size + 1
+            )
+        )
+        name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
+        back_button.text =
+            view.context.getString(R.string.create_collection_name_collection)
+    }
+
+    private fun updateForRenameCollection(state: CollectionCreationState) {
+        view.tab_list.isClickable = false
+
+        state.selectedTabCollection?.let { tabCollection ->
+            tabCollection.tabs.map { tab ->
+                Tab(
+                    tab.id.toString(),
+                    tab.url,
+                    tab.url.urlToTrimmedHost(view.context),
+                    tab.title
+                )
+            }.let { tabs ->
+                collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)
+            }
+        }
+        val constraint = nameCollectionConstraints
+        constraint.applyTo(view.collection_constraint_layout)
+        name_collection_edittext.setText(state.selectedTabCollection?.title)
+        name_collection_edittext.setSelection(0, name_collection_edittext.text.length)
+
+        back_button.text =
+            view.context.getString(R.string.collection_rename)
+        back_button.setOnClickListener {
+            name_collection_edittext.hideKeyboard()
+            val handler = Handler()
+            handler.postDelayed({
+                interactor.onBackPressed(SaveCollectionStep.RenameCollection)
+            }, TRANSITION_DURATION)
+        }
+        transition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionStart(transition: Transition) { /* noop */ }
+
+            override fun onTransitionEnd(transition: Transition) {
+                view.name_collection_edittext.showKeyboard()
+                transition.removeListener(this)
+            }
+
+            override fun onTransitionCancel(transition: Transition) { /* noop */ }
+            override fun onTransitionPause(transition: Transition) { /* noop */ }
+            override fun onTransitionResume(transition: Transition) { /* noop */ }
+        })
+        TransitionManager.beginDelayedTransition(
+            view.collection_constraint_layout,
+            transition
+        )
     }
 
     fun onResumed() {
