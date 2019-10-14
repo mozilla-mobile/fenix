@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.collections
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -153,7 +154,8 @@ class DefaultCollectionCreationController(
         }
     }
 
-    private fun stepBack(
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun stepBack(
         backFromStep: SaveCollectionStep
     ): SaveCollectionStep? {
         return when (backFromStep) {
@@ -171,6 +173,9 @@ class DefaultCollectionCreationController(
         }
     }
 
+    /**
+     * @return the number of currently active sessions that are neither custom nor private
+     */
     private fun normalSessionSize(sessionManager: SessionManager): Int {
         return sessionManager.sessions.filter { session ->
             (!session.isCustomTabSession() && !session.private)
