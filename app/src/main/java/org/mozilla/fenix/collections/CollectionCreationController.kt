@@ -122,7 +122,7 @@ class DefaultCollectionCreationController(
         closeTabsIfNecessary(tabs, sessionManager, tabsUseCases)
     }
 
-    override fun saveTabsToCollection(tabs: List<Tab>) { // TODO most of this should live in the reducer
+    override fun saveTabsToCollection(tabs: List<Tab>) {
         store.dispatch(CollectionCreationAction.StepChanged(
             saveCollectionStep = if (store.state.tabCollections.isEmpty()) {
                 SaveCollectionStep.NameCollection
@@ -144,7 +144,7 @@ class DefaultCollectionCreationController(
         store.dispatch(CollectionCreationAction.TabRemoved(tab))
     }
 
-    private fun handleBackPress(backFromStep: SaveCollectionStep) { // TODO feels like this should live in the reducer
+    private fun handleBackPress(backFromStep: SaveCollectionStep) {
         val newStep = stepBack(backFromStep)
         if (newStep != null) {
             store.dispatch(CollectionCreationAction.StepChanged(newStep))
@@ -155,7 +155,7 @@ class DefaultCollectionCreationController(
 
     private fun stepBack(
         backFromStep: SaveCollectionStep
-    ): SaveCollectionStep? { // TODO feels like this should live in the reducer
+    ): SaveCollectionStep? {
         return when (backFromStep) {
             SaveCollectionStep.SelectTabs, SaveCollectionStep.RenameCollection -> null
             SaveCollectionStep.SelectCollection -> if (store.state.tabs.size <= 1) {
