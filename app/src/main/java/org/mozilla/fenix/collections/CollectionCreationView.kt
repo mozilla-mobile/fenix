@@ -77,11 +77,7 @@ class CollectionCreationView(
                         interactor.onNewCollectionNameSaved(selectedTabs.toList(), text)
                     SaveCollectionStep.RenameCollection ->
                         selectedCollection?.let { interactor.onCollectionRenamed(it, text) }
-                    // TODO if shouldn't be possible to reach the other states, let's log that to telemetry
-                    else -> {
-                        /* noop */
-                        // TODO else branch will hopefully be replaced with above mentioned telemetry calls
-                    }
+                    else -> { /* noop */ }
                 }
             }
             false
