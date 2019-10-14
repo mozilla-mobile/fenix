@@ -8,6 +8,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.collections.CollectionCreationAction.StepChanged
 import org.mozilla.fenix.home.sessioncontrol.Tab
 
 class CollectionCreationStore(
@@ -17,6 +18,15 @@ class CollectionCreationStore(
     ::collectionCreationReducer
 )
 
+/**
+ * Represents the current purpose of the screen. This determines what options are shown to the
+ * user.
+ *
+ * TODO refactor [CollectionCreationState] into a sealed class with four implementations, each
+ * replacing a [SaveCollectionStep] value. These will not need null / emptyCollection default
+ * values. Handle changes bebtween these state changes internally, here and in the controller,
+ * instead of exposing [StepChanged], which currently acts as a setter.
+ */
 enum class SaveCollectionStep {
     SelectTabs,
     SelectCollection,
@@ -38,7 +48,11 @@ sealed class CollectionCreationAction : Action {
     object RemoveAllTabs : CollectionCreationAction()
     data class TabAdded(val tab: Tab) : CollectionCreationAction()
     data class TabRemoved(val tab: Tab) : CollectionCreationAction()
-    // TODO kdoc (and possibly rename)
+    /**
+     * Used as a setter for [SaveCollectionStep].
+     *
+     * This should be refactored, see kdoc on [SaveCollectionStep].
+     */
     data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationAction()
 }
 
