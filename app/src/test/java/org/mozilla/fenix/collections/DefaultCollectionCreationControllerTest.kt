@@ -36,6 +36,8 @@ class DefaultCollectionCreationControllerTest {
 
         every { state.previousFragmentId } returns 0
         every { store.state } returns state
+        every { state.tabCollections } returns emptyList()
+        every { state.tabs } returns emptyList()
 
         controller = DefaultCollectionCreationController(store, dismiss, analytics,
             tabCollectionStorage, tabsUseCases, sessionManager, testCoroutineScope)

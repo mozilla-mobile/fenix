@@ -158,18 +158,27 @@ class DefaultCollectionCreationController(
     fun stepBack(
         backFromStep: SaveCollectionStep
     ): SaveCollectionStep? {
+        /*
+        Will return the next valid state according to this diagram.
+
+        Name Collection -> Select Collection -> Select Tabs -> (dismiss fragment) <- Rename Collection
+         */
+
+        val tabCollectionCount = store.state.tabCollections.size
+        val tabCount = store.state.tabs.size
+
         return when (backFromStep) {
-            SaveCollectionStep.SelectTabs, SaveCollectionStep.RenameCollection -> null
-            SaveCollectionStep.SelectCollection -> if (store.state.tabs.size <= 1) {
-                stepBack(SaveCollectionStep.SelectTabs)
-            } else {
-                SaveCollectionStep.SelectTabs
-            }
-            SaveCollectionStep.NameCollection -> if (store.state.tabCollections.isEmpty()) {
-                stepBack(SaveCollectionStep.SelectCollection)
-            } else {
+            SaveCollectionStep.NameCollection -> if (tabCollectionCount > 0) {
                 SaveCollectionStep.SelectCollection
+            } else {
+                stepBack(SaveCollectionStep.SelectCollection)
             }
+            SaveCollectionStep.SelectCollection -> if (tabCount > 1) {
+                SaveCollectionStep.SelectTabs
+            } else {
+                stepBack(SaveCollectionStep.SelectTabs)
+            }
+            SaveCollectionStep.SelectTabs, SaveCollectionStep.RenameCollection -> null
         }
     }
 
