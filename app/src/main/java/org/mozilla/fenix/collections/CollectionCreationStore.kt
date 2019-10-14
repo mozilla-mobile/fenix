@@ -33,17 +33,13 @@ data class CollectionCreationState(
     val selectedTabCollection: TabCollection? = null
 ) : State
 
-// any actions that don't map to a change will be handled in the controller, and don't need a LibState Action
 sealed class CollectionCreationAction : Action {
-    // TODO kdoc
-    data class TabListChange(val tabs: List<Tab>) : CollectionCreationAction()
     object AddAllTabs : CollectionCreationAction()
     object RemoveAllTabs : CollectionCreationAction()
     data class TabAdded(val tab: Tab) : CollectionCreationAction()
     data class TabRemoved(val tab: Tab) : CollectionCreationAction()
     // TODO kdoc (and possibly rename)
     data class StepChanged(val saveCollectionStep: SaveCollectionStep) : CollectionCreationAction()
-    data class CollectionSelected(val collection: TabCollection) : CollectionCreationAction()
 }
 
 private fun collectionCreationReducer(
@@ -52,9 +48,7 @@ private fun collectionCreationReducer(
 ): CollectionCreationState = when (action) {
     is CollectionCreationAction.AddAllTabs -> prevState.copy(selectedTabs = prevState.tabs.toSet())
     is CollectionCreationAction.RemoveAllTabs -> prevState.copy(selectedTabs = emptySet())
-    is CollectionCreationAction.TabListChange -> prevState.copy(tabs = action.tabs)
     is CollectionCreationAction.TabAdded -> prevState.copy(selectedTabs = prevState.selectedTabs + action.tab)
     is CollectionCreationAction.TabRemoved -> prevState.copy(selectedTabs = prevState.selectedTabs - action.tab)
     is CollectionCreationAction.StepChanged -> prevState.copy(saveCollectionStep = action.saveCollectionStep)
-    is CollectionCreationAction.CollectionSelected -> prevState.copy(selectedTabCollection = action.collection)
 }
