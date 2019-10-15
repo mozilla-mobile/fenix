@@ -64,9 +64,6 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
         return true
     }
 
-    companion object {
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
