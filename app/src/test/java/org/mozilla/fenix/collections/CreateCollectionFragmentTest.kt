@@ -4,37 +4,23 @@
 
 package org.mozilla.fenix.collections
 
-import androidx.fragment.app.FragmentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertk.assertThat
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mozilla.components.support.test.robolectric.createAddedTestFragment
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
-import org.robolectric.Robolectric
 import org.robolectric.annotation.Config
 
-@ObsoleteCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
 class CreateCollectionFragmentTest {
     @Test
     fun `creation dialog shows and can be dismissed`() {
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java)
-            .create()
-            .start()
-            .resume()
-            .get()
-
-        val fragment = CreateCollectionFragment()
-
-        activity.supportFragmentManager.beginTransaction().apply {
-            add(fragment, "test")
-            commitNow()
-        }
+        val fragment = createAddedTestFragment { CreateCollectionFragment() }
 
         assertThat(fragment.dialog).isNotNull()
         assertThat(fragment.requireDialog().isShowing).isTrue()

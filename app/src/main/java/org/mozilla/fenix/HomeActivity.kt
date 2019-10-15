@@ -54,6 +54,7 @@ import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.settings.AboutFragmentDirections
+import org.mozilla.fenix.settings.DefaultBrowserSettingsFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
@@ -85,10 +86,10 @@ open class HomeActivity : AppCompatActivity() {
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setPrivateModeIfNecessary()
+        val mode = getPrivateModeFromIntent()
 
         components.publicSuffixList.prefetch()
-        setupThemeAndBrowsingMode()
+        setupThemeAndBrowsingMode(mode)
 
         setContentView(R.layout.activity_home)
 
@@ -191,18 +192,20 @@ open class HomeActivity : AppCompatActivity() {
      * External sources such as 3rd party links and shortcuts use this function to enter
      * private mode directly before the content view is created.
      */
-    private fun setPrivateModeIfNecessary() {
+    private fun getPrivateModeFromIntent(): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
                 val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
-                settings().usePrivateMode = startPrivateMode
                 intent.removeExtra(PRIVATE_BROWSING_MODE)
+
+                return BrowsingMode.fromBoolean(isPrivate = startPrivateMode)
             }
         }
+        return BrowsingMode.Normal
     }
 
-    private fun setupThemeAndBrowsingMode() {
-        browsingModeManager = createBrowsingModeManager()
+    private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
+        browsingModeManager = createBrowsingModeManager(mode)
         themeManager = createThemeManager()
         themeManager.setActivityTheme(this)
         themeManager.applyStatusBarTheme(this)
@@ -273,6 +276,10 @@ open class HomeActivity : AppCompatActivity() {
             TrackingProtectionFragmentDirections.actionTrackingProtectionFragmentToBrowserFragment(
                 customTabSessionId
             )
+        BrowserDirection.FromDefaultBrowserSettingsFragment ->
+            DefaultBrowserSettingsFragmentDirections.actionDefaultBrowserSettingsFragmentToBrowserFragment(
+                customTabSessionId
+            )
     }
 
     private fun load(
@@ -317,9 +324,9 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
-    protected open fun createBrowsingModeManager(): BrowsingModeManager {
-        return DefaultBrowsingModeManager(settings()) { mode ->
-            themeManager.currentTheme = mode
+    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+        return DefaultBrowsingModeManager(initialMode) { newMode ->
+            themeManager.currentTheme = newMode
         }
     }
 

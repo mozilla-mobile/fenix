@@ -5,7 +5,6 @@
 package org.mozilla.fenix.utils
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
@@ -23,7 +22,6 @@ import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.robolectric.annotation.Config
 
-@ObsoleteCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
 class SettingsTest {
@@ -33,25 +31,6 @@ class SettingsTest {
     @Before
     fun setUp() {
         settings = testContext.settings().apply(Settings::clear)
-    }
-
-    @Test
-    fun usePrivateMode() {
-        // When just created
-        // Then
-        assertFalse(settings.usePrivateMode)
-
-        // When
-        settings.usePrivateMode = true
-
-        // Then
-        assertTrue(settings.usePrivateMode)
-
-        // When
-        settings.usePrivateMode = false
-
-        // Then
-        assertFalse(settings.usePrivateMode)
     }
 
     @Test
@@ -65,12 +44,6 @@ class SettingsTest {
 
         // Then
         assertTrue(settings.openLinksInAPrivateTab)
-
-        // When
-        settings.openLinksInAPrivateTab = false
-
-        // Then
-        assertFalse(settings.usePrivateMode)
     }
 
     @Test

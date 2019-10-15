@@ -9,8 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -94,11 +92,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
 
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-
-        if (SDK_INT <= Build.VERSION_CODES.M) {
-            findPreference<Preference>(getPreferenceKey(pref_key_make_default_browser))?.isVisible =
-                false
-        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -128,6 +121,20 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         val aboutPreference = findPreference<Preference>(getPreferenceKey(R.string.pref_key_about))
         val appName = getString(R.string.app_name)
         aboutPreference?.title = getString(R.string.preferences_about, appName)
+
+        val deleteBrowsingDataPreference =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit_preference))
+        deleteBrowsingDataPreference?.summary = context?.let {
+            if (it.settings().shouldDeleteBrowsingDataOnQuit) {
+                getString(R.string.delete_browsing_data_quit_on)
+            } else {
+                getString(R.string.delete_browsing_data_quit_off)
+            }
+        }
+
+        findPreference<Preference>(getPreferenceKey(R.string.pref_key_add_private_browsing_shortcut))?.apply {
+            isVisible = !PrivateShortcutCreateManager.doesPrivateBrowsingPinnedShortcutExist(context)
+        }
 
         setupPreferences()
 
@@ -159,7 +166,7 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "220")
             }
             resources.getString(pref_key_make_default_browser) -> {
-                navigateToDefaultBrowserFragment()
+                navigateToDefaultBrowserSettingsFragment()
             }
             resources.getString(pref_key_data_choices) -> {
                 navigateToDataChoices()
@@ -281,8 +288,8 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         Navigation.findNavController(view!!).navigate(directions)
     }
 
-    private fun navigateToDefaultBrowserFragment() {
-        val directions = SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserFragment()
+    private fun navigateToDefaultBrowserSettingsFragment() {
+        val directions = SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserSettingsFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 

@@ -6,6 +6,8 @@ package org.mozilla.fenix.browser
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.component_search.*
@@ -74,6 +77,7 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
@@ -166,7 +170,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 findNavController(),
                 (activity as HomeActivity).browsingModeManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
+                browserLayout = view.browserLayout,
                 engineView = engineView,
+                swipeRefresh = swipeRefresh,
+                adjustBackgroundAndNavigate = ::adjustBackgroundAndNavigate,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 viewModel = viewModel,
                 getSupportUrl = {
@@ -393,6 +400,14 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         }
     }
 
+    private fun adjustBackgroundAndNavigate(directions: NavDirections) {
+        context?.let {
+            swipeRefresh?.background = ColorDrawable(Color.TRANSPARENT)
+            engineView?.asView()?.visibility = View.GONE
+            findNavController().nav(R.id.browserFragment, directions)
+        }
+    }
+
     @CallSuper
     override fun onSessionSelected(session: Session) {
         (activity as HomeActivity).updateThemeForSession(session)
@@ -509,7 +524,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         session: Session?
     ): BrowserToolbarViewInteractor
 
-    protected abstract fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?)
+    protected abstract fun navToQuickSettingsSheet(
+        session: Session,
+        sitePermissions: SitePermissions?
+    )
 
     protected abstract fun navToTrackingProtectionPanel(session: Session)
 
@@ -526,7 +544,12 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     protected fun updateLayoutMargins(inFullScreen: Boolean) {
         view?.swipeRefresh?.apply {
             val (topMargin, bottomMargin) = if (inFullScreen) 0 to 0 else getEngineMargins()
-            (layoutParams as CoordinatorLayout.LayoutParams).setMargins(0, topMargin, 0, bottomMargin)
+            (layoutParams as CoordinatorLayout.LayoutParams).setMargins(
+                0,
+                topMargin,
+                0,
+                bottomMargin
+            )
         }
     }
 
