@@ -109,16 +109,15 @@ Views should be as dumb as possible, and should include little or no conditional
 Views set listeners on to UI elements, which trigger calls to one or more Interactors. 
 
 REVIEWER NOTE: above this point is a first draft. Below is still an outline
-  
+
 ### Important notes
-- controller changes can happen either as an update to the store, or by routing to a new fragment + store
-- communication between stores only happens via transactions 
-- stores & reducers are persisted across configuration changes (via Arch Components VM), but created / destroyed during fragment transactions
-  - everything else is destroyed / recreated during configuration changes 
-  
+- Unlike other common implementations of unidirectional data flow, which typically have one global Store of data, we maintain a smaller Store for each screen.
+- Stores and their State are persisted across configuration changes via an Architecture Components ViewModel.
+- Whenever a fragment newly created or finished (by the ViewModel definition), its Store will also be created/destroyed
+- Communication between Stores only happens by loading the appropriate data into arguments for the new fragment, which uses them to construct the initial state of the new Store.
+  - We currently violate this in a few places, but are actively refactoring out those violations
 
-
-## Simplified Example
+## Simplified Example (section in progress)
 
 (this will be a lot of work, but imo worth it. reading through a fully fleshed out section of the 
 code base is hard. including this will help to onboard contributors and new devs in a simpler 
@@ -128,13 +127,14 @@ context)
 - text message app
   - contact list screen + conversation screen
   - when on contact screen:
+    - TODO include multiple controllers to show what an interactor does
     - updating a contact changes the state
     - selecting a conversation routes to a new screen
   - when on conversation screen
     - backing out routes to a new screen + sends an extra to update 'unread' status for the conversation
 
 
-## Known Limitations
+## Known Limitations (section in progress)
 
 - how to handle certain things is not defined in current architecture
   - how do we update state from outside of the activity lifecycle (i.e., when no store is active)?
