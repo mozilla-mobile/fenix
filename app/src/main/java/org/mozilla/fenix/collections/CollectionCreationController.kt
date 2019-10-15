@@ -185,7 +185,8 @@ class DefaultCollectionCreationController(
     /**
      * @return the number of currently active sessions that are neither custom nor private
      */
-    private fun normalSessionSize(sessionManager: SessionManager): Int {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun normalSessionSize(sessionManager: SessionManager): Int {
         return sessionManager.sessions.filter { session ->
             (!session.isCustomTabSession() && !session.private)
         }.size

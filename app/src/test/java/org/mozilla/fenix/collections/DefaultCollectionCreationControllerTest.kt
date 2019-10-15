@@ -6,6 +6,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
+import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.Assert.assertEquals
@@ -89,5 +90,31 @@ class DefaultCollectionCreationControllerTest {
         every { state.tabCollections } returns listOf(mockk())
 
         assertEquals(SaveCollectionStep.SelectCollection, controller.stepBack(SaveCollectionStep.NameCollection))
+    }
+
+    @Test
+    fun `normalSessionSize only counts non-private non-custom sessions`() {
+        fun session(isPrivate: Boolean, isCustom: Boolean) = mockk<Session>().apply {
+            every { private } returns isPrivate
+            every { isCustomTabSession() } returns isCustom
+        }
+
+        val normal1 = session(isPrivate = false, isCustom = false)
+        val normal2 = session(isPrivate = false, isCustom = false)
+        val normal3 = session(isPrivate = false, isCustom = false)
+
+        val private1 = session(isPrivate = true, isCustom = false)
+        val private2 = session(isPrivate = true, isCustom = false)
+
+        val custom1 = session(isPrivate = false, isCustom = true)
+        val custom2 = session(isPrivate = false, isCustom = true)
+        val custom3 = session(isPrivate = false, isCustom = true)
+
+        val privateCustom = session(isPrivate = true, isCustom = true)
+
+        every { sessionManager.sessions } returns listOf(normal1, private1, private2, custom1,
+            normal2, normal3, custom2, custom3, privateCustom)
+
+        assertEquals(3, controller.normalSessionSize(sessionManager))
     }
 }
