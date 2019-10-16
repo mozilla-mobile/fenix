@@ -135,6 +135,23 @@ TODO: explain flow here, with asic pictures
     - updating a contact name -> interactor -> ContactController -> send action
     - updating theme -> interactor -> ThemeController -> send action
     - selecting a conversation routes to a new screen + includes state about the conversation partner
+    
+    
+    
+    
+
+
+
+// FIRST DRAFT BELOW
+
+When reading through live code trying to understand an architecture, it can be difficult to find canonical examples, and often hard to locate the most important aspects. This is a simplified example using a hypothetical app that should help clarify the above patterns. These patterns are overkill for the problems being solved, but keep in mind that the example is deliberately simplified.
+
+
+
+
+
+    
+    
 
 ## Known Limitations
 There are a few known edge cases and potential problems with our architecture, that in certain circumstances can add to confusion.
