@@ -79,6 +79,8 @@ Interactors may hold references to multiple other Interactors and Controllers, i
 
 Sometimes an Interactor will only reference a single Controller. In these cases, the Interactor will simply forward calls to equivalent calls on the Controller. The Interactor does very little in these cases, and exists only to be consistent with the rest of the app.
 
+Note that prior to the introduction of Controllers, Interactors handled the responsibilities of both objects. **You may still find this pattern in some parts of the codebase,** but it is being actively refactored out.
+
 #### <a name="controller"/>Controller
 ##### Details
 Determines how the app should be updated whenever something happens
@@ -123,32 +125,22 @@ REVIEWER NOTE: above this point is a first draft. Below is still an outline
 code base is hard. including this will help to onboard contributors and new devs in a simpler 
 context)
 
+TODO: explain flow here, with asic pictures
+
 - simple, drawn example
 - text message app
   - contact list screen + conversation screen
   - when on contact screen:
     - TODO include multiple controllers to show what an interactor does
-    - updating a contact changes the state
-    - selecting a conversation routes to a new screen
-  - when on conversation screen
-    - backing out routes to a new screen + sends an extra to update 'unread' status for the conversation
+    - updating a contact name -> interactor -> ContactController -> send action
+    - updating theme -> interactor -> ThemeController -> send action
+    - selecting a conversation routes to a new screen + includes state about the conversation partner
 
+## Known Limitations
+There are a few known edge cases and potential problems with our architecture, that in certain circumstances can add to confusion.
 
-## Known Limitations (section in progress)
-
-- how to handle certain things is not defined in current architecture
-  - how do we update state from outside of the activity lifecycle (i.e., when no store is active)?
-    - e.g., setup in application
-  - how do we handle values that need to be set at a higher scope, and shared by all?
-    - e.g., settings
-- state update / routing change distinction is sometimes fuzzy
-  - anything that involves changing screens goes through a different state update flow
-    - handled by passing values to a new fragment
-- reducer / controller responsibilities can become muddied
-  - state updates need to go through the store, android calls need to happen in controller
-    - what happens if code needs to conditionally do either?
-      - it is forced to do that logic in the controller
-      - we would prefer to keep as much logic as possible in the reducer
-- most interactors do nothing except forward to controllers
-  - these can still provide some value in making changes that add extra dependencies simpler
-  - most of the time though, this layer does not seem to be useful
+- Since [Stores](#store) live at the fragment level, our architecture does not define any way to set data outside of that scope. 
+  - For example, if it is determined during application startup that we need to run in private mode, it must eventually be passed to some fragment, but we don't specify how it will be handled until that point.
+  - We have no defined way to set values shared by all fragments. They must either be passed as an argument to every individual fragment, or use some system outside of our architecture such as SharedPreferences.
+- There isn't always a clear logical distinction between what should provoke a state change (by dispatching an [Action](#action) to a [Store](#store)), and what should start a new fragment. Passing arguments while creating a new fragment causes changes to the new [State](#state) object, while taking a very different code path than the rest of our app would.
+- Many [Interactors](#interactor) have only one dependency, on a single (Controller)[#controller]. In these cases, they typically just forward each method call on and serve as a largely unnecessary layer. They do, however, 1) maintain consistency with the rest of the architecture, and 2) make it easier to add new [Controllers](#controller) in the future.
