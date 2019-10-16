@@ -110,8 +110,6 @@ Views should be as dumb as possible, and should include little or no conditional
 
 Views set listeners on to UI elements, which trigger calls to one or more Interactors. 
 
-REVIEWER NOTE: above this point is a first draft. Below is still an outline
-
 ### Important notes
 - Unlike other common implementations of unidirectional data flow, which typically have one global Store of data, we maintain a smaller Store for each screen.
 - Stores and their State are persisted across configuration changes via an Architecture Components ViewModel.
@@ -119,39 +117,17 @@ REVIEWER NOTE: above this point is a first draft. Below is still an outline
 - Communication between Stores only happens by loading the appropriate data into arguments for the new fragment, which uses them to construct the initial state of the new Store.
   - We currently violate this in a few places, but are actively refactoring out those violations
 
-## Simplified Example (section in progress)
-
-(this will be a lot of work, but imo worth it. reading through a fully fleshed out section of the 
-code base is hard. including this will help to onboard contributors and new devs in a simpler 
-context)
-
-TODO: explain flow here, with asic pictures
-
-- simple, drawn example
-- text message app
-  - contact list screen + conversation screen
-  - when on contact screen:
-    - TODO include multiple controllers to show what an interactor does
-    - updating a contact name -> interactor -> ContactController -> send action
-    - updating theme -> interactor -> ThemeController -> send action
-    - selecting a conversation routes to a new screen + includes state about the conversation partner
-    
-    
-    
-    
-
-
-
-// FIRST DRAFT BELOW
-
+## Simplified Example
 When reading through live code trying to understand an architecture, it can be difficult to find canonical examples, and often hard to locate the most important aspects. This is a simplified example using a hypothetical app that should help clarify the above patterns. These patterns are overkill for the problems being solved, but keep in mind that the example is deliberately simplified.
 
 ![example app wireframe](./architectureexample/example-app-wireframe.png?raw=true)
 
+This app currently has three (wonderful) features.
+- Clicking on one of the colored circles will update the toolbar color
+- Clicking on 'Rename', typing a new name, and selecting return will update the name of the contact
+- Clicking anywhere else on a contact will navigate to a text message fragment
 
-
-    
-    
+The code to accomplish these features is found in <path-to-project>/docs/architectureexample
 
 ## Known Limitations
 There are a few known edge cases and potential problems with our architecture, that in certain circumstances can add to confusion.
