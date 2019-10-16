@@ -4,7 +4,7 @@
 
 
 // This is example code for the 'Simplified Example' section of
-// /docs/architecture-overview-outline.md
+// /docs/architecture-overview.md
 class ContactsInteractor(
     private val contactsController: ContactsController,
     private val themeController: ThemeController

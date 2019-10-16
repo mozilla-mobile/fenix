@@ -4,7 +4,7 @@
 
 
 // This is example code for the 'Simplified Example' section of
-// /docs/architecture-overview-outline.md
+// /docs/architecture-overview.md
 class ContactsController(
     private val store: ContactsStore,
     private val navController: NavController

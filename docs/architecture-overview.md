@@ -13,7 +13,9 @@ Our largest deviation from these architectures is that while they each recommend
 A store of state
 
 See mozilla.components.lib.state.Store
+
 Pushes changes to: [View](#view)
+
 Called by: [Controller](#controller)
 
 #### Description
@@ -30,7 +32,9 @@ Note that there is one Store for any given screen, and only one will be active a
 Simple description of a state change
 
 See mozilla.components.lib.state.Action
+
 Created by: [Controller](#controller)
+
 Is pushed to: [Store](#store)
 
 #### Description
@@ -43,14 +47,15 @@ Simple data object that carries information about a [State](#state) change to a 
 Description of the state of a screen
 
 See mozilla.components.lib.state.State
+
 Referenced by: [Store](#store)
 
 #### Description
 Simple, immutable data object that contains all of the backing data required to display a screen. This does not include style details like colors and view sizes, which are handled by the [View](#view).
 
-As much as possible, the State object should be an accurate, 1:1 representation of what is actually shown on the screen. That is to say, if the same State object were emitted twice, the screen would look exactly the same both times, regardless of how the screen previously looked. This is not always possible as Android UI elements are very stateful, but it is a good goal to aim for.
+As much as possible, the State object should be an accurate, 1:1 representation of what is actually shown on the screen. That is to say, the screen should look exactly the same any time a State with the same values is emitted, regardless of any previous changes. This is not always possible as Android UI elements are very stateful, but it is a good goal to aim for.
 
-One major benefit of rendering a screen based on a State object is its impact on testing. UI tests are notoriously difficult to build and maintain. We try to build a very simple, dumb [View](#view) that accurately renders a State object. If we can trust the View to be correct, that allows us to test our UI by verifying the correctness of our State object.
+One major benefit of rendering a screen based on a State object is its impact on testing. UI tests are notoriously difficult to build and maintain. If we are able to build a simple, reproducible [View](#view) (i.e., if we can trust that the View will render as expected), that allows us to test our UI by verifying the correctness of our State object.
 
 This also gives us a major advantage when debugging. If the UI looks wrong, check the State object. If it's correct, the problem is in the View binding. If not, check that the correct [Action](#action) was sent. If so, the problem is in the reducer. If not, check the [Controller](#controller) that sent the Action. This helps us quickly narrow down problems.
 
@@ -61,6 +66,7 @@ This also gives us a major advantage when debugging. If the UI looks wrong, chec
 Pure function used to create new [State](#state) objects
 
 See mozilla.components.lib.state.Reducer
+
 Referenced by: [Store](#store)
 
 #### Description
@@ -75,6 +81,7 @@ Note that the Reducer is always called serially, as state could be lost if it we
 Called in response to a direct user action. Delegates to something else
 
 Called by: [View](#view)
+
 Calls: [Controllers](#controller), other Interactors
 
 #### Description
@@ -93,13 +100,14 @@ Note that prior to the introduction of Controllers, Interactors handled the resp
 Determines how the app should be updated whenever something happens
 
 Called by: [Interactor](#interactor)
+
 Calls: [Store](#store), library code (e.g., forward a back-press to Android, trigger an FxA login, navigate to a new Fragment, use an Android Components UseCase, etc)
 
 #### Description
 This is where much of the business logic of the app lives. Whenever called by an Interactor, a Controller will do one of the three following things:
 - Create a new [Action](#action) that describes the necessary change, and send it to the Store
 - Navigate to a new fragment via the NavController. Optionally include any state necessary to create this new fragment
-- Interact with some third party manager. Typically these will update their own internal state and then emit changes to some observer, which will be used to update our Store
+- Interact with some third party manager. Typically these will update their own internal state and then emit changes to an observer, which will be used to update our Store
 
 Controllers can become very complex, and should be unit tested thoroughly whenever their methods do more than delegate simple calls to other objects.
 
@@ -110,6 +118,7 @@ Controllers can become very complex, and should be unit tested thoroughly whenev
 Initializes UI elements, then updates them in response to [State](#state) changes
 
 Observes: [Store](#store)
+
 Calls: [Interactor](#interactor)
 
 #### Description
@@ -141,10 +150,10 @@ This app currently has three (wonderful) features.
 The code to accomplish these features is found in <path-to-project>/docs/architectureexample
 
 ## Known Limitations
-There are a few known edge cases and potential problems with our architecture, that in certain circumstances can add to confusion.
+There are a few known edge cases and potential problems with our architecture, that in certain circumstances can be confusing.
 
 - Since [Stores](#store) live at the fragment level, our architecture does not define any way to set data outside of that scope. 
-  - For example, if it is determined during application startup that we need to run in private mode, it must eventually be passed to some fragment, but we don't specify how it will be handled until that point.
-  - We have no defined way to set values shared by all fragments. They must either be passed as an argument to every individual fragment, or use some system outside of our architecture such as SharedPreferences.
+  - For example, if it is determined during application startup that we need to run in private mode, it must eventually be passed to a fragment, but we don't specify how it will be handled until that point.
+  - We have no defined way to set values shared by all fragments. They must either be passed as an argument to every individual fragment, or use some system outside of our architecture (e.g., by accessing SharedPreferences).
 - There isn't always a clear logical distinction between what should provoke a state change (by dispatching an [Action](#action) to a [Store](#store)), and what should start a new fragment. Passing arguments while creating a new fragment causes changes to the new [State](#state) object, while taking a very different code path than the rest of our app would.
-- Many [Interactors](#interactor) have only one dependency, on a single (Controller)[#controller]. In these cases, they typically just forward each method call on and serve as a largely unnecessary layer. They do, however, 1) maintain consistency with the rest of the architecture, and 2) make it easier to add new [Controllers](#controller) in the future.
+- Many [Interactors](#interactor) have only one dependency, on a single [Controller](#controller). In these cases, they typically just forward each method call on and serve as a largely unnecessary layer. They do, however, 1) maintain consistency with the rest of the architecture, and 2) make it easier to add new Controllers in the future.
