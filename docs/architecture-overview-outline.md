@@ -146,7 +146,7 @@ TODO: explain flow here, with asic pictures
 
 When reading through live code trying to understand an architecture, it can be difficult to find canonical examples, and often hard to locate the most important aspects. This is a simplified example using a hypothetical app that should help clarify the above patterns. These patterns are overkill for the problems being solved, but keep in mind that the example is deliberately simplified.
 
-
+![example app wireframe](./architectureexample/example-app-wireframe.png?raw=true)
 
 
 
