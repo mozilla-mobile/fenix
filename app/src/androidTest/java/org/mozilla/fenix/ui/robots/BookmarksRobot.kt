@@ -14,7 +14,7 @@ import org.mozilla.fenix.helpers.click
 
 class BookmarksRobot {
 
-    fun verifyBookmarksMenuView() = assertBookmarksView()
+    fun verifyBookmarksMenuView() = assertFirefoxPreviewPage()
 
     class Transition {
         fun goBack(interact: LibraryRobot.() -> Unit): LibraryRobot.Transition {
@@ -31,7 +31,7 @@ fun bookmarksMenu(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transitio
     return BookmarksRobot.Transition()
 }
 
-private fun assertBookmarksView() {
+private fun assertFirefoxPreviewPage() {
     onView(allOf(
             withText("Bookmarks"),
             withParent(withId(R.id.navigationToolbar))))

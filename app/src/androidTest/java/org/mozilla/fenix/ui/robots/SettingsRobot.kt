@@ -8,7 +8,6 @@ package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -17,6 +16,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.click
 
 
 /**
@@ -62,7 +62,7 @@ class SettingsRobot {
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
 
             mDevice.waitForIdle()
-            goBackButton().perform(ViewActions.click())
+            goBackButton().click()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -71,7 +71,7 @@ class SettingsRobot {
         fun clickOnHelpButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 
             mDevice.waitForIdle()
-            helpButton().perform(ViewActions.click())
+            assertHelp().click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -80,10 +80,19 @@ class SettingsRobot {
         fun clickOnRateButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 
             mDevice.waitForIdle()
-            rateButton().perform(ViewActions.click())
+            assertRateOnGooglePlay().click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun clickOnAboutFirefoxPreview(interact: AboutFirefoxPreviewRobot.() -> Unit): AboutFirefoxPreviewRobot.Transition {
+
+            mDevice.waitForIdle()
+            assertAboutFirefoxPreview().click()
+
+            AboutFirefoxPreviewRobot().interact()
+            return AboutFirefoxPreviewRobot.Transition()
         }
     }
 }
@@ -149,29 +158,38 @@ private fun assertRemoteDebug() = onView(ViewMatchers.withText("Remote debugging
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 // ABOUT SECTION
-private fun assertAboutHeading() {
-    TestHelper.scrollToElementByText("About")
-    onView(ViewMatchers.withText("About"))
+
+private fun assertTextIsVisible(text: String): ViewInteraction {
+    TestHelper.scrollToElementByText(text)
+    return onView(ViewMatchers.withText(text))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
-private fun assertHelp() = onView(ViewMatchers.withText("Help"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-private fun assertRateOnGooglePlay() {
-    TestHelper.scrollToElementByText("Rate on Google Play")
-    onView(ViewMatchers.withText("Rate on Google Play"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertAboutHeading(): ViewInteraction {
+    return assertTextIsVisible("About")
 }
-private fun assertAboutFirefoxPreview() = onView(ViewMatchers.withText("About Firefox Preview"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertHelp(): ViewInteraction {
+    return assertTextIsVisible("Help")
+}
+private fun assertRateOnGooglePlay(): ViewInteraction {
+    return assertTextIsVisible("Rate on Google Play")
+}
+private fun assertAboutFirefoxPreview(): ViewInteraction {
+    return assertTextIsVisible("About Firefox Preview")
+}
 
 private fun goBackButton() = onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
 
-private fun helpButton() : ViewInteraction {
-    TestHelper.scrollToElementByText("Help")
-    return onView(ViewMatchers.withText("Help"))
-}
+//private fun helpButton() : ViewInteraction {
+//    TestHelper.scrollToElementByText("Help")
+//    return onView(ViewMatchers.withText("Help"))
+//}
 
-private fun rateButton() : ViewInteraction {
-    TestHelper.scrollToElementByText("Rate on Google Play")
-    return onView(ViewMatchers.withText("Rate on Google Play"))
-}
+//private fun rateButton() : ViewInteraction {
+//    TestHelper.scrollToElementByText("Rate on Google Play")
+//    return onView(ViewMatchers.withText("Rate on Google Play"))
+//}
+
+//private fun aboutFirefoxPreviewButton() : ViewInteraction {
+//    TestHelper.scrollToElementByText("About Firefox Preview")
+//    return onView(ViewMatchers.withText("About Firefox Preview"))
+//}

@@ -87,7 +87,7 @@ class SettingsAboutTest {
         }
     }
 
-    @Ignore("This is a stub test, ignore for now")
+//    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyAboutFirefoxPreview() {
         // Open 3dot (main) menu
@@ -99,5 +99,12 @@ class SettingsAboutTest {
         // "Firefox Preview is produced by Mozilla"
         // Day, Date, timestamp
         // "Open source libraries we use"
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.clickOnAboutFirefoxPreview{
+            verifyFirefoxPreviewPage()
+        }
+
     }
 }
