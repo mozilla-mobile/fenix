@@ -100,7 +100,7 @@ class SyncIntegrationTest {
         continueButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
     }
 
-    fun typePassowrd() {
+    fun typePassword() {
         val passwordInput = mDevice.findObject(UiSelector()
                 .instance(0)
                 .className(EditText::class.java))
@@ -127,8 +127,8 @@ class SyncIntegrationTest {
     }
 
     fun bookmarkAfterSyncIsShown() {
-        val bookmarkyEntry = mDevice.findObject(By.text("Example Domain"))
-        bookmarkyEntry.isEnabled()
+        val bookmarkEntry = mDevice.findObject(By.text("Example Domain"))
+        bookmarkEntry.isEnabled()
     }
 
     fun seeBookmark() {
@@ -152,7 +152,7 @@ class SyncIntegrationTest {
 
         typeEmail()
         tapOnContinueButton()
-        typePassowrd()
+        typePassword()
         sleep(TestAssetHelper.waitingTimeShort)
         tapOnSignIn()
     }
