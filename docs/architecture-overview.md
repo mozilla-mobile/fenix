@@ -147,7 +147,15 @@ This app currently has three (wonderful) features.
 - Clicking on 'Rename', typing a new name, and selecting return will update the name of the contact
 - Clicking anywhere else on a contact will navigate to a text message fragment
 
-The code to accomplish these features is found in <path-to-project>/docs/architectureexample
+These link to the architectural code that accomplishes those features:
+- [ContactsView](./architectureexample/ContactsView.kt)
+- [ContactsInteractor](./architectureexample/ContactsInteractor.kt)
+- [ContactsController](./architectureexample/ContactsController.kt)
+- [ThemeController](./architectureexample/ThemeController.kt)
+- [ContactsStore](./architectureexample/ContactsStore.kt)
+- [ContactsState](./architectureexample/ContactsStore.kt)
+- [ContactsReducer](./architectureexample/ContactsStore.kt)
+- [ContactsFragment](./architectureexample/ContactsFragment.kt)
 
 ## Known Limitations
 There are a few known edge cases and potential problems with our architecture, that in certain circumstances can be confusing.
