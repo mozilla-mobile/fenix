@@ -1,0 +1,40 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+kind-dependencies:
+    - build
+    - lint
+    - test
+
+transforms:
+    - taskgraph.transforms.code_review:transforms
+    - fenix_taskgraph.transforms.complete:transforms
+    - taskgraph.transforms.job:transforms
+    - taskgraph.transforms.task:transforms
+
+job-defaults:
+    attributes:
+        code-review: true
+    worker-type: b-android
+    worker:
+        docker-image: {in-tree: base}
+        max-run-time: 600
+    requires: all-resolved
+    run:
+        command:
+            task-reference:
+                /builds/worker/checkouts/src/taskcluster/scripts/are_dependencies_completed.py {dependencies}
+        use-caches: false
+        using: run-task
+
+jobs:
+    pr:
+        description: PR Summary Task
+        run-on-tasks-for: [github-pull-request]
+
+    push:
+        description: Push Summary Task
+        run-on-tasks-for: [github-push]

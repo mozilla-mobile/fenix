@@ -1,11 +1,5 @@
 status = [
-  "build-debug",
-  "test-debug",
-  "test-ui",
-  "lint-compare-locales",
-  "lint-detekt",
-  "lint-ktlint",
-  "lint-lint"
+    "complete-push"
 ]
 block_labels = [
   "needs:data-review",
