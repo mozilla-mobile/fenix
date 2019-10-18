@@ -14,15 +14,16 @@ import org.mozilla.fenix.isInExperiment
 
 object FxaServer {
     const val CLIENT_ID = "a2270f727f45f648"
-    const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+    //const val REDIRECT_URL = "http://127.0.0.1:3030/oauth/success/$CLIENT_ID"
+    const val REDIRECT_URL = "https://fpnfenix.dev.lcip.org/oauth/success/$CLIENT_ID"
 
     fun redirectUrl(context: Context) = if (context.isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
         REDIRECT_URL
     } else {
-        "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
+        REDIRECT_URL
     }
 
     fun config(context: Context): ServerConfig {
-        return ServerConfig.release(CLIENT_ID, redirectUrl(context))
+        return ServerConfig("https://fpnfenix.dev.lcip.org", CLIENT_ID, redirectUrl(context))
     }
 }

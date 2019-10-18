@@ -25,7 +25,7 @@ class AppRequestInterceptor(private val context: Context) : RequestInterceptor {
         return if (context.isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
             context.components.services.accountsAuthFeature.interceptor.onLoadRequest(session, uri)
         } else {
-            null
+            context.components.services.accountsAuthFeature.interceptor.onLoadRequest(session, uri)
         }
     }
 
