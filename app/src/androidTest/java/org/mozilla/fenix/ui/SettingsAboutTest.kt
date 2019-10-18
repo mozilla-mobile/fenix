@@ -10,7 +10,6 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
 import org.junit.Before
 import org.junit.After
-import org.junit.Ignore
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -68,7 +67,7 @@ class SettingsAboutTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-        }.clickOnHelpButton{
+        }.clickOnHelpButton {
             verifyHelpUrl()
         }
     }
@@ -82,12 +81,11 @@ class SettingsAboutTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-        }.clickOnRateButton{
+        }.clickOnRateButton {
             verifyRateOnGooglePlayURL()
         }
     }
 
-//    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyAboutFirefoxPreview() {
         // Open 3dot (main) menu
@@ -102,7 +100,7 @@ class SettingsAboutTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-        }.clickOnAboutFirefoxPreview{
+        }.clickOnAboutFirefoxPreview {
             verifyFirefoxPreviewPage()
         }
 

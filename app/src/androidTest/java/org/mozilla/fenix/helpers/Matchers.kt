@@ -5,12 +5,8 @@
 package org.mozilla.fenix.helpers
 
 import android.view.View
-import android.widget.TextView
-import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.CoreMatchers.not
-import org.hamcrest.Description
 import org.hamcrest.Matcher
-import java.util.regex.Pattern
 import androidx.test.espresso.matcher.ViewMatchers.isChecked as espressoIsChecked
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled as espressoIsEnabled
 import androidx.test.espresso.matcher.ViewMatchers.isSelected as espressoIsSelected
@@ -38,21 +34,4 @@ private fun maybeInvertMatcher(matcher: Matcher<View>, useUnmodifiedMatcher: Boo
 /**
  * The [matchDatePattern] function will match a date pattern following this format: "Wednesday 10/16 @ 12:09 PM".
  */
-//fun matchDatePattern() = withPattern(dateRegex)
-
 fun withPattern(regex: String): Matcher<View>? = RegexMatcherForTextView(regex)
-
-class RegexMatcherForTextView(private val regex: String) : BoundedMatcher<View, TextView>(TextView::class.java) {
-    private val pattern = Pattern.compile(regex)
-
-    override fun describeTo(description: Description?) {
-        description?.appendText("Checking the matcher on received view: with pattern=$regex")
-    }
-
-    override fun matchesSafely(item: TextView?) : Boolean {
-        return item?.text?.let {
-            pattern.matcher(it).matches()
-        } ?: false
-    }
-
-}

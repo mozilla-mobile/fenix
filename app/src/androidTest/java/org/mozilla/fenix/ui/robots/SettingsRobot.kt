@@ -18,7 +18,6 @@ import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 
-
 /**
  * Implementation of Robot Pattern for the settings menu.
  */
@@ -178,18 +177,3 @@ private fun assertAboutFirefoxPreview(): ViewInteraction {
 }
 
 private fun goBackButton() = onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
-
-//private fun helpButton() : ViewInteraction {
-//    TestHelper.scrollToElementByText("Help")
-//    return onView(ViewMatchers.withText("Help"))
-//}
-
-//private fun rateButton() : ViewInteraction {
-//    TestHelper.scrollToElementByText("Rate on Google Play")
-//    return onView(ViewMatchers.withText("Rate on Google Play"))
-//}
-
-//private fun aboutFirefoxPreviewButton() : ViewInteraction {
-//    TestHelper.scrollToElementByText("About Firefox Preview")
-//    return onView(ViewMatchers.withText("About Firefox Preview"))
-//}

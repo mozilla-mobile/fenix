@@ -3,7 +3,12 @@ package org.mozilla.fenix.ui.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
@@ -64,4 +69,3 @@ private fun assertOpenSourcedLibraries() {
 }
 
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
-

@@ -17,8 +17,7 @@ import org.hamcrest.CoreMatchers
 /**
  * Implementation of Robot Pattern for the home screen menu.
  */
-class SettingsSearchMenuRobot{
-//    fun verifyNavigationToolbar() = assertNavigationToolbar()
+class SettingsSearchMenuRobot {
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -35,8 +34,3 @@ class SettingsSearchMenuRobot{
 
 private fun goBackButton() =
     Espresso.onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
-
-//val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-//private fun navigationToolbar() =
-//    onView(CoreMatchers.allOf(ViewMatchers.withText("Search or enter address")))
