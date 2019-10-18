@@ -12,18 +12,20 @@ Our largest deviation from these architectures is that while they each recommend
 #### Overview
 A store of state
 
-See mozilla.components.lib.state.Store
+See [mozilla.components.lib.state.Store](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/Store.kt)
 
 Pushes changes to: [View](#view)
 
-Called by: [Controller](#controller)
+Receives [Actions](#action) from: [Controller](#controller)
 
 #### Description
 Maintains a [State](#state) object and a [Reducer](#reducer). Whenever the Store receives a new [Action](#action) via `store.dispatch(action)`, it calls the [Reducer](#reducer) with the previous state and the new action. The result is then stored as the new State, and published to all consumers of the store.
 
-It is recommended that consumers rely as much as possible on `consumeFrom(store)`, rather than querying `store.state`. `consumeBy` is called any time state is updated, ensuring that the most up to date data is always used. This can prevent subtle bugs around call order.
+It is recommended that consumers rely as much as possible on `consumeFrom(store)`, rather than querying `store.state`. `consumeBy` is called any time state is updated, ensuring that the most up to date data is always used. This can prevent subtle bugs around call order, as all observers are notified of the same state change before a new change is applied.
 
 Note that there is one Store for any given screen, and only one will be active at any given time. Stores are persisted across configuration changes, but created and destroyed during fragment transactions. This means that data that must be shared across Stores must be passed as arguments to the new fragment.
+
+Stores should be created using [StoreProvider#get](https://github.com/mozilla-mobile/fenix/blob/master/app/src/main/java/org/mozilla/fenix/components/StoreProvider.kt).
 
 -------
 
@@ -31,7 +33,7 @@ Note that there is one Store for any given screen, and only one will be active a
 #### Overview
 Simple description of a state change
 
-See mozilla.components.lib.state.Action
+See [mozilla.components.lib.state.Action](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/Action.kt)
 
 Created by: [Controller](#controller)
 
@@ -46,7 +48,7 @@ Simple data object that carries information about a [State](#state) change to a 
 #### Overview
 Description of the state of a screen
 
-See mozilla.components.lib.state.State
+See [mozilla.components.lib.state.State](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/State.kt)
 
 Referenced by: [Store](#store)
 
@@ -65,7 +67,7 @@ This also gives us a major advantage when debugging. If the UI looks wrong, chec
 #### Overview
 Pure function used to create new [State](#state) objects
 
-See mozilla.components.lib.state.Reducer
+See [mozilla.components.lib.state.Reducer](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/Store.kt)
 
 Referenced by: [Store](#store)
 
