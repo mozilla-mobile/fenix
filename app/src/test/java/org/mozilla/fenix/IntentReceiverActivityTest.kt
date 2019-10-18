@@ -6,7 +6,6 @@ package org.mozilla.fenix
 
 import android.content.Intent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
@@ -20,16 +19,15 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 class IntentReceiverActivityTest {
 
     @Test
-    fun `process intent with alwaysOpenInPrivateMode set to true`() {
+    fun `process intent with launchLinksInPrivateTab set to true`() {
         runBlockingTest {
-            testContext.settings().alwaysOpenInPrivateMode = true
+            testContext.settings().openLinksInAPrivateTab = true
 
             val intent = Intent()
             `when`(testContext.components.intentProcessors.privateIntentProcessor.process(intent)).thenReturn(true)
@@ -44,9 +42,9 @@ class IntentReceiverActivityTest {
     }
 
     @Test
-    fun `process intent with alwaysOpenInPrivateMode set to false`() {
+    fun `process intent with launchLinksInPrivateTab set to false`() {
         runBlockingTest {
-            testContext.settings().alwaysOpenInPrivateMode = false
+            testContext.settings().openLinksInAPrivateTab = false
 
             val intent = Intent()
             `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(true)

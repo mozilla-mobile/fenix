@@ -103,6 +103,5 @@ class SettingsAboutTest {
         }.clickOnAboutFirefoxPreview {
             verifyFirefoxPreviewPage()
         }
-
     }
 }

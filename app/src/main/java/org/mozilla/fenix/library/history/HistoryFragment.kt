@@ -5,8 +5,6 @@
 package org.mozilla.fenix.library.history
 
 import android.content.DialogInterface
-import android.graphics.PorterDuff.Mode.SRC_IN
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,15 +12,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
@@ -110,7 +107,6 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
         }
     }
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -133,22 +129,15 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val mode = historyStore.state.mode
-        when (mode) {
+        @MenuRes
+        val menuRes = when (historyStore.state.mode) {
             HistoryFragmentState.Mode.Normal -> R.menu.library_menu
             is HistoryFragmentState.Mode.Editing -> R.menu.history_select_multi
-            else -> null
-        }?.let { inflater.inflate(it, menu) }
-
-        if (mode is HistoryFragmentState.Mode.Editing) {
-            menu.findItem(R.id.share_history_multi_select)?.run {
-                isVisible = true
-                icon.colorFilter = PorterDuffColorFilter(
-                    ContextCompat.getColor(context!!, R.color.white_color),
-                    SRC_IN
-                )
-            }
+            else -> return
         }
+
+        inflater.inflate(menuRes, menu)
+        menu.findItem(R.id.share_history_multi_select)?.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {

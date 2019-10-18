@@ -63,7 +63,15 @@ class SettingsBasicsTest {
             verifyBasicsHeading()
             verifySearchEngineButton()
             // drill down to submenu
-
+            }.openSearchSubMenu {
+                verifyDefaultSearchEngineHeader()
+                verifySearchEngineList()
+                verifyShowSearchSuggestions()
+                verifyShowClipboardSuggestions()
+                verifySearchBrowsingHistory()
+                verifySearchBookmarks()
+//            clickOnSearchEngineButton()
+            }.goBack {
             verifyThemeButton()
             verifyThemeSelected()
             // drill down to submenu

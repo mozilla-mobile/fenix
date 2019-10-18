@@ -36,7 +36,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:lineSpacingExtra="2dp"
-            android:text="@string/etp_onboarding_message"
+            android:text="@string/etp_onboarding_message_2"
             android:textColor="@color/primary_text_dark_theme"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,7 @@
 
     <ImageView
         android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_height="@dimen/tp_onboarding_triangle_height"
         android:layout_marginStart="16dp"
         android:importantForAccessibility="no"
         android:rotation="180"

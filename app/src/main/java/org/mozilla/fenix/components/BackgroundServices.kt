@@ -30,6 +30,7 @@ import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.SyncConfig
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.fxa.manager.SCOPE_SYNC
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.Experiments
@@ -52,34 +53,24 @@ class BackgroundServices(
     historyStorage: PlacesHistoryStorage,
     bookmarkStorage: PlacesBookmarksStorage
 ) {
-    companion object {
-        const val CLIENT_ID = "a2270f727f45f648"
-
-        fun redirectUrl(context: Context) = if (context.isInExperiment(Experiments.asFeatureWebChannelsDisabled)) {
-            "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
-        } else {
-            "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
-        }
-    }
-
     // // A malformed string is causing crashes.
     // This will be removed when the string is fixed. See #5552
     fun defaultDeviceName(context: Context): String = try {
-            context.getString(
-                R.string.default_device_name,
-                context.getString(R.string.app_name),
-                Build.MANUFACTURER,
-                Build.MODEL
-            )
-        } catch (ex: FormatFlagsConversionMismatchException) {
-            "%s on %s %s".format(
-                context.getString(R.string.app_name),
-                Build.MANUFACTURER,
-                Build.MODEL
-            )
-        }
+        context.getString(
+            R.string.default_device_name,
+            context.getString(R.string.app_name),
+            Build.MANUFACTURER,
+            Build.MODEL
+        )
+    } catch (ex: FormatFlagsConversionMismatchException) {
+        "%s on %s %s".format(
+            context.getString(R.string.app_name),
+            Build.MANUFACTURER,
+            Build.MODEL
+        )
+    }
 
-    private val serverConfig = ServerConfig.release(CLIENT_ID, redirectUrl(context))
+    private val serverConfig = FxaServer.config(context)
     private val deviceConfig = DeviceConfig(
         name = defaultDeviceName(context),
         type = DeviceType.MOBILE,
@@ -161,12 +152,14 @@ class BackgroundServices(
         serverConfig,
         deviceConfig,
         syncConfig,
-        // We don't need to specify this explicitly, but `syncConfig` may be disabled due to an 'experiments'
-        // flag. In that case, sync scope necessary for syncing won't be acquired during authentication
-        // unless we explicitly specify it below.
-        // This is a good example of an information leak at the API level.
-        // See https://github.com/mozilla-mobile/android-components/issues/3732
-        setOf("https://identity.mozilla.com/apps/oldsync")
+        setOf(
+            // We don't need to specify sync scope explicitly, but `syncConfig` may be disabled due to
+            // an 'experiments' flag. In that case, sync scope necessary for syncing won't be acquired
+            // during authentication unless we explicitly specify it below.
+            // This is a good example of an information leak at the API level.
+            // See https://github.com/mozilla-mobile/android-components/issues/3732
+            SCOPE_SYNC
+        )
     ).also { accountManager ->
         // TODO this needs to change once we have a SyncManager
         context.settings().fxaHasSyncedItems = syncConfig?.supportedEngines?.isNotEmpty() ?: false

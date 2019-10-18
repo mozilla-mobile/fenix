@@ -23,19 +23,19 @@ object Versions {
     const val androidx_preference = "1.1.0"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
-    const val androidx_lifecycle = "2.2.0-alpha04"
-    const val androidx_fragment = "1.2.0-alpha03"
-    const val androidx_navigation = "2.2.0-alpha03"
+    const val androidx_lifecycle = "2.2.0-beta01"
+    const val androidx_fragment = "1.2.0-beta02"
+    const val androidx_navigation = "2.2.0-beta01"
     const val androidx_recyclerview = "1.1.0-beta04"
     const val androidx_testing = "1.2.1-alpha02"
     const val androidx_test_ext = "1.0.0"
-    const val androidx_core = "1.2.0-alpha04"
+    const val androidx_core = "1.2.0-beta01"
     const val androidx_paging = "2.1.0"
-    const val androidx_transition = "1.1.0"
-    const val androidx_work = "2.0.1"
-    const val google_material = "1.1.0-alpha10"
+    const val androidx_transition = "1.3.0-beta01"
+    const val androidx_work = "2.2.0"
+    const val google_material = "1.1.0-beta01"
 
-    const val mozilla_android_components = "15.0.0-SNAPSHOT"
+    const val mozilla_android_components = "16.0.0"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -143,7 +143,6 @@ object Deps {
     const val mozilla_ui_icons = "org.mozilla.components:ui-icons:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
-    const val mozilla_lib_fetch_httpurlconnection = "org.mozilla.components:lib-fetch-httpurlconnection:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
 
     const val mozilla_ui_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
@@ -160,6 +159,7 @@ object Deps {
     const val leakcanary_noop = "com.squareup.leakcanary:leakcanary-android-no-op:${Versions.leakcanary}"
 
     const val leanplum = "com.leanplum:leanplum-core:${Versions.leanplum}"
+    const val leanplumMessaging = "com.leanplum:leanplum-fcm:${Versions.leanplum}"
 
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"

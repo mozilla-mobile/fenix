@@ -14,7 +14,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.click
 
@@ -93,6 +96,16 @@ class SettingsRobot {
             AboutFirefoxPreviewRobot().interact()
             return AboutFirefoxPreviewRobot.Transition()
         }
+
+        fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit): SettingsSubMenuSearchRobot.Transition {
+
+            mDevice.waitForIdle()
+            fun searchEngineButton() = onView(ViewMatchers.withText("Search"))
+            searchEngineButton().click()
+
+            SettingsSubMenuSearchRobot().interact()
+            return SettingsSubMenuSearchRobot.Transition()
+        }
     }
 }
 
@@ -108,6 +121,7 @@ private fun assertSettingsView() {
 private fun assertBasicsHeading() = onView(ViewMatchers.withText("Basics"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 private fun assertSearchEngineButton() {
+    mDevice.wait(Until.findObject(By.text("Search")), waitingTime)
     onView(ViewMatchers.withText("Search"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -129,8 +143,11 @@ private fun assertEnhancedTrackingProtectionButton() = onView(ViewMatchers.withT
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 private fun assertEnhancedTrackingProtectionValue() = onView(ViewMatchers.withText("On"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-private fun assertAddPrivateBrowsingShortcutButton() = onView(ViewMatchers.withText("Add private browsing shortcut"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertAddPrivateBrowsingShortcutButton() {
+    mDevice.wait(Until.findObject(By.text("Add private browsing shortcut")), waitingTime)
+    onView(ViewMatchers.withText("Add private browsing shortcut"))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 private fun assertSitePermissionsButton() {
     TestHelper.scrollToElementByText("Site permissions")
     onView(ViewMatchers.withText("Site permissions"))
@@ -157,7 +174,6 @@ private fun assertRemoteDebug() = onView(ViewMatchers.withText("Remote debugging
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 // ABOUT SECTION
-
 private fun assertTextIsVisible(text: String): ViewInteraction {
     TestHelper.scrollToElementByText(text)
     return onView(ViewMatchers.withText(text))

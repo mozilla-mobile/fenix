@@ -9,11 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.provider.Settings
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -22,7 +18,6 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
@@ -44,7 +39,6 @@ import org.mozilla.fenix.R.string.pref_key_delete_browsing_data
 import org.mozilla.fenix.R.string.pref_key_delete_browsing_data_on_quit_preference
 import org.mozilla.fenix.R.string.pref_key_help
 import org.mozilla.fenix.R.string.pref_key_language
-import org.mozilla.fenix.R.string.pref_key_launch_links_in_private_mode
 import org.mozilla.fenix.R.string.pref_key_leakcanary
 import org.mozilla.fenix.R.string.pref_key_make_default_browser
 import org.mozilla.fenix.R.string.pref_key_privacy_link
@@ -98,12 +92,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         updateAccountUIState(context!!, requireComponents.backgroundServices.accountManager.accountProfile())
 
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-
-        if (SDK_INT <= Build.VERSION_CODES.M) {
-            findPreference<DefaultBrowserPreference>(getPreferenceKey(R.string.pref_key_make_default_browser))?.apply {
-                isVisible = false
-            }
-        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -115,9 +103,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
         (activity as AppCompatActivity).title = getString(R.string.settings_title)
         (activity as AppCompatActivity).supportActionBar?.show()
-        val defaultBrowserPreference =
-            findPreference<DefaultBrowserPreference>(getPreferenceKey(R.string.pref_key_make_default_browser))
-        defaultBrowserPreference?.updateSwitch()
 
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
@@ -136,6 +121,20 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         val aboutPreference = findPreference<Preference>(getPreferenceKey(R.string.pref_key_about))
         val appName = getString(R.string.app_name)
         aboutPreference?.title = getString(R.string.preferences_about, appName)
+
+        val deleteBrowsingDataPreference =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit_preference))
+        deleteBrowsingDataPreference?.summary = context?.let {
+            if (it.settings().shouldDeleteBrowsingDataOnQuit) {
+                getString(R.string.delete_browsing_data_quit_on)
+            } else {
+                getString(R.string.delete_browsing_data_quit_off)
+            }
+        }
+
+        findPreference<Preference>(getPreferenceKey(R.string.pref_key_add_private_browsing_shortcut))?.apply {
+            isVisible = !PrivateShortcutCreateManager.doesPrivateBrowsingPinnedShortcutExist(context)
+        }
 
         setupPreferences()
 
@@ -165,6 +164,9 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             resources.getString(pref_key_language) -> {
                 // TODO #220
                 ItsNotBrokenSnack(context!!).showSnackbar(issueNumber = "220")
+            }
+            resources.getString(pref_key_make_default_browser) -> {
+                navigateToDefaultBrowserSettingsFragment()
             }
             resources.getString(pref_key_data_choices) -> {
                 navigateToDataChoices()
@@ -239,25 +241,11 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     private fun setupPreferences() {
-        val makeDefaultBrowserKey = getPreferenceKey(pref_key_make_default_browser)
         val leakKey = getPreferenceKey(pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(pref_key_remote_debugging)
-        val preferenceAlwaysOpenInPrivateModeKey = getPreferenceKey(
-            pref_key_launch_links_in_private_mode
-        )
 
-        val preferenceMakeDefaultBrowser = findPreference<Preference>(makeDefaultBrowserKey)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
-        val preferenceAlwaysOpenInPrivateMode = findPreference<SwitchPreference>(preferenceAlwaysOpenInPrivateModeKey)
-
-        preferenceAlwaysOpenInPrivateMode?.setOnPreferenceClickListener {
-            requireContext().settings().alwaysOpenInPrivateMode = !requireContext().settings().alwaysOpenInPrivateMode
-            true
-        }
-
-        preferenceMakeDefaultBrowser?.onPreferenceClickListener =
-            getClickListenerForMakeDefaultBrowser()
 
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
@@ -271,25 +259,6 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
                 .putBoolean(preference.key, newValue as Boolean).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true
-        }
-    }
-
-    private val defaultClickListener = OnPreferenceClickListener { preference ->
-        Toast.makeText(context, "${preference.title} Clicked", Toast.LENGTH_SHORT).show()
-        true
-    }
-
-    private fun getClickListenerForMakeDefaultBrowser(): OnPreferenceClickListener {
-        return if (SDK_INT >= Build.VERSION_CODES.N) {
-            OnPreferenceClickListener {
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
-                )
-                startActivity(intent)
-                true
-            }
-        } else {
-            defaultClickListener
         }
     }
 
@@ -316,6 +285,11 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToAccessibility() {
         val directions = SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
+        Navigation.findNavController(view!!).navigate(directions)
+    }
+
+    private fun navigateToDefaultBrowserSettingsFragment() {
+        val directions = SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserSettingsFragment()
         Navigation.findNavController(view!!).navigate(directions)
     }
 
