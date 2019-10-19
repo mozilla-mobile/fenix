@@ -166,7 +166,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler {
                     inflater.inflate(R.menu.bookmarks_select_multi, menu)
                 }
 
-                menu.findItem(R.id.edit_bookmark_multi_select)?.isVisible = mode.selectedItems.size == 1
+                menu.findItem(R.id.share_bookmark_multi_select)?.isVisible = mode.selectedItems.size == 1
             }
         }
     }
@@ -199,10 +199,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler {
                 metrics?.track(Event.OpenedBookmarksInPrivateTabs)
                 true
             }
-            R.id.edit_bookmark_multi_select -> {
+            R.id.share_bookmark_multi_select -> {
                 val bookmark = bookmarkStore.state.mode.selectedItems.first()
                 navigate(
-                    BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkEditFragment(
+                    BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
                         bookmark.guid
                     )
                 )
