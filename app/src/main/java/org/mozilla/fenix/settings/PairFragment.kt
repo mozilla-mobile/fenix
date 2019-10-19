@@ -4,7 +4,11 @@
 
 package org.mozilla.fenix.settings
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
@@ -35,13 +39,17 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
                 onNeedToRequestPermissions = { permissions ->
                     requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
                 },
-                onScanResult = { pairingUrl ->
-                    requireComponents.services.accountsAuthFeature.beginPairingAuthentication(
-                        requireContext(),
-                        pairingUrl
-                    )
-                    findNavController(this@PairFragment)
-                        .popBackStack(R.id.turnOnSyncFragment, false)
+                onScanResult = {
+                        pairingUrl ->requireComponents.services.accountsAuthFeature.beginPairingAuthentication(requireContext(),pairingUrl)
+                    val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        //vibrator.vibrate(200)  //commented to avoid unknown gradle error
+                    }
+                        findNavController(this@PairFragment).popBackStack(R.id.turnOnSyncFragment, false)
+
+
                 }),
             owner = this,
             view = view
