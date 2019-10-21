@@ -47,6 +47,7 @@ import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.share.ShareTab
 import org.mozilla.fenix.utils.allowUndo
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -203,7 +204,9 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler {
                 val bookmark = bookmarkStore.state.mode.selectedItems.first()
                 navigate(
                     BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
-                        bookmark.guid
+                        url = bookmark.url,
+                        title = bookmark.title,
+                        tabs = arrayOf(ShareTab(bookmark.url!!, bookmark.title!!))
                     )
                 )
                 true
