@@ -46,14 +46,9 @@ class SettingsDeveloperToolsTest {
     @Test
     // Walks through settings developer tools menu and sub-menus to ensure all items are present
     fun settingsDeveloperToolsItemsTest() {
-        // DEVELOPER TOOLS
-        // Verify header: "Developer Tools"
-        // Verify item: "Remote debugging via USB" and default toggle value: "Off"
-
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            // DEV TOOLS
             verifyDeveloperToolsHeading()
             verifyRemoteDebug()
         }

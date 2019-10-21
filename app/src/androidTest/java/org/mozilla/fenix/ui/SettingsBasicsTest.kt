@@ -46,20 +46,9 @@ class SettingsBasicsTest {
     @Test
     // Walks through settings menu and sub-menus to ensure all items are present
     fun settingsMenuBasicsItemsTests() {
-        // Open 3dot (main) menu
-        // Select settings
-
-        // Verify header: "Basics"
-
-        // Verify item: "Search Engine" and default value: "Google"
-        // Open 3dot (main) menu
-        // Select settings
-        // Verify default search engine (Google)
-
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            // BASICS
             verifyBasicsHeading()
             verifySearchEngineButton()
             // drill down to submenu
@@ -70,28 +59,19 @@ class SettingsBasicsTest {
                 verifyShowClipboardSuggestions()
                 verifySearchBrowsingHistory()
                 verifySearchBookmarks()
-//            clickOnSearchEngineButton()
             }.goBack {
-            verifyThemeButton()
-            verifyThemeSelected()
+            }.openThemeSubMenu {
+                verifyThemes()
+            }.goBack {
+            }.openAccessibilitySubMenu {
+                verifyAutomaticFontSizing()
+            }.goBack {
             // drill down to submenu
-            verifyAccessibilityButton()
-            // drill down to submenu
-            verifySetAsDefaultBrowserButton()
-            // launch submenu
+            }.openDefaultBrowserSubMenu {
+                // verify item: set as default browser (duplicates, verify child of recyclerview)
+                // Verify label: Open links in private tab
+            }.goBack {
         }
-
-        // Select "Search engine" to change
-        // Verify menu choices: Google, Amazon.com, Bing, DuckDuckGo, Twitter, Wikipedia
-        // Verify label: "Show search suggestions"
-        // Verify search suggestions toggle, set to 'on' by default
-        // Verify label: "Show visited sites and bookmarks"
-        // Verify visited sites and bookmarks toggle, set to 'on' by default
-
-        // Verify item: "Theme" and default value: "Light"
-        // Verify item: "Accessibility"
-        // Verify item: "Set as default browser" and default toggle value: "off"
-        // Verify item: "Search Engine" and default value: "Google"
     }
 
     @Ignore("This is a stub test, ignore for now")

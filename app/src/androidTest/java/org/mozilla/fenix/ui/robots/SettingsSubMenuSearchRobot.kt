@@ -55,6 +55,7 @@ private fun assertSearchEngineList() {
     onView(ViewMatchers.withText("Wikipedia"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
+
 private fun assertShowSearchSuggestions() = onView(ViewMatchers.withText("Show search suggestions"))
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 private fun assertShowClipboardSuggestions() = onView(ViewMatchers.withText("Show clipboard suggestions"))

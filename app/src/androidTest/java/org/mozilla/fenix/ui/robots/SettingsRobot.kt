@@ -62,7 +62,6 @@ class SettingsRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-
             mDevice.waitForIdle()
             goBackButton().click()
 
@@ -98,13 +97,39 @@ class SettingsRobot {
         }
 
         fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit): SettingsSubMenuSearchRobot.Transition {
-
             mDevice.waitForIdle()
             fun searchEngineButton() = onView(ViewMatchers.withText("Search"))
             searchEngineButton().click()
 
             SettingsSubMenuSearchRobot().interact()
             return SettingsSubMenuSearchRobot.Transition()
+        }
+
+        fun openThemeSubMenu(interact: SettingsSubMenuThemeRobot.() -> Unit): SettingsSubMenuThemeRobot.Transition {
+            mDevice.waitForIdle()
+            fun themeButton() = onView(ViewMatchers.withText("Theme"))
+            themeButton().click()
+
+            SettingsSubMenuThemeRobot().interact()
+            return SettingsSubMenuThemeRobot.Transition()
+        }
+
+        fun openAccessibilitySubMenu(interact: SettingsSubMenuAccessibilityRobot.() -> Unit): SettingsSubMenuAccessibilityRobot.Transition {
+            mDevice.waitForIdle()
+            fun accessibilityButton() = onView(ViewMatchers.withText("Accessibility"))
+            accessibilityButton().click()
+
+            SettingsSubMenuAccessibilityRobot().interact()
+            return SettingsSubMenuAccessibilityRobot.Transition()
+        }
+
+        fun openDefaultBrowserSubMenu(interact: SettingsSubMenuDefaultBrowserRobot.() -> Unit): SettingsSubMenuDefaultBrowserRobot.Transition {
+            mDevice.waitForIdle()
+            fun defaultBrowserButton() = onView(ViewMatchers.withText("Set as default browser"))
+            defaultBrowserButton().click()
+
+            SettingsSubMenuDefaultBrowserRobot().interact()
+            return SettingsSubMenuDefaultBrowserRobot.Transition()
         }
     }
 }
