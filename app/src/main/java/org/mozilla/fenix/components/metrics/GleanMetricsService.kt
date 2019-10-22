@@ -478,7 +478,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
                 .components
                 .search
                 .searchEngineManager
-                .defaultSearchEngine ?: return@apply
+                .defaultSearchEngine ?: return@apply // TODO is it ok for this to be synchronous? it's already handling a null case...
 
             code.set(defaultEngine.identifier)
             name.set(defaultEngine.name)

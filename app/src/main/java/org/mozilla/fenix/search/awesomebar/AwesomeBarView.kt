@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.coroutines.launch
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -24,6 +25,7 @@ import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.support.ktx.android.view.toScope
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.asActivity
@@ -180,14 +182,17 @@ class AwesomeBarView(
 
     fun update(state: SearchFragmentState) {
         updateSearchShortcutsIcon(state)
-        updateSuggestionProvidersVisibility(state)
 
-        // Do not make suggestions based on user's current URL unless it's a search shortcut
-        if (state.query == state.session?.url && !state.showSearchShortcuts) {
-            return
+        view.toScope().launch {
+            updateSuggestionProvidersVisibility(state)
+
+            // Do not make suggestions based on user's current URL unless it's a search shortcut
+            if (state.query == state.session?.url && !state.showSearchShortcuts) {
+                return@launch
+            }
+
+            view.onInputChanged(state.query)
         }
-
-        view.onInputChanged(state.query)
     }
 
     private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
@@ -201,11 +206,12 @@ class AwesomeBarView(
         }
     }
 
-    private fun updateSuggestionProvidersVisibility(state: SearchFragmentState) {
+    private suspend fun updateSuggestionProvidersVisibility(state: SearchFragmentState) {
         if (state.showSearchShortcuts) {
             handleDisplayShortcutsProviders()
             return
         }
+
 
         val providersToAdd = getProvidersToAdd(state)
         val providersToRemove = getProvidersToRemove(state)
@@ -232,7 +238,7 @@ class AwesomeBarView(
         }
     }
 
-    private fun getProvidersToAdd(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
+    private suspend fun getProvidersToAdd(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
         val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
         if (state.showHistorySuggestions) {
@@ -256,7 +262,7 @@ class AwesomeBarView(
         return providersToAdd
     }
 
-    private fun getProvidersToRemove(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
+    private suspend fun getProvidersToRemove(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
         val providersToRemove = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
         providersToRemove.add(shortcutsEnginePickerProvider)
@@ -287,7 +293,7 @@ class AwesomeBarView(
             ?: false
     }
 
-    private fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): SearchSuggestionProvider? {
+    private suspend fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): SearchSuggestionProvider? {
         return when (state.searchEngineSource) {
             is SearchEngineSource.Default -> defaultSearchSuggestionProvider
             is SearchEngineSource.Shortcut -> getSuggestionProviderForEngine(
@@ -303,7 +309,7 @@ class AwesomeBarView(
         view.addProviders(shortcutsEnginePickerProvider)
     }
 
-    private fun getSuggestionProviderForEngine(engine: SearchEngine): SearchSuggestionProvider? {
+    private suspend fun getSuggestionProviderForEngine(engine: SearchEngine): SearchSuggestionProvider? {
         if (!searchSuggestionProviderMap.containsKey(engine)) {
             with(container.context) {
                 val draw = getDrawable(R.drawable.ic_search)
@@ -312,7 +318,7 @@ class AwesomeBarView(
 
                 searchSuggestionProviderMap.put(
                     engine, SearchSuggestionProvider(
-                        components.search.searchEngineManager.getDefaultSearchEngine(
+                        components.search.searchEngineManager.getDefaultSearchEngineAsync(
                             this,
                             engine.name
                         ),

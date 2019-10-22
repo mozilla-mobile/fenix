@@ -6,7 +6,9 @@
 package org.mozilla.fenix.search
 
 import android.content.Context
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.support.ktx.kotlin.isUrl
@@ -38,7 +40,8 @@ interface SearchController {
 class DefaultSearchController(
     private val context: Context,
     private val store: SearchFragmentStore,
-    private val navController: NavController
+    private val navController: NavController,
+    private val scope: LifecycleCoroutineScope
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String) {
@@ -50,13 +53,15 @@ class DefaultSearchController(
                 engine = store.state.searchEngineSource.searchEngine
             )
 
-            val event = if (url.isUrl()) {
-                Event.EnteredUrl(false)
-            } else {
-                createSearchEvent(store.state.searchEngineSource.searchEngine, false)
-            }
+            scope.launch {
+                val event = if (url.isUrl()) {
+                    Event.EnteredUrl(false)
+                } else {
+                    createSearchEvent(store.state.searchEngineSource.searchEngine, false)
+                }
 
-            context.metrics.track(event)
+                context.metrics.track(event)
+            }
         }
     }
 
@@ -90,8 +95,10 @@ class DefaultSearchController(
             forceSearch = true
         )
 
-        val event = createSearchEvent(store.state.searchEngineSource.searchEngine, true)
-        context.metrics.track(event)
+        scope.launch {
+            val event = createSearchEvent(store.state.searchEngineSource.searchEngine, true)
+            context.metrics.track(event)
+        }
     }
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
@@ -115,11 +122,12 @@ class DefaultSearchController(
         context.components.core.sessionManager.select(session)
     }
 
-    private fun createSearchEvent(
+    private suspend fun createSearchEvent(
         engine: SearchEngine,
         isSuggestion: Boolean
     ): Event.PerformedSearch {
-        val isShortcut = engine != context.searchEngineManager.defaultSearchEngine
+        val isShortcut = engine != context.searchEngineManager
+            .getDefaultSearchEngineAsync(context)
 
         val engineSource =
             if (isShortcut) Event.PerformedSearch.EngineSource.Shortcut(engine)
