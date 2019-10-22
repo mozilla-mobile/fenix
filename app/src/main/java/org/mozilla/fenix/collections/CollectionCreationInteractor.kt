@@ -74,11 +74,11 @@ class DefaultCollectionCreationInteractor(
     }
 
     override fun selectAllTapped() {
-        controller.selectAllTapped()
+        controller.selectAllTabs()
     }
 
     override fun deselectAllTapped() {
-        controller.deselectAllTapped()
+        controller.deselectAllTabs()
     }
 
     override fun close() {

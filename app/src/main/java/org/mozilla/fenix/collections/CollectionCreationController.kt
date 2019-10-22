@@ -34,12 +34,12 @@ interface CollectionCreationController {
     /**
      * See [CollectionCreationInteractor.selectAllTapped]
      */
-    fun selectAllTapped()
+    fun selectAllTabs()
 
     /**
      * See [CollectionCreationInteractor.deselectAllTapped]
      */
-    fun deselectAllTapped()
+    fun deselectAllTabs()
 
     /**
      * See [CollectionCreationInteractor.close]
@@ -96,11 +96,11 @@ class DefaultCollectionCreationController(
         handleBackPress(fromStep)
     }
 
-    override fun selectAllTapped() {
+    override fun selectAllTabs() {
         store.dispatch(CollectionCreationAction.AddAllTabs)
     }
 
-    override fun deselectAllTapped() {
+    override fun deselectAllTabs() {
         store.dispatch(CollectionCreationAction.RemoveAllTabs)
     }
 
