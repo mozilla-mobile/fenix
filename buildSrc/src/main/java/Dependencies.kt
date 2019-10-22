@@ -46,6 +46,8 @@ object Versions {
 
     const val mozilla_glean = "19.0.0"
 
+    const val mozilla_glean = "19.0.0"
+
     const val autodispose = "1.1.0"
     const val adjust = "4.18.3"
     const val installreferrer = "1.0"
