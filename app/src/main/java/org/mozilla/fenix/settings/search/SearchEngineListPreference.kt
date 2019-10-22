@@ -62,8 +62,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         // To get the default search engine we have to pass in a name that doesn't exist
         // https://github.com/mozilla-mobile/android-components/issues/3344
         val defaultSearchEngine = context.components.search.searchEngineManager.getDefaultSearchEngine(
-            context,
-            THIS_IS_A_HACK_FIX_ME
+            context
         )
 
         val selectedSearchEngine =
@@ -127,9 +126,5 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 }
             }
         }
-    }
-
-    companion object {
-        private const val THIS_IS_A_HACK_FIX_ME = "."
     }
 }
