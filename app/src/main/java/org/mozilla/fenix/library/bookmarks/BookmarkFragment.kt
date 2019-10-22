@@ -206,7 +206,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler {
                     BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
                         url = bookmark.url,
                         title = bookmark.title,
-                        tabs = arrayOf(ShareTab(bookmark.url!!, bookmark.title!!))
+                        tabs = arrayOf(ShareTab(bookmark.url.orEmpty(), bookmark.title.orEmpty()))
                     )
                 )
                 true
