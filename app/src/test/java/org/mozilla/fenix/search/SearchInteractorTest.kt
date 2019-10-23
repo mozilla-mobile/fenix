@@ -13,9 +13,13 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.Session
+import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FenixApplication
@@ -24,7 +28,16 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.searchEngineManager
 
+@ExperimentalCoroutinesApi
 class SearchInteractorTest {
+
+    private lateinit var scope: CoroutineScope
+
+    @Before
+    fun before() {
+        scope = TestCoroutineScope()
+    }
+
     @Test
     fun onUrlCommitted() {
         val context: HomeActivity = mockk()
@@ -44,7 +57,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            scope
         )
         val interactor = SearchInteractor(searchController)
 
@@ -70,7 +84,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             mockk(),
             store,
-            navController
+            navController,
+            scope
         )
         val interactor = SearchInteractor(searchController)
 
@@ -90,7 +105,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             mockk(),
             store,
-            mockk()
+            mockk(),
+            scope
         )
         val interactor = SearchInteractor(searchController)
 
@@ -114,7 +130,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            scope
         )
         val interactor = SearchInteractor(searchController)
 
@@ -148,7 +165,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            scope
         )
 
         val interactor = SearchInteractor(searchController)
@@ -179,7 +197,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            scope
         )
         val interactor = SearchInteractor(searchController)
         val searchEngine: SearchEngine = mockk(relaxed = true)
@@ -209,7 +228,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             mockk(),
             store,
-            navController
+            navController,
+            scope
         )
         val interactor = SearchInteractor(searchController)
 
@@ -237,7 +257,8 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            navController
+            navController,
+            scope
         )
         val interactor = SearchInteractor(searchController)
         val session = Session("http://mozilla.org", false)

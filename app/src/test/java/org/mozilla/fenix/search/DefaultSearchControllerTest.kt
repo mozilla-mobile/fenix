@@ -10,6 +10,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -33,6 +36,7 @@ import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.whatsnew.clear
 import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
 class DefaultSearchControllerTest {
@@ -46,6 +50,7 @@ class DefaultSearchControllerTest {
     private val metrics: MetricController = mockk(relaxed = true)
     private val sessionManager: SessionManager = mockk(relaxed = true)
 
+    private lateinit var scope: CoroutineScope
     private lateinit var controller: DefaultSearchController
     private lateinit var settings: Settings
 
@@ -57,10 +62,12 @@ class DefaultSearchControllerTest {
         every { context.metrics } returns metrics
         every { context.components.core.sessionManager } returns sessionManager
 
+        scope = TestCoroutineScope()
         controller = DefaultSearchController(
             context = context,
             store = store,
-            navController = navController
+            navController = navController,
+            scope = scope
         )
 
         settings = testContext.settings().apply { testContext.settings().clear() }

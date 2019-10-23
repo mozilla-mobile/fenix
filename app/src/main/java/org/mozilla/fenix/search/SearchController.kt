@@ -6,8 +6,8 @@
 package org.mozilla.fenix.search
 
 import android.content.Context
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -41,7 +41,7 @@ class DefaultSearchController(
     private val context: Context,
     private val store: SearchFragmentStore,
     private val navController: NavController,
-    private val scope: LifecycleCoroutineScope
+    private val scope: CoroutineScope
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String) {

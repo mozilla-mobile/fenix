@@ -10,7 +10,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
-import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.location.search.RegionSearchLocalizationProvider
 import org.mozilla.fenix.ext.components
