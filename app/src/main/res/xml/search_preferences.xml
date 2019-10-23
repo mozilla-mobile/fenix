@@ -11,6 +11,10 @@
         app:iconSpaceReserved="false">
         <org.mozilla.fenix.settings.search.RadioSearchEngineListPreference
             android:selectable="false"/>
+        <androidx.preference.Preference
+                android:icon="@drawable/ic_new"
+                android:key="@string/pref_key_add_search_engine"
+                android:title="@string/search_engine_add_custom_search_engine_title" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="@string/pref_key_show_search_suggestions"
