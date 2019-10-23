@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -473,19 +474,21 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             totalUriCount.set(context.settings().totalUriCount.toString())
         }
 
-        SearchDefaultEngine.apply {
-            val defaultEngine = context
-                .components
-                .search
-                .searchEngineManager
-                .defaultSearchEngine ?: return@apply // TODO is it ok for this to be synchronous? it's already handling a null case...
+        GlobalScope.launch {
+            SearchDefaultEngine.apply {
+                val defaultEngine = context
+                    .components
+                    .search
+                    .searchEngineManager
+                    .getDefaultSearchEngineAsync(context)
 
-            code.set(defaultEngine.identifier)
-            name.set(defaultEngine.name)
-            submissionUrl.set(defaultEngine.buildSearchUrl(""))
+                code.set(defaultEngine.identifier)
+                name.set(defaultEngine.name)
+                submissionUrl.set(defaultEngine.buildSearchUrl(""))
+            }
+
+            activationPing.checkAndSend()
         }
-
-        activationPing.checkAndSend()
     }
 
     override fun stop() {
