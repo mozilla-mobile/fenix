@@ -10,7 +10,7 @@ import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory.MOZILLA_SOCIAL
 import mozilla.components.concept.engine.content.blocking.Tracker
 import mozilla.components.concept.engine.content.blocking.TrackerLog
-import org.mozilla.fenix.ext.tryGetHostFromUrl
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.trackingprotection.TrackingProtectionCategory.CROSS_SITE_TRACKING_COOKIES
 import org.mozilla.fenix.trackingprotection.TrackingProtectionCategory.CRYPTOMINERS
 import org.mozilla.fenix.trackingprotection.TrackingProtectionCategory.FINGERPRINTERS
