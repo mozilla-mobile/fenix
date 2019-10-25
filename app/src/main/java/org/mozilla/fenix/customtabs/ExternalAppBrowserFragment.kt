@@ -42,6 +42,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
     private val customTabsIntegration = ViewBoundFeatureWrapper<CustomTabsIntegration>()
     private val hideToolbarFeature = ViewBoundFeatureWrapper<WebAppHideToolbarFeature>()
 
+    @Suppress("LongMethod")
     override fun initializeUI(view: View): Session? {
         return super.initializeUI(view)?.also {
             val activity = requireActivity()
@@ -93,6 +94,14 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                             requireComponents.useCases.sessionUseCases.reload,
                             customTabSessionId,
                             manifest
+                        )
+                    )
+                } else {
+                    viewLifecycleOwner.lifecycle.addObserver(
+                        PoweredByNotification(
+                            activity.applicationContext,
+                            requireComponents.core.store,
+                            customTabSessionId
                         )
                     )
                 }
