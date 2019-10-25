@@ -23,7 +23,6 @@ import androidx.transition.TransitionInflater
 import kotlinx.android.synthetic.main.fragment_search.clipboard_url
 import kotlinx.android.synthetic.main.fragment_search.divider_line
 import kotlinx.android.synthetic.main.fragment_search.fill_link_from_clipboard
-import kotlinx.android.synthetic.main.fragment_search.searchEngineIcon
 import kotlinx.android.synthetic.main.fragment_search.searchScanButton
 import kotlinx.android.synthetic.main.fragment_search.search_with_shortcuts
 import kotlinx.android.synthetic.main.fragment_search.view.searchScanButton
@@ -42,6 +41,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
@@ -317,11 +317,8 @@ class SearchFragment : Fragment(), BackHandler {
         val backupSearchEngine = context.components.search.localeSearchEngineManager
             .getDefaultSearchEngine(context)
 
-        if (selectedSearchEngine != null) {
-            // TODO cache hit telemetry
-        } else {
-            // TODO cache miss telemetry
-        }
+        val cacheWasHit = selectedSearchEngine != null
+        Events.searchFragmentCacheAccess.set(cacheWasHit)
 
         return selectedSearchEngine ?: backupSearchEngine
     }
