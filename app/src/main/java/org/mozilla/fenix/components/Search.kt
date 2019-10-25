@@ -10,11 +10,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
+import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.location.search.RegionSearchLocalizationProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
+import java.util.Locale
 
 /**
  * Component group for all search engine integration related functionality.
@@ -24,6 +26,9 @@ class Search(private val context: Context) {
 
     /**
      * This component provides access to a centralized registry of search engines.
+     *
+     * NOTE: only the async API of this manager should be used.
+     * See https://github.com/mozilla-mobile/fenix/issues/3869#issuecomment-524951003
      */
     val searchEngineManager by lazy {
         SearchEngineManager(
@@ -46,6 +51,26 @@ class Search(private val context: Context) {
                     context.settings().defaultSearchEngineName
                 )
             }
+        }
+    }
+
+    /**
+     * Provides access to a centralized registry of search engines.
+     *
+     * This instance will lookup search engines using [Locale], which may be less accurate. Prefer
+     * using [searchEngineManager] where possible.
+     */
+    val localeSearchEngineManager = SearchEngineManager(
+        coroutineContext = IO, providers = listOf(
+            AssetsSearchEngineProvider(LocaleSearchLocalizationProvider())
+        )
+    ).apply {
+        registerForLocaleUpdates(context)
+        GlobalScope.launch {
+            defaultSearchEngine = getDefaultSearchEngineAsync(
+                context,
+                context.settings().defaultSearchEngineName
+            )
         }
     }
 }

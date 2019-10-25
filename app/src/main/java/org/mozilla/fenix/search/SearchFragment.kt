@@ -20,9 +20,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
-import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.fragment_search.view.*
+import kotlinx.android.synthetic.main.fragment_search.clipboard_url
+import kotlinx.android.synthetic.main.fragment_search.divider_line
+import kotlinx.android.synthetic.main.fragment_search.fill_link_from_clipboard
+import kotlinx.android.synthetic.main.fragment_search.searchEngineIcon
+import kotlinx.android.synthetic.main.fragment_search.searchScanButton
+import kotlinx.android.synthetic.main.fragment_search.search_with_shortcuts
+import kotlinx.android.synthetic.main.fragment_search.view.searchScanButton
+import kotlinx.android.synthetic.main.fragment_search.view.search_layout
+import kotlinx.android.synthetic.main.fragment_search.view.toolbar_component_wrapper
+import kotlinx.android.synthetic.main.fragment_search.view.toolbar_wrapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.search.SearchEngine
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFrom
@@ -79,7 +90,7 @@ class SearchFragment : Fragment(), BackHandler {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url.orEmpty()
         val currentSearchEngine = SearchEngineSource.Default(
-            requireComponents.search.searchEngineManager.getDefaultSearchEngine(requireContext()) // TODO making this async will be hard. This call _should_ be resolved by the time we reach teh search fragment, but we can't really rely on that
+            getCurrentSearchEngine(requireContext())
         )
 
         searchStore = StoreProvider.get(this) {
@@ -284,6 +295,35 @@ class SearchFragment : Fragment(), BackHandler {
         return if (requireContext().settings().shouldShowHistorySuggestions) {
             requireComponents.core.historyStorage
         } else null
+    }
+
+    /**
+     * Attempts to get a cached search engine. If none is immediately available, it falls back
+     * to a default.
+     *
+     * Cache hits/misses are reported to telemetry.
+     */
+    private fun getCurrentSearchEngine(context: Context): SearchEngine {
+        val deferredSearchEngine = viewLifecycleOwner.lifecycleScope.async {
+            context.components.search.searchEngineManager.getDefaultSearchEngineAsync(context)
+        }
+
+        val selectedSearchEngine = if (deferredSearchEngine.isCompleted) {
+            runBlocking { deferredSearchEngine.await() }
+        } else {
+            null
+        }
+
+        val backupSearchEngine = context.components.search.localeSearchEngineManager
+            .getDefaultSearchEngine(context)
+
+        if (selectedSearchEngine != null) {
+            // TODO cache hit telemetry
+        } else {
+            // TODO cache miss telemetry
+        }
+
+        return selectedSearchEngine ?: backupSearchEngine
     }
 
     companion object {
