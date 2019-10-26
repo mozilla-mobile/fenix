@@ -23,6 +23,50 @@ buildscript {
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("1.0.0-RC16")
+    id("com.nimbledroid.profiler").version("1.2.0")
+}
+
+// Placeholder for ND plugin configuration.
+//
+// The ND plugin expects this to be where gradle
+// stores configuration information. Variables
+// are set by the setNimbledroidConfiguration task.
+nimbledroid {
+}
+
+// Set the appropriate variables to perform the ND upload.
+//
+// Use the API key from the environment. Always upload a
+// nightly build.
+task setNimbledroidConfiguration {
+    doLast {
+        if (System.env.ND_APIKEY == null) {
+                throw new Exception("API key must be set in the environment (ND_APIKEY) for nimbledroidUpload")
+        }
+        nimbledroid.apiKey = "${System.env.ND_APIKEY}";
+        nimbledroid.apkFilename = "geckoNightly/fenixNightly/app-geckoNightly-armeabi-v7a-fenixNightly-unsigned.apk"
+    }
+}
+
+// Upload a nightly build to ND for profiling.
+//
+// Require that gradle do a nightly build before
+// attempting to upload it, obviously! Make sure that
+// the ND plugin is initialized properly
+// before uploading happens.
+task nimbledroidUpload {
+    ndUpload.mustRunAfter 'setNimbledroidConfiguration'
+    setNimbledroidConfiguration.mustRunAfter 'app:assembleFenixNightly'
+    dependsOn ndUpload, setNimbledroidConfiguration, 'app:assembleFenixNightly'
+}
+
+// Download the profile of the most recent build
+//
+// Make sure that the ND plugin is initialized
+// properly before profile downloading happens.
+task nimbledroidGetProfile {
+    ndGetProfile.mustRunAfter setNimbledroidConfiguration
+    dependsOn ndGetProfile, setNimbledroidConfiguration
 }
 
 allprojects {
