@@ -87,7 +87,7 @@ which app id and settings to use. Here is a description of what each means:
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
 recommend you use our provided pre-push hook in `config/pre-push-recommended.sh`.
 Using this hook will guarantee your hook gets updated as the repository changes.
-This hook tries to run as much as possible without taking too much time.
+This hook tries to run as much as possible without taking too much time to resolve.
 
 To add it on Mac/Linux, run this command from the project root:
 ```sh
