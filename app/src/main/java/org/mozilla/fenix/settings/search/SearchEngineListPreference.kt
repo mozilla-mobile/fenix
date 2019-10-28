@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -40,9 +41,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
         searchEngineGroup = holder!!.itemView.findViewById(R.id.search_engine_group)
-        val context = searchEngineGroup!!.context
+        reload(searchEngineGroup!!.context)
+    }
 
-        searchEngines = context.components.search.searchEngineManager.getSearchEngines(context)
+    fun reload(context: Context) {
+        searchEngines = runBlocking { context.components.search.provider.installedSearchEngines(context).list }
             .sortedBy { it.name }
 
         refreshSearchEngineViews(context)

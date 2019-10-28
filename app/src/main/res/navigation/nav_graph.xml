@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/searchEngineFragment">
 
     <action
         android:id="@+id/action_global_browser"
@@ -428,7 +428,11 @@
     <fragment
         android:id="@+id/searchEngineFragment"
         android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
-        android:label="@string/preferences_search" />
+        android:label="@string/preferences_search">
+        <action
+            android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
+            app:destination="@+id/addSearchEngineFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/turnOnSyncFragment"
@@ -659,4 +663,8 @@
             android:name="savedLoginItem"
             app:argType="org.mozilla.fenix.logins.SavedLoginsItem" />
     </fragment>
+    <fragment
+        android:id="@+id/addSearchEngineFragment"
+        android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
+        android:label="AddSearchEngineFragment" />
 </navigation>
