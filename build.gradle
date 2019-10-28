@@ -23,7 +23,7 @@ buildscript {
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("1.0.0-RC16")
-    id("com.nimbledroid.profiler").version("1.2.0")
+    id("com.nimbledroid.profiler").version("1.2.1")
 }
 
 // Placeholder for ND plugin configuration.
