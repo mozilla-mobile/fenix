@@ -17,8 +17,10 @@ import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.ext.showAndEnable
 
 /**
  * Interactor for items that can be selected on the bookmarks and history screens.
@@ -52,7 +54,7 @@ interface LibraryItemMenu {
     val menuBuilder: BrowserMenuBuilder
 }
 
-class LibrarySiteItemView @JvmOverloads constructor(
+open class LibrarySiteItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -84,6 +86,14 @@ class LibrarySiteItemView @JvmOverloads constructor(
         separator.isVisible = mode == ItemType.SEPARATOR
         isClickable = mode != ItemType.SEPARATOR
         isFocusable = mode != ItemType.SEPARATOR
+    }
+
+    open fun showOverflowMenu() {
+        overflowView.showAndEnable()
+    }
+
+    fun hideOverflowMenu() {
+        overflowView.hideAndDisable()
     }
 
     /**

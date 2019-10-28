@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.library.bookmarks
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -68,16 +69,33 @@ class BookmarkAdapter(val emptyView: View, val interactor: BookmarkViewInteracto
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkNodeViewHolder {
-        val view = LibrarySiteItemView(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        }
-
         return when (viewType) {
-            LibrarySiteItemView.ItemType.SITE.ordinal -> BookmarkItemViewHolder(view, interactor, this)
-            LibrarySiteItemView.ItemType.FOLDER.ordinal -> BookmarkFolderViewHolder(view, interactor, this)
-            LibrarySiteItemView.ItemType.SEPARATOR.ordinal -> BookmarkSeparatorViewHolder(view, interactor)
+            LibrarySiteItemView.ItemType.SITE.ordinal -> getSiteViewHolder(parent.context)
+            LibrarySiteItemView.ItemType.FOLDER.ordinal -> getFolderViewHolder(parent.context)
+            LibrarySiteItemView.ItemType.SEPARATOR.ordinal -> getSeparatorViewHolder(parent.context)
             else -> throw IllegalStateException("ViewType $viewType does not match to a ViewHolder")
         }
+    }
+
+    private fun getSiteViewHolder(context: Context): BookmarkNodeViewHolder {
+        val view = LibrarySiteItemView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        }
+        return BookmarkItemViewHolder(view, interactor, this)
+    }
+
+    private fun getFolderViewHolder(context: Context): BookmarkNodeViewHolder {
+        val view = LibrarySiteItemView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        }
+        return BookmarkFolderViewHolder(view, interactor, this)
+    }
+
+    private fun getSeparatorViewHolder(context: Context): BookmarkNodeViewHolder {
+        val view = BookmarkSeparatorItemView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        }
+        return BookmarkSeparatorViewHolder(view, interactor)
     }
 
     override fun getItemViewType(position: Int): Int {
