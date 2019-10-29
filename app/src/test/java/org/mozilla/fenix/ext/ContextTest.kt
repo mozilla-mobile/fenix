@@ -86,4 +86,9 @@ class ContextTest () {
         val actualStr = testContext.getPreferenceKey(stringId)
         assertEquals(comparisonStr, actualStr)
     }
+
+    @Test
+    fun `GIVEN context WHEN getting a color from attribute THEN ensure right color returned`() {
+
+    }
 }
