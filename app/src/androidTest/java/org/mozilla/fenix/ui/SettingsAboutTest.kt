@@ -77,7 +77,6 @@ class SettingsAboutTest {
         // Verify Android "Open with Google Play Store" sub menu
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyAboutFirefoxPreview() {
         // Open 3dot (main) menu
@@ -89,5 +88,17 @@ class SettingsAboutTest {
         // "Firefox Preview is produced by Mozilla"
         // Day, Date, timestamp
         // "Open source libraries we use"
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // ABOUT
+            verifyAboutFirefoxPreview()
+        }.openAboutFirefoxPreview {
+            verifyBuildNo()
+            verifyProducedBy()
+            verifyTimeStamp()
+            verifyOpenSourceLibraries()
+        }
+
     }
 }

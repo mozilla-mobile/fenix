@@ -104,6 +104,15 @@ class SettingsRobot {
             SettingsSubMenuDefaultBrowserRobot().interact()
             return SettingsSubMenuDefaultBrowserRobot.Transition()
         }
+
+        fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit): SettingsSubMenuAboutRobot.Transition {
+            mDevice.waitForIdle()
+            fun aboutFirefoxPreviewButton() = onView(ViewMatchers.withText("About Firefox Preview"))
+            aboutFirefoxPreviewButton().click()
+
+            SettingsSubMenuAboutRobot().interact()
+            return SettingsSubMenuAboutRobot.Transition()
+        }
     }
 }
 
