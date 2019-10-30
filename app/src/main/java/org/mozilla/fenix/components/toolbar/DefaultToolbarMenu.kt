@@ -86,16 +86,21 @@ class DefaultToolbarMenu(
 
         val bookmark = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = R.drawable.ic_bookmark_filled,
-            primaryContentDescription = "", // TODO
+            primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
             primaryImageTintResource = ThemeManager.resolveAttribute(
                 R.attr.primaryText,
                 context
             ),
             isInPrimaryState = {
                 // TODO true if bookmarked
+                /*
+                How am I going to get this to work? `bookmarksStorage.getBookmarksWithUrl(currentUrl ?: "")`
+                is taking 10-50 MS to complete, there's no way we can run that blocking
+                 */
                 true
             },
             secondaryImageResource = R.drawable.ic_bookmark_outline,
+            secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
             secondaryImageTintResource = ThemeManager.resolveAttribute(
                 R.attr.disabled,
                 context
