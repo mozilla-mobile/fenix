@@ -210,6 +210,7 @@ class DefaultBrowserToolbarController(
                 activity.finish()
             }
             ToolbarMenu.Item.Quit -> deleteAndQuit(activity, scope, snackbar)
+            else -> { /* TODO handle states */ }
         }
     }
 
@@ -260,6 +261,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.SaveToCollection -> Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION
             ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
+            else -> { /* TODO handle states */ Event.BrowserMenuItemTapped.Item.QUIT }
         }
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))

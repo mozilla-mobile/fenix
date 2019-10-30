@@ -23,7 +23,8 @@ class DefaultToolbarMenu(
     private val context: Context,
     private val hasAccountProblem: Boolean = false,
     private val requestDesktopStateProvider: () -> Boolean = { false },
-    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
+    private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
+    readerModeStateProvider: () -> Boolean = { false }
 ) : ToolbarMenu {
 
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems, endOfMenuAlwaysVisible = true) }
@@ -93,7 +94,38 @@ class DefaultToolbarMenu(
             }
         }
 
-        BrowserMenuItemToolbar(listOf(back, forward, refresh))
+        val share = BrowserMenuItemToolbar.Button(
+            imageResource = R.drawable.mozac_ic_share,
+            contentDescription = context.getString(R.string.browser_menu_share),
+            iconTintColorResource = primaryTextColor(),
+            listener = {
+                onItemTapped.invoke(ToolbarMenu.Item.Share)
+            }
+        )
+
+        val bookmark = BrowserMenuItemToolbar.TwoStateButton(
+            primaryImageResource = R.drawable.ic_bookmark_filled,
+            primaryContentDescription = "", // TODO
+            primaryImageTintResource = ThemeManager.resolveAttribute(
+                R.attr.primaryText,
+                context
+            ),
+            isInPrimaryState = {
+                // TODO true if bookmarked
+                true
+            },
+            secondaryImageResource = R.drawable.ic_bookmark_outline,
+            secondaryImageTintResource = ThemeManager.resolveAttribute(
+                R.attr.disabled,
+                context
+            ),
+            disableInSecondaryState = false
+        ) {
+            // TODO send current state?
+            onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
+        }
+
+        BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
     }
 
     private val menuItems by lazy {
@@ -111,10 +143,11 @@ class DefaultToolbarMenu(
             findInPage,
             privateTab,
             newTab,
-            share,
             reportIssue,
             if (browsingModeIsNormal) saveToCollection else null,
             if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
+            readerMode, // TODO only sometimes add
+            openInApp, // TODO only sometimes add
             BrowserMenuDivider(),
             menuToolbar
         )
@@ -203,14 +236,6 @@ class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.NewTab)
     }
 
-    private val share = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_share),
-        imageResource = R.drawable.mozac_ic_share,
-        iconTintColorResource = primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Share)
-    }
-
     private val reportIssue = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_report_issue),
         imageResource = R.drawable.ic_report_issues,
@@ -233,6 +258,22 @@ class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Quit)
+    }
+
+    private val readerMode = BrowserMenuImageSwitch(
+        label = context.getString(R.string.quick_action_read),
+        imageResource = R.drawable.ic_readermode,
+        initialState = readerModeStateProvider
+    ) { checked ->
+        onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
+    }
+
+    private val openInApp = BrowserMenuImageText(
+        label = context.getString(R.string.quick_action_open_app_link),
+        imageResource = R.drawable.ic_library,
+        iconTintColorResource = primaryTextColor()
+        ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }
 
     private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)

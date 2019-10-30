@@ -151,6 +151,8 @@ class CustomTabToolbarMenu(
         textSize = ToolbarMenu.CAPTION_TEXT_SIZE,
         textColorResource = primaryTextColor()
     )
+
+    // TODO which of these new tabs need to exist in custom tabs?
     
     private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
 }
