@@ -30,25 +30,6 @@ class DefaultToolbarMenu(
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems, endOfMenuAlwaysVisible = true) }
 
     override val menuToolbar by lazy {
-        val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
-            primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.primaryText,
-                context
-            ),
-            isInPrimaryState = {
-                context.components.core.sessionManager.selectedSession?.canGoBack ?: true
-            },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.disabled,
-                context
-            ),
-            disableInSecondaryState = true
-        ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Back)
-        }
-
         val forward = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
@@ -125,7 +106,7 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
         }
 
-        BrowserMenuItemToolbar(listOf(back, forward, bookmark, share, refresh))
+        BrowserMenuItemToolbar(listOf(forward, bookmark, share, refresh))
     }
 
     private val menuItems by lazy {
