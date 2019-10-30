@@ -104,6 +104,38 @@ class SettingsRobot {
             SettingsSubMenuDefaultBrowserRobot().interact()
             return SettingsSubMenuDefaultBrowserRobot.Transition()
         }
+
+        fun openHelp(interact: SettingsSubMenuAboutRobot.() -> Unit): SettingsSubMenuAboutRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("Help")
+
+            fun helpButton() = onView(ViewMatchers.withText("Help"))
+            helpButton().click()
+
+            SettingsSubMenuAboutRobot().interact()
+            return SettingsSubMenuAboutRobot.Transition()
+        }
+
+        fun openRateOnGooglePlay(interact: SettingsSubMenuAboutRobot.() -> Unit): SettingsSubMenuAboutRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("Rate on Google Play")
+            fun rateOnGooglePlayButton() = onView(ViewMatchers.withText("Rate on Google Play"))
+            rateOnGooglePlayButton().click()
+
+            SettingsSubMenuAboutRobot().interact()
+            return SettingsSubMenuAboutRobot.Transition()
+        }
+
+        fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit): SettingsSubMenuAboutRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("About Firefox Preview")
+            fun aboutFirefoxPreviewButton() = onView(ViewMatchers.withText("About Firefox Preview"))
+            aboutFirefoxPreviewButton().click()
+
+            SettingsSubMenuAboutRobot().interact()
+            return SettingsSubMenuAboutRobot.Transition()
+        }
+
     }
 }
 
