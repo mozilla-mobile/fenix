@@ -126,6 +126,10 @@ sealed class Event {
     object TrackingProtectionSettingsPanel : Event()
     object TrackingProtectionSettings : Event()
     object TrackingProtectionException : Event()
+    object OpenLogins : Event()
+    object OpenOneLogin : Event()
+    object CopyLogin : Event()
+    object ViewLoginPassword : Event()
 
     // Interaction events with extras
 

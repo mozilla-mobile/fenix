@@ -1509,6 +1509,52 @@ media_notification:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
 
+logins:
+  open_logins:
+    type: event
+    description: >
+      A user accessed Logins in Settings
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  open_individual_login:
+    type: event
+    description: >
+      A user accessed an individual login in saved logins
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  copy_login:
+    type: event
+    description: >
+      A user copied a piece of a login in saved logins
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  view_password_login:
+    type: event
+    description: >
+      A user viewed a password in an individual saved login
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
 experiments.metrics:
   active_experiment:
     type: string
