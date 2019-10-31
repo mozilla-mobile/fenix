@@ -113,8 +113,11 @@
         android:textSize="12sp"
         android:textStyle="bold"
         android:visibility="gone"
+        android:layout_marginStart="@dimen/search_fragment_shortcuts_label_margin"
+        android:layout_marginEnd="@dimen/search_fragment_shortcuts_label_margin"
         app:layout_constraintStart_toStartOf="@id/toolbar_wrapper"
-        app:layout_constraintTop_toBottomOf="@id/fill_link_from_clipboard" />
+        app:layout_constraintTop_toBottomOf="@id/fill_link_from_clipboard"
+        tools:text="Search with" />
 
     <View
         android:id="@+id/search_divider"

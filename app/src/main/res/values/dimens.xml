@@ -63,4 +63,8 @@
 
     <!-- ETP Onboarding Popup -->
     <dimen name="etp_onboarding_popup_width">256dp</dimen>
+
+    <!-- Search Fragment -->
+    <dimen name="search_fragment_shortcuts_label_margin">8dp</dimen>
+
 </resources>
