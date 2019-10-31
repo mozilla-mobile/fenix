@@ -201,7 +201,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
                 interactor = browserInteractor,
-                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
+                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+                scope = lifecycleScope
             )
 
             toolbarIntegration.set(

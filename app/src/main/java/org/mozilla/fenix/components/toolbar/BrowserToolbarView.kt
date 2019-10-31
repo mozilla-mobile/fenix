@@ -10,20 +10,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
+import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.support.ktx.android.util.dpToFloat
 import org.jetbrains.anko.dimen
+import org.jetbrains.anko.view
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
+import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -168,12 +173,15 @@ class BrowserToolbarView(
                 )
             } else {
                 DefaultToolbarMenu(
-                    this,
+                    context = this,
                     hasAccountProblem = components.backgroundServices.accountManager.accountNeedsReauth(),
                     requestDesktopStateProvider = {
                         sessionManager.selectedSession?.desktopMode ?: false
                     },
-                    onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) }
+                    onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) },
+                    lifecycleOwner = container.context as AppCompatActivity,
+                    sessionManager = sessionManager,
+                    bookmarksStorage = bookmarkStorage
                 )
             }
 

@@ -5,12 +5,20 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
+import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.storage.BookmarksStorage
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -24,8 +32,14 @@ class DefaultToolbarMenu(
     private val hasAccountProblem: Boolean = false,
     private val requestDesktopStateProvider: () -> Boolean = { false },
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
-    readerModeStateProvider: () -> Boolean = { false }
+    private val lifecycleOwner: LifecycleOwner,
+    private val bookmarksStorage: BookmarksStorage,
+    readerModeStateProvider: () -> Boolean = { false },
+    sessionManager: SessionManager
 ) : ToolbarMenu {
+
+    private var currentUrlIsBookmarked = false
+    private var isBookmarkedJob: Job? = null
 
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems, endOfMenuAlwaysVisible = true) }
 
@@ -84,6 +98,7 @@ class DefaultToolbarMenu(
             }
         )
 
+        registerForIsBookmarkedUpdates(sessionManager)
         val bookmark = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = R.drawable.ic_bookmark_filled,
             primaryContentDescription = context.getString(R.string.browser_menu_edit_bookmark),
@@ -91,25 +106,22 @@ class DefaultToolbarMenu(
                 R.attr.primaryText,
                 context
             ),
-            isInPrimaryState = {
-                // TODO true if bookmarked
-                /*
-                How am I going to get this to work? `bookmarksStorage.getBookmarksWithUrl(currentUrl ?: "")`
-                is taking 10-50 MS to complete, there's no way we can run that blocking
-                 */
-                true
-            },
+            // TwoStateButton.isInPrimaryState must be synchronous, and checking bookmark state is
+            // relatively slow. The best we can do here is periodically compute and cache a new "is
+            // bookmarked" state, and use that whenever the menu has been opened.
+            isInPrimaryState = { currentUrlIsBookmarked },
             secondaryImageResource = R.drawable.ic_bookmark_outline,
             secondaryContentDescription = context.getString(R.string.browser_menu_bookmark),
             secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.disabled,
+                R.attr.primaryText,
                 context
             ),
             disableInSecondaryState = false
         ) {
-            // TODO send current state?
             onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
         }
+
+
 
         BrowserMenuItemToolbar(listOf(forward, bookmark, share, refresh))
     }
@@ -133,6 +145,7 @@ class DefaultToolbarMenu(
             if (browsingModeIsNormal) saveToCollection else null,
             if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
             readerMode, // TODO only sometimes add
+            // TODO add Appearance button when reader mode is open
             openInApp, // TODO only sometimes add
             BrowserMenuDivider(),
             menuToolbar
@@ -263,4 +276,25 @@ class DefaultToolbarMenu(
     }
 
     private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
+    private fun registerForIsBookmarkedUpdates(sessionManager: SessionManager) {
+        val observer = object : Session.Observer {
+            override fun onUrlChanged(session: Session, url: String) {
+                updateCurrentUrlIsBookmarked(url)
+            }
+        }
+
+        sessionManager.selectedSession?.url?.let { updateCurrentUrlIsBookmarked(it) }
+        sessionManager.selectedSession?.register(observer, lifecycleOwner)
+    }
+
+    private fun updateCurrentUrlIsBookmarked(newUrl: String) {
+        currentUrlIsBookmarked = false
+        isBookmarkedJob?.cancel()
+        isBookmarkedJob = lifecycleOwner.lifecycleScope.launch {
+            currentUrlIsBookmarked = bookmarksStorage
+                .getBookmarksWithUrl(newUrl)
+                .any { it.url == newUrl }
+        }
+    }
 }
