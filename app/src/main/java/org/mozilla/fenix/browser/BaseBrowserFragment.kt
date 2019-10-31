@@ -173,10 +173,13 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             }
 
             val browserToolbarController = DefaultBrowserToolbarController(
-                requireActivity(),
-                snackbar,
-                findNavController(),
-                (activity as HomeActivity).browsingModeManager,
+                store = TODO(),
+                activity = requireActivity(),
+                snackbar = snackbar,
+                navController = findNavController(),
+                readerModeController = TODO(),
+                browsingModeManager = (activity as HomeActivity).browsingModeManager,
+                sessionManager = TODO(),
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 browserLayout = view.browserLayout,
                 engineView = engineView,
@@ -193,6 +196,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     action = Intent.ACTION_VIEW
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
+                bookmarkTapped = TODO(),
                 bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction),
                 scope = lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage

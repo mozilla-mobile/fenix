@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.NavGraphDirections
@@ -31,6 +32,7 @@ import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -54,10 +56,13 @@ interface BrowserToolbarController {
 
 @Suppress("LargeClass")
 class DefaultBrowserToolbarController(
+    private val store: BrowserFragmentStore,
     private val activity: Activity,
     private val snackbar: FenixSnackbar?,
     private val navController: NavController,
+    private val readerModeController: ReaderModeController,
     private val browsingModeManager: BrowsingModeManager,
+    private val sessionManager: SessionManager,
     private val findInPageLauncher: () -> Unit,
     private val browserLayout: ViewGroup,
     private val engineView: EngineView,
@@ -66,6 +71,7 @@ class DefaultBrowserToolbarController(
     private val customTabSession: Session?,
     private val getSupportUrl: () -> String,
     private val openInFenixIntent: Intent,
+    private val bookmarkTapped: (Session) -> Unit,
     private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>,
     private val scope: LifecycleCoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage
@@ -210,7 +216,33 @@ class DefaultBrowserToolbarController(
                 activity.finish()
             }
             ToolbarMenu.Item.Quit -> deleteAndQuit(activity, scope, snackbar)
-            else -> { /* TODO handle states */ }
+            is ToolbarMenu.Item.ReaderMode -> {
+                val enabled = currentSession?.readerMode
+                    ?: activity.components.core.sessionManager.selectedSession?.readerMode
+                    ?: false
+
+                if (enabled) {
+                    readerModeController.hideReaderView()
+                } else {
+                    readerModeController.showReaderView()
+                }
+                store.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
+            }
+            ToolbarMenu.Item.OpenInApp -> {
+                val appLinksUseCases =
+                    activity.components.useCases.appLinksUseCases
+                val getRedirect = appLinksUseCases.appLinkRedirect
+                sessionManager.selectedSession?.let {
+                    val redirect = getRedirect.invoke(it.url)
+                    redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    appLinksUseCases.openAppLink.invoke(redirect)
+                }
+            }
+            ToolbarMenu.Item.Bookmark -> {
+                sessionManager.selectedSession?.let {
+                    bookmarkTapped(it)
+                }
+            }
         }
     }
 
@@ -261,7 +293,11 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.SaveToCollection -> Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION
             ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
-            else -> { /* TODO handle states */ Event.BrowserMenuItemTapped.Item.QUIT }
+            is ToolbarMenu.Item.ReaderMode ->
+                if (item.isChecked) Event.BrowserMenuItemTapped.Item.READER_MODE_ON
+                else Event.BrowserMenuItemTapped.Item.READER_MODE_OFF
+            ToolbarMenu.Item.OpenInApp -> Event.BrowserMenuItemTapped.Item.OPEN_IN_APP
+            ToolbarMenu.Item.Bookmark -> Event.BrowserMenuItemTapped.Item.BOOKMARK
         }
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))

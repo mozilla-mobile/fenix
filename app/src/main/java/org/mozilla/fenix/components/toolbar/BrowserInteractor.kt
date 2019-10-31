@@ -71,7 +71,7 @@ class BrowserInteractor(
         val enabled =
             currentSession?.readerMode ?: context.components.core.sessionManager.selectedSession?.readerMode ?: false
 
-        if (enabled) {
+        if (enabled) { // TODO is this the correct metric for this?
             context.metrics.track(Event.QuickActionSheetClosed)
             readerModeController.hideReaderView()
         } else {
