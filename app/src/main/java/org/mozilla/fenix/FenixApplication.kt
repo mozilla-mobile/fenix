@@ -64,6 +64,8 @@ open class FenixApplication : Application() {
         registerRxExceptionHandling()
         enableStrictMode()
 
+        applicationContext.settings().totalUriCount = 0
+
         if (!isMainProcess()) {
             // If this is not the main process then do not continue with the initialization here. Everything that
             // follows only needs to be done in our app's main process and should not be done in other processes like
@@ -87,6 +89,10 @@ open class FenixApplication : Application() {
                     httpClient = lazy(LazyThreadSafetyMode.NONE) { components.core.client }
                 )
             )
+        } else {
+            // We should make a better way to opt out for when we have more experiments
+            // See https://github.com/mozilla-mobile/fenix/issues/6278
+            ExperimentsManager.optOutEtpExperiment(this)
         }
 
         // When the `fenix-test-2019-08-05` experiment is active, record its branch in Glean
@@ -137,7 +143,7 @@ open class FenixApplication : Application() {
         // no-op, LeakCanary is disabled by default
     }
 
-    open fun toggleLeakCanary(newValue: Boolean) {
+    open fun updateLeakCanaryState(isEnabled: Boolean) {
         // no-op, LeakCanary is disabled by default
     }
 

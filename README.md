@@ -5,6 +5,8 @@
 
 Firefox Preview (internal code name: "Fenix") is an all-new browser for Android, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
+** Note: The team is currently experiencing heavy triage and review load, so when triaging issues, we will mainly be looking to identify [S1 (high severity)](https://github.com/mozilla-mobile/fenix/labels/S1) issues. See our triage process [here](https://github.com/mozilla-mobile/fenix/wiki/Triage-Process). Please be patient if you don't hear back from us immediately on your issue! **
+
 ## I want to open a Pull Request!
 
 We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
@@ -37,7 +39,7 @@ Before you attempt to make a contribution please read the [Community Participati
 
 * Browse our [current Issues](https://github.com/mozilla-mobile/fenix/issues), or [file a security issue][sec issue].
 
-* IRC: [#fenix (irc.mozilla.org)](https://wiki.mozilla.org/IRC) | [view logs](https://mozilla.logbot.info/fenix/)
+* Slack: [#fenix on mozilla-android.slack.com](mozilla-android.slack.com) | [Join here](https://join.slack.com/t/mozilla-android/shared_invite/enQtNzk3NDczMzc0ODMzLWNjYTQ5MjA3ZDI0NzNhOTBjMWUyMmNmZDcwM2ZhY2YxZjdjMWIwZWY1YmQ3NjJmMDNkODYxMmRmNTdjNGJmMTU)
 (**We're available Monday-Friday, GMT and PST working hours**).
 
 * Check out the [project wiki](https://github.com/mozilla-mobile/fenix/wiki) for more information.

@@ -25,6 +25,7 @@
 // import org.mozilla.fenix.HomeActivity
 // import org.mozilla.fenix.R
 // import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+// import org.mozilla.fenix.helpers.ext.waitNotNull
 // import org.mozilla.fenix.helpers.HomeActivityTestRule
 // import org.mozilla.fenix.helpers.TestAssetHelper
 // import org.mozilla.fenix.helpers.click
@@ -167,22 +168,22 @@
 //                 .instance(1)
 //                 .className(ImageView::class.java)).click()
 //         // Homescreen with visited tabs
-//         device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(device.wait(Until.findObjects(By.text("Save to collection")))
 //         openTabsMenu()
 //         Screengrab.screenshot("open-tabs-menu")
 //         device.pressBack()
-//         device.wait(Until.findObjects(By.text("Save to collection")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(Until.findObjects(By.text("Save to collection")))
 //         Screengrab.screenshot("save-collection-button")
 //
 //         // Save a collection
 //         saveToCollectionButton()
 //         Screengrab.screenshot("save-collection-view")
-//         device.wait(Until.findObject(By.res("name_collection_edittext")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/name_collection_edittext")))
 //         nameCollectionTextBox().perform(replaceText("CollectionName"),
 //                 pressImeActionButton())
 //
 //         // Homescreen after saving one collection
-//         device.wait(Until.findObject(By.res("collection_title")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/collection_title")))
 //         Screengrab.screenshot("saved-tab")
 //
 //         // Open Collection menu
@@ -196,7 +197,7 @@
 //         navigationToolbar {
 //         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
 //         }
-//         device.wait(Until.findObjects(By.res("quick_action_sheet_handle")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/quick_action_sheet_handle")))
 //         openQuickActionMenu()
 //         Screengrab.screenshot("browser-tab-share-bookmark")
 //         // Open Browser tab menu
@@ -209,7 +210,7 @@
 //         device.findObject(UiSelector()
 //                 .instance(1)
 //                 .className(ImageView::class.java)).click()
-//         device.wait(Until.findObjects(By.res("close_tab_button")), TestAssetHelper.waitingTimeShort)
+//         mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/close_tab_button")))
 //         closeTabButton()
 //         Screengrab.screenshot("remove-tab")
 //     }

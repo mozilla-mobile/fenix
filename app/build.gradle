@@ -341,7 +341,6 @@ dependencies {
 
     implementation Deps.sentry
     implementation Deps.leanplum
-    implementation Deps.leanplumMessaging
     implementation Deps.osslicenses_library
 
     implementation Deps.mozilla_concept_engine
@@ -384,6 +383,7 @@ dependencies {
     implementation Deps.mozilla_feature_sendtab
     implementation Deps.mozilla_feature_webcompat
 
+    implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_fretboard
     implementation Deps.mozilla_service_glean
@@ -403,7 +403,6 @@ dependencies {
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
     debugImplementation Deps.leakcanary
-    releaseImplementation Deps.leakcanary_noop
 
     implementation Deps.androidx_legacy
     implementation Deps.androidx_paging
@@ -487,6 +486,10 @@ dependencies {
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
     testImplementation Deps.assertk
+
+    // For the initial release of Glean 19, we require consumer applications to
+    // depend on a separate library for unit tests. This will be removed in future releases.
+    testImplementation Deps.mozilla_service_glean_forUnitTests
 }
 
 if (project.hasProperty("raptor")) {

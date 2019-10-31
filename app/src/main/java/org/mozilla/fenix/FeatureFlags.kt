@@ -54,4 +54,11 @@ object FeatureFlags {
      * Allows Progressive Web Apps to be installed to the device home screen.
      */
     val progressiveWebApps = nightly or debug
+
+    val forceZoomPreference = nightly or debug
+
+    /**
+     * Gives option in Settings to see logins and sync logins
+     */
+    const val logins = false
 }

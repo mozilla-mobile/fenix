@@ -12,7 +12,7 @@ object Versions {
     const val rxBindings = "3.0.0-alpha2"
     const val anko = "0.10.8"
     const val sentry = "1.7.10"
-    const val leakcanary = "1.6.3"
+    const val leakcanary = "2.0-beta-3"
     const val leanplum = "5.2.3"
     const val osslicenses_plugin = "0.9.5"
     const val osslicenses_library = "17.0.0"
@@ -35,7 +35,7 @@ object Versions {
     const val androidx_work = "2.2.0"
     const val google_material = "1.1.0-beta01"
 
-    const val mozilla_android_components = "18.0.0-SNAPSHOT"
+    const val mozilla_android_components = "20.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -44,8 +44,10 @@ object Versions {
     // sync with the version used by android-components above.
     const val mozilla_appservices = "0.42.0"
 
+    const val mozilla_glean = "19.0.0"
+
     const val autodispose = "1.1.0"
-    const val adjust = "4.11.4"
+    const val adjust = "4.18.3"
     const val installreferrer = "1.0"
 
     const val junit = "4.12"
@@ -134,9 +136,12 @@ object Deps {
     const val mozilla_feature_sendtab = "org.mozilla.components:feature-sendtab:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
 
+    const val mozilla_service_sync_logins =
+        "org.mozilla.components:service-sync-logins:${Versions.mozilla_android_components}"
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"
     const val mozilla_service_fretboard = "org.mozilla.components:service-fretboard:${Versions.mozilla_android_components}"
     const val mozilla_service_glean = "org.mozilla.components:service-glean:${Versions.mozilla_android_components}"
+    const val mozilla_service_glean_forUnitTests = "org.mozilla.telemetry:glean-forUnitTests:${Versions.mozilla_glean}"
     const val mozilla_service_experiments = "org.mozilla.components:service-experiments:${Versions.mozilla_android_components}"
 
     const val mozilla_ui_colors = "org.mozilla.components:ui-colors:${Versions.mozilla_android_components}"
@@ -157,10 +162,8 @@ object Deps {
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
-    const val leakcanary_noop = "com.squareup.leakcanary:leakcanary-android-no-op:${Versions.leakcanary}"
 
     const val leanplum = "com.leanplum:leanplum-core:${Versions.leanplum}"
-    const val leanplumMessaging = "com.leanplum:leanplum-fcm:${Versions.leanplum}"
 
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment}"

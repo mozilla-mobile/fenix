@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -86,7 +87,7 @@ open class HomeActivity : AppCompatActivity() {
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val mode = getPrivateModeFromIntent()
+        val mode = getPrivateModeFromIntent(intent)
 
         components.publicSuffixList.prefetch()
         setupThemeAndBrowsingMode(mode)
@@ -150,6 +151,7 @@ open class HomeActivity : AppCompatActivity() {
 
         val intentProcessors = listOf(CrashReporterIntentProcessor()) + externalSourceIntentProcessors
         intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
+        browsingModeManager.mode = getPrivateModeFromIntent(intent)
     }
 
     /**
@@ -192,7 +194,7 @@ open class HomeActivity : AppCompatActivity() {
      * External sources such as 3rd party links and shortcuts use this function to enter
      * private mode directly before the content view is created.
      */
-    private fun getPrivateModeFromIntent(): BrowsingMode {
+    private fun getPrivateModeFromIntent(intent: Intent?): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
                 val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
@@ -246,14 +248,15 @@ open class HomeActivity : AppCompatActivity() {
         if (navHost.navController.alreadyOnDestination(R.id.browserFragment)) return
         @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
         val directions = getNavDirections(from, customTabSessionId)
-
-        navHost.navController.nav(fragmentId, directions)
+        if (directions != null) {
+            navHost.navController.nav(fragmentId, directions)
+        }
     }
 
     protected open fun getNavDirections(
         from: BrowserDirection,
         customTabSessionId: String?
-    ) = when (from) {
+    ): NavDirections? = when (from) {
         BrowserDirection.FromGlobal ->
             NavGraphDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHome ->

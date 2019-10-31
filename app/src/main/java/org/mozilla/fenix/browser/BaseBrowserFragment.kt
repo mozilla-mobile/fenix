@@ -4,11 +4,13 @@
 
 package org.mozilla.fenix.browser
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,11 +75,13 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.getDimenInDip
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.isInExperiment
 import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
@@ -221,11 +225,11 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 view = view
             )
 
-            browserToolbarView.view.setOnSiteSecurityClickedListener {
+            browserToolbarView.view.display.setOnSiteSecurityClickedListener {
                 showQuickSettingsDialog()
             }
 
-            browserToolbarView.view.setOnTrackingProtectionClickedListener {
+            browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
                 context.metrics.track(Event.TrackingProtectionIconPressed)
                 showTrackingProtectionPanel()
             }
@@ -234,16 +238,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 feature = ContextMenuFeature(
                     fragmentManager = parentFragmentManager,
                     store = store,
-                    candidates = ContextMenuCandidate.defaultCandidates(
-                        context,
-                        context.components.useCases.tabsUseCases,
-                        context.components.useCases.contextMenuUseCases,
-                        view,
-                        FenixSnackbarDelegate(
-                            view,
-                            if (getSessionById()?.isCustomTabSession() == true) null else nestedScrollQuickAction
-                        )
-                    ),
+                    candidates = getContextMenuCandidates(context, view),
                     engineView = view.engineView,
                     useCases = context.components.useCases.contextMenuUseCases,
                     customTabId = customTabSessionId
@@ -268,6 +263,13 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     downloadManager = FetchDownloadManager(
                         context.applicationContext,
                         DownloadService::class
+                    ),
+                    promptsStyling = DownloadsFeature.PromptsStyling(
+                        gravity = Gravity.BOTTOM,
+                        shouldWidthMatchParent = true,
+                        positiveButtonBackgroundColor = ThemeManager.resolveAttribute(R.attr.accent, context),
+                        positiveButtonTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
+                        positiveButtonRadius = context.getDimenInDip(R.dimen.tab_corner_radius)
                     ),
                     onNeedToRequestPermissions = { permissions ->
                         requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
@@ -403,6 +405,14 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         }
     }
 
+    /**
+     * Returns a list of context menu items [ContextMenuCandidate] for the context menu
+     */
+    protected abstract fun getContextMenuCandidates(
+        context: Context,
+        view: View
+    ): List<ContextMenuCandidate>
+
     private fun adjustBackgroundAndNavigate(directions: NavDirections) {
         context?.let {
             swipeRefresh?.background = ColorDrawable(Color.TRANSPARENT)
@@ -511,12 +521,19 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     }
 
     /**
-     * Removes the session if it was opened by an ACTION_VIEW intent.
+     * Removes the session if it was opened by an ACTION_VIEW intent
+     * or if it has no more history
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getSessionById()?.let { session ->
+            val sessionManager = requireComponents.core.sessionManager
             if (session.source == Session.Source.ACTION_VIEW) {
-                requireComponents.core.sessionManager.remove(session)
+                sessionManager.remove(session)
+            } else {
+                val isLastSession =
+                    sessionManager.sessionsOfType(private = session.private).count() == 1
+                sessionManager.remove(session, true)
+                return !isLastSession // Jump to tab overview if last session was removed
             }
         }
         return false

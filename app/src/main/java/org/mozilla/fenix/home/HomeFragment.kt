@@ -43,6 +43,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -276,6 +277,7 @@ class HomeFragment : Fragment() {
 
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
+            onboarding.finish()
             val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
                 sessionId = null
             )
@@ -664,12 +666,20 @@ class HomeFragment : Fragment() {
                         HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
                     )
                 }
-                HomeMenu.Item.Library -> {
+                HomeMenu.Item.Bookmarks -> {
                     invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToLibraryFragment()
+                        HomeFragmentDirections.actionHomeFragmentToBookmarksFragment(BookmarkRoot.Mobile.id)
+                    )
+                }
+                HomeMenu.Item.History -> {
+                    invokePendingDeleteJobs()
+                    hideOnboardingIfNeeded()
+                    nav(
+                        R.id.homeFragment,
+                        HomeFragmentDirections.actionHomeFragmentToHistoryFragment()
                     )
                 }
                 HomeMenu.Item.Help -> {

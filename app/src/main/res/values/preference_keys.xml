@@ -12,6 +12,7 @@
     <string name="pref_key_accessibility" translatable="false">pref_key_accessibility</string>
     <string name="pref_key_accessibility_auto_size" translatable="false">pref_key_accessibility_auto_size</string>
     <string name="pref_key_accessibility_font_scale" translatable="false">pref_key_accessibility_font_scale</string>
+    <string name="pref_key_accessibility_force_enable_zoom" translatable="false">pref_key_accessibility_force_enable_zoom</string>
     <string name="pref_key_language" translatable="false">pref_key_language</string>
     <string name="pref_key_data_choices" translatable="false">pref_key_data_choices</string>
     <string name="pref_key_privacy_link" translatable="false">pref_key_privacy_link</string>
@@ -54,6 +55,7 @@
     <string name="pref_key_sync_now" translatable="false">pref_key_sync_now</string>
     <string name="pref_key_sync_history" translatable="false">pref_key_sync_history</string>
     <string name="pref_key_sync_bookmarks" translatable="false">pref_key_sync_bookmarks</string>
+    <string name="pref_key_sync_logins" translatable="false">pref_key_sync_logins</string>
     <string name="pref_key_sign_out" translatable="false">pref_key_sign_out</string>
     <string name="pref_key_cached_account" translatable="false">pref_key_cached_account</string>
     <string name="pref_key_sync_pair" translatable="false">pref_key_sync_pair</string>
@@ -99,6 +101,10 @@
     <string name="pref_key_tracking_protection_strict" translatable="false">pref_key_tracking_protection_strict</string>
     <string name="pref_key_tracking_protection_onboarding" translatable="false">pref_key_tracking_protection_onboarding</string>
 
+    <!-- Logins Settings -->
+    <string name="pref_key_saved_logins" translatable="false">pref_key_saved_logins</string>
+    <string name="pref_key_password_sync_logins" translatable="false">pref_key_password_sync_logins</string>
+
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
 
@@ -107,4 +113,6 @@
     <string name="pref_key_reader_mode_notification" translatable="false">pref_key_reader_mode_notification</string>
     <string name="pref_key_adjust_campaign" translatable="false">pref_key_adjust_campaign</string>
     <string name="pref_key_testing_stage" translatable="false">pref_key_testing_stage</string>
+
+    <string name="pref_key_total_uri" translatable="false">pref_key_total_uri</string>
 </resources>

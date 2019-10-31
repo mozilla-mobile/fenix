@@ -77,6 +77,11 @@ class Settings private constructor(
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
+    var forceEnableZoom by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_force_enable_zoom),
+        default = false
+    )
+
     var adjustCampaignId by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_adjust_campaign),
         default = ""
@@ -304,6 +309,11 @@ class Settings private constructor(
 
     var lastPlacesStorageMaintenance by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_last_maintenance),
+        default = 0
+    )
+
+    var totalUriCount by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_total_uri),
         default = 0
     )
 
