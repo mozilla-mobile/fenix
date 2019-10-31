@@ -33,7 +33,7 @@ object Versions {
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.3.0-beta01"
     const val androidx_work = "2.2.0"
-    const val google_material = "1.1.0-beta01"
+    const val google_material = "1.2.0-alpha01"
 
     const val mozilla_android_components = "20.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,

@@ -198,6 +198,9 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_saveLoginBottomSheetFragment"
+            app:destination="@id/saveLoginBottomSheetFragment" />
     </fragment>
 
     <fragment
@@ -221,6 +224,9 @@
         <action
             android:id="@+id/action_externalAppBrowserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
+        <action
+            android:id="@+id/action_externalAppBrowserFragment_to_saveLoginBottomSheetFragment"
+            app:destination="@id/saveLoginBottomSheetFragment" />
     </fragment>
 
     <fragment
@@ -500,8 +506,7 @@
     <dialog
         android:id="@+id/collectionCreationFragment"
         android:name="org.mozilla.fenix.collections.CollectionCreationFragment"
-        android:label="fragment_create_collection"
-        tools:layout="@layout/fragment_create_collection" >
+        tools:layout="@layout/fragment_create_collection">
         <argument
             android:name="tabIds"
             android:defaultValue="@null"
@@ -564,8 +569,7 @@
     </dialog>
     <dialog
         android:id="@+id/quickSettingsSheetDialogFragment"
-        android:name="org.mozilla.fenix.settings.quicksettings.QuickSettingsSheetDialogFragment"
-        android:label="QuickSettingsSheetDialogFragment">
+        android:name="org.mozilla.fenix.settings.quicksettings.QuickSettingsSheetDialogFragment">
         <argument
             android:name="sessionId"
             app:argType="string" />
@@ -607,8 +611,7 @@
         app:destination="@id/shareFragment" />
     <dialog
         android:id="@+id/trackingProtectionPanelDialogFragment"
-        android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragment"
-        android:label="TrackingProtectionPanelDialogFragment">
+        android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragment">
         <argument
             android:name="sessionId"
             app:argType="string" />
@@ -628,25 +631,21 @@
     </dialog>
     <fragment
         android:id="@+id/trackingProtectionBlockingFragment"
-        android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionBlockingFragment"
-        android:label="TrackingProtectionBlockingFragment">
+        android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionBlockingFragment">
         <argument
             android:name="strictMode"
             app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/deleteBrowsingDataOnQuitFragment"
-        android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitFragment"
-        android:label="DeleteBrowsingDataOnQuitFragment" />
+        android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitFragment" />
 
     <fragment
         android:id="@+id/addNewDeviceFragment"
-        android:name="org.mozilla.fenix.share.AddNewDeviceFragment"
-        android:label="AddNewDeviceFragment" />
+        android:name="org.mozilla.fenix.share.AddNewDeviceFragment" />
     <fragment
         android:id="@+id/defaultBrowserSettingsFragment"
-        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment"
-        android:label="DefaultBrowserSettingsFragment">
+        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment">
         <action
             android:id="@+id/action_defaultBrowserSettingsFragment_to_browserFragment"
             app:destination="@id/browserFragment" />
@@ -654,7 +653,6 @@
     <fragment
         android:id="@+id/savedLoginsFragment"
         android:name="org.mozilla.fenix.logins.SavedLoginsFragment"
-        android:label="fragment_saved_logins"
         tools:layout="@layout/fragment_saved_logins">
         <action
             android:id="@+id/action_savedLoginsFragment_to_savedLoginSiteInfoFragment"
@@ -663,10 +661,12 @@
     <fragment
         android:id="@+id/savedLoginSiteInfoFragment"
         android:name="org.mozilla.fenix.logins.SavedLoginSiteInfoFragment"
-        android:label="fragment_saved_login_site_info"
         tools:layout="@layout/fragment_saved_login_site_info">
         <argument
             android:name="savedLoginItem"
             app:argType="org.mozilla.fenix.logins.SavedLoginsItem" />
     </fragment>
+    <dialog
+        android:id="@+id/saveLoginBottomSheetFragment"
+        android:name="org.mozilla.fenix.logins.SaveLoginBottomSheetFragment" />
 </navigation>

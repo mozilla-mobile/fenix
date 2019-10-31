@@ -1009,4 +1009,8 @@
     <string name="saved_login_reveal_password">Show password</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">Hide password</string>
+    <!-- Hint shown in password field in save login dialog when there is no entry -->
+    <string name="logins_doorhanger_password_hint">Password</string>
+    <!-- Hint shown in username field in save login dialog when there is no entry -->
+    <string name="logins_doorhanger_username_hint">Username</string>
 </resources>
