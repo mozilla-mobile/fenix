@@ -17,12 +17,15 @@ import mozilla.components.concept.storage.BookmarkNodeType
 @Config(application = TestApplication::class)
 class BookmarkNodeTest {
 
+    val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
+    val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
+    val bookMarkChild3 = newBookmarkNode("Child 3", 3, null)
+    val listOfAllChildren = listOf(bookMarkChild1, bookMarkChild2)
+    val setOfAllChildren = setOf(bookMarkChild1, bookMarkChild2)
+
     @Test
     fun `GIVEN a bookmark node with children WHEN minusing a sub set of children THEN the children subset is removed and rest remains`() {
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val allChildren = listOf(bookMarkChild1, bookMarkChild2)
-        val bookmarkNode = newBookmarkNode("Parent 1", 0, allChildren)
+        val bookmarkNode = newBookmarkNode("Parent 1", 0, listOfAllChildren)
         val subsetToSubtract = setOf(bookMarkChild1)
         val expectedRemainingSubset = listOf(bookMarkChild2)
         val bookmarkNodeSubsetRemoved = bookmarkNode.minus(subsetToSubtract)
@@ -31,10 +34,7 @@ class BookmarkNodeTest {
 
     @Test
     fun `GIVEN a bookmark node with children WHEN minusing a set of all children THEN all children are removed and empty list remains`() {
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val allChildren = listOf(bookMarkChild1, bookMarkChild2)
-        val bookmarkNode = newBookmarkNode("Parent 1", 0, allChildren)
+        val bookmarkNode = newBookmarkNode("Parent 1", 0, listOfAllChildren)
         val setofAllChildren = setOf(bookMarkChild1, bookMarkChild2)
         val bookmarkNodeAllChildrenRemoved = bookmarkNode.minus(setofAllChildren)
         assertEquals(emptyList<BookmarkNode>(), bookmarkNodeAllChildrenRemoved.children)
@@ -42,31 +42,22 @@ class BookmarkNodeTest {
 
     @Test
     fun `GIVEN a bookmark node with children WHEN minusing a set of non-children THEN no children are removed`() {
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val allChildren = listOf(bookMarkChild1, bookMarkChild2)
-        val bookMarkChild3 = newBookmarkNode("Child 3", 3, null)
         val setofNonChildren = setOf(bookMarkChild3)
-        val bookmarkNode = newBookmarkNode("Parent 1", 0, allChildren)
+        val bookmarkNode = newBookmarkNode("Parent 1", 0, listOfAllChildren)
         val bookmarkNodeNonChildrenRemoved = bookmarkNode.minus(setofNonChildren)
-        assertEquals(allChildren, bookmarkNodeNonChildrenRemoved.children)
+        assertEquals(listOfAllChildren, bookmarkNodeNonChildrenRemoved.children)
     }
 
     @Test
     fun `GIVEN a bookmark node with children WHEN minusing an empty set THEN no children are removed`() {
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val allChildren = listOf(bookMarkChild1, bookMarkChild2)
-        val bookmarkNode = newBookmarkNode("Parent 1", 0, allChildren)
+        val bookmarkNode = newBookmarkNode("Parent 1", 0, listOfAllChildren)
         val bookmarkNodeEmptySetRemoved = bookmarkNode.minus(emptySet())
-        assertEquals(allChildren, bookmarkNodeEmptySetRemoved.children)
+        assertEquals(listOfAllChildren, bookmarkNodeEmptySetRemoved.children)
     }
 
     @Test
     fun `GIVEN a bookmark node with an empty list as children WHEN minusing a set of non-children from an empty parent THEN an empty list remains`() {
         val parentWithEmptyList = newBookmarkNode("Parent 1", 0, emptyList<BookmarkNode>())
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
         val setofAllChildren = setOf(bookMarkChild1, bookMarkChild2)
         val parentWithEmptyListNonChildRemoved = parentWithEmptyList.minus(setofAllChildren)
         assertEquals(emptyList<BookmarkNode>(), parentWithEmptyListNonChildRemoved.children)
@@ -75,19 +66,13 @@ class BookmarkNodeTest {
     @Test
     fun `GIVEN a bookmark node with null as children WHEN minusing a set of non-children from a parent with null children THEN null remains`() {
         val parentWithNullList = newBookmarkNode("Parent 1", 0, null)
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val setofAllChildren = setOf(bookMarkChild1, bookMarkChild2)
-        val parentWithNullListNonChildRemoved = parentWithNullList.minus(setofAllChildren)
+        val parentWithNullListNonChildRemoved = parentWithNullList.minus(setOfAllChildren)
         assertEquals(null, parentWithNullListNonChildRemoved.children)
     }
 
     @Test
     fun `GIVEN a bookmark node with children WHEN minusing a sub-set of children THEN the rest of the parents object should remain the same`() {
-        val bookMarkChild1 = newBookmarkNode("Child 1", 1, null)
-        val bookMarkChild2 = newBookmarkNode("Child 2", 2, null)
-        val allChildren = listOf(bookMarkChild1, bookMarkChild2)
-        val bookmarkNode = newBookmarkNode("Parent 1", 0, allChildren)
+        val bookmarkNode = newBookmarkNode("Parent 1", 0, listOfAllChildren)
         val subsetToSubtract = setOf(bookMarkChild1)
         val expectedRemainingSubset = listOf(bookMarkChild2)
         val resultBookmarkNode = bookmarkNode.minus(subsetToSubtract)
