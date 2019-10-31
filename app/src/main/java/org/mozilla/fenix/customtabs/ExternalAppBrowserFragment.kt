@@ -123,7 +123,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                 }
             }
 
-            consumeFrom(browserStore) {
+            consumeFrom(browserFragmentStore) {
                 browserToolbarView.update(it)
             }
 

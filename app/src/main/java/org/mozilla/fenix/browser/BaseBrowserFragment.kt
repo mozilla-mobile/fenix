@@ -95,7 +95,7 @@ import org.mozilla.fenix.theme.ThemeManager
  */
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Observer {
-    protected lateinit var browserStore: BrowserFragmentStore
+    protected lateinit var browserFragmentStore: BrowserFragmentStore
     protected lateinit var browserInteractor: BrowserToolbarViewInteractor
     protected lateinit var browserToolbarView: BrowserToolbarView
 
@@ -132,7 +132,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         activity.themeManager.applyStatusBarTheme(activity)
 
         val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
-        browserStore = StoreProvider.get(this) {
+        browserFragmentStore = StoreProvider.get(this) {
             BrowserFragmentStore(
                 BrowserFragmentState(
                     quickActionSheetState = QuickActionSheetState(
@@ -173,13 +173,13 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             }
 
             val browserToolbarController = DefaultBrowserToolbarController(
-                store = TODO(),
+                store = browserFragmentStore,
                 activity = requireActivity(),
                 snackbar = snackbar,
                 navController = findNavController(),
                 readerModeController = TODO(),
                 browsingModeManager = (activity as HomeActivity).browsingModeManager,
-                sessionManager = TODO(),
+                sessionManager = requireComponents.core.sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 browserLayout = view.browserLayout,
                 engineView = engineView,

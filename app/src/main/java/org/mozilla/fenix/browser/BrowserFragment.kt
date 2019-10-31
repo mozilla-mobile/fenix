@@ -115,7 +115,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                         context.components.analytics.metrics.track(Event.ReaderModeAvailable)
                     }
 
-                    browserStore.apply {
+                    browserFragmentStore.apply {
                         dispatch(QuickActionSheetAction.ReadableStateChange(available))
                         dispatch(
                             QuickActionSheetAction.ReaderActiveStateChange(
@@ -134,7 +134,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                 themeReaderViewControlsForPrivateMode(view.readerViewControlsBar)
             }
 
-            consumeFrom(browserStore) {
+            consumeFrom(browserFragmentStore) {
                 quickActionSheetView.update(it)
                 browserToolbarView.update(it)
             }
@@ -147,7 +147,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         quickActionSheetSessionObserver = QuickActionSheetSessionObserver(
             lifecycleScope,
             requireComponents,
-            dispatch = { action -> browserStore.dispatch(action) }
+            dispatch = { action -> browserFragmentStore.dispatch(action) }
         ).also { observer ->
             getSessionById()?.register(observer, this, autoPause = true)
         }
@@ -190,7 +190,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
 
         val interactor = BrowserInteractor(
             context = context,
-            store = browserStore,
+            store = browserFragmentStore,
             browserToolbarController = browserToolbarController,
             quickActionSheetController = DefaultQuickActionSheetController(
                 context = context,
@@ -299,7 +299,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
             )
 
             withContext(Main) {
-                browserStore.dispatch(
+                browserFragmentStore.dispatch(
                     QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
                 )
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
