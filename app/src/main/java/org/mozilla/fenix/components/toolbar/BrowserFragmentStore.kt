@@ -2,12 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("unused", "UNUSED_PARAMETER")
+
 package org.mozilla.fenix.components.toolbar
 
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
+// TODO ... remove file? Find things that should live here and refactor them in?
 class BrowserFragmentStore(initialState: BrowserFragmentState) :
     Store<BrowserFragmentState, BrowserFragmentAction>(initialState, ::browserStateReducer)
 
@@ -15,37 +18,9 @@ class BrowserFragmentStore(initialState: BrowserFragmentState) :
  * The state for the Browser Screen
  * @property quickActionSheetState: state of the quick action sheet
  */
-data class BrowserFragmentState(
-    val quickActionSheetState: QuickActionSheetState
-) : State
-
-/**
- * The state for the QuickActionSheet
- * @property readable Whether or not the current session can display a reader view
- * @property bookmarked Whether or not the current session is already bookmarked
- * @property readerActive Whether or not the current session is in reader mode
- * @property bounceNeeded Whether or not the quick action sheet should bounce
- */
-data class QuickActionSheetState(
-    val readable: Boolean,
-    val bookmarked: Boolean,
-    val readerActive: Boolean,
-    val bounceNeeded: Boolean,
-    val isAppLink: Boolean
-) : State
+class BrowserFragmentState : State
 
 sealed class BrowserFragmentAction : Action
-
-/**
- * Actions to dispatch through the [QuickActionSheetStore] to modify [QuickActionSheetState] through the reducer.
- */
-sealed class QuickActionSheetAction : BrowserFragmentAction() {
-    data class BookmarkedStateChange(val bookmarked: Boolean) : QuickActionSheetAction()
-    data class ReadableStateChange(val readable: Boolean) : QuickActionSheetAction()
-    data class ReaderActiveStateChange(val active: Boolean) : QuickActionSheetAction()
-    data class AppLinkStateChange(val isAppLink: Boolean) : QuickActionSheetAction()
-    object BounceNeededChange : QuickActionSheetAction()
-}
 
 /**
  * Reducers for [BrowserFragmentStore].
@@ -57,10 +32,8 @@ private fun browserStateReducer(
     state: BrowserFragmentState,
     action: BrowserFragmentAction
 ): BrowserFragmentState {
-    return when (action) {
-        is QuickActionSheetAction -> {
-            QuickActionSheetStateReducer.reduce(state, action)
-        }
+    return when {
+        else -> BrowserFragmentState()
     }
 }
 
@@ -68,19 +41,9 @@ private fun browserStateReducer(
  * Reduces [QuickActionSheetAction]s to update [BrowserFragmentState].
  */
 internal object QuickActionSheetStateReducer {
-    fun reduce(state: BrowserFragmentState, action: QuickActionSheetAction): BrowserFragmentState {
-        return when (action) {
-            is QuickActionSheetAction.BookmarkedStateChange ->
-                state.copy(quickActionSheetState = state.quickActionSheetState.copy(bookmarked = action.bookmarked))
-            is QuickActionSheetAction.ReadableStateChange ->
-                state.copy(quickActionSheetState = state.quickActionSheetState.copy(readable = action.readable))
-            is QuickActionSheetAction.ReaderActiveStateChange ->
-                state.copy(quickActionSheetState = state.quickActionSheetState.copy(readerActive = action.active))
-            is QuickActionSheetAction.BounceNeededChange ->
-                state.copy(quickActionSheetState = state.quickActionSheetState.copy(bounceNeeded = true))
-            is QuickActionSheetAction.AppLinkStateChange -> {
-                state.copy(quickActionSheetState = state.quickActionSheetState.copy(isAppLink = action.isAppLink))
-            }
+    fun reduce(state: BrowserFragmentState): BrowserFragmentState {
+        return when {
+            else -> state
         }
     }
 }

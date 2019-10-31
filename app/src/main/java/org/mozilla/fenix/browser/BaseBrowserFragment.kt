@@ -74,8 +74,6 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
-import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
-import org.mozilla.fenix.components.toolbar.QuickActionSheetState
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadNotificationBottomSheetDialog
 import org.mozilla.fenix.downloads.DownloadService
@@ -88,7 +86,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -137,20 +134,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
 
-        val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
         browserFragmentStore = StoreProvider.get(this) {
             BrowserFragmentStore(
-                BrowserFragmentState(
-                    quickActionSheetState = QuickActionSheetState(
-                        readable = getSessionById()?.readerable ?: false,
-                        bookmarked = false,
-                        readerActive = getSessionById()?.readerMode ?: false,
-                        bounceNeeded = false,
-                        isAppLink = getSessionById()?.let {
-                            appLink.invoke(it.url).hasExternalApp()
-                        } ?: false
-                    )
-                )
+                BrowserFragmentState()
             )
         }
 
@@ -203,7 +189,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
                 bookmarkTapped = { lifecycleScope.launch { bookmarkTapped(it) } },
-                bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction),
                 scope = lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage
             )
@@ -676,9 +661,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             )
 
             withContext(Main) {
-                browserFragmentStore.dispatch(
-                    QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
-                )
+                // TODO make sure this change is shown with the new code path
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
 
                 view?.let { view ->

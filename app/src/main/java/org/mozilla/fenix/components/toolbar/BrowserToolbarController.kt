@@ -40,7 +40,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.lib.Do
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 
 /**
@@ -72,7 +71,6 @@ class DefaultBrowserToolbarController(
     private val getSupportUrl: () -> String,
     private val openInFenixIntent: Intent,
     private val bookmarkTapped: (Session) -> Unit,
-    private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView>,
     private val scope: LifecycleCoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage
 ) : BrowserToolbarController {
@@ -169,7 +167,6 @@ class DefaultBrowserToolbarController(
                 browsingModeManager.mode = BrowsingMode.Private
             }
             ToolbarMenu.Item.FindInPage -> {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 findInPageLauncher()
                 activity.components.analytics.metrics.track(Event.FindInPageOpened)
             }
@@ -226,7 +223,7 @@ class DefaultBrowserToolbarController(
                 } else {
                     readerModeController.showReaderView()
                 }
-                store.dispatch(QuickActionSheetAction.ReaderActiveStateChange(!enabled))
+                // TODO make sure this state change is seen in the new code path
             }
             ToolbarMenu.Item.OpenInApp -> {
                 val appLinksUseCases =

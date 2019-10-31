@@ -21,18 +21,12 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -40,7 +34,6 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
-import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.jetbrains.anko.dimen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -51,7 +44,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
-import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getDimenInDip
 import org.mozilla.fenix.ext.increaseTapArea
@@ -61,9 +53,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.getManagedEmitter
-import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetSessionObserver
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 
 /**
  * Fragment used for browsing the web within the main app.
@@ -71,8 +60,6 @@ import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
 class BrowserFragment : BaseBrowserFragment(), BackHandler {
-    private lateinit var quickActionSheetView: QuickActionSheetView
-    private var quickActionSheetSessionObserver: QuickActionSheetSessionObserver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,15 +99,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                     if (available) {
                         context.components.analytics.metrics.track(Event.ReaderModeAvailable)
                     }
-
-                    browserFragmentStore.apply {
-                        dispatch(QuickActionSheetAction.ReadableStateChange(available))
-                        dispatch(
-                            QuickActionSheetAction.ReaderActiveStateChange(
-                                sessionManager.selectedSession?.readerMode ?: false
-                            )
-                        )
-                    }
+                    // TODO will we need code here? the browser menu will auto update on loading state change. might be enough
                 },
                 owner = this,
                 view = view
@@ -133,7 +112,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
             }
 
             consumeFrom(browserFragmentStore) {
-                quickActionSheetView.update(it)
                 browserToolbarView.update(it)
             }
         }
@@ -142,13 +120,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     override fun onStart() {
         super.onStart()
         subscribeToTabCollections()
-        quickActionSheetSessionObserver = QuickActionSheetSessionObserver(
-            lifecycleScope,
-            requireComponents,
-            dispatch = { action -> browserFragmentStore.dispatch(action) }
-        ).also { observer ->
-            getSessionById()?.register(observer, this, autoPause = true)
-        }
         getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
     }
 
@@ -171,7 +142,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
              * This fixes issue #5254.
              */
             (activity as HomeActivity).updateThemeForSession(it)
-            quickActionSheetSessionObserver?.updateBookmarkState(it)
         }
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
@@ -190,20 +160,9 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
             context = context,
             store = browserFragmentStore,
             browserToolbarController = browserToolbarController,
-            quickActionSheetController = DefaultQuickActionSheetController(
-                context = context,
-                navController = findNavController(),
-                sessionManager = context.components.core.sessionManager,
-                appLinksUseCases = context.components.useCases.appLinksUseCases,
-                bookmarkTapped = {
-                    lifecycleScope.launch { bookmarkTapped(it) }
-                }
-            ),
             readerModeController = DefaultReaderModeController(readerViewFeature),
             currentSession = session
         )
-
-        quickActionSheetView = QuickActionSheetView(view!!.nestedScrollQuickAction, interactor)
 
         return interactor
     }
@@ -284,11 +243,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                 )
             )
         })
-    }
-
-    override fun onSessionSelected(session: Session) {
-        super.onSessionSelected(session)
-        quickActionSheetSessionObserver?.updateBookmarkState(session)
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {

@@ -25,10 +25,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollQuickAction"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mozac_behavior_hideable="true"
-        app:mozac_behavior_peekHeight="12dp"
-        app:layout_behavior="org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior" />
+        android:layout_height="wrap_content" />
 
     <ViewStub
         android:id="@+id/stubFindInPage"
