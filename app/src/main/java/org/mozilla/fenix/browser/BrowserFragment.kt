@@ -74,8 +74,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     private lateinit var quickActionSheetView: QuickActionSheetView
     private var quickActionSheetSessionObserver: QuickActionSheetSessionObserver? = null
 
-    private val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
@@ -274,51 +272,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                     R.color.readerview_private_radio_color
                 )
             )
-        }
-    }
-
-    private suspend fun bookmarkTapped(session: Session) = withContext(IO) {
-        val bookmarksStorage = requireComponents.core.bookmarksStorage
-        val existing =
-            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
-        if (existing != null) {
-            // Bookmark exists, go to edit fragment
-            withContext(Main) {
-                nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(existing.guid)
-                )
-            }
-        } else {
-            // Save bookmark, then go to edit fragment
-            val guid = bookmarksStorage.addItem(
-                BookmarkRoot.Mobile.id,
-                url = session.url,
-                title = session.title,
-                position = null
-            )
-
-            withContext(Main) {
-                browserFragmentStore.dispatch(
-                    QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
-                )
-                requireComponents.analytics.metrics.track(Event.AddBookmark)
-
-                view?.let { view ->
-                    FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
-                        .setAnchorView(browserToolbarView.view)
-                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
-                            nav(
-                                R.id.browserFragment,
-                                BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(
-                                    guid
-                                )
-                            )
-                        }
-                        .setText(getString(R.string.bookmark_saved_snackbar))
-                        .show()
-                }
-            }
         }
     }
 

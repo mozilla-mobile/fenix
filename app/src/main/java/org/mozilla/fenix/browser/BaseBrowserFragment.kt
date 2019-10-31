@@ -32,6 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.accounts.FxaCapability
@@ -44,6 +45,7 @@ import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.prompts.PromptFeature
+import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
@@ -61,6 +63,7 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
@@ -71,6 +74,7 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
+import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.components.toolbar.QuickActionSheetState
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadNotificationBottomSheetDialog
@@ -98,6 +102,8 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
     protected lateinit var browserFragmentStore: BrowserFragmentStore
     protected lateinit var browserInteractor: BrowserToolbarViewInteractor
     protected lateinit var browserToolbarView: BrowserToolbarView
+
+    protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
@@ -177,7 +183,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 activity = requireActivity(),
                 snackbar = snackbar,
                 navController = findNavController(),
-                readerModeController = TODO(),
+                readerModeController = DefaultReaderModeController(readerViewFeature),
                 browsingModeManager = (activity as HomeActivity).browsingModeManager,
                 sessionManager = requireComponents.core.sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
@@ -196,7 +202,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     action = Intent.ACTION_VIEW
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                bookmarkTapped = TODO(),
+                bookmarkTapped = { lifecycleScope.launch { bookmarkTapped(it) } },
                 bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction),
                 scope = lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage
@@ -645,6 +651,51 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             sessionManager.findSessionById(localCustomTabId)
         } else {
             sessionManager.selectedSession
+        }
+    }
+
+    private suspend fun bookmarkTapped(session: Session) = withContext(IO) {
+        val bookmarksStorage = requireComponents.core.bookmarksStorage
+        val existing =
+            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
+        if (existing != null) {
+            // Bookmark exists, go to edit fragment
+            withContext(Main) {
+                nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(existing.guid)
+                )
+            }
+        } else {
+            // Save bookmark, then go to edit fragment
+            val guid = bookmarksStorage.addItem(
+                BookmarkRoot.Mobile.id,
+                url = session.url,
+                title = session.title,
+                position = null
+            )
+
+            withContext(Main) {
+                browserFragmentStore.dispatch(
+                    QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
+                )
+                requireComponents.analytics.metrics.track(Event.AddBookmark)
+
+                view?.let { view ->
+                    FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+                        .setAnchorView(browserToolbarView.view)
+                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                            nav(
+                                R.id.browserFragment,
+                                BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(
+                                    guid
+                                )
+                            )
+                        }
+                        .setText(getString(R.string.bookmark_saved_snackbar))
+                        .show()
+                }
+            }
         }
     }
 
