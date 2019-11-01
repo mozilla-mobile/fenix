@@ -265,19 +265,19 @@ class DefaultToolbarMenu(
     }
 
     private val readerMode = BrowserMenuImageSwitch(
-        label = context.getString(R.string.quick_action_read),
+        label = context.getString(R.string.quick_action_read), // TODO make new strings for all QAB strings, in case this movement changes the grammar in some languages
         imageResource = R.drawable.ic_readermode,
         initialState = readerModeStateProvider
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
     }
 
-    private val readerAppearance = BrowserMenuImageSwitch(
-        label = context.getString(R.string.quick_action_read), // TODO
-        imageResource = R.drawable.ic_readermode, // TODO
-        initialState = readerModeStateProvider // TODO
-    ) { checked ->
-        onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked)) // TODO
+    private val readerAppearance = BrowserMenuImageText(
+        label = context.getString(R.string.quick_action_read_appearance),
+        imageResource = R.drawable.ic_readermode_appearance,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.ReaderModeAppearance)
     }
 
     private val openInApp = BrowserMenuImageText(

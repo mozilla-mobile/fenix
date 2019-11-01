@@ -29,6 +29,7 @@ interface ToolbarMenu {
         data class ReaderMode(val isChecked: Boolean) : Item()
         object OpenInApp : Item()
         object Bookmark : Item()
+        object ReaderModeAppearance : Item()
     }
 
     val menuBuilder: BrowserMenuBuilder
