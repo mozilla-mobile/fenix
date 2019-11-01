@@ -117,6 +117,7 @@ class DefaultToolbarMenu(
             ),
             disableInSecondaryState = false
         ) {
+            if (!currentUrlIsBookmarked) currentUrlIsBookmarked = true
             onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
         }
 
@@ -293,6 +294,7 @@ class DefaultToolbarMenu(
     private fun registerForIsBookmarkedUpdates(sessionManager: SessionManager) {
         val observer = object : Session.Observer {
             override fun onUrlChanged(session: Session, url: String) {
+                currentUrlIsBookmarked = false
                 updateCurrentUrlIsBookmarked(url)
             }
         }
@@ -302,7 +304,6 @@ class DefaultToolbarMenu(
     }
 
     private fun updateCurrentUrlIsBookmarked(newUrl: String) {
-        currentUrlIsBookmarked = false
         isBookmarkedJob?.cancel()
         isBookmarkedJob = lifecycleOwner.lifecycleScope.launch {
             currentUrlIsBookmarked = bookmarksStorage
