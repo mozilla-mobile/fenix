@@ -174,7 +174,8 @@ class HistoryTest {
     }
 
     @Test
-    fun deleteMultipleSelectionTest() {
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+ fun deleteMultipleSelectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
