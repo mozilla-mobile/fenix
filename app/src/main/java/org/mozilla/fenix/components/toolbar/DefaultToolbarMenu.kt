@@ -7,7 +7,6 @@ package org.mozilla.fenix.components.toolbar
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -125,32 +124,41 @@ class DefaultToolbarMenu(
     }
 
     private val menuItems by lazy {
-        val browsingModeIsNormal = (context.asActivity() as? HomeActivity)
+        // Predicates that are called once, during screen init
+        val shouldShowSaveToCollection = (context.asActivity() as? HomeActivity)
             ?.browsingModeManager?.mode == BrowsingMode.Normal
         val shouldDeleteDataOnQuit = Settings.getInstance(context)
             .shouldDeleteBrowsingDataOnQuit
-        val readerModeIsAvailable = sessionManager.selectedSession?.readerable ?: false
-        val openInAppAvailable = sessionManager.selectedSession?.let { session ->
+
+        // Predicates that need to be repeatedly called as the session changes
+        fun shouldShowAddToHomescreen(): Boolean {
+            return context.components.useCases.webAppUseCases.isPinningSupported() &&
+                    context.components.core.sessionManager.selectedSession != null
+        }
+        fun shouldShowReaderMode(): Boolean = sessionManager.selectedSession?.readerable ?: false
+        fun shouldShowOpenInApp(): Boolean = sessionManager.selectedSession?.let { session ->
             val appLink =
                 context.components.useCases.appLinksUseCases.appLinkRedirect
             appLink(session.url).hasExternalApp()
         } ?: false
+        fun shouldShowReaderAppearance(): Boolean =
+            sessionManager.selectedSession?.readerMode ?: false
 
-        listOfNotNull( // TODO this approach doesn't work. We provide these on fragment init, so we need to provide them all and somehow toggle their visibility after the fact
+        listOfNotNull(
             help,
             settings,
             library,
             desktopMode,
-            addToHomescreen,
+            addToHomescreen.apply { visible = ::shouldShowAddToHomescreen },
             findInPage,
             privateTab,
             newTab,
             reportIssue,
-            if (browsingModeIsNormal) saveToCollection else null,
+            if (shouldShowSaveToCollection) saveToCollection else null,
             if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
-            if (readerModeIsAvailable) readerMode else null,
-            // TODO add Appearance button when reader mode is open
-            if (openInAppAvailable) openInApp else null,
+            readerMode.apply { visible = ::shouldShowReaderMode },
+            readerAppearance.apply { visible = ::shouldShowReaderAppearance },
+            openInApp.apply { visible = ::shouldShowOpenInApp },
             BrowserMenuDivider(),
             menuToolbar
         )
@@ -206,13 +214,6 @@ class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
-    }.apply {
-        visible = ::shouldShowAddToHomescreen
-    }
-
-    private fun shouldShowAddToHomescreen(): Boolean {
-        return context.components.useCases.webAppUseCases.isPinningSupported() &&
-                context.components.core.sessionManager.selectedSession != null
     }
 
     private val findInPage = BrowserMenuImageText(
@@ -269,6 +270,14 @@ class DefaultToolbarMenu(
         initialState = readerModeStateProvider
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
+    }
+
+    private val readerAppearance = BrowserMenuImageSwitch(
+        label = context.getString(R.string.quick_action_read), // TODO
+        imageResource = R.drawable.ic_readermode, // TODO
+        initialState = readerModeStateProvider // TODO
+    ) { checked ->
+        onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked)) // TODO
     }
 
     private val openInApp = BrowserMenuImageText(
