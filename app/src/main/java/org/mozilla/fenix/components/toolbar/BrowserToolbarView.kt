@@ -178,6 +178,9 @@ class BrowserToolbarView(
                     requestDesktopStateProvider = {
                         sessionManager.selectedSession?.desktopMode ?: false
                     },
+                    readerModeStateProvider = {
+                        sessionManager.selectedSession?.readerMode ?: false
+                    },
                     onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) },
                     lifecycleOwner = container.context as AppCompatActivity,
                     sessionManager = sessionManager,

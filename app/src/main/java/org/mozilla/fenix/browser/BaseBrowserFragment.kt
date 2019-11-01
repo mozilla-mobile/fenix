@@ -201,8 +201,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
                 interactor = browserInteractor,
-                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                scope = lifecycleScope
+                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
             )
 
             toolbarIntegration.set(
@@ -663,6 +662,10 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             withContext(Main) {
                 // TODO make sure this change is shown with the new code path
+                // update, it isn't. Go to unbookmarked page -> bookmark
+                // expect: star filled in
+                // actual: star outlined
+                // TODO fix
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
 
                 view?.let { view ->

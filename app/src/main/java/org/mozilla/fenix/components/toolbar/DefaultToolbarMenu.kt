@@ -121,8 +121,6 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
         }
 
-
-
         BrowserMenuItemToolbar(listOf(forward, bookmark, share, refresh))
     }
 
@@ -131,8 +129,14 @@ class DefaultToolbarMenu(
             ?.browsingModeManager?.mode == BrowsingMode.Normal
         val shouldDeleteDataOnQuit = Settings.getInstance(context)
             .shouldDeleteBrowsingDataOnQuit
+        val readerModeIsAvailable = sessionManager.selectedSession?.readerable ?: false
+        val openInAppAvailable = sessionManager.selectedSession?.let { session ->
+            val appLink =
+                context.components.useCases.appLinksUseCases.appLinkRedirect
+            appLink(session.url).hasExternalApp()
+        } ?: false
 
-        listOfNotNull(
+        listOfNotNull( // TODO this approach doesn't work. We provide these on fragment init, so we need to provide them all and somehow toggle their visibility after the fact
             help,
             settings,
             library,
@@ -144,9 +148,9 @@ class DefaultToolbarMenu(
             reportIssue,
             if (browsingModeIsNormal) saveToCollection else null,
             if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
-            readerMode, // TODO only sometimes add
+            if (readerModeIsAvailable) readerMode else null,
             // TODO add Appearance button when reader mode is open
-            openInApp, // TODO only sometimes add
+            if (openInAppAvailable) openInApp else null,
             BrowserMenuDivider(),
             menuToolbar
         )
