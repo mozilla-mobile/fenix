@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.net.Uri
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -39,6 +40,8 @@ class ThreeDotMenuMainRobot {
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
     fun verifyBackButton() = assertBackButton()
+    fun verifyAddBookmarkButton() = assertAddBookmarkButton()
+    fun verifyEditBookmarkButton() = assertEditBookmarkButton()
     fun verifyRefreshButton() = assertRefreshButton()
     fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyShareButton() = assertShareButton()
@@ -55,6 +58,7 @@ class ThreeDotMenuMainRobot {
     fun clickAddNewCollection() {
         addNewCollectionButton().click()
     }
+    fun clickAddBookmarkButton() = addBookmarkButton().click()
     fun verifyCollectionNameTextField() = assertCollectionNameTextField()
     fun verifyFindInPageButton() = assertFindInPageButton()
     fun verifyShareScrim() = assertShareScrim()
@@ -198,6 +202,14 @@ private fun backButton() = onView(ViewMatchers.withContentDescription("Back"))
 private fun assertBackButton() = backButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
+private fun addBookmarkButton() = onView(ViewMatchers.withContentDescription("Bookmark"))
+private fun assertAddBookmarkButton() = addBookmarkButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun editBookmarkButton() = onView(ViewMatchers.withContentDescription("Edit bookmark"))
+private fun assertEditBookmarkButton() = editBookmarkButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
 private fun refreshButton() = onView(ViewMatchers.withContentDescription("Refresh"))
 private fun assertRefreshButton() = refreshButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
@@ -210,7 +222,7 @@ private fun shareTabButton() = onView(allOf(withText("Share tabs")))
 private fun assertShareTabButton() = shareTabButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
-private fun shareButton() = onView(allOf(withText("Share")))
+private fun shareButton() = onView(ViewMatchers.withContentDescription("Share"))
 private fun assertShareButton() = shareButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
