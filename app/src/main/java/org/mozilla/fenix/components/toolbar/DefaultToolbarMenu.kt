@@ -26,6 +26,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 
+@Suppress("LargeClass") // While large, most of the class is very simple
 class DefaultToolbarMenu(
     private val context: Context,
     private val hasAccountProblem: Boolean = false,
@@ -266,7 +267,7 @@ class DefaultToolbarMenu(
     }
 
     private val readerMode = BrowserMenuImageSwitch(
-        label = context.getString(R.string.quick_action_read), // TODO make new strings for all QAB strings, in case this movement changes the grammar in some languages
+        label = context.getString(R.string.browser_menu_read),
         imageResource = R.drawable.ic_readermode,
         initialState = readerModeStateProvider
     ) { checked ->
@@ -274,7 +275,7 @@ class DefaultToolbarMenu(
     }
 
     private val readerAppearance = BrowserMenuImageText(
-        label = context.getString(R.string.quick_action_read_appearance),
+        label = context.getString(R.string.browser_menu_read_appearance),
         imageResource = R.drawable.ic_readermode_appearance,
         iconTintColorResource = primaryTextColor()
     ) {
@@ -282,7 +283,7 @@ class DefaultToolbarMenu(
     }
 
     private val openInApp = BrowserMenuImageText(
-        label = context.getString(R.string.quick_action_open_app_link),
+        label = context.getString(R.string.browser_menu_open_app_link),
         imageResource = R.drawable.ic_library,
         iconTintColorResource = primaryTextColor()
         ) {

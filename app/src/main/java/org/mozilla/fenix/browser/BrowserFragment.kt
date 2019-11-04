@@ -95,7 +95,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
                     if (available) {
                         context.components.analytics.metrics.track(Event.ReaderModeAvailable)
                     }
-                    // TODO will we need code here? the browser menu will auto update on loading state change. might be enough
                 },
                 owner = this,
                 view = view
