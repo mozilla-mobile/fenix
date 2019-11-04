@@ -4,11 +4,7 @@
 
 package org.mozilla.fenix.components.toolbar
 
-import android.content.Context
-import mozilla.components.browser.session.Session
-import org.mozilla.fenix.browser.readermode.ReaderModeController
-
-open class BrowserToolbarInteractor(
+open class BrowserInteractor(
     private val browserToolbarController: BrowserToolbarController
 ) : BrowserToolbarViewInteractor {
 
@@ -32,11 +28,3 @@ open class BrowserToolbarInteractor(
         browserToolbarController.handleToolbarItemInteraction(item)
     }
 }
-
-class BrowserInteractor( // TODO remove
-    private val context: Context,
-    private val store: BrowserFragmentStore,
-    browserToolbarController: BrowserToolbarController,
-    private val readerModeController: ReaderModeController,
-    private val currentSession: Session?
-) : BrowserToolbarInteractor(browserToolbarController)

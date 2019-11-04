@@ -70,6 +70,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
+import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
@@ -193,10 +194,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage
             )
 
-            browserInteractor =
-                createBrowserToolbarViewInteractor(
-                    browserToolbarController,
-                    customTabSessionId?.let { sessionManager.findSessionById(it) })
+            browserInteractor = BrowserInteractor(
+                browserToolbarController = browserToolbarController
+            )
 
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
@@ -551,11 +551,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         }
         return false
     }
-
-    protected abstract fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor
 
     protected abstract fun navToQuickSettingsSheet(
         session: Session,

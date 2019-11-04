@@ -28,7 +28,6 @@ class CustomTabsIntegration(
     toolbar: BrowserToolbar,
     sessionId: String,
     activity: Activity,
-    quickActionbar: NestedScrollView,
     engineLayout: View,
     onItemTapped: (ToolbarMenu.Item) -> Unit = {}
 ) : LifecycleAwareFeature, BackHandler {
@@ -51,9 +50,6 @@ class CustomTabsIntegration(
                 gravity = Gravity.TOP
             }
         }
-
-        // Hide the Quick Action Bar.
-        quickActionbar.visibility = View.GONE
 
         val task = LottieCompositionFactory
             .fromRawRes(

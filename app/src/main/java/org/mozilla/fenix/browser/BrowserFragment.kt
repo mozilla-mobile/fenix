@@ -150,23 +150,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         return readerViewFeature.onBackPressed() || super.onBackPressed()
     }
 
-    override fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor {
-        val context = requireContext()
-
-        val interactor = BrowserInteractor(
-            context = context,
-            store = browserFragmentStore,
-            browserToolbarController = browserToolbarController,
-            readerModeController = DefaultReaderModeController(readerViewFeature),
-            currentSession = session
-        )
-
-        return interactor
-    }
-
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
         val directions =
             BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(

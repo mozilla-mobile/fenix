@@ -10,13 +10,14 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
-// TODO ... remove file? Find things that should live here and refactor them in?
+// The state that used to live in this class was moved into another component in #4281. Keeping
+// the shell of this file because we will need to expand it as we add additional features to
+// the browser.
 class BrowserFragmentStore(initialState: BrowserFragmentState) :
     Store<BrowserFragmentState, BrowserFragmentAction>(initialState, ::browserStateReducer)
 
 /**
  * The state for the Browser Screen
- * @property quickActionSheetState: state of the quick action sheet
  */
 class BrowserFragmentState : State
 
@@ -34,16 +35,5 @@ private fun browserStateReducer(
 ): BrowserFragmentState {
     return when {
         else -> BrowserFragmentState()
-    }
-}
-
-/**
- * Reduces [QuickActionSheetAction]s to update [BrowserFragmentState].
- */
-internal object QuickActionSheetStateReducer {
-    fun reduce(state: BrowserFragmentState): BrowserFragmentState {
-        return when {
-            else -> state
-        }
     }
 }
