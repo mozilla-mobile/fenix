@@ -212,7 +212,6 @@ class AwesomeBarView(
             return
         }
 
-
         val providersToAdd = getProvidersToAdd(state)
         val providersToRemove = getProvidersToRemove(state)
 

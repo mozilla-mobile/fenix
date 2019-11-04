@@ -11,6 +11,10 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
+import mozilla.components.service.location.MozillaLocationService
+import mozilla.components.service.location.search.RegionSearchLocalizationProvider
+import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
 import java.util.Locale
@@ -30,15 +34,14 @@ class Search(private val context: Context) {
     val searchEngineManager by lazy {
         SearchEngineManager(
             coroutineContext = IO, providers = listOf(
-                AssetsSearchEngineProvider(LocaleSearchLocalizationProvider())
-//                TODO use RegionSearchLocalizationProvider instead once API key is available
-//                AssetsSearchEngineProvider(RegionSearchLocalizationProvider(
-//                    MozillaLocationService(
-//                        context = context,
-//                        client = context.components.core.client,
-//                        apiKey = ???
-//                    )
-//                ))
+                AssetsSearchEngineProvider(
+                    RegionSearchLocalizationProvider(
+                    MozillaLocationService(
+                        context = context,
+                        client = context.components.core.client,
+                        apiKey = BuildConfig.MOZ_LOCATION_SERVICE_TOKEN
+                    )
+                ))
             )
         ).apply {
             registerForLocaleUpdates(context)
