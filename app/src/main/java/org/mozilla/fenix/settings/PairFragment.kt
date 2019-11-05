@@ -62,8 +62,6 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
                         R.id.turnOnSyncFragment,
                         false
                     )
-
-
                 }),
             owner = this,
             view = view
