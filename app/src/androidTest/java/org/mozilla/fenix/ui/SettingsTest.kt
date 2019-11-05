@@ -65,11 +65,8 @@ class SettingsTest {
 
         // ABOUT
 
-        // Verify header: "About"
-        // Verify item: "Help"
-        // Verify item: "Rate on Google Play"
-        // Verify item: "About Firefox Preview"
-        //
+        // see: SettingsAboutTest
+
     }
 
     // SYNC
@@ -95,35 +92,6 @@ class SettingsTest {
     }
 
     // ABOUT
-    @Ignore("This is a stub test, ignore for now")
-    @Test
-    fun verifyHelpRedirect() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Help"
-        // Verify redirect to: https://support.mozilla.org/
-    }
 
-    @Ignore("This is a stub test, ignore for now")
-    @Test
-    fun verifyRateOnGooglePlayRedirect() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Rate on Google Play"
-        // Verify Android "Open with Google Play Store" sub menu
-    }
-
-    @Ignore("This is a stub test, ignore for now")
-    @Test
-    fun verifyAboutFirefoxPreview() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Verify About Firefox Preview"
-        // Verify about page contains....
-        // Build #
-        // Version #
-        // "Firefox Preview is produced by Mozilla"
-        // Day, Date, timestamp
-        // "Open source libraries we use"
-    }
+    // see: SettingsAboutTest
 }

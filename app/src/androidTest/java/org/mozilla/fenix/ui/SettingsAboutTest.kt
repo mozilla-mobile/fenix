@@ -59,13 +59,8 @@ class SettingsAboutTest {
     }
 
     // ABOUT
-//    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyHelpRedirect() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Help"
-        // Verify redirect to: https://support.mozilla.org/
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -74,36 +69,18 @@ class SettingsAboutTest {
         }
     }
 
-
-    //    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyRateOnGooglePlayRedirect() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openRateOnGooglePlay{
-            // TODO: add test.getActivity???
-        }.goBack {  }
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Rate on Google Play"
-        // Verify Android "Open with Google Play Store" sub menu
+            // TODO: test with externalAppsRobot
+        }
     }
 
-
-
-    //    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyAboutFirefoxPreview() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Verify About Firefox Preview"
-        // Verify about page contains....
-        // Build #
-        // Version #
-        // "Firefox Preview is produced by Mozilla"
-        // Day, Date, timestamp
-        // "Open source libraries we use"
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {

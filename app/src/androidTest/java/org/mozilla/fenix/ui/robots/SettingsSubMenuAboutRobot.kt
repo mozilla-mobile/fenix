@@ -31,7 +31,6 @@ class SettingsSubMenuAboutRobot {
     fun verifyProducedBy() = assertProducedBy()
     fun verifyTimeStamp() = assertTimestamp()
     fun verifyOpenSourceLibraries() = assertOpenSourceLibraries()
-    fun verifyRateOnGooglePlaySubmenu() = assertRateOnGooglePlaySubmenu()
     fun verifyRedirectToSupport() = assertRedirectToSupport()
 
     class Transition {
@@ -86,11 +85,7 @@ private fun assertOpenSourceLibraries() {
     onView(ViewMatchers.withText("Open source libraries we use"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
-private fun assertRateOnGooglePlaySubmenu() {
-    onView(ViewMatchers.withText("Rate on Google Play"))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    goBackButton().click()
-}
+
 private fun assertRedirectToSupport() {
     onView(CoreMatchers.allOf(ViewMatchers.withText(startsWith("https://support.mozilla.org/"))))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
