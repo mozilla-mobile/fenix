@@ -55,7 +55,7 @@ import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 
 @ExperimentalCoroutinesApi
 @UseExperimental(ObsoleteCoroutinesApi::class)
-class DefaultBrowserToolbarControllerTest { // TODO test recently added code
+class DefaultBrowserToolbarControllerTest {
 
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
     private var browserLayout: ViewGroup = mockk(relaxed = true)

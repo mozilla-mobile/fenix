@@ -221,7 +221,6 @@ class DefaultBrowserToolbarController(
                 } else {
                     readerModeController.showReaderView()
                 }
-                // TODO make sure this state change is seen in the new code path
             }
             ToolbarMenu.Item.ReaderModeAppearance -> {
                 readerModeController.showControls()
