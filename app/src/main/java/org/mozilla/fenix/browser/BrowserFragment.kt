@@ -22,9 +22,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_browser.nestedScrollQuickAction
 import kotlinx.android.synthetic.main.fragment_browser.view.browserLayout
 import kotlinx.android.synthetic.main.fragment_browser.view.readerViewControlsBar
+import kotlinx.android.synthetic.main.fragment_home.bottom_bar
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.onboarding_message
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -300,7 +300,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         view,
         FenixSnackbarDelegate(
             view,
-            nestedScrollQuickAction
+            bottom_bar
         )
     )
 

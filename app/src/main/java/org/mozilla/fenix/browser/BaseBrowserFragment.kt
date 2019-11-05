@@ -362,7 +362,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                             ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
                         activity?.enterToImmersiveMode()
                         toolbar.visibility = View.GONE
-                        nestedScrollQuickAction.visibility = View.GONE
                     } else {
                         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
                         activity?.exitImmersiveModeIfNeeded()
@@ -370,7 +369,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                             activity.themeManager.applyStatusBarTheme(activity)
                         }
                         toolbar.visibility = View.VISIBLE
-                        nestedScrollQuickAction.visibility = View.VISIBLE
                     }
                     updateLayoutMargins(inFullScreen)
                 },

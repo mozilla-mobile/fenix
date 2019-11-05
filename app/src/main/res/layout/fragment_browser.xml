@@ -22,11 +22,6 @@
             android:layout_height="match_parent" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollQuickAction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <ViewStub
         android:id="@+id/stubFindInPage"
         android:inflatedId="@+id/findInPageView"
