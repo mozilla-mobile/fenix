@@ -77,12 +77,12 @@ open class FenixApplication : Application() {
         // Make sure the engine is initialized and ready to use.
         components.core.engine.warmUp()
 
-        // We want to call this function as early as possible, but only once and
-        // on the main process, as it uses Gecko to fetch experiments from the server.
-        experimentLoader = loadExperiments()
-
         // Enable the service-experiments component
         if (settings().isExperimentationEnabled && Config.channel.isReleaseOrBeta) {
+            // We want to call this function as early as possible, but only once and
+            // on the main process, as it uses Gecko to fetch experiments from the server.
+            experimentLoader = loadExperiments()
+
             Experiments.initialize(
                 applicationContext,
                 mozilla.components.service.experiments.Configuration(
