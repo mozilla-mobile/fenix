@@ -157,11 +157,12 @@ class DefaultCollectionCreationController(
      * Algorithm: Go through all collections, make a list of their names and keep only the default ones.
      * Then get the numbers from all these default names, compute the maximum number and add one.
      */
-    private fun getDefaultCollectionNumber(): Int {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getDefaultCollectionNumber(): Int {
         return (store.state.tabCollections
             .map { it.title }
             .filter { it.matches(Regex("Collection\\s\\d+")) }
-            .map { Integer.valueOf(it.split("\\s")[DEFAULT_COLLECTION_NUMBER_POSITION]) }
+            .map { Integer.valueOf(it.split(" ")[DEFAULT_COLLECTION_NUMBER_POSITION]) }
             .max() ?: 0) + DEFAULT_INCREMENT_VALUE
     }
 
