@@ -38,7 +38,7 @@ class FragmentTest {
     val mockOptions: NavOptions = mockk(relaxed = true)
 
     @Before
-    fun setup(){
+    fun setup() {
         mockkStatic(NavHostFragment::class)
         every { (NavHostFragment.findNavController(mockFragment)) } returns navController
         every { (NavHostFragment.findNavController(mockFragment).getCurrentDestination()) } returns mockDestination

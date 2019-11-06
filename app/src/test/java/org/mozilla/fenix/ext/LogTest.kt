@@ -20,7 +20,7 @@ class LogTest {
     val numCalls = if (BuildConfig.DEBUG) 1 else 0
 
     @Before
-    fun setup(){
+    fun setup() {
         mockkStatic(Log::class)
     }
 
