@@ -325,6 +325,11 @@ androidExtensions {
     experimental = true
 }
 
+// Generate Kotlin code markdown docs for the collected metrics.
+ext.gleanGenerateMarkdownDocs = true
+ext.gleanDocsDirectory = "$rootDir/docs"
+apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
+
 dependencies {
     implementation project(':architecture')
 
@@ -499,7 +504,7 @@ dependencies {
 
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
-    testImplementation Deps.mozilla_service_glean_forUnitTests
+    testImplementation "org.mozilla.telemetry:glean-forUnitTests:${project.ext.glean_version}"
 }
 
 if (project.hasProperty("raptor")) {
@@ -560,17 +565,6 @@ task printVariants {
         println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
     }
 }
-
-def glean_android_components_tag = (
-    Versions.mozilla_android_components.endsWith('-SNAPSHOT') ?
-        'master' :
-        'v' + Versions.mozilla_android_components
-)
-
-// Generate markdown docs for the collected metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
-apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 // For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together
 // into a single "megazord" build, and different megazords are published for different subsets of features.
