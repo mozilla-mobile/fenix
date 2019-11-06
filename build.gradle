@@ -27,6 +27,7 @@ plugins {
 
 allprojects {
     repositories {
+        mavenLocal()
         google()
         maven {
             url "https://snapshots.maven.mozilla.org/maven2"

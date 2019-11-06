@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        dependencies {
+            classpath "org.mozilla.components:tooling-glean-gradle-plugin:${Versions.mozilla_android_components}"
+        }
+    }
+}
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.26"
 }
@@ -560,7 +570,7 @@ def glean_android_components_tag = (
 // Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
-apply from: 'https://github.com/mozilla-mobile/android-components/raw/' + glean_android_components_tag + '/components/service/glean/scripts/sdk_generator.gradle'
+apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 // For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together
 // into a single "megazord" build, and different megazords are published for different subsets of features.
