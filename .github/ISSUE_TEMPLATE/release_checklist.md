@@ -34,13 +34,15 @@ We will refer to the release that is going out as the *current* release.
 - [ ] Merge any remaining [automated L10N string PRs](https://github.com/mozilla-mobile/fenix/pull/6156).
 - [ ] Create a branch off of master (DO NOT PUSH YET) for the *current* milestone of format `releases/v2.3` (where 2.3 is the *current* milestone). After that, anything landing in master will be part of the next milestone.
 - [ ] On the Release branch, pin the AC version to the stable version ([example](https://github.com/mozilla-mobile/fenix/commit/e413da29f6a7a7d4a765817a9cd5687abbf27619)) with commit message "Issue #`<this releng issue>`: Pin to stable AC `<version>` for release v2.3" (replacing 2.3 with the version)
-- For each issue closed since the last release (run `kotlinc -script automation/releasetools/PrintMentionedIssuesAndPrs.kts` to get a list [see script for details]):
+- For each issue closed since the last release (run `kotlinc -script automation/releasetools/PrintMentionedIssuesAndPrs.kts` to get a list [see script for details] and paste it into the Releng issue):
   - [ ] Ensure it has the correct milestone.
   - [ ] Add `eng:qa:needed` flags on each issue that still needs it.
 - Note: You will need code review to make changes to the release branch after this point, because it is a protected branch.
     - [ ] Push the branch.
 
 - [ ] On GitHub, draft a GitHub Release with with a tag of the format `v2.3.0-rc.1` with the release branch as the target. Check the pre-release checkbox. This will kick off a build of the branch. You can see it in the mouseover of the CI badge of the branch in the commits view.
+!!! This ^ was a lot cleaner on FFTV, we should poach from those docs:  - [ ] Create GitHub pre-release build `vX.X-LAT2` ([instructions](https://github.com/mozilla-mobile/firefox-tv/wiki/Release-Management-Checklist#final-builds))
+!!! "This will kick off a build of the branch. You can see it in the mouseover of the CI badge of the branch in the commits view."  Where?  There are a LOT of tasks, and they change as the build progresses. (builds are found under `signing-production` task)
 
     - If you need to trigger a new RC build, you will need to draft and publish a new (pre-release) release. Editing an existing release and creating a new tag will not trigger a new RC build.
 
@@ -60,6 +62,7 @@ We will refer to the release that is going out as the *current* release.
 ## Release to Google Play Store [Tuesday, 3rd week]
 
 - [ ] Tag the latest released RC version additionally with the tag of the release (v1.0-RC2 -> v1.0) (This can be done as soon as there are no more release blockers, does not need to be on Release Day.)
+    - [ ] **Verify that the commit hash of the new release matches the most recent RC.**  This ensures that the correct version will be released
 - [ ] Upload signed APKs to the [release page](https://github.com/mozilla-mobile/fenix/releases)
 - [ ] Create a release request in Bugzilla. You can clone [this issue](https://bugzilla.mozilla.org/show_bug.cgi?id=1571967) and `need-info` someone from release management.
 
@@ -74,3 +77,5 @@ We will refer to the release that is going out as the *current* release.
 ## Room for improvement
 - [ ] Automate assigning milestones to closed issues (based on date, etc) #6199
 - [ ] Automate assignig `eng:qa:needed` to issues #6199
+- [ ] Automate verification that the commit hash matches the most recent RC
+- [ ] Builds generated as part of `signing-production` task look like `public/build/arm64-v8a/geckoBeta/target.apk`.  This means that the dev must download, then rename them by hand.  Could RM update these to generate `public/build/arm64-v8a/geckoBeta/firefox-preview-v3.0.0-rc.1-arm64-v8a.apk`, or similar?
