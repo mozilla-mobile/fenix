@@ -38,7 +38,6 @@ class ThreeDotMenuMainRobot {
     fun verifyHelpButton() = assertHelpButton()
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
-    fun verifyBackButton() = assertBackButton()
     fun verifyAddBookmarkButton() = assertAddBookmarkButton()
     fun verifyEditBookmarkButton() = assertEditBookmarkButton()
     fun verifyRefreshButton() = assertRefreshButton()
@@ -118,8 +117,10 @@ class ThreeDotMenuMainRobot {
         }
 
         fun goBack(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.desc("Back")), waitingTime)
-            backButton().click()
+            // Close three dot
+            mDevice.pressBack()
+            // Nav back to previous page
+            mDevice.pressBack()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -195,10 +196,6 @@ private fun assertHelpButton() = helpButton()
 
 private fun forwardButton() = onView(ViewMatchers.withContentDescription("Forward"))
 private fun assertForwardButton() = forwardButton()
-    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
-private fun backButton() = onView(ViewMatchers.withContentDescription("Back"))
-private fun assertBackButton() = backButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun addBookmarkButton() = onView(ViewMatchers.withContentDescription("Bookmark"))
