@@ -99,7 +99,7 @@
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Powered by %1$s</string>
     <!-- Browser menu button to put the the current page in reader mode -->
-    <string name="browser_menu_read">Read</string>
+    <string name="browser_menu_read">Reader view</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Open in App</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
