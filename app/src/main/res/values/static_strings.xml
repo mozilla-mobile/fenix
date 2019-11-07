@@ -32,4 +32,6 @@
 
     <string name="search_engine_add_custom_search_engine_title" translatable="false">Add search engine</string>
     <string name="search_engine_add_custom_search_engine_add_button_content_description" translatable="false">Add</string>
+
+    <string name="search_engine_delete" translatable="false">Delete</string>
 </resources>

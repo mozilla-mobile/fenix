@@ -8,8 +8,16 @@ import android.content.Context
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineParser
+import mozilla.components.browser.search.provider.SearchEngineList
+import mozilla.components.browser.search.provider.SearchEngineProvider
 import org.mozilla.fenix.ext.components
 import java.lang.Exception
+
+class CustomSearchEngineProvider : SearchEngineProvider {
+    override suspend fun loadSearchEngines(context: Context): SearchEngineList {
+        return SearchEngineList(CustomSearchEngineStore.loadCustomSearchEngines(context), null)
+    }
+}
 
 object CustomSearchEngineStore {
     class EngineNameAlreadyExists: Exception()
@@ -35,6 +43,7 @@ object CustomSearchEngineStore {
         val customEngines = pref(context).getStringSet(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet())
         val enginesEditor = pref(context).edit()
         enginesEditor.remove(engineId)
+
 
         enginesEditor.putStringSet(
             PREF_KEY_CUSTOM_SEARCH_ENGINES,

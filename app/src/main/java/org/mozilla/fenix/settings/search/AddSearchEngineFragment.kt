@@ -122,6 +122,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = "Custom"
         wrapper.engine_icon.visibility = View.GONE
+        wrapper.overflow_menu.visibility = View.GONE
         return wrapper
     }
 
@@ -138,6 +139,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         val engineIcon = BitmapDrawable(res, engine.icon)
         engineIcon.setBounds(0, 0, iconSize, iconSize)
         wrapper.engine_icon.setImageDrawable(engineIcon)
+        wrapper.overflow_menu.visibility = View.GONE
         return wrapper
     }
 }

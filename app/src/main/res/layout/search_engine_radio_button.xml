@@ -39,4 +39,14 @@
         app:layout_constraintStart_toEndOf="@id/engine_icon"
         app:layout_constraintTop_toTopOf="@id/engine_icon"
         app:layout_constraintEnd_toEndOf="parent" />
+    <ImageButton
+        android:id="@+id/overflow_menu"
+        android:layout_width="@dimen/glyph_button_width"
+        android:layout_height="@dimen/glyph_button_height"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/content_description_menu"
+        android:src="@drawable/ic_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
