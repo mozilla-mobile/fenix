@@ -176,8 +176,8 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun getEngineMargins(): Pair<Int, Int> {
-        val toolbarAndQASSize = resources.getDimensionPixelSize(R.dimen.toolbar_and_qab_height)
-        return 0 to toolbarAndQASSize
+        val toolbarSize = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+        return 0 to toolbarSize
     }
 
     override fun getAppropriateLayoutGravity() = Gravity.BOTTOM
