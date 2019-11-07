@@ -81,14 +81,27 @@ class ContextTest () {
 
     @Test
     fun `GIVEN context WHEN given a preference key THEN send back the right string`() {
-        val comparisonStr = testContext.getString(R.string.app_name_private)
-        val stringId = R.string.app_name_private.toInt()
+        val comparisonStr = testContext.getString(R.string.private_browsing_common_myths)
+        val stringId = R.string.private_browsing_common_myths.toInt()
         val actualStr = testContext.getPreferenceKey(stringId)
         assertEquals(comparisonStr, actualStr)
     }
 
     @Test
     fun `GIVEN context WHEN getting a color from attribute THEN ensure right color returned`() {
+        // "@color/sync_error_text_color"
+        val resource = testContext.getResources().getDrawable(R.drawable.fenix_snackbar_background)
+        val id = resource.toInt()
+        println(id)
+        println(testContext.getColorFromAttr(resource))
+    }
 
+    @Test
+    fun `GIVEN context WHEN setting boolean prefs settings THEN send back correct settings obj`() {
+        val buildConfigCrashReporting = false
+        val configChannelIsRelease = true
+        val isCrashReportEnabled = buildConfigCrashReporting && configChannelIsRelease
+        
+        println(isCrashReportEnabled)
     }
 }
