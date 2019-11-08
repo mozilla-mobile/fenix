@@ -47,15 +47,31 @@ private class EventWrapper<T : Enum<T>>(
     private val recorder: ((Map<T, String>?) -> Unit),
     private val keyMapper: ((String) -> T)? = null
 ) {
-    private val String.asCamelCase: String
-        get() = this.split("_").reduceIndexed { index, acc, s ->
-            if (index == 0) acc + s
-            else acc + s.capitalize()
+
+    /**
+     * Converts snake_case string to camelCase.
+     */
+    private fun String.asCamelCase(): String {
+        val parts = split("_")
+        val builder = StringBuilder()
+
+        for ((index, part) in parts.withIndex()) {
+            if (index == 0) {
+                builder.append(part)
+            } else {
+                builder.append(part[0].toUpperCase())
+                builder.append(part.substring(1))
+            }
         }
+
+        return builder.toString()
+    }
 
     fun track(event: Event) {
         val extras = if (keyMapper != null) {
-            event.extras?.mapKeys { keyMapper.invoke(it.key.toString().asCamelCase) }
+            event.extras?.mapKeys { (key) ->
+                keyMapper.invoke(key.toString().asCamelCase())
+            }
         } else {
             null
         }
@@ -400,6 +416,10 @@ private val Event.wrapper: EventWrapper<*>?
             { TrackingProtection.etpSettingChanged.record(it) },
             { TrackingProtection.etpSettingChangedKeys.valueOf(it) }
         )
+        is Event.OpenedLink -> EventWrapper(
+            { Events.openedLink.record(it) },
+            { Events.openedLinkKeys.valueOf(it) }
+        )
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
         is Event.OpenedBookmark -> null
@@ -440,6 +460,8 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         }
 
         setStartupMetrics()
+
+        context.settings().totalUriCount = 0
     }
 
     internal fun setStartupMetrics() {
@@ -450,6 +472,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             }
             mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
             adjustCampaign.set(context.settings().adjustCampaignId)
+            totalUriCount.set(context.settings().totalUriCount.toString())
         }
 
         SearchDefaultEngine.apply {

@@ -12,6 +12,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
+import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.ui.robots.PRIVATE_SESSION_MESSAGE
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -121,7 +122,7 @@ class HomeScreenTest {
         homeScreen {
             // To deal with the race condition where multiple "add tab" buttons are present,
             // we need to wait until previous HomeFragment View objects are gone.
-            mDevice.wait(Until.gone(By.text(PRIVATE_SESSION_MESSAGE)), waitingTime)
+            mDevice.waitNotNull(Until.gone(By.text(PRIVATE_SESSION_MESSAGE)), waitingTime)
             verifyHomeScreen()
             verifyNavigationToolbar()
             verifyHomePrivateBrowsingButton()

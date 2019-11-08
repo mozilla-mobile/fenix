@@ -20,6 +20,7 @@ import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the find in page UI.
@@ -33,15 +34,15 @@ class FindInPageRobot {
     fun verifyFindInPageCloseButton() = assertFindInPageCloseButton()!!
 
     fun enterFindInPageQuery(expectedText: String) {
-        mDevice.wait(Until.findObject(By.res("find_in_page_query_text")), waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/find_in_page_query_text")), waitingTime)
         findInPageQuery().perform(clearText())
-        mDevice.wait(Until.gone(By.res("find_in_page_result_text")), waitingTime)
+        mDevice.waitNotNull(Until.gone(By.res("org.mozilla.fenix.debug:id/find_in_page_result_text")), waitingTime)
         findInPageQuery().perform(typeText(expectedText))
-        mDevice.wait(Until.findObject(By.res("find_in_page_result_text")), waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/find_in_page_result_text")), waitingTime)
     }
 
     fun verifyFindNextInPageResult(ratioCounter: String) {
-        mDevice.wait(Until.findObject(By.text(ratioCounter)), waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.text(ratioCounter)), waitingTime)
         val element = mDevice.findObject(By.text(ratioCounter))
         findInPageResult().check(matches(withText((ratioCounter))))
         findInPageNextButton().click()
@@ -49,7 +50,7 @@ class FindInPageRobot {
     }
 
     fun verifyFindPrevInPageResult(ratioCounter: String) {
-        mDevice.wait(Until.findObject(By.text(ratioCounter)), waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.text(ratioCounter)), waitingTime)
         val element = mDevice.findObject(By.text(ratioCounter))
         findInPageResult().check(matches(withText((ratioCounter))))
         findInPagePrevButton().click()

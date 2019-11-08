@@ -18,9 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.support.utils.ThreadUtils
-
-import org.mozilla.fenix.R
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
@@ -70,7 +69,7 @@ class SessionNotificationService : Service() {
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_pbm_notification)
-            .setContentTitle(getString(R.string.app_name_private))
+            .setContentTitle(getString(R.string.app_name_private_2))
             .setContentText(getString(R.string.notification_pbm_delete_text))
             .setContentIntent(createNotificationIntent())
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
@@ -104,6 +103,7 @@ class SessionNotificationService : Service() {
     private fun createOpenActionIntent(): PendingIntent {
         val intent = Intent(this, HomeActivity::class.java)
         intent.putExtra(HomeActivity.EXTRA_OPENED_FROM_NOTIFICATION, true)
+        intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
 
         return PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }

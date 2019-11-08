@@ -4,8 +4,10 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
+import android.content.Context
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -15,18 +17,17 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
  *  Tests for verifying basic functionality of history
  *
  */
-
 class HistoryTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -43,52 +44,207 @@ class HistoryTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        // Clearing all history data after each test to avoid overlapping data
+        val applicationContext: Context = activityTestRule.activity.applicationContext
+        val historyStorage = PlacesHistoryStorage(applicationContext)
+        runBlocking {
+            historyStorage.deleteEverything()
+        }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
     fun noHistoryItemsInCacheTest() {
-        homeScreen { }.dismissOnboarding()
-
-        // Verify "Your Library" in 3-dot menu is visible
-        // Verify "History" line-item in library is visible
-        // Verify "No history here" is visible
-        // Verify "History" UI elements
+        homeScreen {
+        }.openThreeDotMenu {
+            verifyHistoryButton()
+        }.openHistory {
+            verifyHistoryMenuView()
+            verifyEmptyHistoryView()
+        }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
-    fun historyTest() {
-        // Setup:
-        //  - Visit a URL
-        //  - Visit a second URL
-        // Verify browser view exists for each visit
-        // Verify "Your Library" in 3-dot menu is visible
-        // Click "Your Library"
-        // Verify "History" line-item in Library is visible
-        // Click "History"
-        // Verify "History" UI elements (view is visible)
-        // Verify history is added, URLs match history added in Library
-
-        // Verify history 3-dot menu functions:
-        // 1. Delete
-
-        // Verify history visibility in new URL search
-
-        // Verify "Delete history"
-        // Verify "This will delete all your browsing data."
-        // Verify "No history here" UI element
-
-        // Verify return to "Your Library"
-    }
-
-    @Ignore("This is a sample test, ignore")
-    @Test
-    fun sampleTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun visitedUrlHistoryTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyHistoryMenuView()
+            verifyVisitedTimeTitle()
+            verifyFirstTestPageTitle("Test_Page_1")
+            verifyTestPageUrl(firstWebPage.url)
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun deleteHistoryItemTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            openOverflowMenu()
+            clickThreeDotMenuDelete()
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun deleteAllHistoryTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            clickDeleteHistoryButton()
+            verifyDeleteConfirmationMessage()
+            confirmDeleteAllHistory()
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun multiSelectionToolbarItemsTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            longTapSelectItem(firstWebPage.url)
+        }
+
+        multipleSelectionToolbar {
+            verifyMultiSelectionCheckmark()
+            verifyMultiSelectionCounter()
+            verifyShareButton()
+            verifyCloseToolbarButton()
+        }.closeToolbarReturnToHistory {
+            verifyHistoryMenuView()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun openHistoryInNewTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+            closeTab()
+        }.openThreeDotMenu {
+        }.openHistory {
+            longTapSelectItem(firstWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.getActivity())
+        }
+
+        multipleSelectionToolbar {
+        }.clickOpenNewTab {
+            verifyExistingTabList()
+            verifyOpenTabsHeader()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun openHistoryInPrivateTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            longTapSelectItem(firstWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.getActivity())
+        }
+
+        multipleSelectionToolbar {
+        }.clickOpenPrivateTab {
+            verifyExistingTabList()
+            verifyPrivateSessionHeader()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun deleteMultipleSelectionTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            longTapSelectItem(firstWebPage.url)
+            longTapSelectItem(secondWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.getActivity())
+        }
+
+        multipleSelectionToolbar {
+        }.clickMultiSelectionDelete {
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun shareButtonTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            longTapSelectItem(firstWebPage.url)
+        }
+
+        multipleSelectionToolbar {
+            clickShareButton()
+            verifyShareOverlay()
+            verifyShareTabFavicon()
+            verifyShareTabTitle()
+            verifyShareTabUrl()
+        }
+    }
+
+    @Test
+    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
+    fun verifyBackNavigation() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+        }.goBack {
+            verifyHomeScreen()
+        }
+    }
+
+    @Ignore("Test will be included after back navigation from History Fragment is sorted")
+    @Test
+    fun verifyCloseMenu() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+        }.closeMenu {
+            verifyHomeScreen()
         }
     }
 }

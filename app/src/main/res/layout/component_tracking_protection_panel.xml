@@ -2,7 +2,9 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/panel_wrapper"
@@ -27,7 +29,7 @@
             tools:text="https://wikipedia.org" />
 
         <org.mozilla.fenix.trackingprotection.SwitchWithDescription
-            android:id="@+id/tracking_protection"
+            android:id="@+id/trackingProtectionSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/tracking_protection_item_height"
@@ -48,16 +50,16 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tracking_protection" />
+            app:layout_constraintTop_toBottomOf="@id/trackingProtectionSwitch" />
 
         <TextView
             android:id="@+id/cross_site_tracking"
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cookies"
             android:text="@string/etp_cookies_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_cookies"
             app:layout_constraintTop_toBottomOf="@id/blocking_header" />
 
         <TextView
@@ -65,9 +67,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_fingerprinters"
             android:text="@string/etp_fingerprinters_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_fingerprinters"
             app:layout_constraintTop_toBottomOf="@id/cross_site_tracking" />
 
         <TextView
@@ -75,9 +77,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cryptominers"
             android:text="@string/etp_cryptominers_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_cryptominers"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters" />
 
         <TextView
@@ -85,9 +87,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_social_media_trackers"
             android:text="@string/etp_social_media_trackers_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_social_media_trackers"
             app:layout_constraintTop_toBottomOf="@id/cryptominers" />
 
         <TextView
@@ -95,9 +97,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_tracking_content"
             android:text="@string/etp_tracking_content_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_tracking_content"
             app:layout_constraintTop_toBottomOf="@id/social_media_trackers" />
 
         <TextView
@@ -116,9 +118,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_fingerprinters"
             android:text="@string/etp_fingerprinters_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_fingerprinters"
             app:layout_constraintTop_toBottomOf="@id/not_blocking_header" />
 
         <TextView
@@ -126,9 +128,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_cryptominers"
             android:text="@string/etp_cryptominers_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_cryptominers"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters_loaded" />
 
         <TextView
@@ -136,9 +138,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_social_media_trackers"
             android:text="@string/etp_social_media_trackers_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_social_media_trackers"
             app:layout_constraintTop_toBottomOf="@id/cryptominers_loaded" />
 
         <TextView
@@ -146,9 +148,9 @@
             style="@style/QuickSettingsText.Icon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tracking_protection_item_height"
-            android:drawableStart="@drawable/ic_tracking_content"
             android:text="@string/etp_tracking_content_title"
             android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_tracking_content"
             app:layout_constraintTop_toBottomOf="@id/social_media_trackers_loaded" />
 
         <View
@@ -182,11 +184,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:src="@drawable/mozac_ic_back"
             android:tint="?attr/primaryText"
             app:layout_constraintBottom_toBottomOf="@+id/category_description"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/category_title" />
+            app:layout_constraintTop_toTopOf="@id/category_title"
+            app:srcCompat="@drawable/mozac_ic_back" />
 
         <TextView
             android:id="@+id/category_title"
@@ -229,6 +231,7 @@
             android:layout_marginStart="52dp"
             android:layout_marginEnd="26dp"
             android:paddingStart="0dp"
+            android:paddingEnd="0dp"
             android:text="@string/enhanced_tracking_protection_blocked"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"

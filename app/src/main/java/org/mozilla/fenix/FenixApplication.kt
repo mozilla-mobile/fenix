@@ -80,13 +80,17 @@ open class FenixApplication : Application() {
         experimentLoader = loadExperiments()
 
         // Enable the service-experiments component
-        if (settings().isExperimentationEnabled) {
+        if (settings().isExperimentationEnabled && Config.channel.isReleaseOrBeta) {
             Experiments.initialize(
                 applicationContext,
                 mozilla.components.service.experiments.Configuration(
                     httpClient = lazy(LazyThreadSafetyMode.NONE) { components.core.client }
                 )
             )
+        } else {
+            // We should make a better way to opt out for when we have more experiments
+            // See https://github.com/mozilla-mobile/fenix/issues/6278
+            ExperimentsManager.optOutEtpExperiment(this)
         }
 
         // When the `fenix-test-2019-08-05` experiment is active, record its branch in Glean
@@ -137,7 +141,7 @@ open class FenixApplication : Application() {
         // no-op, LeakCanary is disabled by default
     }
 
-    open fun toggleLeakCanary(newValue: Boolean) {
+    open fun updateLeakCanaryState(isEnabled: Boolean) {
         // no-op, LeakCanary is disabled by default
     }
 

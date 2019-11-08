@@ -4,10 +4,16 @@
 
 package org.mozilla.fenix.settings.account
 
+import android.app.KeyguardManager
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.format.DateUtils
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,6 +34,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -35,8 +42,9 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 
-@SuppressWarnings("TooManyFunctions")
+@SuppressWarnings("TooManyFunctions", "LargeClass")
 class AccountSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var accountManager: FxaAccountManager
     private lateinit var accountSettingsStore: AccountSettingsFragmentStore
@@ -96,7 +104,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         )
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.account_settings_preferences, rootKey)
 
@@ -108,7 +116,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                         LastSyncTime.Never
                     else
                         LastSyncTime.Success(getLastSynced(requireContext())),
-                    deviceName = requireComponents.backgroundServices.defaultDeviceName(requireContext())
+                    deviceName = requireComponents.backgroundServices.defaultDeviceName(
+                        requireContext()
+                    )
                 )
             )
         }
@@ -158,6 +168,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         findPreference<CheckBoxPreference>(historyNameKey)?.apply {
             setOnPreferenceChangeListener { _, newValue ->
                 SyncEnginesStorage(context).setStatus(SyncEngine.History, newValue as Boolean)
+                @Suppress("DeferredResultUnused")
                 context.components.backgroundServices.accountManager.syncNowAsync(SyncReason.EngineChange)
                 true
             }
@@ -167,18 +178,69 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         findPreference<CheckBoxPreference>(bookmarksNameKey)?.apply {
             setOnPreferenceChangeListener { _, newValue ->
                 SyncEnginesStorage(context).setStatus(SyncEngine.Bookmarks, newValue as Boolean)
+                @Suppress("DeferredResultUnused")
                 context.components.backgroundServices.accountManager.syncNowAsync(SyncReason.EngineChange)
                 true
             }
         }
 
-        deviceConstellation?.registerDeviceObserver(deviceConstellationObserver, owner = this, autoPause = true)
+        val loginsNameKey = getPreferenceKey(R.string.pref_key_sync_logins)
+        findPreference<CheckBoxPreference>(loginsNameKey)?.apply {
+            setOnPreferenceChangeListener { _, newValue ->
+                val manager =
+                    activity?.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                if (manager.isKeyguardSecure ||
+                    newValue == false ||
+                    !context.settings().shouldShowSecurityPinWarningSync
+                ) {
+                    SyncEnginesStorage(context).setStatus(SyncEngine.Passwords, newValue as Boolean)
+                    @Suppress("DeferredResultUnused")
+                    context.components.backgroundServices.accountManager.syncNowAsync(SyncReason.EngineChange)
+                } else {
+                    showPinDialogWarning(newValue as Boolean)
+                }
+                true
+            }
+        }
+
+        deviceConstellation?.registerDeviceObserver(
+            deviceConstellationObserver,
+            owner = this,
+            autoPause = true
+        )
 
         // NB: ObserverRegistry will take care of cleaning up internal references to 'observer' and
         // 'owner' when appropriate.
         requireComponents.backgroundServices.accountManager.registerForSyncEvents(
             syncStatusObserver, owner = this, autoPause = true
         )
+    }
+
+    private fun showPinDialogWarning(newValue: Boolean) {
+        context?.let {
+            AlertDialog.Builder(it).apply {
+                setTitle(getString(R.string.logins_warning_dialog_title))
+                setMessage(
+                    getString(R.string.logins_warning_dialog_message)
+                )
+
+                setNegativeButton(getString(R.string.logins_warning_dialog_later)) { _: DialogInterface, _ ->
+                    SyncEnginesStorage(context).setStatus(SyncEngine.Passwords, newValue)
+                    @Suppress("DeferredResultUnused")
+                    context.components.backgroundServices.accountManager.syncNowAsync(SyncReason.EngineChange)
+                }
+
+                setPositiveButton(getString(R.string.logins_warning_dialog_set_up_now)) { it: DialogInterface, _ ->
+                    it.dismiss()
+                    val intent = Intent(
+                        Settings.ACTION_SECURITY_SETTINGS
+                    )
+                    startActivity(intent)
+                }
+                create()
+            }.show()
+            it.settings().incrementShowLoginsSecureWarningSyncCount()
+        }
     }
 
     private fun updateSyncEngineStates() {
@@ -193,13 +255,20 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.History)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.History) { true }
         }
+        val loginsNameKey = getPreferenceKey(R.string.pref_key_sync_logins)
+        findPreference<CheckBoxPreference>(loginsNameKey)?.apply {
+            isVisible = FeatureFlags.logins
+            isEnabled = syncEnginesStatus.containsKey(SyncEngine.Passwords)
+            isChecked = syncEnginesStatus.getOrElse(SyncEngine.Passwords) { false }
+        }
     }
 
     private fun syncNow() {
         lifecycleScope.launch {
             requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
             // Trigger a sync.
-            requireComponents.backgroundServices.accountManager.syncNowAsync(SyncReason.User).await()
+            requireComponents.backgroundServices.accountManager.syncNowAsync(SyncReason.User)
+                .await()
             // Poll for device events & update devices.
             accountManager.authenticatedAccount()
                 ?.deviceConstellation()?.run {
@@ -243,8 +312,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         return Preference.OnPreferenceChangeListener { _, newValue ->
             accountSettingsInteractor.onChangeDeviceName(newValue as String) {
                 FenixSnackbar.make(view!!, FenixSnackbar.LENGTH_LONG)
-                .setText(getString(R.string.empty_device_name_error))
-                .show()
+                    .setText(getString(R.string.empty_device_name_error))
+                    .show()
             }
         }
     }
@@ -284,7 +353,11 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     pref.isEnabled = true
 
                     val failedTime = getLastSynced(requireContext())
-                    accountSettingsStore.dispatch(AccountSettingsFragmentAction.SyncFailed(failedTime))
+                    accountSettingsStore.dispatch(
+                        AccountSettingsFragmentAction.SyncFailed(
+                            failedTime
+                        )
+                    )
                 }
             }
         }

@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings.quicksettings
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Color
@@ -19,75 +18,95 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.net.toUri
-import androidx.core.widget.NestedScrollView
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.Dispatchers
+import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.*
+import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import mozilla.components.browser.session.Session
-import mozilla.components.feature.sitepermissions.SitePermissions
-import org.mozilla.fenix.FenixViewModelProvider
+import mozilla.components.feature.session.TrackingProtectionUseCases
+import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragment
-import org.mozilla.fenix.exceptions.ExceptionDomains
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.tryGetHostFromUrl
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.getAutoDisposeObservable
-import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.utils.Settings
 import com.google.android.material.R as MaterialR
 
-private const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4
-
-@SuppressWarnings("TooManyFunctions")
+/**
+ * Dialog that presents the user with information about
+ * - the current website and whether the connection is secured or not.
+ * - website tracking protection.
+ * - website permission.
+ */
 class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
+    private lateinit var quickSettingsStore: QuickSettingsFragmentStore
+    private lateinit var quickSettingsController: QuickSettingsController
+    private lateinit var websiteInfoView: WebsiteInfoView
+    private lateinit var websitePermissionsView: WebsitePermissionsView
+    private lateinit var websiteTrackingProtectionView: TrackingProtectionView
+    private lateinit var interactor: QuickSettingsInteractor
     private val safeArguments get() = requireNotNull(arguments)
-    private val sessionId: String by lazy { QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).sessionId }
-    private val url: String by lazy { QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).url }
-    private val isSecured: Boolean by lazy { QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).isSecured }
-    private val isTrackingProtectionOn: Boolean by lazy {
-        QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).isTrackingProtectionOn
+    private val promptGravity: Int by lazy {
+        QuickSettingsSheetDialogFragmentArgs.fromBundle(
+            safeArguments
+        ).gravity
     }
-    private val promptGravity: Int by lazy { QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).gravity }
-    private lateinit var quickSettingsComponent: QuickSettingsComponent
-
-    private var sitePermissions: SitePermissions? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        sitePermissions = QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments).sitePermissions
+
+        val context = context!!
+        val args = QuickSettingsSheetDialogFragmentArgs.fromBundle(safeArguments)
         val rootView = inflateRootView(container)
-        requireComponents.core.sessionManager.findSessionById(sessionId)?.register(sessionObserver, view = rootView)
-        quickSettingsComponent = QuickSettingsComponent(
-            rootView as NestedScrollView,
-            ActionBusFactory.get(this),
-            FenixViewModelProvider.create(
-                this,
-                QuickSettingsViewModel::class.java
-            ) {
-                QuickSettingsViewModel(
-                    QuickSettingsState(
-                        QuickSettingsState.Mode.Normal(
-                            url,
-                            isSecured,
-                            isTrackingProtectionOn,
-                            sitePermissions
-                        )
-                    )
-                )
-            }
+
+        quickSettingsStore = QuickSettingsFragmentStore.createStore(
+            context = context,
+            websiteUrl = args.url,
+            isSecured = args.isSecured,
+            isTrackingProtectionOn = args.isTrackingProtectionOn,
+            permissions = args.sitePermissions,
+            settings = Settings.getInstance(context)
         )
+
+        quickSettingsController = DefaultQuickSettingsController(
+            context = context,
+            quickSettingsStore = quickSettingsStore,
+            coroutineScope = lifecycleScope,
+            navController = findNavController(),
+            session = context.components.core.sessionManager.findSessionById(args.sessionId),
+            sitePermissions = args.sitePermissions,
+            settings = Settings.getInstance(context),
+            permissionStorage = context.components.core.permissionStorage,
+            reload = context.components.useCases.sessionUseCases.reload,
+            addNewTab = context.components.useCases.tabsUseCases.addTab,
+            requestRuntimePermissions = { permissions ->
+                requestPermissions(permissions, REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS)
+            },
+            reportSiteIssue = ::launchIntentReceiver,
+            displayTrackingProtection = ::showTrackingProtectionView,
+            displayPermissions = ::showPermissionsView,
+            dismiss = ::dismiss,
+            trackingProtectionUseCases = TrackingProtectionUseCases(
+                context.components.core.sessionManager,
+                context.components.core.engine
+            )
+        )
+
+        interactor = QuickSettingsInteractor(quickSettingsController)
+
+        websiteTrackingProtectionView =
+            TrackingProtectionView(rootView.trackingProtectionLayout, interactor)
+        websiteInfoView = WebsiteInfoView(rootView.websiteInfoLayout)
+        websitePermissionsView =
+            WebsitePermissionsView(rootView.websitePermissionsLayout, interactor)
+
         return rootView
     }
 
@@ -118,6 +137,29 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         }
     }
 
+    @ExperimentalCoroutinesApi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        consumeFrom(quickSettingsStore) {
+            websiteInfoView.update(it.webInfoState)
+            websiteTrackingProtectionView.update(it.trackingProtectionState)
+            websitePermissionsView.update(it.websitePermissionsState)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (arePermissionsGranted(requestCode, grantResults)) {
+            PhoneFeature.findFeatureBy(permissions)?.let {
+                quickSettingsController.handleAndroidPermissionGranted(it)
+            }
+        }
+    }
+
     private fun Dialog.applyCustomizationsForTopDialog(rootView: View): Dialog {
         addContentView(
             rootView,
@@ -136,145 +178,26 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         return this
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (arePermissionsGranted(requestCode, grantResults)) {
-            val feature = requireNotNull(PhoneFeature.findFeatureBy(permissions))
-            getManagedEmitter<QuickSettingsChange>()
-                .onNext(QuickSettingsChange.PermissionGranted(feature, sitePermissions))
-        }
-    }
-
     private fun arePermissionsGranted(requestCode: Int, grantResults: IntArray) =
         requestCode == REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }
 
-    private fun toggleTrackingProtection(context: Context, url: String) {
-        val host = url.tryGetHostFromUrl()
-        lifecycleScope.launch {
-            ExceptionDomains(context).toggle(host)
+    private fun showTrackingProtectionView() {
+        trackingProtectionGroup.isVisible = true
+    }
+
+    private fun showPermissionsView() {
+        websitePermissionsGroup.isVisible = true
+    }
+
+    private fun launchIntentReceiver() {
+        context?.let { context ->
+            val intent = Intent(context, IntentReceiverActivity::class.java)
+            intent.action = Intent.ACTION_VIEW
+            context.startActivity(intent)
         }
     }
 
-    @ExperimentalCoroutinesApi
-    override fun onResume() {
-        super.onResume()
-        getAutoDisposeObservable<QuickSettingsAction>()
-            .subscribe {
-                when (it) {
-                    is QuickSettingsAction.SelectBlockedByAndroid -> {
-                        requestPermissions(it.permissions, REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS)
-                    }
-                    is QuickSettingsAction.SelectTrackingProtectionSettings -> {
-                        val directions =
-                            QuickSettingsSheetDialogFragmentDirections
-                                .actionQuickSettingsSheetDialogFragmentToTrackingProtectionFragment()
-                        findNavController(this@QuickSettingsSheetDialogFragment).navigate(directions)
-                    }
-                    is QuickSettingsAction.SelectReportProblem -> {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            val reportUrl =
-                                String.format(BrowserFragment.REPORT_SITE_ISSUE_URL, it.url)
-                            requireComponents.useCases.tabsUseCases.addTab.invoke(reportUrl)
-                            val sessionManager = requireComponents.core.sessionManager
-                            if (sessionManager.findSessionById(sessionId)?.isCustomTabSession() == true) {
-                                val intent = Intent(context, IntentReceiverActivity::class.java)
-                                intent.action = Intent.ACTION_VIEW
-                                startActivity(intent)
-                            }
-                        }
-                        dismiss()
-                    }
-                    is QuickSettingsAction.ToggleTrackingProtection -> {
-                        val trackingEnabled = it.trackingProtection
-                        context?.let { context: Context -> toggleTrackingProtection(context, url) }
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            getManagedEmitter<QuickSettingsChange>().onNext(
-                                QuickSettingsChange.Change(
-                                    url,
-                                    isSecured,
-                                    trackingEnabled,
-                                    sitePermissions
-                                )
-                            )
-                            requireContext().components.useCases.sessionUseCases.reload.invoke()
-                        }
-                    }
-                    is QuickSettingsAction.TogglePermission -> {
-
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            sitePermissions = quickSettingsComponent.toggleSitePermission(
-                                context = requireContext(),
-                                featurePhone = it.featurePhone,
-                                url = url,
-                                sitePermissions = sitePermissions
-                            )
-
-                            launch(Dispatchers.Main) {
-                                getManagedEmitter<QuickSettingsChange>()
-                                    .onNext(
-                                        QuickSettingsChange.Stored(
-                                            it.featurePhone,
-                                            sitePermissions
-                                        )
-                                    )
-
-                                requireContext().components.useCases.sessionUseCases.reload.invoke()
-                            }
-                        }
-                    }
-                }
-            }
-
-        if (isVisible) {
-            getManagedEmitter<QuickSettingsChange>()
-                .onNext(QuickSettingsChange.PromptRestarted(sitePermissions))
-        }
-    }
-
-    private val sessionObserver = object : Session.Observer {
-        override fun onUrlChanged(session: Session, url: String) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                val host = session.url.toUri().host
-                val sitePermissions: SitePermissions? = host?.let {
-                    val storage = requireContext().components.core.permissionStorage
-                    storage.findSitePermissionsBy(it)
-                }
-                launch(Dispatchers.Main) {
-                    getManagedEmitter<QuickSettingsChange>().onNext(
-                        QuickSettingsChange.Change(
-                            url,
-                            session.securityInfo.secure,
-                            session.trackerBlockingEnabled,
-                            sitePermissions
-                        )
-                    )
-                }
-            }
-        }
-
-        override fun onTrackerBlockingEnabledChanged(session: Session, blockingEnabled: Boolean) {
-            getManagedEmitter<QuickSettingsChange>().onNext(
-                QuickSettingsChange.Change(
-                    session.url,
-                    session.securityInfo.secure,
-                    blockingEnabled,
-                    sitePermissions
-                )
-            )
-        }
-
-        override fun onSecurityChanged(session: Session, securityInfo: Session.SecurityInfo) {
-            getManagedEmitter<QuickSettingsChange>().onNext(
-                QuickSettingsChange.Change(
-                    session.url,
-                    securityInfo.secure,
-                    session.trackerBlockingEnabled,
-                    sitePermissions
-                )
-            )
-        }
+    private companion object {
+        const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4
     }
 }
