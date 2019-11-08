@@ -312,15 +312,6 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Follow device theme</string>
 
-    <!-- Quick Action Sheet -->
-    <!-- Button in the browser chrome to download the current page -->
-    <string name="quick_action_download">Download</string>
-    <!-- Button in the browser chrome to exit reader mode -->
-    <string name="quick_action_read_close">Close</string>
-    <!-- Content description (not visible, for screen readers etc.): Quick action sheet handle to provide users
-        with shortcuts to commonly used actions such as Share, Bookmark etc.. -->
-    <string name="quick_action_sheet_handle">Quick actions</string>
-
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessions</string>

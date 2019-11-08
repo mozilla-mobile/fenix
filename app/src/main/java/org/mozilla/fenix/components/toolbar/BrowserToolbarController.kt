@@ -291,8 +291,11 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
             is ToolbarMenu.Item.ReaderMode ->
-                if (item.isChecked) Event.BrowserMenuItemTapped.Item.READER_MODE_ON
-                else Event.BrowserMenuItemTapped.Item.READER_MODE_OFF
+                if (item.isChecked) {
+                    Event.BrowserMenuItemTapped.Item.READER_MODE_ON
+                } else {
+                    Event.BrowserMenuItemTapped.Item.READER_MODE_OFF
+                }
             ToolbarMenu.Item.ReaderModeAppearance ->
                 Event.BrowserMenuItemTapped.Item.READER_MODE_APPEARANCE
             ToolbarMenu.Item.OpenInApp -> Event.BrowserMenuItemTapped.Item.OPEN_IN_APP
