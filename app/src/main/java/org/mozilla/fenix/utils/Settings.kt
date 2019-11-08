@@ -37,6 +37,8 @@ class Settings private constructor(
     private val isCrashReportEnabledInBuild: Boolean
 ) : PreferencesHolder {
     companion object {
+        const val showLoginsSecureWarningSyncMaxCount = 1
+        const val showLoginsSecureWarningMaxCount = 1
         const val autoBounceMaximumCount = 2
         const val trackingProtectionOnboardingMaximumCount = 2
         const val FENIX_PREFERENCES = "fenix_preferences"
@@ -76,6 +78,11 @@ class Settings private constructor(
 
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
+
+    var forceEnableZoom by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_force_enable_zoom),
+        default = false
+    )
 
     var adjustCampaignId by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_adjust_campaign),
@@ -127,6 +134,12 @@ class Settings private constructor(
 
     val shouldAutoBounceQuickActionSheet: Boolean
         get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
+
+    val shouldShowSecurityPinWarningSync: Boolean
+        get() = loginsSecureWarningSyncCount < showLoginsSecureWarningSyncMaxCount
+
+    val shouldShowSecurityPinWarning: Boolean
+        get() = loginsSecureWarningCount < showLoginsSecureWarningMaxCount
 
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
@@ -244,6 +257,32 @@ class Settings private constructor(
         default = 0
     )
 
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val loginsSecureWarningSyncCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning_sync),
+        default = 0
+    )
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val loginsSecureWarningCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning),
+        default = 0
+    )
+
+    fun incrementShowLoginsSecureWarningCount() {
+        preferences.edit().putInt(
+            appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning),
+            loginsSecureWarningCount + 1
+        ).apply()
+    }
+
+    fun incrementShowLoginsSecureWarningSyncCount() {
+        preferences.edit().putInt(
+            appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning_sync),
+            loginsSecureWarningSyncCount + 1
+        ).apply()
+    }
+
     fun incrementAutomaticBounceQuickActionSheetCount() {
         preferences.edit().putInt(
             appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action),
@@ -304,6 +343,11 @@ class Settings private constructor(
 
     var lastPlacesStorageMaintenance by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_last_maintenance),
+        default = 0
+    )
+
+    var totalUriCount by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_total_uri),
         default = 0
     )
 

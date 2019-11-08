@@ -16,8 +16,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.mozilla.fenix.R
@@ -50,6 +48,8 @@ class BookmarksRobot {
 
     fun verifyParentFolderSelector() = assertBookmarkFolderSelector()
 
+    fun verifyHomeScreen() = HomeScreenRobot().verifyHomeScreen()
+
     fun clickAddFolderButton() {
         addFolderButton().click()
     }
@@ -68,20 +68,18 @@ class BookmarksRobot {
     }
 
     class Transition {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        fun goBack(interact: LibraryRobot.() -> Unit): LibraryRobot.Transition {
+        fun goBack(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
             goBackButton().click()
 
-            LibraryRobot().interact()
-            return LibraryRobot.Transition()
+            BookmarksRobot().interact()
+            return BookmarksRobot.Transition()
         }
 
-        fun openThreeDotMenu(interact: ThreeDotMenuBookmarks.() -> Unit): ThreeDotMenuBookmarks.Transition {
+        fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
             threeDotMenu().click()
 
-            ThreeDotMenuBookmarks().interact()
-            return ThreeDotMenuBookmarks.Transition()
+            ThreeDotMenuBookmarksRobot().interact()
+            return ThreeDotMenuBookmarksRobot.Transition()
         }
     }
 }
@@ -101,7 +99,7 @@ private fun folderTitle() = onView(withId(R.id.title))
 
 private fun addFolderButton() = onView(withId(R.id.add_bookmark_folder))
 
-private fun addFolderTitleField() = onView(withId(R.id.bookmarkAddFolderTitleEdit))
+private fun addFolderTitleField() = onView(withId(R.id.bookmarkNameEdit))
 
 private fun saveFolderButton() = onView(withId(R.id.confirm_add_folder_button))
 
@@ -151,7 +149,7 @@ private fun assertBookmarkNameEditBox() =
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertBookmarkFolderSelector() =
-    onView(withId(R.id.bookmarkFolderSelector))
+    onView(withId(R.id.bookmarkParentFolderSelector))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertBookmarkURLEditBox() =

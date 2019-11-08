@@ -25,6 +25,7 @@ import mozilla.components.feature.push.AutoPushSubscription
 import mozilla.components.feature.push.PushConfig
 import mozilla.components.feature.push.PushSubscriptionObserver
 import mozilla.components.feature.push.PushType
+import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.fxa.DeviceConfig
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.SyncConfig
@@ -50,6 +51,7 @@ import java.util.FormatFlagsConversionMismatchException
 @Mockable
 class BackgroundServices(
     private val context: Context,
+    crashReporter: CrashReporter,
     historyStorage: PlacesHistoryStorage,
     bookmarkStorage: PlacesBookmarksStorage
 ) {
@@ -85,6 +87,7 @@ class BackgroundServices(
     val syncConfig = if (context.isInExperiment(Experiments.asFeatureSyncDisabled)) {
         null
     } else {
+        // TODO Add Passwords Here Waiting On https://github.com/mozilla-mobile/android-components/issues/4741
         SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks), syncPeriodInMinutes = 240L) // four hours
     }
 
@@ -93,9 +96,11 @@ class BackgroundServices(
     val push by lazy { makePushConfig()?.let { makePush(it) } }
 
     init {
-        // Make the "history" and "bookmark" stores accessible to workers spawned by the sync manager.
+        // Make the "history", "bookmark", and "logins" stores accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Bookmarks to bookmarkStorage)
+        // TODO Add Passwords Here Waiting On https://github.com/mozilla-mobile/android-components/issues/4741
+        // GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to loginsStorage)
     }
 
     private val deviceEventObserver = object : DeviceEventsObserver {
@@ -112,6 +117,8 @@ class BackgroundServices(
         context,
         context.components.analytics.metrics
     )
+
+    val accountAbnormalities = AccountAbnormalities(context, crashReporter)
 
     private val pushAccountObserver by lazy { push?.let { PushAccountObserver(it) } }
 
@@ -168,6 +175,10 @@ class BackgroundServices(
         // Register a telemetry account observer to keep track of FxA auth metrics.
         accountManager.register(telemetryAccountObserver)
 
+        // Register an "abnormal fxa behaviour" middleware to keep track of events such as
+        // unexpected logouts.
+        accountManager.register(accountAbnormalities)
+
         // Enable push if it's configured.
         push?.let { autoPushFeature ->
             // Register the push account observer so we know how to update our push subscriptions.
@@ -203,7 +214,10 @@ class BackgroundServices(
                 }
             })
         }
-        accountManager.initAsync()
+        accountAbnormalities.accountManagerInitializedAsync(
+            accountManager,
+            accountManager.initAsync()
+        )
     }
 
     /**

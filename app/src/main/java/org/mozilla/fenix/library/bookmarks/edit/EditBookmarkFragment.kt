@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +34,7 @@ import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -41,6 +43,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.urlToTrimmedHost
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
@@ -66,8 +69,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
     override fun onResume() {
         super.onResume()
 
-        val activity = activity as? AppCompatActivity
-        activity?.supportActionBar?.show()
+        initToolbar()
 
         guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
         lifecycleScope.launch(Main) {
@@ -99,13 +101,13 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 bookmarkUrlEdit.setText(bookmarkNode.url)
 
                 if (sharedViewModel.selectedFolder != null && bookmarkNode.title != null) {
-                    updateBookmarkNode(bookmarkNode.title to bookmarkNode.url)
+                    updateBookmarkNode(bookmarkNode.title, bookmarkNode.url)
                 }
             }
 
             bookmarkParent?.let { node ->
-                    bookmarkFolderSelector.text = node.title
-                    bookmarkFolderSelector.setOnClickListener {
+                    bookmarkParentFolderSelector.text = node.title
+                    bookmarkParentFolderSelector.setOnClickListener {
                         sharedViewModel.selectedFolder = null
                         nav(
                             R.id.bookmarkEditFragment,
@@ -117,6 +119,18 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
             }
 
         updateBookmarkFromObservableInput()
+    }
+
+    private fun initToolbar() {
+        val activity = activity as? AppCompatActivity
+        val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
+        context?.let {
+            toolbar?.setToolbarColors(
+                foreground = it.getColorFromAttr(R.attr.primaryText),
+                background = it.getColorFromAttr(R.attr.foundation)
+            )
+        }
+        activity?.supportActionBar?.show()
     }
 
     override fun onPause() {
@@ -132,13 +146,13 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
             BiFunction { name: CharSequence, url: CharSequence ->
                 Pair(name.toString(), url.toString())
             })
-            .filter { it.first.isNotBlank() }
+            .filter { (name) -> name.isNotBlank() }
             .debounce(debouncePeriodInMs, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .`as`(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this@EditBookmarkFragment)))
-            .subscribe {
-                updateBookmarkNode(it)
+            .subscribe { (name, url) ->
+                updateBookmarkNode(name, url)
             }
     }
 
@@ -169,12 +183,14 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
 
                         launch(Main) {
-                            Navigation.findNavController(requireActivity(), R.id.container).popBackStack()
+                            Navigation.findNavController(requireActivity(), R.id.container)
+                                .popBackStack()
                             activity.getRootView()?.let { rootView ->
                                 bookmarkNode?.let {
                                     FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
                                         .setText(
-                                            getString(R.string.bookmark_deletion_snackbar_message,
+                                            getString(
+                                                R.string.bookmark_deletion_snackbar_message,
                                                 it.url?.urlToTrimmedHost(activity) ?: it.title
                                             )
                                         )
@@ -190,28 +206,28 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         }
     }
 
-    private fun updateBookmarkNode(pair: Pair<String?, String?>) {
+    private fun updateBookmarkNode(title: String?, url: String?) {
         lifecycleScope.launch(IO) {
             try {
-                requireComponents.let {
-                    if (pair != Pair(bookmarkNode?.title, bookmarkNode?.url)) {
-                        it.analytics.metrics.track(Event.EditedBookmark)
+                requireComponents.let { components ->
+                    if (title != bookmarkNode?.title || url != bookmarkNode?.url) {
+                        components.analytics.metrics.track(Event.EditedBookmark)
                     }
                     if (sharedViewModel.selectedFolder != null) {
-                        it.analytics.metrics.track(Event.MovedBookmark)
+                        components.analytics.metrics.track(Event.MovedBookmark)
                     }
-                    it.core.bookmarksStorage.updateNode(
+                    components.core.bookmarksStorage.updateNode(
                         guidToEdit,
                         BookmarkInfo(
                             sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid,
                             bookmarkNode?.position,
-                            pair.first,
-                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) pair.second else null
+                            title,
+                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) url else null
                         )
                     )
                 }
             } catch (e: UrlParseFailed) {
-                launch(Main) {
+                withContext(Main) {
                     bookmarkUrlEdit.error = getString(R.string.bookmark_invalid_url_error)
                 }
             }

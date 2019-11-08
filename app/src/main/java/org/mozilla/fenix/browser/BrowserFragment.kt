@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.browser
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -23,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,7 +34,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
+import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
+import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
@@ -50,11 +54,11 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarController
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getDimenInDip
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.getDimenInDip
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -221,14 +225,21 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun navToTrackingProtectionPanel(session: Session) {
-        val directions =
-            BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
-                sessionId = session.id,
-                url = session.url,
-                trackingProtectionEnabled = session.trackerBlockingEnabled,
-                gravity = getAppropriateLayoutGravity()
-            )
-        nav(R.id.browserFragment, directions)
+        val useCase = TrackingProtectionUseCases(
+            sessionManager = requireComponents.core.sessionManager,
+            engine = requireComponents.core.engine
+        )
+        useCase.containsException(session) { contains ->
+            val isEnabled = session.trackerBlockingEnabled && !contains
+            val directions =
+                BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                    sessionId = session.id,
+                    url = session.url,
+                    trackingProtectionEnabled = isEnabled,
+                    gravity = getAppropriateLayoutGravity()
+                )
+            nav(R.id.browserFragment, directions)
+        }
     }
 
     override fun getEngineMargins(): Pair<Int, Int> {
@@ -379,7 +390,7 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
             val tpIcon =
                 browserToolbarView
                     .view
-                    .findViewById<AppCompatImageView>(R.id.mozac_browser_toolbar_tracking_protection_icon_view)
+                    .findViewById<AppCompatImageView>(R.id.mozac_browser_toolbar_tracking_protection_indicator)
 
             // Measure layout view
             val spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -391,12 +402,27 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
             val xOffset = it.dimen(R.dimen.tp_onboarding_x_offset)
 
             // Positioning the popup above the tp anchor.
-            val yOffset = -containerHeight - (browserToolbarView.view.height / THREE * 2) + triangleHeight
+            val yOffset =
+                -containerHeight - (browserToolbarView.view.height / THREE * 2) + triangleHeight
 
             trackingOnboarding.showAsDropDown(tpIcon, xOffset, yOffset)
             it.settings().incrementTrackingProtectionOnboardingCount()
         }
     }
+
+    override fun getContextMenuCandidates(
+        context: Context,
+        view: View
+    ): List<ContextMenuCandidate> = ContextMenuCandidate.defaultCandidates(
+        context,
+        context.components.useCases.tabsUseCases,
+        context.components.useCases.contextMenuUseCases,
+        view,
+        FenixSnackbarDelegate(
+            view,
+            nestedScrollQuickAction
+        )
+    )
 
     private fun shouldShowTrackingProtectionOnboarding(session: Session) =
         context?.settings()?.shouldShowTrackingProtectionOnboarding ?: false &&

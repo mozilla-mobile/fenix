@@ -18,6 +18,7 @@ import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the URL toolbar.
@@ -28,7 +29,7 @@ class NavigationToolbarRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun enterURLAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.wait(Until.findObject(By.text("Search or enter address")), waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")), waitingTime)
             urlBar().click()
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
@@ -36,16 +37,16 @@ class NavigationToolbarRobot {
             return BrowserRobot.Transition()
         }
 
-        fun openThreeDotMenu(interact: ThreeDotMenuRobot.() -> Unit): ThreeDotMenuRobot.Transition {
-            mDevice.wait(Until.findObject(By.text("Menu")), waitingTime)
+        fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.descContains("Menu")), waitingTime)
             threeDotButton().click()
 
-            ThreeDotMenuRobot().interact()
-            return ThreeDotMenuRobot.Transition()
+            ThreeDotMenuMainRobot().interact()
+            return ThreeDotMenuMainRobot.Transition()
         }
 
         fun openNewTabAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.wait(Until.findObject(By.descContains("Add tab")), waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.descContains("Add tab")), waitingTime)
             newTab().click()
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 

@@ -21,6 +21,7 @@ import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the your library menu.
@@ -34,24 +35,24 @@ class LibraryRobot {
 
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+        fun goBack(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
 
             mDevice.waitForIdle()
             goBackButton().perform(click())
 
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
 
-        fun closeMenu(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+        fun closeMenu(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             closeButton().click()
 
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
 
         fun openBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
-            mDevice.wait(Until.findObject(By.text("Bookmarks")), TestAssetHelper.waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), TestAssetHelper.waitingTime)
             bookmarksButton().click()
 
             BookmarksRobot().interact()
@@ -59,7 +60,7 @@ class LibraryRobot {
         }
 
         fun openHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
-            mDevice.wait(Until.findObject(By.text("History")), TestAssetHelper.waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.text("History")), TestAssetHelper.waitingTime)
             historyButton().click()
 
             HistoryRobot().interact()

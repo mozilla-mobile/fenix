@@ -15,7 +15,7 @@ import org.mozilla.fenix.utils.ClipboardHandler
 @Mockable
 class Components(private val context: Context) {
     val backgroundServices by lazy {
-        BackgroundServices(context, core.historyStorage, core.bookmarksStorage)
+        BackgroundServices(context, analytics.crashReporter, core.historyStorage, core.bookmarksStorage)
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
     val core by lazy { Core(context) }
@@ -27,7 +27,7 @@ class Components(private val context: Context) {
             core.store,
             core.engine.settings,
             search.searchEngineManager,
-            core.client
+            core.webAppShortcutManager
         )
     }
     val intentProcessors by lazy {

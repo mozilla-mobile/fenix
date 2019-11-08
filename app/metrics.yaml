@@ -111,16 +111,18 @@ events:
       preference_key:
         description: "The preference key for the switch preference the user toggled. We currently track:
           show_search_suggestions, remote_debugging, telemetry, tracking_protection, search_bookmarks,
-          search_browsing_history, show_clipboard_suggestions, and show_search_shortcuts"
+          search_browsing_history, show_clipboard_suggestions, show_search_shortcuts, and open_links_in_a_private_tab"
       enabled:
         description: "Whether or not the preference is *now* enabled"
     bugs:
     - https://github.com/mozilla-mobile/fenix/issue/975
     - https://github.com/mozilla-mobile/fenix/issue/5094
+    - https://github.com/mozilla-mobile/fenix/issues/5737
     data_reviews:
     - https://github.com/mozilla-mobile/fenix/pull/1896
     - https://github.com/mozilla-mobile/fenix/pull/5704
     - https://github.com/mozilla-mobile/fenix/pull/5886
+    - https://github.com/mozilla-mobile/fenix/pull/5975
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -135,6 +137,20 @@ events:
       - https://github.com/mozilla-mobile/fenix/issue/5021
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/5090
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  opened_link:
+    type: event
+    description: >
+        A user opened a link with Fenix
+    extra_keys:
+      mode:
+        description: "The mode the link was opened in. Either 'PRIVATE' or 'NORMAL'"
+    bugs:
+     - https://github.com/mozilla-mobile/fenix/issue/5737
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/5975
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -399,13 +415,28 @@ metrics:
     type: string
     lifetime: application
     description: >
-      A string containing the Adjust campaign ID from which the user installed Fenix
+      A string containing the Adjust campaign ID from which the user installed Fenix. This will not
+      send on the first session the user runs. If the install is organic, this will be empty.
     send_in_pings:
       - metrics
     bugs:
       - https://github.com/mozilla-mobile/fenix/issue/1298
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/5579
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  total_uri_count:
+    type: string
+    lifetime: application
+    description: >
+      A counter of URIs visited by the user in the current session, including page reloads. This does not include background page requests and URIs from embedded pages or private browsing.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issue/4456
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6003
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -653,7 +684,7 @@ activation:
     - https://github.com/mozilla-mobile/fenix/pull/1707#issuecomment-486972209
     notification_emails:
     - fenix-core@mozilla.com
-    expires: "2019-10-01"
+    expires: "2020-03-01"
 
   activation_id:
     type: uuid
@@ -669,7 +700,7 @@ activation:
     - https://github.com/mozilla-mobile/fenix/pull/1707#issuecomment-486972209
     notification_emails:
     - fenix-core@mozilla.com
-    expires: "2019-10-01"
+    expires: "2020-03-01"
 
 qr_scanner:
   opened:
@@ -1347,7 +1378,7 @@ tracking_protection:
   etp_setting_changed:
     type: event
     description: >
-      A user added a tracking protection exception through the TP toggle in the panel.
+      A user changed their tracking protection level setting to either strict or standard.
     extra_keys:
       etp_setting:
         description: "The new setting for ETP: strict, standard"

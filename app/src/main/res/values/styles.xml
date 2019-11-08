@@ -50,6 +50,7 @@
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_normal_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
+        <item name="menuCategoryText">@color/menu_category_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -134,6 +135,7 @@
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_private_theme</item>
+        <item name="menuCategoryText">@color/menu_category_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -175,7 +177,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/toggle_text_color</item>
-        <item name="android:drawableTint" tools:targetApi="m">@color/toggle_text_color</item>
+        <item name="drawableTint">@color/toggle_text_color</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
@@ -308,6 +310,30 @@
 
     <style name="OnboardingCardDark" parent="OnboardingCardLight">
         <item name="android:background">@drawable/onboarding_card_background_dark</item>
+    </style>
+
+    <style name="SearchShortcutsLabelStyle">
+        <item name="android:fontFamily">Inter UI</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textSize">@dimen/search_fragment_shortcuts_label_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SearchClipboardStyle">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="SearchClipboardTitleStyle" parent="SearchClipboardStyle">
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:textSize">@dimen/search_fragment_clipboard_title_text_size</item>
+    </style>
+
+    <style name="SearchClipboardUrlStyle" parent="SearchClipboardStyle">
+        <item name="android:textAppearance">@style/Subtitle12TextStyle</item>
+        <item name="android:textColor">?fillLinkFromClipboard</item>
     </style>
 
     <style name="CreateCollectionDialogStyle" parent="DialogStyleBase"/>

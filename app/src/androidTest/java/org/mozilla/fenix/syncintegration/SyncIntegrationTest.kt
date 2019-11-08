@@ -27,6 +27,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SyncIntegrationTest {
@@ -42,13 +43,9 @@ class SyncIntegrationTest {
         tapReturnToPreviousApp()
         homeScreen {
         }.openThreeDotMenu {
-        }.openLibrary {
         }.openHistory { }
         historyAfterSyncIsShown()
     }
-    /* These tests will be running in the future
-    // once the test above runs successfully and
-    // the environment is stable
 
     // Bookmark item Desktop -> Fenix
     @Test
@@ -57,10 +54,13 @@ class SyncIntegrationTest {
         tapReturnToPreviousApp()
         homeScreen {
         }.openThreeDotMenu {
-        }.openLibrary {
         }.openBookmarks { }
         bookmarkAfterSyncIsShown()
     }
+
+    /* These tests will be running in the future
+    // once the test above runs successfully and
+    // the environment is stable
 
     // History item Fenix -> Desktop
     @Test
@@ -99,7 +99,7 @@ class SyncIntegrationTest {
         continueButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
     }
 
-    fun typePassowrd() {
+    fun typePassword() {
         val passwordInput = mDevice.findObject(UiSelector()
                 .instance(0)
                 .className(EditText::class.java))
@@ -109,7 +109,7 @@ class SyncIntegrationTest {
     }
 
     fun tapOnSignIn() {
-        mDevice.wait(Until.findObjects(By.text("Sign in")), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(Until.findObjects(By.text("Sign in")))
         // Let's tap on enter, sometimes depending on the device the sign in button is
         // hidden by the keyboard
         mDevice.pressEnter()
@@ -126,25 +126,19 @@ class SyncIntegrationTest {
     }
 
     fun bookmarkAfterSyncIsShown() {
-        val bookmarkyEntry = mDevice.findObject(By.text("Example Domain"))
-        bookmarkyEntry.isEnabled()
+        val bookmarkEntry = mDevice.findObject(By.text("Example Domain"))
+        bookmarkEntry.isEnabled()
     }
 
     fun seeBookmark() {
-        mDevice.wait(Until.findObjects(By.text("Bookmark")), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(Until.findObjects(By.text("Bookmark")), TestAssetHelper.waitingTime)
         val bookmarkButton = mDevice.findObject(By.text("Bookmark"))
         bookmarkButton.click()
     }
 
     fun tapReturnToPreviousApp() {
-        mDevice.wait(Until.findObjects(By.text("Connected")), TestAssetHelper.waitingTime)
-
-        val settingsLabel = mDevice.wait(Until.findObject(By.text("Settings")), TestAssetHelper.waitingTime)
-        settingsLabel.isClickable()
-
-        mDevice.wait(Until.findObjects(By.desc("Navigate up")), TestAssetHelper.waitingTime)
-        val backButton = mDevice.findObject(By.desc("Navigate up"))
-        backButton.click()
+        sleep(TestAssetHelper.waitingTime)
+        mDevice.pressBack()
     }
 
     fun signInFxSync() {
@@ -157,8 +151,8 @@ class SyncIntegrationTest {
 
         typeEmail()
         tapOnContinueButton()
-        typePassowrd()
-        sleep(TestAssetHelper.waitingTime)
+        typePassword()
+        sleep(TestAssetHelper.waitingTimeShort)
         tapOnSignIn()
     }
 }
