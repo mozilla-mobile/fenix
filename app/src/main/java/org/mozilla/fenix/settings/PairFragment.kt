@@ -46,7 +46,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), BackHandler {
                         requireContext(),
                         pairingUrl
                     )
-                    val vibrator = requireContext().getSystemService<Vibrator>() as Vibrator
+                    val vibrator = requireContext().getSystemService<Vibrator>()!!
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(
                             VibrationEffect.createOneShot(
