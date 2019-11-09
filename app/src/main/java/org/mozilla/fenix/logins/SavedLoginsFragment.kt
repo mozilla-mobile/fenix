@@ -13,12 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_saved_logins.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
@@ -51,7 +51,7 @@ class SavedLoginsFragment : Fragment() {
         }
         savedLoginsInteractor = SavedLoginsInteractor(::itemClicked)
         savedLoginsView = SavedLoginsView(view.savedLoginsLayout, savedLoginsInteractor)
-        loadAndMapLogins()
+        lifecycleScope.launch(Main) { loadAndMapLogins() }
         return view
     }
 
@@ -64,8 +64,10 @@ class SavedLoginsFragment : Fragment() {
         }
     }
 
+    /**
+     * If we pause this fragment, we want to pop users back to reauth
+     */
     override fun onPause() {
-        // If we pause this fragment, we want to pop users back to reauth
         if (findNavController().currentDestination?.id != R.id.savedLoginSiteInfoFragment) {
             findNavController().popBackStack(R.id.loginsFragment, false)
         }
@@ -79,22 +81,16 @@ class SavedLoginsFragment : Fragment() {
         findNavController().navigate(directions)
     }
 
-    private fun loadAndMapLogins() {
-        lifecycleScope.launch(IO) {
-            val syncedLogins = async {
-                context!!.components.core.passwordsStorage.withUnlocked {
-                    it.list().await().map { item ->
-                        SavedLoginsItem(
-                            item.hostname,
-                            item.username,
-                            item.password
-                        )
-                    }
+    private suspend fun loadAndMapLogins() {
+        val syncedLogins = withContext(IO) {
+            requireContext().components.core.passwordsStorage.withUnlocked {
+                it.list().await().map { item ->
+                    SavedLoginsItem(item.hostname, item.username, item.password)
                 }
-            }.await()
-            launch(Dispatchers.Main) {
-                savedLoginsStore.dispatch(SavedLoginsFragmentAction.UpdateLogins(syncedLogins))
             }
+        }
+        withContext(Main) {
+            savedLoginsStore.dispatch(SavedLoginsFragmentAction.UpdateLogins(syncedLogins))
         }
     }
 }
