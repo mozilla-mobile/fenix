@@ -27,7 +27,7 @@ class TrackerBuckets {
 
     private var trackers = emptyList<TrackerLog>()
 
-    data class BucketedTrackerLog(var blockedBucketMap: BucketMap, var loadedBucketMap: BucketMap)
+    data class BucketedTrackerLog(val blockedBucketMap: BucketMap, val loadedBucketMap: BucketMap)
 
     var buckets: BucketedTrackerLog = BucketedTrackerLog(emptyMap(), emptyMap())
         private set
@@ -60,6 +60,7 @@ class TrackerBuckets {
         if (blocked) buckets.blockedBucketMap[key].orEmpty() else buckets.loadedBucketMap[key].orEmpty()
 
     companion object {
+
         @Suppress("ComplexMethod")
         private fun putTrackersInBuckets(
             list: List<TrackerLog>
@@ -132,6 +133,13 @@ class TrackerBuckets {
                             item.url.tryGetHostFromUrl()
                 }
             }
+        }
+
+        private fun createMap() =
+            EnumMap<TrackingProtectionCategory, MutableList<String>>(TrackingProtectionCategory::class.java)
+
+        private fun <K> MutableMap<K, MutableList<String>>.addTrackerHost(key: K, tracker: TrackerLog) {
+            getOrPut(key) { mutableListOf() }.add(tracker.url.tryGetHostFromUrl())
         }
     }
 }
