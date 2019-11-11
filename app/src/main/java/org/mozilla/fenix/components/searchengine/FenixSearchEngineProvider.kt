@@ -29,7 +29,7 @@ class FenixSearchEngineProvider(
         ).loadSearchEngines(context)
     }
 
-    private val customEngines = async {
+    private var customEngines = async {
         CustomSearchEngineProvider().loadSearchEngines(context)
     }
 
@@ -78,13 +78,22 @@ class FenixSearchEngineProvider(
     }
 
     fun uninstallSearchEngine(context: Context, searchEngine: SearchEngine) = runBlocking {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
-        installedIdentifiers.remove(searchEngine.identifier)
-        prefs(context).edit().putStringSet(INSTALLED_ENGINES_KEY, installedIdentifiers).commit()
+        val isCustom = CustomSearchEngineStore.isCustomSearchEngine(context, searchEngine.identifier)
+
+        if (isCustom) {
+            CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
+        } else {
+            val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
+            installedIdentifiers.remove(searchEngine.identifier)
+            prefs(context).edit().putStringSet(INSTALLED_ENGINES_KEY, installedIdentifiers).apply()
+        }
+
+        reload()
     }
 
     fun reload() {
         launch {
+            customEngines = async { CustomSearchEngineProvider().loadSearchEngines(context) }
             loadedSearchEngines = refreshAsync()
         }
     }
@@ -93,6 +102,7 @@ class FenixSearchEngineProvider(
         val engineList = defaultEngines.await()
         val bundledList = bundledEngines.await().list
         val customList = customEngines.await().list
+
         engineList.copy(list = engineList.list + bundledList + customList)
     }
 

@@ -58,7 +58,7 @@ object CustomSearchEngineStore {
         enginesEditor.apply()
     }
 
-    fun isCustomSearchEngine(engineId: String, context: Context): Boolean {
+    fun isCustomSearchEngine(context: Context, engineId: String): Boolean {
         return loadCustomSearchEngines(context).firstOrNull { it.identifier == engineId } != null
     }
 

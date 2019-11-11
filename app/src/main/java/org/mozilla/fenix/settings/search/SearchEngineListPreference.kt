@@ -23,6 +23,8 @@ import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
@@ -119,6 +121,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                     if (engine == defaultEngine) {
                         context.settings().defaultSearchEngineName = context.components.search.provider.getDefaultEngine(context).name
                     }
+
                     reload(context)
                 }
             ).menuBuilder.build(context).show(wrapper.overflow_menu)
