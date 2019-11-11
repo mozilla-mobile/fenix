@@ -128,10 +128,16 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         val name = edit_engine_name.text?.toString() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
-
         var hasError = false
         if (name.isEmpty()) {
             custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_name)
+            hasError = true
+        }
+
+        val existingIdentifiers = requireComponents.search.provider.allSearchEngineIdentifiers()
+
+        if (existingIdentifiers.contains(name)) {
+            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_existing_name, name)
             hasError = true
         }
 

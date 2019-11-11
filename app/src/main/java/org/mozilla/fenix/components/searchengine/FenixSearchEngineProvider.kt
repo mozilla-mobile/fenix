@@ -60,6 +60,10 @@ class FenixSearchEngineProvider(
         )
     }
 
+    fun allSearchEngineIdentifiers() = runBlocking {
+        loadedSearchEngines.await().list.map { it.identifier }
+    }
+
     fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlocking {
         val engineList = loadedSearchEngines.await()
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
