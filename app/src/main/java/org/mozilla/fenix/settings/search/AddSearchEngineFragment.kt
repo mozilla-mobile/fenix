@@ -11,11 +11,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.android.synthetic.main.custom_search_engine.*
 import kotlinx.android.synthetic.main.fragment_add_search_engine.*
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
 import kotlinx.coroutines.launch
@@ -27,7 +27,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.logDebug
 
 class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
-
     private var availableEngines: List<SearchEngine> = listOf()
     private var selectedIndex: Int = -1
     private val engineViews = mutableListOf<View>()
@@ -75,6 +74,8 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         engineItem.radio_button.isChecked = selectedIndex == -1
         engineViews.add(engineItem)
         search_engine_group.addView(engineItem, layoutParams)
+
+        toggleCustomForm(selectedIndex == -1)
     }
 
     override fun onResume() {
@@ -130,6 +131,8 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
                 }
             }
         }
+
+        toggleCustomForm(selectedIndex == -1)
     }
 
     private fun makeCustomButton(layoutInflater: LayoutInflater): View {
@@ -137,6 +140,17 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         return wrapper
+    }
+
+    private fun toggleCustomForm(isEnabled: Boolean) {
+        custom_search_engine_form.alpha = if (isEnabled) {
+            1.0f
+        } else {
+            0.2f
+        }
+
+        edit_search_string.isEnabled = isEnabled
+        edit_engine_name.isEnabled = isEnabled
     }
 
     private fun makeButtonFromSearchEngine(
