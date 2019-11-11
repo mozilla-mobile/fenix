@@ -55,7 +55,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
             requireContext().components.search.provider.uninstalledSearchEngines(requireContext()).list
         }
 
-        selectedIndex = availableEngines.size - 1
+        selectedIndex = if (availableEngines.isEmpty()) -1 else 0
     }
 
     override fun onCreateView(
