@@ -13,7 +13,12 @@ import mozilla.components.browser.search.provider.SearchEngineProvider
 import org.mozilla.fenix.ext.components
 import java.lang.Exception
 
+/**
+ * SearchEngineProvider implementation to load user entered custom search engines.
+ */
 class CustomSearchEngineProvider : SearchEngineProvider {
+    // Our version of ktlint enforces the wrong modifier order. We need to update the plugin: #2488
+    /* ktlint-disable modifier-order */
     override suspend fun loadSearchEngines(context: Context): SearchEngineList {
         return SearchEngineList(CustomSearchEngineStore.loadCustomSearchEngines(context), null)
     }
@@ -28,8 +33,8 @@ object CustomSearchEngineStore {
 
         val icon = context.components.core.icons.loadIcon(IconRequest(searchQuery)).await()
         val searchEngineXml = SearchEngineWriter.buildSearchEngineXML(engineName, searchQuery, icon.bitmap)
-        val engines = pref(context)
-            .getStringSet(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet()) ?: emptySet()
+        val engines = (pref(context)
+            .getStringSet(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet()) ?: emptySet()).toMutableSet()
         engines.add(engineName)
 
         pref(context)

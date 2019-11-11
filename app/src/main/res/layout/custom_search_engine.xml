@@ -18,7 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hintTextColor="?secondaryText"
-        android:textColorHint="?secondaryText">
+        android:textColorHint="?secondaryText"
+        app:hintTextAppearance="@style/EngineTextField"
+        android:paddingBottom="8dp"
+        app:errorEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_engine_name"
             android:layout_width="match_parent"
@@ -32,7 +35,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hintTextColor="?secondaryText"
-        android:textColorHint="?secondaryText">
+        android:textColorHint="?secondaryText"
+        app:hintTextAppearance="@style/EngineTextField"
+        android:paddingBottom="8dp"
+        app:errorEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_search_string"
             android:layout_width="match_parent"

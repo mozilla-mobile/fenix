@@ -1,11 +1,7 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.SearchEngineList
@@ -33,7 +29,11 @@ class FenixSearchEngineProvider(
         ).loadSearchEngines(context)
     }
 
-    private val loadedSearchEngines = refreshAsync()
+    private val customEngines = async {
+        CustomSearchEngineProvider().loadSearchEngines(context)
+    }
+
+    private var loadedSearchEngines = refreshAsync()
 
     fun getDefaultEngine(context: Context): SearchEngine {
         val engines = installedSearchEngines(context)
@@ -47,7 +47,9 @@ class FenixSearchEngineProvider(
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
 
         engineList.copy(
-            list = engineList.list.filter { installedIdentifiers.contains(it.identifier) },
+            list = engineList.list.filter {
+                installedIdentifiers.contains(it.identifier)
+            },
             default = engineList.default?.let {
                 if (installedIdentifiers.contains(it.identifier)) {
                     it
@@ -81,9 +83,17 @@ class FenixSearchEngineProvider(
         prefs(context).edit().putStringSet(INSTALLED_ENGINES_KEY, installedIdentifiers).commit()
     }
 
+    fun reload() {
+        launch {
+            loadedSearchEngines = refreshAsync()
+        }
+    }
+
     private fun refreshAsync() = async {
         val engineList = defaultEngines.await()
-        engineList.copy(list = engineList.list + bundledEngines.await().list)
+        val bundledList = bundledEngines.await().list
+        val customList = customEngines.await().list
+        engineList.copy(list = engineList.list + bundledList + customList)
     }
 
     private fun prefs(context: Context) = context.getSharedPreferences(
@@ -91,20 +101,23 @@ class FenixSearchEngineProvider(
         Context.MODE_PRIVATE
     )
 
-    private fun installedSearchEngineIdentifiers(context: Context) = runBlocking {
+    private suspend fun installedSearchEngineIdentifiers(context: Context): Set<String> {
         val prefs = prefs(context)
 
-        if (!prefs.contains(INSTALLED_ENGINES_KEY)) {
+        val identifiers = if (!prefs.contains(INSTALLED_ENGINES_KEY)) {
             val defaultSet =  defaultEngines.await()
                 .list
                 .map { it.identifier }
                 .toSet()
 
             prefs.edit().putStringSet(INSTALLED_ENGINES_KEY, defaultSet).apply()
-            return@runBlocking defaultSet
+            defaultSet
+        } else {
+            prefs(context).getStringSet(INSTALLED_ENGINES_KEY, setOf()) ?: setOf()
         }
 
-        prefs(context).getStringSet(INSTALLED_ENGINES_KEY, setOf()) ?: setOf()
+        val customEngineIdentifiers = customEngines.await().list.map { it.identifier }.toSet()
+        return identifiers + customEngineIdentifiers
     }
 
     companion object {

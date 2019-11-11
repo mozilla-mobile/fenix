@@ -2,6 +2,7 @@ package org.mozilla.fenix.settings.search
 
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,13 +19,28 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.custom_search_engine.*
 import kotlinx.android.synthetic.main.fragment_add_search_engine.*
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
+import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.logDebug
+import org.mozilla.fenix.ext.requireComponents
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
+
+sealed class SearchStringResult {
+    object Success : SearchStringResult()
+    object MalformedURL : SearchStringResult()
+    object CannotReach : SearchStringResult()
+}
 
 class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
     private var availableEngines: List<SearchEngine> = listOf()
@@ -106,7 +122,86 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
     }
 
     private fun createCustomEngine() {
-        logDebug("AddSearchEngineFragment", "Creating Engine!")
+        custom_search_engine_name_field.error = ""
+        custom_search_engine_search_string_field.error = ""
+
+        val name = edit_engine_name.text?.toString() ?: ""
+        val searchString = edit_search_string.text?.toString() ?: ""
+
+
+        var hasError = false
+        if (name.isEmpty()) {
+            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_name)
+            hasError = true
+        }
+
+        if (searchString.isEmpty()) {
+            custom_search_engine_search_string_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
+            hasError = true
+        }
+
+        if (hasError) { return }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = validateSearchString(searchString)
+
+            launch(Main) {
+                when (result) {
+                    SearchStringResult.MalformedURL -> {
+                        custom_search_engine_search_string_field.error = "Malformed URL"
+                    }
+                    SearchStringResult.CannotReach -> {
+                        custom_search_engine_search_string_field.error = "Cannot Reach"
+                    }
+                    SearchStringResult.Success -> {
+                        CustomSearchEngineStore.addSearchEngine(requireContext(), name, searchString)
+                        requireComponents.search.provider.reload()
+                        val successMessage = resources.getString(R.string.search_add_custom_engine_success_message, name)
+
+                        view?.also {
+                            FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
+                                .setText(successMessage)
+                                .show()
+                        }
+
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun validateSearchString(searchString: String): SearchStringResult {
+        // we should share the code to substitute and normalize the search string (see SearchEngine.buildSearchUrl).
+        val encodedTestQuery = Uri.encode("testSearchEngineValidation")
+
+        val normalizedHttpsSearchURLStr = searchString.toNormalizedUrl()
+        val searchURLStr = normalizedHttpsSearchURLStr.replace("%s".toRegex(), encodedTestQuery)
+        val searchURL = try { URL(searchURLStr) } catch (e: MalformedURLException) {
+            return SearchStringResult.MalformedURL
+        }
+
+        val connection = searchURL.openConnection() as HttpURLConnection
+        connection.instanceFollowRedirects = true
+        connection.connectTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
+        connection.readTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
+
+        return try {
+            if (connection.responseCode < VALID_RESPONSE_CODE_UPPER_BOUND) {
+                SearchStringResult.Success
+            } else {
+                SearchStringResult.CannotReach
+            }
+        } catch (e: IOException) {
+            logDebug(LOGTAG, "Failure to get response code from server: returning invalid search query")
+            SearchStringResult.CannotReach
+        } finally {
+            try { connection.inputStream.close() } catch (_: IOException) {
+                logDebug(LOGTAG, "connection.inputStream failed to close")
+            }
+
+            connection.disconnect()
+        }
     }
 
     private fun installEngine(engine: SearchEngine) {
@@ -168,5 +263,11 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         wrapper.engine_icon.setImageDrawable(engineIcon)
         wrapper.overflow_menu.visibility = View.GONE
         return wrapper
+    }
+
+    companion object {
+        private const val LOGTAG = "AddSearchEngineFragment"
+        private val SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS = 4000
+        private val VALID_RESPONSE_CODE_UPPER_BOUND = 300
     }
 }
