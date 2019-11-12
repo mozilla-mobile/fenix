@@ -51,12 +51,6 @@ sealed class Event {
     object AddBookmarkFolder : Event()
     object RemoveBookmarkFolder : Event()
     object RemoveBookmarks : Event()
-    object QuickActionSheetOpened : Event()
-    object QuickActionSheetClosed : Event()
-    object QuickActionSheetShareTapped : Event()
-    object QuickActionSheetBookmarkTapped : Event()
-    object QuickActionSheetDownloadTapped : Event()
-    object QuickActionSheetOpenInAppTapped : Event()
     object CustomTabsClosed : Event()
     object CustomTabsActionTapped : Event()
     object CustomTabsMenuOpened : Event()
@@ -130,11 +124,15 @@ sealed class Event {
     object TrackingProtectionSettingsPanel : Event()
     object TrackingProtectionSettings : Event()
     object TrackingProtectionException : Event()
+    object OpenLogins : Event()
+    object OpenOneLogin : Event()
+    object CopyLogin : Event()
+    object ViewLoginPassword : Event()
 
     // Interaction events with extras
 
     data class PreferenceToggled(val preferenceKey: String, val enabled: Boolean, val context: Context) : Event() {
-        private val switchPreferenceTelemetryAllowList = listOf(
+        private val booleanPreferenceTelemetryAllowList = listOf(
             context.getString(R.string.pref_key_show_search_suggestions),
             context.getString(R.string.pref_key_remote_debugging),
             context.getString(R.string.pref_key_telemetry),
@@ -143,7 +141,8 @@ sealed class Event {
             context.getString(R.string.pref_key_search_browsing_history),
             context.getString(R.string.pref_key_show_clipboard_suggestions),
             context.getString(R.string.pref_key_show_search_shortcuts),
-            context.getString(R.string.pref_key_open_links_in_a_private_tab)
+            context.getString(R.string.pref_key_open_links_in_a_private_tab),
+            context.getString(R.string.pref_key_sync_logins)
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>?
@@ -154,7 +153,7 @@ sealed class Event {
 
         init {
             // If the event is not in the allow list, we don't want to track it
-            if (!switchPreferenceTelemetryAllowList.contains(preferenceKey)) { throw IllegalArgumentException() }
+            require(booleanPreferenceTelemetryAllowList.contains(preferenceKey))
         }
     }
 
@@ -304,7 +303,8 @@ sealed class Event {
         enum class Item {
             SETTINGS, LIBRARY, HELP, DESKTOP_VIEW_ON, DESKTOP_VIEW_OFF, FIND_IN_PAGE, NEW_TAB,
             NEW_PRIVATE_TAB, SHARE, REPORT_SITE_ISSUE, BACK, FORWARD, RELOAD, STOP, OPEN_IN_FENIX,
-            SAVE_TO_COLLECTION, ADD_TO_HOMESCREEN, QUIT
+            SAVE_TO_COLLECTION, ADD_TO_HOMESCREEN, QUIT, READER_MODE_ON, READER_MODE_OFF, OPEN_IN_APP,
+            BOOKMARK, READER_MODE_APPEARANCE
         }
 
         override val extras: Map<Events.browserMenuActionKeys, String>?

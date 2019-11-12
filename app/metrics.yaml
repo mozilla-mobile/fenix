@@ -81,12 +81,14 @@ events:
         description: >
           A string containing the name of the item the user tapped. These items include:
           Settings, Library, Help, Desktop Site toggle on/off, Find in Page, New Tab,
-          Private Tab, Share, Report Site Issue, Back/Forward button, Reload Button, Quit
+          Private Tab, Share, Report Site Issue, Back/Forward button, Reload Button, Quit,
+          Reader Mode On, Reader Mode Off, Open In App
     bugs:
     - https://github.com/mozilla-mobile/fenix/issue/1024
     data_reviews:
     - https://github.com/mozilla-mobile/fenix/pull/1214#issue-264756708
     - https://github.com/mozilla-mobile/fenix/pull/5098#issuecomment-529658996
+    - https://github.com/mozilla-mobile/fenix/pull/6310
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -106,23 +108,26 @@ events:
   preference_toggled:
     type: event
     description: >
-      A user toggled a preference switch in settings
+      A user toggled a boolean preference in settings
     extra_keys:
       preference_key:
-        description: "The preference key for the switch preference the user toggled. We currently track:
+        description: "The preference key for the boolean (true/false) preference the user toggled. We currently track:
           show_search_suggestions, remote_debugging, telemetry, tracking_protection, search_bookmarks,
-          search_browsing_history, show_clipboard_suggestions, show_search_shortcuts, and open_links_in_a_private_tab"
+          search_browsing_history, show_clipboard_suggestions, show_search_shortcuts, open_links_in_a_private_tab,
+          and pref_key_sync_logins"
       enabled:
         description: "Whether or not the preference is *now* enabled"
     bugs:
     - https://github.com/mozilla-mobile/fenix/issue/975
     - https://github.com/mozilla-mobile/fenix/issue/5094
     - https://github.com/mozilla-mobile/fenix/issues/5737
+    - https://github.com/mozilla-mobile/fenix/issues/5586
     data_reviews:
     - https://github.com/mozilla-mobile/fenix/pull/1896
     - https://github.com/mozilla-mobile/fenix/pull/5704
     - https://github.com/mozilla-mobile/fenix/pull/5886
     - https://github.com/mozilla-mobile/fenix/pull/5975
+    - https://github.com/mozilla-mobile/fenix/pull/6352
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-03-01"
@@ -274,74 +279,6 @@ find_in_page:
     - https://github.com/mozilla-mobile/fenix/pull/1344#issuecomment-479285010
     notification_emails:
     - fenix-core@mozilla.com
-    expires: "2020-03-01"
-
-quick_action_sheet:
-  opened:
-    type: event
-    description: >
-      A user opened the quick action sheet UI
-    bugs:
-    - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-  closed:
-    type: event
-    description: >
-      A user closed the quick action sheet UI
-    bugs:
-    - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-  share_tapped:
-    type: event
-    description: >
-      A user tapped the share button
-    bugs:
-    - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-  bookmark_tapped:
-    type: event
-    description: >
-      A user tapped the bookmark button
-    bugs:
-    - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-  download_tapped:
-    type: event
-    description: >
-      A user tapped the download button
-    bugs:
-    - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-    - https://github.com/mozilla-mobile/fenix/pull/1362#issuecomment-479668466
-    notification_emails:
-    - fenix-core@mozilla.com
-    expires: "2020-03-01"
-  open_app_tapped:
-    type: event
-    description: >
-      A user tapped the open in app button
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issue/1195
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/4629
-    notification_emails:
-      - fenix-core@mozilla.com
     expires: "2020-03-01"
 
 metrics:
@@ -1540,6 +1477,52 @@ media_state:
       - https://github.com/mozilla-mobile/fenix/issues/5705
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6463
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
+logins:
+  open_logins:
+    type: event
+    description: >
+      A user accessed Logins in Settings
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  open_individual_login:
+    type: event
+    description: >
+      A user accessed an individual login in saved logins
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  copy_login:
+    type: event
+    description: >
+      A user copied a piece of a login in saved logins
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+  view_password_login:
+    type: event
+    description: >
+      A user viewed a password in an individual saved login
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/6352
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"

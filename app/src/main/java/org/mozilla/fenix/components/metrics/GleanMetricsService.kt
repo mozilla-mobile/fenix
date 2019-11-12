@@ -25,6 +25,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Library
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
@@ -32,7 +33,6 @@ import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
 import org.mozilla.fenix.GleanMetrics.QrScanner
-import org.mozilla.fenix.GleanMetrics.QuickActionSheet
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
@@ -138,24 +138,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.BrowserMenuItemTapped -> EventWrapper(
             { Events.browserMenuAction.record(it) },
             { Events.browserMenuActionKeys.valueOf(it) }
-        )
-        is Event.QuickActionSheetOpened -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.opened.record(it) }
-        )
-        is Event.QuickActionSheetClosed -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.closed.record(it) }
-        )
-        is Event.QuickActionSheetShareTapped -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.shareTapped.record(it) }
-        )
-        is Event.QuickActionSheetBookmarkTapped -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.bookmarkTapped.record(it) }
-        )
-        is Event.QuickActionSheetDownloadTapped -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.downloadTapped.record(it) }
-        )
-        is Event.QuickActionSheetOpenInAppTapped -> EventWrapper<NoExtraKeys>(
-            { QuickActionSheet.openAppTapped.record(it) }
         )
         is Event.OpenedBookmarkInNewTab -> EventWrapper<NoExtraKeys>(
             { BookmarksManagement.openInNewTab.record(it) }
@@ -429,6 +411,18 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.OpenedLink -> EventWrapper(
             { Events.openedLink.record(it) },
             { Events.openedLinkKeys.valueOf(it) }
+        )
+        is Event.OpenLogins -> EventWrapper<NoExtraKeys>(
+            { Logins.openLogins.record(it) }
+        )
+        is Event.OpenOneLogin -> EventWrapper<NoExtraKeys>(
+            { Logins.openIndividualLogin.record(it) }
+        )
+        is Event.CopyLogin -> EventWrapper<NoExtraKeys>(
+            { Logins.copyLogin.record(it) }
+        )
+        is Event.ViewLoginPassword -> EventWrapper<NoExtraKeys>(
+            { Logins.viewPasswordLogin.record(it) }
         )
         // Don't record other events in Glean:
         is Event.AddBookmark -> null

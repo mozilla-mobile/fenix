@@ -23,7 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.component_search.*
+import kotlinx.android.synthetic.main.component_search.toolbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,6 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.accounts.FxaCapability
@@ -39,10 +40,12 @@ import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
+import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.prompts.PromptFeature
+import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
@@ -60,22 +63,22 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
-import org.mozilla.fenix.components.toolbar.BrowserToolbarController
+import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
-import org.mozilla.fenix.components.toolbar.QuickActionSheetState
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
+import org.mozilla.fenix.downloads.DownloadNotificationBottomSheetDialog
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
-import org.mozilla.fenix.ext.getDimenInDip
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -83,7 +86,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.isInExperiment
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -94,9 +96,11 @@ import org.mozilla.fenix.theme.ThemeManager
  */
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Observer {
-    protected lateinit var browserStore: BrowserFragmentStore
+    protected lateinit var browserFragmentStore: BrowserFragmentStore
     protected lateinit var browserInteractor: BrowserToolbarViewInteractor
     protected lateinit var browserToolbarView: BrowserToolbarView
+
+    protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
@@ -130,20 +134,9 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
 
-        val appLink = requireComponents.useCases.appLinksUseCases.appLinkRedirect
-        browserStore = StoreProvider.get(this) {
+        browserFragmentStore = StoreProvider.get(this) {
             BrowserFragmentStore(
-                BrowserFragmentState(
-                    quickActionSheetState = QuickActionSheetState(
-                        readable = getSessionById()?.readerable ?: false,
-                        bookmarked = false,
-                        readerActive = getSessionById()?.readerMode ?: false,
-                        bounceNeeded = false,
-                        isAppLink = getSessionById()?.let {
-                            appLink.invoke(it.url).hasExternalApp()
-                        } ?: false
-                    )
-                )
+                BrowserFragmentState()
             )
         }
 
@@ -172,10 +165,13 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             }
 
             val browserToolbarController = DefaultBrowserToolbarController(
-                requireActivity(),
-                snackbar,
-                findNavController(),
-                (activity as HomeActivity).browsingModeManager,
+                store = browserFragmentStore,
+                activity = requireActivity(),
+                snackbar = snackbar,
+                navController = findNavController(),
+                readerModeController = DefaultReaderModeController(readerViewFeature),
+                browsingModeManager = (activity as HomeActivity).browsingModeManager,
+                sessionManager = requireComponents.core.sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 browserLayout = view.browserLayout,
                 engineView = engineView,
@@ -192,14 +188,14 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     action = Intent.ACTION_VIEW
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                bottomSheetBehavior = QuickActionSheetBehavior.from(nestedScrollQuickAction),
-                scope = lifecycleScope
+                bookmarkTapped = { lifecycleScope.launch { bookmarkTapped(it) } },
+                scope = lifecycleScope,
+                tabCollectionStorage = requireComponents.core.tabCollectionStorage
             )
 
-            browserInteractor =
-                createBrowserToolbarViewInteractor(
-                    browserToolbarController,
-                    customTabSessionId?.let { sessionManager.findSessionById(it) })
+            browserInteractor = BrowserInteractor(
+                browserToolbarController = browserToolbarController
+            )
 
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
@@ -256,27 +252,40 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                 view = view
             )
 
-            downloadsFeature.set(
-                feature = DownloadsFeature(
+            val downloadFeature = DownloadsFeature(
+                context.applicationContext,
+                store = store,
+                useCases = context.components.useCases.downloadUseCases,
+                fragmentManager = childFragmentManager,
+                customTabId = customTabSessionId,
+                downloadManager = FetchDownloadManager(
                     context.applicationContext,
-                    store = store,
-                    useCases = context.components.useCases.downloadUseCases,
-                    fragmentManager = childFragmentManager,
-                    customTabId = customTabSessionId,
-                    downloadManager = FetchDownloadManager(
-                        context.applicationContext,
-                        DownloadService::class
-                    ),
-                    promptsStyling = DownloadsFeature.PromptsStyling(
-                        gravity = Gravity.BOTTOM,
-                        shouldWidthMatchParent = true,
-                        positiveButtonBackgroundColor = ThemeManager.resolveAttribute(R.attr.accent, context),
-                        positiveButtonTextColor = ThemeManager.resolveAttribute(R.attr.contrastText, context),
-                        positiveButtonRadius = context.getDimenInDip(R.dimen.tab_corner_radius)
-                    ),
-                    onNeedToRequestPermissions = { permissions ->
-                        requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
-                    }),
+                    DownloadService::class
+                ),
+                promptsStyling = DownloadsFeature.PromptsStyling(
+                    gravity = Gravity.BOTTOM,
+                    shouldWidthMatchParent = true,
+                    positiveButtonBackgroundColor = ThemeManager.resolveAttribute(R.attr.accent, context),
+                    positiveButtonTextColor = ThemeManager.resolveAttribute(R.attr.contrastText, context),
+                    positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
+                ),
+                onNeedToRequestPermissions = { permissions ->
+                    requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
+                }
+            )
+
+            downloadFeature.onDownloadCompleted = { download, _, downloadJobStatus ->
+                val dialog = DownloadNotificationBottomSheetDialog(
+                    context = context,
+                    didFail = downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED,
+                    download = download,
+                    tryAgain = downloadFeature::tryAgain
+                )
+                dialog.show()
+            }
+
+            downloadsFeature.set(
+                downloadFeature,
                 owner = this,
                 view = view
             )
@@ -353,7 +362,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                             ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
                         activity?.enterToImmersiveMode()
                         toolbar.visibility = View.GONE
-                        nestedScrollQuickAction.visibility = View.GONE
                     } else {
                         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
                         activity?.exitImmersiveModeIfNeeded()
@@ -361,7 +369,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                             activity.themeManager.applyStatusBarTheme(activity)
                         }
                         toolbar.visibility = View.VISIBLE
-                        nestedScrollQuickAction.visibility = View.VISIBLE
                     }
                     updateLayoutMargins(inFullScreen)
                 },
@@ -542,11 +549,6 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
         return false
     }
 
-    protected abstract fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor
-
     protected abstract fun navToQuickSettingsSheet(
         session: Session,
         sitePermissions: SitePermissions?
@@ -626,6 +628,48 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
             sessionManager.findSessionById(localCustomTabId)
         } else {
             sessionManager.selectedSession
+        }
+    }
+
+    private suspend fun bookmarkTapped(session: Session) = withContext(IO) {
+        val bookmarksStorage = requireComponents.core.bookmarksStorage
+        val existing =
+            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
+        if (existing != null) {
+            // Bookmark exists, go to edit fragment
+            withContext(Main) {
+                nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(existing.guid)
+                )
+            }
+        } else {
+            // Save bookmark, then go to edit fragment
+            val guid = bookmarksStorage.addItem(
+                BookmarkRoot.Mobile.id,
+                url = session.url,
+                title = session.title,
+                position = null
+            )
+
+            withContext(Main) {
+                requireComponents.analytics.metrics.track(Event.AddBookmark)
+
+                view?.let { view ->
+                    FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+                        .setAnchorView(browserToolbarView.view)
+                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                            nav(
+                                R.id.browserFragment,
+                                BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(
+                                    guid
+                                )
+                            )
+                        }
+                        .setText(getString(R.string.bookmark_saved_snackbar))
+                        .show()
+                }
+            }
         }
     }
 
