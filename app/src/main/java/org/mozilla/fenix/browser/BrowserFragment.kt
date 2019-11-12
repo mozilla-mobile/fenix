@@ -12,10 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -117,6 +120,20 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     override fun onStart() {
         super.onStart()
         subscribeToTabCollections()
+        getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
+
+        updateToolbar()
+    }
+
+    private fun updateToolbar() {
+        val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+
+        browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
+            requireContext().dimen(R.dimen.browser_toolbar_height)
+        } else {
+            0
+        }
+    }
 
         val toolbarSessionObserver = TrackingProtectionOverlay(
             context = requireContext(),

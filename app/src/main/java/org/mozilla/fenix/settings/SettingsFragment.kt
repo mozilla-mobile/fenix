@@ -117,16 +117,8 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         (activity as AppCompatActivity).supportActionBar?.show()
 
         setSummaryAndTitleStrings()
-        setupPreferences()
-
-        updateAccountUIState(
-            context!!,
-            requireComponents.backgroundServices.accountManager.accountProfile()
-        )
-
-        updatePreferenceVisibilityForFeatureFlags()
     }
-    
+
     private fun setSummaryAndTitleStrings() {
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(pref_key_tracking_protection_settings))
@@ -168,6 +160,15 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
             isVisible =
                 !PrivateShortcutCreateManager.doesPrivateBrowsingPinnedShortcutExist(context)
         }
+
+        setupPreferences()
+
+        updateAccountUIState(
+            context!!,
+            requireComponents.backgroundServices.accountManager.accountProfile()
+        )
+
+        updatePreferenceVisibilityForFeatureFlags()
     }
 
     private fun updatePreferenceVisibilityForFeatureFlags() {

@@ -15,9 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.copy
-import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.paste
-import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.paste_and_go
+import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -29,6 +27,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 
 interface BrowserToolbarViewInteractor {
@@ -41,6 +40,7 @@ interface BrowserToolbarViewInteractor {
 
 class BrowserToolbarView(
     private val container: ViewGroup,
+    private val shouldUseBottomToolbar: Boolean,
     private val interactor: BrowserToolbarViewInteractor,
     private val customTabSession: Session?
 ) : LayoutContainer {
@@ -48,12 +48,21 @@ class BrowserToolbarView(
     override val containerView: View?
         get() = container
 
-    private val urlBackground = LayoutInflater.from(container.context)
-        .inflate(R.layout.layout_url_background, container, false)
-
-    val view: BrowserToolbar = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_search, container, true)
-        .findViewById(R.id.toolbar)
+    val view: BrowserToolbar = if (container.context.settings().shouldUseBottomToolbar) {
+        LayoutInflater.from(container.context)
+            .inflate(R.layout.component_bottom_browser_toolbar, container, true)
+            .findViewById(R.id.toolbar_bottom)
+    } else {
+        if (container.context.settings().shouldUseFixedToolbar) {
+            LayoutInflater.from(container.context)
+                .inflate(R.layout.component_browser_top_toolbar_fixed, container, true)
+                .findViewById(R.id.toolbar_top_fixed)
+        } else {
+            LayoutInflater.from(container.context)
+                .inflate(R.layout.component_browser_bottom_toolbar, container, true)
+                .findViewById(R.id.toolbar_top)
+        }
+    }
 
     val toolbarIntegration: ToolbarIntegration
 
@@ -180,6 +189,7 @@ class BrowserToolbarView(
                     readerModeStateProvider = {
                         sessionManager.selectedSession?.readerMode ?: false
                     },
+                    shouldReverseItems = !shouldUseBottomToolbar,
                     onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) },
                     lifecycleOwner = container.context as AppCompatActivity,
                     sessionManager = sessionManager,

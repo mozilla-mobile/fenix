@@ -12,7 +12,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 
-class ToolbarSettingsFragment: PreferenceFragmentCompat() {
+class ToolbarSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var topPreference: RadioButtonPreference
     private lateinit var bottomPreference: RadioButtonPreference
 

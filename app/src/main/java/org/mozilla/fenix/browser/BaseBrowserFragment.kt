@@ -197,6 +197,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
+                shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
             )
@@ -213,7 +214,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                     sessionId = customTabSessionId,
                     stub = view.stubFindInPage,
                     engineView = view.engineView,
-                    toolbar = toolbar
+                    toolbar = browserToolbarView.view
                 ),
                 owner = this,
                 view = view
@@ -361,14 +362,14 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
                         activity?.requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
                         activity?.enterToImmersiveMode()
-                        toolbar.visibility = View.GONE
+                        browserToolbarView.view.visibility = View.GONE
                     } else {
                         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
                         activity?.exitImmersiveModeIfNeeded()
                         (activity as? HomeActivity)?.let { activity ->
                             activity.themeManager.applyStatusBarTheme(activity)
                         }
-                        toolbar.visibility = View.VISIBLE
+                        browserToolbarView.view.visibility = View.VISIBLE
                     }
                     updateLayoutMargins(inFullScreen)
                 },

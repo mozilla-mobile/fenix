@@ -8,6 +8,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -197,6 +198,12 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
         true
     )
+
+    val shouldUseFixedToolbar: Boolean
+        get() {
+            val accessibilityManager = appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+            return accessibilityManager?.isTouchExplorationEnabled ?: false
+        }
 
     var shouldDeleteBrowsingDataOnQuit by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit),

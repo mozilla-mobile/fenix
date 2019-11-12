@@ -445,6 +445,7 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ViewLoginPassword -> EventWrapper<NoExtraKeys>(
             { Logins.viewPasswordLogin.record(it) }
+        )
         is Event.ToolbarPositionChanged -> EventWrapper(
             { ToolbarSettings.changedPosition.record(it) },
             { ToolbarSettings.changedPositionKeys.valueOf(it) }
