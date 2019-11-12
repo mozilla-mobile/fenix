@@ -187,7 +187,7 @@ toolbar_settings:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issue/6054
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/TODO
+      - https://github.com/mozilla-mobile/fenix/pull/6571
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-03-01"

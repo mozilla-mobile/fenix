@@ -59,7 +59,7 @@ class ToolbarView(
         get() = container
 
     val view: BrowserToolbar = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_search, container, true)
+        .inflate(R.layout.component_browser_toolbar, container, true)
         .findViewById(R.id.toolbar)
 
     private var isInitialized = false

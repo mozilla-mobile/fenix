@@ -23,7 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.component_search.toolbar
+import kotlinx.android.synthetic.main.component_browser_toolbar.*
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -199,6 +199,7 @@ abstract class BaseBrowserFragment : Fragment(), BackHandler, SessionManager.Obs
 
             browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
+                shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
             )

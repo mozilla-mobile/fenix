@@ -13,19 +13,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.RadioButton
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_browser.view.browserLayout
-import kotlinx.android.synthetic.main.fragment_browser.view.readerViewControlsBar
-import kotlinx.android.synthetic.main.fragment_home.bottom_bar
-import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.onboarding_message
+import kotlinx.android.synthetic.main.fragment_browser.*
+import kotlinx.android.synthetic.main.fragment_browser.view.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
@@ -116,10 +118,60 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         super.onStart()
         subscribeToTabCollections()
         getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
+
+        val accessibilityManager = activity?.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+        accessibilityManager?.addTouchExplorationStateChangeListener {
+            updateToolbar()
+        }
+
+        updateToolbar()
+    }
+
+    private fun updateToolbar() {
+        val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+        val toolbarParams = browserToolbarView.view.layoutParams as CoordinatorLayout.LayoutParams
+
+        toolbarParams.gravity = if (requireContext().settings().shouldUseBottomToolbar) {
+            browserEngine.bottomMargin = requireContext().dimen(R.dimen.browser_toolbar_height)
+            Gravity.BOTTOM
+        } else {
+            browserEngine.bottomMargin = 0
+            Gravity.TOP
+        }
+
+        getSessionById()?.loading?.let {
+            setToolbarBehavior(it)
+        }
+    }
+
+    private fun setToolbarBehavior(loading: Boolean) {
+        (browserToolbarView.view.layoutParams as CoordinatorLayout.LayoutParams).apply {
+            // Stop toolbar from collapsing if TalkBack is enabled or page is loading
+            val accessibilityManager = context?.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+            val shouldUseBottomToolbar = requireContext().settings().shouldUseBottomToolbar
+
+            behavior = when {
+                loading || accessibilityManager?.isTouchExplorationEnabled == true -> {
+                    (behavior as? BrowserToolbarTopBehavior)?.forceExpand(browserToolbarView.view)
+                    null
+                }
+                shouldUseBottomToolbar -> {
+                    // Do not use a dynamic behavior for the bottom toolbar
+                    null
+                }
+                !shouldUseBottomToolbar -> {
+                    BrowserToolbarTopBehavior(context, null)
+                }
+                else -> {
+                    null
+                }
+            }
+        }
     }
 
     private val toolbarSessionObserver = object : Session.Observer {
         override fun onLoadingStateChanged(session: Session, loading: Boolean) {
+            setToolbarBehavior(loading)
             if (!loading &&
                 shouldShowTrackingProtectionOnboarding(session)
             ) {
