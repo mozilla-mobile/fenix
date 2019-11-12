@@ -203,6 +203,17 @@ class Settings private constructor(
         default = false
     )
 
+    var shouldUseBottomToolbar by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
+        default = true
+    )
+
+    val toolbarSettingString: String
+        get() = when {
+            shouldUseBottomToolbar -> appContext.getString(R.string.preference_bottom_toolbar)
+            else -> appContext.getString(R.string.preference_top_toolbar)
+        }
+
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
 

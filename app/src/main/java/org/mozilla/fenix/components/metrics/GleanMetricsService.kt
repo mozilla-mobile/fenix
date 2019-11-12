@@ -40,6 +40,7 @@ import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.Tab
+import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -444,6 +445,9 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.ViewLoginPassword -> EventWrapper<NoExtraKeys>(
             { Logins.viewPasswordLogin.record(it) }
+        is Event.ToolbarPositionChanged -> EventWrapper(
+            { ToolbarSettings.changedPosition.record(it) },
+            { ToolbarSettings.changedPositionKeys.valueOf(it) }
         )
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
