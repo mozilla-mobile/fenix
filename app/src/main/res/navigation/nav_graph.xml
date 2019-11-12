@@ -394,6 +394,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_defaultBrowserSettingsFragment"
             app:destination="@id/defaultBrowserSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_toolbarSettingsFragment"
+            app:destination="@id/toolbarSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/dataChoicesFragment"
@@ -659,4 +662,8 @@
             android:name="savedLoginItem"
             app:argType="org.mozilla.fenix.logins.SavedLoginsItem" />
     </fragment>
+    <fragment
+        android:id="@+id/toolbarSettingsFragment"
+        android:name="org.mozilla.fenix.settings.ToolbarSettingsFragment"
+        android:label="ToolbarSettingsFragment" />
 </navigation>

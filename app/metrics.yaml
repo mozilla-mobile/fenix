@@ -176,6 +176,22 @@ search_shortcuts:
       - fenix-core@mozilla.com
     expires: "2020-03-01"
 
+toolbar_settings:
+  changed_position:
+    type: event
+    description: >
+      The user selected a new position for the toolbar
+    extra_keys:
+      position:
+        description: "A string that indicates the new position of the toolbar TOP or BOTTOM"
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issue/6054
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/TODO
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-03-01"
+
 crash_reporter:
   opened:
     type: event
