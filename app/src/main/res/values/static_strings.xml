@@ -38,11 +38,12 @@
     <string name="search_add_custom_engine_name_hint" translatable="false">Name</string>
 
     <string name="search_add_custom_engine_search_string_hint" translatable="false">Search string to use</string>
-    <string name="search_add_custom_engine_search_string_example" translatable="false">Replace query with "%s". Example:\nhttps://www.google.com/search?q=%s</string>
+    <string name="search_add_custom_engine_search_string_example" translatable="false">Replace query with “%s”. Example:\nhttps://www.google.com/search?q=%s</string>
     <string name="search_add_custom_engine_learn_more_label" translatable="false">Learn More</string>
 
     <string name="search_add_custom_engine_error_empty_name" translatable="false">Enter search engine name</string>
-    <string name="search_add_custom_engine_error_existing_name" translatable="false">Search engine with name "%s" already exists.</string>
+    <string name="search_add_custom_engine_error_existing_name" translatable="false">Search engine with name “%s” already exists.</string>
     <string name="search_add_custom_engine_error_empty_search_string" translatable="false">Enter a search string</string>
+    <string name="search_add_custom_engine_error_missing_template" translatable="false">Invalid search string: Missing “%s”</string>
     <string name="search_add_custom_engine_success_message" translatable="false">Created %s</string>
 </resources>

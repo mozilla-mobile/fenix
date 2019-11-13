@@ -35,6 +35,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 
 sealed class SearchStringResult {
     object Success : SearchStringResult()
@@ -134,15 +135,24 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
             hasError = true
         }
 
-        val existingIdentifiers = requireComponents.search.provider.allSearchEngineIdentifiers()
+        val existingIdentifiers = requireComponents
+            .search
+            .provider
+            .allSearchEngineIdentifiers()
+            .map { it.toLowerCase(Locale.ROOT) }
 
-        if (existingIdentifiers.contains(name)) {
+        if (existingIdentifiers.contains(name.toLowerCase(Locale.ROOT))) {
             custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_existing_name, name)
             hasError = true
         }
 
         if (searchString.isEmpty()) {
             custom_search_engine_search_string_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
+            hasError = true
+        }
+
+        if (!searchString.contains("%s")) {
+            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
             hasError = true
         }
 
