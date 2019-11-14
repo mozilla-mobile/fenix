@@ -122,6 +122,7 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
 
 class SessionControlUIView(
     container: ViewGroup,
+    interactor: TabSessionInteractor,
     actionEmitter: Observer<SessionControlAction>,
     changesObservable: Observable<SessionControlChange>
 ) :
@@ -135,7 +136,7 @@ class SessionControlUIView(
         .inflate(R.layout.component_session_control, container, true)
         .findViewById(R.id.home_component)
 
-    private val sessionControlAdapter = SessionControlAdapter(actionEmitter)
+    private val sessionControlAdapter = SessionControlAdapter(interactor, actionEmitter)
 
     init {
         view.apply {

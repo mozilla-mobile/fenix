@@ -24,12 +24,14 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
+import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 import org.mozilla.fenix.home.sessioncontrol.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabAction
 import org.mozilla.fenix.home.sessioncontrol.onNext
 
 class TabViewHolder(
     view: View,
+    interactor: TabSessionInteractor,
     actionEmitter: Observer<SessionControlAction>,
     override val containerView: View? = view
 ) :
@@ -52,8 +54,8 @@ class TabViewHolder(
 
         item_tab.setOnLongClickListener {
             view.context.components.analytics.metrics.track(Event.CollectionTabLongPressed)
-            actionEmitter.onNext(TabAction.SaveTabGroup(tab?.sessionId!!))
-            true
+            interactor.onSaveToCollection(tab?.sessionId!!)
+            return@setOnLongClickListener true
         }
 
         close_tab_button.setOnClickListener {

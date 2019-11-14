@@ -139,6 +139,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 }
 
 class SessionControlAdapter(
+    private val interactor: TabSessionInteractor,
     private val actionEmitter: Observer<SessionControlAction>
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
 
@@ -147,9 +148,9 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, actionEmitter)
-            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, actionEmitter)
-            SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, actionEmitter)
+            TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, interactor, actionEmitter)
+            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor, actionEmitter)
+            SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, actionEmitter)
             NoContentMessageViewHolder.LAYOUT_ID -> NoContentMessageViewHolder(view)
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)

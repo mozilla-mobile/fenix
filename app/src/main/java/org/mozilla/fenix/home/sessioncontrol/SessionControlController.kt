@@ -1,0 +1,79 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.fenix.home.sessioncontrol
+
+import android.content.Context
+import androidx.navigation.NavController
+import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.home.HomeFragmentDirections
+
+/**
+ * [HomeFragment] controller. An interface that handles the view manipulation of the Tabs triggered
+ * by the Interactor.
+ */
+interface SessionControlController {
+    /**
+     * See [TabSessionInteractor.onSaveToCollection]
+     */
+    fun handleSaveTabToCollection(selectedTabId: String?)
+}
+
+class DefaultSessionControlController(
+    private val context: Context,
+    private val navController: NavController,
+    private val browsingModeManager: BrowsingModeManager,
+    private val getListOfTabs: () -> List<Tab>,
+    private val invokePendingDeleteJobs: () -> Unit,
+    private val registerCollectionStorageObserver: () -> Unit
+) : SessionControlController {
+    private val tabCollectionStorage: TabCollectionStorage
+        get() = context.components.core.tabCollectionStorage
+
+    override fun handleSaveTabToCollection(selectedTabId: String?) {
+        if (browsingModeManager.mode.isPrivate) return
+
+        invokePendingDeleteJobs()
+
+        val tabs = getListOfTabs()
+        val step = when {
+            // Show the SelectTabs fragment if there are multiple opened tabs to select which tabs
+            // you want to save to a collection.
+            tabs.size > 1 -> SaveCollectionStep.SelectTabs
+            // If there is an existing tab collection, show the SelectCollection fragment to save
+            // the selected tab to a collection of your choice.
+            tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+            // Show the NameCollection fragment to create a new collection for the selected tab.
+            else -> SaveCollectionStep.NameCollection
+        }
+
+        showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
+    }
+
+    private fun showCollectionCreationFragment(
+        step: SaveCollectionStep,
+        selectedTabIds: Array<String>? = null,
+        selectedTabCollectionId: Long? = null
+    ) {
+        if (navController.currentDestination?.id == R.id.collectionCreationFragment) return
+
+        // Only register the observer right before moving to collection creation
+        registerCollectionStorageObserver()
+
+        val tabIds = getListOfTabs().map { it.sessionId }.toTypedArray()
+        val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment(
+            tabIds = tabIds,
+            previousFragmentId = R.id.homeFragment,
+            saveCollectionStep = step,
+            selectedTabIds = selectedTabIds,
+            selectedTabCollectionId = selectedTabCollectionId ?: -1
+        )
+        navController.nav(R.id.homeFragment, directions)
+    }
+}

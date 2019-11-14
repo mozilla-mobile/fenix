@@ -79,6 +79,8 @@ import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
+import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.OnboardingAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
@@ -143,6 +145,7 @@ class HomeFragment : Fragment() {
 
     private val onboarding by lazy { FenixOnboarding(requireContext()) }
     private lateinit var sessionControlComponent: SessionControlComponent
+    private lateinit var sessionControlInteractor: SessionControlInteractor
     private lateinit var currentMode: CurrentMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,8 +180,20 @@ class HomeFragment : Fragment() {
             getManagedEmitter()
         )
 
+        sessionControlInteractor = SessionControlInteractor(
+            DefaultSessionControlController(
+                context = requireContext(),
+                navController = findNavController(),
+                browsingModeManager = browsingModeManager,
+                getListOfTabs = ::getListOfTabs,
+                invokePendingDeleteJobs = ::invokePendingDeleteJobs,
+                registerCollectionStorageObserver = ::registerCollectionStorageObserver
+            )
+        )
+
         sessionControlComponent = SessionControlComponent(
             view.homeLayout,
+            sessionControlInteractor,
             bus,
             FenixViewModelProvider.create(
                 this,
@@ -369,11 +384,6 @@ class HomeFragment : Fragment() {
     @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun handleTabAction(action: TabAction) {
         Do exhaustive when (action) {
-            is TabAction.SaveTabGroup -> {
-                if (browsingModeManager.mode.isPrivate) return
-                invokePendingDeleteJobs()
-                saveTabToCollection(action.selectedTabSessionId)
-            }
             is TabAction.Select -> {
                 invokePendingDeleteJobs()
                 val session = sessionManager.findSessionById(action.sessionId)
@@ -815,6 +825,10 @@ class HomeFragment : Fragment() {
             .toList()
     }
 
+    private fun getListOfTabs(): List<Tab> {
+        return getListOfSessions().toTabs()
+    }
+
     private fun showCollectionCreationFragment(
         step: SaveCollectionStep,
         selectedTabIds: Array<String>? = null,
@@ -822,9 +836,8 @@ class HomeFragment : Fragment() {
     ) {
         if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
 
-        val storage = requireComponents.core.tabCollectionStorage
         // Only register the observer right before moving to collection creation
-        storage.register(collectionStorageObserver, this)
+        registerCollectionStorageObserver()
 
         val tabIds = getListOfSessions().toTabs().map { it.sessionId }.toTypedArray()
         view?.let {
@@ -839,17 +852,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun saveTabToCollection(selectedTabId: String?) {
-        val tabs = getListOfSessions().toTabs()
-        val storage = requireComponents.core.tabCollectionStorage
-
-        val step = when {
-            tabs.size > 1 -> SaveCollectionStep.SelectTabs
-            storage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
-            else -> SaveCollectionStep.NameCollection
-        }
-
-        showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
+    private fun registerCollectionStorageObserver() {
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
     private fun share(data: List<ShareData>) {

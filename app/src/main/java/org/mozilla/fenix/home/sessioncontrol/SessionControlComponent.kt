@@ -27,6 +27,7 @@ import mozilla.components.feature.tab.collections.TabCollection as ACTabCollecti
 
 class SessionControlComponent(
     private val container: ViewGroup,
+    private val interactor: TabSessionInteractor,
     bus: ActionBusFactory,
     viewModelProvider: UIComponentViewModelProvider<SessionControlState, SessionControlChange>
 ) :
@@ -36,7 +37,7 @@ class SessionControlComponent(
         viewModelProvider
     ) {
 
-    override fun initView() = SessionControlUIView(container, actionEmitter, changesObservable)
+    override fun initView() = SessionControlUIView(container, interactor, actionEmitter, changesObservable)
 
     val view: RecyclerView
         get() = uiView.view as RecyclerView
@@ -79,7 +80,6 @@ data class SessionControlState(
 typealias TabCollection = ACTabCollection
 
 sealed class TabAction : Action {
-    data class SaveTabGroup(val selectedTabSessionId: String?) : TabAction()
     object ShareTabs : TabAction()
     data class CloseAll(val private: Boolean) : TabAction()
     data class Select(val tabView: View, val sessionId: String) : TabAction()
