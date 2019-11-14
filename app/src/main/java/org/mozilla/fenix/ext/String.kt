@@ -79,7 +79,7 @@ fun String.toShortUrl(publicSuffixList: PublicSuffixList): String {
     }
 
     fun String.stripUserInfo(): String {
-        val userInfo = this.toUri().userInfo
+        val userInfo = this.toUri().encodedUserInfo
         return if (userInfo != null) {
             val infoIndex = this.indexOf(userInfo)
             this.removeRange(infoIndex..infoIndex + userInfo.length)

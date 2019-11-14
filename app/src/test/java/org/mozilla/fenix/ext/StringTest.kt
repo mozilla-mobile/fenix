@@ -114,6 +114,29 @@ class StringTest {
         "about:buildconfig" shortenedShouldBecome "about:buildconfig"
     }
 
+    @Test
+    fun `encoded userinfo should still be considered userinfo`() {
+        "https://user:password%40really.evil.domain%2F@mail.google.com" shortenedShouldBecome "mail.google.com"
+    }
+
+    @Test
+    @Ignore("This would be more correct, but does not appear to be an attack vector")
+    fun `should decode DWORD IP addresses`() {
+        "https://16843009" shortenedShouldBecome "1.1.1.1"
+    }
+
+    @Test
+    @Ignore("This would be more correct, but does not appear to be an attack vector")
+    fun `should decode octal IP addresses`() {
+        "https://000010.000010.000010.000010" shortenedShouldBecome "8.8.8.8"
+    }
+
+    @Test
+    @Ignore("This would be more correct, but does not appear to be an attack vector")
+    fun `should decode hex IP addresses`() {
+        "http://0x01010101" shortenedShouldBecome "1.1.1.1"
+    }
+
     // BEGIN test cases borrowed from desktop (shortUrl is used for Top Sites on new tab)
     // Test cases are modified, as we show the eTLD
     // (https://searchfox.org/mozilla-central/source/browser/components/newtab/test/unit/lib/ShortUrl.test.js)
