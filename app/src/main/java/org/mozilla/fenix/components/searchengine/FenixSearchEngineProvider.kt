@@ -1,7 +1,12 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.SearchEngineList
@@ -10,9 +15,10 @@ import mozilla.components.browser.search.provider.filter.SearchEngineFilter
 import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import org.mozilla.fenix.ext.settings
 
+@SuppressWarnings("TooManyFunctions")
 class FenixSearchEngineProvider(
     private val context: Context
-): SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {
+) : SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {
     private val defaultEngines = async {
         AssetsSearchEngineProvider(LocaleSearchLocalizationProvider()).loadSearchEngines(context)
     }
@@ -119,7 +125,7 @@ class FenixSearchEngineProvider(
         val prefs = prefs(context)
 
         val identifiers = if (!prefs.contains(INSTALLED_ENGINES_KEY)) {
-            val defaultSet =  defaultEngines.await()
+            val defaultSet = defaultEngines.await()
                 .list
                 .map { it.identifier }
                 .toSet()
@@ -138,6 +144,5 @@ class FenixSearchEngineProvider(
         private val BUNDLED_SEARCH_ENGINES = listOf("ecosia", "reddit", "startpage", "yahoo", "youtube")
         private const val PREF_FILE = "fenix-search-engine-provider"
         private const val INSTALLED_ENGINES_KEY = "fenix-installed-search-engines"
-        private const val EMPTY = ""
     }
 }

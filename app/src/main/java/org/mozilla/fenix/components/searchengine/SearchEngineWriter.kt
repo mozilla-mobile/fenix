@@ -19,14 +19,15 @@ import javax.xml.transform.stream.StreamResult
 import android.util.Base64
 import java.io.ByteArrayOutputStream
 
+private const val BITMAP_COMPRESS_QUALITY = 100
 private fun Bitmap.toBase64(): String {
     val stream = ByteArrayOutputStream()
-    compress(Bitmap.CompressFormat.PNG, 100, stream)
+    compress(Bitmap.CompressFormat.PNG, BITMAP_COMPRESS_QUALITY, stream)
     val encodedImage = Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
     return "data:image/png;base64,$encodedImage"
 }
 
-internal class SearchEngineWriter {
+class SearchEngineWriter {
     companion object {
         private const val LOG_TAG = "SearchEngineWriter"
 

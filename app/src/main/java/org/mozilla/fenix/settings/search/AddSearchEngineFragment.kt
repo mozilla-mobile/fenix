@@ -40,10 +40,15 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         setHasOptionsMenu(true)
 
         availableEngines = runBlocking {
-            requireContext().components.search.provider.uninstalledSearchEngines(requireContext()).list
+            requireContext()
+                .components
+                .search
+                .provider
+                .uninstalledSearchEngines(requireContext())
+                .list
         }
 
-        selectedIndex = if (availableEngines.isEmpty()) -1 else 0
+        selectedIndex = if (availableEngines.isEmpty()) CUSTOM_INDEX else FIRST_INDEX
     }
 
     override fun onCreateView(
@@ -64,7 +69,11 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
         val setupSearchEngineItem: (Int, SearchEngine) -> Unit = { index, engine ->
             val engineId = engine.identifier
-            val engineItem = makeButtonFromSearchEngine(engine, layoutInflater, requireContext().resources)
+            val engineItem = makeButtonFromSearchEngine(
+                engine = engine,
+                layoutInflater = layoutInflater,
+                res = requireContext().resources
+            )
             engineItem.id = index
             engineItem.tag = engineId
             engineItem.radio_button.isChecked = selectedIndex == index
@@ -75,12 +84,12 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         availableEngines.forEachIndexed(setupSearchEngineItem)
 
         val engineItem = makeCustomButton(layoutInflater)
-        engineItem.id = -1
-        engineItem.radio_button.isChecked = selectedIndex == -1
+        engineItem.id = CUSTOM_INDEX
+        engineItem.radio_button.isChecked = selectedIndex == CUSTOM_INDEX
         engineViews.add(engineItem)
         search_engine_group.addView(engineItem, layoutParams)
 
-        toggleCustomForm(selectedIndex == -1)
+        toggleCustomForm(selectedIndex == CUSTOM_INDEX)
     }
 
     override fun onResume() {
@@ -97,7 +106,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         return when (item.itemId) {
             R.id.addSearchEngine -> {
                 when (selectedIndex) {
-                    -1 -> createCustomEngine()
+                    CUSTOM_INDEX -> createCustomEngine()
                     else -> {
                         val engine = availableEngines[selectedIndex]
                         installEngine(engine)
@@ -119,7 +128,8 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
         var hasError = false
         if (name.isEmpty()) {
-            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_name)
+            custom_search_engine_name_field.error = resources
+                .getString(R.string.search_add_custom_engine_error_empty_name)
             hasError = true
         }
 
@@ -130,17 +140,20 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
             .map { it.toLowerCase(Locale.ROOT) }
 
         if (existingIdentifiers.contains(name.toLowerCase(Locale.ROOT))) {
-            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_existing_name, name)
+            custom_search_engine_name_field.error = resources
+                .getString(R.string.search_add_custom_engine_error_existing_name, name)
             hasError = true
         }
 
         if (searchString.isEmpty()) {
-            custom_search_engine_search_string_field.error = resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
+            custom_search_engine_search_string_field
+                .error = resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
             hasError = true
         }
 
         if (!searchString.contains("%s")) {
-            custom_search_engine_name_field.error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
+            custom_search_engine_name_field
+                .error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
             hasError = true
         }
 
@@ -158,9 +171,14 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
                         custom_search_engine_search_string_field.error = "Cannot Reach"
                     }
                     SearchStringValidator.Result.Success -> {
-                        CustomSearchEngineStore.addSearchEngine(requireContext(), name, searchString)
+                        CustomSearchEngineStore.addSearchEngine(
+                            context = requireContext(),
+                            engineName = name,
+                            searchQuery = searchString
+                        )
                         requireComponents.search.provider.reload()
-                        val successMessage = resources.getString(R.string.search_add_custom_engine_success_message, name)
+                        val successMessage = resources
+                            .getString(R.string.search_add_custom_engine_success_message, name)
 
                         view?.also {
                             FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
@@ -202,19 +220,15 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
     }
 
     private fun makeCustomButton(layoutInflater: LayoutInflater): View {
-        val wrapper = layoutInflater.inflate(R.layout.custom_search_engine_radio_button, null) as ConstraintLayout
+        val wrapper = layoutInflater
+            .inflate(R.layout.custom_search_engine_radio_button, null) as ConstraintLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         return wrapper
     }
 
     private fun toggleCustomForm(isEnabled: Boolean) {
-        custom_search_engine_form.alpha = if (isEnabled) {
-            1.0f
-        } else {
-            0.2f
-        }
-
+        custom_search_engine_form.alpha = if (isEnabled) ENABLED_ALPHA else DISABLED_ALPHA
         edit_search_string.isEnabled = isEnabled
         edit_engine_name.isEnabled = isEnabled
     }
@@ -224,7 +238,8 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         layoutInflater: LayoutInflater,
         res: Resources
     ): View {
-        val wrapper = layoutInflater.inflate(R.layout.search_engine_radio_button, null) as ConstraintLayout
+        val wrapper = layoutInflater
+            .inflate(R.layout.search_engine_radio_button, null) as ConstraintLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = engine.name
@@ -234,5 +249,12 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         wrapper.engine_icon.setImageDrawable(engineIcon)
         wrapper.overflow_menu.visibility = View.GONE
         return wrapper
+    }
+
+    companion object {
+        private const val ENABLED_ALPHA = 1.0f
+        private const val DISABLED_ALPHA = 0.2f
+        private const val CUSTOM_INDEX = -1
+        private const val FIRST_INDEX = 0
     }
 }

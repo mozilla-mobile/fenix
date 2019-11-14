@@ -57,6 +57,6 @@ object SearchStringValidator {
     }
 
     private const val LOGTAG = "AddSearchEngineFragment"
-    private val SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS = 4000
-    private val VALID_RESPONSE_CODE_UPPER_BOUND = 300
+    private const val SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS = 4000
+    private const val VALID_RESPONSE_CODE_UPPER_BOUND = 300
 }

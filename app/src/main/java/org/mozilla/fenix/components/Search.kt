@@ -8,13 +8,8 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
-import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
-import mozilla.components.browser.search.provider.filter.SearchEngineFilter
-import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
-import org.mozilla.fenix.ext.searchEngineManager
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
 

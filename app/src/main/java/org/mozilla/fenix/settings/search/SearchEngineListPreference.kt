@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +18,9 @@ import androidx.core.view.isVisible
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
-import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
@@ -119,7 +115,12 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                     context.components.search.provider.uninstallSearchEngine(context, engine)
 
                     if (engine == defaultEngine) {
-                        context.settings().defaultSearchEngineName = context.components.search.provider.getDefaultEngine(context).name
+                        context.settings().defaultSearchEngineName = context
+                            .components
+                            .search
+                            .provider
+                            .getDefaultEngine(context)
+                            .name
                     }
 
                     reload(context)

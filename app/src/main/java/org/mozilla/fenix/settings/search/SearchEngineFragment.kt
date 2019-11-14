@@ -60,7 +60,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         showHistorySuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
         showBookmarkSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
         showClipboardSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
-
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {

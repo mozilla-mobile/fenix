@@ -25,7 +25,7 @@ class CustomSearchEngineProvider : SearchEngineProvider {
 }
 
 object CustomSearchEngineStore {
-    class EngineNameAlreadyExists: Exception()
+    class EngineNameAlreadyExists : Exception()
 
     suspend fun addSearchEngine(context: Context, engineName: String, searchQuery: String) {
         val prefs = pref(context)
@@ -48,7 +48,6 @@ object CustomSearchEngineStore {
         val customEngines = pref(context).getStringSet(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet())
         val enginesEditor = pref(context).edit()
         enginesEditor.remove(engineId)
-
 
         enginesEditor.putStringSet(
             PREF_KEY_CUSTOM_SEARCH_ENGINES,
