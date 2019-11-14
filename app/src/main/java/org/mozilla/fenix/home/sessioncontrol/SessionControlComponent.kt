@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import io.reactivex.Observer
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.media.state.MediaState
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
@@ -51,13 +49,10 @@ data class Tab(
     val url: String,
     val hostname: String,
     val title: String,
-    val selected: Boolean? = null,
+    val selected: Boolean = false,
     var mediaState: MediaState? = null,
     val icon: Bitmap? = null
 )
-
-fun List<Tab>.toSessionBundle(context: Context): MutableList<Session> =
-    this.toSessionBundle(context.components.core.sessionManager)
 
 fun List<Tab>.toSessionBundle(sessionManager: SessionManager): MutableList<Session> {
     val sessionBundle = mutableListOf<Session>()

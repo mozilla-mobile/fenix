@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.synthetic.main.tab_list_row.*
 import mozilla.components.feature.media.state.MediaState
-import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoContentMessageViewHolder
@@ -26,15 +24,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.SaveTabGroupViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabHeaderViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
@@ -89,24 +78,6 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         override fun sameAs(other: AdapterItem) = other is TabInCollectionItem && tab.id == other.tab.id
     }
 
-    object OnboardingHeader : AdapterItem(OnboardingHeaderViewHolder.LAYOUT_ID)
-    data class OnboardingSectionHeader(
-        val labelBuilder: (Context) -> String
-    ) : AdapterItem(OnboardingSectionHeaderViewHolder.LAYOUT_ID) {
-        override fun sameAs(other: AdapterItem) = other is OnboardingSectionHeader && labelBuilder == other.labelBuilder
-    }
-    data class OnboardingManualSignIn(
-        val state: OnboardingState
-    ) : AdapterItem(OnboardingManualSignInViewHolder.LAYOUT_ID)
-    data class OnboardingAutomaticSignIn(
-        val state: OnboardingState
-    ) : AdapterItem(OnboardingAutomaticSignInViewHolder.LAYOUT_ID)
-    object OnboardingThemePicker : AdapterItem(OnboardingThemePickerViewHolder.LAYOUT_ID)
-    object OnboardingTrackingProtection : AdapterItem(OnboardingTrackingProtectionViewHolder.LAYOUT_ID)
-    object OnboardingPrivateBrowsing : AdapterItem(OnboardingPrivateBrowsingViewHolder.LAYOUT_ID)
-    object OnboardingPrivacyNotice : AdapterItem(OnboardingPrivacyNoticeViewHolder.LAYOUT_ID)
-    object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
-
     /**
      * True if this item represents the same value as other. Used by [AdapterItemDiffCallback].
      */
@@ -118,14 +89,14 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     open fun getChangePayload(newItem: AdapterItem): Any? = null
 }
 
-class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
+object AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
     override fun areItemsTheSame(oldItem: AdapterItem, newItem: AdapterItem) = oldItem.sameAs(newItem)
 
     @Suppress("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: AdapterItem, newItem: AdapterItem) = oldItem == newItem
 
     override fun getChangePayload(oldItem: AdapterItem, newItem: AdapterItem): Any? {
-        return oldItem.getChangePayload(newItem) ?: return super.getChangePayload(oldItem, newItem)
+        return oldItem.getChangePayload(newItem) ?: super.getChangePayload(oldItem, newItem)
     }
 
     data class TabChangePayload(
@@ -140,7 +111,7 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 class SessionControlAdapter(
     private val actionEmitter: Observer<SessionControlAction>
-) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
+) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback) {
 
     // This method triggers the ComplexMethod lint error when in fact it's quite simple.
     @SuppressWarnings("ComplexMethod")
@@ -155,15 +126,6 @@ class SessionControlAdapter(
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, actionEmitter)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(view, actionEmitter)
-            OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
-            OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
-            OnboardingAutomaticSignInViewHolder.LAYOUT_ID -> OnboardingAutomaticSignInViewHolder(view)
-            OnboardingManualSignInViewHolder.LAYOUT_ID -> OnboardingManualSignInViewHolder(view)
-            OnboardingThemePickerViewHolder.LAYOUT_ID -> OnboardingThemePickerViewHolder(view)
-            OnboardingTrackingProtectionViewHolder.LAYOUT_ID -> OnboardingTrackingProtectionViewHolder(view)
-            OnboardingPrivateBrowsingViewHolder.LAYOUT_ID -> OnboardingPrivateBrowsingViewHolder(view)
-            OnboardingPrivacyNoticeViewHolder.LAYOUT_ID -> OnboardingPrivacyNoticeViewHolder(view)
-            OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, actionEmitter)
             else -> throw IllegalStateException()
         }
     }
@@ -178,7 +140,8 @@ class SessionControlAdapter(
                 holder.bind(tabHeader.isPrivate, tabHeader.hasTabs)
             }
             is TabViewHolder -> {
-                holder.bindSession((item as AdapterItem.TabItem).tab)
+                val (tab) = item as AdapterItem.TabItem
+                holder.bindSession(tab)
             }
             is NoContentMessageViewHolder -> {
                 val (icon, header, description) = item as AdapterItem.NoContentMessage
@@ -192,14 +155,6 @@ class SessionControlAdapter(
                 val (collection, tab, isLastTab) = item as AdapterItem.TabInCollectionItem
                 holder.bindSession(collection, tab, isLastTab)
             }
-            is OnboardingSectionHeaderViewHolder -> holder.bind(
-                (item as AdapterItem.OnboardingSectionHeader).labelBuilder
-            )
-            is OnboardingManualSignInViewHolder -> holder.bind()
-            is OnboardingAutomaticSignInViewHolder -> holder.bind((
-                (item as AdapterItem.OnboardingAutomaticSignIn).state
-                    as OnboardingState.SignedOutCanAutoSignIn).withAccount
-            )
         }
     }
 
@@ -213,23 +168,22 @@ class SessionControlAdapter(
             return
         }
 
-        (payloads[0] as AdapterItemDiffCallback.TabChangePayload).let {
-            (holder as TabViewHolder).updateTab(it.tab)
+        val payload = payloads[0] as AdapterItemDiffCallback.TabChangePayload
+        (holder as TabViewHolder).updateTab(payload.tab)
 
-            // Always set the visibility to GONE to avoid the play button sticking around from previous draws
-            holder.play_pause_button.visibility = View.GONE
+        // Always set the visibility to GONE to avoid the play button sticking around from previous draws
+        holder.play_pause_button.visibility = View.GONE
 
-            if (it.shouldUpdateHostname) { holder.updateHostname(it.tab.hostname) }
-            if (it.shouldUpdateTitle) {
-                holder.updateTitle(it.tab.title)
-                holder.updateCloseButtonDescription(it.tab.title) }
-            if (it.shouldUpdateFavicon) {
-                holder.updateFavIcon(it.tab.url, it.tab.icon)
-            }
-            if (it.shouldUpdateSelected) { holder.updateSelected(it.tab.selected ?: false) }
-            if (it.shouldUpdateMediaState) {
-                holder.updatePlayPauseButton(it.tab.mediaState ?: MediaState.None)
-            }
+        if (payload.shouldUpdateHostname) { holder.updateHostname(payload.tab.hostname) }
+        if (payload.shouldUpdateTitle) {
+            holder.updateTitle(payload.tab.title)
+            holder.updateCloseButtonDescription(payload.tab.title) }
+        if (payload.shouldUpdateFavicon) {
+            holder.updateFavIcon(payload.tab.url, payload.tab.icon)
+        }
+        if (payload.shouldUpdateSelected) { holder.updateSelected(payload.tab.selected) }
+        if (payload.shouldUpdateMediaState) {
+            holder.updatePlayPauseButton(payload.tab.mediaState ?: MediaState.None)
         }
     }
 }

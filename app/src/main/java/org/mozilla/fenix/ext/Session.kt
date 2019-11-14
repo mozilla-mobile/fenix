@@ -13,14 +13,13 @@ import org.mozilla.fenix.home.sessioncontrol.Tab
 fun Session.toTab(context: Context, selected: Boolean? = null, mediaState: MediaState? = null): Tab =
     this.toTab(context.components.publicSuffixList, selected, mediaState)
 
-fun Session.toTab(publicSuffixList: PublicSuffixList, selected: Boolean? = null, mediaState: MediaState? = null): Tab {
-    return Tab(
-        this.id,
-        this.url,
-        this.url.urlToTrimmedHost(publicSuffixList),
-        this.title,
-        selected,
-        mediaState,
-        this.icon
+fun Session.toTab(publicSuffixList: PublicSuffixList, selected: Boolean? = null, mediaState: MediaState? = null) =
+    Tab(
+        sessionId = id,
+        url = url,
+        hostname = url.urlToTrimmedHost(publicSuffixList),
+        title = title,
+        selected = selected ?: false,
+        mediaState = mediaState,
+        icon = icon
     )
-}

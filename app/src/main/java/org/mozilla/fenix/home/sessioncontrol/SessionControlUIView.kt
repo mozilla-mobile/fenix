@@ -35,8 +35,9 @@ private fun normalModeAdapterItems(
     collections: List<TabCollection>,
     expandedCollections: Set<Long>
 ): List<AdapterItem> {
-    val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
+    val items = mutableListOf<AdapterItem>(
+        AdapterItem.TabHeader(isPrivate = false, hasTabs = tabs.isNotEmpty())
+    )
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
@@ -47,7 +48,6 @@ private fun normalModeAdapterItems(
 
     items.add(AdapterItem.CollectionHeader)
     if (collections.isNotEmpty()) {
-
         // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
         collections.map {
             AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), tabs.isNotEmpty())
@@ -65,8 +65,9 @@ private fun normalModeAdapterItems(
 }
 
 private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
-    val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(true, tabs.isNotEmpty()))
+    val items = mutableListOf<AdapterItem>(
+        AdapterItem.TabHeader(isPrivate = true, hasTabs = tabs.isNotEmpty())
+    )
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
@@ -77,34 +78,27 @@ private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
     return items
 }
 
-private fun onboardingAdapterItems(onboardingState: OnboardingState): List<AdapterItem> {
-    val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.OnboardingHeader)
+private fun onboardingAdapterItems(onboardingState: OnboardingState): List<OnboardingItem> {
+    val items = mutableListOf<OnboardingItem>(OnboardingItem.OnboardingHeader)
 
     // Customize FxA items based on where we are with the account state:
-    items.addAll(when (onboardingState) {
-        OnboardingState.SignedOutNoAutoSignIn -> {
-            listOf(
-                AdapterItem.OnboardingManualSignIn(onboardingState)
-            )
-        }
-        is OnboardingState.SignedOutCanAutoSignIn -> {
-            listOf(
-                AdapterItem.OnboardingAutomaticSignIn(onboardingState)
-            )
-        }
-        OnboardingState.SignedIn -> listOf()
-    })
+    when (onboardingState) {
+        OnboardingState.SignedOutNoAutoSignIn -> OnboardingItem.OnboardingManualSignIn
+        is OnboardingState.SignedOutCanAutoSignIn ->
+            OnboardingItem.OnboardingAutomaticSignIn(onboardingState)
+        OnboardingState.SignedIn -> null
+    }?.let { items.add(it) }
 
     items.addAll(listOf(
-        AdapterItem.OnboardingSectionHeader {
-            val appName = it.getString(R.string.app_name)
-            it.getString(R.string.onboarding_feature_section_header, appName)
+        OnboardingItem.OnboardingSectionHeader { context ->
+            val appName = context.getString(R.string.app_name)
+            context.getString(R.string.onboarding_feature_section_header, appName)
         },
-        AdapterItem.OnboardingThemePicker,
-        AdapterItem.OnboardingTrackingProtection,
-        AdapterItem.OnboardingPrivateBrowsing,
-        AdapterItem.OnboardingPrivacyNotice,
-        AdapterItem.OnboardingFinish
+        OnboardingItem.OnboardingThemePicker,
+        OnboardingItem.OnboardingTrackingProtection,
+        OnboardingItem.OnboardingPrivateBrowsing,
+        OnboardingItem.OnboardingPrivacyNotice,
+        OnboardingItem.OnboardingFinish
     ))
 
     return items
@@ -113,11 +107,11 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 private fun SessionControlState.toAdapterList(): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(tabs, collections, expandedCollections)
     is Mode.Private -> privateModeAdapterItems(tabs)
-    is Mode.Onboarding -> onboardingAdapterItems(mode.state)
+    is Mode.Onboarding -> emptyList()
 }
 
 private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapIndexed { index, tab ->
-        AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
+    AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
 }
 
 class SessionControlUIView(
@@ -136,26 +130,31 @@ class SessionControlUIView(
         .findViewById(R.id.home_component)
 
     private val sessionControlAdapter = SessionControlAdapter(actionEmitter)
+    private val onboardingAdapter = OnboardingAdapter(actionEmitter)
 
     init {
         view.apply {
-            adapter = sessionControlAdapter
             layoutManager = LinearLayoutManager(container.context)
-            val itemTouchHelper =
-                ItemTouchHelper(
-                    SwipeToDeleteCallback(
-                        actionEmitter
-                    )
-                )
+            val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(actionEmitter))
             itemTouchHelper.attachToRecyclerView(this)
         }
     }
 
     override fun updateView() = Consumer<SessionControlState> {
-        // Workaround for list not updating until scroll on Android 5 + 6
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            sessionControlAdapter.submitList(null)
+        if (it.mode is Mode.Onboarding) {
+            setAdapter(onboardingAdapter)
+            onboardingAdapter.submitList(onboardingAdapterItems(it.mode.state))
+        } else {
+            setAdapter(sessionControlAdapter)
+            // Workaround for list not updating until scroll on Android 5 + 6
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                sessionControlAdapter.submitList(null)
+            }
+            sessionControlAdapter.submitList(it.toAdapterList())
         }
-        sessionControlAdapter.submitList(it.toAdapterList())
+    }
+
+    private fun setAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+        if (view.adapter != adapter) view.adapter = adapter
     }
 }

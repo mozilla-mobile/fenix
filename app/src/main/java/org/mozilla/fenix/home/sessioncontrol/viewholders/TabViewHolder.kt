@@ -95,7 +95,7 @@ class TabViewHolder(
         updateTitle(tab.title)
         updateHostname(tab.hostname)
         updateFavIcon(tab.url, tab.icon)
-        updateSelected(tab.selected ?: false)
+        updateSelected(tab.selected)
         updatePlayPauseButton(tab.mediaState ?: MediaState.None)
         item_tab.transitionName = "$TAB_ITEM_TRANSITION_NAME${tab.sessionId}"
         updateCloseButtonDescription(tab.title)
