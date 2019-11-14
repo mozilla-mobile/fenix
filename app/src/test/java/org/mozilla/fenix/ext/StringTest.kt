@@ -15,8 +15,8 @@ import org.mozilla.fenix.TestApplication
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-const val puny = "xn--kpry57d"
-const val idn = "台灣"
+const val PUNYCODE = "xn--kpry57d"
+const val IDN = "台灣"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
@@ -133,7 +133,7 @@ class StringTest {
 
     @Test
     fun `should convert host to idn when calling shortURL`() {
-        "http://$puny.blah.com" shortenedShouldBecome "$idn.blah.com"
+        "http://$PUNYCODE.blah.com" shortenedShouldBecome "$IDN.blah.com"
     }
 
     @Test
@@ -174,7 +174,7 @@ class StringTest {
 
     @Test
     fun `should return idn etld for www-only non-etld`() {
-        "https://www.$puny/foo" shortenedShouldBecome idn
+        "https://www.$PUNYCODE/foo" shortenedShouldBecome IDN
     }
 
     @Test
