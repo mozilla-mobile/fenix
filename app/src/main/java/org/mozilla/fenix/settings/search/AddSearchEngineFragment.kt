@@ -2,7 +2,6 @@ package org.mozilla.fenix.settings.search
 
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,26 +22,14 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
-import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.requireComponents
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
-import java.util.*
+import java.util.Locale
 
-sealed class SearchStringResult {
-    object Success : SearchStringResult()
-    object MalformedURL : SearchStringResult()
-    object CannotReach : SearchStringResult()
-}
-
+@SuppressWarnings("LargeClass", "TooManyFunctions")
 class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
     private var availableEngines: List<SearchEngine> = listOf()
     private var selectedIndex: Int = -1
@@ -60,7 +47,8 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_add_search_engine, container, false)
@@ -159,17 +147,17 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         if (hasError) { return }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = validateSearchString(searchString)
+            val result = SearchStringValidator.isSearchStringValid(searchString)
 
             launch(Main) {
                 when (result) {
-                    SearchStringResult.MalformedURL -> {
+                    SearchStringValidator.Result.MalformedURL -> {
                         custom_search_engine_search_string_field.error = "Malformed URL"
                     }
-                    SearchStringResult.CannotReach -> {
+                    SearchStringValidator.Result.CannotReach -> {
                         custom_search_engine_search_string_field.error = "Cannot Reach"
                     }
-                    SearchStringResult.Success -> {
+                    SearchStringValidator.Result.Success -> {
                         CustomSearchEngineStore.addSearchEngine(requireContext(), name, searchString)
                         requireComponents.search.provider.reload()
                         val successMessage = resources.getString(R.string.search_add_custom_engine_success_message, name)
@@ -184,39 +172,6 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
                     }
                 }
             }
-        }
-    }
-
-    private fun validateSearchString(searchString: String): SearchStringResult {
-        // we should share the code to substitute and normalize the search string (see SearchEngine.buildSearchUrl).
-        val encodedTestQuery = Uri.encode("testSearchEngineValidation")
-
-        val normalizedHttpsSearchURLStr = searchString.toNormalizedUrl()
-        val searchURLStr = normalizedHttpsSearchURLStr.replace("%s".toRegex(), encodedTestQuery)
-        val searchURL = try { URL(searchURLStr) } catch (e: MalformedURLException) {
-            return SearchStringResult.MalformedURL
-        }
-
-        val connection = searchURL.openConnection() as HttpURLConnection
-        connection.instanceFollowRedirects = true
-        connection.connectTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
-        connection.readTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
-
-        return try {
-            if (connection.responseCode < VALID_RESPONSE_CODE_UPPER_BOUND) {
-                SearchStringResult.Success
-            } else {
-                SearchStringResult.CannotReach
-            }
-        } catch (e: IOException) {
-            logDebug(LOGTAG, "Failure to get response code from server: returning invalid search query")
-            SearchStringResult.CannotReach
-        } finally {
-            try { connection.inputStream.close() } catch (_: IOException) {
-                logDebug(LOGTAG, "connection.inputStream failed to close")
-            }
-
-            connection.disconnect()
         }
     }
 
@@ -279,11 +234,5 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         wrapper.engine_icon.setImageDrawable(engineIcon)
         wrapper.overflow_menu.visibility = View.GONE
         return wrapper
-    }
-
-    companion object {
-        private const val LOGTAG = "AddSearchEngineFragment"
-        private val SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS = 4000
-        private val VALID_RESPONSE_CODE_UPPER_BOUND = 300
     }
 }
