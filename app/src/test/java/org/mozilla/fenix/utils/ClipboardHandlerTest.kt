@@ -55,7 +55,6 @@ class ClipboardHandlerTest {
         assertEquals(clipboardUrl, clipboardHandler.url)
     }
 
-    //Add text plain or text html test
     @Test
     fun getUrlfromTextUrlMIME(){
         assertEquals(null, clipboardHandler.url)
