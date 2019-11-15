@@ -19,12 +19,15 @@ import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
+import kotlinx.coroutines.MainScope
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.utils.allowUndo
 
 abstract class SearchEngineListPreference @JvmOverloads constructor(
     context: Context,
@@ -96,6 +99,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
 
         searchEngineList.list
             .filter { it.identifier != searchEngineList.default?.identifier }
+            .sortedBy { it.name }
             .forEachIndexed(setupSearchEngineItem)
     }
 
@@ -154,18 +158,34 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     }
 
     private fun deleteSearchEngine(context: Context, engine: SearchEngine) {
-        val defaultEngine = context.components.search.provider.getDefaultEngine(context)
-        context.components.search.provider.uninstallSearchEngine(context, engine)
+        MainScope().allowUndo(
+            view = context.getRootView()!!,
+            message = context
+                .resources
+                .getString(R.string.search_delete_search_engine_success_message, engine.name),
+            undoActionTitle = context.resources.getString(R.string.snackbar_deleted_undo),
+            onCancel = {
+                searchEngineList = searchEngineList.copy(list = searchEngineList.list + engine)
+                refreshSearchEngineViews(context)
+            },
+            operation = {
+                val defaultEngine = context.components.search.provider.getDefaultEngine(context)
+                context.components.search.provider.uninstallSearchEngine(context, engine)
 
-        if (engine == defaultEngine) {
-            context.settings().defaultSearchEngineName = context
-                .components
-                .search
-                .provider
-                .getDefaultEngine(context)
-                .name
-        }
+                if (engine == defaultEngine) {
+                    context.settings().defaultSearchEngineName = context
+                        .components
+                        .search
+                        .provider
+                        .getDefaultEngine(context)
+                        .name
+                }
+            }
+        )
 
-        reload(context)
+        searchEngineList = searchEngineList.copy(list = searchEngineList.list.filter {
+            it.identifier != engine.identifier
+        })
+        refreshSearchEngineViews(context)
     }
 }
