@@ -79,7 +79,8 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 engine = engine,
                 layoutInflater = layoutInflater,
                 res = context.resources,
-                allowDelete = searchEngineList.list.size > 1)
+                allowDeletion = searchEngineList.list.size > 1
+            )
 
             engineItem.id = index + (searchEngineList.default?.let { 1 } ?: 0)
             engineItem.tag = engineId
@@ -102,17 +103,19 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         engine: SearchEngine,
         layoutInflater: LayoutInflater,
         res: Resources,
-        allowDelete: Boolean
+        allowDeletion: Boolean
     ): View {
+        val isCustomSearchEngine = CustomSearchEngineStore.isCustomSearchEngine(context, engine.identifier)
+
         val wrapper = layoutInflater.inflate(itemResId, null) as ConstraintLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = engine.name
-        wrapper.overflow_menu.isVisible = allowDelete
+        wrapper.overflow_menu.isVisible = allowDeletion || isCustomSearchEngine
         wrapper.overflow_menu.setOnClickListener {
-            val isCustomSearchEngine = CustomSearchEngineStore.isCustomSearchEngine(context, engine.identifier)
             SearchEngineMenu(
                 context = context,
+                allowDeletion = allowDeletion,
                 isCustomSearchEngine = isCustomSearchEngine,
                 onItemTapped = {
                     when (it) {

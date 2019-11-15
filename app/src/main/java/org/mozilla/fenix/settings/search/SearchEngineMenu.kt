@@ -8,6 +8,7 @@ import org.mozilla.fenix.theme.ThemeManager
 
 class SearchEngineMenu(
     private val context: Context,
+    private val allowDeletion: Boolean,
     private val isCustomSearchEngine: Boolean,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
@@ -31,14 +32,16 @@ class SearchEngineMenu(
             )
         }
 
-        items.add(
-            SimpleBrowserMenuItem(
-                context.getString(R.string.search_engine_delete),
-                textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
-            ) {
-                onItemTapped.invoke(Item.Delete)
-            }
-        )
+        if (allowDeletion) {
+            items.add(
+                SimpleBrowserMenuItem(
+                    context.getString(R.string.search_engine_delete),
+                    textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
+                ) {
+                    onItemTapped.invoke(Item.Delete)
+                }
+            )
+        }
 
         items
     }
