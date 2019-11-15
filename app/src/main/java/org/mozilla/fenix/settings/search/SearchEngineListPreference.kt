@@ -66,7 +66,10 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             return
         }
 
-        val selectedEngine = context.components.search.provider.getDefaultEngine(context).identifier
+        val defaultEngine = context.components.search.provider.getDefaultEngine(context).identifier
+        val selectedEngine = (searchEngineList.list.find {
+            it.identifier == defaultEngine
+        } ?: searchEngineList.list.first()).identifier
 
         searchEngineGroup!!.removeAllViews()
 
@@ -180,12 +183,14 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                         .getDefaultEngine(context)
                         .name
                 }
+                refreshSearchEngineViews(context)
             }
         )
 
         searchEngineList = searchEngineList.copy(list = searchEngineList.list.filter {
             it.identifier != engine.identifier
         })
+
         refreshSearchEngineViews(context)
     }
 }
