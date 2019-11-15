@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.settings.search
 
 import android.content.res.Resources
@@ -26,7 +30,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
@@ -90,6 +96,20 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         search_engine_group.addView(engineItem, layoutParams)
 
         toggleCustomForm(selectedIndex == CUSTOM_INDEX)
+
+        custom_search_engines_learn_more.increaseTapArea(DPS_TO_INCREASE)
+        custom_search_engines_learn_more.setOnClickListener {
+            requireContext().let { context ->
+                val intent = SupportUtils.createCustomTabIntent(
+                    context,
+                    SupportUtils.getSumoURLForTopic(
+                        context,
+                        SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                    )
+                )
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onResume() {
@@ -231,6 +251,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         custom_search_engine_form.alpha = if (isEnabled) ENABLED_ALPHA else DISABLED_ALPHA
         edit_search_string.isEnabled = isEnabled
         edit_engine_name.isEnabled = isEnabled
+        custom_search_engines_learn_more.isEnabled = isEnabled
     }
 
     private fun makeButtonFromSearchEngine(
@@ -256,5 +277,6 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         private const val DISABLED_ALPHA = 0.2f
         private const val CUSTOM_INDEX = -1
         private const val FIRST_INDEX = 0
+        private const val DPS_TO_INCREASE = 20
     }
 }

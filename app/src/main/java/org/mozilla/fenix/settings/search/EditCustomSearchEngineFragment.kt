@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.settings.search
 
 import android.net.Uri
@@ -19,7 +23,9 @@ import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
 class EditCustomSearchEngineFragment : Fragment() {
@@ -55,6 +61,20 @@ class EditCustomSearchEngineFragment : Fragment() {
         edit_engine_name.setText(searchEngine.name)
         val decodedUrl = Uri.decode(searchEngine.buildSearchUrl("%s"))
         edit_search_string.setText(decodedUrl)
+
+        custom_search_engines_learn_more.increaseTapArea(DPS_TO_INCREASE)
+        custom_search_engines_learn_more.setOnClickListener {
+            requireContext().let { context ->
+                val intent = SupportUtils.createCustomTabIntent(
+                    context,
+                    SupportUtils.getSumoURLForTopic(
+                        context,
+                        SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                    )
+                )
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onResume() {
@@ -152,5 +172,9 @@ class EditCustomSearchEngineFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val DPS_TO_INCREASE = 20
     }
 }
