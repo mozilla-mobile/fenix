@@ -22,13 +22,13 @@ class ClipboardHandler(context: Context) {
         get() {
             if (!clipboard.isPrimaryClipEmpty() &&
                 (clipboard.isPrimaryClipPlainText() ||
-                    clipboard.isPrimaryClipHtmlText())) {
+                        clipboard.isPrimaryClipHtmlText())
+            ) {
                 return clipboard.firstPrimaryClipItem?.text.toString()
 
             }
             return null
         }
-
         set(value) {
             clipboard.primaryClip = ClipData.newPlainText("Text", value)
         }

@@ -56,7 +56,7 @@ class ClipboardHandlerTest {
     }
 
     @Test
-    fun getUrlfromTextUrlMIME(){
+    fun getUrlfromTextUrlMIME() {
         assertEquals(null, clipboardHandler.url)
 
         clipboard.primaryClip = ClipData.newHtmlText("Html", clipboardUrl, clipboardUrl)
