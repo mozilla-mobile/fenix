@@ -36,6 +36,8 @@ object FeatureFlags {
 
     val forceZoomPreference = Config.channel.isNightlyOrDebug
 
+    val customSearchEngines = Config.channel.isNightlyOrDebug
+
     /**
      * Gives option in Settings to see logins and sync logins
      */

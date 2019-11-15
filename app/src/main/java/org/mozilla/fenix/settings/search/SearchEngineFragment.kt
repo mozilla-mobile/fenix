@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -19,6 +20,12 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.search_preferences, rootKey)
+
+        val addSearchEnginePreference = findPreference<AddSearchEnginePreference>(
+            getPreferenceKey(R.string.pref_key_add_search_engine)
+        )
+
+        addSearchEnginePreference?.isVisible = FeatureFlags.customSearchEngines
     }
 
     override fun onResume() {
