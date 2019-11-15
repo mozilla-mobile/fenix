@@ -7,8 +7,6 @@ package org.mozilla.fenix.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.util.Log
-
 import mozilla.components.support.utils.WebURLFinder
 
 private const val MIME_TYPE_TEXT_PLAIN = "text/plain"
