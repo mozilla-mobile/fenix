@@ -62,5 +62,4 @@ class ClipboardHandlerTest {
         clipboard.primaryClip = ClipData.newHtmlText("Html", clipboardUrl, clipboardUrl)
         assertEquals(clipboardUrl, clipboardHandler.url)
     }
-
 }
