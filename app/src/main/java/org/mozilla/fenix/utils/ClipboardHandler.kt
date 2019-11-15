@@ -33,8 +33,6 @@ class ClipboardHandler(context: Context) {
 
         set(value) {
             clipboard.primaryClip = ClipData.newPlainText("Text", value)
-            val string = clipboard.primaryClip!!.toString()
-            println(string)
         }
 
     val url: String?
