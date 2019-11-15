@@ -29,26 +29,4 @@
     <string name="preference_accessibility_force_enable_zoom" translatable="false">Zoom on all websites</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary" translatable="false">Enable to allow pinch and zoom, even on websites that prevent this gesture.</string>
-
-    <string name="search_engine_add_custom_search_engine_title" translatable="false">Add search engine</string>
-    <string name="search_engine_edit_custom_search_engine_title" translatable="false">Edit search engine</string>
-    <string name="search_engine_add_custom_search_engine_add_button_content_description" translatable="false">Add</string>
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description" translatable="false">Save</string>
-
-    <string name="search_engine_edit" translatable="false">Edit</string>
-    <string name="search_engine_delete" translatable="false">Delete</string>
-    <string name="search_add_custom_engine_label" translatable="false">Custom</string>
-    <string name="search_add_custom_engine_name_hint" translatable="false">Name</string>
-
-    <string name="search_add_custom_engine_search_string_hint" translatable="false">Search string to use</string>
-    <string name="search_add_custom_engine_search_string_example" translatable="false">Replace query with “%s”. Example:\nhttps://www.google.com/search?q=%s</string>
-    <string name="search_add_custom_engine_learn_more_label" translatable="false">Learn More</string>
-
-    <string name="search_add_custom_engine_error_empty_name" translatable="false">Enter search engine name</string>
-    <string name="search_add_custom_engine_error_existing_name" translatable="false">Search engine with name “%s” already exists.</string>
-    <string name="search_add_custom_engine_error_empty_search_string" translatable="false">Enter a search string</string>
-    <string name="search_add_custom_engine_error_missing_template" translatable="false">Invalid search string: Missing “%s”</string>
-    <string name="search_add_custom_engine_success_message" translatable="false">Created %s</string>
-    <string name="search_edit_custom_engine_success_message" translatable="false">Saved %s</string>
-    <string name="search_delete_search_engine_success_message" translatable="false">Deleted %s</string>
 </resources>
