@@ -22,7 +22,7 @@ class ClipboardHandler(context: Context) {
 
     var text: String?
         get() {
-            if( !clipboard.isPrimaryClipEmpty() &&
+            if (!clipboard.isPrimaryClipEmpty() &&
                 (clipboard.isPrimaryClipPlainText() or
                     clipboard.isPrimaryClipHtmlText())) {
                 return clipboard.firstPrimaryClipItem?.text.toString()
