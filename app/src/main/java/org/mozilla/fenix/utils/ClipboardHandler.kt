@@ -25,7 +25,6 @@ class ClipboardHandler(context: Context) {
                         clipboard.isPrimaryClipHtmlText())
             ) {
                 return clipboard.firstPrimaryClipItem?.text.toString()
-
             }
             return null
         }
