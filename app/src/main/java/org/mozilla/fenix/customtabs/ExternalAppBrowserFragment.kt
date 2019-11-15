@@ -9,7 +9,7 @@ import android.view.Gravity
 import android.view.View
 import androidx.core.view.isGone
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.component_browser_bottom_toolbar.*
+import kotlinx.android.synthetic.main.component_browser_top_toolbar.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -64,7 +64,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                 customTabsIntegration.set(
                     feature = CustomTabsIntegration(
                         sessionManager = requireComponents.core.sessionManager,
-                        toolbar = toolbar_top,
+                        toolbar = toolbar,
                         sessionId = customTabSessionId,
                         activity = activity,
                         engineLayout = view.swipeRefresh,
@@ -86,14 +86,14 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
                 hideToolbarFeature.set(
                     feature = WebAppHideToolbarFeature(
                         requireComponents.core.sessionManager,
-                        toolbar_top,
+                        toolbar,
                         customTabSessionId,
                         trustedScopes
                     ) { toolbarVisible ->
                         updateLayoutMargins(inFullScreen = !toolbarVisible)
                     },
                     owner = this,
-                    view = toolbar_top
+                    view = toolbar
                 )
 
                 if (manifest != null) {
@@ -187,7 +187,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), BackHandler {
     }
 
     override fun getEngineMargins(): Pair<Int, Int> {
-        val toolbarHidden = toolbar_top.isGone
+        val toolbarHidden = toolbar.isGone
         return if (toolbarHidden) {
             0 to 0
         } else {

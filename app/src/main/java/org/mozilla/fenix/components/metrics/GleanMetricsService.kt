@@ -6,8 +6,8 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
@@ -507,6 +507,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
             adjustCampaign.set(context.settings().adjustCampaignId)
             totalUriCount.set(context.settings().totalUriCount.toString())
+            toolbarPosition.set(context.settings().toolbarSettingString)
         }
 
         SearchDefaultEngine.apply {

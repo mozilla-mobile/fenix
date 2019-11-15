@@ -199,9 +199,10 @@ class Settings private constructor(
         true
     )
 
-    val shouldUseFixedToolbar: Boolean
+    val shouldUseFixedTopToolbar: Boolean
         get() {
-            val accessibilityManager = appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+            val accessibilityManager =
+                appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
             return accessibilityManager?.isTouchExplorationEnabled ?: false
         }
 

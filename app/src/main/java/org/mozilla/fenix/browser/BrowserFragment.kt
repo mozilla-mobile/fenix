@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -30,6 +29,7 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.BackHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.jetbrains.anko.dimen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -48,7 +48,7 @@ import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
  * Fragment used for browsing the web within the main app.
  */
 @ExperimentalCoroutinesApi
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 class BrowserFragment : BaseBrowserFragment(), BackHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
@@ -120,12 +120,17 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     override fun onStart() {
         super.onStart()
         subscribeToTabCollections()
+        val toolbarSessionObserver = TrackingProtectionOverlay(
+            context = requireContext(),
+            settings = requireContext().settings()
+        ) {
+            browserToolbarView.view
+        }
         getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
-
-        updateToolbar()
+        updateEngineBottomMargin()
     }
 
-    private fun updateToolbar() {
+    private fun updateEngineBottomMargin() {
         val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
 
         browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
@@ -133,7 +138,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         } else {
             0
         }
-    }
 
         val toolbarSessionObserver = TrackingProtectionOverlay(
             context = requireContext(),
@@ -273,8 +277,6 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
     )
 
     companion object {
-        private const val THREE = 3
-        private const val BUTTON_INCREASE_DPS = 12
         private const val SHARED_TRANSITION_MS = 200L
         private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         const val REPORT_SITE_ISSUE_URL =

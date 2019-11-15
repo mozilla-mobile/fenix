@@ -7,7 +7,6 @@ package org.mozilla.fenix.browser
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.View.SCROLL_AXIS_VERTICAL
@@ -97,8 +96,6 @@ class BrowserToolbarTopBehavior(
     override fun layoutDependsOn(parent: CoordinatorLayout, child: BrowserToolbar, dependency: View): Boolean {
         if (dependency is Snackbar.SnackbarLayout) {
             positionSnackbar(dependency)
-        } else {
-            Log.d("Sawyer", "depenedency: $dependency")
         }
 
         return super.layoutDependsOn(parent, child, dependency)

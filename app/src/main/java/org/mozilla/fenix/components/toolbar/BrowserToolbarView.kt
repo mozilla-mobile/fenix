@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -28,6 +29,7 @@ import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.toolbar.setScrollFlagsForTopToolbar
 import org.mozilla.fenix.theme.ThemeManager
 
 interface BrowserToolbarViewInteractor {
@@ -48,21 +50,17 @@ class BrowserToolbarView(
     override val containerView: View?
         get() = container
 
-    val view: BrowserToolbar = if (container.context.settings().shouldUseBottomToolbar) {
-        LayoutInflater.from(container.context)
-            .inflate(R.layout.component_bottom_browser_toolbar, container, true)
-            .findViewById(R.id.toolbar_bottom)
-    } else {
-        if (container.context.settings().shouldUseFixedToolbar) {
-            LayoutInflater.from(container.context)
-                .inflate(R.layout.component_browser_top_toolbar_fixed, container, true)
-                .findViewById(R.id.toolbar_top_fixed)
-        } else {
-            LayoutInflater.from(container.context)
-                .inflate(R.layout.component_browser_bottom_toolbar, container, true)
-                .findViewById(R.id.toolbar_top)
-        }
+    private val settings = container.context.settings()
+
+    @LayoutRes
+    private val toolbarLayout = when {
+        settings.shouldUseBottomToolbar -> R.layout.component_bottom_browser_toolbar
+        else -> R.layout.component_browser_top_toolbar
     }
+
+    val view: BrowserToolbar = LayoutInflater.from(container.context)
+        .inflate(toolbarLayout, container, true)
+        .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
 
@@ -127,6 +125,8 @@ class BrowserToolbarView(
             val sessionManager = components.core.sessionManager
 
             view.apply {
+                setScrollFlagsForTopToolbar()
+
                 elevation = TOOLBAR_ELEVATION.dpToFloat(resources.displayMetrics)
 
                 if (!isCustomTabSession) {

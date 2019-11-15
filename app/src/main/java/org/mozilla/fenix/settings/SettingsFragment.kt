@@ -116,10 +116,10 @@ class SettingsFragment : PreferenceFragmentCompat(), AccountObserver {
         (activity as AppCompatActivity).title = getString(R.string.settings_title)
         (activity as AppCompatActivity).supportActionBar?.show()
 
-        setSummaryAndTitleStrings()
+        update()
     }
 
-    private fun setSummaryAndTitleStrings() {
+    private fun update() {
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(pref_key_tracking_protection_settings))
         trackingProtectionPreference?.summary = context?.let {
