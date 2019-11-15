@@ -104,7 +104,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.addSearchEngine -> {
+            R.id.add_search_engine -> {
                 when (selectedIndex) {
                     CUSTOM_INDEX -> createCustomEngine()
                     else -> {

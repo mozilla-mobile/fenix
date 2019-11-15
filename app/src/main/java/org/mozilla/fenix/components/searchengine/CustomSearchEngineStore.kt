@@ -44,6 +44,16 @@ object CustomSearchEngineStore {
             .apply()
     }
 
+    suspend fun updateSearchEngine(
+        context: Context,
+        oldEngineName: String,
+        newEngineName: String,
+        searchQuery: String
+    ) {
+        removeSearchEngine(context, oldEngineName)
+        addSearchEngine(context, newEngineName, searchQuery)
+    }
+
     fun removeSearchEngine(context: Context, engineId: String) {
         val customEngines = pref(context).getStringSet(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet())
         val enginesEditor = pref(context).edit()

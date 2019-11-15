@@ -15,12 +15,14 @@ import android.widget.CompoundButton
 import android.widget.RadioGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
@@ -108,22 +110,15 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         wrapper.engine_text.text = engine.name
         wrapper.overflow_menu.isVisible = allowDelete
         wrapper.overflow_menu.setOnClickListener {
+            val isCustomSearchEngine = CustomSearchEngineStore.isCustomSearchEngine(context, engine.identifier)
             SearchEngineMenu(
                 context = context,
+                isCustomSearchEngine = isCustomSearchEngine,
                 onItemTapped = {
-                    val defaultEngine = context.components.search.provider.getDefaultEngine(context)
-                    context.components.search.provider.uninstallSearchEngine(context, engine)
-
-                    if (engine == defaultEngine) {
-                        context.settings().defaultSearchEngineName = context
-                            .components
-                            .search
-                            .provider
-                            .getDefaultEngine(context)
-                            .name
+                    when (it) {
+                        is SearchEngineMenu.Item.Edit -> editCustomSearchEngine(engine)
+                        is SearchEngineMenu.Item.Delete -> deleteSearchEngine(context, engine)
                     }
-
-                    reload(context)
                 }
             ).menuBuilder.build(context).show(wrapper.overflow_menu)
         }
@@ -147,5 +142,27 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 }
             }
         }
+    }
+
+    private fun editCustomSearchEngine(engine: SearchEngine) {
+        val directions = SearchEngineFragmentDirections
+            .actionSearchEngineFragmentToEditCustomSearchEngineFragment(engine.identifier)
+        Navigation.findNavController(searchEngineGroup!!).navigate(directions)
+    }
+
+    private fun deleteSearchEngine(context: Context, engine: SearchEngine) {
+        val defaultEngine = context.components.search.provider.getDefaultEngine(context)
+        context.components.search.provider.uninstallSearchEngine(context, engine)
+
+        if (engine == defaultEngine) {
+            context.settings().defaultSearchEngineName = context
+                .components
+                .search
+                .provider
+                .getDefaultEngine(context)
+                .name
+        }
+
+        reload(context)
     }
 }
