@@ -57,12 +57,12 @@ class TabViewHolder(
             when (tab?.mediaState) {
                 is MediaState.Playing -> {
                     it.context.components.analytics.metrics.track(Event.TabMediaPlay)
-                    actionEmitter.onNext(TabAction.PauseMedia(tab?.sessionId!!))
+                    interactor.onPauseMediaClicked()
                 }
 
                 is MediaState.Paused -> {
                     it.context.components.analytics.metrics.track(Event.TabMediaPause)
-                    actionEmitter.onNext(TabAction.PlayMedia(tab?.sessionId!!))
+                    interactor.onPlayMediaClicked()
                 }
             }
         }

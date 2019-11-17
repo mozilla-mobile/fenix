@@ -50,8 +50,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.media.ext.getSession
-import mozilla.components.feature.media.ext.pauseIfPlaying
-import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
@@ -411,12 +409,6 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-            }
-            is TabAction.PauseMedia -> {
-                MediaStateMachine.state.pauseIfPlaying()
-            }
-            is TabAction.PlayMedia -> {
-                MediaStateMachine.state.playIfPaused()
             }
             is TabAction.CloseAll -> {
                 if (pendingSessionDeletion?.deletionJob == null) {

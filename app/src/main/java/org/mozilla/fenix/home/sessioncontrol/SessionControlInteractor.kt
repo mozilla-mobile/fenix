@@ -9,6 +9,17 @@ package org.mozilla.fenix.home.sessioncontrol
  */
 interface TabSessionInteractor {
     /**
+     * Pauses all playing [Media]. Called when a user clicks on the Pause button in the tab view.
+     */
+    fun onPauseMediaClicked()
+
+    /**
+     * Resumes playing all paused [Media]. Called when a user clicks on the Play button in the tab
+     * view.
+     */
+    fun onPlayMediaClicked()
+
+    /**
      * Shows the Private Browsing Learn More page in a new tab. Called when a user clicks on the
      * "Common myths about private browsing" link in private mode.
      */
@@ -36,6 +47,14 @@ interface TabSessionInteractor {
 class SessionControlInteractor(
     private val controller: SessionControlController
 ) : TabSessionInteractor {
+    override fun onPauseMediaClicked() {
+        controller.handlePauseMediaClicked()
+    }
+
+    override fun onPlayMediaClicked() {
+        controller.handlePlayMediaClicked()
+    }
+
     override fun onPrivateBrowsingLearnMoreClicked() {
         controller.handlePrivateBrowsingLearnMoreClicked()
     }

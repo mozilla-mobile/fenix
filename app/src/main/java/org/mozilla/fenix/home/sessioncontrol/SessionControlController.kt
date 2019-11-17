@@ -8,6 +8,9 @@ import android.content.Context
 import androidx.navigation.NavController
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.feature.media.ext.pauseIfPlaying
+import mozilla.components.feature.media.ext.playIfPaused
+import mozilla.components.feature.media.state.MediaStateMachine
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -25,6 +28,16 @@ import org.mozilla.fenix.settings.SupportUtils
  * by the Interactor.
  */
 interface SessionControlController {
+    /**
+     * See [TabSessionInteractor.onPauseMediaClicked]
+     */
+    fun handlePauseMediaClicked()
+
+    /**
+     * See [TabSessionInteractor.onPlayMediaClicked]
+     */
+    fun handlePlayMediaClicked()
+
     /**
      * See [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
@@ -53,6 +66,14 @@ class DefaultSessionControlController(
         get() = context.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
         get() = context.components.core.tabCollectionStorage
+
+    override fun handlePauseMediaClicked() {
+        MediaStateMachine.state.pauseIfPlaying()
+    }
+
+    override fun handlePlayMediaClicked() {
+        MediaStateMachine.state.playIfPaused()
+    }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {
         (context as HomeActivity).openToBrowserAndLoad(
