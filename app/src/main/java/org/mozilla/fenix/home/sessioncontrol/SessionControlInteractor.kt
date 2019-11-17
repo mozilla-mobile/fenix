@@ -9,6 +9,12 @@ package org.mozilla.fenix.home.sessioncontrol
  */
 interface TabSessionInteractor {
     /**
+     * Shows the Private Browsing Learn More page in a new tab. Called when a user clicks on the
+     * "Common myths about private browsing" link in private mode.
+     */
+    fun onPrivateBrowsingLearnMoreClicked()
+
+    /**
      * Saves the given tab to collection. Called when a user clicks on the "Save to collection"
      * button or tab header menu item, and on long click of an open tab.
      *
@@ -24,6 +30,10 @@ interface TabSessionInteractor {
 class SessionControlInteractor(
     private val controller: SessionControlController
 ) : TabSessionInteractor {
+    override fun onPrivateBrowsingLearnMoreClicked() {
+        controller.handlePrivateBrowsingLearnMoreClicked()
+    }
+
     override fun onSaveToCollection(sessionId: String?) {
         controller.handleSaveTabToCollection(sessionId)
     }

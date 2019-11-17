@@ -6,6 +6,8 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
 import androidx.navigation.NavController
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
@@ -13,12 +15,18 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.settings.SupportUtils
 
 /**
  * [HomeFragment] controller. An interface that handles the view manipulation of the Tabs triggered
  * by the Interactor.
  */
 interface SessionControlController {
+    /**
+     * See [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
+     */
+    fun handlePrivateBrowsingLearnMoreClicked()
+
     /**
      * See [TabSessionInteractor.onSaveToCollection]
      */
@@ -35,6 +43,15 @@ class DefaultSessionControlController(
 ) : SessionControlController {
     private val tabCollectionStorage: TabCollectionStorage
         get() = context.components.core.tabCollectionStorage
+
+    override fun handlePrivateBrowsingLearnMoreClicked() {
+        (context as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
+                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )
+    }
 
     override fun handleSaveTabToCollection(selectedTabId: String?) {
         if (browsingModeManager.mode.isPrivate) return

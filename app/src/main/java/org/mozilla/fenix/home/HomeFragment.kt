@@ -444,15 +444,6 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-            is TabAction.PrivateBrowsingLearnMore -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                        (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
-                    newTab = true,
-                    from = BrowserDirection.FromHome
-                )
-            }
-
             is TabAction.ShareTabs -> {
                 invokePendingDeleteJobs()
                 val shareData = sessionManager

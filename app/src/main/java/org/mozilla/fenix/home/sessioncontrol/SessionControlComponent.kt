@@ -87,7 +87,6 @@ sealed class TabAction : Action {
     data class Share(val sessionId: String) : TabAction()
     data class PauseMedia(val sessionId: String) : TabAction()
     data class PlayMedia(val sessionId: String) : TabAction()
-    object PrivateBrowsingLearnMore : TabAction()
 }
 
 sealed class CollectionAction : Action {
