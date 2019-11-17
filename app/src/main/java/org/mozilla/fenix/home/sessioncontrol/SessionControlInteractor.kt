@@ -21,6 +21,12 @@ interface TabSessionInteractor {
      * @param sessionId The selected tab session id to save.
      */
     fun onSaveToCollection(sessionId: String?)
+
+    /**
+     * Shares the current opened tabs. Called when a user clicks on the Share Tabs button in private
+     * mode or tab header menu item.
+     */
+    fun onShareTabs()
 }
 
 /**
@@ -36,5 +42,9 @@ class SessionControlInteractor(
 
     override fun onSaveToCollection(sessionId: String?) {
         controller.handleSaveTabToCollection(sessionId)
+    }
+
+    override fun onShareTabs() {
+        controller.handleShareTabs()
     }
 }

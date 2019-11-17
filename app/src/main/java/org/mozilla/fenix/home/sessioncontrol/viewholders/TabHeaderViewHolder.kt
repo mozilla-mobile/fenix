@@ -34,7 +34,7 @@ class TabHeaderViewHolder(
     init {
         tabsMenu = TabHeaderMenu(view.context, isPrivate) {
             when (it) {
-                is TabHeaderMenu.Item.Share -> actionEmitter.onNext(TabAction.ShareTabs)
+                is TabHeaderMenu.Item.Share -> interactor.onShareTabs()
                 is TabHeaderMenu.Item.CloseAll -> actionEmitter.onNext(TabAction.CloseAll(isPrivate))
                 is TabHeaderMenu.Item.SaveToCollection -> {
                     interactor.onSaveToCollection(null)
@@ -47,7 +47,7 @@ class TabHeaderViewHolder(
         view.apply {
             share_tabs_button.run {
                 setOnClickListener {
-                    actionEmitter.onNext(TabAction.ShareTabs)
+                    interactor.onShareTabs()
                 }
             }
 

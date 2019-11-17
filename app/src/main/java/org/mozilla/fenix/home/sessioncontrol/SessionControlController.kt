@@ -6,6 +6,8 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
 import androidx.navigation.NavController
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.prompt.ShareData
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -14,6 +16,7 @@ import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -31,6 +34,11 @@ interface SessionControlController {
      * See [TabSessionInteractor.onSaveToCollection]
      */
     fun handleSaveTabToCollection(selectedTabId: String?)
+
+    /**
+     * See [TabSessionInteractor.onShareTabs]
+     */
+    fun handleShareTabs()
 }
 
 class DefaultSessionControlController(
@@ -41,6 +49,8 @@ class DefaultSessionControlController(
     private val invokePendingDeleteJobs: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit
 ) : SessionControlController {
+    private val sessionManager: SessionManager
+        get() = context.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
         get() = context.components.core.tabCollectionStorage
 
@@ -73,6 +83,15 @@ class DefaultSessionControlController(
         showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
     }
 
+    override fun handleShareTabs() {
+        invokePendingDeleteJobs()
+        val shareData = sessionManager
+            .sessionsOfType(private = browsingModeManager.mode.isPrivate)
+            .map { ShareData(url = it.url, title = it.title) }
+            .toList()
+        showShareFragment(shareData)
+    }
+
     private fun showCollectionCreationFragment(
         step: SaveCollectionStep,
         selectedTabIds: Array<String>? = null,
@@ -90,6 +109,13 @@ class DefaultSessionControlController(
             saveCollectionStep = step,
             selectedTabIds = selectedTabIds,
             selectedTabCollectionId = selectedTabCollectionId ?: -1
+        )
+        navController.nav(R.id.homeFragment, directions)
+    }
+
+    private fun showShareFragment(data: List<ShareData>) {
+        val directions = HomeFragmentDirections.actionHomeFragmentToShareFragment(
+            data = data.toTypedArray()
         )
         navController.nav(R.id.homeFragment, directions)
     }

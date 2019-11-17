@@ -444,14 +444,6 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-            is TabAction.ShareTabs -> {
-                invokePendingDeleteJobs()
-                val shareData = sessionManager
-                    .sessionsOfType(private = browsingModeManager.mode.isPrivate)
-                    .map { ShareData(url = it.url, title = it.title) }
-                    .toList()
-                share(shareData)
-            }
         }
     }
 

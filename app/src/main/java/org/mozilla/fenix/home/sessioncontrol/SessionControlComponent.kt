@@ -80,7 +80,6 @@ data class SessionControlState(
 typealias TabCollection = ACTabCollection
 
 sealed class TabAction : Action {
-    object ShareTabs : TabAction()
     data class CloseAll(val private: Boolean) : TabAction()
     data class Select(val tabView: View, val sessionId: String) : TabAction()
     data class Close(val sessionId: String) : TabAction()
