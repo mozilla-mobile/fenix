@@ -6,7 +6,6 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
@@ -81,7 +80,6 @@ typealias TabCollection = ACTabCollection
 
 sealed class TabAction : Action {
     data class CloseAll(val private: Boolean) : TabAction()
-    data class Select(val tabView: View, val sessionId: String) : TabAction()
     data class Close(val sessionId: String) : TabAction()
 }
 

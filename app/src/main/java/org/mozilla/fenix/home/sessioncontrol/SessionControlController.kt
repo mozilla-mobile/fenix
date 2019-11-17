@@ -5,7 +5,9 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
+import android.view.View
 import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigator
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.media.ext.pauseIfPlaying
@@ -47,6 +49,11 @@ interface SessionControlController {
      * See [TabSessionInteractor.onSaveToCollection]
      */
     fun handleSaveTabToCollection(selectedTabId: String?)
+
+    /**
+     * See [TabSessionInteractor.onSelectTab]
+     */
+    fun handleSelectTab(tabView: View, sessionId: String)
 
     /**
      * See [TabSessionInteractor.onShareTabs]
@@ -104,6 +111,20 @@ class DefaultSessionControlController(
         showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
     }
 
+    override fun handleSelectTab(tabView: View, sessionId: String) {
+        invokePendingDeleteJobs()
+        val session = sessionManager.findSessionById(sessionId)
+        sessionManager.select(session!!)
+        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
+        val extras =
+            FragmentNavigator.Extras.Builder()
+                .addSharedElement(tabView,
+                    "$TAB_ITEM_TRANSITION_NAME$sessionId"
+                )
+                .build()
+        navController.nav(R.id.homeFragment, directions, extras)
+    }
+
     override fun handleShareTabs() {
         invokePendingDeleteJobs()
         val shareData = sessionManager
@@ -139,5 +160,9 @@ class DefaultSessionControlController(
             data = data.toTypedArray()
         )
         navController.nav(R.id.homeFragment, directions)
+    }
+
+    companion object {
+        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
     }
 }

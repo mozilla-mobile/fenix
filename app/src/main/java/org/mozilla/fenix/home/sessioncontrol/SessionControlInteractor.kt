@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.view.View
+
 /**
  * Interface for tab related actions in the TabSessionInteractor.
  */
@@ -34,6 +36,15 @@ interface TabSessionInteractor {
     fun onSaveToCollection(sessionId: String?)
 
     /**
+     * Selects the given tab. Called when a user clicks on a tab.
+     *
+     * @param tabView [View] of the current Fragment to match with a View in the Fragment being
+     *                navigated to.
+     * @param sessionId The tab session id to select.
+     */
+    fun onSelectTab(tabView: View, sessionId: String)
+
+    /**
      * Shares the current opened tabs. Called when a user clicks on the Share Tabs button in private
      * mode or tab header menu item.
      */
@@ -61,6 +72,10 @@ class SessionControlInteractor(
 
     override fun onSaveToCollection(sessionId: String?) {
         controller.handleSaveTabToCollection(sessionId)
+    }
+
+    override fun onSelectTab(tabView: View, sessionId: String) {
+        controller.handleSelectTab(tabView, sessionId)
     }
 
     override fun onShareTabs() {

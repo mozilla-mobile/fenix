@@ -382,20 +382,6 @@ class HomeFragment : Fragment() {
     @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun handleTabAction(action: TabAction) {
         Do exhaustive when (action) {
-            is TabAction.Select -> {
-                invokePendingDeleteJobs()
-                val session = sessionManager.findSessionById(action.sessionId)
-                sessionManager.select(session!!)
-                val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
-                val extras =
-                    FragmentNavigator.Extras.Builder()
-                        .addSharedElement(
-                            action.tabView,
-                            "$TAB_ITEM_TRANSITION_NAME${action.sessionId}"
-                        )
-                        .build()
-                nav(R.id.homeFragment, directions, extras)
-            }
             is TabAction.Close -> {
                 if (pendingSessionDeletion?.deletionJob == null) {
                     removeTabWithUndo(action.sessionId, browsingModeManager.mode.isPrivate)
@@ -955,7 +941,6 @@ class HomeFragment : Fragment() {
         private const val FADE_ANIM_DURATION = 150L
         private const val ANIM_SNACKBAR_DELAY = 100L
         private const val SHARED_TRANSITION_MS = 200L
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
     }

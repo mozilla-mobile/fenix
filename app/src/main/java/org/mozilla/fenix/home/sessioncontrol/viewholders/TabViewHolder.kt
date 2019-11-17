@@ -38,7 +38,7 @@ class TabViewHolder(
 
     init {
         item_tab.setOnClickListener {
-            actionEmitter.onNext(TabAction.Select(it, tab?.sessionId!!))
+            interactor.onSelectTab(it, tab?.sessionId!!)
         }
 
         item_tab.setOnLongClickListener {
