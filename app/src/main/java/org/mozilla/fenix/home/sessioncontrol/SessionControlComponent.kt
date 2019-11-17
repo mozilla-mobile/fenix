@@ -83,7 +83,6 @@ sealed class TabAction : Action {
     data class CloseAll(val private: Boolean) : TabAction()
     data class Select(val tabView: View, val sessionId: String) : TabAction()
     data class Close(val sessionId: String) : TabAction()
-    data class Share(val sessionId: String) : TabAction()
     data class PauseMedia(val sessionId: String) : TabAction()
     data class PlayMedia(val sessionId: String) : TabAction()
 }

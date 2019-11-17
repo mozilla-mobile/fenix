@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Outline
 import android.view.View
@@ -13,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.tab_list_row.*
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.support.ktx.android.util.dpToFloat
 import org.jetbrains.anko.imageBitmap
@@ -38,16 +35,8 @@ class TabViewHolder(
     RecyclerView.ViewHolder(view), LayoutContainer {
 
     internal var tab: Tab? = null
-    private var tabMenu: TabItemMenu
 
     init {
-        tabMenu = TabItemMenu(view.context) {
-            when (it) {
-                is TabItemMenu.Item.Share ->
-                    actionEmitter.onNext(TabAction.Share(tab?.sessionId!!))
-            }
-        }
-
         item_tab.setOnClickListener {
             actionEmitter.onNext(TabAction.Select(it, tab?.sessionId!!))
         }
@@ -155,26 +144,5 @@ class TabViewHolder(
         private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         const val LAYOUT_ID = R.layout.tab_list_row
         const val favIconBorderRadiusInPx = 4
-    }
-}
-
-class TabItemMenu(
-    private val context: Context,
-    private val onItemTapped: (Item) -> Unit = {}
-) {
-    sealed class Item {
-        object Share : Item()
-    }
-
-    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
-
-    private val menuItems by lazy {
-        listOf(
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_share)
-            ) {
-                onItemTapped.invoke(Item.Share)
-            }
-        )
     }
 }
