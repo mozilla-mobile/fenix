@@ -129,7 +129,6 @@ private fun assertBookmarkFavicon() = bookmarkFavicon().check(
 )
 
 private fun assertBookmarkURL(expectedURL: Uri) = bookmarkURL()
-//    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     .check(matches(ViewMatchers.isCompletelyDisplayed()))
     .check(matches(withText(containsString(expectedURL.toString()))))
 
