@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.content.Context
 import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import mozilla.components.browser.session.SessionManager
@@ -59,13 +60,20 @@ interface SessionControlController {
      * See [TabSessionInteractor.onShareTabs]
      */
     fun handleShareTabs()
+
+    /**
+     * See [OnboardingInteractor.onStartBrowsingClicked]
+     */
+    fun handleStartBrowsingClicked()
 }
 
 class DefaultSessionControlController(
     private val context: Context,
     private val navController: NavController,
+    private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
     private val getListOfTabs: () -> List<Tab>,
+    private val hideOnboarding: () -> Unit,
     private val invokePendingDeleteJobs: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit
 ) : SessionControlController {
@@ -132,6 +140,11 @@ class DefaultSessionControlController(
             .map { ShareData(url = it.url, title = it.title) }
             .toList()
         showShareFragment(shareData)
+    }
+
+    override fun handleStartBrowsingClicked() {
+        homeLayout.progress = 0F
+        hideOnboarding()
     }
 
     private fun showCollectionCreationFragment(

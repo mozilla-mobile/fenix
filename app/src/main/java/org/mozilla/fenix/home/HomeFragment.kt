@@ -79,7 +79,6 @@ import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
-import org.mozilla.fenix.home.sessioncontrol.OnboardingAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
@@ -182,8 +181,10 @@ class HomeFragment : Fragment() {
             DefaultSessionControlController(
                 context = requireContext(),
                 navController = findNavController(),
+                homeLayout = view.homeLayout,
                 browsingModeManager = browsingModeManager,
                 getListOfTabs = ::getListOfTabs,
+                hideOnboarding = ::hideOnboarding,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver
             )
@@ -329,7 +330,6 @@ class HomeFragment : Fragment() {
                 when (it) {
                     is SessionControlAction.Tab -> handleTabAction(it.action)
                     is SessionControlAction.Collection -> handleCollectionAction(it.action)
-                    is SessionControlAction.Onboarding -> handleOnboardingAction(it.action)
                 }
             }
 
@@ -368,15 +368,6 @@ class HomeFragment : Fragment() {
 
         // We only want this observer live just before we navigate away to the collection creation screen
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
-    }
-
-    private fun handleOnboardingAction(action: OnboardingAction) {
-        Do exhaustive when (action) {
-            is OnboardingAction.Finish -> {
-                homeLayout?.progress = 0F
-                hideOnboarding()
-            }
-        }
     }
 
     @SuppressWarnings("ComplexMethod", "LongMethod")

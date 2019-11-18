@@ -26,7 +26,7 @@ import mozilla.components.feature.tab.collections.TabCollection as ACTabCollecti
 
 class SessionControlComponent(
     private val container: ViewGroup,
-    private val interactor: TabSessionInteractor,
+    private val interactor: SessionControlInteractor,
     bus: ActionBusFactory,
     viewModelProvider: UIComponentViewModelProvider<SessionControlState, SessionControlChange>
 ) :
@@ -95,14 +95,9 @@ sealed class CollectionAction : Action {
     data class RemoveTab(val collection: TabCollection, val tab: ComponentTab) : CollectionAction()
 }
 
-sealed class OnboardingAction : Action {
-    object Finish : OnboardingAction()
-}
-
 sealed class SessionControlAction : Action {
     data class Tab(val action: TabAction) : SessionControlAction()
     data class Collection(val action: CollectionAction) : SessionControlAction()
-    data class Onboarding(val action: OnboardingAction) : SessionControlAction()
 }
 
 fun Observer<SessionControlAction>.onNext(tabAction: TabAction) {
@@ -111,10 +106,6 @@ fun Observer<SessionControlAction>.onNext(tabAction: TabAction) {
 
 fun Observer<SessionControlAction>.onNext(collectionAction: CollectionAction) {
     onNext(SessionControlAction.Collection(collectionAction))
-}
-
-fun Observer<SessionControlAction>.onNext(onboardingAction: OnboardingAction) {
-    onNext(SessionControlAction.Onboarding(onboardingAction))
 }
 
 sealed class SessionControlChange : Change {

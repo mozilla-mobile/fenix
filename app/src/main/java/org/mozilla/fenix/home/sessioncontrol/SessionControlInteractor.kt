@@ -7,7 +7,17 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.view.View
 
 /**
- * Interface for tab related actions in the TabSessionInteractor.
+ * Interface for onboarding related actions in the [SessionControlInteractor].
+ */
+interface OnboardingInteractor {
+    /**
+     * Hides the onboarding. Called when a user clicks on the "Start Browsing" button.
+     */
+    fun onStartBrowsingClicked()
+}
+
+/**
+ * Interface for tab related actions in the [SessionControlInteractor].
  */
 interface TabSessionInteractor {
     /**
@@ -53,11 +63,11 @@ interface TabSessionInteractor {
 
 /**
  * Interactor for the Home screen.
- * Provides implementations for the TabSessionInteractor.
+ * Provides implementations for the OnboardingInteractor and TabSessionInteractor.
  */
 class SessionControlInteractor(
     private val controller: SessionControlController
-) : TabSessionInteractor {
+) : OnboardingInteractor, TabSessionInteractor {
     override fun onPauseMediaClicked() {
         controller.handlePauseMediaClicked()
     }
@@ -80,5 +90,9 @@ class SessionControlInteractor(
 
     override fun onShareTabs() {
         controller.handleShareTabs()
+    }
+
+    override fun onStartBrowsingClicked() {
+        controller.handleStartBrowsingClicked()
     }
 }

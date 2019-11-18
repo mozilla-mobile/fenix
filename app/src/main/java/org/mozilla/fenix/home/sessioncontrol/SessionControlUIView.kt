@@ -122,7 +122,7 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
 
 class SessionControlUIView(
     container: ViewGroup,
-    interactor: TabSessionInteractor,
+    interactor: SessionControlInteractor,
     actionEmitter: Observer<SessionControlAction>,
     changesObservable: Observable<SessionControlChange>
 ) :
