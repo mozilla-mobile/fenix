@@ -7,7 +7,7 @@
         android:id="@+id/private_session_description_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
+        android:layout_margin="1dp"
         android:importantForAccessibility="no"
         android:orientation="vertical">
     <TextView
