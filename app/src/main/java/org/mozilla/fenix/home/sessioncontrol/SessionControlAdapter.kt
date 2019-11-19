@@ -148,8 +148,8 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, interactor, actionEmitter)
-            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor, actionEmitter)
+            TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, interactor)
+            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor)
             SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, interactor)
             NoContentMessageViewHolder.LAYOUT_ID -> NoContentMessageViewHolder(view)

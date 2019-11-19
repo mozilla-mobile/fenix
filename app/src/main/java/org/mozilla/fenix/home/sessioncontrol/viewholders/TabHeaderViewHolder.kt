@@ -10,7 +10,6 @@ import android.widget.PopupWindow
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import kotlinx.android.synthetic.main.tab_header.view.*
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -18,15 +17,11 @@ import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
-import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
-import org.mozilla.fenix.home.sessioncontrol.TabAction
-import org.mozilla.fenix.home.sessioncontrol.onNext
+import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 
 class TabHeaderViewHolder(
     private val view: View,
-    private val interactor: TabSessionInteractor,
-    private val actionEmitter: Observer<SessionControlAction>
+    private val interactor: SessionControlInteractor
 ) : RecyclerView.ViewHolder(view) {
     private var isPrivate = false
     private var tabsMenu: TabHeaderMenu
@@ -35,7 +30,7 @@ class TabHeaderViewHolder(
         tabsMenu = TabHeaderMenu(view.context, isPrivate) {
             when (it) {
                 is TabHeaderMenu.Item.Share -> interactor.onShareTabs()
-                is TabHeaderMenu.Item.CloseAll -> actionEmitter.onNext(TabAction.CloseAll(isPrivate))
+                is TabHeaderMenu.Item.CloseAll -> interactor.onCloseAllTabs(isPrivate)
                 is TabHeaderMenu.Item.SaveToCollection -> {
                     interactor.onSaveToCollection(null)
                     view.context.components.analytics.metrics
@@ -54,7 +49,7 @@ class TabHeaderViewHolder(
             close_tabs_button.run {
                 setOnClickListener {
                     view.context.components.analytics.metrics.track(Event.PrivateBrowsingGarbageIconTapped)
-                    actionEmitter.onNext(TabAction.CloseAll(true))
+                    interactor.onCloseAllTabs(true)
                 }
             }
 

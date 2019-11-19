@@ -32,6 +32,16 @@ import org.mozilla.fenix.settings.SupportUtils
  */
 interface SessionControlController {
     /**
+     * See [TabSessionInteractor.onCloseTab]
+     */
+    fun handleCloseTab(sessionId: String)
+
+    /**
+     * See [TabSessionInteractor.onCloseAllTabs]
+     */
+    fun handleCloseAllTabs(isPrivateMode: Boolean)
+
+    /**
      * See [TabSessionInteractor.onPauseMediaClicked]
      */
     fun handlePauseMediaClicked()
@@ -67,11 +77,14 @@ interface SessionControlController {
     fun handleStartBrowsingClicked()
 }
 
+@SuppressWarnings("TooManyFunctions")
 class DefaultSessionControlController(
     private val context: Context,
     private val navController: NavController,
     private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
+    private val closeTab: (sessionId: String) -> Unit,
+    private val closeAllTabs: (isPrivateMode: Boolean) -> Unit,
     private val getListOfTabs: () -> List<Tab>,
     private val hideOnboarding: () -> Unit,
     private val invokePendingDeleteJobs: () -> Unit,
@@ -81,6 +94,14 @@ class DefaultSessionControlController(
         get() = context.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
         get() = context.components.core.tabCollectionStorage
+
+    override fun handleCloseTab(sessionId: String) {
+        closeTab.invoke(sessionId)
+    }
+
+    override fun handleCloseAllTabs(isPrivateMode: Boolean) {
+        closeAllTabs.invoke(isPrivateMode)
+    }
 
     override fun handlePauseMediaClicked() {
         MediaStateMachine.state.pauseIfPlaying()

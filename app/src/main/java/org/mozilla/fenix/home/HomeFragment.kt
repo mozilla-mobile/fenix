@@ -85,9 +85,7 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
 import org.mozilla.fenix.home.sessioncontrol.SessionControlState
 import org.mozilla.fenix.home.sessioncontrol.SessionControlViewModel
 import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.TabAction
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
-import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.getAutoDisposeObservable
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -183,6 +181,8 @@ class HomeFragment : Fragment() {
                 navController = findNavController(),
                 homeLayout = view.homeLayout,
                 browsingModeManager = browsingModeManager,
+                closeTab = ::closeTab,
+                closeAllTabs = ::closeAllTabs,
                 getListOfTabs = ::getListOfTabs,
                 hideOnboarding = ::hideOnboarding,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
@@ -328,7 +328,6 @@ class HomeFragment : Fragment() {
         getAutoDisposeObservable<SessionControlAction>()
             .subscribe {
                 when (it) {
-                    is SessionControlAction.Tab -> handleTabAction(it.action)
                     is SessionControlAction.Collection -> handleCollectionAction(it.action)
                 }
             }
@@ -370,41 +369,37 @@ class HomeFragment : Fragment() {
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
     }
 
-    @SuppressWarnings("ComplexMethod", "LongMethod")
-    private fun handleTabAction(action: TabAction) {
-        Do exhaustive when (action) {
-            is TabAction.Close -> {
-                if (pendingSessionDeletion?.deletionJob == null) {
-                    removeTabWithUndo(action.sessionId, browsingModeManager.mode.isPrivate)
-                } else {
-                    pendingSessionDeletion?.deletionJob?.let {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            it.invoke()
-                        }.invokeOnCompletion {
-                            pendingSessionDeletion = null
-                            removeTabWithUndo(action.sessionId, browsingModeManager.mode.isPrivate)
-                        }
-                    }
+    private fun closeTab(sessionId: String) {
+        if (pendingSessionDeletion?.deletionJob == null) {
+            removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
+        } else {
+            pendingSessionDeletion?.deletionJob?.let {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    it.invoke()
+                }.invokeOnCompletion {
+                    pendingSessionDeletion = null
+                    removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
                 }
             }
-            is TabAction.CloseAll -> {
-                if (pendingSessionDeletion?.deletionJob == null) {
+        }
+    }
+
+    private fun closeAllTabs(isPrivateMode: Boolean) {
+        if (pendingSessionDeletion?.deletionJob == null) {
+            removeAllTabsWithUndo(
+                sessionManager.sessionsOfType(private = isPrivateMode),
+                isPrivateMode
+            )
+        } else {
+            pendingSessionDeletion?.deletionJob?.let {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    it.invoke()
+                }.invokeOnCompletion {
+                    pendingSessionDeletion = null
                     removeAllTabsWithUndo(
-                        sessionManager.sessionsOfType(private = action.private),
-                        action.private
+                        sessionManager.sessionsOfType(private = isPrivateMode),
+                        isPrivateMode
                     )
-                } else {
-                    pendingSessionDeletion?.deletionJob?.let {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            it.invoke()
-                        }.invokeOnCompletion {
-                            pendingSessionDeletion = null
-                            removeAllTabsWithUndo(
-                                sessionManager.sessionsOfType(private = action.private),
-                                action.private
-                            )
-                        }
-                    }
                 }
             }
         }

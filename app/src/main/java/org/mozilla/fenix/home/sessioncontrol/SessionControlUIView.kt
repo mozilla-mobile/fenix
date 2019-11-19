@@ -145,6 +145,7 @@ class SessionControlUIView(
             val itemTouchHelper =
                 ItemTouchHelper(
                     SwipeToDeleteCallback(
+                        interactor,
                         actionEmitter
                     )
                 )

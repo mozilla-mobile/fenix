@@ -17,6 +17,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHold
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
 
 class SwipeToDeleteCallback(
+    val interactor: TabSessionInteractor,
     val actionEmitter: Observer<SessionControlAction>
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     override fun onMove(
@@ -30,7 +31,7 @@ class SwipeToDeleteCallback(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         when (viewHolder) {
-            is TabViewHolder -> actionEmitter.onNext(TabAction.Close(viewHolder.tab?.sessionId!!))
+            is TabViewHolder -> interactor.onCloseTab(viewHolder.tab?.sessionId!!)
             is TabInCollectionViewHolder -> {
                 actionEmitter.onNext(CollectionAction.RemoveTab(viewHolder.collection, viewHolder.tab))
             }

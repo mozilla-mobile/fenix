@@ -9,7 +9,6 @@ import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.tab_list_row.*
 import mozilla.components.feature.media.state.MediaState
@@ -20,16 +19,12 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.TabAction
-import org.mozilla.fenix.home.sessioncontrol.onNext
 
 class TabViewHolder(
     view: View,
     interactor: TabSessionInteractor,
-    actionEmitter: Observer<SessionControlAction>,
     override val containerView: View? = view
 ) :
     RecyclerView.ViewHolder(view), LayoutContainer {
@@ -48,7 +43,7 @@ class TabViewHolder(
         }
 
         close_tab_button.setOnClickListener {
-            actionEmitter.onNext(TabAction.Close(tab?.sessionId!!))
+            interactor.onCloseTab(tab?.sessionId!!)
         }
 
         play_pause_button.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)

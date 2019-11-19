@@ -78,11 +78,6 @@ data class SessionControlState(
 
 typealias TabCollection = ACTabCollection
 
-sealed class TabAction : Action {
-    data class CloseAll(val private: Boolean) : TabAction()
-    data class Close(val sessionId: String) : TabAction()
-}
-
 sealed class CollectionAction : Action {
     data class Expand(val collection: TabCollection) : CollectionAction()
     data class Collapse(val collection: TabCollection) : CollectionAction()
@@ -96,12 +91,7 @@ sealed class CollectionAction : Action {
 }
 
 sealed class SessionControlAction : Action {
-    data class Tab(val action: TabAction) : SessionControlAction()
     data class Collection(val action: CollectionAction) : SessionControlAction()
-}
-
-fun Observer<SessionControlAction>.onNext(tabAction: TabAction) {
-    onNext(SessionControlAction.Tab(tabAction))
 }
 
 fun Observer<SessionControlAction>.onNext(collectionAction: CollectionAction) {

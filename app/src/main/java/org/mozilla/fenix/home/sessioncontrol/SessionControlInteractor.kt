@@ -21,6 +21,22 @@ interface OnboardingInteractor {
  */
 interface TabSessionInteractor {
     /**
+     * Closes the given tab. Called when a user swipes to close a tab or clicks on the Close Tab
+     * button in the tab view.
+     *
+     * @param sessionId The selected tab session id to close.
+     */
+    fun onCloseTab(sessionId: String)
+
+    /**
+     * Closes all the tabs. Called when a user clicks on the Close Tabs button or "Close all tabs"
+     * tab header menu item.
+     *
+     * @param isPrivateMode True if the [BrowsingMode] is [Private] and false otherwise.
+     */
+    fun onCloseAllTabs(isPrivateMode: Boolean)
+
+    /**
      * Pauses all playing [Media]. Called when a user clicks on the Pause button in the tab view.
      */
     fun onPauseMediaClicked()
@@ -68,6 +84,14 @@ interface TabSessionInteractor {
 class SessionControlInteractor(
     private val controller: SessionControlController
 ) : OnboardingInteractor, TabSessionInteractor {
+    override fun onCloseTab(sessionId: String) {
+        controller.handleCloseTab(sessionId)
+    }
+
+    override fun onCloseAllTabs(isPrivateMode: Boolean) {
+        controller.handleCloseAllTabs(isPrivateMode)
+    }
+
     override fun onPauseMediaClicked() {
         controller.handlePauseMediaClicked()
     }
