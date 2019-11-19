@@ -183,7 +183,10 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
         viewLifecycleOwner.lifecycleScope.launch(Main) {
             val result = withContext(IO) {
-                SearchStringValidator.isSearchStringValid(searchString)
+                SearchStringValidator.isSearchStringValid(
+                    requireComponents.core.client,
+                    searchString
+                )
             }
 
             when (result) {
@@ -216,7 +219,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
     }
 
     private fun installEngine(engine: SearchEngine) {
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             withContext(IO) {
                 requireContext().components.search.provider.installSearchEngine(
                     requireContext(),

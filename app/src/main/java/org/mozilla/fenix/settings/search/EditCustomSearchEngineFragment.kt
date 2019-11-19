@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.custom_search_engine.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
@@ -127,9 +128,12 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
 
         if (hasError) { return }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             val result = withContext(IO) {
-                SearchStringValidator.isSearchStringValid(searchString)
+                SearchStringValidator.isSearchStringValid(
+                    requireComponents.core.client,
+                    searchString
+                )
             }
 
             when (result) {

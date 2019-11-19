@@ -5,56 +5,26 @@
 package org.mozilla.fenix.settings.search
 
 import android.net.Uri
+import mozilla.components.concept.fetch.Client
+import mozilla.components.concept.fetch.Request
+import mozilla.components.concept.fetch.isSuccess
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-import org.mozilla.fenix.ext.logDebug
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
 
 object SearchStringValidator {
     enum class Result { Success, MalformedURL, CannotReach }
 
-    fun isSearchStringValid(searchString: String): Result {
-        val searchURL = createSearchURL(searchString) ?: return Result.MalformedURL
-        val connection = openConnection(searchURL)
-
-        return try {
-            if (connection.hasValidResponseCode) Result.Success else Result.CannotReach
-        } catch (e: IOException) {
-            logDebug(LOGTAG, "Failure to get response code from server: returning invalid search query")
-            Result.CannotReach
-        } finally {
-            try { connection.inputStream.close() } catch (_: IOException) {
-                logDebug(LOGTAG, "connection.inputStream failed to close")
-            }
-
-            connection.disconnect()
-        }
+    fun isSearchStringValid(client: Client, searchString: String): Result {
+        val request = createRequest(searchString) ?: return Result.MalformedURL
+        val response = client.fetch(request)
+        return if (response.isSuccess) Result.Success else Result.CannotReach
     }
 
-    private val HttpURLConnection.hasValidResponseCode: Boolean
-        get() = responseCode < VALID_RESPONSE_CODE_UPPER_BOUND
-
-    private fun createSearchURL(searchString: String): URL? {
+    private fun createRequest(searchString: String): Request? {
         // we should share the code to substitute and normalize the search string (see SearchEngine.buildSearchUrl).
         val encodedTestQuery = Uri.encode("testSearchEngineValidation")
 
         val normalizedHttpsSearchUrlStr = searchString.toNormalizedUrl()
-        val searchURLStr = normalizedHttpsSearchUrlStr.replace("%s".toRegex(), encodedTestQuery)
-        return try { URL(searchURLStr) } catch (e: MalformedURLException) { null }
+        val searchUrl = normalizedHttpsSearchUrlStr.replace("%s".toRegex(), encodedTestQuery)
+        return Request(searchUrl)
     }
-
-    private fun openConnection(url: URL): HttpURLConnection {
-        val connection = url.openConnection() as HttpURLConnection
-        connection.instanceFollowRedirects = true
-        connection.connectTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
-        connection.readTimeout = SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS
-
-        return connection
-    }
-
-    private const val LOGTAG = "AddSearchEngineFragment"
-    private const val SEARCH_QUERY_VALIDATION_TIMEOUT_MILLIS = 4000
-    private const val VALID_RESPONSE_CODE_UPPER_BOUND = 300
 }
