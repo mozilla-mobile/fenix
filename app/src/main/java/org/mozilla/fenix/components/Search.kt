@@ -37,8 +37,4 @@ class Search(private val context: Context) {
             }
         }
     }
-
-    companion object {
-        private val BUNDLED_SEARCH_ENGINES = listOf("ecosia", "reddit", "startpage", "yahoo", "youtube")
-    }
 }

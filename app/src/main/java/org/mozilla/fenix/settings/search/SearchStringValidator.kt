@@ -13,11 +13,7 @@ import java.net.MalformedURLException
 import java.net.URL
 
 object SearchStringValidator {
-    sealed class Result {
-        object Success : Result()
-        object MalformedURL : Result()
-        object CannotReach : Result()
-    }
+    enum class Result { Success, MalformedURL, CannotReach }
 
     fun isSearchStringValid(searchString: String): Result {
         val searchURL = createSearchURL(searchString) ?: return Result.MalformedURL
@@ -44,11 +40,9 @@ object SearchStringValidator {
         // we should share the code to substitute and normalize the search string (see SearchEngine.buildSearchUrl).
         val encodedTestQuery = Uri.encode("testSearchEngineValidation")
 
-        val normalizedHttpsSearchURLStr = searchString.toNormalizedUrl()
-        val searchURLStr = normalizedHttpsSearchURLStr.replace("%s".toRegex(), encodedTestQuery)
-        return try { URL(searchURLStr) } catch (e: MalformedURLException) {
-            return null
-        }
+        val normalizedHttpsSearchUrlStr = searchString.toNormalizedUrl()
+        val searchURLStr = normalizedHttpsSearchUrlStr.replace("%s".toRegex(), encodedTestQuery)
+        return try { URL(searchURLStr) } catch (e: MalformedURLException) { null }
     }
 
     private fun openConnection(url: URL): HttpURLConnection {

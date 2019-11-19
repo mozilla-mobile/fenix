@@ -49,8 +49,7 @@ android {
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
         }
-        forPerformanceTest releaseTemplate >> {
-            // the ">>" concatenates the raptor-specific options with the template
+        forPerformanceTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
             manifestPlaceholders.isRaptorEnabled = "true"
             applicationIdSuffix ".fenix.performancetest"
             debuggable true
@@ -83,8 +82,7 @@ android {
         }
     }
 
-    variantFilter {
-        // There's a "release" build type that exists by default that we don't use (it's replaced by "nightly" and "beta")
+    variantFilter { // There's a "release" build type that exists by default that we don't use (it's replaced by "nightly" and "beta")
         if (buildType.name == 'release') {
             setIgnore true
         }
@@ -175,9 +173,7 @@ android.applicationVariants.all { variant ->
 // Set up kotlin-allopen plugin for writing tests
 // -------------------------------------------------------------------------------------------------
 
-    boolean hasTest = gradle.startParameter.taskNames.find {
-        it.contains("test") || it.contains("Test")
-    } != null
+    boolean hasTest = gradle.startParameter.taskNames.find { it.contains("test") || it.contains("Test") } != null
     if (hasTest) {
         apply plugin: 'kotlin-allopen'
         allOpen {
@@ -245,8 +241,7 @@ android.applicationVariants.all { variant ->
         try {
             def token = new File("${rootDir}/.sentry_token").text.trim()
             buildConfigField 'String', 'SENTRY_TOKEN', '"' + token + '"'
-        } catch (FileNotFoundException ignored) {
-        }
+        } catch (FileNotFoundException ignored) {}
     } else {
         buildConfigField 'boolean', 'CRASH_REPORTING', 'false'
     }
@@ -324,7 +319,6 @@ androidExtensions {
 dependencies {
     implementation project(':architecture')
 
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     geckoNightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     geckoBetaImplementation Deps.mozilla_browser_engine_gecko_beta
 
@@ -471,7 +465,7 @@ dependencies {
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.androidx_junit
     testImplementation Deps.androidx_work_testing
-    testImplementation(Deps.robolectric) {
+    testImplementation (Deps.robolectric) {
         exclude group: 'org.apache.maven'
     }
 
@@ -549,19 +543,15 @@ if (project.hasProperty("coverage")) {
 // -------------------------------------------------------------------------------------------------
 task printVariants {
     doLast {
-        def variants = android.applicationVariants.collect {
-            [
-                    apks      : it.variantData.outputScope.apkDatas.collect {
-                        [
-                                abi: it.filters.find { it.filterType == 'ABI' }.identifier,
-                                fileName: it.outputFileName,
-                        ]
-                    },
-                    build_type: it.buildType.name,
-                    engine    : it.productFlavors.find { it.dimension == 'engine' }.name,
-                    name      : it.name,
-            ]
-        }
+        def variants = android.applicationVariants.collect {[
+                apks: it.variantData.outputScope.apkDatas.collect {[
+                        abi: it.filters.find { it.filterType == 'ABI' }.identifier,
+                        fileName: it.outputFileName,
+                ]},
+                build_type: it.buildType.name,
+                engine: it.productFlavors.find { it.dimension == 'engine' }.name,
+                name: it.name,
+        ]}
         println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
     }
 }
@@ -585,7 +575,7 @@ apply from: 'https://github.com/mozilla-mobile/android-components/raw/' + glean_
 afterEvaluate {
 
     // Format test output. Ported from AC #2401
-    tasks.matching { it instanceof Test }.all {
+    tasks.matching {it instanceof Test}.all {
         systemProperty "robolectric.logging", "stdout"
         systemProperty "logging.test-mode", "true"
 

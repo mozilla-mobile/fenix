@@ -7,18 +7,18 @@ package org.mozilla.fenix.settings.search
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.custom_search_engine.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -28,12 +28,9 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
-class EditCustomSearchEngineFragment : Fragment() {
-    private val safeArguments get() = requireNotNull(arguments)
+class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine) {
     private val engineIdentifier: String by lazy {
-        EditCustomSearchEngineFragmentArgs.fromBundle(
-            safeArguments
-        ).searchEngineIdentifier
+        navArgs<EditCustomSearchEngineFragmentArgs>().value.searchEngineIdentifier
     }
 
     private lateinit var searchEngine: SearchEngine
@@ -41,18 +38,9 @@ class EditCustomSearchEngineFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
         searchEngine = CustomSearchEngineStore.loadCustomSearchEngines(requireContext()).first {
             it.identifier == engineIdentifier
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_search_engine, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -140,35 +128,35 @@ class EditCustomSearchEngineFragment : Fragment() {
         if (hasError) { return }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = SearchStringValidator.isSearchStringValid(searchString)
+            val result = withContext(IO) {
+                SearchStringValidator.isSearchStringValid(searchString)
+            }
 
-            launch(Dispatchers.Main) {
-                when (result) {
-                    SearchStringValidator.Result.MalformedURL -> {
-                        custom_search_engine_search_string_field.error = "Malformed URL"
-                    }
-                    SearchStringValidator.Result.CannotReach -> {
-                        custom_search_engine_search_string_field.error = "Cannot Reach"
-                    }
-                    SearchStringValidator.Result.Success -> {
-                        CustomSearchEngineStore.updateSearchEngine(
-                            context = requireContext(),
-                            oldEngineName = engineIdentifier,
-                            newEngineName = name,
-                            searchQuery = searchString
-                        )
-                        requireComponents.search.provider.reload()
-                        val successMessage = resources
-                            .getString(R.string.search_edit_custom_engine_success_message, name)
+            when (result) {
+                SearchStringValidator.Result.MalformedURL -> {
+                    custom_search_engine_search_string_field.error = "Malformed URL"
+                }
+                SearchStringValidator.Result.CannotReach -> {
+                    custom_search_engine_search_string_field.error = "Cannot Reach"
+                }
+                SearchStringValidator.Result.Success -> {
+                    CustomSearchEngineStore.updateSearchEngine(
+                        context = requireContext(),
+                        oldEngineName = engineIdentifier,
+                        newEngineName = name,
+                        searchQuery = searchString
+                    )
+                    requireComponents.search.provider.reload()
+                    val successMessage = resources
+                        .getString(R.string.search_edit_custom_engine_success_message, name)
 
-                        view?.also {
-                            FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
-                                .setText(successMessage)
-                                .show()
-                        }
-
-                        findNavController().popBackStack()
+                    view?.also {
+                        FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
+                            .setText(successMessage)
+                            .show()
                     }
+
+                    findNavController().popBackStack()
                 }
             }
         }

@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
 import kotlinx.coroutines.MainScope
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
@@ -119,8 +118,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = engine.name
-        wrapper.overflow_menu.isVisible = FeatureFlags.customSearchEngines &&
-                (allowDeletion || isCustomSearchEngine)
+        wrapper.overflow_menu.isVisible = allowDeletion || isCustomSearchEngine
         wrapper.overflow_menu.setOnClickListener {
             SearchEngineMenu(
                 context = context,
@@ -166,11 +164,16 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         MainScope().allowUndo(
             view = context.getRootView()!!,
             message = context
-                .resources
                 .getString(R.string.search_delete_search_engine_success_message, engine.name),
-            undoActionTitle = context.resources.getString(R.string.snackbar_deleted_undo),
+            undoActionTitle = context.getString(R.string.snackbar_deleted_undo),
             onCancel = {
-                searchEngineList = searchEngineList.copy(list = searchEngineList.list + engine)
+                val defaultEngine = context.components.search.provider.getDefaultEngine(context)
+
+                searchEngineList = searchEngineList.copy(
+                    list = searchEngineList.list + engine,
+                    default = defaultEngine
+                )
+
                 refreshSearchEngineViews(context)
             },
             operation = {
@@ -189,9 +192,16 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             }
         )
 
-        searchEngineList = searchEngineList.copy(list = searchEngineList.list.filter {
-            it.identifier != engine.identifier
-        })
+        searchEngineList = searchEngineList.copy(
+            list = searchEngineList.list.filter {
+                it.identifier != engine.identifier
+            },
+            default = if (searchEngineList.default?.identifier == engine.identifier) {
+                null
+            } else {
+                searchEngineList.default
+            }
+        )
 
         refreshSearchEngineViews(context)
     }

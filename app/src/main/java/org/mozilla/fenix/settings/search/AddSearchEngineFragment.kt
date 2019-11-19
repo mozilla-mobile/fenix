@@ -22,9 +22,11 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.custom_search_engine.*
 import kotlinx.android.synthetic.main.fragment_add_search_engine.*
 import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -172,42 +174,42 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         }
 
         if (!searchString.contains("%s")) {
-            custom_search_engine_name_field
+            custom_search_engine_search_string_field
                 .error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
             hasError = true
         }
 
         if (hasError) { return }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            val result = SearchStringValidator.isSearchStringValid(searchString)
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
+            val result = withContext(IO) {
+                SearchStringValidator.isSearchStringValid(searchString)
+            }
 
-            launch(Main) {
-                when (result) {
-                    SearchStringValidator.Result.MalformedURL -> {
-                        custom_search_engine_search_string_field.error = "Malformed URL"
-                    }
-                    SearchStringValidator.Result.CannotReach -> {
-                        custom_search_engine_search_string_field.error = "Cannot Reach"
-                    }
-                    SearchStringValidator.Result.Success -> {
-                        CustomSearchEngineStore.addSearchEngine(
-                            context = requireContext(),
-                            engineName = name,
-                            searchQuery = searchString
-                        )
-                        requireComponents.search.provider.reload()
-                        val successMessage = resources
-                            .getString(R.string.search_add_custom_engine_success_message, name)
+            when (result) {
+                SearchStringValidator.Result.MalformedURL -> {
+                    custom_search_engine_search_string_field.error = "Malformed URL"
+                }
+                SearchStringValidator.Result.CannotReach -> {
+                    custom_search_engine_search_string_field.error = "Cannot Reach"
+                }
+                SearchStringValidator.Result.Success -> {
+                    CustomSearchEngineStore.addSearchEngine(
+                        context = requireContext(),
+                        engineName = name,
+                        searchQuery = searchString
+                    )
+                    requireComponents.search.provider.reload()
+                    val successMessage = resources
+                        .getString(R.string.search_add_custom_engine_success_message, name)
 
-                        view?.also {
-                            FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
-                                .setText(successMessage)
-                                .show()
-                        }
-
-                        findNavController().popBackStack()
+                    view?.also {
+                        FenixSnackbar.make(it, FenixSnackbar.LENGTH_SHORT)
+                            .setText(successMessage)
+                            .show()
                     }
+
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -215,11 +217,15 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
     private fun installEngine(engine: SearchEngine) {
         viewLifecycleOwner.lifecycleScope.launch {
-            requireContext().components.search.provider.installSearchEngine(
-                requireContext(),
-                engine
-            )
-        }.invokeOnCompletion { findNavController().popBackStack() }
+            withContext(IO) {
+                requireContext().components.search.provider.installSearchEngine(
+                    requireContext(),
+                    engine
+                )
+            }
+
+            findNavController().popBackStack()
+        }
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
