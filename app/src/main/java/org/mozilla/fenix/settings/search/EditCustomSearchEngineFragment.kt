@@ -137,11 +137,9 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             }
 
             when (result) {
-                SearchStringValidator.Result.MalformedURL -> {
-                    custom_search_engine_search_string_field.error = "Malformed URL"
-                }
                 SearchStringValidator.Result.CannotReach -> {
-                    custom_search_engine_search_string_field.error = "Cannot Reach"
+                    custom_search_engine_search_string_field.error = resources
+                        .getString(R.string.search_add_custom_engine_error_cannot_reach)
                 }
                 SearchStringValidator.Result.Success -> {
                     CustomSearchEngineStore.updateSearchEngine(

@@ -11,15 +11,15 @@ import mozilla.components.concept.fetch.isSuccess
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 
 object SearchStringValidator {
-    enum class Result { Success, MalformedURL, CannotReach }
+    enum class Result { Success, CannotReach }
 
     fun isSearchStringValid(client: Client, searchString: String): Result {
-        val request = createRequest(searchString) ?: return Result.MalformedURL
+        val request = createRequest(searchString)
         val response = client.fetch(request)
         return if (response.isSuccess) Result.Success else Result.CannotReach
     }
 
-    private fun createRequest(searchString: String): Request? {
+    private fun createRequest(searchString: String): Request {
         // we should share the code to substitute and normalize the search string (see SearchEngine.buildSearchUrl).
         val encodedTestQuery = Uri.encode("testSearchEngineValidation")
 
