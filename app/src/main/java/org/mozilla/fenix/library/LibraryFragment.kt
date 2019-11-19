@@ -65,16 +65,6 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
         inflater.inflate(R.menu.library_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.libraryClose -> {
-                Navigation.findNavController(requireActivity(), R.id.container).navigateUp()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         requireComponents.analytics.metrics.track(Event.LibraryClosed)
