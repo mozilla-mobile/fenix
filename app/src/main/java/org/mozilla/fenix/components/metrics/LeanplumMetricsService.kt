@@ -10,6 +10,12 @@ import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
 import com.leanplum.annotations.Parser
 import com.leanplum.internal.LeanplumInternal
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.ext.settings
 import java.util.UUID.randomUUID
@@ -52,6 +58,8 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
     }
 
     private val token = Token(LeanplumId, LeanplumToken)
+    lateinit var lpmsSetUserAttributeJob: Job
+    private val lpmsSetUserAttributeCoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun start() {
         when (token.type) {
@@ -69,21 +77,34 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         Parser.parseVariables(application)
 
         LeanplumActivityHelper.enableLifecycleCallbacks(application)
+        Leanplum.start(application)
 
-        val installedApps = MozillaProductDetector.getInstalledMozillaProducts(application)
-
-        Leanplum.start(application, hashMapOf(
-            "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
-            "fennec_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.FIREFOX.productName),
-            "focus_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.FOCUS.productName),
-            "klar_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.KLAR.productName),
-            "fxa_signed_in" to application.settings().fxaSignedIn,
-            "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
-            "search_widget_installed" to application.settings().searchWidgetInstalled
-        ))
+        lpmsSetUserAttributeJob = lpmsSetUserAttributeCoroutineScope.launch {
+            val installedApps = MozillaProductDetector.getInstalledMozillaProducts(application)
+            Leanplum.setUserAttributes(
+                hashMapOf(
+                    "default_browser" to
+                            MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
+                    "fennec_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.FIREFOX.productName),
+                    "focus_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.FOCUS.productName),
+                    "klar_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.KLAR.productName),
+                    "fxa_signed_in" to
+                            application.settings().fxaSignedIn,
+                    "fxa_has_synced_items" to
+                            application.settings().fxaHasSyncedItems,
+                    "search_widget_installed" to
+                            application.settings().searchWidgetInstalled
+                )
+            )
+        }
     }
 
     override fun stop() {
+        runBlocking { lpmsSetUserAttributeJob.join() }
+        lpmsSetUserAttributeCoroutineScope.cancel()
         // As written in LeanPlum SDK documentation, "This prevents Leanplum from communicating with the server."
         // as this "isTestMode" flag is checked before LeanPlum SDK does anything.
         // Also has the benefit effect of blocking the display of already downloaded messages.
