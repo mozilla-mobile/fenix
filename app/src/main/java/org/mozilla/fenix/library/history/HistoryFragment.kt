@@ -130,12 +130,12 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 
-        if(historyStore.state.mode !is HistoryFragmentState.Mode.Editing) {
+        if (historyStore.state.mode !is HistoryFragmentState.Mode.Editing) {
             return
         }
 
         @MenuRes
-        val menuRes= R.menu.history_select_multi
+        val menuRes = R.menu.history_select_multi
 
         inflater.inflate(menuRes, menu)
         menu.findItem(R.id.share_history_multi_select)?.isVisible = true
