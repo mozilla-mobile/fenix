@@ -310,8 +310,9 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+        subscribeToTabCollections()
 
         getAutoDisposeObservable<SessionControlAction>()
             .subscribe {
@@ -354,11 +355,6 @@ class HomeFragment : Fragment() {
             !PrivateShortcutCreateManager.doesPrivateBrowsingPinnedShortcutExist(context)) {
             recommendPrivateBrowsingShortcut()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        subscribeToTabCollections()
 
         // We only want this observer live just before we navigate away to the collection creation screen
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
@@ -602,9 +598,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
+    override fun onStop() {
         invokePendingDeleteJobs()
-        super.onPause()
+        super.onStop()
         val homeViewModel: HomeScreenViewModel by activityViewModels {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
         }
