@@ -45,7 +45,6 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -527,10 +526,6 @@ class HomeFragment : Fragment() {
                 }
                 components.analytics.metrics.track(Event.CollectionAllTabsRestored)
             }
-            is CollectionAction.ShareTabs -> {
-                share(action.collection.tabs.map { ShareData(url = it.url, title = it.title) })
-                requireComponents.analytics.metrics.track(Event.CollectionShared)
-            }
             is CollectionAction.RemoveTab -> {
                 viewLifecycleOwner.lifecycleScope.launch(IO) {
                     requireComponents.core.tabCollectionStorage.removeTabFromCollection(
@@ -793,13 +788,6 @@ class HomeFragment : Fragment() {
 
     private fun registerCollectionStorageObserver() {
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
-    }
-
-    private fun share(data: List<ShareData>) {
-        val directions = HomeFragmentDirections.actionHomeFragmentToShareFragment(
-            data = data.toTypedArray()
-        )
-        nav(R.id.homeFragment, directions)
     }
 
     private fun scrollAndAnimateCollection(

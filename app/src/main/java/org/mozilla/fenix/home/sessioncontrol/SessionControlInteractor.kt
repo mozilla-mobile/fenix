@@ -11,6 +11,14 @@ import android.view.View
  */
 interface CollectionInteractor {
     /**
+     * Shares the tabs in the given tab collection. Called when a user clicks on the Collection
+     * Share button.
+     *
+     * @param collection The collection of tabs to share.
+     */
+    fun onCollectionShareTabsClicked(collection: TabCollection)
+
+    /**
      * Shows a prompt for deleting the given tab collection. Called when a user taps on the
      * "Delete collection" collection menu item.
      *
@@ -95,6 +103,7 @@ interface TabSessionInteractor {
  * Provides implementations for the CollectionInteractor, OnboardingInteractor and
  * TabSessionInteractor.
  */
+@SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
     private val controller: SessionControlController
 ) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor {
@@ -104,6 +113,10 @@ class SessionControlInteractor(
 
     override fun onCloseAllTabs(isPrivateMode: Boolean) {
         controller.handleCloseAllTabs(isPrivateMode)
+    }
+
+    override fun onCollectionShareTabsClicked(collection: TabCollection) {
+        controller.handleCollectionShareTabsClicked(collection)
     }
 
     override fun onDeleteCollectionTapped(collection: TabCollection) {

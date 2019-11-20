@@ -21,6 +21,8 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -30,6 +32,7 @@ import org.mozilla.fenix.settings.SupportUtils
  * [HomeFragment] controller. An interface that handles the view manipulation of the Tabs triggered
  * by the Interactor.
  */
+@SuppressWarnings("TooManyFunctions")
 interface SessionControlController {
     /**
      * See [TabSessionInteractor.onCloseTab]
@@ -40,6 +43,11 @@ interface SessionControlController {
      * See [TabSessionInteractor.onCloseAllTabs]
      */
     fun handleCloseAllTabs(isPrivateMode: Boolean)
+
+    /**
+     * See [CollectionInteractor.onCollectionShareTabsClicked]
+     */
+    fun handleCollectionShareTabsClicked(collection: TabCollection)
 
     /**
      * See [CollectionInteractor.onDeleteCollectionTapped]
@@ -96,6 +104,8 @@ class DefaultSessionControlController(
     private val registerCollectionStorageObserver: () -> Unit,
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit
 ) : SessionControlController {
+    private val metrics: MetricController
+        get() = context.components.analytics.metrics
     private val sessionManager: SessionManager
         get() = context.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
@@ -107,6 +117,11 @@ class DefaultSessionControlController(
 
     override fun handleCloseAllTabs(isPrivateMode: Boolean) {
         closeAllTabs.invoke(isPrivateMode)
+    }
+
+    override fun handleCollectionShareTabsClicked(collection: TabCollection) {
+        showShareFragment(collection.tabs.map { ShareData(url = it.url, title = it.title) })
+        metrics.track(Event.CollectionShared)
     }
 
     override fun handleDeleteCollectionTapped(collection: TabCollection) {

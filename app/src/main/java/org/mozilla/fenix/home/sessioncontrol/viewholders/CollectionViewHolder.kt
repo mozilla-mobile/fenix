@@ -61,7 +61,7 @@ class CollectionViewHolder(
         collection_share_button.run {
             increaseTapArea(buttonIncreaseDps)
             setOnClickListener {
-                actionEmitter.onNext(CollectionAction.ShareTabs(collection))
+                interactor.onCollectionShareTabsClicked(collection)
             }
         }
 
