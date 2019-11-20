@@ -129,12 +129,13 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        @MenuRes
-        val menuRes = when (historyStore.state.mode) {
-            HistoryFragmentState.Mode.Normal -> R.menu.library_menu
-            is HistoryFragmentState.Mode.Editing -> R.menu.history_select_multi
-            else -> return
+
+        if(historyStore.state.mode !is HistoryFragmentState.Mode.Editing) {
+            return
         }
+
+        @MenuRes
+        val menuRes= R.menu.history_select_multi
 
         inflater.inflate(menuRes, menu)
         menu.findItem(R.id.share_history_multi_select)?.isVisible = true
@@ -155,10 +156,6 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), BackHandler {
                     share(tabs = shareTabs)
                 }
             }
-            true
-        }
-        R.id.libraryClose -> {
-            close()
             true
         }
         R.id.delete_history_multi_select -> {

@@ -44,13 +44,6 @@ class LibraryRobot {
             return BrowserRobot.Transition()
         }
 
-        fun closeMenu(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            closeButton().click()
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
-
         fun openBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), TestAssetHelper.waitingTime)
             bookmarksButton().click()
@@ -70,7 +63,6 @@ class LibraryRobot {
 }
 
 private fun goBackButton() = onView(allOf(withContentDescription("Navigate up")))
-private fun closeButton() = onView(withId(R.id.libraryClose))
 private fun bookmarksButton() = onView(allOf(withText("Bookmarks")))
 private fun historyButton() = onView(allOf(withText("History")))
 

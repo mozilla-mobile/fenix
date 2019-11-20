@@ -61,10 +61,6 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
         requireComponents.analytics.metrics.track(Event.LibraryOpened)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.library_menu, menu)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         requireComponents.analytics.metrics.track(Event.LibraryClosed)
