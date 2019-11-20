@@ -16,8 +16,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
+import org.junit.Assert
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 
@@ -42,13 +45,17 @@ class BookmarksRobot {
 
     fun verifyEditBookmarksView() = assertEditBookmarksView()
 
-    fun verifyBoomarkNameEditBox() = assertBookmarkNameEditBox()
+    fun verifyBookmarkNameEditBox() = assertBookmarkNameEditBox()
 
     fun verifyBookmarkURLEditBox() = assertBookmarkURLEditBox()
 
     fun verifyParentFolderSelector() = assertBookmarkFolderSelector()
 
     fun verifyHomeScreen() = HomeScreenRobot().verifyHomeScreen()
+
+    fun verifyKeyboardHidden() = assertKeyboardVisibility(isExpectedToBeVisible = false)
+
+    fun verifyKeyboardVisible() = assertKeyboardVisibility(isExpectedToBeVisible = true)
 
     fun clickAddFolderButton() {
         addFolderButton().click()
@@ -68,11 +75,11 @@ class BookmarksRobot {
     }
 
     class Transition {
-        fun goBack(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
+        fun goBack(interact: BookmarksRobot.() -> Unit): Transition {
             goBackButton().click()
 
             BookmarksRobot().interact()
-            return BookmarksRobot.Transition()
+            return Transition()
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
@@ -129,7 +136,7 @@ private fun assertBookmarkFavicon() = bookmarkFavicon().check(
 )
 
 private fun assertBookmarkURL(expectedURL: Uri) = bookmarkURL()
-    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    .check(matches(ViewMatchers.isCompletelyDisplayed()))
     .check(matches(withText(containsString(expectedURL.toString()))))
 
 private fun assertFolderTitle(expectedTitle: String) = folderTitle()
@@ -155,3 +162,11 @@ private fun assertBookmarkFolderSelector() =
 private fun assertBookmarkURLEditBox() =
     onView(withId(R.id.bookmarkUrlEdit))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
+    Assert.assertEquals(
+        isExpectedToBeVisible,
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            .executeShellCommand("dumpsys input_method | grep mInputShown")
+            .contains("mInputShown=true")
+    )
