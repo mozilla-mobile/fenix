@@ -103,7 +103,7 @@ open class FenixApplication : Application() {
             components.analytics.metrics.start()
         }
 
-        setupPush()
+        setupPushFeature()
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
@@ -166,18 +166,18 @@ open class FenixApplication : Application() {
         }
     }
 
-    private fun setupPush() {
+    private fun setupPushFeature() {
         // Sets the PushFeature as the singleton instance for push messages to go to.
-        // We need the push feature setup here to deliver messages in the case where the service
+        // We need the pushFeature feature setup here to deliver messages in the case where the service
         // starts up the app first.
-        components.backgroundServices.push?.let { autoPushFeature ->
-            Logger.info("AutoPushFeature is configured, initializing it...")
+        components.pushDispatcher.pushDispatcher?.let { pushDispatcher ->
+            Logger.info("Push dispatcher is configured, initializing it...")
 
-            // Install the AutoPush singleton to receive messages.
-            PushProcessor.install(autoPushFeature)
+            // Install the AutoPushFeature singleton to receive messages.
+            PushProcessor.install(pushDispatcher)
 
             // Initialize the service. This could potentially be done in a coroutine in the future.
-            autoPushFeature.initialize()
+            pushDispatcher.initialize()
         }
     }
 

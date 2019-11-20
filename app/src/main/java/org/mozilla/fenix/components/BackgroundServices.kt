@@ -11,19 +11,14 @@ import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.ProcessLifecycleOwner
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
-import mozilla.components.concept.push.Bus
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceEvent
 import mozilla.components.concept.sync.DeviceEventsObserver
-import mozilla.components.concept.sync.DevicePushSubscription
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.push.AutoPushFeature
-import mozilla.components.feature.push.AutoPushSubscription
-import mozilla.components.feature.push.PushConfig
-import mozilla.components.feature.push.PushSubscriptionObserver
 import mozilla.components.feature.push.PushType
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
@@ -96,10 +91,6 @@ class BackgroundServices(
             syncPeriodInMinutes = 240L) // four hours
     }
 
-    private val pushService by lazy { FirebasePush() }
-
-    val push by lazy { makePushConfig()?.let { makePush(it) } }
-
     init {
         // Make the "history", "bookmark", and "passwords" stores accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
@@ -125,33 +116,7 @@ class BackgroundServices(
 
     val accountAbnormalities = AccountAbnormalities(context, crashReporter)
 
-    private val pushAccountObserver by lazy { push?.let { PushAccountObserver(it) } }
-
     val accountManager = makeAccountManager(context, serverConfig, deviceConfig, syncConfig)
-
-    @VisibleForTesting(otherwise = PRIVATE)
-    fun makePush(pushConfig: PushConfig): AutoPushFeature {
-        return AutoPushFeature(
-            context = context,
-            service = pushService,
-            config = pushConfig
-        )
-    }
-
-    @VisibleForTesting(otherwise = PRIVATE)
-    fun makePushConfig(): PushConfig? {
-        val logger = Logger("PushConfig")
-        val projectIdKey = context.getString(R.string.pref_key_push_project_id)
-        val resId = context.resources.getIdentifier(projectIdKey, "string", context.packageName)
-        if (resId == 0) {
-            logger.warn("No firebase configuration found; cannot support push service.")
-            return null
-        }
-
-        logger.debug("Creating push configuration for autopush.")
-        val projectId = context.resources.getString(resId)
-        return PushConfig(projectId)
-    }
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun makeAccountManager(
@@ -188,41 +153,6 @@ class BackgroundServices(
         // unexpected logouts.
         accountManager.register(accountAbnormalities)
 
-        // Enable push if it's configured.
-        push?.let { autoPushFeature ->
-            // Register the push account observer so we know how to update our push subscriptions.
-            accountManager.register(pushAccountObserver!!)
-
-            val logger = Logger("AutoPushFeature")
-
-            // Notify observers for Services' messages.
-            autoPushFeature.registerForPushMessages(
-                PushType.Services,
-                object : Bus.Observer<PushType, String> {
-                    override fun onEvent(type: PushType, message: String) {
-                        accountManager.authenticatedAccount()?.deviceConstellation()
-                            ?.processRawEventAsync(message)
-                    }
-                })
-
-            // Notify observers for subscription changes.
-            autoPushFeature.registerForSubscriptions(object : PushSubscriptionObserver {
-                override fun onSubscriptionAvailable(subscription: AutoPushSubscription) {
-                    // Update for only the services subscription.
-                    if (subscription.type == PushType.Services) {
-                        logger.info("New push subscription received for FxA")
-                        accountManager.authenticatedAccount()?.deviceConstellation()
-                            ?.setDevicePushSubscriptionAsync(
-                                DevicePushSubscription(
-                                    endpoint = subscription.endpoint,
-                                    publicKey = subscription.publicKey,
-                                    authKey = subscription.authKey
-                                )
-                            )
-                    }
-                }
-            })
-        }
         accountAbnormalities.accountManagerInitializedAsync(
             accountManager,
             accountManager.initAsync()

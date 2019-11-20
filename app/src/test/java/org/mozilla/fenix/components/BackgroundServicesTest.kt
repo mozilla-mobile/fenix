@@ -14,7 +14,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.push.AutoPushFeature
-import mozilla.components.feature.push.PushConfig
 import mozilla.components.feature.push.PushType
 import mozilla.components.service.fxa.DeviceConfig
 import mozilla.components.service.fxa.ServerConfig
@@ -33,16 +32,13 @@ import org.mozilla.fenix.isInExperiment
 class BackgroundServicesTest {
     class TestableBackgroundServices(
         val context: Context
-    ) : BackgroundServices(context, mockk(), mockk(), mockk(), mockk(), mockk()) {
+    ) : BackgroundServices(context, mockk(), mockk(), mockk(), mockk(), mockk(), mockk()) {
         override fun makeAccountManager(
             context: Context,
             serverConfig: ServerConfig,
             deviceConfig: DeviceConfig,
             syncConfig: SyncConfig?
         ) = mockk<FxaAccountManager>(relaxed = true)
-
-        override fun makePushConfig() = mockk<PushConfig>(relaxed = true)
-        override fun makePush(pushConfig: PushConfig) = mockk<AutoPushFeature>(relaxed = true)
     }
 
     @Test

@@ -6,6 +6,7 @@ package org.mozilla.fenix.components
 
 import android.content.Context
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import org.mozilla.fenix.components.push.Dispatcher
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.fenix.utils.ClipboardHandler
 
@@ -22,6 +23,12 @@ class Components(private val context: Context) {
             core.bookmarksStorage,
             core.passwordsStorage,
             core.getSecureAbove22Preferences()
+        )
+    }
+    val pushDispatcher by lazy {
+        Dispatcher(
+            context,
+            listOf(AccountManagerDispatchee(lazy { backgroundServices.accountManager }))
         )
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
