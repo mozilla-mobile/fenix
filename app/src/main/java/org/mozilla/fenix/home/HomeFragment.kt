@@ -186,7 +186,8 @@ class HomeFragment : Fragment() {
                 getListOfTabs = ::getListOfTabs,
                 hideOnboarding = ::hideOnboarding,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
-                registerCollectionStorageObserver = ::registerCollectionStorageObserver
+                registerCollectionStorageObserver = ::registerCollectionStorageObserver,
+                showDeleteCollectionPrompt = ::showDeleteCollectionPrompt
             )
         )
 
@@ -423,7 +424,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun createDeleteCollectionPrompt(tabCollection: TabCollection) {
+    private fun showDeleteCollectionPrompt(tabCollection: TabCollection) {
         val context = context ?: return
         AlertDialog.Builder(context).apply {
             val message =
@@ -454,9 +455,6 @@ class HomeFragment : Fragment() {
             is CollectionAction.Collapse -> {
                 getManagedEmitter<SessionControlChange>()
                     .onNext(SessionControlChange.ExpansionChange(action.collection, false))
-            }
-            is CollectionAction.Delete -> {
-                createDeleteCollectionPrompt(action.collection)
             }
             is CollectionAction.AddTab -> {
                 requireComponents.analytics.metrics.track(Event.CollectionAddTabPressed)

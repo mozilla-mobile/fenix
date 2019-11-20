@@ -21,12 +21,14 @@ import org.mozilla.fenix.components.description
 import org.mozilla.fenix.ext.getIconColor
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.CollectionAction
+import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import org.mozilla.fenix.home.sessioncontrol.onNext
 
 class CollectionViewHolder(
     val view: View,
+    val interactor: CollectionInteractor,
     val actionEmitter: Observer<SessionControlAction>,
     override val containerView: View? = view
 ) :
@@ -40,7 +42,7 @@ class CollectionViewHolder(
     init {
         collectionMenu = CollectionItemMenu(view.context, sessionHasOpenTabs) {
             when (it) {
-                is CollectionItemMenu.Item.DeleteCollection -> actionEmitter.onNext(CollectionAction.Delete(collection))
+                is CollectionItemMenu.Item.DeleteCollection -> interactor.onDeleteCollectionTapped(collection)
                 is CollectionItemMenu.Item.AddTab -> actionEmitter.onNext(CollectionAction.AddTab(collection))
                 is CollectionItemMenu.Item.RenameCollection -> actionEmitter.onNext(CollectionAction.Rename(collection))
                 is CollectionItemMenu.Item.OpenTabs -> actionEmitter.onNext(CollectionAction.OpenTabs(collection))

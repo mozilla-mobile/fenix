@@ -42,6 +42,11 @@ interface SessionControlController {
     fun handleCloseAllTabs(isPrivateMode: Boolean)
 
     /**
+     * See [CollectionInteractor.onDeleteCollectionTapped]
+     */
+    fun handleDeleteCollectionTapped(collection: TabCollection)
+
+    /**
      * See [TabSessionInteractor.onPauseMediaClicked]
      */
     fun handlePauseMediaClicked()
@@ -88,7 +93,8 @@ class DefaultSessionControlController(
     private val getListOfTabs: () -> List<Tab>,
     private val hideOnboarding: () -> Unit,
     private val invokePendingDeleteJobs: () -> Unit,
-    private val registerCollectionStorageObserver: () -> Unit
+    private val registerCollectionStorageObserver: () -> Unit,
+    private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit
 ) : SessionControlController {
     private val sessionManager: SessionManager
         get() = context.components.core.sessionManager
@@ -101,6 +107,10 @@ class DefaultSessionControlController(
 
     override fun handleCloseAllTabs(isPrivateMode: Boolean) {
         closeAllTabs.invoke(isPrivateMode)
+    }
+
+    override fun handleDeleteCollectionTapped(collection: TabCollection) {
+        showDeleteCollectionPrompt(collection)
     }
 
     override fun handlePauseMediaClicked() {

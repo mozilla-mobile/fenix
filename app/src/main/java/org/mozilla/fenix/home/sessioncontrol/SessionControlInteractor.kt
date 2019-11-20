@@ -7,6 +7,19 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.view.View
 
 /**
+ * Interface for collection related actions in the [SessionControlInteractor].
+ */
+interface CollectionInteractor {
+    /**
+     * Shows a prompt for deleting the given tab collection. Called when a user taps on the
+     * "Delete collection" collection menu item.
+     *
+     * @param collection The collection of tabs to delete.
+     */
+    fun onDeleteCollectionTapped(collection: TabCollection)
+}
+
+/**
  * Interface for onboarding related actions in the [SessionControlInteractor].
  */
 interface OnboardingInteractor {
@@ -79,17 +92,22 @@ interface TabSessionInteractor {
 
 /**
  * Interactor for the Home screen.
- * Provides implementations for the OnboardingInteractor and TabSessionInteractor.
+ * Provides implementations for the CollectionInteractor, OnboardingInteractor and
+ * TabSessionInteractor.
  */
 class SessionControlInteractor(
     private val controller: SessionControlController
-) : OnboardingInteractor, TabSessionInteractor {
+) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor {
     override fun onCloseTab(sessionId: String) {
         controller.handleCloseTab(sessionId)
     }
 
     override fun onCloseAllTabs(isPrivateMode: Boolean) {
         controller.handleCloseAllTabs(isPrivateMode)
+    }
+
+    override fun onDeleteCollectionTapped(collection: TabCollection) {
+        controller.handleDeleteCollectionTapped(collection)
     }
 
     override fun onPauseMediaClicked() {

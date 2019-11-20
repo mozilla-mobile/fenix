@@ -81,7 +81,6 @@ typealias TabCollection = ACTabCollection
 sealed class CollectionAction : Action {
     data class Expand(val collection: TabCollection) : CollectionAction()
     data class Collapse(val collection: TabCollection) : CollectionAction()
-    data class Delete(val collection: TabCollection) : CollectionAction()
     data class AddTab(val collection: TabCollection) : CollectionAction()
     data class Rename(val collection: TabCollection) : CollectionAction()
     data class OpenTab(val tab: ComponentTab) : CollectionAction()
