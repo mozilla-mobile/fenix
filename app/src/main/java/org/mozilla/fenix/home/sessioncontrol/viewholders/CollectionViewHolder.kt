@@ -43,8 +43,8 @@ class CollectionViewHolder(
         collectionMenu = CollectionItemMenu(view.context, sessionHasOpenTabs) {
             when (it) {
                 is CollectionItemMenu.Item.DeleteCollection -> interactor.onDeleteCollectionTapped(collection)
-                is CollectionItemMenu.Item.AddTab -> actionEmitter.onNext(CollectionAction.AddTab(collection))
-                is CollectionItemMenu.Item.RenameCollection -> actionEmitter.onNext(CollectionAction.Rename(collection))
+                is CollectionItemMenu.Item.AddTab -> interactor.onCollectionAddTabTapped(collection)
+                is CollectionItemMenu.Item.RenameCollection -> interactor.onRenameCollectionTapped(collection)
                 is CollectionItemMenu.Item.OpenTabs -> actionEmitter.onNext(CollectionAction.OpenTabs(collection))
             }
         }

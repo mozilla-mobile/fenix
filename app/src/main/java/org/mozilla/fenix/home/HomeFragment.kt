@@ -62,7 +62,6 @@ import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -455,20 +454,6 @@ class HomeFragment : Fragment() {
                 getManagedEmitter<SessionControlChange>()
                     .onNext(SessionControlChange.ExpansionChange(action.collection, false))
             }
-            is CollectionAction.AddTab -> {
-                requireComponents.analytics.metrics.track(Event.CollectionAddTabPressed)
-                showCollectionCreationFragment(
-                    step = SaveCollectionStep.SelectTabs,
-                    selectedTabCollectionId = action.collection.id
-                )
-            }
-            is CollectionAction.Rename -> {
-                showCollectionCreationFragment(
-                    step = SaveCollectionStep.RenameCollection,
-                    selectedTabCollectionId = action.collection.id
-                )
-                requireComponents.analytics.metrics.track(Event.CollectionRenamePressed)
-            }
             is CollectionAction.OpenTab -> {
                 invokePendingDeleteJobs()
 
@@ -761,29 +746,6 @@ class HomeFragment : Fragment() {
 
     private fun getListOfTabs(): List<Tab> {
         return getListOfSessions().toTabs()
-    }
-
-    private fun showCollectionCreationFragment(
-        step: SaveCollectionStep,
-        selectedTabIds: Array<String>? = null,
-        selectedTabCollectionId: Long? = null
-    ) {
-        if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
-
-        // Only register the observer right before moving to collection creation
-        registerCollectionStorageObserver()
-
-        val tabIds = getListOfSessions().toTabs().map { it.sessionId }.toTypedArray()
-        view?.let {
-            val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment(
-                tabIds = tabIds,
-                previousFragmentId = R.id.homeFragment,
-                saveCollectionStep = step,
-                selectedTabIds = selectedTabIds,
-                selectedTabCollectionId = selectedTabCollectionId ?: -1
-            )
-            nav(R.id.homeFragment, directions)
-        }
     }
 
     private fun registerCollectionStorageObserver() {

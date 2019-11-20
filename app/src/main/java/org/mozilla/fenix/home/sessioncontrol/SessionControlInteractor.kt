@@ -11,6 +11,14 @@ import android.view.View
  */
 interface CollectionInteractor {
     /**
+     * Shows the Collection Creation fragment for selecting the tabs to add to the given tab
+     * collection. Called when a user taps on the "Add tab" collection menu item.
+     *
+     * @param collection The collection of tabs that will be modified.
+     */
+    fun onCollectionAddTabTapped(collection: TabCollection)
+
+    /**
      * Shares the tabs in the given tab collection. Called when a user clicks on the Collection
      * Share button.
      *
@@ -25,6 +33,14 @@ interface CollectionInteractor {
      * @param collection The collection of tabs to delete.
      */
     fun onDeleteCollectionTapped(collection: TabCollection)
+
+    /**
+     * Shows the Collection Creation fragment for renaming the given tab collection. Called when a
+     * user taps on the "Rename collection" collection menu item.
+     *
+     * @param collection The collection of tabs to rename.
+     */
+    fun onRenameCollectionTapped(collection: TabCollection)
 }
 
 /**
@@ -115,6 +131,10 @@ class SessionControlInteractor(
         controller.handleCloseAllTabs(isPrivateMode)
     }
 
+    override fun onCollectionAddTabTapped(collection: TabCollection) {
+        controller.handleCollectionAddTabTapped(collection)
+    }
+
     override fun onCollectionShareTabsClicked(collection: TabCollection) {
         controller.handleCollectionShareTabsClicked(collection)
     }
@@ -133,6 +153,10 @@ class SessionControlInteractor(
 
     override fun onPrivateBrowsingLearnMoreClicked() {
         controller.handlePrivateBrowsingLearnMoreClicked()
+    }
+
+    override fun onRenameCollectionTapped(collection: TabCollection) {
+        controller.handleRenameCollectionTapped(collection)
     }
 
     override fun onSaveToCollection(sessionId: String?) {

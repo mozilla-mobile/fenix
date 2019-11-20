@@ -45,6 +45,11 @@ interface SessionControlController {
     fun handleCloseAllTabs(isPrivateMode: Boolean)
 
     /**
+     * See [CollectionInteractor.onCollectionAddTabTapped]
+     */
+    fun handleCollectionAddTabTapped(collection: TabCollection)
+
+    /**
      * See [CollectionInteractor.onCollectionShareTabsClicked]
      */
     fun handleCollectionShareTabsClicked(collection: TabCollection)
@@ -68,6 +73,11 @@ interface SessionControlController {
      * See [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
+
+    /**
+     * See [CollectionInteractor.onRenameCollectionTapped]
+     */
+    fun handleRenameCollectionTapped(collection: TabCollection)
 
     /**
      * See [TabSessionInteractor.onSaveToCollection]
@@ -119,6 +129,14 @@ class DefaultSessionControlController(
         closeAllTabs.invoke(isPrivateMode)
     }
 
+    override fun handleCollectionAddTabTapped(collection: TabCollection) {
+        metrics.track(Event.CollectionAddTabPressed)
+        showCollectionCreationFragment(
+            step = SaveCollectionStep.SelectTabs,
+            selectedTabCollectionId = collection.id
+        )
+    }
+
     override fun handleCollectionShareTabsClicked(collection: TabCollection) {
         showShareFragment(collection.tabs.map { ShareData(url = it.url, title = it.title) })
         metrics.track(Event.CollectionShared)
@@ -143,6 +161,14 @@ class DefaultSessionControlController(
             newTab = true,
             from = BrowserDirection.FromHome
         )
+    }
+
+    override fun handleRenameCollectionTapped(collection: TabCollection) {
+        showCollectionCreationFragment(
+            step = SaveCollectionStep.RenameCollection,
+            selectedTabCollectionId = collection.id
+        )
+        metrics.track(Event.CollectionRenamePressed)
     }
 
     override fun handleSaveTabToCollection(selectedTabId: String?) {
