@@ -4,23 +4,13 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
-import android.graphics.Bitmap
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observer
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
-import mozilla.components.feature.media.state.MediaState
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.Change
 import org.mozilla.fenix.mvi.UIComponent
-import org.mozilla.fenix.mvi.UIComponentViewModelBase
 import org.mozilla.fenix.mvi.UIComponentViewModelProvider
-import org.mozilla.fenix.mvi.ViewState
 import mozilla.components.feature.tab.collections.TabCollection as ACTabCollection
 
 class SessionControlComponent(
@@ -45,36 +35,6 @@ class SessionControlComponent(
     }
 }
 
-data class Tab(
-    val sessionId: String,
-    val url: String,
-    val hostname: String,
-    val title: String,
-    val selected: Boolean? = null,
-    var mediaState: MediaState? = null,
-    val icon: Bitmap? = null
-)
-
-fun List<Tab>.toSessionBundle(context: Context): MutableList<Session> =
-    this.toSessionBundle(context.components.core.sessionManager)
-
-fun List<Tab>.toSessionBundle(sessionManager: SessionManager): MutableList<Session> {
-    val sessionBundle = mutableListOf<Session>()
-    this.forEach {
-        sessionManager.findSessionById(it.sessionId)?.let { session ->
-            sessionBundle.add(session)
-        }
-    }
-    return sessionBundle
-}
-
-data class SessionControlState(
-    val tabs: List<Tab>,
-    val expandedCollections: Set<Long>,
-    val collections: List<TabCollection>,
-    val mode: Mode
-) : ViewState
-
 typealias TabCollection = ACTabCollection
 
 sealed class CollectionAction : Action {
@@ -88,43 +48,4 @@ sealed class SessionControlAction : Action {
 
 fun Observer<SessionControlAction>.onNext(collectionAction: CollectionAction) {
     onNext(SessionControlAction.Collection(collectionAction))
-}
-
-sealed class SessionControlChange : Change {
-    data class Change(val tabs: List<Tab>, val mode: Mode, val collections: List<TabCollection>) :
-        SessionControlChange()
-    data class TabsChange(val tabs: List<Tab>) : SessionControlChange()
-    data class ModeChange(val mode: Mode) : SessionControlChange()
-    data class CollectionsChange(val collections: List<TabCollection>) : SessionControlChange()
-    data class ExpansionChange(val collection: TabCollection, val expand: Boolean) : SessionControlChange()
-}
-
-class SessionControlViewModel(
-    initialState: SessionControlState
-) : UIComponentViewModelBase<SessionControlState, SessionControlChange>(initialState, reducer) {
-    companion object {
-        val reducer: (SessionControlState, SessionControlChange) -> SessionControlState = { state, change ->
-            when (change) {
-                is SessionControlChange.CollectionsChange -> state.copy(collections = change.collections)
-                is SessionControlChange.TabsChange -> state.copy(tabs = change.tabs)
-                is SessionControlChange.ModeChange -> state.copy(mode = change.mode, tabs = emptyList())
-                is SessionControlChange.ExpansionChange -> {
-                    val newExpandedCollection = state.expandedCollections.toMutableSet()
-
-                    if (change.expand) {
-                        newExpandedCollection.add(change.collection.id)
-                    } else {
-                        newExpandedCollection.remove(change.collection.id)
-                    }
-
-                    state.copy(expandedCollections = newExpandedCollection)
-                }
-                is SessionControlChange.Change -> state.copy(
-                    tabs = change.tabs,
-                    mode = change.mode,
-                    collections = change.collections
-                )
-            }
-        }
-    }
 }
