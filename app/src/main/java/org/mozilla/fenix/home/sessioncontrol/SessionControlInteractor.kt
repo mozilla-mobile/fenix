@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.View
+import mozilla.components.feature.tab.collections.Tab
 
 /**
  * Interface for collection related actions in the [SessionControlInteractor].
@@ -17,6 +18,15 @@ interface CollectionInteractor {
      * @param collection The collection of tabs that will be modified.
      */
     fun onCollectionAddTabTapped(collection: TabCollection)
+
+    /**
+     * Removes the given tab from the given tab collection. Called when a user swipes to remove a
+     * tab or clicks on the tab close button.
+     *
+     * @param collection The collection of tabs that will be modified.
+     * @param tab The tab to remove from the tab collection.
+     */
+    fun onCollectionRemoveTab(collection: TabCollection, tab: Tab)
 
     /**
      * Shares the tabs in the given tab collection. Called when a user clicks on the Collection
@@ -133,6 +143,10 @@ class SessionControlInteractor(
 
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
+    }
+
+    override fun onCollectionRemoveTab(collection: TabCollection, tab: Tab) {
+        controller.handleCollectionRemoveTab(collection, tab)
     }
 
     override fun onCollectionShareTabsClicked(collection: TabCollection) {

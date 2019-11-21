@@ -83,7 +83,6 @@ sealed class CollectionAction : Action {
     data class Collapse(val collection: TabCollection) : CollectionAction()
     data class OpenTab(val tab: ComponentTab) : CollectionAction()
     data class OpenTabs(val collection: TabCollection) : CollectionAction()
-    data class RemoveTab(val collection: TabCollection, val tab: ComponentTab) : CollectionAction()
 }
 
 sealed class SessionControlAction : Action {

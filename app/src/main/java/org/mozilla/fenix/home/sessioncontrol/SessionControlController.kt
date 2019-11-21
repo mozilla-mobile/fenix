@@ -9,11 +9,15 @@ import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.media.state.MediaStateMachine
+import mozilla.components.feature.tab.collections.Tab as ComponentTab
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -48,6 +52,11 @@ interface SessionControlController {
      * See [CollectionInteractor.onCollectionAddTabTapped]
      */
     fun handleCollectionAddTabTapped(collection: TabCollection)
+
+    /**
+     * See [CollectionInteractor.onCollectionRemoveTab]
+     */
+    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
 
     /**
      * See [CollectionInteractor.onCollectionShareTabsClicked]
@@ -106,6 +115,7 @@ class DefaultSessionControlController(
     private val navController: NavController,
     private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
+    private val lifecycleScope: CoroutineScope,
     private val closeTab: (sessionId: String) -> Unit,
     private val closeAllTabs: (isPrivateMode: Boolean) -> Unit,
     private val getListOfTabs: () -> List<Tab>,
@@ -135,6 +145,13 @@ class DefaultSessionControlController(
             step = SaveCollectionStep.SelectTabs,
             selectedTabCollectionId = collection.id
         )
+    }
+
+    override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            tabCollectionStorage.removeTabFromCollection(collection, tab)
+        }
+        metrics.track(Event.CollectionTabRemoved)
     }
 
     override fun handleCollectionShareTabsClicked(collection: TabCollection) {

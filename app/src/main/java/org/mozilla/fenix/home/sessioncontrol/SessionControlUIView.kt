@@ -145,8 +145,7 @@ class SessionControlUIView(
             val itemTouchHelper =
                 ItemTouchHelper(
                     SwipeToDeleteCallback(
-                        interactor,
-                        actionEmitter
+                        interactor
                     )
                 )
             itemTouchHelper.attachToRecyclerView(this)
