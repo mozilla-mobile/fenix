@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.tab_in_collection.*
 import mozilla.components.support.ktx.android.util.dpToFloat
@@ -20,17 +19,13 @@ import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.home.sessioncontrol.onNext
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 class TabInCollectionViewHolder(
     val view: View,
     val interactor: CollectionInteractor,
-    val actionEmitter: Observer<SessionControlAction>,
     override val containerView: View? = view
 ) : RecyclerView.ViewHolder(view), LayoutContainer {
 
@@ -55,7 +50,7 @@ class TabInCollectionViewHolder(
         }
 
         view.setOnClickListener {
-            actionEmitter.onNext(CollectionAction.OpenTab(tab))
+            interactor.onCollectionOpenTabClicked(tab)
         }
 
         collection_tab_close_button.increaseTapArea(buttonIncreaseDps)

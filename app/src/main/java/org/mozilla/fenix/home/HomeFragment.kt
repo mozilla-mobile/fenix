@@ -455,34 +455,6 @@ class HomeFragment : Fragment() {
                 getManagedEmitter<SessionControlChange>()
                     .onNext(SessionControlChange.ExpansionChange(action.collection, false))
             }
-            is CollectionAction.OpenTab -> {
-                invokePendingDeleteJobs()
-
-                val context = requireContext()
-                val components = context.components
-
-                val session = action.tab.restore(
-                    context = context,
-                    engine = components.core.engine,
-                    tab = action.tab,
-                    restoreSessionId = false
-                )
-                if (session == null) {
-                    // We were unable to create a snapshot, so just load the tab instead
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = action.tab.url,
-                        newTab = true,
-                        from = BrowserDirection.FromHome
-                    )
-                } else {
-                    components.core.sessionManager.add(
-                        session,
-                        true
-                    )
-                    (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
-                }
-                components.analytics.metrics.track(Event.CollectionTabRestored)
-            }
             is CollectionAction.OpenTabs -> {
                 invokePendingDeleteJobs()
 

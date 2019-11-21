@@ -54,6 +54,11 @@ interface SessionControlController {
     fun handleCollectionAddTabTapped(collection: TabCollection)
 
     /**
+     * See [CollectionInteractor.onCollectionOpenTabClicked]
+     */
+    fun handleCollectionOpenTabClicked(tab: ComponentTab)
+
+    /**
      * See [CollectionInteractor.onCollectionRemoveTab]
      */
     fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
@@ -145,6 +150,35 @@ class DefaultSessionControlController(
             step = SaveCollectionStep.SelectTabs,
             selectedTabCollectionId = collection.id
         )
+    }
+
+    override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
+        invokePendingDeleteJobs()
+
+        val components = context.components
+        val session = tab.restore(
+            context = context,
+            engine = components.core.engine,
+            tab = tab,
+            restoreSessionId = false
+        )
+
+        if (session == null) {
+            // We were unable to create a snapshot, so just load the tab instead
+            (context as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = tab.url,
+                newTab = true,
+                from = BrowserDirection.FromHome
+            )
+        } else {
+            components.core.sessionManager.add(
+                session,
+                true
+            )
+            (context as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+        }
+
+        metrics.track(Event.CollectionTabRestored)
     }
 
     override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {

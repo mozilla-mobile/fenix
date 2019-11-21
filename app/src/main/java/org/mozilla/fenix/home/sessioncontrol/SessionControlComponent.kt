@@ -21,7 +21,6 @@ import org.mozilla.fenix.mvi.UIComponent
 import org.mozilla.fenix.mvi.UIComponentViewModelBase
 import org.mozilla.fenix.mvi.UIComponentViewModelProvider
 import org.mozilla.fenix.mvi.ViewState
-import mozilla.components.feature.tab.collections.Tab as ComponentTab
 import mozilla.components.feature.tab.collections.TabCollection as ACTabCollection
 
 class SessionControlComponent(
@@ -81,7 +80,6 @@ typealias TabCollection = ACTabCollection
 sealed class CollectionAction : Action {
     data class Expand(val collection: TabCollection) : CollectionAction()
     data class Collapse(val collection: TabCollection) : CollectionAction()
-    data class OpenTab(val tab: ComponentTab) : CollectionAction()
     data class OpenTabs(val collection: TabCollection) : CollectionAction()
 }
 
