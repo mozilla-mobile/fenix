@@ -9,7 +9,6 @@ import android.graphics.PorterDuff.Mode.SRC_IN
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.collection_home_list_row.*
 import kotlinx.android.synthetic.main.collection_home_list_row.view.*
@@ -20,16 +19,12 @@ import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.components.description
 import org.mozilla.fenix.ext.getIconColor
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.home.sessioncontrol.CollectionAction
 import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
 import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.home.sessioncontrol.onNext
 
 class CollectionViewHolder(
     val view: View,
     val interactor: CollectionInteractor,
-    val actionEmitter: Observer<SessionControlAction>,
     override val containerView: View? = view
 ) :
     RecyclerView.ViewHolder(view), LayoutContainer {
@@ -67,7 +62,7 @@ class CollectionViewHolder(
 
         view.clipToOutline = true
         view.setOnClickListener {
-            handleExpansion(expanded)
+            interactor.onToggleCollectionExpanded(collection, !expanded)
         }
     }
 
@@ -98,14 +93,6 @@ class CollectionViewHolder(
             collection.getIconColor(view.context),
             SRC_IN
         )
-    }
-
-    private fun handleExpansion(isExpanded: Boolean) {
-        if (isExpanded) {
-            actionEmitter.onNext(CollectionAction.Collapse(collection))
-        } else {
-            actionEmitter.onNext(CollectionAction.Expand(collection))
-        }
     }
 
     companion object {

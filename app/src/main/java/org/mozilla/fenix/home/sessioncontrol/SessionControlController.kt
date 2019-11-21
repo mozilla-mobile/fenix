@@ -30,7 +30,9 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.settings.SupportUtils
 
 /**
@@ -118,11 +120,17 @@ interface SessionControlController {
      * See [OnboardingInteractor.onStartBrowsingClicked]
      */
     fun handleStartBrowsingClicked()
+
+    /**
+     * See [CollectionInteractor.onToggleCollectionExpanded]
+     */
+    fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 }
 
 @SuppressWarnings("TooManyFunctions")
 class DefaultSessionControlController(
     private val context: Context,
+    private val store: HomeFragmentStore,
     private val navController: NavController,
     private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
@@ -300,6 +308,10 @@ class DefaultSessionControlController(
     override fun handleStartBrowsingClicked() {
         homeLayout.progress = 0F
         hideOnboarding()
+    }
+
+    override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
+        store.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
     }
 
     private fun showCollectionCreationFragment(

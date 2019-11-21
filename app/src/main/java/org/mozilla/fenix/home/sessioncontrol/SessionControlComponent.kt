@@ -6,8 +6,6 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
-import org.mozilla.fenix.mvi.Action
 import org.mozilla.fenix.mvi.ActionBusFactory
 import org.mozilla.fenix.mvi.UIComponent
 import org.mozilla.fenix.mvi.UIComponentViewModelProvider
@@ -36,16 +34,3 @@ class SessionControlComponent(
 }
 
 typealias TabCollection = ACTabCollection
-
-sealed class CollectionAction : Action {
-    data class Expand(val collection: TabCollection) : CollectionAction()
-    data class Collapse(val collection: TabCollection) : CollectionAction()
-}
-
-sealed class SessionControlAction : Action {
-    data class Collection(val action: CollectionAction) : SessionControlAction()
-}
-
-fun Observer<SessionControlAction>.onNext(collectionAction: CollectionAction) {
-    onNext(SessionControlAction.Collection(collectionAction))
-}

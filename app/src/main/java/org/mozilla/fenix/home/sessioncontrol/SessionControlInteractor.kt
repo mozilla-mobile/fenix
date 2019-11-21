@@ -66,6 +66,15 @@ interface CollectionInteractor {
      * @param collection The collection of tabs to rename.
      */
     fun onRenameCollectionTapped(collection: TabCollection)
+
+    /**
+     * Toggles expanding or collapsing the given tab collection. Called when a user clicks on a
+     * [CollectionViewHolder].
+     *
+     * @param collection The collection of tabs that will be collapsed.
+     * @param expand True if the given tab collection should be expanded or collapse if false.
+     */
+    fun onToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 }
 
 /**
@@ -210,5 +219,9 @@ class SessionControlInteractor(
 
     override fun onStartBrowsingClicked() {
         controller.handleStartBrowsingClicked()
+    }
+
+    override fun onToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
+        controller.handleToggleCollectionExpanded(collection, expand)
     }
 }
