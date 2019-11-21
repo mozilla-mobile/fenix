@@ -29,6 +29,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -57,6 +58,11 @@ interface SessionControlController {
      * See [CollectionInteractor.onCollectionOpenTabClicked]
      */
     fun handleCollectionOpenTabClicked(tab: ComponentTab)
+
+    /**
+     * See [CollectionInteractor.onCollectionOpenTabsTapped]
+     */
+    fun handleCollectionOpenTabsTapped(collection: TabCollection)
 
     /**
      * See [CollectionInteractor.onCollectionRemoveTab]
@@ -127,6 +133,7 @@ class DefaultSessionControlController(
     private val hideOnboarding: () -> Unit,
     private val invokePendingDeleteJobs: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
+    private val scrollToTheTop: () -> Unit,
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit
 ) : SessionControlController {
     private val metrics: MetricController
@@ -155,10 +162,9 @@ class DefaultSessionControlController(
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
         invokePendingDeleteJobs()
 
-        val components = context.components
         val session = tab.restore(
             context = context,
-            engine = components.core.engine,
+            engine = context.components.core.engine,
             tab = tab,
             restoreSessionId = false
         )
@@ -171,7 +177,7 @@ class DefaultSessionControlController(
                 from = BrowserDirection.FromHome
             )
         } else {
-            components.core.sessionManager.add(
+            context.components.core.sessionManager.add(
                 session,
                 true
             )
@@ -179,6 +185,32 @@ class DefaultSessionControlController(
         }
 
         metrics.track(Event.CollectionTabRestored)
+    }
+
+    override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
+        invokePendingDeleteJobs()
+
+        collection.tabs.reversed().forEach {
+            val session = it.restore(
+                context = context,
+                engine = context.components.core.engine,
+                tab = it,
+                restoreSessionId = false
+            )
+
+            if (session == null) {
+                // We were unable to create a snapshot, so just load the tab instead
+                context.components.useCases.tabsUseCases.addTab.invoke(it.url)
+            } else {
+                sessionManager.add(
+                    session,
+                    context.components.core.sessionManager.selectedSession == null
+                )
+            }
+        }
+
+        scrollToTheTop()
+        metrics.track(Event.CollectionAllTabsRestored)
     }
 
     override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {

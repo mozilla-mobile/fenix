@@ -27,6 +27,14 @@ interface CollectionInteractor {
     fun onCollectionOpenTabClicked(tab: Tab)
 
     /**
+     * Opens all the tabs in a given tab collection. Called when a user taps on the "Open tabs"
+     * collection menu item.
+     *
+     * @param collection The collection of tabs to open.
+     */
+    fun onCollectionOpenTabsTapped(collection: TabCollection)
+
+    /**
      * Removes the given tab from the given tab collection. Called when a user swipes to remove a
      * tab or clicks on the tab close button.
      *
@@ -154,6 +162,10 @@ class SessionControlInteractor(
 
     override fun onCollectionOpenTabClicked(tab: Tab) {
         controller.handleCollectionOpenTabClicked(tab)
+    }
+
+    override fun onCollectionOpenTabsTapped(collection: TabCollection) {
+        controller.handleCollectionOpenTabsTapped(collection)
     }
 
     override fun onCollectionRemoveTab(collection: TabCollection, tab: Tab) {

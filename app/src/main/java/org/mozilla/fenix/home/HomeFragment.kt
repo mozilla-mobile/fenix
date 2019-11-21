@@ -186,6 +186,7 @@ class HomeFragment : Fragment() {
                 hideOnboarding = ::hideOnboarding,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
+                scrollToTheTop = ::scrollToTheTop,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt
             )
         )
@@ -455,35 +456,6 @@ class HomeFragment : Fragment() {
                 getManagedEmitter<SessionControlChange>()
                     .onNext(SessionControlChange.ExpansionChange(action.collection, false))
             }
-            is CollectionAction.OpenTabs -> {
-                invokePendingDeleteJobs()
-
-                val context = requireContext()
-                val components = context.components
-
-                action.collection.tabs.reversed().forEach {
-                    val session = it.restore(
-                        context = context,
-                        engine = components.core.engine,
-                        tab = it,
-                        restoreSessionId = false
-                    )
-                    if (session == null) {
-                        // We were unable to create a snapshot, so just load the tab instead
-                        components.useCases.tabsUseCases.addTab.invoke(it.url)
-                    } else {
-                        components.core.sessionManager.add(
-                            session,
-                            context.components.core.sessionManager.selectedSession == null
-                        )
-                    }
-                }
-                viewLifecycleOwner.lifecycleScope.launch(Main) {
-                    delay(ANIM_SCROLL_DELAY)
-                    sessionControlComponent.view.smoothScrollToPosition(0)
-                }
-                components.analytics.metrics.track(Event.CollectionAllTabsRestored)
-            }
         }
     }
 
@@ -714,6 +686,13 @@ class HomeFragment : Fragment() {
 
     private fun registerCollectionStorageObserver() {
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+    }
+
+    private fun scrollToTheTop() {
+        lifecycleScope.launch(Main) {
+            delay(ANIM_SCROLL_DELAY)
+            sessionControlComponent.view.smoothScrollToPosition(0)
+        }
     }
 
     private fun scrollAndAnimateCollection(

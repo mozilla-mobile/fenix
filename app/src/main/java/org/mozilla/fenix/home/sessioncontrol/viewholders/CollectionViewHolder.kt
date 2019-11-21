@@ -45,7 +45,7 @@ class CollectionViewHolder(
                 is CollectionItemMenu.Item.DeleteCollection -> interactor.onDeleteCollectionTapped(collection)
                 is CollectionItemMenu.Item.AddTab -> interactor.onCollectionAddTabTapped(collection)
                 is CollectionItemMenu.Item.RenameCollection -> interactor.onRenameCollectionTapped(collection)
-                is CollectionItemMenu.Item.OpenTabs -> actionEmitter.onNext(CollectionAction.OpenTabs(collection))
+                is CollectionItemMenu.Item.OpenTabs -> interactor.onCollectionOpenTabsTapped(collection)
             }
         }
 
