@@ -14,7 +14,7 @@ import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.publicsuffixlist.ext.urlToTrimmedHost
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import java.net.IDN
-import java.util.*
+import java.util.Locale
 
 const val FILE_PREFIX = "file://"
 const val MAX_VALID_PORT = 65_535
