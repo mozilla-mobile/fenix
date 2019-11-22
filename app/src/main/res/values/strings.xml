@@ -1117,4 +1117,8 @@
     <string name="search_edit_custom_engine_success_message">Saved %s</string>
     <!-- Text shown when a user successfully deletes a custom search engine -->
     <string name="search_delete_search_engine_success_message">Deleted %s</string>
+    <string name="tab_tray_title">Open Tabs</string>
+    <string name="tab_tray_menu_item_select">Select</string>
+    <string name="tab_tray_menu_item_share">Share</string>
+    <string name="tab_tray_menu_item_close">Close all tabs</string>
 </resources>
