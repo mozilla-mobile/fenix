@@ -256,7 +256,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), BackHandler {
         bookmarkInteractor.onBookmarksChanged(bookmarkTree)
 
         val deleteOperation: (suspend () -> Unit) = {
-            deleteSelectedBookmarks(selected)
+            deleteSelectedBookmarks(pendingBookmarksToDelete)
             pendingBookmarkDeletionJob = null
             // Since this runs in a coroutine, we can't depend upon the fragment still being attached
             metrics?.track(Event.RemoveBookmarks)
