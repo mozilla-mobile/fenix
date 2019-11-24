@@ -38,6 +38,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -52,18 +53,19 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.lib.state.ext.consumeFrom
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.TOP
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
+import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -76,15 +78,8 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
-import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
-import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
-import org.mozilla.fenix.home.sessioncontrol.SessionControlState
-import org.mozilla.fenix.home.sessioncontrol.SessionControlViewModel
-import org.mozilla.fenix.home.sessioncontrol.Tab
+import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
@@ -95,9 +90,6 @@ import kotlin.math.min
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
-
-    private val bus = ActionBusFactory.get(this)
-
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
 
     private val singleSessionObserver = object : Session.Observer {
@@ -135,8 +127,9 @@ class HomeFragment : Fragment() {
     data class PendingSessionDeletion(val deletionJob: (suspend () -> Unit), val sessionId: String)
 
     private val onboarding by lazy { FenixOnboarding(requireContext()) }
-    private lateinit var sessionControlComponent: SessionControlComponent
+    private lateinit var homeFragmentStore: HomeFragmentStore
     private lateinit var sessionControlInteractor: SessionControlInteractor
+    private lateinit var sessionControlView: SessionControlView
     private lateinit var currentMode: CurrentMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,12 +161,24 @@ class HomeFragment : Fragment() {
             view.context,
             onboarding,
             browsingModeManager,
-            getManagedEmitter()
+            ::dispatchModeChanges
         )
+
+        homeFragmentStore = StoreProvider.get(this) {
+            HomeFragmentStore(
+                HomeFragmentState(
+                    collections = requireComponents.core.tabCollectionStorage.cachedTabCollections,
+                    expandedCollections = emptySet(),
+                    mode = currentMode.getCurrentMode(),
+                    tabs = emptyList()
+                )
+            )
+        }
 
         sessionControlInteractor = SessionControlInteractor(
             DefaultSessionControlController(
                 context = requireContext(),
+                store = homeFragmentStore,
                 navController = findNavController(),
                 homeLayout = view.homeLayout,
                 browsingModeManager = browsingModeManager,
@@ -189,27 +194,10 @@ class HomeFragment : Fragment() {
             )
         )
 
-        sessionControlComponent = SessionControlComponent(
-            view.homeLayout,
-            sessionControlInteractor,
-            bus,
-            FenixViewModelProvider.create(
-                this,
-                SessionControlViewModel::class.java
-            ) {
-                SessionControlViewModel(
-                    SessionControlState(
-                        emptyList(),
-                        emptySet(),
-                        requireComponents.core.tabCollectionStorage.cachedTabCollections,
-                        currentMode.getCurrentMode()
-                    )
-                )
-            }
-        )
+        sessionControlView = SessionControlView(view.homeLayout, sessionControlInteractor)
 
         view.homeLayout.applyConstraintSet {
-            sessionControlComponent.view {
+            sessionControlView.view {
                 connect(
                     TOP to BOTTOM of view.wordmark_spacer,
                     START to START of PARENT_ID,
@@ -219,13 +207,13 @@ class HomeFragment : Fragment() {
             }
         }
 
-        ActionBusFactory.get(this).logMergedObservables()
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
 
         return view
     }
 
+    @ExperimentalCoroutinesApi
     @SuppressWarnings("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -235,7 +223,7 @@ class HomeFragment : Fragment() {
                 ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
             }
             homeViewModel.layoutManagerState?.also { parcelable ->
-                sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
+                sessionControlView.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
             homeLayout?.progress = homeViewModel.motionLayoutProgress
             homeViewModel.layoutManagerState = null
@@ -305,14 +293,17 @@ class HomeFragment : Fragment() {
             }
 
             if (onboarding.userHasBeenOnboarded()) {
-                getManagedEmitter<SessionControlChange>().onNext(
-                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
-                )
+                homeFragmentStore.dispatch(
+                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode)))
             }
         }
 
         // We need the shadow to be above the components.
         bottomBarShadow.bringToFront()
+
+        consumeFrom(homeFragmentStore) {
+            sessionControlView.update(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -327,13 +318,11 @@ class HomeFragment : Fragment() {
         val context = requireContext()
         val components = context.components
 
-        getManagedEmitter<SessionControlChange>().onNext(
-            SessionControlChange.Change(
-                tabs = getListOfSessions().toTabs(),
-                mode = currentMode.getCurrentMode(),
-                collections = components.core.tabCollectionStorage.cachedTabCollections
-            )
-        )
+        homeFragmentStore.dispatch(HomeFragmentAction.Change(
+            collections = components.core.tabCollectionStorage.cachedTabCollections,
+            mode = currentMode.getCurrentMode(),
+            tabs = getListOfSessions().toTabs()
+        ))
 
         hideToolbar()
 
@@ -397,6 +386,10 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun dispatchModeChanges(mode: Mode) {
+        homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
+    }
+
     private fun invokePendingDeleteJobs() {
         pendingSessionDeletion?.deletionJob?.let {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -443,7 +436,7 @@ class HomeFragment : Fragment() {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
         }
         homeViewModel.layoutManagerState =
-            sessionControlComponent.view.layoutManager?.onSaveInstanceState()
+            sessionControlView.view.layoutManager?.onSaveInstanceState()
         homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
     }
 
@@ -567,20 +560,14 @@ class HomeFragment : Fragment() {
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {
         return Observer<List<TabCollection>> {
             requireComponents.core.tabCollectionStorage.cachedTabCollections = it
-            getManagedEmitter<SessionControlChange>().onNext(
-                SessionControlChange.CollectionsChange(
-                    it
-                )
-            )
+            homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(it))
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
         }
     }
 
     private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
-        val sessionManager = requireComponents.core.sessionManager
-
-        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
+        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(listOf()))
 
         val deleteOperation: (suspend () -> Unit) = {
             listOfSessionsToDelete.forEach {
@@ -644,11 +631,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun emitSessionChanges() {
-        getManagedEmitter<SessionControlChange>().onNext(
-            SessionControlChange.TabsChange(
-                getListOfSessions().toTabs()
-            )
-        )
+        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(getListOfTabs()))
     }
 
     private fun getListOfSessions(): List<Session> {
@@ -668,7 +651,7 @@ class HomeFragment : Fragment() {
     private fun scrollToTheTop() {
         lifecycleScope.launch(Main) {
             delay(ANIM_SCROLL_DELAY)
-            sessionControlComponent.view.smoothScrollToPosition(0)
+            sessionControlView.view.smoothScrollToPosition(0)
         }
     }
 
@@ -678,7 +661,7 @@ class HomeFragment : Fragment() {
     ) {
         if (view != null) {
             viewLifecycleOwner.lifecycleScope.launch {
-                val recyclerView = sessionControlComponent.view
+                val recyclerView = sessionControlView.view
                 delay(ANIM_SCROLL_DELAY)
                 val tabsSize = getListOfSessions().size
 
@@ -721,7 +704,7 @@ class HomeFragment : Fragment() {
     private fun animateCollection(addedTabsSize: Int, indexOfCollection: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val viewHolder =
-                sessionControlComponent.view.findViewHolderForAdapterPosition(indexOfCollection)
+                sessionControlView.view.findViewHolderForAdapterPosition(indexOfCollection)
             val border =
                 (viewHolder as? CollectionViewHolder)?.view?.findViewById<View>(R.id.selected_border)
             val listener = object : Animator.AnimatorListener {

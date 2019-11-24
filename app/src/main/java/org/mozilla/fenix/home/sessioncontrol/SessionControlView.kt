@@ -6,17 +6,18 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.functions.Consumer
+import kotlinx.android.extensions.LayoutContainer
+import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.R
+import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.mvi.UIView
+import org.mozilla.fenix.home.Tab
 
 val noTabMessage = AdapterItem.NoContentMessage(
     R.drawable.ic_tabs,
@@ -110,7 +111,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
     return items
 }
 
-private fun SessionControlState.toAdapterList(): List<AdapterItem> = when (mode) {
+private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(tabs, collections, expandedCollections)
     is Mode.Private -> privateModeAdapterItems(tabs)
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
@@ -120,23 +121,18 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
 }
 
-class SessionControlUIView(
-    container: ViewGroup,
-    interactor: SessionControlInteractor,
-    actionEmitter: Observer<SessionControlAction>,
-    changesObservable: Observable<SessionControlChange>
-) :
-    UIView<SessionControlState, SessionControlAction, SessionControlChange>(
-        container,
-        actionEmitter,
-        changesObservable
-    ) {
+class SessionControlView(
+    private val container: ViewGroup,
+    interactor: SessionControlInteractor
+) : LayoutContainer {
+    override val containerView: View?
+        get() = container
 
-    override val view: RecyclerView = LayoutInflater.from(container.context)
+    val view: RecyclerView = LayoutInflater.from(container.context)
         .inflate(R.layout.component_session_control, container, true)
         .findViewById(R.id.home_component)
 
-    private val sessionControlAdapter = SessionControlAdapter(interactor, actionEmitter)
+    private val sessionControlAdapter = SessionControlAdapter(interactor)
 
     init {
         view.apply {
@@ -152,11 +148,11 @@ class SessionControlUIView(
         }
     }
 
-    override fun updateView() = Consumer<SessionControlState> {
+    fun update(state: HomeFragmentState) {
         // Workaround for list not updating until scroll on Android 5 + 6
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             sessionControlAdapter.submitList(null)
         }
-        sessionControlAdapter.submitList(it.toAdapterList())
+        sessionControlAdapter.submitList(state.toAdapterList())
     }
 }
