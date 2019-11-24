@@ -14,7 +14,6 @@ import android.widget.Button
 import android.widget.RadioButton
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
@@ -39,9 +38,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
@@ -119,7 +115,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     override fun onStart() {
         super.onStart()
-        subscribeToTabCollections()
         val toolbarSessionObserver = TrackingProtectionOverlay(
             context = requireContext(),
             settings = requireContext().settings()
@@ -230,17 +225,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )
             )
         }
-    }
-
-    private fun subscribeToTabCollections() {
-        requireComponents.core.tabCollectionStorage.getCollections().observe(this, Observer {
-            requireComponents.core.tabCollectionStorage.cachedTabCollections = it
-            getManagedEmitter<SessionControlChange>().onNext(
-                SessionControlChange.CollectionsChange(
-                    it
-                )
-            )
-        })
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
