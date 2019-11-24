@@ -19,8 +19,8 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
-import org.mozilla.fenix.home.sessioncontrol.Tab
 
 class TabViewHolder(
     view: View,

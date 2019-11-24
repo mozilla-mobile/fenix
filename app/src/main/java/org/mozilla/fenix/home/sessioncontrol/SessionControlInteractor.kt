@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.View
 import mozilla.components.feature.tab.collections.Tab
+import mozilla.components.feature.tab.collections.TabCollection
 
 /**
  * Interface for collection related actions in the [SessionControlInteractor].

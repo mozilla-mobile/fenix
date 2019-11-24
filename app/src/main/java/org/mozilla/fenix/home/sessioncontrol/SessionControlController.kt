@@ -17,6 +17,7 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.media.state.MediaStateMachine
+import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -33,6 +34,7 @@ import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.settings.SupportUtils
 
 /**

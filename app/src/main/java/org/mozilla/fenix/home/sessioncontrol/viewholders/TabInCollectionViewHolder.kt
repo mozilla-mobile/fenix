@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.tab_in_collection.*
+import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.util.dpToFloat
 import org.jetbrains.anko.backgroundColor
 import org.mozilla.fenix.R
@@ -20,7 +21,6 @@ import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 class TabInCollectionViewHolder(

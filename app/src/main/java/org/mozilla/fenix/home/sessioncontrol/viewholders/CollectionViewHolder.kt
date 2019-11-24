@@ -14,13 +14,13 @@ import kotlinx.android.synthetic.main.collection_home_list_row.*
 import kotlinx.android.synthetic.main.collection_home_list_row.view.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
+import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.components.description
 import org.mozilla.fenix.ext.getIconColor
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
 
 class CollectionViewHolder(
     val view: View,
