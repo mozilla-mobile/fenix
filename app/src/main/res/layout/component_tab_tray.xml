@@ -8,11 +8,11 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/history_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/above_dark_theme">
+        android:layout_height="match_parent">
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tab_tray_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/tab_tray_list_item"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/tab_tray_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/tab_tray_list_item"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
