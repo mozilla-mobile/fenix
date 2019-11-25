@@ -2,11 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.mozilla.fenix.tabtray.TabTrayFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    tools:context="org.mozilla.fenix.tabtray.TabTrayFragment"
+    android:id="@+id/tab_tray_list_wrapper">
 
 </FrameLayout>

@@ -10,12 +10,18 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
 
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.logDebug
+import org.mozilla.fenix.library.history.HistoryFragmentState
 
 
 class TabTrayFragment : Fragment() {
+
+    private lateinit var tabTrayView: TabTrayView
+    private lateinit var tabTrayStore: TabTrayFragmentStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +33,19 @@ class TabTrayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tab_tray, container, false)
+        val view = inflater.inflate(R.layout.fragment_tab_tray, container, false)
+
+        tabTrayStore = StoreProvider.get(this) {
+            TabTrayFragmentStore(
+                TabTrayFragmentState(
+                    tabs = listOf()
+                )
+            )
+        }
+
+        tabTrayView = TabTrayView(view.tab_tray_list_wrapper)
+
+        return view
     }
 
     override fun onResume() {
