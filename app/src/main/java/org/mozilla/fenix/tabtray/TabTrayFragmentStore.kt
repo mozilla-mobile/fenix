@@ -5,9 +5,13 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
-data class TabTrayFragmentState(val tabs: List<Session>) : State
+typealias Tab = Session
 
-object TabTrayFragmentAction: Action
+data class TabTrayFragmentState(val tabs: List<Tab>) : State
+
+sealed class TabTrayFragmentAction: Action {
+    data class UpdateTabs(val tabs: List<Tab>) : TabTrayFragmentAction()
+}
 
 /**
  * The [Store] for holding the [TabTrayFragmentState] and applying [TabTrayFragmentAction]s.
@@ -23,5 +27,7 @@ private fun tabTrayStateReducer(
     state: TabTrayFragmentState,
     action: TabTrayFragmentAction
 ): TabTrayFragmentState {
-    return state
+    return when (action) {
+        is TabTrayFragmentAction.UpdateTabs -> state.copy(tabs = action.tabs)
+    }
 }

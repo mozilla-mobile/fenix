@@ -794,7 +794,7 @@ class HomeFragment : Fragment() {
  * @param observer [Session.Observer] instance that will recieve updates.
  * @param onChanged callback that will be called when any of [SessionManager.Observer]'s events are fired.
  */
-private class BrowserSessionsObserver(
+class BrowserSessionsObserver(
     private val manager: SessionManager,
     private val observer: Session.Observer,
     private val onChanged: () -> Unit
@@ -859,7 +859,7 @@ private class BrowserSessionsObserver(
         override fun onSessionRemoved(session: Session) {
             unsubscribeFrom(session)
             onChanged()
-        }
+         }
 
         override fun onSessionSelected(session: Session) {
             onChanged()
