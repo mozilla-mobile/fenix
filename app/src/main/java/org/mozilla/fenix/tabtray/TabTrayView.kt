@@ -3,26 +3,34 @@ package org.mozilla.fenix.tabtray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.ui.SelectableListItemView
 
 interface TabTrayInteractor {
     fun tabWasTapped(tab: Tab)
+    fun closeButtonTapped(tab: Tab)
 }
 
 class TabItemViewHolder(
-    private val view: View,
+    private val view: SelectableListItemView,
     private val interactor: TabTrayInteractor
 ) : RecyclerView.ViewHolder(view) {
     private var tab: Tab? = null
 
     init {
+        view.displayAs(SelectableListItemView.ItemType.CLOSABLE_ITEM)
         view.setOnClickListener {
             tab?.apply(interactor::tabWasTapped)
+        }
+        view.accessoryView.setOnClickListener {
+            tab?.apply(interactor::closeButtonTapped)
         }
     }
 
@@ -33,7 +41,7 @@ class TabItemViewHolder(
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.tab_tray_list_item
+        const val LAYOUT_ID = R.layout.selectable_list_item
     }
 }
 
@@ -43,7 +51,10 @@ class TabTrayAdapter(
     private var tabs = listOf<Tab>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(TabItemViewHolder.LAYOUT_ID, parent, false)
+        val view = SelectableListItemView(parent.context).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        }
+
         return TabItemViewHolder(view, interactor)
     }
 

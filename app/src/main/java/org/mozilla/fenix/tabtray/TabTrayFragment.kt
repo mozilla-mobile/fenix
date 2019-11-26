@@ -126,4 +126,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
         findNavController().navigate(directions)
     }
+
+    override fun closeButtonTapped(tab: Tab) {
+        requireComponents.core.sessionManager.remove(tab)
+    }
 }
