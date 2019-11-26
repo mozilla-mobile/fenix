@@ -17,6 +17,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.ext.logDebug
 
 /**
  * Interactor for items that can be selected on the bookmarks and history screens.

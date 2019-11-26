@@ -12,7 +12,7 @@
     <androidx.recyclerview.widget.RecyclerView
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/tab_tray_list"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/selectable_list_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>
