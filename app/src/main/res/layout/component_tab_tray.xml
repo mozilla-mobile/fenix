@@ -14,5 +14,5 @@
         android:id="@+id/tab_tray_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/tab_tray_list_item"/>
+        tools:listitem="@layout/selectable_list_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>
