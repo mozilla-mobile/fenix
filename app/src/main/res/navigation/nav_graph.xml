@@ -706,5 +706,11 @@
     <fragment
         android:id="@+id/tabTrayFragment"
         android:name="org.mozilla.fenix.tabtray.TabTrayFragment"
-        android:label="TabTrayFragment" />
+        android:label="TabTrayFragment">
+        <action
+            android:id="@+id/action_tabTrayFragment_to_browserFragment"
+            app:destination="@+id/browserFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
+    </fragment>
 </navigation>
