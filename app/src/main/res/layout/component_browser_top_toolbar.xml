@@ -4,9 +4,10 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<mozilla.components.browser.toolbar.BrowserToolbar
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/browser_toolbar_top_behavior">
+<mozilla.components.browser.toolbar.BrowserToolbar
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/browser_toolbar_height"

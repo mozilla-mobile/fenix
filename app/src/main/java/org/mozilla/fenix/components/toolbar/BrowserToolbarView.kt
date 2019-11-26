@@ -211,6 +211,23 @@ class BrowserToolbarView(
         }
     }
 
+//    private fun setToolbarBehavior(loading: Boolean) {
+//        val toolbarView = toolbarComponent.uiView.view
+//        (toolbarView.layoutParams as CoordinatorLayout.LayoutParams).apply {
+//            // Stop toolbar from collapsing if TalkBack is enabled or page is loading
+//            val accessibilityManager = context
+//                ?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+//            if (!accessibilityManager.isTouchExplorationEnabled) {
+//                if (!loading) {
+//                    behavior = BrowserToolbarBottomBehavior(context, null)
+//                } else {
+//                    (behavior as? BrowserToolbarBottomBehavior)?.forceExpand(toolbarView)
+//                    behavior = null
+//                }
+//            }
+//        }
+//    }
+
     @Suppress("UNUSED_PARAMETER")
     fun update(state: BrowserFragmentState) {
         // Intentionally leaving this as a stub for now since we don't actually want to update currently

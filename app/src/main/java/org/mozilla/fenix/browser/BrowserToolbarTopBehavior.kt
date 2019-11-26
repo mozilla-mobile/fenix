@@ -14,6 +14,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat.TYPE_NON_TOUCH
 import androidx.core.view.ViewCompat.TYPE_TOUCH
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import mozilla.components.browser.toolbar.BrowserToolbar
 import org.mozilla.fenix.R
@@ -33,7 +34,7 @@ private const val SNAP_ANIMATION_DURATION = 150L
 class BrowserToolbarTopBehavior(
     context: Context?,
     attrs: AttributeSet?
-) : CoordinatorLayout.Behavior<BrowserToolbar>(context, attrs) {
+) : AppBarLayout.Behavior(context, attrs) {
     // This implementation is heavily based on this blog article:
     // https://android.jlelse.eu/scroll-your-bottom-navigation-view-away-with-10-lines-of-code-346f1ed40e9e
 
@@ -45,18 +46,18 @@ class BrowserToolbarTopBehavior(
     }
 
     fun forceExpand(view: View) {
-        animateSnap(view, SnapDirection.DOWN)
+        animateSnap(view, SnapDirection.UP)
     }
 
     override fun onStartNestedScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: BrowserToolbar,
+        parent: CoordinatorLayout,
+        child: AppBarLayout,
         directTargetChild: View,
         target: View,
-        axes: Int,
+        nestedScrollAxes: Int,
         type: Int
     ): Boolean {
-        return if (axes == SCROLL_AXIS_VERTICAL) {
+        return if (nestedScrollAxes == SCROLL_AXIS_VERTICAL) {
             shouldSnapAfterScroll = type == TYPE_TOUCH
             snapAnimator.cancel()
             true
@@ -67,22 +68,22 @@ class BrowserToolbarTopBehavior(
 
     override fun onStopNestedScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: BrowserToolbar,
+        abl: AppBarLayout,
         target: View,
         type: Int
     ) {
         if (shouldSnapAfterScroll || type == TYPE_NON_TOUCH) {
-            if (child.translationY >= (-child.height / 2f)) {
-                animateSnap(child, SnapDirection.DOWN)
+            if (abl.translationY >= (-abl.height / 2f)) {
+                animateSnap(abl, SnapDirection.UP)
             } else {
-                animateSnap(child, SnapDirection.UP)
+                animateSnap(abl, SnapDirection.DOWN)
             }
         }
     }
 
     override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: BrowserToolbar,
+        child: AppBarLayout,
         target: View,
         dx: Int,
         dy: Int,
@@ -93,7 +94,11 @@ class BrowserToolbarTopBehavior(
         child.translationY = max(-child.height.toFloat(), min(0f, child.translationY - dy))
     }
 
-    override fun layoutDependsOn(parent: CoordinatorLayout, child: BrowserToolbar, dependency: View): Boolean {
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: AppBarLayout,
+        dependency: View
+    ): Boolean {
         if (dependency is Snackbar.SnackbarLayout) {
             positionSnackbar(dependency)
         }
@@ -103,7 +108,7 @@ class BrowserToolbarTopBehavior(
 
     private fun animateSnap(child: View, direction: SnapDirection) = with(snapAnimator) {
         addUpdateListener { child.translationY = it.animatedValue as Float }
-        setFloatValues(child.translationY, if (direction == SnapDirection.DOWN) 0f else -child.height.toFloat())
+        setFloatValues(child.translationY, if (direction == SnapDirection.UP) 0f else -child.height.toFloat())
         start()
     }
 

@@ -1085,4 +1085,6 @@
     <string name="search_edit_custom_engine_success_message">Saved %s</string>
     <!-- Text shown when a user successfully deletes a custom search engine -->
     <string name="search_delete_search_engine_success_message">Deleted %s</string>
+
+    <string name="browser_toolbar_top_behavior" translatable="false">org.mozilla.fenix.browser.BrowserToolbarTopBehavior</string>
 </resources>

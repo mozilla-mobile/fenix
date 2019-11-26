@@ -175,6 +175,7 @@ fun BrowserToolbar.setScrollFlagsForTopToolbar() {
     }
 
     val params = layoutParams as AppBarLayout.LayoutParams
+
     params.scrollFlags = when (context.settings().shouldUseFixedTopToolbar) {
         true -> 0
         false -> {
