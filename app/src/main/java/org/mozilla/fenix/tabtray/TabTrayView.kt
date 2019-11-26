@@ -38,6 +38,7 @@ class TabItemViewHolder(
         this.tab = tab
         view.title.text = tab.title
         view.url.text= tab.url
+        view.loadFavicon(tab.url)
     }
 
     companion object {

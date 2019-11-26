@@ -13,8 +13,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.selectable_list_item.view.*
-import mozilla.components.browser.menu.BrowserMenu
-import mozilla.components.browser.menu.BrowserMenuBuilder
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
@@ -75,7 +73,7 @@ class SelectableListItemView @JvmOverloads constructor(
     fun displayAs(mode: ItemType) {
         favicon.isVisible = mode != ItemType.SEPARATOR
         title.isVisible = mode != ItemType.SEPARATOR
-        url.isVisible = mode == ItemType.SITE
+        url.isVisible = mode == ItemType.SITE || mode == ItemType.CLOSABLE_ITEM
         accessory_view.isVisible = mode != ItemType.SEPARATOR
         separator.isVisible = mode == ItemType.SEPARATOR
         isClickable = mode != ItemType.SEPARATOR
