@@ -40,13 +40,10 @@ We will refer to the release that is going out as the *current* release.
 - Note: You will need code review to make changes to the release branch after this point, because it is a protected branch.
     - [ ] Push the branch.
 
-- [ ] On GitHub, draft a GitHub Release with with a tag of the format `v2.3.0-rc.1` with the release branch as the target. Check the pre-release checkbox. This will kick off a build of the branch. You can see it in the mouseover of the CI badge of the branch in the commits view.
-!!! This ^ was a lot cleaner on FFTV, we should poach from those docs:  - [ ] Create GitHub pre-release build `vX.X-LAT2` ([instructions](https://github.com/mozilla-mobile/firefox-tv/wiki/Release-Management-Checklist#final-builds))
-!!! "This will kick off a build of the branch. You can see it in the mouseover of the CI badge of the branch in the commits view."  Where?  There are a LOT of tasks, and they change as the build progresses. (builds are found under `signing-production` task)
-
+- [ ] Create a GitHub pre-release build `vX.X.X-rc.1` (v2.3.0-rc.1)  with the release branch as the target. This will kick off a build of the branch. You can see it in the mouseover of the CI badge of the branch in the commits view. Builds are found under `signing-*` task.
     - If you need to trigger a new RC build, you will need to draft and publish a new (pre-release) release. Editing an existing release and creating a new tag will not trigger a new RC build.
 
-- [ ] Upload the APK from the Taskcluster signing task to the [releases page](https://github.com/mozilla-mobile/fenix/releases).
+- [ ] Upload the APK from the Taskcluster `signing-*` task to the [releases page](https://github.com/mozilla-mobile/fenix/releases).
 - [ ] Create a new PI (product integrity) request in Jira. You can clone [this issue](https://jira.mozilla.com/browse/PI-219).
 
 
