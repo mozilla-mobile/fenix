@@ -10,12 +10,24 @@ import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
 import org.mozilla.fenix.R
 
-class TabItemViewHolder(
-    private val view: View
-) : RecyclerView.ViewHolder(view) {
+interface TabTrayInteractor {
+    fun tabWasTapped(tab: Tab)
+}
 
+class TabItemViewHolder(
+    private val view: View,
+    private val interactor: TabTrayInteractor
+) : RecyclerView.ViewHolder(view) {
+    private var tab: Tab? = null
+
+    init {
+        view.setOnClickListener {
+            tab?.apply(interactor::tabWasTapped)
+        }
+    }
 
     fun bind(tab: Tab) {
+        this.tab = tab
         view.title.text = tab.title
         view.url.text= tab.url
     }
@@ -25,12 +37,14 @@ class TabItemViewHolder(
     }
 }
 
-class TabTrayAdapter: RecyclerView.Adapter<TabItemViewHolder>() {
+class TabTrayAdapter(
+    private val interactor: TabTrayInteractor
+): RecyclerView.Adapter<TabItemViewHolder>() {
     private var tabs = listOf<Tab>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(TabItemViewHolder.LAYOUT_ID, parent, false)
-        return TabItemViewHolder(view)
+        return TabItemViewHolder(view, interactor)
     }
 
     override fun getItemCount() = tabs.size
@@ -45,9 +59,12 @@ class TabTrayAdapter: RecyclerView.Adapter<TabItemViewHolder>() {
     }
 }
 
-class TabTrayView(val container: ViewGroup) : LayoutContainer {
+class TabTrayView(
+    val container: ViewGroup,
+    val interactor: TabTrayInteractor
+) : LayoutContainer {
 
-    val tabTrayAdapter = TabTrayAdapter()
+    val tabTrayAdapter = TabTrayAdapter(interactor)
 
     override val containerView: View?
         get() = container

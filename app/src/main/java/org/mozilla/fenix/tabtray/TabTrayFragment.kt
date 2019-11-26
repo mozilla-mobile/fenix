@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -21,13 +22,14 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.logDebug
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.BrowserSessionsObserver
 import org.mozilla.fenix.library.history.HistoryFragmentState
 
 
-class TabTrayFragment : Fragment() {
+class TabTrayFragment : Fragment(), TabTrayInteractor {
 
     private lateinit var tabTrayView: TabTrayView
     private lateinit var tabTrayStore: TabTrayFragmentStore
@@ -75,7 +77,7 @@ class TabTrayFragment : Fragment() {
             )
         }
 
-        tabTrayView = TabTrayView(view.tab_tray_list_wrapper)
+        tabTrayView = TabTrayView(view.tab_tray_list_wrapper, this)
 
         return view
     }
@@ -119,5 +121,9 @@ class TabTrayFragment : Fragment() {
         }
     }
 
-
+    override fun tabWasTapped(tab: Tab) {
+        requireComponents.core.sessionManager.select(tab)
+        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
+        findNavController().navigate(directions)
+    }
 }
