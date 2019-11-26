@@ -4,5 +4,4 @@
     android:layout_height="match_parent"
     tools:context="org.mozilla.fenix.tabtray.TabTrayFragment"
     android:id="@+id/tab_tray_list_wrapper">
-
 </FrameLayout>

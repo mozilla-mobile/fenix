@@ -20,6 +20,6 @@
     <!-- Close tab-->
     <item
         android:id="@+id/close_menu_item"
-        android:title="@string/tab_tray_menu_item_close"
+            android:title="@string/tab_tray_menu_item_close"
         app:showAsAction="never" />
 </menu>

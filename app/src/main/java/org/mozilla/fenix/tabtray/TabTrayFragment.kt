@@ -22,11 +22,9 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.logDebug
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.BrowserSessionsObserver
-import org.mozilla.fenix.library.history.HistoryFragmentState
 
 
 class TabTrayFragment : Fragment(), TabTrayInteractor {
@@ -50,7 +48,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         setHasOptionsMenu(true)
 
         val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
-            logDebug("boek", sessionManager.size.toString())
             tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getListOfSessions()))
         }
 
@@ -72,7 +69,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         tabTrayStore = StoreProvider.get(this) {
             TabTrayFragmentStore(
                 TabTrayFragmentState(
-                    tabs = getListOfSessions()
+                    tabs = getListOfSessions(),
+                    selectedTabs = setOf()
                 )
             )
         }
@@ -87,7 +85,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         super.onViewCreated(view, savedInstanceState)
 
         consumeFrom(tabTrayStore) {
-            logDebug("boek", it.tabs.toString())
             tabTrayView.update(it)
         }
     }
@@ -99,35 +96,46 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        logDebug("dw-testing", "onCreateOptionsMenu!")
         inflater.inflate(R.menu.tab_tray_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.select_menu_item -> {
-                logDebug("dw-testing", "SELECT!")
+                logDebug("davidwalsh", "SELECT!")
                 true
             }
             R.id.share_menu_item -> {
-                logDebug("dw-testing", "SHARE!")
+                logDebug("davidwalsh", "SHARE!")
                 true
             }
             R.id.close_menu_item -> {
-                logDebug("dw-testing", "CLOSE!")
+                logDebug("davidwalsh", "CLOSE!")
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun tabWasTapped(tab: Tab) {
-        requireComponents.core.sessionManager.select(tab)
+    override fun closeButtonTapped(tab: Tab) {
+        requireComponents.core.sessionManager.remove(tab)
+    }
+
+    override fun open(item: Tab) {
+        requireComponents.core.sessionManager.select(item)
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
         findNavController().navigate(directions)
     }
 
-    override fun closeButtonTapped(tab: Tab) {
-        requireComponents.core.sessionManager.remove(tab)
+    override fun select(item: Tab) {
+        tabTrayStore.dispatch(
+            TabTrayFragmentAction.SelectTab(item)
+        )
+    }
+
+    override fun deselect(item: Tab) {
+        tabTrayStore.dispatch(
+            TabTrayFragmentAction.DeselectTab(item)
+        )
     }
 }
