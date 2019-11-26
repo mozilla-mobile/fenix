@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.logins
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -14,11 +15,12 @@ private sealed class AdapterItem {
 }
 
 class SavedLoginsAdapter(
+    private val context: Context,
     private val interactor: SavedLoginsInteractor
 ) : ListAdapter<SavedLoginsItem, SavedLoginsListItemViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedLoginsListItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        val view = LayoutInflater.from(context).inflate(viewType, parent, false)
         return SavedLoginsListItemViewHolder(view, interactor)
     }
 

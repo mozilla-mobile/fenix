@@ -36,7 +36,7 @@ class SavedLoginsView(
         .inflate(R.layout.component_saved_logins, containerView, true)
         .findViewById(R.id.saved_logins_wrapper)
 
-    private val loginsAdapter = SavedLoginsAdapter(interactor)
+    private val loginsAdapter = SavedLoginsAdapter(containerView.context, interactor)
 
     init {
         view.saved_logins_list.apply {
