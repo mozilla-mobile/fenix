@@ -8,13 +8,17 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
@@ -121,7 +125,9 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
 }
 
+@ExperimentalCoroutinesApi
 class SessionControlView(
+    private val homeFragmentStore: HomeFragmentStore,
     private val container: ViewGroup,
     interactor: SessionControlInteractor
 ) : LayoutContainer {
@@ -145,6 +151,10 @@ class SessionControlView(
                     )
                 )
             itemTouchHelper.attachToRecyclerView(this)
+
+            view.consumeFrom(homeFragmentStore, ProcessLifecycleOwner.get()) {
+                update(it)
+            }
         }
     }
 

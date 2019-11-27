@@ -36,12 +36,12 @@ import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
@@ -53,7 +53,6 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.lib.state.ext.consumeFrom
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
@@ -88,6 +87,7 @@ import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
 import kotlin.math.min
 
+@ExperimentalCoroutinesApi
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
@@ -194,7 +194,7 @@ class HomeFragment : Fragment() {
             )
         )
 
-        sessionControlView = SessionControlView(view.homeLayout, sessionControlInteractor)
+        sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
         view.homeLayout.applyConstraintSet {
             sessionControlView.view {
@@ -300,10 +300,6 @@ class HomeFragment : Fragment() {
 
         // We need the shadow to be above the components.
         bottomBarShadow.bringToFront()
-
-        consumeFrom(homeFragmentStore) {
-            sessionControlView.update(it)
-        }
     }
 
     override fun onDestroyView() {
