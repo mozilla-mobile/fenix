@@ -47,16 +47,20 @@ class IntentReceiverActivity : Activity() {
             ))
         }
 
-        val tabIntentProcessor = if (settings().openLinksInAPrivateTab) {
-            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
-            components.intentProcessors.privateIntentProcessor
-        } else {
-            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
-            components.intentProcessors.intentProcessor
-        }
+        val (tabIntentProcessor, customTabProcessor) =
+            if (settings().openLinksInAPrivateTab) {
+                components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
+                components.intentProcessors.privateIntentProcessor to
+                        components.intentProcessors.privateCustomTabIntentProcessor
+            } else {
+                components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
+                components.intentProcessors.intentProcessor to
+                        components.intentProcessors.customTabIntentProcessor
+            }
 
         val intentProcessors = components.intentProcessors.externalAppIntentProcessors +
                 tabIntentProcessor +
+                customTabProcessor +
                 NewTabShortcutIntentProcessor()
 
         intentProcessors.any { it.process(intent) }
