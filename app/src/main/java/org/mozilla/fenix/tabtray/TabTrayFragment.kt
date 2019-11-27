@@ -16,15 +16,18 @@ import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.logDebug
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.BrowserSessionsObserver
+import org.mozilla.fenix.home.HomeFragmentDirections
 
 
 class TabTrayFragment : Fragment(), TabTrayInteractor {
@@ -57,6 +60,16 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     private fun getListOfSessions(): List<Session> {
         return sessionManager.sessionsOfType(private = (activity as HomeActivity).browsingModeManager.mode.isPrivate)
             .toList()
+    }
+
+    private fun share(tabs: List<Tab>) {
+        val data = tabs.map {
+            ShareData(url = it.url, title = it.title)
+        }
+        val directions = TabTrayFragmentDirections.actionGlobalShareFragment(
+            data = data.toTypedArray()
+        )
+        nav(R.id.tabTrayFragment, directions)
     }
 
     override fun onCreateView(
@@ -106,7 +119,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
                 true
             }
             R.id.share_menu_item -> {
-                logDebug("davidwalsh", "SHARE!")
+                share(tabTrayStore.state.selectedTabs.toList())
                 true
             }
             R.id.close_menu_item -> {
