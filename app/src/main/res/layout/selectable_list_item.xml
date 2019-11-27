@@ -49,7 +49,7 @@
             android:textSize="18sp"
             android:textColor="?primaryText"
             tools:text="Example site"
-            app:layout_constraintEnd_toStartOf="@id/overflow_menu"
+            app:layout_constraintEnd_toStartOf="@id/accessory_view"
             app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/url"
