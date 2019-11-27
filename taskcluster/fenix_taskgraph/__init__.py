@@ -55,6 +55,10 @@ def get_decision_parameters(graph_config, parameters):
                 )
         parameters["target_tasks_method"] = "release"
 
+    parameters["target_tasks_method"] = "release"
+    parameters["release_type"] = "beta"
+    parameters['release_version'] = "3.0.0-beta.2"
+
 
 def _resolve_release_type(head_tag):
     if not head_tag:
