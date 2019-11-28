@@ -563,7 +563,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
-        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(listOf()))
+        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(emptyList()))
 
         val deleteOperation: (suspend () -> Unit) = {
             listOfSessionsToDelete.forEach {
