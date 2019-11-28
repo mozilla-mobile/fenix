@@ -347,37 +347,37 @@ class HomeFragment : Fragment() {
     }
 
     private fun closeTab(sessionId: String) {
-        if (pendingSessionDeletion?.deletionJob == null) {
+        val deletionJob = pendingSessionDeletion?.deletionJob
+
+        if (deletionJob == null) {
             removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
         } else {
-            pendingSessionDeletion?.deletionJob?.let {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    it.invoke()
-                }.invokeOnCompletion {
-                    pendingSessionDeletion = null
-                    removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
-                }
+            viewLifecycleOwner.lifecycleScope.launch {
+                deletionJob.invoke()
+            }.invokeOnCompletion {
+                pendingSessionDeletion = null
+                removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
             }
         }
     }
 
     private fun closeAllTabs(isPrivateMode: Boolean) {
-        if (pendingSessionDeletion?.deletionJob == null) {
+        val deletionJob = pendingSessionDeletion?.deletionJob
+
+        if (deletionJob == null) {
             removeAllTabsWithUndo(
                 sessionManager.sessionsOfType(private = isPrivateMode),
                 isPrivateMode
             )
         } else {
-            pendingSessionDeletion?.deletionJob?.let {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    it.invoke()
-                }.invokeOnCompletion {
-                    pendingSessionDeletion = null
-                    removeAllTabsWithUndo(
-                        sessionManager.sessionsOfType(private = isPrivateMode),
-                        isPrivateMode
-                    )
-                }
+            viewLifecycleOwner.lifecycleScope.launch {
+                deletionJob.invoke()
+            }.invokeOnCompletion {
+                pendingSessionDeletion = null
+                removeAllTabsWithUndo(
+                    sessionManager.sessionsOfType(private = isPrivateMode),
+                    isPrivateMode
+                )
             }
         }
     }
