@@ -224,10 +224,11 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {
+        metrics.track(Event.CollectionTabRemoved)
+
         lifecycleScope.launch(Dispatchers.IO) {
             tabCollectionStorage.removeTabFromCollection(collection, tab)
         }
-        metrics.track(Event.CollectionTabRemoved)
     }
 
     override fun handleCollectionShareTabsClicked(collection: TabCollection) {
