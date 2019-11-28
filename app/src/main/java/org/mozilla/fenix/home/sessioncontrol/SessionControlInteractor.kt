@@ -137,7 +137,7 @@ interface TabSessionInteractor {
      * Selects the given tab. Called when a user clicks on a tab.
      *
      * @param tabView [View] of the current Fragment to match with a View in the Fragment being
-     *                navigated to.
+     * navigated to.
      * @param sessionId The tab session id to select.
      */
     fun onSelectTab(tabView: View, sessionId: String)

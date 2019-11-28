@@ -44,87 +44,87 @@ import org.mozilla.fenix.settings.SupportUtils
 @SuppressWarnings("TooManyFunctions")
 interface SessionControlController {
     /**
-     * See [TabSessionInteractor.onCloseTab]
+     * @see [TabSessionInteractor.onCloseTab]
      */
     fun handleCloseTab(sessionId: String)
 
     /**
-     * See [TabSessionInteractor.onCloseAllTabs]
+     * @see [TabSessionInteractor.onCloseAllTabs]
      */
     fun handleCloseAllTabs(isPrivateMode: Boolean)
 
     /**
-     * See [CollectionInteractor.onCollectionAddTabTapped]
+     * @see [CollectionInteractor.onCollectionAddTabTapped]
      */
     fun handleCollectionAddTabTapped(collection: TabCollection)
 
     /**
-     * See [CollectionInteractor.onCollectionOpenTabClicked]
+     * @see [CollectionInteractor.onCollectionOpenTabClicked]
      */
     fun handleCollectionOpenTabClicked(tab: ComponentTab)
 
     /**
-     * See [CollectionInteractor.onCollectionOpenTabsTapped]
+     * @see [CollectionInteractor.onCollectionOpenTabsTapped]
      */
     fun handleCollectionOpenTabsTapped(collection: TabCollection)
 
     /**
-     * See [CollectionInteractor.onCollectionRemoveTab]
+     * @see [CollectionInteractor.onCollectionRemoveTab]
      */
     fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
 
     /**
-     * See [CollectionInteractor.onCollectionShareTabsClicked]
+     * @see [CollectionInteractor.onCollectionShareTabsClicked]
      */
     fun handleCollectionShareTabsClicked(collection: TabCollection)
 
     /**
-     * See [CollectionInteractor.onDeleteCollectionTapped]
+     * @see [CollectionInteractor.onDeleteCollectionTapped]
      */
     fun handleDeleteCollectionTapped(collection: TabCollection)
 
     /**
-     * See [TabSessionInteractor.onPauseMediaClicked]
+     * @see [TabSessionInteractor.onPauseMediaClicked]
      */
     fun handlePauseMediaClicked()
 
     /**
-     * See [TabSessionInteractor.onPlayMediaClicked]
+     * @see [TabSessionInteractor.onPlayMediaClicked]
      */
     fun handlePlayMediaClicked()
 
     /**
-     * See [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
+     * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
 
     /**
-     * See [CollectionInteractor.onRenameCollectionTapped]
+     * @see [CollectionInteractor.onRenameCollectionTapped]
      */
     fun handleRenameCollectionTapped(collection: TabCollection)
 
     /**
-     * See [TabSessionInteractor.onSaveToCollection]
+     * @see [TabSessionInteractor.onSaveToCollection]
      */
     fun handleSaveTabToCollection(selectedTabId: String?)
 
     /**
-     * See [TabSessionInteractor.onSelectTab]
+     * @see [TabSessionInteractor.onSelectTab]
      */
     fun handleSelectTab(tabView: View, sessionId: String)
 
     /**
-     * See [TabSessionInteractor.onShareTabs]
+     * @see [TabSessionInteractor.onShareTabs]
      */
     fun handleShareTabs()
 
     /**
-     * See [OnboardingInteractor.onStartBrowsingClicked]
+     * @see [OnboardingInteractor.onStartBrowsingClicked]
      */
     fun handleStartBrowsingClicked()
 
     /**
-     * See [CollectionInteractor.onToggleCollectionExpanded]
+     * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 }
