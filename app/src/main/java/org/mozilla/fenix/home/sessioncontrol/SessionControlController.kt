@@ -187,7 +187,7 @@ class DefaultSessionControlController(
                 from = BrowserDirection.FromHome
             )
         } else {
-            context.components.core.sessionManager.add(
+            sessionManager.add(
                 session,
                 true
             )
