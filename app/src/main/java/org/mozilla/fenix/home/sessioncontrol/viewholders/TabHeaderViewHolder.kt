@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
+import android.os.SystemClock
 import android.view.View
 import android.widget.PopupWindow
 import androidx.core.view.isInvisible
@@ -55,17 +56,22 @@ class TabHeaderViewHolder(
 
             tabs_overflow_button.run {
                 var menu: PopupWindow? = null
+                var lastClickTime = 0L
                 setOnClickListener {
-                    if (menu == null) {
-                        menu = tabsMenu.menuBuilder
-                            .build(view.context)
-                            .show(
-                                anchor = it,
-                                orientation = BrowserMenu.Orientation.DOWN,
-                                onDismiss = { menu = null }
-                            )
-                    } else {
-                        menu?.dismiss()
+                    if (hasThrottleDelayPassed(lastClickTime)) {
+                        if (menu == null) {
+                            menu = tabsMenu.menuBuilder
+                                .build(view.context)
+                                .show(
+                                    anchor = it,
+                                    orientation = BrowserMenu.Orientation.DOWN,
+                                    onDismiss = { menu = null }
+                                )
+                        } else {
+                            menu?.dismiss()
+                        }
+
+                        lastClickTime = now()
                     }
                 }
             }
@@ -118,8 +124,14 @@ class TabHeaderViewHolder(
         }
     }
 
+    private fun hasThrottleDelayPassed(lastClickTime: Long) =
+        now() - lastClickTime >= CLICK_LISTENER_THROTTLE_DELAY
+
+    private fun now() = SystemClock.elapsedRealtime()
+
     companion object {
         const val TELEMETRY_HOME_MENU_IDENITIFIER = "homeMenu"
         const val LAYOUT_ID = R.layout.tab_header
+        private const val CLICK_LISTENER_THROTTLE_DELAY = 500L
     }
 }

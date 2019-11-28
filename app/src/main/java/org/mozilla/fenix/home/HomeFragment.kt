@@ -9,6 +9,7 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -266,15 +267,20 @@ class HomeFragment : Fragment() {
 
         with(view.menuButton) {
             var menu: PopupWindow? = null
+            var lastClickTime = 0L
             setOnClickListener {
-                if (menu == null) {
-                    menu = homeMenu?.menuBuilder?.build(requireContext())?.show(
-                        anchor = it,
-                        orientation = BrowserMenu.Orientation.UP,
-                        onDismiss = { menu = null }
-                    )
-                } else {
-                    menu?.dismiss()
+                if (hasThrottleDelayPassed(lastClickTime)) {
+                    if (menu == null) {
+                        menu = homeMenu?.menuBuilder?.build(requireContext())?.show(
+                            anchor = it,
+                            orientation = BrowserMenu.Orientation.UP,
+                            onDismiss = { menu = null }
+                        )
+                    } else {
+                        menu?.dismiss()
+                    }
+
+                    lastClickTime = now()
                 }
             }
         }
@@ -801,6 +807,11 @@ class HomeFragment : Fragment() {
         super.onPause()
     }
 
+    private fun hasThrottleDelayPassed(lastClickTime: Long) =
+        now() - lastClickTime >= CLICK_LISTENER_THROTTLE_DELAY
+
+    private fun now() = SystemClock.elapsedRealtime()
+
     companion object {
         private const val NON_TAB_ITEM_NUM = 3
         private const val ANIM_SCROLL_DELAY = 100L
@@ -810,6 +821,7 @@ class HomeFragment : Fragment() {
         private const val SHARED_TRANSITION_MS = 200L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
+        private const val CLICK_LISTENER_THROTTLE_DELAY = 500L
     }
 }
 
