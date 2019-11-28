@@ -6,8 +6,10 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.content.Context
 import android.graphics.PorterDuff.Mode.SRC_IN
+import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.collection_home_list_row.*
@@ -46,10 +48,23 @@ class CollectionViewHolder(
 
         collection_overflow_button.run {
             increaseTapArea(buttonIncreaseDps)
+            var menu: PopupWindow? = null
+            var lastClickTime = 0L
             setOnClickListener {
-                collectionMenu.menuBuilder
-                    .build(view.context)
-                    .show(anchor = it)
+                if (hasThrottleDelayPassed(lastClickTime)) {
+                    if (menu == null) {
+                        menu = collectionMenu.menuBuilder
+                            .build(view.context)
+                            .show(
+                                anchor = it,
+                                onDismiss = { menu = null }
+                            )
+                    } else {
+                        menu?.dismiss()
+                    }
+
+                    lastClickTime = now()
+                }
             }
         }
 
@@ -95,12 +110,18 @@ class CollectionViewHolder(
         )
     }
 
+    private fun hasThrottleDelayPassed(lastClickTime: Long) =
+        now() - lastClickTime >= CLICK_LISTENER_THROTTLE_DELAY
+
+    private fun now() = SystemClock.elapsedRealtime()
+
     companion object {
         const val buttonIncreaseDps = 16
         const val EXPANDED_PADDING = 60
         const val COLLAPSED_MARGIN = 12
         const val LAYOUT_ID = R.layout.collection_home_list_row
         const val maxTitleLength = 20
+        private const val CLICK_LISTENER_THROTTLE_DELAY = 500L
     }
 }
 
