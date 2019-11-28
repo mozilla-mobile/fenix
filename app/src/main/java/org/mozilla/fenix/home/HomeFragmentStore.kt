@@ -32,14 +32,8 @@ data class Tab(
     val icon: Bitmap? = null
 )
 
-fun List<Tab>.toSessionBundle(sessionManager: SessionManager): MutableList<Session> {
-    val sessionBundle = mutableListOf<Session>()
-    this.forEach {
-        sessionManager.findSessionById(it.sessionId)?.let { session ->
-            sessionBundle.add(session)
-        }
-    }
-    return sessionBundle
+fun List<Tab>.toSessionBundle(sessionManager: SessionManager): List<Session> {
+    return this.mapNotNull { sessionManager.findSessionById(it.sessionId) }
 }
 
 /**
