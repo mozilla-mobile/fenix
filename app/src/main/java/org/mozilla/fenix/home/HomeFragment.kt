@@ -156,6 +156,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val activity = activity as HomeActivity
 
         currentMode = CurrentMode(
             view.context,
@@ -177,7 +178,7 @@ class HomeFragment : Fragment() {
 
         sessionControlInteractor = SessionControlInteractor(
             DefaultSessionControlController(
-                context = requireContext(),
+                activity = activity,
                 store = homeFragmentStore,
                 navController = findNavController(),
                 homeLayout = view.homeLayout,
@@ -207,7 +208,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
 
         return view

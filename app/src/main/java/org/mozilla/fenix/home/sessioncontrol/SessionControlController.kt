@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
@@ -131,7 +130,7 @@ interface SessionControlController {
 
 @SuppressWarnings("TooManyFunctions")
 class DefaultSessionControlController(
-    private val context: Context,
+    private val activity: HomeActivity,
     private val store: HomeFragmentStore,
     private val navController: NavController,
     private val homeLayout: MotionLayout,
@@ -147,11 +146,11 @@ class DefaultSessionControlController(
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit
 ) : SessionControlController {
     private val metrics: MetricController
-        get() = context.components.analytics.metrics
+        get() = activity.components.analytics.metrics
     private val sessionManager: SessionManager
-        get() = context.components.core.sessionManager
+        get() = activity.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
-        get() = context.components.core.tabCollectionStorage
+        get() = activity.components.core.tabCollectionStorage
 
     override fun handleCloseTab(sessionId: String) {
         closeTab.invoke(sessionId)
@@ -173,15 +172,15 @@ class DefaultSessionControlController(
         invokePendingDeleteJobs()
 
         val session = tab.restore(
-            context = context,
-            engine = context.components.core.engine,
+            context = activity,
+            engine = activity.components.core.engine,
             tab = tab,
             restoreSessionId = false
         )
 
         if (session == null) {
             // We were unable to create a snapshot, so just load the tab instead
-            (context as HomeActivity).openToBrowserAndLoad(
+            activity.openToBrowserAndLoad(
                 searchTermOrURL = tab.url,
                 newTab = true,
                 from = BrowserDirection.FromHome
@@ -191,7 +190,7 @@ class DefaultSessionControlController(
                 session,
                 true
             )
-            (context as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+            activity.openToBrowser(BrowserDirection.FromHome)
         }
 
         metrics.track(Event.CollectionTabRestored)
@@ -202,19 +201,19 @@ class DefaultSessionControlController(
 
         collection.tabs.reversed().forEach {
             val session = it.restore(
-                context = context,
-                engine = context.components.core.engine,
+                context = activity,
+                engine = activity.components.core.engine,
                 tab = it,
                 restoreSessionId = false
             )
 
             if (session == null) {
                 // We were unable to create a snapshot, so just load the tab instead
-                context.components.useCases.tabsUseCases.addTab.invoke(it.url)
+                activity.components.useCases.tabsUseCases.addTab.invoke(it.url)
             } else {
                 sessionManager.add(
                     session,
-                    context.components.core.sessionManager.selectedSession == null
+                    activity.components.core.sessionManager.selectedSession == null
                 )
             }
         }
@@ -249,7 +248,7 @@ class DefaultSessionControlController(
     }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {
-        (context as HomeActivity).openToBrowserAndLoad(
+        activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
                 (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
             newTab = true,
