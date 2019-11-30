@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.settings.account
 
+import android.app.Activity
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +28,27 @@ import org.mozilla.fenix.ext.showToolbar
 @SuppressWarnings("TooManyFunctions")
 class TurnOnSyncFragment : Fragment(), AccountObserver {
 
+    private fun verifyAvailableNetwork(activity: Activity):Boolean{
+        val connectivityManager=activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
+    }
+
+    private fun signIn() {
+        if(verifyAvailableNetwork(activity!!)) {
+            requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
+        }
+        else {
+            val dialog = SyncFailedBottomSheetDialog(
+                context = context!!,
+                action = "sign in",
+                tryAgain = ::signIn
+            )
+            dialog.show()
+        }
+    }
     private val signInClickListener = View.OnClickListener {
-        requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
+        signIn()
         // TODO The sign-in web content populates session history,
         // so pressing "back" after signing in won't take us back into the settings screen, but rather up the
         // session history stack.
@@ -34,10 +56,29 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         // Via an interceptor, perhaps.
     }
 
+    private fun pairing() {
+        fun pair(){
+            if (verifyAvailableNetwork(activity!!)) {
+
+                requireComponents.analytics.metrics.track(Event.SyncAuthScanPairing)
+            } else {
+                val dialog = SyncFailedBottomSheetDialog(
+                    context = context!!,
+                    action = "sign in",
+                    tryAgain = ::pair
+                )
+                dialog.show()
+            }
+        }
+
+        pair()
+    }
+
     private val paringClickListener = View.OnClickListener {
         val directions = TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToPairFragment()
         view!!.findNavController().navigate(directions)
         requireComponents.analytics.metrics.track(Event.SyncAuthScanPairing)
+        pairing()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

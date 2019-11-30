@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:background="?foundation">
+
+        <ImageView
+            android:id="@+id/sync_failed_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="center"
+            app:srcCompat="@drawable/mozac_ic_warning"
+            android:importantForAccessibility="no"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:tint="?primaryText"/>
+
+    <TextView
+        android:id="@+id/sync_failed_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="11dp"
+        android:paddingStart="5dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="5dp"
+        android:textColor="?primaryText"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/sync_failed_close_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/sync_failed_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Failed to X. Please check your internet connection." />
+
+        <ImageButton
+            android:id="@+id/sync_failed_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="3dp"
+            android:contentDescription="@string/mozac_feature_downloads_button_close"
+            android:background="@null"
+            android:tint="?primaryText"
+            app:srcCompat="@drawable/mozac_ic_close"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/sync_failed_action_button"
+            android:textColor="?contrastText"
+            android:backgroundTint="?accentBright"
+            android:background="@drawable/rounded_all_corners"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sync_failed_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="8dp"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mozac_feature_downloads_button_try_again"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>

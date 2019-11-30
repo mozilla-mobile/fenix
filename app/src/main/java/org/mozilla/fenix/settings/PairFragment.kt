@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.settings
 
+import android.app.Activity
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -19,12 +22,57 @@ import mozilla.components.feature.qr.QrFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.account.SyncFailedBottomSheetDialog
+import org.mozilla.fenix.settings.account.TurnOnSyncFragment
 
 class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
 
+    private fun verifyAvailableNetwork(activity: Activity):Boolean{
+        val connectivityManager=activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
+    }
+
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
+
+    private fun pairing(pairingUrl: String) {
+        fun pair(){
+            if (verifyAvailableNetwork(activity!!)) {
+                requireComponents.services.accountsAuthFeature.beginPairingAuthentication(
+                    requireContext(),
+                    pairingUrl
+                )
+                val vibrator = requireContext().getSystemService<Vibrator>()!!
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            VIBRATE_LENGTH,
+                            VibrationEffect.DEFAULT_AMPLITUDE
+                        )
+                    )
+                } else {
+                    @Suppress("Deprecation")
+                    vibrator.vibrate(VIBRATE_LENGTH)
+                }
+                findNavController(this@PairFragment).popBackStack(
+                    R.id.turnOnSyncFragment,
+                    false
+                )
+
+            } else {
+                val dialog = SyncFailedBottomSheetDialog(
+                    context = context!!,
+                    action = "sign in",
+                    tryAgain = ::pair
+                )
+                dialog.show()
+            }
+        }
+        pair()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,26 +90,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                     requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
                 },
                 onScanResult = { pairingUrl ->
-                    requireComponents.services.accountsAuthFeature.beginPairingAuthentication(
-                        requireContext(),
-                        pairingUrl
-                    )
-                    val vibrator = requireContext().getSystemService<Vibrator>()!!
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(
-                                VIBRATE_LENGTH,
-                                VibrationEffect.DEFAULT_AMPLITUDE
-                            )
-                        )
-                    } else {
-                        @Suppress("Deprecation")
-                        vibrator.vibrate(VIBRATE_LENGTH)
-                    }
-                    findNavController(this@PairFragment).popBackStack(
-                        R.id.turnOnSyncFragment,
-                        false
-                    )
+                    pairing(pairingUrl)
                 }),
             owner = this,
             view = view

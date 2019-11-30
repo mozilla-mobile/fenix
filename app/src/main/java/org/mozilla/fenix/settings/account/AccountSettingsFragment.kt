@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix.settings.account
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputFilter
@@ -20,6 +22,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -272,8 +275,24 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun verifyAvailableNetwork(activity: Activity):Boolean{
+        val connectivityManager=activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
+    }
+
+    private fun showNetworkErrorSnackbar() {
+        view?.let {
+            FenixSnackbar.make(it, Snackbar.LENGTH_LONG)
+                .setText("Could not sync, no internet connection.")
+                .setAction("OK") {}
+                .show()
+        }
+    }
+
     private fun syncNow() {
-        lifecycleScope.launch {
+        if(verifyAvailableNetwork(activity!!)) {
+            lifecycleScope.launch {
             requireComponents.analytics.metrics.track(Event.SyncAccountSyncNow)
             // Trigger a sync.
             requireComponents.backgroundServices.accountManager.syncNowAsync(SyncReason.User)
@@ -284,6 +303,10 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     refreshDevicesAsync().await()
                     pollForEventsAsync().await()
                 }
+            }
+        }
+        else {
+            showNetworkErrorSnackbar()
         }
     }
 
