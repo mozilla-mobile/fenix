@@ -67,6 +67,7 @@ import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.toolbar.TabCounterToolbarButton
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -197,6 +198,18 @@ class HomeFragment : Fragment() {
 
         sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
+        val tabCounter = TabCounterToolbarButton(
+            sessionManager = requireComponents.core.sessionManager,
+            showTabs = {
+                invokePendingDeleteJobs()
+                hideOnboardingIfNeeded()
+                val directions = HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
+                nav(R.id.homeFragment, directions)
+            },
+            isPrivate = browsingModeManager.mode.isPrivate
+        )
+        tabCounter.createView(view.tab_tray_button_wrapper)
+
         view.homeLayout.applyConstraintSet {
             sessionControlView.view {
                 connect(
@@ -271,13 +284,6 @@ class HomeFragment : Fragment() {
                     .build()
             nav(R.id.homeFragment, directions, extras)
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
-        }
-
-        view.tab_tray_button.setOnClickListener {
-            invokePendingDeleteJobs()
-            hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
-            nav(R.id.homeFragment, directions)
         }
 
         PrivateBrowsingButtonView(

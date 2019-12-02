@@ -114,13 +114,10 @@
                     android:textSize="15sp" />
             </org.mozilla.fenix.home.SearchView>
 
-            <ImageButton
-                android:id="@+id/tab_tray_button"
+            <FrameLayout
+                android:id="@+id/tab_tray_button_wrapper"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/add_tab"
-                android:src="@drawable/ic_tabs"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/menuButton"
                 app:layout_constraintStart_toEndOf="@id/toolbar_wrapper"
