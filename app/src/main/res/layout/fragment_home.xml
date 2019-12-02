@@ -87,7 +87,7 @@
                 android:focusable="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tab_tray_button"
+                app:layout_constraintEnd_toStartOf="@+id/tab_tray_button_wrapper"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
@@ -118,6 +118,11 @@
                 android:id="@+id/tab_tray_button_wrapper"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+
+                android:background="@color/collection_icon_color_pink"
+                android:clickable="true"
+                android:focusable="false"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/menuButton"
                 app:layout_constraintStart_toEndOf="@id/toolbar_wrapper"
