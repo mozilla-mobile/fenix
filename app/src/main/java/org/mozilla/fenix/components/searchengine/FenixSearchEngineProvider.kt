@@ -28,14 +28,17 @@ class FenixSearchEngineProvider(
     }
 
     private val bundledEngines = async {
+        val defaultEngineIdentifiers = defaultEngineIdentifiers()
+        val bundledEnginesFiltered =
+            BUNDLED_SEARCH_ENGINES.filter { !defaultEngineIdentifiers.contains(it) }
         AssetsSearchEngineProvider(
             LocaleSearchLocalizationProvider(),
             filters = listOf(object : SearchEngineFilter {
                 override fun filter(context: Context, searchEngine: SearchEngine): Boolean {
-                    return BUNDLED_SEARCH_ENGINES.contains(searchEngine.identifier)
+                    return bundledEnginesFiltered.contains(searchEngine.identifier)
                 }
             }),
-            additionalIdentifiers = BUNDLED_SEARCH_ENGINES
+            additionalIdentifiers = bundledEnginesFiltered
         ).loadSearchEngines(context)
     }
 
@@ -70,6 +73,10 @@ class FenixSearchEngineProvider(
         )
     }
 
+    fun defaultEngineIdentifiers() = runBlocking {
+        defaultEngines.await().list.map { it.identifier }
+    }
+
     fun allSearchEngineIdentifiers() = runBlocking {
         loadedSearchEngines.await().list.map { it.identifier }
     }
@@ -92,7 +99,8 @@ class FenixSearchEngineProvider(
     }
 
     fun uninstallSearchEngine(context: Context, searchEngine: SearchEngine) = runBlocking {
-        val isCustom = CustomSearchEngineStore.isCustomSearchEngine(context, searchEngine.identifier)
+        val isCustom =
+            CustomSearchEngineStore.isCustomSearchEngine(context, searchEngine.identifier)
 
         if (isCustom) {
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
@@ -145,7 +153,8 @@ class FenixSearchEngineProvider(
     }
 
     companion object {
-        private val BUNDLED_SEARCH_ENGINES = listOf("ecosia", "reddit", "startpage", "yahoo", "youtube")
+        private val BUNDLED_SEARCH_ENGINES =
+            listOf("ecosia", "reddit", "startpage", "yahoo", "youtube")
         private const val PREF_FILE = "fenix-search-engine-provider"
         private const val INSTALLED_ENGINES_KEY = "fenix-installed-search-engines"
     }
