@@ -19,9 +19,7 @@
 
     <action
         android:id="@+id/action_global_search"
-        app:destination="@id/searchFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true" />
+        app:destination="@id/searchFragment"/>
 
     <action
         android:id="@+id/action_global_crash_reporter"
