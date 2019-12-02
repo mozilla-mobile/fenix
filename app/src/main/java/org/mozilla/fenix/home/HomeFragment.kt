@@ -70,6 +70,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounterToolbarButton
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -199,16 +200,37 @@ class HomeFragment : Fragment() {
         sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
         val tabCounter = TabCounterToolbarButton(
-            sessionManager = requireComponents.core.sessionManager,
-            showTabs = {
+            requireComponents.core.sessionManager,
+            {
                 invokePendingDeleteJobs()
                 hideOnboardingIfNeeded()
-                val directions = HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
-                nav(R.id.homeFragment, directions)
+                nav(
+                    R.id.homeFragment,
+                    HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
+                )
             },
-            isPrivate = browsingModeManager.mode.isPrivate
+            browsingModeManager.mode.isPrivate
         )
+
+
+        logDebug(
+            "davidwalsh",
+            tabCounter.visible().toString()
+        )
+        //tabCounter.visible = isVis
+        //tabCounter.
+
         tabCounter.createView(view.tab_tray_button_wrapper)
+
+        // TESTING:  Can tapping on the button display the icon?
+        view.tab_tray_button_wrapper.setOnClickListener {
+            invokePendingDeleteJobs()
+            hideOnboardingIfNeeded()
+            nav(
+                R.id.homeFragment,
+                HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
+            )
+        }
 
         ConstraintSet().apply {
             clone(view.homeLayout)
