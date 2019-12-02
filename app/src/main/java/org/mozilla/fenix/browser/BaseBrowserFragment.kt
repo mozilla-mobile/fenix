@@ -33,6 +33,7 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
@@ -43,6 +44,7 @@ import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.prompts.PromptFeature
+import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionFeature
@@ -59,6 +61,7 @@ import org.mozilla.fenix.Experiments
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
@@ -315,6 +318,21 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     store = store,
                     customTabId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
+                    shareDelegate = object : ShareDelegate {
+                        override fun showShareSheet(
+                            context: Context,
+                            shareData: ShareData,
+                            onDismiss: () -> Unit,
+                            onSuccess: () -> Unit
+                        ) {
+                            val directions = NavGraphDirections.actionGlobalShareFragment(
+                                data = arrayOf(shareData),
+                                showPage = true,
+                                sessionId = getSessionById()?.id
+                            )
+                            findNavController().navigate(directions)
+                        }
+                    },
                     onNeedToRequestPermissions = { permissions ->
                         requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
                     }),
