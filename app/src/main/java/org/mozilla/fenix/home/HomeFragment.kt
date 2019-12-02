@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.StringRes
@@ -213,24 +214,11 @@ class HomeFragment : Fragment() {
         )
 
 
-        logDebug(
-            "davidwalsh",
-            tabCounter.visible().toString()
+        val tabCounterView = tabCounter.createView(view.tab_tray_button_wrapper)
+        view.tab_tray_button_wrapper.addView(
+            tabCounterView,
+            FrameLayout.LayoutParams(80, 80) // TODO:  Can we use its parent dimensions here?
         )
-        //tabCounter.visible = isVis
-        //tabCounter.
-
-        tabCounter.createView(view.tab_tray_button_wrapper)
-
-        // TESTING:  Can tapping on the button display the icon?
-        view.tab_tray_button_wrapper.setOnClickListener {
-            invokePendingDeleteJobs()
-            hideOnboardingIfNeeded()
-            nav(
-                R.id.homeFragment,
-                HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
-            )
-        }
 
         ConstraintSet().apply {
             clone(view.homeLayout)
