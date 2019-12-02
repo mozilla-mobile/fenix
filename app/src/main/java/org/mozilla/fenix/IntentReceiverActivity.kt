@@ -85,8 +85,7 @@ class IntentReceiverActivity : Activity() {
             ))
         }
 
-        val modeDependentProcessors =
-            if (settings().openLinksInAPrivateTab) {
+        val modeDependentProcessors = if (settings().openLinksInAPrivateTab) {
                 components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
                 listOf(
                     components.intentProcessors.privateCustomTabIntentProcessor,
