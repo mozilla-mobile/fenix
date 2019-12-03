@@ -221,6 +221,9 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
             inflated.text.text =
                 getString(R.string.search_suggestions_onboarding_text, getString(R.string.app_name))
+
+            inflated.title.text =
+                getString(R.string.search_suggestions_onboarding_title)
         }
 
         view.search_suggestions_onboarding.setOnInflateListener((stubListener))
@@ -333,8 +336,12 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     }
 
     private fun updateSearchSuggestionsHintVisibility(state: SearchFragmentState) {
-        view?.findViewById<View>(R.id.search_suggestions_onboarding)
-            ?.isVisible = state.showSearchSuggestionsHint
+        view?.apply {
+            findViewById<View>(R.id.search_suggestions_onboarding)?.isVisible = state.showSearchSuggestionsHint
+
+            search_suggestions_onboarding_divider?.isVisible =
+                search_with_shortcuts.isVisible && state.showSearchSuggestionsHint
+        }
     }
 
     companion object {
