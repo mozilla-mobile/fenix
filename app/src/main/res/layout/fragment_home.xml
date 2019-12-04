@@ -87,7 +87,7 @@
                 android:focusable="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/add_tab_button"
+                app:layout_constraintEnd_toStartOf="@+id/tab_tray_button"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
@@ -115,12 +115,12 @@
             </org.mozilla.fenix.home.SearchView>
 
             <ImageButton
-                android:id="@+id/add_tab_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/tab_tray_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/add_tab"
-                app:srcCompat="@drawable/ic_new"
+                android:src="@drawable/ic_tabs"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/menuButton"
                 app:layout_constraintStart_toEndOf="@id/toolbar_wrapper"

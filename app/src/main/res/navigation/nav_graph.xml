@@ -71,6 +71,11 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in" />
         <action
+            android:id="@+id/action_homeFragment_to_tabTrayFragment"
+            app:destination="@id/tabTrayFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
+        <action
             android:id="@+id/action_homeFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
         <action
@@ -698,4 +703,8 @@
         android:id="@+id/localeSettingsFragment"
         android:name="org.mozilla.fenix.settings.advanced.LocaleSettingsFragment"
         android:label="LanguageSettingsFragment" />
+    <fragment
+        android:id="@+id/tabTrayFragment"
+        android:name="org.mozilla.fenix.tabtray.TabTrayFragment"
+        android:label="TabTrayFragment" />
 </navigation>

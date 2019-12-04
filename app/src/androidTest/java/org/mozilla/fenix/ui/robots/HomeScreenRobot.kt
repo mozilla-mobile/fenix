@@ -204,7 +204,7 @@ private fun assertOpenTabsHeader() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertAddTabButton() =
-    onView(CoreMatchers.allOf(withId(R.id.add_tab_button), isDisplayed()))
+    onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.tab_tray_button), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertNoTabsOpenedHeader() =
