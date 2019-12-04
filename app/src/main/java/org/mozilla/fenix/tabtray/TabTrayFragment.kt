@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.BrowserSessionsObserver
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
@@ -164,7 +165,18 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     }
 
     override fun closeButtonTapped(tab: Tab) {
-        requireComponents.core.sessionManager.remove(tab)
+        if (pendingSessionDeletion?.deletionJob == null) {
+            removeTabWithUndo(tab.id, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+        } else {
+            pendingSessionDeletion?.deletionJob?.let {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    it.invoke()
+                }.invokeOnCompletion {
+                    pendingSessionDeletion = null
+                    removeTabWithUndo(tab.id, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+                }
+            }
+        }
     }
 
     override fun open(item: Tab) {
@@ -216,6 +228,39 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             operation = deleteOperation,
             anchorView = bottom_bar
         )
+    }
+
+    private fun removeTabWithUndo(sessionId: String, private: Boolean) {
+        val sessionManager = requireComponents.core.sessionManager
+        val deleteOperation: (suspend () -> Unit) = {
+            sessionManager.findSessionById(sessionId)
+                ?.let { session ->
+                    pendingSessionDeletion = null
+                    sessionManager.remove(session)
+                }
+        }
+
+        pendingSessionDeletion = TabTrayFragment.PendingSessionDeletion(deleteOperation, sessionId)
+
+        val snackbarMessage = if (private) {
+            getString(R.string.snackbar_private_tab_closed)
+        } else {
+            getString(R.string.snackbar_tab_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            view!!,
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo), {
+                pendingSessionDeletion = null
+                emitSessionChanges()
+            },
+            operation = deleteOperation,
+            anchorView = bottom_bar
+        )
+
+        // Update the UI with the tab removed, but don't remove it from storage yet
+        emitSessionChanges()
     }
 
     private fun emitSessionChanges() {
