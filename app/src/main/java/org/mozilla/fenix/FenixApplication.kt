@@ -74,8 +74,12 @@ open class FenixApplication : Application() {
         Log.addSink(AndroidLogSink())
     }
 
-    @CallSuper
     open fun setupInMainProcessOnly() {
+        setupOperationsNotInvolvingStorageLayers()
+        setupOperationsThatAccessStorageLayers()
+    }
+
+    protected fun setupOperationsNotInvolvingStorageLayers() {
         run {
             // Attention: Do not invoke any code from a-s in this scope.
             val megazordSetup = setupMegazord()
@@ -130,7 +134,9 @@ open class FenixApplication : Application() {
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
 
         components.core.sessionManager.register(NotificationSessionObserver(this))
+    }
 
+    protected fun setupOperationsThatAccessStorageLayers() {
         if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
             runStorageMaintenance()
         }

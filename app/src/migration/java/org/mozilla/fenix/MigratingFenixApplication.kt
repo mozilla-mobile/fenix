@@ -5,7 +5,12 @@
 package org.mozilla.fenix
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.support.migration.FennecMigrator
+import mozilla.components.support.migration.MigrationResults
 
 /**
  * An application class which knows how to migrate Fennec data.
@@ -14,9 +19,20 @@ class MigratingFenixApplication : FenixApplication() {
     override fun setupInMainProcessOnly() {
         migrateGeckoBlocking()
 
-        super.setupInMainProcessOnly()
+        setupOperationsNotInvolvingStorageLayers()
 
-        migrateDataAsynchronously()
+        // Some of the operations we need to execute will race with
+        // `migrateDataAsynchronously` for access to storage DBs, possibly resulting in SQLITE_BUSY
+        // errors.
+
+        // So, storage operations are split away into a separate method,
+        // setupOperationsThatAccessStorageLayers.
+        // This lets us order things and avoid overlapping storage access.
+
+        CoroutineScope(Dispatchers.Main).launch {
+            migrateDataAsync().await()
+            setupOperationsThatAccessStorageLayers()
+        }
     }
 
     private fun migrateGeckoBlocking() {
@@ -29,7 +45,7 @@ class MigratingFenixApplication : FenixApplication() {
         }
     }
 
-    private fun migrateDataAsynchronously() {
+    private fun migrateDataAsync(): Deferred<MigrationResults> {
         val migrator = FennecMigrator.Builder(this, this.components.analytics.crashReporter)
             .migrateOpenTabs(this.components.core.sessionManager)
             .migrateHistory(this.components.core.historyStorage)
@@ -37,6 +53,6 @@ class MigratingFenixApplication : FenixApplication() {
             .migrateFxa(this.components.backgroundServices.accountManager)
             .build()
 
-        migrator.migrateAsync()
+        return migrator.migrateAsync()
     }
 }
