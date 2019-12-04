@@ -71,6 +71,11 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in" />
         <action
+            android:id="@+id/action_homeFragment_to_tabTrayFragment"
+            app:destination="@id/tabTrayFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
+        <action
             android:id="@+id/action_homeFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
         <action
@@ -682,4 +687,9 @@
         android:id="@+id/toolbarSettingsFragment"
         android:name="org.mozilla.fenix.settings.ToolbarSettingsFragment"
         android:label="ToolbarSettingsFragment" />
+    <fragment
+        android:id="@+id/tabTrayFragment"
+        android:name="org.mozilla.fenix.tabtray.TabTrayFragment"
+        android:label="TabTrayFragment">
+    </fragment>
 </navigation>
