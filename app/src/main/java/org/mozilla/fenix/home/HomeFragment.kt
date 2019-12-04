@@ -215,9 +215,11 @@ class HomeFragment : Fragment() {
 
 
         val tabCounterView = tabCounter.createView(view.tab_tray_button_wrapper)
+        val tabCounterLayout = FrameLayout.LayoutParams(80, 80) // TODO:  Can we use its parent dimensions here?
+        tabCounterLayout.gravity = Gravity.CENTER
         view.tab_tray_button_wrapper.addView(
             tabCounterView,
-            FrameLayout.LayoutParams(80, 80) // TODO:  Can we use its parent dimensions here?
+            tabCounterLayout
         )
 
         ConstraintSet().apply {
