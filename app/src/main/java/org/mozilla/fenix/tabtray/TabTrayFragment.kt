@@ -25,6 +25,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 
 import com.google.android.material.snackbar.*
+import kotlinx.android.synthetic.main.component_tab_tray.view.*
 
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -116,6 +117,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        toggleEmptyMessage()
+
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
         }
@@ -180,6 +183,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
                 }
             }
         }
+
+        toggleEmptyMessage()
     }
 
     override fun open(item: Tab) {
@@ -255,6 +260,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             operation = deleteOperation,
             anchorView = bottom_bar
         )
+
+        toggleEmptyMessage()
     }
 
     private fun removeTabWithUndo(sessionId: String, private: Boolean) {
@@ -298,8 +305,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     }
 
     private fun emitSessionChanges() {
-        val sessions = getListOfSessions().filterNot { it.id == pendingSessionDeletion?.sessionId }
-        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(sessions))
+        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getVisibleSessions()))
+        toggleEmptyMessage()
     }
 
     private fun List<Session>.toTabs(): List<org.mozilla.fenix.home.sessioncontrol.Tab> {
@@ -315,5 +322,23 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
             it.toTab(requireContext(), it == selected, mediaState)
         }
+    }
+
+    private fun toggleEmptyMessage() {
+        // Show an empty message if no tabs are opened
+        view?.tab_tray_empty_view?.visibility = if (getVisibleSessions().isEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+        view?.announceForAccessibility(context?.getString(R.string.no_open_tabs_description))
+    }
+
+    private fun getVisibleSessions(): List<Session> {
+        if (deleteAllSessionsJob != null) {
+            return emptyList()
+        }
+        val sessions = getListOfSessions().filterNot { it.id == pendingSessionDeletion?.sessionId }
+        return sessions
     }
 }
