@@ -2,7 +2,6 @@ package org.mozilla.fenix.tabtray
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -25,7 +24,11 @@ import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 
+import com.google.android.material.snackbar.*
+
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.FenixSnackbarPresenter
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.logDebug
@@ -34,8 +37,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.BrowserSessionsObserver
-import org.mozilla.fenix.home.HomeFragment
-import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.utils.allowUndo
@@ -50,6 +51,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     data class PendingSessionDeletion(val deletionJob: (suspend () -> Unit), val sessionId: String)
 
     var deleteAllSessionsJob: (suspend () -> Unit)? = null
+
+    var snackbar: FenixSnackbar? = null
 
     private val sessionManager: SessionManager
         get() = requireComponents.core.sessionManager
@@ -197,10 +200,34 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         )
     }
 
+    override fun onStop() {
+        invokePendingDeleteJobs()
+        snackbar?.dismiss()
+        super.onStop()
+    }
+
+    private fun invokePendingDeleteJobs() {
+        pendingSessionDeletion?.deletionJob?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                it.invoke()
+            }.invokeOnCompletion {
+                pendingSessionDeletion = null
+            }
+        }
+
+        deleteAllSessionsJob?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                it.invoke()
+            }.invokeOnCompletion {
+                deleteAllSessionsJob = null
+            }
+        }
+    }
+
     private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
         val sessionManager = requireComponents.core.sessionManager
 
-        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
+        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(emptyList()))
 
         val deleteOperation: (suspend () -> Unit) = {
             listOfSessionsToDelete.forEach {
@@ -215,7 +242,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             getString(R.string.snackbar_tabs_closed)
         }
 
-        viewLifecycleOwner.lifecycleScope.allowUndo(
+        snackbar = viewLifecycleOwner.lifecycleScope.allowUndo(
             view!!,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
@@ -232,12 +259,19 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
     private fun removeTabWithUndo(sessionId: String, private: Boolean) {
         val sessionManager = requireComponents.core.sessionManager
+
         val deleteOperation: (suspend () -> Unit) = {
             sessionManager.findSessionById(sessionId)
                 ?.let { session ->
                     pendingSessionDeletion = null
                     sessionManager.remove(session)
                 }
+        }
+
+        pendingSessionDeletion?.deletionJob?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                it.invoke()
+            }
         }
 
         pendingSessionDeletion = TabTrayFragment.PendingSessionDeletion(deleteOperation, sessionId)
@@ -248,7 +282,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             getString(R.string.snackbar_tab_closed)
         }
 
-        viewLifecycleOwner.lifecycleScope.allowUndo(
+        snackbar = viewLifecycleOwner.lifecycleScope.allowUndo(
             view!!,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
@@ -264,11 +298,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     }
 
     private fun emitSessionChanges() {
-        getManagedEmitter<SessionControlChange>().onNext(
-            SessionControlChange.TabsChange(
-                getListOfSessions().toTabs()
-            )
-        )
+        val sessions = getListOfSessions().filterNot { it.id == pendingSessionDeletion?.sessionId }
+        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(sessions))
     }
 
     private fun List<Session>.toTabs(): List<org.mozilla.fenix.home.sessioncontrol.Tab> {

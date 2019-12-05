@@ -14,6 +14,7 @@ import android.app.AlertDialog
 import org.mozilla.fenix.R
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import com.google.android.material.snackbar.Snackbar
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal const val UNDO_DELAY = 3000L
@@ -39,12 +40,12 @@ fun CoroutineScope.allowUndo(
     onCancel: suspend () -> Unit = {},
     operation: suspend () -> Unit,
     anchorView: View? = null
-) {
+): FenixSnackbar? {
     // By using an AtomicBoolean, we achieve memory effects of reading and
     // writing a volatile variable.
     val requestedUndo = AtomicBoolean(false)
 
-    fun showUndoDialog() {
+    fun showUndoDialog(): FenixSnackbar? {
         val dialogBuilder = AlertDialog.Builder(view.context)
         dialogBuilder.setMessage(message).setCancelable(false)
             .setPositiveButton(R.string.a11y_dialog_deleted_confirm) { _, _ ->
@@ -58,9 +59,11 @@ fun CoroutineScope.allowUndo(
         }
         val alert = dialogBuilder.create()
         alert.show()
+
+        return null
     }
 
-    fun showUndoSnackbar() {
+    fun showUndoSnackbar() :FenixSnackbar? {
         val snackbar = FenixSnackbar
             .make(view, FenixSnackbar.LENGTH_INDEFINITE)
             .setText(message)
@@ -84,11 +87,13 @@ fun CoroutineScope.allowUndo(
                 operation.invoke()
             }
         }
+
+        return snackbar
     }
 
     //  It is difficult to use our Snackbars quickly enough with
     //  Talkback enabled, so in that case we show a dialog instead
-    if (touchExplorationEnabled(view)) {
+    return if (touchExplorationEnabled(view)) {
         showUndoDialog()
     } else {
         showUndoSnackbar()
