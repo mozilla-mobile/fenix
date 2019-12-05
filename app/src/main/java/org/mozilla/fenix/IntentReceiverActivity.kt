@@ -45,7 +45,7 @@ enum class IntentProcessorType {
 /**
  * Classifies the [IntentType] based on the [IntentProcessor] that handled the [Intent]
  */
-fun IntentProcessor.getType(intentProcessors: IntentProcessors): IntentProcessorType {
+fun IntentProcessor?.getType(intentProcessors: IntentProcessors): IntentProcessorType {
     return when {
         intentProcessors.externalAppIntentProcessors.contains(this) ||
             intentProcessors.customTabIntentProcessor == this ||
@@ -103,8 +103,11 @@ class IntentReceiverActivity : Activity() {
                 modeDependentProcessors +
                 NewTabShortcutIntentProcessor()
 
+        // Call process for side effects, short on the first that returns true
+        intentProcessors.any { it.process(intent) }
+
         val intentProcessorType = intentProcessors
-            .first { it.process(intent) }
+            .firstOrNull { it.matches(intent) }
             .getType(components.intentProcessors)
 
         intent.setClassName(applicationContext, intentProcessorType.activityClassName)
