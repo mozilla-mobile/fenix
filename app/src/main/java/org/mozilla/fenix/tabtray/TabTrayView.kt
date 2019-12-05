@@ -14,6 +14,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.ui.SelectableListItemView
 import org.mozilla.fenix.components.ui.SelectionHolder
 import org.mozilla.fenix.components.ui.SelectionInteractor
+import org.mozilla.fenix.library.LibraryPageView
 
 interface TabTrayInteractor : SelectionInteractor<Tab> {
     fun closeButtonTapped(tab: Tab)
@@ -79,13 +80,10 @@ class TabTrayAdapter(
 class TabTrayView(
     val container: ViewGroup,
     val interactor: TabTrayInteractor
-) : LayoutContainer {
+) : LibraryPageView(container), LayoutContainer {
 
     val tabTrayAdapter = TabTrayAdapter(interactor)
-
-    override val containerView: View?
-        get() = container
-
+    
     val view: View = LayoutInflater.from(container.context)
         .inflate(R.layout.component_tab_tray, container, true)
 
@@ -98,5 +96,15 @@ class TabTrayView(
 
     fun update(state: TabTrayFragmentState) {
         tabTrayAdapter.updateState(state)
+
+        if(state.selectedTabs.size == 0) {
+            setUiForNormalMode(
+                view.context.getString(R.string.tab_tray_title),
+                view.tab_tray_list)
+        } else {
+            setUiForSelectingMode(
+                view.context.getString(R.string.history_multi_select_title, state.selectedTabs.size),
+                view.tab_tray_list)
+        }
     }
 }
