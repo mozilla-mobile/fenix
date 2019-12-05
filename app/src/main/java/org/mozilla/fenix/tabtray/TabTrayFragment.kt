@@ -126,7 +126,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
     override fun onResume() {
         super.onResume()
-        activity?.title = getString(R.string.tab_tray_title)
+        //activity?.title = getString(R.string.tab_tray_title)
         (activity as AppCompatActivity).supportActionBar?.show()
     }
 
