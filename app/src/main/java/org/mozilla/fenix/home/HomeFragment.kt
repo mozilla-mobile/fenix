@@ -383,7 +383,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun dispatchModeChanges(mode: Mode) {
-        homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
+        if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
+            homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
+        }
     }
 
     private fun invokePendingDeleteJobs() {
