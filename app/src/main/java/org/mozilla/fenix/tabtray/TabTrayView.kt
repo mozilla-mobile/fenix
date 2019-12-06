@@ -51,7 +51,7 @@ class TabItemViewHolder(
 class TabTrayAdapter(
     private val interactor: TabTrayInteractor
 ): RecyclerView.Adapter<TabItemViewHolder>(), SelectionHolder<Tab> {
-    private var state = TabTrayFragmentState(listOf(), setOf())
+    private var state = TabTrayFragmentState(listOf(), TabTrayFragmentState.Mode.Normal)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
@@ -74,7 +74,7 @@ class TabTrayAdapter(
     }
 
     override val selectedItems: Set<Tab>
-        get() = state.selectedTabs
+        get() = state.mode.selectedTabs
 }
 
 class TabTrayView(
@@ -97,14 +97,8 @@ class TabTrayView(
     fun update(state: TabTrayFragmentState) {
         tabTrayAdapter.updateState(state)
 
-        if(state.selectedTabs.size == 0) {
-            setUiForNormalMode(
-                view.context.getString(R.string.tab_tray_title),
-                view.tab_tray_list)
-        } else {
-            setUiForSelectingMode(
-                view.context.getString(R.string.history_multi_select_title, state.selectedTabs.size),
-                view.tab_tray_list)
-        }
+
     }
+
+
 }

@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -36,6 +37,7 @@ import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.BrowserSessionsObserver
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
@@ -103,7 +105,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             TabTrayFragmentStore(
                 TabTrayFragmentState(
                     tabs = getListOfSessions(),
-                    selectedTabs = setOf()
+                    mode = TabTrayFragmentState.Mode.Normal
                 )
             )
         }
@@ -121,6 +123,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
+            // activity?.title = it.appBarTitle(requireContext())
+            val (foregroundColor, backgroundColor) = it.appBarBackground(requireContext())
+
+            val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
+            toolbar?.setToolbarColors(foregroundColor, backgroundColor)
         }
     }
 
@@ -137,11 +144,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.select_menu_item -> {
-                logDebug("davidwalsh", "SELECT!")
                 true
             }
             R.id.share_menu_item -> {
-                share(tabTrayStore.state.selectedTabs.toList())
+                // share(tabTrayStore.state.selecttoListedTabs.toList())
+                share(tabTrayStore.state.tabs.toList())
                 true
             }
             R.id.close_menu_item -> {
