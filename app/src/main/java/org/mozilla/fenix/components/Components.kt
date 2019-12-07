@@ -44,7 +44,8 @@ class Components(private val context: Context) {
             useCases.sessionUseCases,
             useCases.searchUseCases,
             core.client,
-            core.customTabsStore
+            core.customTabsStore,
+            core.webAppManifestStorage
         )
     }
     val analytics by lazy { Analytics(context) }
