@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings.search
 import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.custom_search_engine.*
@@ -38,7 +38,8 @@ import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
-class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
+class AddSearchEngineFragment :
+    Fragment(R.layout.fragment_add_search_engine), CompoundButton.OnCheckedChangeListener {
     private var availableEngines: List<SearchEngine> = listOf()
     private var selectedIndex: Int = -1
     private val engineViews = mutableListOf<View>()
@@ -57,14 +58,6 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         }
 
         selectedIndex = if (availableEngines.isEmpty()) CUSTOM_INDEX else FIRST_INDEX
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_search_engine, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

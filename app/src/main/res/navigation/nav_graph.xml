@@ -37,7 +37,7 @@
 
     <action
         android:id="@+id/action_global_searchEngineFragment"
-        app:destination="@id/searchEngineFragment" />
+        app:destination="@id/searchEngineGraph" />
 
     <action
         android:id="@+id/action_global_accessibilityFragment"
@@ -106,58 +106,13 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_searchFragment_to_searchEngineFragment"
-            app:destination="@id/searchEngineFragment"
+            app:destination="@id/searchEngineGraph"
             app:popUpTo="@+id/searchFragment" />
         <argument
             android:name="pastedText"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/SitePermissionsManagePhoneFeature"
-        android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsManagePhoneFeatureFragment"
-        tools:layout="@layout/fragment_manage_site_permissions_feature_phone">
-        <argument
-            android:name="permission"
-            app:argType="integer" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/sitePermissionsExceptionsFragment"
-        android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsExceptionsFragment"
-        android:label="@string/preference_exceptions"
-        tools:layout="@layout/fragment_site_permissions_exceptions">
-        <action
-            android:id="@+id/action_site_permissions_to_exceptions_to_site_permissions_details"
-            app:destination="@id/sitePermissionsDetailsExceptionsFragment"
-            app:popUpTo="@+id/sitePermissionsExceptionsFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/sitePermissionsDetailsExceptionsFragment"
-        android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsDetailsExceptionsFragment"
-        tools:layout="@xml/site_permissions_details_exceptions_preferences">
-        <action
-            android:id="@+id/action_site_permissions_to_exceptions_to_manage_phone_feature"
-            app:destination="@id/sitePermissionsManageExceptionsPhoneFeatureFragment"
-            app:popUpTo="@+id/sitePermissionsDetailsExceptionsFragment" />
-        <argument
-            android:name="sitePermissions"
-            app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/sitePermissionsManageExceptionsPhoneFeatureFragment"
-        android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsManageExceptionsPhoneFeatureFragment"
-        tools:layout="@layout/fragment_manage_site_permissions_feature_phone">
-        <argument
-            android:name="phoneFeatureId"
-            app:argType="integer" />
-        <argument
-            android:name="sitePermissions"
-            app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
     </fragment>
 
     <fragment
@@ -319,7 +274,8 @@
     <fragment
         android:id="@+id/bookmarkAddFolderFragment"
         android:name="org.mozilla.fenix.library.bookmarks.addfolder.AddBookmarkFolderFragment"
-        android:label="@string/bookmark_add_folder_fragment_label">
+        android:label="@string/bookmark_add_folder_fragment_label"
+        tools:layout="@layout/fragment_edit_bookmark">
         <action
             android:id="@+id/action_bookmarkAddFolderFragment_to_bookmarkSelectFolderFragment"
             app:destination="@id/bookmarkSelectFolderFragment" />
@@ -357,7 +313,7 @@
             app:popUpTo="@+id/settingsFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_sitePermissionsFragment"
-            app:destination="@id/sitePermissionsFragment" />
+            app:destination="@id/sitePermissionsGraph" />
         <action
             android:id="@+id/action_settingsFragment_to_loginsFragment"
             app:destination="@id/loginsFragment" />
@@ -369,7 +325,7 @@
             app:destination="@id/accountSettingsFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_searchEngineFragment"
-            app:destination="@id/searchEngineFragment" />
+            app:destination="@id/searchEngineGraph" />
         <action
             android:id="@+id/action_settingsFragment_to_turnOnSyncFragment"
             app:destination="@id/turnOnSyncFragment" />
@@ -381,7 +337,7 @@
             app:destination="@id/themeFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_trackingProtectionFragment"
-            app:destination="@id/trackingProtectionFragment" />
+            app:destination="@id/trackingProtectionGraph" />
         <action
             android:id="@+id/action_settingsFragment_to_deleteBrowsingDataFragment"
             app:destination="@id/deleteBrowsingDataFragment" />
@@ -402,19 +358,6 @@
         android:id="@+id/dataChoicesFragment"
         android:name="org.mozilla.fenix.settings.DataChoicesFragment"
         android:label="@string/preferences_data_choices" />
-    <fragment
-        android:id="@+id/sitePermissionsFragment"
-        android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsFragment"
-        android:label="@string/preferences_site_permissions">
-        <action
-            android:id="@+id/action_site_permissions_to_manage_phone_features"
-            app:destination="@id/SitePermissionsManagePhoneFeature"
-            app:popUpTo="@id/sitePermissionsFragment" />
-        <action
-            android:id="@+id/action_site_permissions_to_exceptions"
-            app:destination="@id/sitePermissionsExceptionsFragment"
-            app:popUpTo="@id/sitePermissionsFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/accessibilityFragment"
@@ -428,22 +371,12 @@
             android:id="@+id/action_accountSettingsFragment_to_signOutFragment"
             app:destination="@id/signOutFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/searchEngineFragment"
-        android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
-        android:label="@string/preferences_search">
-        <action
-            android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
-            app:destination="@+id/addSearchEngineFragment" />
-        <action
-            android:id="@+id/action_searchEngineFragment_to_editCustomSearchEngineFragment"
-            app:destination="@+id/editCustomSearchEngineFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/turnOnSyncFragment"
         android:name="org.mozilla.fenix.settings.account.TurnOnSyncFragment"
-        android:label="@string/preferences_sync">
+        android:label="@string/preferences_sync"
+        tools:layout="@layout/fragment_turn_on_sync">
         <action
             android:id="@+id/action_turnOnSyncFragment_to_pairFragment"
             app:destination="@id/pairFragment" />
@@ -452,12 +385,14 @@
     <fragment
         android:id="@+id/pairFragment"
         android:name="org.mozilla.fenix.settings.PairFragment"
-        android:label="@string/preferences_sync" />
+        android:label="@string/preferences_sync"
+        tools:layout="@layout/fragment_pair" />
 
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.mozilla.fenix.settings.AboutFragment"
-        android:label="AboutFragment">
+        android:label="AboutFragment"
+        tools:layout="@layout/fragment_about">
         <action
             android:id="@+id/action_aboutFragment_to_browserFragment"
             app:destination="@id/browserFragment" />
@@ -479,33 +414,9 @@
         android:name="org.mozilla.fenix.settings.ThemeFragment"
         android:label="@string/preferences_theme" />
     <fragment
-        android:id="@+id/trackingProtectionFragment"
-        android:name="org.mozilla.fenix.settings.TrackingProtectionFragment"
-        android:label="TrackingProtectionFragment">
-        <action
-            android:id="@+id/action_trackingProtectionFragment_to_exceptionsFragment"
-            app:destination="@id/exceptionsFragment" />
-        <action
-            android:id="@+id/action_trackingProtectionFragment_to_trackingProtectionBlockingFragment"
-            app:destination="@id/trackingProtectionBlockingFragment" />
-        <action
-            android:id="@+id/action_trackingProtectionFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataFragment"
         android:label="@string/preferences_delete_browsing_data" />
-    <fragment
-        android:id="@+id/exceptionsFragment"
-        android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
-        android:label="@string/preference_exceptions">
-        <action
-            android:id="@+id/action_exceptionsFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@id/settingsFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
     <dialog
         android:id="@+id/collectionCreationFragment"
         android:name="org.mozilla.fenix.collections.CollectionCreationFragment"
@@ -565,7 +476,8 @@
     </dialog>
     <dialog
         android:id="@+id/quickSettingsSheetDialogFragment"
-        android:name="org.mozilla.fenix.settings.quicksettings.QuickSettingsSheetDialogFragment">
+        android:name="org.mozilla.fenix.settings.quicksettings.QuickSettingsSheetDialogFragment"
+        tools:layout="@layout/fragment_quick_settings_dialog_sheet">
         <argument
             android:name="sessionId"
             app:argType="string" />
@@ -593,14 +505,16 @@
     </fragment>
     <dialog
         android:id="@+id/signOutFragment"
-        android:name="org.mozilla.fenix.settings.account.SignOutFragment" />
+        android:name="org.mozilla.fenix.settings.account.SignOutFragment"
+        tools:layout="@layout/fragment_sign_out" />
     <action
         android:id="@+id/action_global_shareFragment"
         app:destination="@id/shareFragment" />
     <dialog
         android:id="@+id/trackingProtectionPanelDialogFragment"
         android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragment"
-        android:label="TrackingProtectionPanelDialogFragment">
+        android:label="TrackingProtectionPanelDialogFragment"
+        tools:layout="@layout/fragment_tracking_protection">
         <argument
             android:name="sessionId"
             app:argType="string" />
@@ -616,16 +530,8 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_trackingProtectionPanelDialogFragment_to_trackingProtectionFragment"
-            app:destination="@id/trackingProtectionFragment" />
+            app:destination="@id/trackingProtectionGraph" />
     </dialog>
-    <fragment
-        android:id="@+id/trackingProtectionBlockingFragment"
-        android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionBlockingFragment"
-        android:label="TrackingProtectionBlockingFragment">
-        <argument
-            android:name="strictMode"
-            app:argType="boolean" />
-    </fragment>
     <fragment
         android:id="@+id/deleteBrowsingDataOnQuitFragment"
         android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitFragment"
@@ -634,7 +540,8 @@
     <fragment
         android:id="@+id/addNewDeviceFragment"
         android:name="org.mozilla.fenix.share.AddNewDeviceFragment"
-        android:label="AddNewDeviceFragment" />
+        android:label="AddNewDeviceFragment"
+        tools:layout="@layout/fragment_add_new_device" />
     <fragment
         android:id="@+id/defaultBrowserSettingsFragment"
         android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment"
@@ -662,19 +569,135 @@
             app:argType="org.mozilla.fenix.logins.SavedLoginsItem" />
     </fragment>
     <fragment
-        android:id="@+id/addSearchEngineFragment"
-        android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
-        android:label="AddSearchEngineFragment" />
-    <fragment
-        android:id="@+id/editCustomSearchEngineFragment"
-        android:name="org.mozilla.fenix.settings.search.EditCustomSearchEngineFragment"
-        android:label="EditCustomSearchEngineFragment">
-        <argument
-            android:name="searchEngineIdentifier"
-            app:argType="string" />
-    </fragment>
-    <fragment
         android:id="@+id/toolbarSettingsFragment"
         android:name="org.mozilla.fenix.settings.ToolbarSettingsFragment"
         android:label="ToolbarSettingsFragment" />
+
+    <navigation
+        android:id="@+id/sitePermissionsGraph"
+        app:startDestination="@id/sitePermissionsFragment" >
+        <fragment
+            android:id="@+id/sitePermissionsFragment"
+            android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsFragment"
+            android:label="@string/preferences_site_permissions">
+            <action
+                android:id="@+id/action_site_permissions_to_manage_phone_features"
+                app:destination="@id/SitePermissionsManagePhoneFeature"
+                app:popUpTo="@id/sitePermissionsFragment" />
+            <action
+                android:id="@+id/action_site_permissions_to_exceptions"
+                app:destination="@id/sitePermissionsExceptionsFragment"
+                app:popUpTo="@id/sitePermissionsFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/sitePermissionsExceptionsFragment"
+            android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsExceptionsFragment"
+            android:label="@string/preference_exceptions"
+            tools:layout="@layout/fragment_site_permissions_exceptions">
+            <action
+                android:id="@+id/action_site_permissions_to_exceptions_to_site_permissions_details"
+                app:destination="@id/sitePermissionsDetailsExceptionsFragment"
+                app:popUpTo="@+id/sitePermissionsExceptionsFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/SitePermissionsManagePhoneFeature"
+            android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsManagePhoneFeatureFragment"
+            tools:layout="@layout/fragment_manage_site_permissions_feature_phone">
+            <argument
+                android:name="permission"
+                app:argType="integer" />
+        </fragment>
+        <fragment
+            android:id="@+id/sitePermissionsDetailsExceptionsFragment"
+            android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsDetailsExceptionsFragment"
+            tools:layout="@xml/site_permissions_details_exceptions_preferences">
+            <action
+                android:id="@+id/action_site_permissions_to_exceptions_to_manage_phone_feature"
+                app:destination="@id/sitePermissionsManageExceptionsPhoneFeatureFragment"
+                app:popUpTo="@+id/sitePermissionsDetailsExceptionsFragment" />
+            <argument
+                android:name="sitePermissions"
+                app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
+        </fragment>
+        <fragment
+            android:id="@+id/sitePermissionsManageExceptionsPhoneFeatureFragment"
+            android:name="org.mozilla.fenix.settings.sitepermissions.SitePermissionsManageExceptionsPhoneFeatureFragment"
+            tools:layout="@layout/fragment_manage_site_permissions_feature_phone">
+            <argument
+                android:name="phoneFeatureId"
+                app:argType="integer" />
+            <argument
+                android:name="sitePermissions"
+                app:argType="mozilla.components.feature.sitepermissions.SitePermissions" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/searchEngineGraph"
+        app:startDestination="@id/searchEngineFragment">
+        <fragment
+            android:id="@+id/searchEngineFragment"
+            android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
+            android:label="@string/preferences_search">
+            <action
+                android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
+                app:destination="@+id/addSearchEngineFragment" />
+            <action
+                android:id="@+id/action_searchEngineFragment_to_editCustomSearchEngineFragment"
+                app:destination="@+id/editCustomSearchEngineFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/addSearchEngineFragment"
+            android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
+            android:label="AddSearchEngineFragment"
+            tools:layout="@layout/fragment_add_search_engine" />
+        <fragment
+            android:id="@+id/editCustomSearchEngineFragment"
+            android:name="org.mozilla.fenix.settings.search.EditCustomSearchEngineFragment"
+            android:label="EditCustomSearchEngineFragment"
+            tools:layout="@layout/fragment_add_search_engine">
+            <argument
+                android:name="searchEngineIdentifier"
+                app:argType="string" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/trackingProtectionGraph"
+        app:startDestination="@id/trackingProtectionFragment" >
+        <fragment
+            android:id="@+id/exceptionsFragment"
+            android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
+            android:label="@string/preference_exceptions"
+            tools:layout="@layout/fragment_exceptions" >
+            <action
+                android:id="@+id/action_exceptionsFragment_to_browserFragment"
+                app:destination="@id/browserFragment"
+                app:popUpTo="@id/settingsFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/trackingProtectionBlockingFragment"
+            android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionBlockingFragment"
+            android:label="TrackingProtectionBlockingFragment"
+            tools:layout="@layout/fragment_tracking_protection_blocking">
+            <argument
+                android:name="strictMode"
+                app:argType="boolean" />
+        </fragment>
+        <fragment
+            android:id="@+id/trackingProtectionFragment"
+            android:name="org.mozilla.fenix.settings.TrackingProtectionFragment"
+            android:label="TrackingProtectionFragment">
+            <action
+                android:id="@+id/action_trackingProtectionFragment_to_exceptionsFragment"
+                app:destination="@id/exceptionsFragment" />
+            <action
+                android:id="@+id/action_trackingProtectionFragment_to_trackingProtectionBlockingFragment"
+                app:destination="@id/trackingProtectionBlockingFragment" />
+            <action
+                android:id="@+id/action_trackingProtectionFragment_to_browserFragment"
+                app:destination="@id/browserFragment" />
+        </fragment>
+    </navigation>
 </navigation>
