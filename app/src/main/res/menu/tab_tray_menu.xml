@@ -7,9 +7,10 @@
 
     <!-- Select -->
     <item
-        android:id="@+id/save_to_collection"
+        android:id="@+id/tab_tray_menu_item_save"
         android:title="@string/tab_tray_menu_item_save"
         android:icon="@drawable/ic_tab_collection"
+        android:visibility="gone"
         app:showAsAction="always" />
 
     <!-- Select -->
