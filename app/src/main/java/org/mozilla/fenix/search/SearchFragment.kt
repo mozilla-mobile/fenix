@@ -38,6 +38,7 @@ import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -87,7 +88,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         )
 
         val showSearchSuggestions =
-            if ((activity as HomeActivity).browsingModeManager.mode.isPrivate) {
+            if (DefaultBrowsingModeManager.mode.isPrivate) {
                 requireContext().settings().shouldShowSearchSuggestions &&
                         requireContext().settings().shouldShowSearchSuggestionsInPrivate
             } else {
@@ -130,7 +131,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             view.toolbar_component_wrapper,
             searchInteractor,
             historyStorageProvider(),
-            (activity as HomeActivity).browsingModeManager.mode.isPrivate
+            DefaultBrowsingModeManager.mode.isPrivate
         )
 
         val urlView = toolbarView.view

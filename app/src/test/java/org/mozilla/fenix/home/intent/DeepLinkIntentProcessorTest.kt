@@ -19,7 +19,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.TestApplication
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -116,7 +116,7 @@ class DeepLinkIntentProcessorTest {
     fun `process enable_private_browsing deep link`() {
         assertTrue(processor.process(testIntent("fenix://enable_private_browsing"), navController, out))
 
-        verify { activity.browsingModeManager.mode = BrowsingMode.Private }
+        assertTrue(DefaultBrowsingModeManager.mode.isPrivate)
         verify { navController.navigate(NavGraphDirections.actionGlobalHomeFragment()) }
         verify { out wasNot Called }
     }

@@ -22,6 +22,8 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
@@ -92,6 +94,7 @@ class DefaultSearchControllerTest {
     @Test
     fun handleTextChangedNonEmpty() {
         val text = "fenix"
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
 
         controller.handleTextChanged(text)
 
@@ -119,6 +122,7 @@ class DefaultSearchControllerTest {
     @Test
     fun `do not show search shortcuts when setting enabled AND query non-empty`() {
         val text = "mozilla"
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
 
         controller.handleTextChanged(text)
 
@@ -143,6 +147,7 @@ class DefaultSearchControllerTest {
 
     @Test
     fun `do not show search shortcuts when setting disabled AND query non-empty`() {
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
         testContext.settings().preferences
             .edit()
             .putBoolean(testContext.getString(R.string.pref_key_show_search_shortcuts), false)

@@ -16,6 +16,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -34,6 +35,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
+import mozilla.components.support.utils.Browsers
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
@@ -67,6 +69,7 @@ import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
+import java.lang.ref.WeakReference
 import org.mozilla.fenix.utils.BrowsersCache
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -74,7 +77,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
-    lateinit var browsingModeManager: BrowsingModeManager
 
     private var sessionObserver: SessionManager.Observer? = null
 
@@ -181,7 +183,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         val intentProcessors = listOf(CrashReporterIntentProcessor()) + externalSourceIntentProcessors
         intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
-        browsingModeManager.mode = getModeFromIntentOrLastKnown(intent)
+        DefaultBrowsingModeManager.mode = getModeFromIntentOrLastKnown(intent)
     }
 
     /**
@@ -237,7 +239,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
         settings().lastKnownMode = mode
-        browsingModeManager = createBrowsingModeManager(mode)
+        createBrowsingModeManager(mode)
         themeManager = createThemeManager()
         themeManager.setActivityTheme(this)
         themeManager.applyStatusBarTheme(this)
@@ -338,7 +340,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         engine: SearchEngine?,
         forceSearch: Boolean
     ) {
-        val mode = browsingModeManager.mode
+        val mode = DefaultBrowsingModeManager.mode
 
         val loadUrlUseCase = if (newTab) {
             when (mode) {
@@ -369,19 +371,23 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     fun updateThemeForSession(session: Session) {
         val sessionMode = BrowsingMode.fromBoolean(session.private)
-        if (sessionMode != browsingModeManager.mode) {
-            browsingModeManager.mode = sessionMode
+        if (sessionMode != DefaultBrowsingModeManager.mode) {
+            DefaultBrowsingModeManager.mode = sessionMode
         }
     }
 
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
-        return DefaultBrowsingModeManager(initialMode) { newMode ->
-            themeManager.currentTheme = newMode
-        }
+    protected open fun createBrowsingModeManager(initialMode: BrowsingMode) {
+        DefaultBrowsingModeManager.initMode(initialMode)
+
+        DefaultBrowsingModeManager.currentMode.observe(
+            this,
+            Observer<BrowsingMode> { newMode ->
+                themeManager.currentTheme = newMode
+            })
     }
 
     protected open fun createThemeManager(): ThemeManager {
-        return DefaultThemeManager(browsingModeManager.mode, this)
+        return DefaultThemeManager(DefaultBrowsingModeManager.mode, this)
     }
 
     private fun openPopup(webExtensionState: WebExtensionState) {

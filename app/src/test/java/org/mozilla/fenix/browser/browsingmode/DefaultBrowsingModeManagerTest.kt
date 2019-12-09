@@ -4,50 +4,54 @@
 
 package org.mozilla.fenix.browser.browsingmode
 
-import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
+import androidx.lifecycle.Observer
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.clearMocks
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.TestApplication
+import org.robolectric.annotation.Config
 
+@RunWith(AndroidJUnit4::class)
+@Config(application = TestApplication::class)
 class DefaultBrowsingModeManagerTest {
-
-    @MockK(relaxed = true) lateinit var callback: (BrowsingMode) -> Unit
-    lateinit var manager: BrowsingModeManager
 
     private val initMode = BrowsingMode.Normal
 
-    @Before
-    fun before() {
-        MockKAnnotations.init(this)
-        manager = DefaultBrowsingModeManager(initMode, callback)
-    }
-
     @Test
-    fun `WHEN mode is updated THEN callback is invoked`() {
-        verify(exactly = 0) { callback.invoke(any()) }
+    fun `AWHEN mode is updated THEN callback is invoked`() {
+        DefaultBrowsingModeManager.initMode(initMode)
+        val mockedObserver: Observer<BrowsingMode> = spyk(Observer { })
+        DefaultBrowsingModeManager.currentMode.observeForever(mockedObserver)
 
-        manager.mode = BrowsingMode.Private
-        manager.mode = BrowsingMode.Private
-        manager.mode = BrowsingMode.Private
+        // Clear invocations because liveData might have been called before
+        clearMocks(mockedObserver)
 
-        verify(exactly = 3) { callback.invoke(any()) }
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
 
-        manager.mode = BrowsingMode.Normal
-        manager.mode = BrowsingMode.Normal
+        verify(exactly = 3) { mockedObserver.onChanged(any()) }
 
-        verify(exactly = 5) { callback.invoke(any()) }
+        DefaultBrowsingModeManager.mode = BrowsingMode.Normal
+        DefaultBrowsingModeManager.mode = BrowsingMode.Normal
+
+        verify(exactly = 5) { mockedObserver.onChanged(any()) }
     }
 
     @Test
     fun `WHEN mode is updated THEN it should be returned from get`() {
-        assertEquals(BrowsingMode.Normal, manager.mode)
+        DefaultBrowsingModeManager.initMode(initMode)
 
-        manager.mode = BrowsingMode.Private
-        assertEquals(BrowsingMode.Private, manager.mode)
+        assertEquals(BrowsingMode.Normal, DefaultBrowsingModeManager.mode)
 
-        manager.mode = BrowsingMode.Normal
-        assertEquals(BrowsingMode.Normal, manager.mode)
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
+        assertEquals(BrowsingMode.Private, DefaultBrowsingModeManager.mode)
+
+        DefaultBrowsingModeManager.mode = BrowsingMode.Normal
+        assertEquals(BrowsingMode.Normal, DefaultBrowsingModeManager.mode)
     }
 }

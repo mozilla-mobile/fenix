@@ -18,6 +18,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
+import org.junit.Assert.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -33,14 +34,17 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.FenixSnackbar
@@ -53,9 +57,13 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @UseExperimental(ObsoleteCoroutinesApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
 class DefaultBrowserToolbarControllerTest {
 
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
@@ -63,7 +71,6 @@ class DefaultBrowserToolbarControllerTest {
     private var swipeRefreshLayout: SwipeRefreshLayout = mockk(relaxed = true)
     private var activity: HomeActivity = mockk(relaxed = true)
     private var analytics: Analytics = mockk(relaxed = true)
-    private val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
     private var navController: NavController = mockk(relaxed = true)
     private var findInPageLauncher: () -> Unit = mockk(relaxed = true)
     private val engineView: EngineView = mockk(relaxed = true)
@@ -89,7 +96,6 @@ class DefaultBrowserToolbarControllerTest {
         controller = DefaultBrowserToolbarController(
             activity = activity,
             navController = navController,
-            browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
             engineView = engineView,
             adjustBackgroundAndNavigate = adjustBackgroundAndNavigate,
@@ -359,7 +365,7 @@ class DefaultBrowserToolbarControllerTest {
     fun handleToolbarNewPrivateTabPress() {
         val item = ToolbarMenu.Item.NewPrivateTab
 
-        every { browsingModeManager.mode } returns BrowsingMode.Normal
+        DefaultBrowsingModeManager.mode = BrowsingMode.Normal
 
         controller.handleToolbarItemInteraction(item)
 
@@ -369,7 +375,8 @@ class DefaultBrowserToolbarControllerTest {
                 .actionBrowserFragmentToSearchFragment(sessionId = null)
             adjustBackgroundAndNavigate.invoke(directions)
         }
-        verify { browsingModeManager.mode = BrowsingMode.Private }
+
+        assertTrue(DefaultBrowsingModeManager.mode.isPrivate)
     }
 
     @Test
@@ -430,7 +437,7 @@ class DefaultBrowserToolbarControllerTest {
     fun handleToolbarNewTabPress() {
         val item = ToolbarMenu.Item.NewTab
 
-        every { browsingModeManager.mode } returns BrowsingMode.Private
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
 
         controller.handleToolbarItemInteraction(item)
 
@@ -440,7 +447,8 @@ class DefaultBrowserToolbarControllerTest {
                 .actionBrowserFragmentToSearchFragment(sessionId = null)
             adjustBackgroundAndNavigate.invoke(directions)
         }
-        verify { browsingModeManager.mode = BrowsingMode.Normal }
+
+        assertFalse(DefaultBrowsingModeManager.mode.isPrivate)
     }
 
     @Test
@@ -497,7 +505,6 @@ class DefaultBrowserToolbarControllerTest {
         controller = DefaultBrowserToolbarController(
             activity = activity,
             navController = navController,
-            browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
             engineView = engineView,
             adjustBackgroundAndNavigate = adjustBackgroundAndNavigate,

@@ -17,6 +17,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
@@ -56,7 +57,7 @@ class DefaultBookmarkController(
     private val services: Services = activity.components.services
 
     override fun handleBookmarkTapped(item: BookmarkNode) {
-        openInNewTab(item.url!!, true, BrowserDirection.FromBookmarks, activity.browsingModeManager.mode)
+        openInNewTab(item.url!!, true, BrowserDirection.FromBookmarks, DefaultBrowsingModeManager.mode)
     }
 
     override fun handleBookmarkExpand(folder: BookmarkNode) {
@@ -116,8 +117,9 @@ class DefaultBookmarkController(
         mode: BrowsingMode
     ) {
         invokePendingDeletion.invoke()
+
+        DefaultBrowsingModeManager.mode = mode
         with(activity) {
-            browsingModeManager.mode = mode
             openToBrowserAndLoad(searchTermOrURL, newTab, from)
         }
     }

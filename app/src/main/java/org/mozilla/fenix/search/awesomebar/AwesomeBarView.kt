@@ -28,9 +28,8 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.asActivity
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
@@ -305,8 +304,7 @@ class AwesomeBarView(
     }
 
     private fun isBrowsingModePrivate(): Boolean {
-        return (container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate
-            ?: false
+        return DefaultBrowsingModeManager.mode.isPrivate
     }
 
     private fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): SearchSuggestionProvider? {

@@ -26,6 +26,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.createSynchronousPagedHistoryProvider
@@ -168,8 +169,8 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
                 selectedItem.url
             }
 
+            DefaultBrowsingModeManager.mode = BrowsingMode.Private
             (activity as HomeActivity).apply {
-                browsingModeManager.mode = BrowsingMode.Private
                 supportActionBar?.hide()
             }
             nav(

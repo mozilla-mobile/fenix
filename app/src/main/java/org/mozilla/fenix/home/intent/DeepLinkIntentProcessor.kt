@@ -14,6 +14,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GlobalDirections
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.ext.alreadyOnDestination
 
 /**
@@ -56,7 +57,7 @@ class DeepLinkIntentProcessor(
     private fun handleDeepLinkSideEffects(deepLink: Uri) {
         when (deepLink.host) {
             "enable_private_browsing" -> {
-                activity.browsingModeManager.mode = BrowsingMode.Private
+                DefaultBrowsingModeManager.mode = BrowsingMode.Private
             }
             "make_default_browser" -> {
                 if (SDK_INT >= Build.VERSION_CODES.N) {

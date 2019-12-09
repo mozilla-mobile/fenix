@@ -12,6 +12,8 @@ import mozilla.components.browser.session.Session
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint.ACTION
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint.NONE
@@ -88,7 +90,7 @@ class DefaultSearchController(
         store.dispatch(
             SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                 text.isNotEmpty() &&
-                        (context as HomeActivity).browsingModeManager.mode.isPrivate &&
+                        DefaultBrowsingModeManager.mode.isPrivate &&
                         !context.settings().shouldShowSearchSuggestionsInPrivate &&
                         !context.settings().showSearchSuggestionsInPrivateOnboardingFinished
             )

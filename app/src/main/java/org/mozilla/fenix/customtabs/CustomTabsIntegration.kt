@@ -15,6 +15,7 @@ import mozilla.components.feature.customtabs.CustomTabsToolbarFeature
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.settings
 
@@ -25,8 +26,7 @@ class CustomTabsIntegration(
     activity: Activity,
     engineLayout: View,
     onItemTapped: (ToolbarMenu.Item) -> Unit = {},
-    shouldReverseItems: Boolean,
-    isPrivate: Boolean
+    shouldReverseItems: Boolean
 ) : LifecycleAwareFeature, UserInteractionHandler {
 
     init {
@@ -70,7 +70,7 @@ class CustomTabsIntegration(
 
         // If in private mode, override toolbar background to use private color
         // See #5334
-        if (isPrivate) {
+        if (DefaultBrowsingModeManager.mode.isPrivate) {
             sessionManager.findSessionById(sessionId)?.apply {
                 val config = customTabConfig
                 customTabConfig = config?.copy(

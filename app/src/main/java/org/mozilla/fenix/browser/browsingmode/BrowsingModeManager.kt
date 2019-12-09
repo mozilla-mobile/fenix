@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.browser.browsingmode
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -32,18 +34,22 @@ interface BrowsingModeManager {
 }
 
 /**
- * Wraps a [BrowsingMode] and executes a callback whenever [mode] is updated.
+ * Wraps a [BrowsingMode] and triggers [mutableCurrentMode] liveData whenever [mode] is updated.
  */
-class DefaultBrowsingModeManager(
-    private var _mode: BrowsingMode,
-    private val modeDidChange: (BrowsingMode) -> Unit
-) : BrowsingModeManager {
+object DefaultBrowsingModeManager : BrowsingModeManager {
+    private lateinit var _mode: BrowsingMode
+    private val mutableCurrentMode = MutableLiveData<BrowsingMode>()
+    val currentMode: LiveData<BrowsingMode> get() = mutableCurrentMode
 
     override var mode: BrowsingMode
         get() = _mode
         set(value) {
             _mode = value
-            modeDidChange(value)
+            mutableCurrentMode.value = value
             Settings.instance?.lastKnownMode = value
         }
+
+    fun initMode(mode: BrowsingMode) {
+        this._mode = mode
+    }
 }

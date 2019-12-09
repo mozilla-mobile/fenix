@@ -15,8 +15,10 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
@@ -25,16 +27,23 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
 class BookmarkControllerTest {
 
     private lateinit var controller: BookmarkController
@@ -109,16 +118,16 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkTapped should respect browsing mode`() {
         // if in normal mode, should be in normal mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
+        every { DefaultBrowsingModeManager.mode } returns BrowsingMode.Normal
 
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Normal, DefaultBrowsingModeManager.mode)
 
         // if in private mode, should be in private mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+        every { DefaultBrowsingModeManager.mode } returns BrowsingMode.Private
 
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Private, DefaultBrowsingModeManager.mode)
     }
 
     @Test
@@ -200,24 +209,32 @@ class BookmarkControllerTest {
 
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Normal' tab`() {
+        mockkObject(DefaultBrowsingModeManager)
+
         controller.handleOpeningBookmark(item, BrowsingMode.Normal)
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+            DefaultBrowsingModeManager.mode = BrowsingMode.Normal
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
+
+        unmockkObject(DefaultBrowsingModeManager)
     }
 
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Private' tab`() {
+        mockkObject(DefaultBrowsingModeManager)
+
         controller.handleOpeningBookmark(item, BrowsingMode.Private)
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+            DefaultBrowsingModeManager.mode = BrowsingMode.Private
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
+
+        unmockkObject(DefaultBrowsingModeManager)
     }
 
     @Test

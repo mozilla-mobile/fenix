@@ -24,6 +24,8 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore.PREF_FILE_SEARCH_ENGINES
 import org.mozilla.fenix.ext.metrics
@@ -110,6 +112,7 @@ class SearchInteractorTest {
 
         mockkObject(Settings)
         every { Settings.getInstance(context = context) } returns settings
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
 
         every { store.state } returns mockk(relaxed = true)
 

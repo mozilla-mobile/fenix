@@ -67,6 +67,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
@@ -106,7 +107,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
+    private val browsingModeManager get() = DefaultBrowsingModeManager
     private var homeAppBarOffset = 0
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
