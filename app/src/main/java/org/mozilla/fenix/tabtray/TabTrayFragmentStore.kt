@@ -26,6 +26,7 @@ sealed class TabTrayFragmentAction: Action {
     data class SelectTab(val tab: Tab) : TabTrayFragmentAction()
     data class DeselectTab(val tab: Tab) : TabTrayFragmentAction()
     object ExitEditMode: TabTrayFragmentAction()
+    object EnterEditMode: TabTrayFragmentAction()
 }
 
 /**
@@ -43,9 +44,13 @@ private fun tabTrayStateReducer(
     action: TabTrayFragmentAction
 ): TabTrayFragmentState {
     return when (action) {
-
+        is TabTrayFragmentAction.EnterEditMode -> state.copy(
+            mode = TabTrayFragmentState.Mode.Editing(emptySet())
+        )
         is TabTrayFragmentAction.SelectTab ->
-            state.copy(mode = TabTrayFragmentState.Mode.Editing(state.mode.selectedTabs + action.tab))
+            state.copy(
+                mode = TabTrayFragmentState.Mode.Editing(state.mode.selectedTabs + action.tab)
+            )
         is TabTrayFragmentAction.DeselectTab -> {
             val selected = state.mode.selectedTabs - action.tab
             state.copy(
@@ -84,10 +89,6 @@ fun TabTrayFragmentState.appBarBackground(context: Context): Pair<Int, Int> {
 fun TabTrayFragmentState.appBarShowCollectionIcon(): Boolean {
     return when (this.mode) {
         is TabTrayFragmentState.Mode.Normal -> false
-        is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
-            false
-        } else {
-            true
-        }
+        is TabTrayFragmentState.Mode.Editing -> true
     }
 }

@@ -134,10 +134,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
             toolbar?.setToolbarColors(foregroundColor, backgroundColor)
 
-            // Show or hide icon based on number of selected items
+            // Show or hide save icon based on number of selected items
             val showCollectionIcon = it.appBarShowCollectionIcon()
             this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible = showCollectionIcon
 
+            // Hide all other icons when showing save icon
             this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
             this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = !showCollectionIcon
             this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = !showCollectionIcon
@@ -156,7 +157,13 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.tab_tray_menu_item_save -> {
+                // TODO:  Trigger the save to collection workflow
+
+                true
+            }
             R.id.select_menu_item -> {
+                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
                 true
             }
             R.id.share_menu_item -> {
