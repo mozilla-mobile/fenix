@@ -96,9 +96,5 @@ class TabTrayView(
 
     fun update(state: TabTrayFragmentState) {
         tabTrayAdapter.updateState(state)
-
-
     }
-
-
 }

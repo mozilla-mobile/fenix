@@ -57,6 +57,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
     var snackbar: FenixSnackbar? = null
 
+    var tabTrayMenu: Menu? = null
+
     private val sessionManager: SessionManager
         get() = requireComponents.core.sessionManager
 
@@ -123,21 +125,32 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
-            // activity?.title = it.appBarTitle(requireContext())
-            val (foregroundColor, backgroundColor) = it.appBarBackground(requireContext())
 
+            // Set the title based on mode and number of selected tabs
+            activity?.title = it.appBarTitle(requireContext())
+
+            // Set title bar colors
+            val (foregroundColor, backgroundColor) = it.appBarBackground(requireContext())
             val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
             toolbar?.setToolbarColors(foregroundColor, backgroundColor)
+
+            // Show or hide icon based on number of selected items
+            val showCollectionIcon = it.appBarShowCollectionIcon()
+            this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible = showCollectionIcon
+
+            this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
+            this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = !showCollectionIcon
+            this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = !showCollectionIcon
         }
     }
 
     override fun onResume() {
         super.onResume()
-        //activity?.title = getString(R.string.tab_tray_title)
         (activity as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        this.tabTrayMenu = menu
         inflater.inflate(R.menu.tab_tray_menu, menu)
     }
 
@@ -147,7 +160,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
                 true
             }
             R.id.share_menu_item -> {
-                // share(tabTrayStore.state.selecttoListedTabs.toList())
                 share(tabTrayStore.state.tabs.toList())
                 true
             }

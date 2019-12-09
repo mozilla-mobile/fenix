@@ -54,16 +54,6 @@ private fun tabTrayStateReducer(
         }
         is TabTrayFragmentAction.ExitEditMode -> state.copy(mode = TabTrayFragmentState.Mode.Normal)
         is TabTrayFragmentAction.UpdateTabs -> state.copy(tabs = action.tabs)
-
-        /**
-        is TabTrayFragmentAction.UpdateTabs -> state.copy(tabs = action.tabs)
-        is TabTrayFragmentAction.SelectTab -> state.copy(
-            selectedTabs = state.selectedTabs + action.tab
-        )
-        is TabTrayFragmentAction.DeselectTab -> state.copy(
-            selectedTabs = state.selectedTabs - action.tab
-        )
-        */
     }
 }
 
@@ -71,7 +61,7 @@ fun TabTrayFragmentState.appBarTitle(context: Context): String {
     return when (this.mode) {
         is TabTrayFragmentState.Mode.Normal -> context.getString(R.string.tab_tray_title)
         is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
-            "Select Tabs to Save" //context.getString("")
+            context.getString(R.string.tab_tray_menu_item_save_select)
         } else {
             context.getString(R.string.history_multi_select_title, this.mode.selectedTabs.size)
         }
@@ -88,5 +78,16 @@ fun TabTrayFragmentState.appBarBackground(context: Context): Pair<Int, Int> {
             ContextCompat.getColor(context, R.color.white_color),
             context.getColorFromAttr(R.attr.accentHighContrast)
         )
+    }
+}
+
+fun TabTrayFragmentState.appBarShowCollectionIcon(): Boolean {
+    return when (this.mode) {
+        is TabTrayFragmentState.Mode.Normal -> false
+        is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
+            false
+        } else {
+            true
+        }
     }
 }
