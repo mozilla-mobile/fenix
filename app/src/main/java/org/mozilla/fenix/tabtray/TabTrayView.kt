@@ -28,6 +28,7 @@ class TabItemViewHolder(
     private var tab: Tab? = null
 
     init {
+        // TODO:  Hide the close button if in edit mode
         view.displayAs(SelectableListItemView.ItemType.CLOSABLE_ITEM)
         view.accessoryView.setOnClickListener {
             tab?.apply(interactor::closeButtonTapped)

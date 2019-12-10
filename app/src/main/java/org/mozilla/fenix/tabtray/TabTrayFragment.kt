@@ -123,6 +123,16 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
         toggleEmptyMessage()
 
+        // Sets the navigation icon callback action
+        val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
+        toolbar?.setNavigationOnClickListener {
+            if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing) {
+                tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
+            } else {
+                findNavController().popBackStack()
+            }
+        }
+
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
 
@@ -131,8 +141,10 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
             // Set title bar colors
             val (foregroundColor, backgroundColor) = it.appBarBackground(requireContext())
-            val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
             toolbar?.setToolbarColors(foregroundColor, backgroundColor)
+
+            // Sets the navigation icon to close
+            toolbar?.setNavigationIcon(it.appBarIcon())
 
             // Show or hide save icon based on number of selected items
             val showCollectionIcon = it.appBarShowCollectionIcon()
