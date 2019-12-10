@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -126,13 +127,12 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toggleEmptyMessage()
-
         // Sets the navigation icon callback action
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
 
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
+            toggleEmptyMessage(it.tabs.isEmpty())
 
             // Set the title based on mode and number of selected tabs
             activity?.title = it.appBarTitle(requireContext())
@@ -145,20 +145,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             val icon = resources.getDrawable(it.appBarIcon(), requireContext().theme)
             icon.setTint(foregroundColor)
             toolbar?.setNavigationIcon(icon)
-
-
-            // Show or hide save icon based on number of selected items
-            val showCollectionIcon = it.appBarShowCollectionIcon()
-            this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
-                isVisible = showCollectionIcon
-                isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
-                getIcon().setTint(foregroundColor)
-            }
-
-            // Hide all other icons when showing save icon
-            this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
-            this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = !showCollectionIcon
-            this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = !showCollectionIcon
+            
+            updateMenuItems()
         }
     }
 
@@ -168,8 +156,12 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        this.tabTrayMenu = menu
         inflater.inflate(R.menu.tab_tray_menu, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        this.tabTrayMenu = menu
+        updateMenuItems()
     }
 
     override fun onBackPressed(): Boolean {
@@ -234,8 +226,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 }
             }
         }
-
-        toggleEmptyMessage()
     }
 
     override fun open(item: Tab) {
@@ -321,8 +311,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             operation = deleteOperation,
             anchorView = bottom_bar
         )
-
-        toggleEmptyMessage()
     }
 
     private fun removeTabWithUndo(sessionId: String, private: Boolean) {
@@ -367,7 +355,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     private fun emitSessionChanges() {
         tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getVisibleSessions()))
-        toggleEmptyMessage()
     }
 
     private fun List<Session>.toTabs(): List<org.mozilla.fenix.home.sessioncontrol.Tab> {
@@ -385,13 +372,9 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         }
     }
 
-    private fun toggleEmptyMessage() {
+    private fun toggleEmptyMessage(isVisible: Boolean) {
         // Show an empty message if no tabs are opened
-        view?.tab_tray_empty_view?.visibility = if (getVisibleSessions().isEmpty()) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        view?.tab_tray_empty_view?.isVisible = isVisible
         view?.announceForAccessibility(context?.getString(R.string.no_open_tabs_description))
     }
 
@@ -436,6 +419,21 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 .setText(view.context.getString(stringRes))
                 .show()
         }
+    }
+
+    private fun updateMenuItems() {
+        val (foregroundColor, _) = tabTrayStore.state.appBarBackground(requireContext())
+        val showCollectionIcon = tabTrayStore.state.appBarShowCollectionIcon()
+        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
+            isVisible = showCollectionIcon
+            isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
+            getIcon().setTint(foregroundColor)
+        }
+
+        // Hide all other icons when showing save icon
+        this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = !showCollectionIcon
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
