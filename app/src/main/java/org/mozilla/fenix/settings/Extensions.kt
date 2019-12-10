@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.settings
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.view.View
 import android.widget.RadioButton
 import android.widget.TextView
@@ -13,6 +16,23 @@ import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
 import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.ThemeManager
+
+/**
+ * Checks for availability of network.
+ *
+ * For devices above [Build.VERSION_CODES.M] it even checks if there's internet flowing through it or not.
+ * */
+fun ConnectivityManager.isOnline(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        getNetworkCapabilities(activeNetwork)?.let {
+            it.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && it.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        } ?: false
+    } else {
+        // for device below android M, there's not better way to get this.
+        // active network info can be null if there are no active networks.
+        activeNetworkInfo?.isConnected ?: false
+    }
+}
 
 fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
     return when (featurePhone) {

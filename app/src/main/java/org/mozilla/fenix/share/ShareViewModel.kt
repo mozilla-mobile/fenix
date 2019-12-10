@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.isOnline
 import org.mozilla.fenix.share.listadapters.AppShareOption
 import org.mozilla.fenix.share.listadapters.SyncShareOption
 
@@ -126,12 +127,11 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
     @VisibleForTesting
     @WorkerThread
     internal fun buildDeviceList(accountManager: FxaAccountManager): List<SyncShareOption> {
-        val activeNetwork = connectivityManager?.activeNetworkInfo
         val account = accountManager.authenticatedAccount()
 
         return when {
             // No network
-            activeNetwork?.isConnected != true -> listOf(SyncShareOption.Offline)
+            connectivityManager?.isOnline() != true -> listOf(SyncShareOption.Offline)
             // No account signed in
             account == null -> listOf(SyncShareOption.SignIn)
             // Account needs to be re-authenticated
