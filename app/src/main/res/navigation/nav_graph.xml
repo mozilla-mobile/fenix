@@ -712,5 +712,10 @@
             app:destination="@+id/browserFragment"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in" />
+        <action
+            android:id="@+id/action_tabTrayFragment_to_createCollectionFragment"
+            app:destination="@+id/collectionCreationFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
     </fragment>
 </navigation>
