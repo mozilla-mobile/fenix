@@ -144,11 +144,17 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
             toolbar?.setToolbarColors(foregroundColor, backgroundColor)
 
             // Sets the navigation icon to close
-            toolbar?.setNavigationIcon(it.appBarIcon())
+            val icon = resources.getDrawable(it.appBarIcon(), requireContext().theme)
+            icon.setTint(foregroundColor)
+            toolbar?.setNavigationIcon(icon)
+
 
             // Show or hide save icon based on number of selected items
             val showCollectionIcon = it.appBarShowCollectionIcon()
-            this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible = showCollectionIcon
+            this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
+                isVisible = showCollectionIcon
+                getIcon().setTint(foregroundColor)
+            }
 
             // Hide all other icons when showing save icon
             this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
@@ -247,6 +253,10 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
         invokePendingDeleteJobs()
         snackbar?.dismiss()
         super.onStop()
+    }
+
+    override fun shouldAllowSelect(): Boolean {
+        return tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing
     }
 
     private fun invokePendingDeleteJobs() {
