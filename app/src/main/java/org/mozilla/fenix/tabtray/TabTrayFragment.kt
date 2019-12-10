@@ -145,7 +145,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             val icon = resources.getDrawable(it.appBarIcon(), requireContext().theme)
             icon.setTint(foregroundColor)
             toolbar?.setNavigationIcon(icon)
-            
+
             updateMenuItems()
         }
     }

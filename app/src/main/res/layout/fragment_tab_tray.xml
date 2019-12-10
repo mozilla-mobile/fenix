@@ -1,7 +1,25 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.mozilla.fenix.tabtray.TabTrayFragment"
-    android:id="@+id/tab_tray_list_wrapper">
-</FrameLayout>
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <FrameLayout
+        tools:context="org.mozilla.fenix.tabtray.TabTrayFragment"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:id="@+id/tab_tray_list_wrapper"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tab_tray_controls"/>
+    <LinearLayout
+        android:id="@+id/tab_tray_controls"
+        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:orientation="horizontal"
+        android:background="@color/photonRed50"
+        app:layout_constraintTop_toBottomOf="@id/tab_tray_list_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
