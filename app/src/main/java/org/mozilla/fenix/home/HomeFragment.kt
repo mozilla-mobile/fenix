@@ -6,6 +6,7 @@ package org.mozilla.fenix.home
 
 import android.animation.Animator
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -222,10 +223,10 @@ class HomeFragment : Fragment() {
         window?.decorView?.setOnApplyWindowInsetsListener { _, insets ->
 
             homeScreen.setPadding(
-                homeScreen.paddingLeft,
-                homeScreen.paddingTop + insets.stableInsetTop,
-                homeScreen.paddingRight,
-                homeScreen.paddingBottom + insets.stableInsetBottom
+                insets.stableInsetLeft,
+                insets.stableInsetTop,
+                insets.stableInsetRight,
+                insets.stableInsetBottom
             )
 
             window.decorView.setOnApplyWindowInsetsListener(null)
@@ -462,6 +463,11 @@ class HomeFragment : Fragment() {
         this.activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         hideToolbar()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        view?.homeLayout?.let { setFragmentFullScreen(this.activity?.window, it) }
     }
 
     private fun recommendPrivateBrowsingShortcut() {
