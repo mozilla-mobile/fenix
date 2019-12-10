@@ -92,3 +92,10 @@ fun TabTrayFragmentState.appBarShowCollectionIcon(): Boolean {
         is TabTrayFragmentState.Mode.Editing -> true
     }
 }
+
+fun TabTrayFragmentState.appBarIcon(): Int {
+    return when (this.mode) {
+        is TabTrayFragmentState.Mode.Normal -> R.drawable.mozac_ic_back
+        is TabTrayFragmentState.Mode.Editing -> R.drawable.ic_close
+    }
+}
