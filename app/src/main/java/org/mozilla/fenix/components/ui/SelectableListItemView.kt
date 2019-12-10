@@ -41,6 +41,11 @@ interface SelectionInteractor<T> {
      * @param item the item to deselect.
      */
     fun deselect(item: T)
+
+    /**
+     *
+     */
+    fun shouldAllowSelect(): Boolean = true
 }
 
 interface SelectionHolder<T> {
@@ -122,6 +127,11 @@ class SelectableListItemView @JvmOverloads constructor(
         }
 
         favicon.setOnClickListener {
+            if (!interactor.shouldAllowSelect()) {
+                interactor.open(item)
+                return@setOnClickListener
+            }
+
             if (item in holder.selectedItems) {
                 interactor.deselect(item)
             } else {

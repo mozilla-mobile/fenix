@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
@@ -26,22 +27,29 @@ class TabItemViewHolder(
     private val selectionHolder: SelectionHolder<Tab>
 ) : RecyclerView.ViewHolder(view) {
     private var tab: Tab? = null
+    private var mode: TabTrayFragmentState.Mode? =null
 
     init {
-        // TODO:  Hide the close button if in edit mode
         view.displayAs(SelectableListItemView.ItemType.CLOSABLE_ITEM)
         view.accessoryView.setOnClickListener {
+            if (mode is TabTrayFragmentState.Mode.Editing) return@setOnClickListener
             tab?.apply(interactor::closeButtonTapped)
         }
     }
 
-    fun bind(tab: Tab) {
+    fun bind(tab: Tab, mode: TabTrayFragmentState.Mode) {
         this.tab = tab
+        this.mode = mode
         view.title.text = tab.title
         view.url.text= tab.url
         view.loadFavicon(tab.url)
         view.setSelectionInteractor(tab, selectionHolder, interactor)
         view.changeSelected(tab in selectionHolder.selectedItems)
+        view.accessoryView.visibility = if (mode is TabTrayFragmentState.Mode.Normal) {
+            View.VISIBLE
+        } else {
+            View.INVISIBLE
+        }
     }
 
     companion object {
@@ -66,7 +74,7 @@ class TabTrayAdapter(
     override fun getItemCount() = state.tabs.size
 
     override fun onBindViewHolder(holder: TabItemViewHolder, position: Int) {
-        holder.bind(state.tabs[position])
+        holder.bind(state.tabs[position], state.mode)
     }
 
     fun updateState(state: TabTrayFragmentState) {
