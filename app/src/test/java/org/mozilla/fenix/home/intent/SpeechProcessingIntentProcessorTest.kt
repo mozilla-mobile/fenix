@@ -22,9 +22,9 @@ import org.robolectric.annotation.Config
 @Config(application = TestApplication::class)
 class SpeechProcessingIntentProcessorTest {
 
-    private val activity: HomeActivity = mockk(relaxed=true)
-    private val navController: NavController = mockk(relaxed=true)
-    private val out: Intent = mockk(relaxed=true)
+    private val activity: HomeActivity = mockk(relaxed = true)
+    private val navController: NavController = mockk(relaxed = true)
+    private val out: Intent = mockk(relaxed = true)
 
     @Test
     fun `do not process blank intents`() {
