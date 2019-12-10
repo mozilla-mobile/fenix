@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -27,12 +28,15 @@ import org.mozilla.fenix.HomeActivity
 
 import com.google.android.material.snackbar.*
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.UserInteractionHandler
 
 import org.mozilla.fenix.R
+import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FenixSnackbarPresenter
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.nav
@@ -147,6 +151,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             val showCollectionIcon = it.appBarShowCollectionIcon()
             this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
                 isVisible = showCollectionIcon
+                isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
                 getIcon().setTint(foregroundColor)
             }
 
@@ -179,8 +184,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.tab_tray_menu_item_save -> {
-                // TODO:  Trigger the save to collection workflow
-
+                showCollectionCreationFragment()
                 true
             }
             R.id.select_menu_item -> {
@@ -250,6 +254,12 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         tabTrayStore.dispatch(
             TabTrayFragmentAction.DeselectTab(item)
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // We only want this observer live just before we navigate away to the collection creation screen
+        requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
     }
 
     override fun onStop() {
@@ -391,5 +401,54 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         }
         val sessions = getListOfSessions().filterNot { it.id == pendingSessionDeletion?.sessionId }
         return sessions
+    }
+
+    private fun showCollectionCreationFragment() {
+        if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
+        if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Normal) return
+
+        val tabIds = tabTrayStore.state.mode.selectedTabs.map { it.id }.toTypedArray()
+
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+
+        view?.let {
+            val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
+                tabIds = tabIds,
+                previousFragmentId = R.id.tabTrayFragment,
+                saveCollectionStep = SaveCollectionStep.SelectCollection,
+                selectedTabIds = tabIds,
+                selectedTabCollectionId = -1
+            )
+
+            nav(R.id.tabTrayFragment, directions)
+        }
+    }
+
+    private fun showSavedSnackbar(tabSize: Int) {
+        view?.let { view ->
+            @StringRes
+            val stringRes = if (tabSize > 1) {
+                R.string.create_collection_tabs_saved
+            } else {
+                R.string.create_collection_tab_saved
+            }
+            FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+                .setText(view.context.getString(stringRes))
+                .show()
+        }
+    }
+
+    private val collectionStorageObserver = object : TabCollectionStorage.Observer {
+        override fun onCollectionCreated(title: String, sessions: List<Session>) {
+            emitSessionChanges()
+            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
+            showSavedSnackbar(sessions.size)
+        }
+
+        override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
+            emitSessionChanges()
+            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
+            showSavedSnackbar(sessions.size)
+        }
     }
 }
