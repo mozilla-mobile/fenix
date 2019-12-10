@@ -27,6 +27,7 @@ import org.mozilla.fenix.HomeActivity
 
 import com.google.android.material.snackbar.*
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import mozilla.components.support.base.feature.UserInteractionHandler
 
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -45,7 +46,7 @@ import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.utils.allowUndo
 
 
-class TabTrayFragment : Fragment(), TabTrayInteractor {
+class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     private lateinit var tabTrayView: TabTrayView
     private lateinit var tabTrayStore: TabTrayFragmentStore
@@ -125,13 +126,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
 
         // Sets the navigation icon callback action
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
-        toolbar?.setNavigationOnClickListener {
-            if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing) {
-                tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
-            } else {
-                findNavController().popBackStack()
-            }
-        }
 
         consumeFrom(tabTrayStore) {
             tabTrayView.update(it)
@@ -171,6 +165,15 @@ class TabTrayFragment : Fragment(), TabTrayInteractor {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         this.tabTrayMenu = menu
         inflater.inflate(R.menu.tab_tray_menu, menu)
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing) {
+            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
+            return true
+        }
+
+        return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
