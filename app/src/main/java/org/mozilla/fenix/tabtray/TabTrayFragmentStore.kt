@@ -1,7 +1,6 @@
 package org.mozilla.fenix.tabtray
 
 import android.content.Context
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.session.Session
 import mozilla.components.lib.state.Action
@@ -9,7 +8,6 @@ import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
-import org.mozilla.fenix.ext.setToolbarColors
 
 typealias Tab = Session
 
@@ -21,12 +19,12 @@ data class TabTrayFragmentState(val tabs: List<Tab>, val mode: Mode) : State {
     }
 }
 
-sealed class TabTrayFragmentAction: Action {
+sealed class TabTrayFragmentAction : Action {
     data class UpdateTabs(val tabs: List<Tab>) : TabTrayFragmentAction()
     data class SelectTab(val tab: Tab) : TabTrayFragmentAction()
     data class DeselectTab(val tab: Tab) : TabTrayFragmentAction()
-    object ExitEditMode: TabTrayFragmentAction()
-    object EnterEditMode: TabTrayFragmentAction()
+    object ExitEditMode : TabTrayFragmentAction()
+    object EnterEditMode : TabTrayFragmentAction()
 }
 
 /**
@@ -34,7 +32,6 @@ sealed class TabTrayFragmentAction: Action {
  */
 class TabTrayFragmentStore(initialState: TabTrayFragmentState) :
     Store<TabTrayFragmentState, TabTrayFragmentAction>(initialState, ::tabTrayStateReducer)
-
 
 /**
  * The TabTrayState Reducer.
@@ -89,8 +86,22 @@ fun TabTrayFragmentState.appBarBackground(context: Context): Pair<Int, Int> {
 fun TabTrayFragmentState.appBarShowCollectionIcon(): Boolean {
     return when (this.mode) {
         is TabTrayFragmentState.Mode.Normal -> false
-        is TabTrayFragmentState.Mode.Editing -> true
+        is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
+            false
+        } else {
+            true
+        }
     }
+}
+
+fun TabTrayFragmentState.appBarShowIcon(): Boolean {
+    if (this.mode.selectedTabs.isEmpty() && this.mode is TabTrayFragmentState.Mode.Editing) {
+        return false
+    }
+    if (this.tabs.size == 0) {
+        return false
+    }
+    return true
 }
 
 fun TabTrayFragmentState.appBarIcon(): Int {

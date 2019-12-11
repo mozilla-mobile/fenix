@@ -717,5 +717,10 @@
             app:destination="@+id/collectionCreationFragment"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in" />
+        <action
+            android:id="@+id/action_tabTrayFragment_to_searchFragment"
+            app:destination="@+id/searchFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
     </fragment>
 </navigation>

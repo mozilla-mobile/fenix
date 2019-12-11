@@ -29,13 +29,14 @@ import org.mozilla.fenix.HomeActivity
 
 import com.google.android.material.snackbar.*
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import kotlinx.android.synthetic.main.library_site_item.*
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.UserInteractionHandler
 
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.FenixSnackbarPresenter
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -44,12 +45,14 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.setToolbarColors
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.BrowserSessionsObserver
+import org.mozilla.fenix.home.Mode
+import org.mozilla.fenix.home.PrivateBrowsingButtonView
 import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
 import org.mozilla.fenix.mvi.getManagedEmitter
 import org.mozilla.fenix.utils.allowUndo
-
 
 class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
@@ -103,7 +106,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -119,6 +123,42 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         }
 
         tabTrayView = TabTrayView(view.tab_tray_list_wrapper, this)
+
+        view.privateBrowsingButton.setOnClickListener {
+            logDebug("davidwalsh", "private mode toggle!")
+            PrivateBrowsingButtonView(
+                privateBrowsingButton,
+                (activity as HomeActivity).browsingModeManager
+            ) { newMode ->
+                invokePendingDeleteJobs()
+
+                if (newMode == BrowsingMode.Private) {
+                    requireContext().settings().incrementNumTimesPrivateModeOpened()
+                }
+
+                getManagedEmitter<SessionControlChange>().onNext(
+                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
+                )
+
+                // TODO:  This doesn't immediately trigger a tab change
+                // Figure out how to make sure tabs switch based on the newly triggered mode
+                emitSessionChanges()
+            }
+        }
+
+        view.tab_tray_close_all.setOnClickListener {
+            closeAllTabs()
+        }
+
+        view.tab_tray_open_new_tab.setOnClickListener {
+            invokePendingDeleteJobs()
+
+            val directions = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(
+                null
+            )
+            nav(R.id.tabTrayFragment, directions)
+            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
+        }
 
         return view
     }
@@ -188,28 +228,36 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 true
             }
             R.id.close_menu_item -> {
-                val private = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-                if (pendingSessionDeletion?.deletionJob == null) {
+                closeAllTabs()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun closeAllTabs() {
+        val private = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        if (sessionManager.sessionsOfType(private = private).toList().isEmpty()) {
+            return
+        }
+
+        if (pendingSessionDeletion?.deletionJob == null) {
+            removeAllTabsWithUndo(
+                sessionManager.sessionsOfType(private = private),
+                private
+            )
+        } else {
+            pendingSessionDeletion?.deletionJob?.let {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    it.invoke()
+                }.invokeOnCompletion {
+                    pendingSessionDeletion = null
                     removeAllTabsWithUndo(
                         sessionManager.sessionsOfType(private = private),
                         private
                     )
-                } else {
-                    pendingSessionDeletion?.deletionJob?.let {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            it.invoke()
-                        }.invokeOnCompletion {
-                            pendingSessionDeletion = null
-                            removeAllTabsWithUndo(
-                                sessionManager.sessionsOfType(private = private),
-                                private
-                            )
-                        }
-                    }
                 }
-                true
             }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -424,16 +472,20 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     private fun updateMenuItems() {
         val (foregroundColor, _) = tabTrayStore.state.appBarBackground(requireContext())
         val showCollectionIcon = tabTrayStore.state.appBarShowCollectionIcon()
+
+        // Shows the "save to collection menu item if in selection mode
         this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
             isVisible = showCollectionIcon
             isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
             getIcon().setTint(foregroundColor)
         }
 
+        // Hide all icons when in selection mode with nothing selected
         // Hide all other icons when showing save icon
-        this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = !showCollectionIcon
-        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = !showCollectionIcon
-        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = !showCollectionIcon
+        val showAnyOverflowIcons = tabTrayStore.state.appBarShowIcon()
+        this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
