@@ -133,6 +133,7 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
+
     final override fun onRestart() {
         hotStartMonitor.onRestartFirstMethodCall()
         super.onRestart()
@@ -141,6 +142,16 @@ open class HomeActivity : AppCompatActivity() {
     final override fun onPostResume() {
         super.onPostResume()
         hotStartMonitor.onPostResumeFinalMethodCall()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ACTIVITY_TITLE_KEY, title.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        title = savedInstanceState?.getString(ACTIVITY_TITLE_KEY)
     }
 
     private fun unsetOpenLinksInAPrivateTabIfNecessary() {
@@ -361,5 +372,6 @@ open class HomeActivity : AppCompatActivity() {
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
         const val EXTRA_FINISH_ONBOARDING = "finishonboarding"
+        const val ACTIVITY_TITLE_KEY = "fenix_activity_title"
     }
 }

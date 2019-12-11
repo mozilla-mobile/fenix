@@ -124,26 +124,19 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
         tabTrayView = TabTrayView(view.tab_tray_list_wrapper, this)
 
-        view.privateBrowsingButton.setOnClickListener {
-            logDebug("davidwalsh", "private mode toggle!")
-            PrivateBrowsingButtonView(
-                privateBrowsingButton,
-                (activity as HomeActivity).browsingModeManager
-            ) { newMode ->
-                invokePendingDeleteJobs()
+        PrivateBrowsingButtonView(
+            view.privateBrowsingButton,
+            (activity as HomeActivity).browsingModeManager
+        ) { newMode ->
+            invokePendingDeleteJobs()
 
-                if (newMode == BrowsingMode.Private) {
-                    requireContext().settings().incrementNumTimesPrivateModeOpened()
-                }
-
-                getManagedEmitter<SessionControlChange>().onNext(
-                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
-                )
-
-                // TODO:  This doesn't immediately trigger a tab change
-                // Figure out how to make sure tabs switch based on the newly triggered mode
-                emitSessionChanges()
+            if (newMode == BrowsingMode.Private) {
+                requireContext().settings().incrementNumTimesPrivateModeOpened()
             }
+
+            // TODO:  This doesn't immediately trigger a tab change
+            // Figure out how to make sure tabs switch based on the newly triggered mode
+            emitSessionChanges()
         }
 
         view.tab_tray_close_all.setOnClickListener {
