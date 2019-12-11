@@ -127,6 +127,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
     }
 
+
     final override fun onRestart() {
         hotStartMonitor.onRestartFirstMethodCall()
         super.onRestart()
@@ -351,5 +352,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
         const val EXTRA_FINISH_ONBOARDING = "finishonboarding"
+        const val ACTIVITY_TITLE_KEY = "fenix_activity_title"
     }
 }
