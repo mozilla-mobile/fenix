@@ -24,11 +24,10 @@
 
     <LinearLayout
         android:id="@+id/tab_tray_controls"
-        android:layout_height="44dp"
+        android:layout_height="48dp"
         android:layout_width="0dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/tab_tray_list_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -39,9 +38,6 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/content_description_private_browsing_button"
             android:src="@drawable/private_browsing_button"
-            app:layout_constraintBottom_toTopOf="@+id/wordmark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_weight=".3333" />
         <ImageButton
             android:id="@+id/tab_tray_close_all"
@@ -50,9 +46,6 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/tab_tray_menu_item_close"
             android:src="@drawable/ic_delete"
-            app:layout_constraintBottom_toTopOf="@+id/wordmark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_weight=".3333" />
         <ImageButton
             android:id="@+id/tab_tray_open_new_tab"
@@ -61,9 +54,6 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="TODO: FIX ME"
             android:src="@drawable/ic_new"
-            app:layout_constraintBottom_toTopOf="@+id/wordmark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_weight=".3333" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
