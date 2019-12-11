@@ -14,7 +14,6 @@ import android.app.AlertDialog
 import org.mozilla.fenix.R
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
-import com.google.android.material.snackbar.Snackbar
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal const val UNDO_DELAY = 3000L
@@ -63,7 +62,7 @@ fun CoroutineScope.allowUndo(
         return null
     }
 
-    fun showUndoSnackbar() :FenixSnackbar? {
+    fun showUndoSnackbar(): FenixSnackbar? {
         val snackbar = FenixSnackbar
             .make(view, FenixSnackbar.LENGTH_INDEFINITE)
             .setText(message)

@@ -72,6 +72,21 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
+        android:id="@+id/play_pause_button"
+        android:contentDescription="@string/mozac_feature_media_notification_action_pause"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:elevation="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/pause_with_background"
+        app:layout_constraintCircleAngle="45"
+        app:layout_constraintCircleRadius="28dp"
+        app:layout_constraintCircle="@id/accessory_view"
+        app:layout_constraintEnd_toEndOf="@id/url"
+        app:layout_constraintEnd_toStartOf="@id/accessory_view"
+        app:layout_constraintTop_toTopOf="@id/accessory_view" />
+
+    <ImageButton
             android:id="@+id/accessory_view"
             android:layout_width="@dimen/glyph_button_width"
             android:layout_height="@dimen/glyph_button_height"

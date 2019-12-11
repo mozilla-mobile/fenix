@@ -60,7 +60,7 @@ import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.TOP
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.internals.AnkoInternals.addView
-//import org.jetbrains.anko.internals.AnkoInternals.addView
+// import org.jetbrains.anko.internals.AnkoInternals.addView
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -73,7 +73,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounterToolbarButton
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -215,9 +214,8 @@ class HomeFragment : Fragment() {
             browsingModeManager.mode.isPrivate
         )
 
-
         val tabCounterView = tabCounter.createView(view.tab_tray_button_wrapper)
-        val tabCounterLayout = FrameLayout.LayoutParams(80, 80) // TODO:  Can we use its parent dimensions here?
+        val tabCounterLayout = FrameLayout.LayoutParams(80, 80)
         tabCounterLayout.gravity = Gravity.CENTER
         view.tab_tray_button_wrapper.addView(
             tabCounterView,
@@ -879,7 +877,7 @@ class BrowserSessionsObserver(
         override fun onSessionRemoved(session: Session) {
             unsubscribeFrom(session)
             onChanged()
-         }
+        }
 
         override fun onSessionSelected(session: Session) {
             onChanged()

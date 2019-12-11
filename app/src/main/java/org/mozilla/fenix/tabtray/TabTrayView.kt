@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
@@ -27,7 +26,7 @@ class TabItemViewHolder(
     private val selectionHolder: SelectionHolder<Tab>
 ) : RecyclerView.ViewHolder(view) {
     private var tab: Tab? = null
-    private var mode: TabTrayFragmentState.Mode? =null
+    private var mode: TabTrayFragmentState.Mode? = null
 
     init {
         view.displayAs(SelectableListItemView.ItemType.CLOSABLE_ITEM)
@@ -41,7 +40,7 @@ class TabItemViewHolder(
         this.tab = tab
         this.mode = mode
         view.title.text = tab.title
-        view.url.text= tab.url
+        view.url.text = tab.url
         view.loadFavicon(tab.url)
         view.setSelectionInteractor(tab, selectionHolder, interactor)
         view.changeSelected(tab in selectionHolder.selectedItems)
@@ -59,9 +58,8 @@ class TabItemViewHolder(
 
 class TabTrayAdapter(
     private val interactor: TabTrayInteractor
-): RecyclerView.Adapter<TabItemViewHolder>(), SelectionHolder<Tab> {
+) : RecyclerView.Adapter<TabItemViewHolder>(), SelectionHolder<Tab> {
     private var state = TabTrayFragmentState(listOf(), TabTrayFragmentState.Mode.Normal)
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
         val view = SelectableListItemView(parent.context).apply {
@@ -92,7 +90,7 @@ class TabTrayView(
 ) : LibraryPageView(container), LayoutContainer {
 
     val tabTrayAdapter = TabTrayAdapter(interactor)
-    
+
     val view: View = LayoutInflater.from(container.context)
         .inflate(R.layout.component_tab_tray, container, true)
 
