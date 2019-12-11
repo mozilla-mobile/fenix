@@ -25,7 +25,8 @@ import org.mozilla.fenix.theme.ThemeManager
 fun ConnectivityManager.isOnline(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         getNetworkCapabilities(activeNetwork)?.let {
-            it.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && it.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            it.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    it.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         } ?: false
     } else {
         // for device below android M, there's not better way to get this.
