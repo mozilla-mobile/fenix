@@ -71,6 +71,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounterToolbarButton
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
