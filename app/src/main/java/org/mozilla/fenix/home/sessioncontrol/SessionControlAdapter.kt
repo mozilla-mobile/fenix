@@ -23,7 +23,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoContentMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.SaveTabGroupViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
@@ -62,8 +61,6 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
             }
         }
     }
-
-    object SaveTabGroup : AdapterItem(SaveTabGroupViewHolder.LAYOUT_ID)
 
     object PrivateBrowsingDescription : AdapterItem(PrivateBrowsingDescriptionViewHolder.LAYOUT_ID)
     data class NoContentMessage(
@@ -145,7 +142,6 @@ class SessionControlAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor)
-            SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, interactor)
             NoContentMessageViewHolder.LAYOUT_ID -> NoContentMessageViewHolder(view)
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)

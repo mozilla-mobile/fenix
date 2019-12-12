@@ -44,7 +44,6 @@ private fun normalModeAdapterItems(
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
-        items.add(AdapterItem.SaveTabGroup)
     } else {
         items.add(noTabMessage)
     }
