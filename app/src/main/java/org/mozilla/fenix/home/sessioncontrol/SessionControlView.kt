@@ -21,13 +21,6 @@ import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.Tab
-
-val noTabMessage = AdapterItem.NoContentMessage(
-    R.drawable.ic_tabs,
-    R.string.no_open_tabs_header_2,
-    R.string.no_open_tabs_description
-)
 
 val noCollectionMessage = AdapterItem.NoContentMessage(
     R.drawable.ic_tab_collection,
@@ -36,24 +29,15 @@ val noCollectionMessage = AdapterItem.NoContentMessage(
 )
 
 private fun normalModeAdapterItems(
-    tabs: List<Tab>,
     collections: List<TabCollection>,
     expandedCollections: Set<Long>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-
-    if (tabs.isNotEmpty()) {
-        items.addAll(tabs.reversed().map(AdapterItem::TabItem))
-    } else {
-        items.add(noTabMessage)
-    }
-
     items.add(AdapterItem.CollectionHeader)
     if (collections.isNotEmpty()) {
-
         // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
         collections.map {
-            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), tabs.isNotEmpty())
+            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), false) // Last one needed (?)
         }.forEach {
             items.add(it)
             if (it.expanded) {
@@ -67,15 +51,9 @@ private fun normalModeAdapterItems(
     return items
 }
 
-private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
+private fun privateModeAdapterItems(): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-
-    if (tabs.isNotEmpty()) {
-        items.addAll(tabs.reversed().map(AdapterItem::TabItem))
-    } else {
-        items.add(AdapterItem.PrivateBrowsingDescription)
-    }
-
+    items.add(AdapterItem.PrivateBrowsingDescription)
     return items
 }
 
@@ -113,8 +91,8 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 }
 
 private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
-    is Mode.Normal -> normalModeAdapterItems(tabs, collections, expandedCollections)
-    is Mode.Private -> privateModeAdapterItems(tabs)
+    is Mode.Normal -> normalModeAdapterItems(collections, expandedCollections)
+    is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
 }
 
