@@ -64,6 +64,8 @@ class SelectableListItemView @JvmOverloads constructor(
 
     val iconView: ImageView get() = favicon
 
+    val playPauseButton: ImageView get() = play_pause_button
+
     val accessoryView: ImageButton get() = accessory_view
 
     init {

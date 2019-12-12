@@ -28,6 +28,9 @@ import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import com.google.android.material.snackbar.*
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import mozilla.components.feature.media.ext.pauseIfPlaying
+import mozilla.components.feature.media.ext.playIfPaused
+import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
@@ -42,13 +45,11 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.home.BrowserSessionsObserver
 import org.mozilla.fenix.home.PrivateBrowsingButtonView
 import org.mozilla.fenix.utils.allowUndo
 
 class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
-
     private lateinit var tabTrayView: TabTrayView
     private lateinit var tabTrayStore: TabTrayFragmentStore
 
@@ -66,9 +67,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
+            if (deleteAllSessionsJob == null) emitSessionChanges()
         }
 
         override fun onIconChanged(session: Session, icon: Bitmap?) {
+            if (deleteAllSessionsJob == null) emitSessionChanges()
         }
     }
 
@@ -77,7 +80,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         setHasOptionsMenu(true)
 
         val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
-            tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getListOfSessions()))
+            tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getListOfSessions().toTabs()))
         }
 
         lifecycle.addObserver(sessionObserver)
@@ -109,7 +112,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         tabTrayStore = StoreProvider.get(this) {
             TabTrayFragmentStore(
                 TabTrayFragmentState(
-                    tabs = getListOfSessions(),
+                    tabs = getListOfSessions().toTabs(),
                     mode = TabTrayFragmentState.Mode.Normal
                 )
             )
@@ -249,21 +252,22 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     override fun closeButtonTapped(tab: Tab) {
         if (pendingSessionDeletion?.deletionJob == null) {
-            removeTabWithUndo(tab.id, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+            removeTabWithUndo(tab.sessionId, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
         } else {
             pendingSessionDeletion?.deletionJob?.let {
                 viewLifecycleOwner.lifecycleScope.launch {
                     it.invoke()
                 }.invokeOnCompletion {
                     pendingSessionDeletion = null
-                    removeTabWithUndo(tab.id, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
+                    removeTabWithUndo(tab.sessionId, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
                 }
             }
         }
     }
 
     override fun open(item: Tab) {
-        requireComponents.core.sessionManager.select(item)
+        val session = sessionManager.findSessionById(item.sessionId) ?: return
+        sessionManager.select(session)
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
         findNavController().navigate(directions)
     }
@@ -294,6 +298,14 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     override fun shouldAllowSelect(): Boolean {
         return tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing
+    }
+
+    override fun onPauseMediaClicked() {
+        MediaStateMachine.state.pauseIfPlaying()
+    }
+
+    override fun onPlayMediaClicked() {
+        MediaStateMachine.state.playIfPaused()
     }
 
     private fun invokePendingDeleteJobs() {
@@ -388,20 +400,15 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     }
 
     private fun emitSessionChanges() {
-        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getVisibleSessions()))
+        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(getVisibleSessions().toTabs()))
     }
 
-    private fun List<Session>.toTabs(): List<org.mozilla.fenix.home.Tab> {
+    private fun List<Session>.toTabs(): List<Tab> {
         val selected = sessionManager.selectedSession
         val mediaStateSession = MediaStateMachine.state.getSession()
 
         return this.map {
-            val mediaState = if (mediaStateSession?.id == it.id) {
-                MediaStateMachine.state
-            } else {
-                null
-            }
-
+            val mediaState = if (mediaStateSession?.id == it.id) MediaStateMachine.state else MediaState.None
             it.toTab(requireContext(), it == selected, mediaState)
         }
     }
@@ -424,7 +431,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
         if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Normal) return
 
-        val tabIds = tabTrayStore.state.mode.selectedTabs.map { it.id }.toTypedArray()
+        val tabIds = tabTrayStore.state.mode.selectedTabs.map { it.sessionId }.toTypedArray()
 
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
 

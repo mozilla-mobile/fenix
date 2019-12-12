@@ -1,15 +1,44 @@
 package org.mozilla.fenix.tabtray
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.session.Session
+import mozilla.components.feature.media.state.MediaState
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.ext.toShortUrl
 
-typealias Tab = Session
+data class Tab(
+    val sessionId: String,
+    val url: String,
+    val hostname: String,
+    val title: String,
+    val selected: Boolean,
+    var mediaState: MediaState,
+    val icon: Bitmap?
+)
+
+fun Session.toTab(context: Context, selected: Boolean, mediaState: MediaState): Tab =
+    this.toTab(context.components.publicSuffixList, selected, mediaState)
+
+fun Session.toTab(publicSuffixList: PublicSuffixList, selected: Boolean, mediaState: MediaState): Tab {
+    return Tab(
+        sessionId = this.id,
+        url = this.url,
+        hostname = this.url.toShortUrl(publicSuffixList),
+        title = this.title,
+        selected = selected,
+        mediaState = mediaState,
+        icon = this.icon
+    )
+}
+
 
 data class TabTrayFragmentState(val tabs: List<Tab>, val mode: Mode) : State {
     sealed class Mode {
