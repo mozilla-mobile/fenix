@@ -5,19 +5,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import kotlinx.android.synthetic.main.tab_list_row.*
 import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
+import mozilla.components.feature.media.ext.getSession
+import mozilla.components.feature.media.state.MediaState
+import mozilla.components.feature.media.state.MediaStateMachine
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.ui.SelectableListItemView
 import org.mozilla.fenix.components.ui.SelectionHolder
 import org.mozilla.fenix.components.ui.SelectionInteractor
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.library.LibraryPageView
 
 interface TabTrayInteractor : SelectionInteractor<Tab> {
     fun closeButtonTapped(tab: Tab)
+    fun onPauseMediaClicked()
+    fun onPlayMediaClicked()
 }
 
 class TabItemViewHolder(
@@ -34,6 +44,22 @@ class TabItemViewHolder(
             if (mode is TabTrayFragmentState.Mode.Editing) return@setOnClickListener
             tab?.apply(interactor::closeButtonTapped)
         }
+
+        view.playPauseButton.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
+
+        view.playPauseButton.setOnClickListener {
+            when (tab?.mediaState) {
+                is MediaState.Playing -> {
+                    it.context.components.analytics.metrics.track(Event.TabMediaPlay)
+                    interactor.onPauseMediaClicked()
+                }
+
+                is MediaState.Paused -> {
+                    it.context.components.analytics.metrics.track(Event.TabMediaPause)
+                    interactor.onPlayMediaClicked()
+                }
+            }
+        }
     }
 
     fun bind(tab: Tab, mode: TabTrayFragmentState.Mode) {
@@ -44,6 +70,7 @@ class TabItemViewHolder(
         view.loadFavicon(tab.url)
         view.setSelectionInteractor(tab, selectionHolder, interactor)
         view.changeSelected(tab in selectionHolder.selectedItems)
+        updatePlayPauseButton(tab.mediaState)
         view.accessoryView.visibility = if (mode is TabTrayFragmentState.Mode.Normal) {
             View.VISIBLE
         } else {
@@ -51,8 +78,25 @@ class TabItemViewHolder(
         }
     }
 
+    fun updatePlayPauseButton(mediaState: MediaState) {
+        with(view.playPauseButton) {
+            isVisible = mediaState is MediaState.Playing || mediaState is MediaState.Paused
+
+            if (mediaState is MediaState.Playing) {
+                contentDescription =
+                    context.getString(R.string.mozac_feature_media_notification_action_pause)
+                setImageDrawable(context.getDrawable(R.drawable.pause_with_background))
+            } else {
+                contentDescription =
+                    context.getString(R.string.mozac_feature_media_notification_action_play)
+                setImageDrawable(context.getDrawable(R.drawable.play_with_background))
+            }
+        }
+    }
+
     companion object {
         const val LAYOUT_ID = R.layout.selectable_list_item
+        private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
     }
 }
 
