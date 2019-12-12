@@ -41,7 +41,6 @@ private fun normalModeAdapterItems(
     expandedCollections: Set<Long>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
@@ -71,7 +70,6 @@ private fun normalModeAdapterItems(
 
 private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
-    items.add(AdapterItem.TabHeader(true, tabs.isNotEmpty()))
 
     if (tabs.isNotEmpty()) {
         items.addAll(tabs.reversed().map(AdapterItem::TabItem))
