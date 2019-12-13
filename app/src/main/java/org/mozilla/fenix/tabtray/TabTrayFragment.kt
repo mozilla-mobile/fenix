@@ -28,6 +28,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import com.google.android.material.snackbar.*
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
+import kotlinx.android.synthetic.main.fragment_tab_tray.*
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.media.state.MediaState
@@ -176,6 +177,8 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             toolbar?.setNavigationIcon(icon)
 
             updateMenuItems()
+
+            tab_tray_controls.isVisible = !it.mode.isEditing
         }
     }
 
