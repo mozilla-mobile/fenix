@@ -224,7 +224,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 true
             }
             R.id.share_menu_item -> {
-                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
+                share(tabTrayStore.state.tabs.toList())
                 true
             }
             R.id.close_menu_item -> {
@@ -485,17 +485,21 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 102
             }
         }
+        val inPrivateMode = (activity as HomeActivity).browsingModeManager.mode.isPrivate
 
         // Shows the "save to collection menu item if in selection mode
         this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.also(setupMenuIcon)
+        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing && !inPrivateMode
+
         // Show the "share" button if in selection mode
         this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.also(setupMenuIcon)
+        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing
 
         // Hide all icons when in selection mode with nothing selected
         val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing
 
         this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
-        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons && !(activity as HomeActivity).browsingModeManager.mode.isPrivate
         this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons
         this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons
     }
