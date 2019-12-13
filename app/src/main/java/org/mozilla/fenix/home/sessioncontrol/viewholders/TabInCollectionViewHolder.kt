@@ -44,7 +44,7 @@ class TabInCollectionViewHolder(
                     0,
                     view.width,
                     view.height,
-                    TabViewHolder.favIconBorderRadiusInPx.dpToFloat(view.context.resources.displayMetrics)
+                    favIconBorderRadiusInPx.dpToFloat(view.context.resources.displayMetrics)
                 )
             }
         }
@@ -84,6 +84,7 @@ class TabInCollectionViewHolder(
 
     companion object {
         const val buttonIncreaseDps = 12
+        const val favIconBorderRadiusInPx = 4
         const val LAYOUT_ID = R.layout.tab_in_collection
     }
 }

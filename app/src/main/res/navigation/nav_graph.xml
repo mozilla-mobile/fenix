@@ -173,6 +173,9 @@
             android:id="@+id/action_browserFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
         <action
+            android:id="@+id/action_browserFragment_to_tabTrayFragment"
+            app:destination="@id/tabTrayFragment" />
+        <action
             android:id="@+id/action_browserFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
         <argument

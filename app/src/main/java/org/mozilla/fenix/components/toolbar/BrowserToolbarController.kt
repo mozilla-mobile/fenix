@@ -245,24 +245,10 @@ class DefaultBrowserToolbarController(
     }
 
     private fun animateTabAndNavigateHome() {
-        // We need to dynamically add the options here because if you do it in XML it overwrites
-        val options = NavOptions.Builder().setPopUpTo(R.id.nav_graph, false)
-            .setEnterAnim(R.anim.fade_in).build()
-        val extras = FragmentNavigator.Extras.Builder().addSharedElement(
-            browserLayout,
-            "${TAB_ITEM_TRANSITION_NAME}${currentSession?.id}"
-        ).build()
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToTabTrayFragment()
         swipeRefresh.background = ColorDrawable(Color.TRANSPARENT)
         engineView.asView().visibility = View.GONE
-        if (!navController.popBackStack(R.id.homeFragment, false)) {
-            navController.nav(
-                R.id.browserFragment,
-                R.id.action_browserFragment_to_homeFragment,
-                null,
-                options,
-                extras
-            )
-        }
+        navController.nav(R.id.browserFragment, directions)
     }
 
     @SuppressWarnings("ComplexMethod")

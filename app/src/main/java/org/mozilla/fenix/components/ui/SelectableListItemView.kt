@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.selectable_list_item.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
@@ -99,15 +100,6 @@ class SelectableListItemView @JvmOverloads constructor(
         context.components.core.icons.loadIntoView(favicon, url)
     }
 
-//    fun attachMenu(menu: LibraryItemMenu) {
-//        overflow_menu.setOnClickListener {
-//            menu.menuBuilder.build(context).show(
-//                anchor = it,
-//                orientation = BrowserMenu.Orientation.DOWN
-//            )
-//        }
-//    }
-
     fun <T> setSelectionInteractor(item: T, holder: SelectionHolder<T>, interactor: SelectionInteractor<T>) {
         setOnClickListener {
             val selected = holder.selectedItems
@@ -119,6 +111,7 @@ class SelectableListItemView @JvmOverloads constructor(
         }
 
         setOnLongClickListener {
+            this.context.components.analytics.metrics.track(Event.CollectionTabLongPressed)
             if (holder.selectedItems.isEmpty()) {
                 interactor.select(item)
                 true

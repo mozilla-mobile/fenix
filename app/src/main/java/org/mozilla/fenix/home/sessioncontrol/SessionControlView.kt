@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -119,14 +118,6 @@ class SessionControlView(
         view.apply {
             adapter = sessionControlAdapter
             layoutManager = LinearLayoutManager(container.context)
-            val itemTouchHelper =
-                ItemTouchHelper(
-                    SwipeToDeleteCallback(
-                        interactor
-                    )
-                )
-            itemTouchHelper.attachToRecyclerView(this)
-
             view.consumeFrom(homeFragmentStore, ProcessLifecycleOwner.get()) {
                 update(it)
             }
