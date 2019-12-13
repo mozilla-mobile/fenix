@@ -475,28 +475,29 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     private fun updateMenuItems() {
         val (foregroundColor, _) = tabTrayStore.state.appBarBackground(requireContext())
-        val showCollectionIcon = tabTrayStore.state.appBarShowCollectionIcon()
+        val setupMenuIcon: (MenuItem) -> Unit = {
+            it.isVisible = tabTrayStore.state.mode.isEditing
+            it.isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
+            it.icon.setTint(foregroundColor)
+            it.icon.alpha = if (tabTrayStore.state.mode.selectedTabs.isNotEmpty()) {
+                255
+            } else {
+                102
+            }
+        }
 
         // Shows the "save to collection menu item if in selection mode
-        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.apply {
-            isVisible = showCollectionIcon
-            isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
-            getIcon().setTint(foregroundColor)
-        }
-
+        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.also(setupMenuIcon)
         // Show the "share" button if in selection mode
-        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.apply {
-            isVisible = showCollectionIcon
-            isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
-            getIcon().setTint(foregroundColor)
-        }
+        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.also(setupMenuIcon)
 
         // Hide all icons when in selection mode with nothing selected
-        val showAnyOverflowIcons = tabTrayStore.state.appBarShowIcon()
-        this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
-        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
-        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
-        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
+        val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing
+
+        this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
