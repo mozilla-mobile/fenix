@@ -308,7 +308,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     }
 
     override fun shouldAllowSelect(): Boolean {
-        return tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing
+        return tabTrayStore.state.mode.isEditing
     }
 
     override fun onPauseMediaClicked() {

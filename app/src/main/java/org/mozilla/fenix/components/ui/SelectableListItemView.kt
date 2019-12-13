@@ -102,11 +102,15 @@ class SelectableListItemView @JvmOverloads constructor(
 
     fun <T> setSelectionInteractor(item: T, holder: SelectionHolder<T>, interactor: SelectionInteractor<T>) {
         setOnClickListener {
-            val selected = holder.selectedItems
-            when {
-                selected.isEmpty() -> interactor.open(item)
-                item in selected -> interactor.deselect(item)
-                else -> interactor.select(item)
+            if (!interactor.shouldAllowSelect()) {
+                interactor.open(item)
+                return@setOnClickListener
+            }
+
+            if (item in holder.selectedItems) {
+                interactor.deselect(item)
+            } else {
+                interactor.select(item)
             }
         }
 
@@ -117,19 +121,6 @@ class SelectableListItemView @JvmOverloads constructor(
                 true
             } else {
                 false
-            }
-        }
-
-        favicon.setOnClickListener {
-            if (!interactor.shouldAllowSelect()) {
-                interactor.open(item)
-                return@setOnClickListener
-            }
-
-            if (item in holder.selectedItems) {
-                interactor.deselect(item)
-            } else {
-                interactor.select(item)
             }
         }
     }
