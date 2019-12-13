@@ -4,18 +4,13 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
-import androidx.navigation.fragment.FragmentNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.prompt.ShareData
-import mozilla.components.feature.media.ext.pauseIfPlaying
-import mozilla.components.feature.media.ext.playIfPaused
-import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 import org.mozilla.fenix.BrowserDirection
@@ -28,7 +23,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -42,16 +36,6 @@ import org.mozilla.fenix.settings.SupportUtils
  */
 @SuppressWarnings("TooManyFunctions")
 interface SessionControlController {
-    /**
-     * @see [TabSessionInteractor.onCloseTab]
-     */
-    fun handleCloseTab(sessionId: String)
-
-    /**
-     * @see [TabSessionInteractor.onCloseAllTabs]
-     */
-    fun handleCloseAllTabs(isPrivateMode: Boolean)
-
     /**
      * @see [CollectionInteractor.onCollectionAddTabTapped]
      */
@@ -83,16 +67,6 @@ interface SessionControlController {
     fun handleDeleteCollectionTapped(collection: TabCollection)
 
     /**
-     * @see [TabSessionInteractor.onPauseMediaClicked]
-     */
-    fun handlePauseMediaClicked()
-
-    /**
-     * @see [TabSessionInteractor.onPlayMediaClicked]
-     */
-    fun handlePlayMediaClicked()
-
-    /**
      * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
@@ -106,16 +80,6 @@ interface SessionControlController {
      * @see [TabSessionInteractor.onSaveToCollection]
      */
     fun handleSaveTabToCollection(selectedTabId: String?)
-
-    /**
-     * @see [TabSessionInteractor.onSelectTab]
-     */
-    fun handleSelectTab(tabView: View, sessionId: String)
-
-    /**
-     * @see [TabSessionInteractor.onShareTabs]
-     */
-    fun handleShareTabs()
 
     /**
      * @see [OnboardingInteractor.onStartBrowsingClicked]
@@ -136,8 +100,6 @@ class DefaultSessionControlController(
     private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
     private val lifecycleScope: CoroutineScope,
-    private val closeTab: (sessionId: String) -> Unit,
-    private val closeAllTabs: (isPrivateMode: Boolean) -> Unit,
     private val getListOfTabs: () -> List<Tab>,
     private val hideOnboarding: () -> Unit,
     private val invokePendingDeleteJobs: () -> Unit,
@@ -151,14 +113,6 @@ class DefaultSessionControlController(
         get() = activity.components.core.sessionManager
     private val tabCollectionStorage: TabCollectionStorage
         get() = activity.components.core.tabCollectionStorage
-
-    override fun handleCloseTab(sessionId: String) {
-        closeTab.invoke(sessionId)
-    }
-
-    override fun handleCloseAllTabs(isPrivateMode: Boolean) {
-        closeAllTabs.invoke(isPrivateMode)
-    }
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
         metrics.track(Event.CollectionAddTabPressed)
@@ -239,14 +193,6 @@ class DefaultSessionControlController(
         showDeleteCollectionPrompt(collection)
     }
 
-    override fun handlePauseMediaClicked() {
-        MediaStateMachine.state.pauseIfPlaying()
-    }
-
-    override fun handlePlayMediaClicked() {
-        MediaStateMachine.state.playIfPaused()
-    }
-
     override fun handlePrivateBrowsingLearnMoreClicked() {
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
@@ -282,29 +228,6 @@ class DefaultSessionControlController(
         }
 
         showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
-    }
-
-    override fun handleSelectTab(tabView: View, sessionId: String) {
-        invokePendingDeleteJobs()
-        val session = sessionManager.findSessionById(sessionId)
-        sessionManager.select(session!!)
-        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
-        val extras =
-            FragmentNavigator.Extras.Builder()
-                .addSharedElement(tabView,
-                    "$TAB_ITEM_TRANSITION_NAME$sessionId"
-                )
-                .build()
-        navController.nav(R.id.homeFragment, directions, extras)
-    }
-
-    override fun handleShareTabs() {
-        invokePendingDeleteJobs()
-        val shareData = sessionManager
-            .sessionsOfType(private = browsingModeManager.mode.isPrivate)
-            .map { ShareData(url = it.url, title = it.title) }
-            .toList()
-        showShareFragment(shareData)
     }
 
     override fun handleStartBrowsingClicked() {

@@ -187,8 +187,6 @@ class HomeFragment : Fragment() {
                 homeLayout = view.homeLayout,
                 browsingModeManager = browsingModeManager,
                 lifecycleScope = viewLifecycleOwner.lifecycleScope,
-                closeTab = ::closeTab,
-                closeAllTabs = ::closeAllTabs,
                 getListOfTabs = ::getListOfTabs,
                 hideOnboarding = ::hideOnboarding,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,

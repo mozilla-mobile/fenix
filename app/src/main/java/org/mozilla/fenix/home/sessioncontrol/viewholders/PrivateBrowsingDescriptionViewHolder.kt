@@ -11,11 +11,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.private_browsing_description.view.*
 import org.mozilla.fenix.R
-import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 
 class PrivateBrowsingDescriptionViewHolder(
-    view: View,
-    private val interactor: TabSessionInteractor
+    view: View
 ) : RecyclerView.ViewHolder(view) {
 
     init {
@@ -31,9 +29,6 @@ class PrivateBrowsingDescriptionViewHolder(
         with(view.private_session_common_myths) {
             movementMethod = LinkMovementMethod.getInstance()
             text = textWithLink
-            setOnClickListener {
-                interactor.onPrivateBrowsingLearnMoreClicked()
-            }
         }
     }
 

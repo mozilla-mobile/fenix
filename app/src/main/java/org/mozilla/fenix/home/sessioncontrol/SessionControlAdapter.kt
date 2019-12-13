@@ -14,8 +14,6 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.tab_list_row.*
-import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
@@ -24,7 +22,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoContentMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
@@ -37,31 +34,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTr
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
-    data class TabItem(val tab: Tab) : AdapterItem(TabViewHolder.LAYOUT_ID) {
-        override fun sameAs(other: AdapterItem) = other is TabItem && tab.sessionId == other.tab.sessionId
-
-        // Tell the adapter exactly what values have changed so it only has to draw those
-        override fun getChangePayload(newItem: AdapterItem): Any? {
-            (newItem as TabItem).let {
-                val shouldUpdateFavicon =
-                    newItem.tab.url != this.tab.url || newItem.tab.icon != this.tab.icon
-                val shouldUpdateHostname = newItem.tab.hostname != this.tab.hostname
-                val shouldUpdateTitle = newItem.tab.title != this.tab.title
-                val shouldUpdateSelected = newItem.tab.selected != this.tab.selected
-                val shouldUpdateMediaState = newItem.tab.mediaState != this.tab.mediaState
-
-                return AdapterItemDiffCallback.TabChangePayload(
-                    tab = newItem.tab,
-                    shouldUpdateFavicon = shouldUpdateFavicon,
-                    shouldUpdateHostname = shouldUpdateHostname,
-                    shouldUpdateTitle = shouldUpdateTitle,
-                    shouldUpdateSelected = shouldUpdateSelected,
-                    shouldUpdateMediaState = shouldUpdateMediaState
-                )
-            }
-        }
-    }
-
     object PrivateBrowsingDescription : AdapterItem(PrivateBrowsingDescriptionViewHolder.LAYOUT_ID)
     data class NoContentMessage(
         @DrawableRes val icon: Int,
@@ -141,8 +113,7 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor)
-            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view, interactor)
+            PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(view)
             NoContentMessageViewHolder.LAYOUT_ID -> NoContentMessageViewHolder(view)
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, interactor)
@@ -165,9 +136,6 @@ class SessionControlAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is TabViewHolder -> {
-                holder.bindSession((item as AdapterItem.TabItem).tab)
-            }
             is NoContentMessageViewHolder -> {
                 val (icon, header, description) = item as AdapterItem.NoContentMessage
                 holder.bind(icon, header, description)
@@ -187,36 +155,6 @@ class SessionControlAdapter(
             is OnboardingAutomaticSignInViewHolder -> holder.bind(
                 (item as AdapterItem.OnboardingAutomaticSignIn).state.withAccount
             )
-        }
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
-            return
-        }
-
-        (payloads[0] as AdapterItemDiffCallback.TabChangePayload).let {
-            (holder as TabViewHolder).updateTab(it.tab)
-
-            // Always set the visibility to GONE to avoid the play button sticking around from previous draws
-            holder.play_pause_button.visibility = View.GONE
-
-            if (it.shouldUpdateHostname) { holder.updateHostname(it.tab.hostname) }
-            if (it.shouldUpdateTitle) {
-                holder.updateTitle(it.tab.title)
-                holder.updateCloseButtonDescription(it.tab.title) }
-            if (it.shouldUpdateFavicon) {
-                holder.updateFavIcon(it.tab.url, it.tab.icon)
-            }
-            if (it.shouldUpdateSelected) { holder.updateSelected(it.tab.selected ?: false) }
-            if (it.shouldUpdateMediaState) {
-                holder.updatePlayPauseButton(it.tab.mediaState ?: MediaState.None)
-            }
         }
     }
 }
