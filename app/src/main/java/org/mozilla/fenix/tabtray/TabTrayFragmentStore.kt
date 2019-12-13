@@ -45,6 +45,8 @@ data class TabTrayFragmentState(val tabs: List<Tab>, val mode: Mode) : State {
         open val selectedTabs = emptySet<Tab>()
         object Normal : Mode()
         data class Editing(override val selectedTabs: Set<Tab>) : Mode()
+
+        val isEditing: Boolean get() = this is Editing
     }
 }
 
