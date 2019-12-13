@@ -204,16 +204,24 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.share_menu_item_save -> {
+                share(tabTrayStore.state.mode.selectedTabs.toList())
+                true
+            }
             R.id.tab_tray_menu_item_save -> {
                 showCollectionCreationFragment()
                 true
             }
-            R.id.select_menu_item -> {
+            R.id.select_tabs_menu_item -> {
+                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
+                true
+            }
+            R.id.select_to_save_menu_item -> {
                 tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
                 true
             }
             R.id.share_menu_item -> {
-                share(tabTrayStore.state.tabs.toList())
+                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
                 true
             }
             R.id.close_menu_item -> {
@@ -473,10 +481,17 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             getIcon().setTint(foregroundColor)
         }
 
+        // Show the "share" button if in selection mode
+        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.apply {
+            isVisible = showCollectionIcon
+            isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
+            getIcon().setTint(foregroundColor)
+        }
+
         // Hide all icons when in selection mode with nothing selected
-        // Hide all other icons when showing save icon
         val showAnyOverflowIcons = tabTrayStore.state.appBarShowIcon()
-        this.tabTrayMenu?.findItem(R.id.select_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
+        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
         this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
         this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons && !showCollectionIcon
     }

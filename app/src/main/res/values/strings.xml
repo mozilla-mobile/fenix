@@ -1124,9 +1124,15 @@
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Save to collection</string>
     <!-- Text shown in the menu for sharing all tabs -->
-    <string name="tab_tray_menu_item_share">Share all tabs</string>
+    <string name="tab_tray_menu_item_share">Share tabs</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Close all tabs</string>
     <!-- Text shown in the title for selecting individual tabs to save -->
-    <string name="tab_tray_menu_item_save_select">Select tabs to save</string>
+    <string name="tab_tray_menu_item_save_select">Select tabs</string>
+    <!-- Text shown in the title for selecting individual tabs to share -->
+    <string name="tab_tray_menu_item_share_select">Select tabs to share</string>
+    <!-- Text shown in the menu for selecting individual tabs -->
+    <string name="tab_tray_menu_item_select">Select tabs</string>
+
+
 </resources>
