@@ -114,27 +114,6 @@ fun TabTrayFragmentState.appBarBackground(context: Context): Pair<Int, Int> {
     }
 }
 
-fun TabTrayFragmentState.appBarShowCollectionIcon(): Boolean {
-    return when (this.mode) {
-        is TabTrayFragmentState.Mode.Normal -> false
-        is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
-            false
-        } else {
-            true
-        }
-    }
-}
-
-fun TabTrayFragmentState.appBarShowIcon(): Boolean {
-    if (this.mode.selectedTabs.isEmpty() && this.mode is TabTrayFragmentState.Mode.Editing) {
-        return false
-    }
-    if (this.tabs.size == 0) {
-        return false
-    }
-    return true
-}
-
 fun TabTrayFragmentState.appBarIcon(): Int {
     return when (this.mode) {
         is TabTrayFragmentState.Mode.Normal -> R.drawable.mozac_ic_back
