@@ -31,6 +31,7 @@ fun ConnectivityManager.isOnline(): Boolean {
     } else {
         // for device below android M, there's not better way to get this.
         // active network info can be null if there are no active networks.
+        @Suppress("Deprecation")
         activeNetworkInfo?.isConnected ?: false
     }
 }

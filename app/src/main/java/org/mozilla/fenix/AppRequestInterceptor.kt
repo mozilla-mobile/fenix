@@ -5,12 +5,13 @@
 package org.mozilla.fenix
 
 import android.content.Context
+import android.net.ConnectivityManager
 import androidx.annotation.RawRes
+import androidx.core.content.getSystemService
 import mozilla.components.browser.errorpages.ErrorPages
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
-import org.jetbrains.anko.connectivityManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -72,7 +73,7 @@ class AppRequestInterceptor(private val context: Context) : RequestInterceptor {
         // This is not an ideal solution. For context, see:
         // https://github.com/mozilla-mobile/android-components/pull/5068#issuecomment-558415367
 
-        val isConnected: Boolean = context.connectivityManager.isOnline()
+        val isConnected: Boolean = context.getSystemService<ConnectivityManager>()!!.isOnline()
 
         return when {
             errorType == ErrorType.ERROR_UNKNOWN_HOST && !isConnected -> ErrorType.ERROR_NO_INTERNET

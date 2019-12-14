@@ -4,7 +4,9 @@
 
 package org.mozilla.fenix
 
+import android.net.ConnectivityManager
 import androidx.annotation.RawRes
+import androidx.core.content.getSystemService
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.mockk.every
@@ -15,7 +17,6 @@ import mozilla.components.browser.errorpages.ErrorPages
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.support.test.robolectric.testContext
-import org.jetbrains.anko.connectivityManager
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +36,7 @@ class AppRequestInterceptorTest {
 
         mockkStatic("org.mozilla.fenix.settings.ExtensionsKt")
 
-        every { testContext.connectivityManager.isOnline() } returns true
+        every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
 
         interceptor = AppRequestInterceptor(testContext)
     }
