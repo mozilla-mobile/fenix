@@ -37,17 +37,17 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
 
     @VisibleForTesting
     internal val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onLost(network: Network?) = reloadDevices()
-        override fun onAvailable(network: Network?) = reloadDevices()
+        override fun onLost(network: Network?) = reloadDevices(network)
+        override fun onAvailable(network: Network?) = reloadDevices(network)
 
-        private fun reloadDevices() {
+        private fun reloadDevices(network: Network?) {
             viewModelScope.launch(IO) {
                 fxaAccountManager.authenticatedAccount()
                     ?.deviceConstellation()
                     ?.refreshDevicesAsync()
                     ?.await()
 
-                val devicesShareOptions = buildDeviceList(fxaAccountManager)
+                val devicesShareOptions = buildDeviceList(fxaAccountManager, network)
                 devicesListLiveData.postValue(devicesShareOptions)
             }
         }
@@ -126,12 +126,12 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
      */
     @VisibleForTesting
     @WorkerThread
-    internal fun buildDeviceList(accountManager: FxaAccountManager): List<SyncShareOption> {
+    internal fun buildDeviceList(accountManager: FxaAccountManager, network: Network? = null): List<SyncShareOption> {
         val account = accountManager.authenticatedAccount()
 
         return when {
             // No network
-            connectivityManager?.isOnline() != true -> listOf(SyncShareOption.Offline)
+            connectivityManager?.isOnline(network) != true -> listOf(SyncShareOption.Offline)
             // No account signed in
             account == null -> listOf(SyncShareOption.SignIn)
             // Account needs to be re-authenticated

@@ -34,7 +34,7 @@ class AppRequestInterceptorTest {
     @Before
     fun setUp() {
 
-        mockkStatic("org.mozilla.fenix.settings.ExtensionsKt")
+        mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
         every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
 

@@ -50,7 +50,7 @@ class ShareViewModelTest {
         connectivityManager = mockk(relaxed = true)
         fxaAccountManager = mockk(relaxed = true)
 
-        mockkStatic("org.mozilla.fenix.settings.ExtensionsKt")
+        mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
         every { application.packageName } returns packageName
         every { application.packageManager } returns packageManager
