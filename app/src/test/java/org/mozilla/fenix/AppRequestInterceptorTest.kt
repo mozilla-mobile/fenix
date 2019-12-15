@@ -20,7 +20,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.settings.isOnline
+import org.mozilla.fenix.ext.isOnline
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
