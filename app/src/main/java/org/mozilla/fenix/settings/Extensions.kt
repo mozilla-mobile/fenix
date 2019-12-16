@@ -26,7 +26,7 @@ fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
 }
 
 /**
- * In devices with Android 6, when we use android:button="@null" app:drawableStartCompat doesn't work via xml
+ * In devices with Android 6, when we use android:button="@null" android:drawableStart doesn't work via xml
  * as a result we have to apply it programmatically. More info about this issue https://github.com/mozilla-mobile/fenix/issues/1414
  */
 fun RadioButton.setStartCheckedIndicator() {
