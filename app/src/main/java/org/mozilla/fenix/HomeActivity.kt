@@ -22,6 +22,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -72,6 +75,8 @@ open class HomeActivity : AppCompatActivity() {
     private var sessionObserver: SessionManager.Observer? = null
 
     private val hotStartMonitor = HotStartPerformanceMonitor()
+
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
@@ -147,7 +152,7 @@ open class HomeActivity : AppCompatActivity() {
         // Toggle off the open_link_in_private_tab pref if we are no longer set as the default browser
         // We do this on a separate thread to alleviate performance issues
         val weakReferenceContext = WeakReference(this)
-        lifecycleScope.launch {
+        scope.launch {
             val context = weakReferenceContext.get() ?: return@launch
             if (!Browsers.all(context).isDefaultBrowser) {
                 context.settings().preferences
