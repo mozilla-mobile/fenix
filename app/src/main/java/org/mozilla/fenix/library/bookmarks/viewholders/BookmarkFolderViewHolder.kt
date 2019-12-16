@@ -44,7 +44,10 @@ class BookmarkFolderViewHolder(
         }
 
         containerView.changeSelected(item in selectionHolder.selectedItems)
-        containerView.iconView.image = AppCompatResources.getDrawable(containerView.context, R.drawable.ic_folder_icon)?.apply {
+        containerView.iconView.image = AppCompatResources.getDrawable(
+            containerView.context,
+            R.drawable.ic_folder_icon
+        )?.apply {
             setTint(ContextCompat.getColor(containerView.context, R.color.primary_text_light_theme))
         }
         containerView.titleView.text = item.title
