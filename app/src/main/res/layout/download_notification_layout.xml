@@ -75,7 +75,7 @@
         <Button
             android:id="@+id/download_notification_action_button"
             android:textColor="?contrastText"
-            android:backgroundTint="?accentBright"
+            android:backgroundTint="?accent"
             android:background="@drawable/rounded_all_corners"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/download_notification_filename"
