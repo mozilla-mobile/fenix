@@ -52,7 +52,7 @@
             android:layout_width="@dimen/glyph_button_height"
             android:layout_height="@dimen/glyph_button_height"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="TODO: FIX ME"
+            android:contentDescription="@string/tab_tray_menu_open_new_tab"
             android:src="@drawable/ic_new"
             android:layout_weight=".3333" />
     </LinearLayout>
