@@ -131,8 +131,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 requireContext().settings().incrementNumTimesPrivateModeOpened()
             }
 
-            // TODO:  This doesn't immediately trigger a tab change
-            // Figure out how to make sure tabs switch based on the newly triggered mode
             emitSessionChanges()
         }
 
@@ -199,6 +197,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
     override fun onBackPressed(): Boolean {
         if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing) {
             tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
+            return true
+        }
+
+        if(tabTrayStore.state.tabs.isEmpty()) {
+            findNavController().popBackStack(R.id.homeFragment, false)
             return true
         }
 
@@ -496,12 +499,21 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing
 
         // Hide all icons when in selection mode with nothing selected
-        val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing
-
+        val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing && tabTrayStore.state.tabs.isNotEmpty()
         this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
         this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons && !(activity as HomeActivity).browsingModeManager.mode.isPrivate
         this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons
         this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons
+
+        // Disable the bottom trash icon when there are no tabs open
+        if (tabTrayStore.state.tabs.isNotEmpty()) {
+            view?.tab_tray_close_all?.alpha = 1.0f
+            view?.tab_tray_close_all?.isEnabled = true
+        }
+        else {
+            view?.tab_tray_close_all?.alpha = 0.4f
+            view?.tab_tray_close_all?.isEnabled = true
+        }
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
