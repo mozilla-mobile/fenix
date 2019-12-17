@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.tabtray
 
 import android.view.LayoutInflater
@@ -12,9 +16,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import kotlinx.android.synthetic.main.tab_list_row.*
 import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
-import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
-import mozilla.components.feature.media.state.MediaStateMachine
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.ui.SelectableListItemView

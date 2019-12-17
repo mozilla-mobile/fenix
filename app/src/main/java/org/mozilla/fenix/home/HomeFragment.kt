@@ -71,7 +71,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounterToolbarButton
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -212,7 +211,7 @@ class HomeFragment : Fragment() {
         )
 
         val tabCounterView = tabCounter.createView(view.tab_tray_button_wrapper)
-        val tabCounterLayout = FrameLayout.LayoutParams(80, 80)
+        val tabCounterLayout = FrameLayout.LayoutParams(TAB_TRAY_BUTTON_SIZE, TAB_TRAY_BUTTON_SIZE)
         tabCounterLayout.gravity = Gravity.CENTER
         view.tab_tray_button_wrapper.addView(
             tabCounterView,
@@ -794,6 +793,7 @@ class HomeFragment : Fragment() {
         private const val SHARED_TRANSITION_MS = 200L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
+        private const val TAB_TRAY_BUTTON_SIZE = 80
     }
 }
 

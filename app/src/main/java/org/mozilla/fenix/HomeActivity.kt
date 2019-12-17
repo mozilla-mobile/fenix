@@ -127,7 +127,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
     }
 
-
     final override fun onRestart() {
         hotStartMonitor.onRestartFirstMethodCall()
         super.onRestart()

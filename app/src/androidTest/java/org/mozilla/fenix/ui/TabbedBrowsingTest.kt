@@ -105,13 +105,13 @@ class TabbedBrowsingTest {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
-        }.openTabScreen{
+        }.openTabScreen {
             // Timing issue on slow devices on Firebase
             mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")), TestAssetHelper.waitingTime)
             verifyExistingTabList()
 //            verifyShareTabsButton(true)
 //            verifyCloseTabsButton(true)
-        }//.togglePrivateBrowsingMode()
+        } // .togglePrivateBrowsingMode()
 
         // Verify private tabs remain in private browsing mode
 
@@ -132,7 +132,7 @@ class TabbedBrowsingTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
-        }.openTabScreen{ }
+        }.openTabScreen { }
 
         homeScreen {
             // Timing issue on slow devices on Firebase

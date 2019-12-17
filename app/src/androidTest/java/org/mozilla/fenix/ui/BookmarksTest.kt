@@ -184,7 +184,6 @@ class BookmarksTest {
         }.clickOpenInPrivateTab {
             verifyPageContent(defaultWebPage.content)
         }.openTabScreen {
-            // TODO: FIXME, VERIFY IN PRIVATE MODE
             verifyExistingTabList()
         }
     }
