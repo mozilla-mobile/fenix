@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -39,11 +38,8 @@ class DownloadNotificationBottomSheetDialog(
             download_notification_title.text =
                 context.getString(R.string.mozac_feature_downloads_failed_notification_text2)
 
-            download_notification_icon.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    context,
-                    mozilla.components.feature.downloads.R.drawable.mozac_feature_download_ic_download_failed
-                )
+            download_notification_icon.setImageResource(
+                mozilla.components.feature.downloads.R.drawable.mozac_feature_download_ic_download_failed
             )
 
             download_notification_action_button.apply {
@@ -63,11 +59,8 @@ class DownloadNotificationBottomSheetDialog(
 
             download_notification_title.text = titleText
 
-            download_notification_icon.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    context,
-                    mozilla.components.feature.downloads.R.drawable.mozac_feature_download_ic_download_complete
-                )
+            download_notification_icon.setImageResource(
+                mozilla.components.feature.downloads.R.drawable.mozac_feature_download_ic_download_complete
             )
 
             download_notification_action_button.apply {
