@@ -13,6 +13,18 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/title"
+        style="@style/QuickSettingsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="" />
+
+    <TextView
         android:id="@+id/url"
         style="@style/QuickSettingsText"
         android:layout_width="match_parent"
@@ -21,7 +33,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="https://wikipedia.org" />
+        tools:text="" />
 
     <TextView
         android:id="@+id/securityInfo"
