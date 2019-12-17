@@ -57,7 +57,7 @@ class QuickSettingsFragmentStoreTest {
         val permissions = mockk<SitePermissions>(relaxed = true)
 
         val store = QuickSettingsFragmentStore.createStore(
-            context, "url", true, permissions, settings
+            context, "url", "Hello", true, permissions, settings
         )
 
         assertAll {
@@ -71,9 +71,10 @@ class QuickSettingsFragmentStoreTest {
     @Test
     fun `createWebsiteInfoState constructs a WebsiteInfoState with the right values for a secure connection`() {
         val websiteUrl = "https://host.com/page1"
+        val websiteTitle = "Hello"
         val securedStatus = true
 
-        val state = QuickSettingsFragmentStore.createWebsiteInfoState(websiteUrl, securedStatus)
+        val state = QuickSettingsFragmentStore.createWebsiteInfoState(websiteUrl, websiteTitle, securedStatus)
 
         assertAll {
             assertThat(state).isNotNull()
@@ -87,9 +88,10 @@ class QuickSettingsFragmentStoreTest {
     @Test
     fun `createWebsiteInfoState constructs a WebsiteInfoState with the right values for an insecure connection`() {
         val websiteUrl = "https://host.com/page1"
+        val websiteTitle = "Hello"
         val securedStatus = false
 
-        val state = QuickSettingsFragmentStore.createWebsiteInfoState(websiteUrl, securedStatus)
+        val state = QuickSettingsFragmentStore.createWebsiteInfoState(websiteUrl, websiteTitle, securedStatus)
 
         assertAll {
             assertThat(state).isNotNull()
