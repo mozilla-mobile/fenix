@@ -133,7 +133,6 @@ open class HomeActivity : AppCompatActivity() {
         }
     }
 
-
     final override fun onRestart() {
         hotStartMonitor.onRestartFirstMethodCall()
         super.onRestart()

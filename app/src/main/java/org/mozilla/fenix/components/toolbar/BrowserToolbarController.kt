@@ -14,8 +14,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope

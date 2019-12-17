@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.tabtray
 
 import android.content.Context
@@ -38,7 +42,6 @@ fun Session.toTab(publicSuffixList: PublicSuffixList, selected: Boolean, mediaSt
         icon = this.icon
     )
 }
-
 
 data class TabTrayFragmentState(val tabs: List<Tab>, val mode: Mode) : State {
     sealed class Mode {

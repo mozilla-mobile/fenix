@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.tabtray
 
 import android.graphics.Bitmap
@@ -26,7 +30,7 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
-import com.google.android.material.snackbar.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray.*
 import mozilla.components.feature.media.ext.pauseIfPlaying
@@ -200,7 +204,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             return true
         }
 
-        if(tabTrayStore.state.tabs.isEmpty()) {
+        if (tabTrayStore.state.tabs.isEmpty()) {
             findNavController().popBackStack(R.id.homeFragment, false)
             return true
         }
@@ -483,16 +487,17 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             it.isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
             it.icon.setTint(foregroundColor)
             it.icon.alpha = if (tabTrayStore.state.mode.selectedTabs.isNotEmpty()) {
-                255
+                ICON_ENABLED_ALPHA
             } else {
-                102
+                ICON_DISABLED_ALPHA
             }
         }
         val inPrivateMode = (activity as HomeActivity).browsingModeManager.mode.isPrivate
 
         // Shows the "save to collection menu item if in selection mode
         this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.also(setupMenuIcon)
-        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing && !inPrivateMode
+        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible =
+            tabTrayStore.state.mode.isEditing && !inPrivateMode
 
         // Show the "share" button if in selection mode
         this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.also(setupMenuIcon)
@@ -501,17 +506,17 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         // Hide all icons when in selection mode with nothing selected
         val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing && tabTrayStore.state.tabs.isNotEmpty()
         this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
-        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible = showAnyOverflowIcons && !(activity as HomeActivity).browsingModeManager.mode.isPrivate
+        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible =
+            showAnyOverflowIcons && !(activity as HomeActivity).browsingModeManager.mode.isPrivate
         this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons
         this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons
 
         // Disable the bottom trash icon when there are no tabs open
         if (tabTrayStore.state.tabs.isNotEmpty()) {
-            view?.tab_tray_close_all?.alpha = 1.0f
+            view?.tab_tray_close_all?.alpha = CLOSE_ALL_ENABLED_ALPHA
             view?.tab_tray_close_all?.isEnabled = true
-        }
-        else {
-            view?.tab_tray_close_all?.alpha = 0.4f
+        } else {
+            view?.tab_tray_close_all?.alpha = CLOSE_ALL_DISABLED_ALPHA
             view?.tab_tray_close_all?.isEnabled = true
         }
     }
@@ -528,5 +533,12 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
             showSavedSnackbar(sessions.size)
         }
+    }
+
+    companion object {
+        const val ICON_ENABLED_ALPHA = 255
+        const val ICON_DISABLED_ALPHA = 102
+        const val CLOSE_ALL_DISABLED_ALPHA = 0.4f
+        const val CLOSE_ALL_ENABLED_ALPHA = 1.0f
     }
 }
