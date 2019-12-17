@@ -57,11 +57,10 @@ class ThreeDotMenuMainTest {
         }.openThreeDotMenu {
         }.openHelp {
             verifyHelpUrl()
-        }.openHomeScreen {
+        }.openTabScreen {
         }.openThreeDotMenu {
         }.openWhatsNew {
             verifyWhatsNewURL()
-        }.openHomeScreen {
         }
 
         homeScreen {
