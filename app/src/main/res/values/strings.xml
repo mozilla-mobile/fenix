@@ -1133,6 +1133,8 @@
     <string name="tab_tray_menu_item_share_select">Select tabs to share</string>
     <!-- Text shown in the menu for selecting individual tabs -->
     <string name="tab_tray_menu_item_select">Select tabs</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">New tab</string>
 
 
 </resources>
