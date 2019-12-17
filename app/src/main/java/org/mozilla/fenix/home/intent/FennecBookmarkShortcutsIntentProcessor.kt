@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.intent
 
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineSession
@@ -52,7 +53,8 @@ class FennecBookmarkShortcutsIntentProcessor(
         }
     }
 
-    private companion object {
+    @VisibleForTesting
+    companion object {
         /**
          * Fennec set action for the pinned website shortcut Intent.
          */
