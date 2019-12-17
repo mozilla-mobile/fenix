@@ -42,10 +42,7 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyOpenTabsHeader()
-            verifyAddTabButton()
-            verifyNoTabsOpenedHeader()
-            verifyNoTabsOpenedText()
+            verifyTabTrayButton()
             verifyCollectionsHeader()
             verifyNoCollectionsHeader()
             verifyNoCollectionsText()
@@ -97,7 +94,6 @@ class HomeScreenTest {
 
     @Test
     @Ignore("Temp disable broken test - see:  https://github.com/mozilla-mobile/fenix/issues/5050")
-
     fun privateModeScreenItemsTest() {
         homeScreen { }.dismissOnboarding()
         homeScreen { }.togglePrivateBrowsingMode()
@@ -108,7 +104,7 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyAddTabButton()
+            verifyTabTrayButton()
             verifyShareTabsButton(visible = false)
             verifyCloseTabsButton(visible = false)
             verifyPrivateSessionHeader()
@@ -128,7 +124,7 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyAddTabButton()
+            verifyTabTrayButton()
             verifyShareTabsButton(visible = true)
             verifyCloseTabsButton(visible = true)
             verifyPrivateSessionHeader()

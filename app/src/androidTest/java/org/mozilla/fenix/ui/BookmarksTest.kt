@@ -166,8 +166,8 @@ class BookmarksTest {
         }.openThreeDotMenu {
         }.clickOpenInNewTab {
             verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen {
-            verifyOpenTabsHeader()
+        }.openTabScreen {
+            verifyExistingTabList()
         }
     }
 
@@ -183,8 +183,9 @@ class BookmarksTest {
         }.openThreeDotMenu {
         }.clickOpenInPrivateTab {
             verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen {
-            verifyPrivateSessionHeader()
+        }.openTabScreen {
+            // TODO: FIXME, VERIFY IN PRIVATE MODE
+            verifyExistingTabList()
         }
     }
 
@@ -231,7 +232,7 @@ class BookmarksTest {
 
         browserScreen {
             createBookmark(defaultWebPage.url)
-        }.openHomeScreen {
+        }.openTabScreen {
             closeTab()
         }.openThreeDotMenu {
         }.openLibrary {

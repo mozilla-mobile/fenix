@@ -19,6 +19,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.tabScreen
 
 /**
  *  Tests for verifying basic functionality of tabbed browsing
@@ -60,30 +61,30 @@ class TabbedBrowsingTest {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
-            verifyOpenTabsHeader()
-            verifyNoTabsOpenedText()
-            verifyNoTabsOpenedHeader()
             verifyNoCollectionsText()
             verifyNoCollectionsHeader()
-            verifyAddTabButton()
+            verifyTabTrayButton()
         }
 
         navigationToolbar {
-        }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
-        }.openHomeScreen { }
+        }.openTabScreen { }
 
-        homeScreen {
+        tabScreen {
             // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")), TestAssetHelper.waitingTime)
+            mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/tab_list_item")), TestAssetHelper.waitingTime)
             verifyExistingTabList()
-
-        }.openTabsListThreeDotMenu {
-            verifyCloseAllTabsButton()
-            verifyShareTabButton()
-            verifySaveCollection()
+        }.openThreeDotMenu {
+            verifyAddBookmarkButton()
         }
+
+//        navigationToolbar {  }.openThreeDotMenu {
+//            verifyCloseAllTabsButton()
+//            verifyShareTabButton()
+//            verifySaveCollection()
+//        }
     }
 
     @Test
@@ -97,20 +98,20 @@ class TabbedBrowsingTest {
         homeScreen {
             verifyPrivateSessionHeader()
             verifyPrivateSessionMessage(true)
-            verifyAddTabButton()
+            verifyTabTrayButton()
         }
 
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
-        }.openHomeScreen {
+        }.openTabScreen{
             // Timing issue on slow devices on Firebase
             mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")), TestAssetHelper.waitingTime)
             verifyExistingTabList()
-            verifyShareTabsButton(true)
-            verifyCloseTabsButton(true)
-        }.togglePrivateBrowsingMode()
+//            verifyShareTabsButton(true)
+//            verifyCloseTabsButton(true)
+        }//.togglePrivateBrowsingMode()
 
         // Verify private tabs remain in private browsing mode
 
@@ -131,7 +132,7 @@ class TabbedBrowsingTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen { }
+        }.openTabScreen{ }
 
         homeScreen {
             // Timing issue on slow devices on Firebase

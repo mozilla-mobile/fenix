@@ -40,7 +40,7 @@ class HomeScreenRobot {
     fun verifyHomePrivateBrowsingButton() = assertHomePrivateBrowsingButton()
     fun verifyHomeMenu() = assertHomeMenu()
     fun verifyOpenTabsHeader() = assertOpenTabsHeader()
-    fun verifyAddTabButton() = assertAddTabButton()
+    fun verifyTabTrayButton() = assertTabTrayButton()
     fun verifyNoTabsOpenedText() = assertNoTabsOpenedText()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsHeader() = assertNoCollectionsHeader()
@@ -138,6 +138,14 @@ class HomeScreenRobot {
             return ThreeDotMenuMainRobot.Transition()
         }
 
+        fun openTabScreen(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
+            mDevice.waitForIdle()
+
+            tabTrayButton().perform(click())
+            TabScreenRobot().interact()
+            return TabScreenRobot.Transition()
+        }
+
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             navigationToolbar().perform(click())
 
@@ -150,7 +158,7 @@ class HomeScreenRobot {
         }
 
         fun addNewTab() {
-            openSearch { }.openBrowser { }.openHomeScreen { }
+            openSearch { }.openBrowser { }.openTabScreen { }
         }
 
         fun togglePrivateBrowsingMode() {
@@ -176,6 +184,9 @@ val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
 private fun navigationToolbar() =
     onView(CoreMatchers.allOf(withText("Search or enter address")))
+
+private fun tabTrayButton() =
+    onView(withId(R.id.tab_tray_button_wrapper))
 
 private fun closeTabButton() = onView(withId(R.id.close_tab_button))
 
@@ -203,7 +214,7 @@ private fun assertOpenTabsHeader() =
     onView(CoreMatchers.allOf(withText("Open tabs")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertAddTabButton() =
+private fun assertTabTrayButton() =
     onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.tab_tray_button_wrapper), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 

@@ -143,7 +143,7 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent("Page content: 1")
-        }.openHomeScreen {
+        }.openTabScreen {
             closeTab()
         }.openThreeDotMenu {
         }.openHistory {
@@ -187,7 +187,7 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent("Page content: 1")
-        }.openHomeScreen {}
+        }.openTabScreen {}
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {

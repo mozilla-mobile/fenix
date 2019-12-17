@@ -111,18 +111,18 @@ class BrowserRobot {
             return NavigationToolbarRobot.Transition()
         }
 
-        fun openHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+        fun openTabScreen(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
             mDevice.waitForIdle()
 
             tabsCounter().click()
 
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/header_text")),
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_tray_controls")),
                 TestAssetHelper.waitingTime
             )
 
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            TabScreenRobot().interact()
+            return TabScreenRobot.Transition()
         }
     }
 }
