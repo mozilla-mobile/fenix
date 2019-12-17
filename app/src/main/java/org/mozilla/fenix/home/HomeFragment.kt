@@ -201,6 +201,7 @@ class HomeFragment : Fragment() {
 
         val tabCounter = TabCounterToolbarButton(
             requireComponents.core.sessionManager,
+            browsingModeManager.mode.isPrivate,
             {
                 invokePendingDeleteJobs()
                 hideOnboardingIfNeeded()
@@ -208,8 +209,7 @@ class HomeFragment : Fragment() {
                     R.id.homeFragment,
                     HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
                 )
-            },
-            browsingModeManager.mode.isPrivate
+            }
         )
 
         val tabCounterView = tabCounter.createView(view.tab_tray_button_wrapper)
