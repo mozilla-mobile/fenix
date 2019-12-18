@@ -19,7 +19,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -54,14 +53,14 @@ import org.mozilla.fenix.home.BrowserSessionsObserver
 import org.mozilla.fenix.home.PrivateBrowsingButtonView
 import org.mozilla.fenix.utils.allowUndo
 
-class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
+class TabTrayFragment : Fragment(), UserInteractionHandler {
     private lateinit var tabTrayView: TabTrayView
     private lateinit var tabTrayStore: TabTrayFragmentStore
+    private lateinit var tabTrayInteractor: TabTrayInteractor
+    private lateinit var tabTrayController: TabTrayController
 
     private var pendingSessionDeletion: PendingSessionDeletion? = null
-    data class PendingSessionDeletion(val deletionJob: (suspend () -> Unit), val sessionId: String)
-
-    var deleteAllSessionsJob: (suspend () -> Unit)? = null
+    data class PendingSessionDeletion(val deletionJob: (suspend () -> Unit), val sessionIds: Set<String>)
 
     var snackbar: FenixSnackbar? = null
 
@@ -72,11 +71,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
 
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
-            if (deleteAllSessionsJob == null) emitSessionChanges()
+            if (pendingSessionDeletion == null) emitSessionChanges()
         }
 
         override fun onIconChanged(session: Session, icon: Bitmap?) {
-            if (deleteAllSessionsJob == null) emitSessionChanges()
+            if (pendingSessionDeletion == null) emitSessionChanges()
         }
     }
 
@@ -111,7 +110,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tab_tray, container, false)
 
         tabTrayStore = StoreProvider.get(this) {
@@ -123,34 +121,26 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             )
         }
 
-        tabTrayView = TabTrayView(view.tab_tray_list_wrapper, this)
+        tabTrayController = DefaultTabTrayController(
+            browsingModeManager = (activity as HomeActivity).browsingModeManager,
+            navController = findNavController(),
+            sessionManager = sessionManager,
+            tabTrayFragmentStore = tabTrayStore,
+            tabCloser = ::tabCloser,
+            onModeChange = { newMode ->
+                invokePendingDeleteJobs()
 
-        PrivateBrowsingButtonView(
-            view.privateBrowsingButton,
-            (activity as HomeActivity).browsingModeManager
-        ) { newMode ->
-            invokePendingDeleteJobs()
+                if (newMode == BrowsingMode.Private) {
+                    requireContext().settings().incrementNumTimesPrivateModeOpened()
+                }
 
-            if (newMode == BrowsingMode.Private) {
-                requireContext().settings().incrementNumTimesPrivateModeOpened()
+                emitSessionChanges()
             }
+        )
 
-            emitSessionChanges()
-        }
+        tabTrayInteractor = TabTrayInteractor(tabTrayController)
 
-        view.tab_tray_close_all.setOnClickListener {
-            closeAllTabs()
-        }
-
-        view.tab_tray_open_new_tab.setOnClickListener {
-            invokePendingDeleteJobs()
-
-            val directions = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(
-                null
-            )
-            nav(R.id.tabTrayFragment, directions)
-            requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
-        }
+        tabTrayView = TabTrayView(view.tab_tray_list_wrapper, tabTrayInteractor)
 
         return view
     }
@@ -163,8 +153,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
 
         consumeFrom(tabTrayStore) {
-            tabTrayView.update(it)
-            toggleEmptyMessage(it.tabs.isEmpty())
+            tabTrayView.update(it, (activity as HomeActivity).browsingModeManager.mode)
 
             // Set the title based on mode and number of selected tabs
             activity?.title = it.appBarTitle(requireContext())
@@ -179,8 +168,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
             toolbar?.setNavigationIcon(icon)
 
             updateMenuItems()
-
-            tab_tray_controls.isVisible = !it.mode.isEditing
         }
     }
 
@@ -219,7 +206,7 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 true
             }
             R.id.tab_tray_menu_item_save -> {
-                showCollectionCreationFragment()
+                tabTrayController.navigateToCollectionCreator()
                 true
             }
             R.id.select_tabs_menu_item -> {
@@ -235,95 +222,73 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 true
             }
             R.id.close_menu_item -> {
-                closeAllTabs()
+                tabTrayController.closeAllTabs()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun closeAllTabs() {
-        val private = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-        if (sessionManager.sessionsOfType(private = private).toList().isEmpty()) {
-            return
-        }
+    fun tabCloser(tabs: Sequence<Session>, isPrivate: Boolean) {
+        val job = pendingSessionDeletion?.deletionJob ?: { }
 
-        if (pendingSessionDeletion?.deletionJob == null) {
-            removeAllTabsWithUndo(
-                sessionManager.sessionsOfType(private = private),
-                private
+        viewLifecycleOwner.lifecycleScope.launch {
+            job()
+        }.invokeOnCompletion {
+            pendingSessionDeletion = null
+            val sessionIdsToRemove = tabs.map { it.id }.toSet()
+
+            val temporaryListOfTabs = tabTrayStore.state.tabs.filterNot {
+                sessionIdsToRemove.contains(it.sessionId)
+            }
+
+            tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(temporaryListOfTabs))
+
+            val deleteOperation: (suspend () -> Unit) = {
+                tabs.forEach {
+                    sessionManager.remove(it)
+                }
+            }
+
+            pendingSessionDeletion = PendingSessionDeletion(deleteOperation, sessionIdsToRemove)
+
+            val undoOperation: (suspend () -> Unit) = {
+                if (isPrivate) {
+                    requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
+                }
+
+                pendingSessionDeletion = null
+                emitSessionChanges()
+            }
+
+            val snackbarMessage = when (Pair(sessionIdsToRemove.size > 1, isPrivate)) {
+                Pair(first = true, second = true) -> getString(R.string.snackbar_private_tabs_closed)
+                Pair(first = true, second = false) -> getString(R.string.snackbar_tabs_closed)
+                Pair(first = false, second = true) -> getString(R.string.snackbar_private_tab_closed)
+                Pair(first = false, second = false) -> getString(R.string.snackbar_tabs_closed)
+                else -> getString(R.string.snackbar_tabs_closed)
+            }
+
+            tabTrayView.showUndoSnackbar(
+                snackbarMessage,
+                deleteOperation,
+                undoOperation,
+                viewLifecycleOwner
             )
-        } else {
-            pendingSessionDeletion?.deletionJob?.let {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    it.invoke()
-                }.invokeOnCompletion {
-                    pendingSessionDeletion = null
-                    removeAllTabsWithUndo(
-                        sessionManager.sessionsOfType(private = private),
-                        private
-                    )
-                }
-            }
         }
-    }
-
-    override fun closeButtonTapped(tab: Tab) {
-        if (pendingSessionDeletion?.deletionJob == null) {
-            removeTabWithUndo(tab.sessionId, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
-        } else {
-            pendingSessionDeletion?.deletionJob?.let {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    it.invoke()
-                }.invokeOnCompletion {
-                    pendingSessionDeletion = null
-                    removeTabWithUndo(tab.sessionId, (activity as HomeActivity).browsingModeManager.mode.isPrivate)
-                }
-            }
-        }
-    }
-
-    override fun open(item: Tab) {
-        val session = sessionManager.findSessionById(item.sessionId) ?: return
-        sessionManager.select(session)
-        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
-        findNavController().navigate(directions)
-    }
-
-    override fun select(item: Tab) {
-        tabTrayStore.dispatch(
-            TabTrayFragmentAction.SelectTab(item)
-        )
-    }
-
-    override fun deselect(item: Tab) {
-        tabTrayStore.dispatch(
-            TabTrayFragmentAction.DeselectTab(item)
-        )
     }
 
     override fun onStart() {
         super.onStart()
-        // We only want this observer live just before we navigate away to the collection creation screen
-        requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
     override fun onStop() {
         invokePendingDeleteJobs()
-        snackbar?.dismiss()
+        tabTrayView.hideSnackbar()
+        // We only want this observer live just before we navigate away to the collection creation screen
+        requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
         super.onStop()
-    }
-
-    override fun shouldAllowSelect(): Boolean {
-        return tabTrayStore.state.mode.isEditing
-    }
-
-    override fun onPauseMediaClicked() {
-        MediaStateMachine.state.pauseIfPlaying()
-    }
-
-    override fun onPlayMediaClicked() {
-        MediaStateMachine.state.playIfPaused()
     }
 
     private fun invokePendingDeleteJobs() {
@@ -334,87 +299,6 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
                 pendingSessionDeletion = null
             }
         }
-
-        deleteAllSessionsJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                deleteAllSessionsJob = null
-            }
-        }
-    }
-
-    private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
-        val sessionManager = requireComponents.core.sessionManager
-
-        tabTrayStore.dispatch(TabTrayFragmentAction.UpdateTabs(emptyList()))
-
-        val deleteOperation: (suspend () -> Unit) = {
-            listOfSessionsToDelete.forEach {
-                sessionManager.remove(it)
-            }
-        }
-        deleteAllSessionsJob = deleteOperation
-
-        val snackbarMessage = if (private) {
-            getString(R.string.snackbar_private_tabs_closed)
-        } else {
-            getString(R.string.snackbar_tabs_closed)
-        }
-
-        snackbar = viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo), {
-                if (private) {
-                    requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
-                }
-                deleteAllSessionsJob = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-    }
-
-    private fun removeTabWithUndo(sessionId: String, private: Boolean) {
-        val sessionManager = requireComponents.core.sessionManager
-
-        val deleteOperation: (suspend () -> Unit) = {
-            sessionManager.findSessionById(sessionId)
-                ?.let { session ->
-                    pendingSessionDeletion = null
-                    sessionManager.remove(session)
-                }
-        }
-
-        pendingSessionDeletion?.deletionJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }
-        }
-
-        pendingSessionDeletion = TabTrayFragment.PendingSessionDeletion(deleteOperation, sessionId)
-
-        val snackbarMessage = if (private) {
-            getString(R.string.snackbar_private_tab_closed)
-        } else {
-            getString(R.string.snackbar_tab_closed)
-        }
-
-        snackbar = viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo), {
-                pendingSessionDeletion = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-
-        // Update the UI with the tab removed, but don't remove it from storage yet
-        emitSessionChanges()
     }
 
     private fun emitSessionChanges() {
@@ -431,39 +315,11 @@ class TabTrayFragment : Fragment(), TabTrayInteractor, UserInteractionHandler {
         }
     }
 
-    private fun toggleEmptyMessage(isVisible: Boolean) {
-        // Show an empty message if no tabs are opened
-        view?.tab_tray_empty_view?.isVisible = isVisible
-        view?.announceForAccessibility(context?.getString(R.string.no_open_tabs_description))
-    }
-
     private fun getVisibleSessions(): List<Session> {
-        if (deleteAllSessionsJob != null) {
-            return emptyList()
-        }
-        val sessions = getListOfSessions().filterNot { it.id == pendingSessionDeletion?.sessionId }
+        val pendingSessionIdsForRemoval = pendingSessionDeletion?.sessionIds ?: setOf()
+        val sessions = getListOfSessions().filterNot { pendingSessionIdsForRemoval.contains(it.id) }
+
         return sessions
-    }
-
-    private fun showCollectionCreationFragment() {
-        if (findNavController().currentDestination?.id == R.id.collectionCreationFragment) return
-        if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Normal) return
-
-        val tabIds = tabTrayStore.state.mode.selectedTabs.map { it.sessionId }.toTypedArray()
-
-        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
-
-        view?.let {
-            val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
-                tabIds = tabIds,
-                previousFragmentId = R.id.tabTrayFragment,
-                saveCollectionStep = SaveCollectionStep.SelectCollection,
-                selectedTabIds = tabIds,
-                selectedTabCollectionId = -1
-            )
-
-            nav(R.id.tabTrayFragment, directions)
-        }
     }
 
     private fun showSavedSnackbar(tabSize: Int) {
