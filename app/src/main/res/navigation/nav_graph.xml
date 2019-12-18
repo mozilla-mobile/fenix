@@ -708,8 +708,7 @@
         android:label="LanguageSettingsFragment" />
     <fragment
         android:id="@+id/tabTrayFragment"
-        android:name="org.mozilla.fenix.tabtray.TabTrayFragment"
-        android:label="TabTrayFragment">
+        android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
         <action
             android:id="@+id/action_tabTrayFragment_to_browserFragment"
             app:destination="@+id/browserFragment"
