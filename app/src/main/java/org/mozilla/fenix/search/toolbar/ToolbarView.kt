@@ -19,15 +19,20 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
+import java.util.concurrent.Executors
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
@@ -82,6 +87,23 @@ class ToolbarView(
 
     init {
         view.apply {
+
+            /* Eventually the user is going to enter some text and Fenix will classify whether or
+            not that is a URL or a search term. In order to do that, Fenix calls
+            mozilla.components.support.ktx.kotlin.isUrl. That function relies on a very complicated
+            regular expression. Once the regular expression is compiled, the classification is fast.
+            However, the compilation process is slow. On a background thread, launch a dummy
+            classification that will pre-compile the regular expression so it is ready for the
+            classification when it is needed.
+            https://github.com/mozilla-mobile/fenix/issues/7143 */
+            Executors.newSingleThreadExecutor().asCoroutineDispatcher().use {
+                CoroutineScope(it).launch {
+                    if (ISURL_WARMUP_URL.isUrl()) {
+                        // We do not care about the result, we just want to do the classification.
+                    }
+                }
+            }
+
             editMode()
 
             setScrollFlagsForTopToolbar()
@@ -162,6 +184,7 @@ class ToolbarView(
 
     companion object {
         private const val TOOLBAR_ELEVATION_IN_DP = 16
+        private const val ISURL_WARMUP_URL = "http://example.com"
     }
 }
 
