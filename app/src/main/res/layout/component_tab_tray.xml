@@ -27,7 +27,55 @@
     <androidx.recyclerview.widget.RecyclerView
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/tab_tray_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tab_tray_controls"
         tools:listitem="@layout/selectable_list_item" />
+
+    <View
+        android:id="@+id/bottomBarShadow"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/bottom_bar_shadow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tab_tray_controls"/>
+
+    <LinearLayout
+        android:id="@+id/tab_tray_controls"
+        android:layout_height="48dp"
+        android:layout_width="0dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <ImageButton
+            android:id="@+id/private_browsing_button"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/content_description_private_browsing_button"
+            android:src="@drawable/private_browsing_button"
+            android:layout_weight=".3333" />
+        <ImageButton
+            android:id="@+id/tab_tray_close_all"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/tab_tray_menu_item_close"
+            android:src="@drawable/ic_delete"
+            android:layout_weight=".3333" />
+        <ImageButton
+            android:id="@+id/tab_tray_open_new_tab"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/tab_tray_menu_open_new_tab"
+            android:src="@drawable/ic_new"
+            android:layout_weight=".3333" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
