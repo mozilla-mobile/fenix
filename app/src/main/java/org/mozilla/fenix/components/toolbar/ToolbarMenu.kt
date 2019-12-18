@@ -25,6 +25,7 @@ interface ToolbarMenu {
         object OpenInFenix : Item()
         object SaveToCollection : Item()
         object AddToHomeScreen : Item()
+        object AddonsManager : Item()
         object Quit : Item()
         data class ReaderMode(val isChecked: Boolean) : Item()
         object OpenInApp : Item()
