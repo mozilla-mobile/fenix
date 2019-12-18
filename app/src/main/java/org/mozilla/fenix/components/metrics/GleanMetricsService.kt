@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
@@ -495,7 +496,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         }
         // setStartupMetrics is not a fast function. It does not need to be done before we can consider
         // ourselves initialized. So, let's do it, well, later.
-        gleanSetStartupMetrics = MainScope().launch {
+        gleanSetStartupMetrics = MainScope().launch(IO){
             setStartupMetrics()
         }
 
