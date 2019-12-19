@@ -21,10 +21,11 @@ interface TabTrayController {
     fun openTab(tab: Tab)
     fun selectTab(tab: Tab)
     fun deselectTab(tab: Tab)
-    fun navigateToCollectionCreator()
     fun newTab()
     fun enterPrivateBrowsingMode()
     fun exitPrivateBrowsingMode()
+
+    fun navigateToCollectionCreator()
     fun shouldAllowSelect(): Boolean
 }
 
