@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home
 
-import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
 import io.mockk.every
@@ -24,12 +23,10 @@ import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -75,8 +72,6 @@ class DefaultSessionControlControllerTest {
             homeLayout = homeLayout,
             browsingModeManager = browsingModeManager,
             lifecycleScope = MainScope(),
-            closeTab = closeTab,
-            closeAllTabs = closeAllTabs,
             getListOfTabs = getListOfTabs,
             hideOnboarding = hideOnboarding,
             invokePendingDeleteJobs = invokePendingDeleteJobs,
@@ -90,20 +85,6 @@ class DefaultSessionControlControllerTest {
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
         mainThreadSurrogate.close()
-    }
-
-    @Test
-    fun handleCloseTab() {
-        val sessionId = "hello"
-        controller.handleCloseTab(sessionId)
-        verify { closeTab(sessionId) }
-    }
-
-    @Test
-    fun handleCloseAllTabs() {
-        val isPrivateMode = true
-        controller.handleCloseAllTabs(isPrivateMode)
-        verify { closeAllTabs(isPrivateMode) }
     }
 
     @Test
@@ -175,22 +156,6 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleSaveTabToCollection() {
         controller.handleSaveTabToCollection(selectedTabId = null)
-        verify { invokePendingDeleteJobs() }
-    }
-
-    @Test
-    fun handleSelectTab() {
-        val tabView: View = mockk(relaxed = true)
-        val sessionId = "hello"
-        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
-        controller.handleSelectTab(tabView, sessionId)
-        verify { invokePendingDeleteJobs() }
-        verify { navController.nav(R.id.homeFragment, directions) }
-    }
-
-    @Test
-    fun handleShareTabs() {
-        controller.handleShareTabs()
         verify { invokePendingDeleteJobs() }
     }
 
