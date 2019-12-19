@@ -6,6 +6,9 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -33,7 +36,8 @@ class TabScreenRobot {
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle()
-            threeDotButton().perform(ViewActions.click())
+
+            Espresso.openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext<Context>())
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
         }

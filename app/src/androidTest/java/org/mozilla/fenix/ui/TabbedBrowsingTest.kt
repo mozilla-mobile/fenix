@@ -74,17 +74,17 @@ class TabbedBrowsingTest {
 
         tabScreen {
             // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/tab_list_item")), TestAssetHelper.waitingTime)
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("org.mozilla.fenix.debug:id/tab_list_item")),
+                TestAssetHelper.waitingTime
+            )
             verifyExistingTabList()
         }.openThreeDotMenu {
-            verifyAddBookmarkButton()
+            verifySelectTabsButton()
+            verifySaveToCollectionButton()
+            verifyShareAllTabsButton()
+            verifyCloseAllTabsButton()
         }
-
-//        navigationToolbar {  }.openThreeDotMenu {
-//            verifyCloseAllTabsButton()
-//            verifyShareTabButton()
-//            verifySaveCollection()
-//        }
     }
 
     @Test

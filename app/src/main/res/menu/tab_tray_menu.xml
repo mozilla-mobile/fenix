@@ -9,6 +9,7 @@
     <item
         android:id="@+id/share_menu_item_save"
         android:title="@string/tab_tray_menu_item_share"
+        android:contentDescription="@string/tab_tray_menu_item_share"
         android:icon="@drawable/ic_hollow_share"
         android:visibility="gone"
         app:showAsAction="always" />
@@ -17,6 +18,7 @@
     <item
         android:id="@+id/tab_tray_menu_item_save"
         android:title="@string/tab_tray_menu_item_save"
+        android:contentDescription="@string/tab_tray_menu_item_save"
         android:icon="@drawable/ic_tab_collection"
         android:visibility="gone"
         app:showAsAction="always" />
@@ -25,23 +27,27 @@
     <item
         android:id="@+id/select_tabs_menu_item"
         android:title="@string/tab_tray_menu_item_select"
+        android:contentDescription="@string/tab_tray_menu_item_select"
         app:showAsAction="never" />
 
     <!-- Save to collection -->
     <item
         android:id="@+id/select_to_save_menu_item"
         android:title="@string/tab_tray_menu_item_save"
+        android:contentDescription="@string/tab_tray_menu_item_save"
         app:showAsAction="never" />
 
     <!-- Share-->
     <item
         android:id="@+id/share_menu_item"
         android:title="@string/tab_tray_menu_item_share"
+        android:contentDescription="@string/tab_tray_menu_item_share"
         app:showAsAction="never" />
 
     <!-- Close tab-->
     <item
         android:id="@+id/close_menu_item"
-            android:title="@string/tab_tray_menu_item_close"
+        android:title="@string/tab_tray_menu_item_close"
+        android:contentDescription="@string/tab_tray_menu_item_close"
         app:showAsAction="never" />
 </menu>
