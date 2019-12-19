@@ -167,10 +167,6 @@ class HomeScreenRobot {
                 .perform(click())
         }
 
-        fun dismissPrivateBrowsingProtip() {
-            onView(withText("No thanks")).perform(click())
-        }
-
         fun openTabsListThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle()
             tabsListThreeDotButton().perform(click())

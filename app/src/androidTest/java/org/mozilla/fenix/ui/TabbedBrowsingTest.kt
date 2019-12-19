@@ -94,7 +94,6 @@ class TabbedBrowsingTest {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen { }.togglePrivateBrowsingMode()
-        homeScreen { }.dismissPrivateBrowsingProtip()
 
         homeScreen {
             verifyPrivateSessionMessage(true)
