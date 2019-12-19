@@ -46,10 +46,11 @@ class TabScreenRobot {
             return ThreeDotMenuMainRobot.Transition()
         }
 
-        fun togglePrivateBrowsingMode() {
+        fun togglePrivateBrowsingMode(interact: TabScreenRobot.() -> Unit): Transition {
             mDevice.waitForIdle()
-
             privateBrowsingButton().perform(click())
+            TabScreenRobot().interact()
+            return Transition()
         }
     }
 }
