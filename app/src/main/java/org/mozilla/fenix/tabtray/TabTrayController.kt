@@ -25,6 +25,7 @@ interface TabTrayController {
     fun newTab()
     fun enterPrivateBrowsingMode()
     fun exitPrivateBrowsingMode()
+    fun shouldAllowSelect(): Boolean
 }
 
 @SuppressWarnings("TooManyFunctions")
@@ -100,4 +101,6 @@ class DefaultTabTrayController(
     override fun deselectTab(tab: Tab) {
         tabTrayFragmentStore.dispatch(TabTrayFragmentAction.DeselectTab(tab))
     }
+
+    override fun shouldAllowSelect(): Boolean = tabTrayFragmentStore.state.mode.isEditing
 }
