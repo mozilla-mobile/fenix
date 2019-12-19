@@ -23,6 +23,7 @@ import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.constraintlayout.widget.ConstraintSet.START
 import androidx.constraintlayout.widget.ConstraintSet.END
+import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -196,12 +197,11 @@ class HomeFragment : Fragment() {
 
         sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
-        val constraintSet = ConstraintSet()
-        constraintSet.apply {
+        ConstraintSet().apply {
             clone(view.homeLayout)
             connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
-            connect(sessionControlView.view.id, START, ConstraintSet.PARENT_ID, START)
-            connect(sessionControlView.view.id, END, ConstraintSet.PARENT_ID, END)
+            connect(sessionControlView.view.id, START, PARENT_ID, START)
+            connect(sessionControlView.view.id, END, PARENT_ID, END)
             connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
             applyTo(view.homeLayout)
         }
