@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -58,10 +59,19 @@ class ThreeDotMenuMainTest {
         }.openHelp {
             verifyHelpUrl()
         }.openTabScreen {
-        }.openThreeDotMenu {
+            closeTab()
+        }
+
+        pressBack()
+
+        homeScreen { }.openThreeDotMenu {
         }.openWhatsNew {
             verifyWhatsNewURL()
+        }.openTabScreen {
+            closeTab()
         }
+
+        pressBack()
 
         homeScreen {
         }.openThreeDotMenu {
