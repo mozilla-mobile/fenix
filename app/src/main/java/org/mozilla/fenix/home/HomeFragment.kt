@@ -18,7 +18,11 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
+import androidx.constraintlayout.widget.ConstraintSet.TOP
+import androidx.constraintlayout.widget.ConstraintSet.START
+import androidx.constraintlayout.widget.ConstraintSet.END
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -53,11 +57,6 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.TOP
-import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -197,16 +196,13 @@ class HomeFragment : Fragment() {
 
         sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
-        view.homeLayout.applyConstraintSet {
-            sessionControlView.view {
-                connect(
-                    TOP to BOTTOM of view.wordmark_spacer,
-                    START to START of PARENT_ID,
-                    END to END of PARENT_ID,
-                    BOTTOM to TOP of view.bottom_bar
-                )
-            }
-        }
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(view.homeLayout)
+        constraintSet.connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
+        constraintSet.connect(sessionControlView.view.id, START, ConstraintSet.PARENT_ID, START)
+        constraintSet.connect(sessionControlView.view.id, END, ConstraintSet.PARENT_ID, END)
+        constraintSet.connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
+        constraintSet.applyTo(view.homeLayout)
 
         activity.themeManager.applyStatusBarTheme(activity)
 
