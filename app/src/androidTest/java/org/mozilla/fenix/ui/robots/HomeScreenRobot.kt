@@ -17,6 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.By
@@ -76,10 +77,7 @@ class HomeScreenRobot {
     fun verifyStartBrowsingButton() = assertStartBrowsingButton()
 
     // Private mode elements
-    fun verifyPrivateSessionHeader() = assertPrivateSessionHeader()
     fun verifyPrivateSessionMessage(visible: Boolean = true) = assertPrivateSessionMessage(visible)
-    fun verifyShareTabsButton(visible: Boolean = true) = assertShareTabsButton(visible)
-    fun verifyCloseTabsButton(visible: Boolean = true) = assertCloseTabsButton(visible)
 
     fun verifyExistingTabList() = assertExistingTabList()
 
@@ -164,6 +162,10 @@ class HomeScreenRobot {
         fun togglePrivateBrowsingMode() {
             onView(ViewMatchers.withResourceName("privateBrowsingButton"))
                 .perform(click())
+        }
+
+        fun dismissPrivateBrowsingProtip() {
+            onView(withText("No thanks")).perform(click())
         }
 
         fun openTabsListThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
@@ -347,26 +349,11 @@ private fun assertPrivateSessionHeader() =
     onView(CoreMatchers.allOf(withText("Private tabs")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-const val PRIVATE_SESSION_MESSAGE = "Firefox Preview clears your search and browsing history " +
-        "when you quit the app or close all private tabs. While this doesn’t make you anonymous to websites or " +
-        "your internet service provider, it makes it easier to keep what you do online private from anyone else " +
-        "who uses this device."
-
 private fun assertPrivateSessionMessage(visible: Boolean) =
-    onView(CoreMatchers.allOf(withText(PRIVATE_SESSION_MESSAGE)))
+    onView(withId(R.id.private_session_description))
         .check(
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else doesNotExist()
         )
-
-private fun assertShareTabsButton(visible: Boolean) =
-    onView(CoreMatchers.allOf(withId(R.id.share_tabs_button), isDisplayed()))
-        .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
-
-private fun assertCloseTabsButton(visible: Boolean) =
-    onView(CoreMatchers.allOf(withId(R.id.close_tab_button), isDisplayed()))
-        .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
-
-private fun visibleOrGone(visibility: Boolean) = if (visibility) Visibility.VISIBLE else Visibility.GONE
 
 private fun assertExistingTabList() =
     onView(CoreMatchers.allOf(withId(R.id.item_tab)))

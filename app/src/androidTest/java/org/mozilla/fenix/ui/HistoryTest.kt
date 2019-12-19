@@ -175,7 +175,6 @@ class HistoryTest {
         multipleSelectionToolbar {
         }.clickOpenPrivateTab {
             verifyExistingTabList()
-            verifyPrivateSessionHeader()
         }
     }
 

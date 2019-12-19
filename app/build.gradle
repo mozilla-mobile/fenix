@@ -531,6 +531,9 @@ dependencies {
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
     testImplementation Deps.mozilla_service_glean_forUnitTests
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 if (project.hasProperty("raptor")) {
@@ -691,4 +694,7 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
     ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
     apply from: "../${acSrcDir}/substitute-local-ac.gradle"
+}
+repositories {
+    mavenCentral()
 }

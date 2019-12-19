@@ -94,33 +94,31 @@ class TabbedBrowsingTest {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen { }.togglePrivateBrowsingMode()
+        homeScreen { }.dismissPrivateBrowsingProtip()
 
         homeScreen {
-            verifyPrivateSessionHeader()
             verifyPrivateSessionMessage(true)
             verifyTabTrayButton()
         }
 
         navigationToolbar {
-        }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
         }.openTabScreen {
             // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")), TestAssetHelper.waitingTime)
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("org.mozilla.fenix.debug:id/tab_list_item")),
+                TestAssetHelper.waitingTime
+            )
             verifyExistingTabList()
-//            verifyShareTabsButton(true)
-//            verifyCloseTabsButton(true)
-        } // .togglePrivateBrowsingMode()
+        }.togglePrivateBrowsingMode()
 
-        // Verify private tabs remain in private browsing mode
-
-        homeScreen {
-            verifyNoTabsOpenedHeader()
+        tabScreen {
             verifyNoTabsOpenedText()
         }.togglePrivateBrowsingMode()
 
-        homeScreen {
+        tabScreen {
             verifyExistingTabList()
         }
     }

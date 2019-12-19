@@ -263,7 +263,6 @@ class BookmarksTest {
         multipleSelectionToolbar {
         }.clickOpenPrivateTab {
             verifyExistingTabList()
-            verifyPrivateSessionHeader()
         }
     }
 
