@@ -237,7 +237,7 @@ class BookmarksTest {
         }
 
         pressBack()
-        homeScreen {  }.openThreeDotMenu {
+        homeScreen { }.openThreeDotMenu {
         }.openLibrary {
         }.openBookmarks {
             longTapSelectItem(defaultWebPage.url)

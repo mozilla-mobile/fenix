@@ -1,10 +1,8 @@
 package org.mozilla.fenix.tabtray
 
-import org.mozilla.fenix.ext.logDebug
-
 class TabTrayInteractor(
     private val controller: TabTrayController
-): TabTrayViewInteractor {
+) : TabTrayViewInteractor {
     override fun normalModeButtonTapped() { controller.exitPrivateBrowsingMode() }
     override fun privateModeButtonTapped() { controller.enterPrivateBrowsingMode() }
     override fun closeAllTabsTapped() { controller.closeAllTabs() }

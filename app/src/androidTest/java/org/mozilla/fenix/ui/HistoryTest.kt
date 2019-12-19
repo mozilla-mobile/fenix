@@ -150,7 +150,7 @@ class HistoryTest {
 
         pressBack()
 
-        homeScreen {  }.openThreeDotMenu {
+        homeScreen { }.openThreeDotMenu {
         }.openHistory {
             longTapSelectItem(firstWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)

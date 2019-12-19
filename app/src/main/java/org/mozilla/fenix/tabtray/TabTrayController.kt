@@ -12,6 +12,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.ext.sessionsOfType
 
+@SuppressWarnings("TooManyFunctions")
 interface TabTrayController {
     fun closeTab(tab: Tab)
     fun closeAllTabs()
@@ -26,6 +27,7 @@ interface TabTrayController {
     fun exitPrivateBrowsingMode()
 }
 
+@SuppressWarnings("TooManyFunctions")
 class DefaultTabTrayController(
     private val navController: NavController,
     private val sessionManager: SessionManager,
@@ -33,7 +35,7 @@ class DefaultTabTrayController(
     private val browsingModeManager: BrowsingModeManager,
     private val tabCloser: (Sequence<Session>, Boolean) -> Unit,
     private val onModeChange: (BrowsingMode) -> Unit
-): TabTrayController {
+) : TabTrayController {
     override fun enterPrivateBrowsingMode() {
         val newMode = BrowsingMode.Private
 
@@ -58,7 +60,6 @@ class DefaultTabTrayController(
         if (tabTrayFragmentStore.state.mode is TabTrayFragmentState.Mode.Normal) return
 
         val tabIds = tabTrayFragmentStore.state.mode.selectedTabs.map { it.sessionId }.toTypedArray()
-
 
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
             tabIds = tabIds,
