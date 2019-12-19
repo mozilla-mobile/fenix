@@ -31,6 +31,10 @@ import org.mozilla.fenix.share.ShareFragment
  * Implementation of Robot Pattern for the three dot (main) menu.
  */
 class ThreeDotMenuMainRobot {
+    fun verifySaveToCollectionButton() = assertSaveToCollectionButton()
+    fun verifySelectTabsButton() = assertSelectTabsButton()
+    fun verifyShareAllTabsButton() = assertShareAllTabsButton()
+    fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifySettingsButton() = assertSettingsButton()
     fun verifyLibraryButton() = assertLibraryButton()
     fun verifyHistoryButton() = assertHistoryButton()
@@ -41,7 +45,6 @@ class ThreeDotMenuMainRobot {
     fun verifyAddBookmarkButton() = assertAddBookmarkButton()
     fun verifyEditBookmarkButton() = assertEditBookmarkButton()
     fun verifyRefreshButton() = assertRefreshButton()
-    fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyShareButton() = assertShareButton()
     fun clickShareButton() {
         shareButton().click()
@@ -198,6 +201,22 @@ private fun threeDotMenuRecyclerViewExists() {
     onView(withId(R.id.mozac_browser_menu_recyclerView)).check(matches(isDisplayed()))
 }
 
+private fun selectTabsButton() = onView(withText("Select tabs"))
+private fun assertSelectTabsButton() = selectTabsButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun saveToCollectionButton() = onView(withText("Save to collection"))
+private fun assertSaveToCollectionButton() = saveToCollectionButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun shareAllTabsButton() = onView(withText("Share all tabs"))
+private fun assertShareAllTabsButton() = shareAllTabsButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun closeAllTabsButton() = onView(withText("Close all tabs"))
+private fun assertCloseAllTabsButton() = closeAllTabsButton()
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
 private fun settingsButton() = onView(allOf(withText(R.string.settings),
     withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 private fun assertSettingsButton() = settingsButton()
@@ -233,10 +252,6 @@ private fun assertEditBookmarkButton() = editBookmarkButton()
 
 private fun refreshButton() = onView(ViewMatchers.withContentDescription("Refresh"))
 private fun assertRefreshButton() = refreshButton()
-    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
-private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs")))
-private fun assertCloseAllTabsButton() = closeAllTabsButton()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun shareTabButton() = onView(allOf(withText("Share tabs")))
