@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
@@ -31,15 +30,11 @@ import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
-import kotlinx.android.synthetic.main.fragment_tab_tray.*
-import mozilla.components.feature.media.ext.pauseIfPlaying
-import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -50,9 +45,8 @@ import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.BrowserSessionsObserver
-import org.mozilla.fenix.home.PrivateBrowsingButtonView
-import org.mozilla.fenix.utils.allowUndo
 
+@SuppressWarnings("LargeClass", "TooManyFunctions")
 class TabTrayFragment : Fragment(), UserInteractionHandler {
     private lateinit var tabTrayView: TabTrayView
     private lateinit var tabTrayStore: TabTrayFragmentStore

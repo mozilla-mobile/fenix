@@ -180,7 +180,8 @@ class TabTrayView(
         message: String,
         onCompletion: suspend () -> Unit,
         onUndo: suspend () -> Unit,
-        lifecycleOwner: LifecycleOwner) {
+        lifecycleOwner: LifecycleOwner
+    ) {
         snackbar = lifecycleOwner.lifecycleScope.allowUndo(
             view,
             message,
