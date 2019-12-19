@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
@@ -32,6 +33,7 @@ class SettingsLoginsAndPasswordsTest {
         }.openThreeDotMenu {
         }.openSettings {
             // Necessary to scroll a little bit for all screen sizes
+            TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
             verifyDefaultValueSyncLogins()
