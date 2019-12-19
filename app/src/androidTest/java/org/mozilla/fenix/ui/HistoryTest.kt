@@ -6,6 +6,7 @@ package org.mozilla.fenix.ui
 
 import android.content.Context
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.Espresso.pressBack
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
@@ -145,17 +146,18 @@ class HistoryTest {
             verifyPageContent("Page content: 1")
         }.openTabScreen {
             closeTab()
-        }.openThreeDotMenu {
+        }
+
+        pressBack()
+
+        homeScreen {  }.openThreeDotMenu {
         }.openHistory {
             longTapSelectItem(firstWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-            verifyExistingTabList()
-            verifyOpenTabsHeader()
-        }
+        }.clickOpenNewTab {}.openTabScreen { verifyExistingTabList() }
     }
 
     @Test
