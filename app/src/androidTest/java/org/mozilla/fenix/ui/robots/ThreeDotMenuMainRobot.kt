@@ -8,6 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasFocus
@@ -161,14 +162,6 @@ class ThreeDotMenuMainRobot {
             return BrowserRobot.Transition()
         }
 
-        fun closeAllTabs(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.text("Close all tabs")), waitingTime)
-            closeAllTabsButton().click()
-
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
-        }
-
         fun openFindInPage(interact: FindInPageRobot.() -> Unit): FindInPageRobot.Transition {
             mDevice.waitNotNull(Until.findObject(By.text("Find in page")), waitingTime)
             findInPageButton().click()
@@ -193,6 +186,14 @@ class ThreeDotMenuMainRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun closeAllTabs(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
+            mDevice.wait(Until.findObject(By.text("Close all tabs")), waitingTime)
+            closeAllTabsButton().perform(click())
+
+            TabScreenRobot().interact()
+            return TabScreenRobot.Transition()
         }
     }
 }

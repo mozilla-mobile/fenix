@@ -112,13 +112,9 @@ class TabbedBrowsingTest {
                 TestAssetHelper.waitingTime
             )
             verifyExistingTabList()
-        }.togglePrivateBrowsingMode()
-
-        tabScreen {
+        }.togglePrivateBrowsingMode {
             verifyNoTabsOpenedText()
-        }.togglePrivateBrowsingMode()
-
-        tabScreen {
+        }.togglePrivateBrowsingMode {
             verifyExistingTabList()
         }
     }
@@ -130,20 +126,11 @@ class TabbedBrowsingTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
-        }.openTabScreen { }
-
-        homeScreen {
-            // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")), TestAssetHelper.waitingTime)
+        }.openTabScreen {
             verifyExistingTabList()
-        }.openTabsListThreeDotMenu {
+        }.openThreeDotMenu {
             verifyCloseAllTabsButton()
-            verifyShareTabButton()
-            verifySaveCollection()
         }.closeAllTabs {
-            verifyNoCollectionsHeader()
-            verifyNoCollectionsText()
-            verifyNoTabsOpenedHeader()
             verifyNoTabsOpenedText()
         }
     }
