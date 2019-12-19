@@ -197,12 +197,14 @@ class HomeFragment : Fragment() {
         sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
 
         val constraintSet = ConstraintSet()
-        constraintSet.clone(view.homeLayout)
-        constraintSet.connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
-        constraintSet.connect(sessionControlView.view.id, START, ConstraintSet.PARENT_ID, START)
-        constraintSet.connect(sessionControlView.view.id, END, ConstraintSet.PARENT_ID, END)
-        constraintSet.connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
-        constraintSet.applyTo(view.homeLayout)
+        constraintSet.apply {
+            clone(view.homeLayout)
+            connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
+            connect(sessionControlView.view.id, START, ConstraintSet.PARENT_ID, START)
+            connect(sessionControlView.view.id, END, ConstraintSet.PARENT_ID, END)
+            connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
+            applyTo(view.homeLayout)
+        }
 
         activity.themeManager.applyStatusBarTheme(activity)
 
