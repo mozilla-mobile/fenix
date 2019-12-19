@@ -90,7 +90,7 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
         fun clickOpenPrivateTab(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             openInPrivateTabButton().click()
             mDevice.waitNotNull(
-                Until.findObject(By.text("Private tabs")),
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/private_session_description")),
                 waitingTime
             )
 

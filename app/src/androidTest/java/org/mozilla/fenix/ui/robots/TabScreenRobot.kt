@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.content.Context
+import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -18,11 +19,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -52,6 +57,15 @@ class TabScreenRobot {
             TabScreenRobot().interact()
             return Transition()
         }
+
+        fun newTabAndEnterURLAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitForIdle()
+            newTabButton().perform(click())
+
+            return searchScreen {
+                typeSearch(url.toString())
+            }.openBrowser(interact)
+        }
     }
 }
 
@@ -60,9 +74,9 @@ fun tabScreen(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
     return TabScreenRobot.Transition()
 }
 
-private fun threeDotButton() = onView(Matchers.allOf(ViewMatchers.withContentDescription("More options")))
 private fun closeTabButton() = onView(withId(R.id.accessory_view))
 private fun privateBrowsingButton() = onView(withId(R.id.private_browsing_button))
+private fun newTabButton() = onView(withId(R.id.tab_tray_open_new_tab))
 
 private fun assertExistingTabList() =
     onView(withId(R.id.tab_list_item))

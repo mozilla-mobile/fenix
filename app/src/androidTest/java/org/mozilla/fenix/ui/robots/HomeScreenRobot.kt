@@ -157,7 +157,9 @@ class HomeScreenRobot {
         }
 
         fun addNewTab() {
-            openSearch { }.openBrowser { }.openTabScreen { }
+            openSearch {
+                typeSearch("Mozilla")
+            }.openBrowser { }.openTabScreen { }
         }
 
         fun togglePrivateBrowsingMode() {
