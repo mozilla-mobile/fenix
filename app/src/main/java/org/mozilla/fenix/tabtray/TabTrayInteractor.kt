@@ -1,5 +1,6 @@
 package org.mozilla.fenix.tabtray
 
+@SuppressWarnings("TooManyFunctions")
 class TabTrayInteractor(
     private val controller: TabTrayController
 ) : TabTrayViewInteractor {
