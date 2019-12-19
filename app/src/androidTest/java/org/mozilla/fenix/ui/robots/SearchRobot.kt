@@ -88,7 +88,7 @@ class SearchRobot {
 
         fun openBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitForIdle()
-            browserToolbarEditView().perform(typeText("Mozilla\n"))
+            browserToolbarEditView().perform(typeText("\n"))
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()

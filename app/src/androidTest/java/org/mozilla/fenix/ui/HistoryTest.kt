@@ -173,7 +173,7 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
+        }.clickOpenPrivateTab { }.openTabScreen {
             verifyExistingTabList()
         }
     }
@@ -186,10 +186,9 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent("Page content: 1")
-        }.openTabScreen {}
+        }.openTabScreen {
 
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+        }.newTabAndEnterURLAndEnterToBrowser(secondWebPage.url) {
             verifyPageContent("Page content: 2")
         }.openThreeDotMenu {
         }.openLibrary {
