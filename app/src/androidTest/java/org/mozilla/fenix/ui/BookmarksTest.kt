@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.Espresso.pressBack
 import kotlinx.coroutines.runBlocking
 import mozilla.appservices.places.BookmarkRoot
 import okhttp3.mockwebserver.MockWebServer
@@ -233,7 +234,10 @@ class BookmarksTest {
             createBookmark(defaultWebPage.url)
         }.openTabScreen {
             closeTab()
-        }.openThreeDotMenu {
+        }
+
+        pressBack()
+        homeScreen {  }.openThreeDotMenu {
         }.openLibrary {
         }.openBookmarks {
             longTapSelectItem(defaultWebPage.url)
@@ -241,9 +245,8 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
+        }.clickOpenNewTab { }.openTabScreen {
             verifyExistingTabList()
-            verifyOpenTabsHeader()
         }
     }
 
@@ -261,7 +264,7 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
+        }.clickOpenPrivateTab { }.openTabScreen {
             verifyExistingTabList()
         }
     }

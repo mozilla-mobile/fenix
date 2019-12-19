@@ -79,7 +79,7 @@ private fun privateBrowsingButton() = onView(withId(R.id.private_browsing_button
 private fun newTabButton() = onView(withId(R.id.tab_tray_open_new_tab))
 
 private fun assertExistingTabList() =
-    onView(withId(R.id.tab_list_item))
+    onView(withId(R.id.tab_tray_list))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertNoTabsOpenedText() =
