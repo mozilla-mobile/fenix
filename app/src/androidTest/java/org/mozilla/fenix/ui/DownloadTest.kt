@@ -79,7 +79,7 @@ class DownloadTest {
         val defaultWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
 
         navigationToolbar {
-        }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             clickLinkMatchingText(defaultWebPage.content)
         }
