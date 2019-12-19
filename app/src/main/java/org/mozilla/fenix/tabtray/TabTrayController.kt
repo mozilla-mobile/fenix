@@ -35,7 +35,9 @@ class DefaultTabTrayController(
     private val tabTrayFragmentStore: TabTrayFragmentStore,
     private val browsingModeManager: BrowsingModeManager,
     private val tabCloser: (Sequence<Session>, Boolean) -> Unit,
-    private val onModeChange: (BrowsingMode) -> Unit
+    private val onModeChange: (BrowsingMode) -> Unit,
+    private val pauseMediaUseCase: () -> Unit = { MediaStateMachine.state.pauseIfPlaying() },
+    private val playMediaUseCase: () -> Unit = { MediaStateMachine.state.playIfPaused() }
 ) : TabTrayController {
     override fun enterPrivateBrowsingMode() {
         val newMode = BrowsingMode.Private
@@ -84,8 +86,8 @@ class DefaultTabTrayController(
         tabCloser(tabs, isPrivate)
     }
 
-    override fun pauseMedia() { MediaStateMachine.state.pauseIfPlaying() }
-    override fun playMedia() { MediaStateMachine.state.playIfPaused() }
+    override fun pauseMedia() { pauseMediaUseCase() }
+    override fun playMedia() { playMediaUseCase() }
 
     override fun openTab(tab: Tab) {
         val session = sessionManager.findSessionById(tab.sessionId) ?: return

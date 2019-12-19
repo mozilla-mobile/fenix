@@ -29,7 +29,7 @@ class TabTrayControllerTest {
     fun onCloseTab() {
         val tab = Tab(
             sessionId = "1",
-            url ="",
+            url = "",
             hostname = "",
             title = "",
             selected = true,
@@ -96,4 +96,40 @@ class TabTrayControllerTest {
         assertTrue(verifyOnlyPrivateTabs)
         assertTrue(verifyIsPrivate)
     }
+
+    @Test
+    fun onPauseMedia() {
+        var pauseWasCalled = false
+        val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            { _, _ -> },
+            { },
+            pauseMediaUseCase = { pauseWasCalled = true }
+        )
+
+        controller.pauseMedia()
+        assertTrue(pauseWasCalled)
+    }
+
+    @Test
+    fun onPlayMedia() {
+        var playWasCalled = false
+        val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            { _, _ -> },
+            { },
+            playMediaUseCase = { playWasCalled = true }
+        )
+
+        controller.playMedia()
+        assertTrue(playWasCalled)
+    }
+
+
 }
