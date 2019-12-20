@@ -14,7 +14,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -60,10 +59,8 @@ class DefaultBrowserToolbarController(
     private val browsingModeManager: BrowsingModeManager,
     private val sessionManager: SessionManager,
     private val findInPageLauncher: () -> Unit,
-    private val browserLayout: ViewGroup,
     private val engineView: EngineView,
     private val adjustBackgroundAndNavigate: (NavDirections) -> Unit,
-    private val swipeRefresh: SwipeRefreshLayout,
     private val customTabSession: Session?,
     private val getSupportUrl: () -> String,
     private val openInFenixIntent: Intent,
@@ -105,7 +102,8 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleTabCounterClick() {
-        animateTabAndNavigateHome()
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToTabTrayFragment()
+        navController.nav(R.id.browserFragment, directions)
     }
 
     @ExperimentalCoroutinesApi
@@ -240,13 +238,6 @@ class DefaultBrowserToolbarController(
                 }
             }
         }
-    }
-
-    private fun animateTabAndNavigateHome() {
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToTabTrayFragment()
-        swipeRefresh.background = ColorDrawable(Color.TRANSPARENT)
-        engineView.asView().visibility = View.GONE
-        navController.nav(R.id.browserFragment, directions)
     }
 
     @SuppressWarnings("ComplexMethod")

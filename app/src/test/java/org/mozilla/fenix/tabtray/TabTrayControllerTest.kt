@@ -164,7 +164,6 @@ class TabTrayControllerTest {
 
         controller.openTab(tab)
         verify {
-            // Is all of this needed?  Aren't we simply copy/pasting the
             sessionManager.select(session)
             navController.navigate(expectedDirections)
         }

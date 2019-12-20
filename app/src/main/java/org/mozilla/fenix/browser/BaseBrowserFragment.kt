@@ -172,9 +172,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 browsingModeManager = (activity as HomeActivity).browsingModeManager,
                 sessionManager = requireComponents.core.sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
-                browserLayout = view.browserLayout,
                 engineView = engineView,
-                swipeRefresh = swipeRefresh,
                 adjustBackgroundAndNavigate = ::adjustBackgroundAndNavigate,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 getSupportUrl = {

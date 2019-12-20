@@ -44,15 +44,6 @@ class NavigationToolbarRobot {
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
         }
-
-        fun openNewTabAndEnterToBrowser(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.descContains("Add tab")), waitingTime)
-            newTab().click()
-            awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
     }
 }
 
