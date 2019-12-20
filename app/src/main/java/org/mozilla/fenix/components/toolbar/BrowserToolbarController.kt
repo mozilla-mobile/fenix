@@ -27,6 +27,7 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.AddonsActivity
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -179,6 +180,11 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.Help -> {
                 activity.components.useCases.tabsUseCases.addTab.invoke(getSupportUrl())
             }
+            ToolbarMenu.Item.AddonsManager -> {
+                val intent = Intent(activity, AddonsActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                activity.startActivity(intent)
+            }
             ToolbarMenu.Item.SaveToCollection -> {
                 activity.components.analytics.metrics
                     .track(Event.CollectionSaveButtonPressed(TELEMETRY_BROWSER_IDENTIFIER))
@@ -301,6 +307,7 @@ class DefaultBrowserToolbarController(
                 Event.BrowserMenuItemTapped.Item.READER_MODE_APPEARANCE
             ToolbarMenu.Item.OpenInApp -> Event.BrowserMenuItemTapped.Item.OPEN_IN_APP
             ToolbarMenu.Item.Bookmark -> Event.BrowserMenuItemTapped.Item.BOOKMARK
+            ToolbarMenu.Item.AddonsManager -> Event.BrowserMenuItemTapped.Item.BOOKMARK // FIXME
         }
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))
