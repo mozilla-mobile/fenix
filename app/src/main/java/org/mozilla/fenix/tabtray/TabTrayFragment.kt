@@ -122,7 +122,7 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             navController = findNavController(),
             sessionManager = sessionManager,
             tabTrayFragmentStore = tabTrayStore,
-            tabCloser = ::tabCloser,
+            closeTabAction = ::closeTabAction,
             onModeChange = { newMode ->
                 invokePendingDeleteJobs()
 
@@ -225,7 +225,7 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         }
     }
 
-    fun tabCloser(tabs: Sequence<Session>, isPrivate: Boolean) {
+    fun closeTabAction(tabs: Sequence<Session>, isPrivate: Boolean) {
         val job = pendingSessionDeletion?.deletionJob ?: { }
 
         viewLifecycleOwner.lifecycleScope.launch {

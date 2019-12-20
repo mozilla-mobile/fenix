@@ -30,6 +30,10 @@ import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.utils.allowUndo
 
+/**
+ * Interface for the TabTrayViewInteractor. This interface is implemented by objects that want
+ * to respond to user interaction on the TabTrayView
+ */
 interface TabTrayViewInteractor : SelectionInteractor<Tab> {
     fun closeButtonTapped(tab: Tab)
     fun onPauseMediaClicked()
@@ -40,6 +44,9 @@ interface TabTrayViewInteractor : SelectionInteractor<Tab> {
     fun newTabTapped()
 }
 
+/**
+ * View that represents individual tab items
+ */
 class TabItemViewHolder(
     private val view: SelectableListItemView,
     private val interactor: TabTrayViewInteractor,
@@ -110,6 +117,9 @@ class TabItemViewHolder(
     }
 }
 
+/**
+ * Adapter that helps facilitate the Tab Tray
+ */
 class TabTrayAdapter(
     private val interactor: TabTrayViewInteractor
 ) : RecyclerView.Adapter<TabItemViewHolder>(), SelectionHolder<Tab> {
@@ -138,6 +148,9 @@ class TabTrayAdapter(
         get() = state.mode.selectedTabs
 }
 
+/**
+ * View that contains and configures the Tab Tray
+ */
 class TabTrayView(
     val container: ViewGroup,
     val interactor: TabTrayViewInteractor

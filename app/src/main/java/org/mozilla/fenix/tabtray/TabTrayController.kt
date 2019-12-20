@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.tabtray
 
 import androidx.navigation.NavController
@@ -35,7 +39,7 @@ class DefaultTabTrayController(
     private val sessionManager: SessionManager,
     private val tabTrayFragmentStore: TabTrayFragmentStore,
     private val browsingModeManager: BrowsingModeManager,
-    private val tabCloser: (Sequence<Session>, Boolean) -> Unit,
+    private val closeTabAction: (Sequence<Session>, Boolean) -> Unit,
     private val onModeChange: (BrowsingMode) -> Unit,
     private val pauseMediaUseCase: () -> Unit = { MediaStateMachine.state.pauseIfPlaying() },
     private val playMediaUseCase: () -> Unit = { MediaStateMachine.state.playIfPaused() }
@@ -77,13 +81,13 @@ class DefaultTabTrayController(
 
     override fun closeTab(tab: Tab) {
         val sessionToDelete = sessionManager.findSessionById(tab.sessionId) ?: return
-        tabCloser(sequenceOf(sessionToDelete), browsingModeManager.mode.isPrivate)
+        closeTabAction(sequenceOf(sessionToDelete), browsingModeManager.mode.isPrivate)
     }
 
     override fun closeAllTabs() {
         val isPrivate = browsingModeManager.mode.isPrivate
         val tabs = sessionManager.sessionsOfType(isPrivate)
-        tabCloser(tabs, isPrivate)
+        closeTabAction(tabs, isPrivate)
     }
 
     override fun pauseMedia() { pauseMediaUseCase() }
