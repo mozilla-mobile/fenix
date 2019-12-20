@@ -29,14 +29,15 @@ val noCollectionMessage = AdapterItem.NoContentMessage(
 
 private fun normalModeAdapterItems(
     collections: List<TabCollection>,
-    expandedCollections: Set<Long>
+    expandedCollections: Set<Long>,
+    hasTabs: Boolean
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     items.add(AdapterItem.CollectionHeader)
     if (collections.isNotEmpty()) {
         // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
         collections.map {
-            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), false)
+            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), hasTabs)
         }.forEach {
             items.add(it)
             if (it.expanded) {
@@ -90,7 +91,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 }
 
 private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
-    is Mode.Normal -> normalModeAdapterItems(collections, expandedCollections)
+    is Mode.Normal -> normalModeAdapterItems(collections, expandedCollections, tabs.isNotEmpty())
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
 }
