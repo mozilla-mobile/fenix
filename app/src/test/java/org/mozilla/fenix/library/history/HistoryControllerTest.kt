@@ -148,7 +148,7 @@ class HistoryControllerTest {
     }
 
     @Test
-    fun `openHistoryItem respects browsing mode`(){
+    fun `openHistoryItem respects browsing mode`() {
         val homeActivity = mockk<HomeActivity>()
 
         every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private

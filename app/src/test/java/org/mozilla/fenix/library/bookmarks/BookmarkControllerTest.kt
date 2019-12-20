@@ -107,7 +107,7 @@ class BookmarkControllerTest {
     }
 
     @Test
-    fun `handleBookmarkTapped should respect browsing mode`(){
+    fun `handleBookmarkTapped should respect browsing mode`() {
         // if in normal mode, should be in normal mode
         every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
 
