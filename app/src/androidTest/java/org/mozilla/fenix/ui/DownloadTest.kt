@@ -95,8 +95,6 @@ class DownloadTest {
     fun testDownloadNotification() {
         homeScreen { }.dismissOnboarding()
 
-        val defaultWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
-
         downloadRobot {
             verifyDownloadPrompt()
         }.clickDownload {
