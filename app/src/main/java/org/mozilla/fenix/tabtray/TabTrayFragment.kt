@@ -16,6 +16,9 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
@@ -44,7 +47,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.BrowserSessionsObserver
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
 class TabTrayFragment : Fragment(), UserInteractionHandler {
@@ -390,5 +392,89 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         const val ICON_DISABLED_ALPHA = 102
         const val CLOSE_ALL_DISABLED_ALPHA = 0.4f
         const val CLOSE_ALL_ENABLED_ALPHA = 1.0f
+    }
+}
+
+/**
+ * Wrapper around sessions manager to observe changes in sessions.
+ * Similar to [mozilla.components.browser.session.utils.AllSessionsObserver] but ignores CustomTab sessions.
+ *
+ * Call [onStart] to start receiving updates into [onChanged] callback.
+ * Call [onStop] to stop receiving updates.
+ *
+ * @param manager [SessionManager] instance to subscribe to.
+ * @param observer [Session.Observer] instance that will recieve updates.
+ * @param onChanged callback that will be called when any of [SessionManager.Observer]'s events are fired.
+ */
+private class BrowserSessionsObserver(
+    private val manager: SessionManager,
+    private val observer: Session.Observer,
+    private val onChanged: () -> Unit
+) : LifecycleObserver {
+
+    /**
+     * Start observing
+     */
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
+        MediaStateMachine.register(managerObserver)
+        manager.register(managerObserver)
+        subscribeToAll()
+    }
+
+    /**
+     * Stop observing (will not receive updates till next [onStop] call)
+     */
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        MediaStateMachine.unregister(managerObserver)
+        manager.unregister(managerObserver)
+        unsubscribeFromAll()
+    }
+
+    private fun subscribeToAll() {
+        manager.sessions.forEach(::subscribeTo)
+    }
+
+    private fun unsubscribeFromAll() {
+        manager.sessions.forEach(::unsubscribeFrom)
+    }
+
+    private fun subscribeTo(session: Session) {
+        session.register(observer)
+    }
+
+    private fun unsubscribeFrom(session: Session) {
+        session.unregister(observer)
+    }
+
+    private val managerObserver = object : SessionManager.Observer, MediaStateMachine.Observer {
+        override fun onStateChanged(state: MediaState) {
+            onChanged()
+        }
+
+        override fun onSessionAdded(session: Session) {
+            subscribeTo(session)
+            onChanged()
+        }
+
+        override fun onSessionsRestored() {
+            subscribeToAll()
+            onChanged()
+        }
+
+        override fun onAllSessionsRemoved() {
+            unsubscribeFromAll()
+            onChanged()
+        }
+
+        override fun onSessionRemoved(session: Session) {
+            unsubscribeFrom(session)
+            onChanged()
+        }
+
+        override fun onSessionSelected(session: Session) {
+            onChanged()
+        }
     }
 }

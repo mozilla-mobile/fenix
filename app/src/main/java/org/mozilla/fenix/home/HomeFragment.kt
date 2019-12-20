@@ -6,7 +6,6 @@ package org.mozilla.fenix.home
 
 import android.animation.Animator
 import android.content.DialogInterface
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -27,10 +26,7 @@ import androidx.constraintlayout.widget.ConstraintSet.START
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigator
@@ -56,7 +52,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.media.ext.getSession
-import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.BrowserDirection
@@ -94,16 +89,6 @@ import kotlin.math.min
 class HomeFragment : Fragment() {
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
 
-    private val singleSessionObserver = object : Session.Observer {
-        override fun onTitleChanged(session: Session, title: String) {
-            if (deleteAllSessionsJob == null) emitSessionChanges()
-        }
-
-        override fun onIconChanged(session: Session, icon: Bitmap?) {
-            if (deleteAllSessionsJob == null) emitSessionChanges()
-        }
-    }
-
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
             scrollAndAnimateCollection(sessions.size)
@@ -140,12 +125,6 @@ class HomeFragment : Fragment() {
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
                 .setDuration(SHARED_TRANSITION_MS)
-
-        val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
-            emitSessionChanges()
-        }
-
-        lifecycle.addObserver(sessionObserver)
 
         if (!onboarding.userHasBeenOnboarded()) {
             requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
@@ -188,7 +167,6 @@ class HomeFragment : Fragment() {
                 lifecycleScope = viewLifecycleOwner.lifecycleScope,
                 getListOfTabs = ::getListOfTabs,
                 hideOnboarding = ::hideOnboarding,
-                invokePendingDeleteJobs = ::invokePendingDeleteJobs,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 scrollToTheTop = ::scrollToTheTop,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt
@@ -201,7 +179,6 @@ class HomeFragment : Fragment() {
             requireComponents.core.sessionManager,
             browsingModeManager.mode.isPrivate,
             {
-                invokePendingDeleteJobs()
                 hideOnboardingIfNeeded()
                 nav(
                     R.id.homeFragment,
@@ -284,7 +261,6 @@ class HomeFragment : Fragment() {
         view.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
         view.toolbar_wrapper.setOnClickListener {
-            invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
             val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
                 sessionId = null
@@ -301,8 +277,6 @@ class HomeFragment : Fragment() {
             privateBrowsingButton,
             browsingModeManager
         ) { newMode ->
-            invokePendingDeleteJobs()
-
             if (newMode == BrowsingMode.Private) {
                 requireContext().settings().incrementNumTimesPrivateModeOpened()
             }
@@ -359,63 +333,9 @@ class HomeFragment : Fragment() {
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
     }
 
-    private fun closeTab(sessionId: String) {
-        val deletionJob = pendingSessionDeletion?.deletionJob
-
-        if (deletionJob == null) {
-            removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
-        } else {
-            viewLifecycleOwner.lifecycleScope.launch {
-                deletionJob.invoke()
-            }.invokeOnCompletion {
-                pendingSessionDeletion = null
-                removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
-            }
-        }
-    }
-
-    private fun closeAllTabs(isPrivateMode: Boolean) {
-        val deletionJob = pendingSessionDeletion?.deletionJob
-
-        if (deletionJob == null) {
-            removeAllTabsWithUndo(
-                sessionManager.sessionsOfType(private = isPrivateMode),
-                isPrivateMode
-            )
-        } else {
-            viewLifecycleOwner.lifecycleScope.launch {
-                deletionJob.invoke()
-            }.invokeOnCompletion {
-                pendingSessionDeletion = null
-                removeAllTabsWithUndo(
-                    sessionManager.sessionsOfType(private = isPrivateMode),
-                    isPrivateMode
-                )
-            }
-        }
-    }
-
     private fun dispatchModeChanges(mode: Mode) {
         if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
             homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
-        }
-    }
-
-    private fun invokePendingDeleteJobs() {
-        pendingSessionDeletion?.deletionJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                pendingSessionDeletion = null
-            }
-        }
-
-        deleteAllSessionsJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                deleteAllSessionsJob = null
-            }
         }
     }
 
@@ -441,7 +361,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStop() {
-        invokePendingDeleteJobs()
         super.onStop()
         val homeViewModel: HomeScreenViewModel by activityViewModels {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
@@ -507,7 +426,6 @@ class HomeFragment : Fragment() {
         homeMenu = HomeMenu(context) {
             when (it) {
                 HomeMenu.Item.Settings -> {
-                    invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
@@ -515,7 +433,6 @@ class HomeFragment : Fragment() {
                     )
                 }
                 HomeMenu.Item.Bookmarks -> {
-                    invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
@@ -523,7 +440,6 @@ class HomeFragment : Fragment() {
                     )
                 }
                 HomeMenu.Item.History -> {
-                    invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
@@ -531,7 +447,6 @@ class HomeFragment : Fragment() {
                     )
                 }
                 HomeMenu.Item.Help -> {
-                    invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getSumoURLForTopic(
@@ -543,7 +458,6 @@ class HomeFragment : Fragment() {
                     )
                 }
                 HomeMenu.Item.WhatsNew -> {
-                    invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     WhatsNew.userViewedWhatsNew(context)
                     context.metrics.track(Event.WhatsNewTapped(Event.WhatsNewTapped.Source.HOME))
@@ -577,74 +491,6 @@ class HomeFragment : Fragment() {
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
         }
-    }
-
-    private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
-        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(emptyList()))
-
-        val deleteOperation: (suspend () -> Unit) = {
-            listOfSessionsToDelete.forEach {
-                sessionManager.remove(it)
-            }
-        }
-        deleteAllSessionsJob = deleteOperation
-
-        val snackbarMessage = if (private) {
-            getString(R.string.snackbar_private_tabs_closed)
-        } else {
-            getString(R.string.snackbar_tabs_closed)
-        }
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo), {
-                if (private) {
-                    requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
-                }
-                deleteAllSessionsJob = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-    }
-
-    private fun removeTabWithUndo(sessionId: String, private: Boolean) {
-        val sessionManager = requireComponents.core.sessionManager
-        val deleteOperation: (suspend () -> Unit) = {
-            sessionManager.findSessionById(sessionId)
-                ?.let { session ->
-                    pendingSessionDeletion = null
-                    sessionManager.remove(session)
-                }
-        }
-
-        pendingSessionDeletion = PendingSessionDeletion(deleteOperation, sessionId)
-
-        val snackbarMessage = if (private) {
-            getString(R.string.snackbar_private_tab_closed)
-        } else {
-            getString(R.string.snackbar_tab_closed)
-        }
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo), {
-                pendingSessionDeletion = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-
-        // Update the UI with the tab removed, but don't remove it from storage yet
-        emitSessionChanges()
-    }
-
-    private fun emitSessionChanges() {
-        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(getListOfTabs()))
     }
 
     private fun getListOfSessions(): List<Session> {
@@ -794,89 +640,5 @@ class HomeFragment : Fragment() {
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
         private const val TAB_TRAY_BUTTON_SIZE = 80
-    }
-}
-
-/**
- * Wrapper around sessions manager to observe changes in sessions.
- * Similar to [mozilla.components.browser.session.utils.AllSessionsObserver] but ignores CustomTab sessions.
- *
- * Call [onStart] to start receiving updates into [onChanged] callback.
- * Call [onStop] to stop receiving updates.
- *
- * @param manager [SessionManager] instance to subscribe to.
- * @param observer [Session.Observer] instance that will recieve updates.
- * @param onChanged callback that will be called when any of [SessionManager.Observer]'s events are fired.
- */
-class BrowserSessionsObserver(
-    private val manager: SessionManager,
-    private val observer: Session.Observer,
-    private val onChanged: () -> Unit
-) : LifecycleObserver {
-
-    /**
-     * Start observing
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart() {
-        MediaStateMachine.register(managerObserver)
-        manager.register(managerObserver)
-        subscribeToAll()
-    }
-
-    /**
-     * Stop observing (will not receive updates till next [onStop] call)
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop() {
-        MediaStateMachine.unregister(managerObserver)
-        manager.unregister(managerObserver)
-        unsubscribeFromAll()
-    }
-
-    private fun subscribeToAll() {
-        manager.sessions.forEach(::subscribeTo)
-    }
-
-    private fun unsubscribeFromAll() {
-        manager.sessions.forEach(::unsubscribeFrom)
-    }
-
-    private fun subscribeTo(session: Session) {
-        session.register(observer)
-    }
-
-    private fun unsubscribeFrom(session: Session) {
-        session.unregister(observer)
-    }
-
-    private val managerObserver = object : SessionManager.Observer, MediaStateMachine.Observer {
-        override fun onStateChanged(state: MediaState) {
-            onChanged()
-        }
-
-        override fun onSessionAdded(session: Session) {
-            subscribeTo(session)
-            onChanged()
-        }
-
-        override fun onSessionsRestored() {
-            subscribeToAll()
-            onChanged()
-        }
-
-        override fun onAllSessionsRemoved() {
-            unsubscribeFromAll()
-            onChanged()
-        }
-
-        override fun onSessionRemoved(session: Session) {
-            unsubscribeFrom(session)
-            onChanged()
-        }
-
-        override fun onSessionSelected(session: Session) {
-            onChanged()
-        }
     }
 }

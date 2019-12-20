@@ -40,11 +40,8 @@ class DefaultSessionControlControllerTest {
     private val navController: NavController = mockk(relaxed = true)
     private val homeLayout: MotionLayout = mockk(relaxed = true)
     private val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
-    private val closeTab: (sessionId: String) -> Unit = mockk(relaxed = true)
-    private val closeAllTabs: (isPrivateMode: Boolean) -> Unit = mockk(relaxed = true)
     private val getListOfTabs: () -> List<Tab> = { emptyList() }
     private val hideOnboarding: () -> Unit = mockk(relaxed = true)
-    private val invokePendingDeleteJobs: () -> Unit = mockk(relaxed = true)
     private val registerCollectionStorageObserver: () -> Unit = mockk(relaxed = true)
     private val scrollToTheTop: () -> Unit = mockk(relaxed = true)
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit =
@@ -74,7 +71,6 @@ class DefaultSessionControlControllerTest {
             lifecycleScope = MainScope(),
             getListOfTabs = getListOfTabs,
             hideOnboarding = hideOnboarding,
-            invokePendingDeleteJobs = invokePendingDeleteJobs,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             scrollToTheTop = scrollToTheTop,
             showDeleteCollectionPrompt = showDeleteCollectionPrompt
@@ -98,7 +94,6 @@ class DefaultSessionControlControllerTest {
     fun handleCollectionOpenTabClicked() {
         val tab: ComponentTab = mockk(relaxed = true)
         controller.handleCollectionOpenTabClicked(tab)
-        verify { invokePendingDeleteJobs() }
         verify { metrics.track(Event.CollectionTabRestored) }
     }
 
@@ -106,7 +101,6 @@ class DefaultSessionControlControllerTest {
     fun handleCollectionOpenTabsTapped() {
         val collection: TabCollection = mockk(relaxed = true)
         controller.handleCollectionOpenTabsTapped(collection)
-        verify { invokePendingDeleteJobs() }
         verify { scrollToTheTop() }
         verify { metrics.track(Event.CollectionAllTabsRestored) }
     }
@@ -151,12 +145,6 @@ class DefaultSessionControlControllerTest {
         val collection: TabCollection = mockk(relaxed = true)
         controller.handleRenameCollectionTapped(collection)
         verify { metrics.track(Event.CollectionRenamePressed) }
-    }
-
-    @Test
-    fun handleSaveTabToCollection() {
-        controller.handleSaveTabToCollection(selectedTabId = null)
-        verify { invokePendingDeleteJobs() }
     }
 
     @Test

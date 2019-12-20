@@ -102,7 +102,6 @@ class DefaultSessionControlController(
     private val lifecycleScope: CoroutineScope,
     private val getListOfTabs: () -> List<Tab>,
     private val hideOnboarding: () -> Unit,
-    private val invokePendingDeleteJobs: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val scrollToTheTop: () -> Unit,
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit
@@ -123,8 +122,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
-        invokePendingDeleteJobs()
-
         val session = tab.restore(
             context = activity,
             engine = activity.components.core.engine,
@@ -151,8 +148,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
-        invokePendingDeleteJobs()
-
         collection.tabs.reversed().forEach {
             val session = it.restore(
                 context = activity,
@@ -212,8 +207,6 @@ class DefaultSessionControlController(
 
     override fun handleSaveTabToCollection(selectedTabId: String?) {
         if (browsingModeManager.mode.isPrivate) return
-
-        invokePendingDeleteJobs()
 
         val tabs = getListOfTabs()
         val step = when {
