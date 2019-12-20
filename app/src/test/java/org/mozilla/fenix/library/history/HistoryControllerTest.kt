@@ -12,6 +12,9 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
 class HistoryControllerTest {
 
@@ -142,5 +145,26 @@ class HistoryControllerTest {
             )
         controller.handleDeleteSome(setOf(historyItem, newHistoryItem))
         assertEquals(itemsToDelete, setOf(historyItem, newHistoryItem))
+    }
+
+    @Test
+    fun `openHistoryItem respects browsing mode`(){
+        val homeActivity = mockk<HomeActivity>()
+
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+        DefaultHistoryController(
+            mockk(),
+            {
+                homeActivity.openToBrowserAndLoad(
+                    mockk(),
+                    true,
+                    BrowserDirection.FromHistory
+                )
+            },
+            mockk(),
+            mockk(),
+            mockk()
+        )
+        assertEquals(BrowsingMode.Private.isPrivate, homeActivity.browsingModeManager.mode.isPrivate)
     }
 }

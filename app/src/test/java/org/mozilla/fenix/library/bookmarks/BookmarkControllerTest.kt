@@ -22,6 +22,7 @@ import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
@@ -101,9 +102,23 @@ class BookmarkControllerTest {
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
+    }
+
+    @Test
+    fun `handleBookmarkTapped should respect browsing mode`(){
+        // if in normal mode, should be in normal mode
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
+
+        controller.handleBookmarkTapped(item)
+        Assert.assertEquals(BrowsingMode.Normal.isPrivate, homeActivity.browsingModeManager.mode.isPrivate)
+
+        // if in private mode, should be in private mode
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+
+        controller.handleBookmarkTapped(item)
+        Assert.assertEquals(BrowsingMode.Private.isPrivate, homeActivity.browsingModeManager.mode.isPrivate)
     }
 
     @Test
