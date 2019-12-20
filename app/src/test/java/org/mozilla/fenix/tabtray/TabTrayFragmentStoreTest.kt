@@ -4,16 +4,18 @@
 
 package org.mozilla.fenix.tabtray
 
+import kotlinx.coroutines.runBlocking
 import mozilla.components.feature.media.state.MediaState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TabTrayFragmentStoreTest {
 
     @Test
-    fun UpdateTabs() {
+    fun UpdateTabs() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayFragmentStore(initialState)
         val tabs = listOf<Tab>(
@@ -21,44 +23,65 @@ class TabTrayFragmentStoreTest {
             createTabWithId("2")
         )
 
-        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs=tabs))
+        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs = tabs)).join()
         assertNotSame(initialState, store.state)
     }
 
     @Test
-    fun SelectTab() {
+    fun SelectTab() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayFragmentStore(initialState)
-        val tabToSelect = createTabWithId("2")
+        val idToSelect = "2"
+        val tabToSelect = createTabWithId(idToSelect)
         val tabs = listOf<Tab>(
             createTabWithId("1"),
-            tabToSelect
+            createTabWithId(idToSelect),
+            createTabWithId("3")
         )
 
-        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs))
-        store.dispatch(TabTrayFragmentAction.SelectTab(tab=tabToSelect))
+        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs)).join()
+        store.dispatch(TabTrayFragmentAction.SelectTab(tab = tabToSelect)).join()
 
-        //val secondTab = store.state.tabs.find { it.sessionId == tabToSelect.sessionId }
-        //assertTrue(secondTab.selected)
+        val selected = store.state.mode.selectedTabs
+        assertEquals(selected.toList().size, 1)
+        assertEquals(selected.first().sessionId, idToSelect)
     }
 
     @Test
-    fun DeselectTab() {
+    fun DeselectTab() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = TabTrayFragmentStore(initialState)
+        val idToSelect = "2"
+        val tabToSelect = createTabWithId(idToSelect)
+        val tabs = listOf<Tab>(
+            createTabWithId("1"),
+            createTabWithId("3")
+        )
 
+        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs)).join()
+        store.dispatch(TabTrayFragmentAction.SelectTab(tab = tabToSelect)).join()
+        store.dispatch(TabTrayFragmentAction.DeselectTab(tab = tabToSelect)).join()
+
+        val selected = store.state.mode.selectedTabs
+        assertEquals(selected.toList().size, 0)
     }
 
     @Test
-    fun ExitEditMode() {
+    fun ExitEditMode() = runBlocking {
         val initialState = emptyEditState()
         val store = TabTrayFragmentStore(initialState)
 
-        store.dispatch(TabTrayFragmentAction.ExitEditMode)
+        store.dispatch(TabTrayFragmentAction.ExitEditMode).join()
         assertFalse(store.state.mode.isEditing)
     }
 
     @Test
-    fun EnterEditMode() {
+    fun EnterEditMode() = runBlocking {
+        val initialState = emptyEditState()
+        val store = TabTrayFragmentStore(initialState)
 
+        store.dispatch(TabTrayFragmentAction.EnterEditMode).join()
+        assertTrue(store.state.mode.isEditing)
     }
 
     private fun emptyDefaultState(): TabTrayFragmentState = TabTrayFragmentState(
@@ -74,5 +97,4 @@ class TabTrayFragmentStoreTest {
     private fun createTabWithId(id: String): Tab {
         return Tab(id, "", "", "", false, MediaState.None, null)
     }
-
 }

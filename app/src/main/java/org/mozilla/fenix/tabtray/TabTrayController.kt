@@ -64,7 +64,6 @@ class DefaultTabTrayController(
         if (tabTrayFragmentStore.state.mode is TabTrayFragmentState.Mode.Normal) return
 
         val tabIds = tabTrayFragmentStore.state.mode.selectedTabs.map { it.sessionId }.toTypedArray()
-
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
             tabIds = tabIds,
             previousFragmentId = R.id.tabTrayFragment,

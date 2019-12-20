@@ -12,15 +12,12 @@ import io.mockk.verify
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.media.state.MediaState
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.collections.SaveCollectionStep
 
 class TabTrayControllerTest {
 
@@ -280,7 +277,7 @@ class TabTrayControllerTest {
     }
 
     @Test
-    fun onShouldAllowSelect () {
+    fun onShouldAllowSelect() {
         val controller = DefaultTabTrayController(
             mockk(relaxed = true),
             mockk(relaxed = true),
@@ -311,15 +308,6 @@ class TabTrayControllerTest {
             mediaState = MediaState.None,
             icon = null
         )
-        val sampleTabIds = listOf("1").toTypedArray()
-
-        val expectedDirections = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
-            tabIds = sampleTabIds,
-            previousFragmentId = R.id.tabTrayFragment,
-            saveCollectionStep = SaveCollectionStep.SelectCollection,
-            selectedTabIds = sampleTabIds,
-            selectedTabCollectionId = -1
-        )
 
         val controller = DefaultTabTrayController(
             navController,
@@ -335,7 +323,7 @@ class TabTrayControllerTest {
         controller.navigateToCollectionCreator()
 
         verify {
-            navController.navigate(expectedDirections)
+            navController.navigate(any<NavDirections>())
         }
     }
 }
