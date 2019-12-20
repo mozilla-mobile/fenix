@@ -52,6 +52,12 @@ interface CollectionInteractor {
     fun onCollectionShareTabsClicked(collection: TabCollection)
 
     /**
+     * Shows the Private Browsing Learn More page in a new tab. Called when a user clicks on the
+     * "Common myths about private browsing" link in private mode.
+     */
+    fun onPrivateBrowsingLearnMoreClicked()
+
+    /**
      * Shows a prompt for deleting the given tab collection. Called when a user taps on the
      * "Delete collection" collection menu item.
      *
@@ -106,6 +112,10 @@ class SessionControlInteractor(
 
     override fun onCollectionOpenTabsTapped(collection: TabCollection) {
         controller.handleCollectionOpenTabsTapped(collection)
+    }
+
+    override fun onPrivateBrowsingLearnMoreClicked() {
+        controller.handlePrivateBrowsingLearnMoreClicked()
     }
 
     override fun onCollectionRemoveTab(collection: TabCollection, tab: Tab) {
