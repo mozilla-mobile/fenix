@@ -165,6 +165,21 @@
         <activity android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
 
+        <activity android:name=".addons.AddonsActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+
+        <activity android:name=".addons.InstalledAddonDetailsActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+
+        <activity android:name=".addons.AddonDetailsActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+
+        <activity android:name=".addons.AddonSettingsActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+
+        <activity android:name=".addons.PermissionsDetailsActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+
         <service
             android:name=".customtabs.CustomTabsService"
             android:exported="true"

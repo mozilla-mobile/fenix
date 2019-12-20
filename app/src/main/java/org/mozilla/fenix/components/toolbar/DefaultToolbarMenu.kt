@@ -156,6 +156,7 @@ class DefaultToolbarMenu(
             library,
             desktopMode,
             addToHomescreen.apply { visible = ::shouldShowAddToHomescreen },
+            addons,
             findInPage,
             privateTab,
             newTab,
@@ -170,6 +171,14 @@ class DefaultToolbarMenu(
         )
 
         if (shouldReverseItems) { menuItems.reversed() } else { menuItems }
+    }
+
+    private val addons = BrowserMenuImageText(
+        context.getString(R.string.browser_menu_addon_manager), // need localization
+        R.drawable.mozac_ic_extensions,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
     }
 
     private val help = BrowserMenuImageText(
