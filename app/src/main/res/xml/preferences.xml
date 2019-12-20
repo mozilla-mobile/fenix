@@ -101,6 +101,16 @@
             app:isPreferenceVisible="@bool/IS_DEBUG" />
     </androidx.preference.PreferenceCategory>
 
+    <!-- Need fenix icon for add-on -->
+    <PreferenceCategory
+        android:title="@string/preferences_category_advanced"
+        app:iconSpaceReserved="false">
+        <androidx.preference.Preference
+            android:icon="@drawable/mozac_ic_extensions_black"
+            android:key="@string/pref_key_addons"
+            android:title="@string/preferences_addons" />
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/preferences_category_advanced"
         app:iconSpaceReserved="false"

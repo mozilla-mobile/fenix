@@ -51,6 +51,7 @@ import org.mozilla.fenix.R.string.pref_key_theme
 import org.mozilla.fenix.R.string.pref_key_toolbar
 import org.mozilla.fenix.R.string.pref_key_tracking_protection_settings
 import org.mozilla.fenix.R.string.pref_key_your_rights
+import org.mozilla.fenix.R.string.pref_key_addons
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.application
@@ -219,6 +220,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(pref_key_language) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToLocaleSettingsFragment()
             }
+            resources.getString(pref_key_addons) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToAddonsFragment()
+            }
+
             resources.getString(pref_key_make_default_browser) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserSettingsFragment()
             }
