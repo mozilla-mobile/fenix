@@ -18,7 +18,6 @@ import org.mozilla.fenix.TestApplication
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 class ConnectivityManagerTest {
@@ -83,5 +82,4 @@ class ConnectivityManagerTest {
 
         Assert.assertEquals(false, connectivityManager.isOnline(network))
     }
-
 }
