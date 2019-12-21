@@ -916,9 +916,9 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Weitere Informationen</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Standard</string>
+    <string name="preference_enhanced_tracking_protection_standard_option">Einfach</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Standard (empfohlen)</string>
+    <string name="preference_enhanced_tracking_protection_standard">Einfach (empfohlen)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description">Ausgewogen für Schutz und Leistung.</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
