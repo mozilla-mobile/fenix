@@ -146,25 +146,4 @@ class HistoryControllerTest {
         controller.handleDeleteSome(setOf(historyItem, newHistoryItem))
         assertEquals(itemsToDelete, setOf(historyItem, newHistoryItem))
     }
-
-    @Test
-    fun `openHistoryItem respects browsing mode`() {
-        val homeActivity = mockk<HomeActivity>()
-
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
-        DefaultHistoryController(
-            mockk(),
-            {
-                homeActivity.openToBrowserAndLoad(
-                    mockk(),
-                    true,
-                    BrowserDirection.FromHistory
-                )
-            },
-            mockk(),
-            mockk(),
-            mockk()
-        )
-        assertEquals(BrowsingMode.Private.isPrivate, homeActivity.browsingModeManager.mode.isPrivate)
-    }
 }
