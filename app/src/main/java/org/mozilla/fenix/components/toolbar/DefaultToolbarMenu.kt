@@ -14,6 +14,7 @@ import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
+import mozilla.components.browser.menu.item.BrowserMenuHighlightableSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
@@ -277,26 +278,38 @@ class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.Quit)
     }
 
-    private val readerMode = BrowserMenuImageSwitch(
+    private val readerMode = BrowserMenuHighlightableSwitch(
         label = context.getString(R.string.browser_menu_read),
-        imageResource = R.drawable.ic_readermode,
-        initialState = readerModeStateProvider
+        startImageResource = R.drawable.ic_readermode,
+        initialState = readerModeStateProvider,
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_read),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        )
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
     }
 
-    private val readerAppearance = BrowserMenuImageText(
+    private val readerAppearance = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_read_appearance),
-        imageResource = R.drawable.ic_readermode_appearance,
-        iconTintColorResource = primaryTextColor()
+        startImageResource = R.drawable.ic_readermode_appearance,
+        iconTintColorResource = primaryTextColor(),
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_read_appearance),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        )
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.ReaderModeAppearance)
     }
 
-    private val openInApp = BrowserMenuImageText(
+    private val openInApp = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_open_app_link),
-        imageResource = R.drawable.ic_app_links,
-        iconTintColorResource = primaryTextColor()
+        startImageResource = R.drawable.ic_app_links,
+        iconTintColorResource = primaryTextColor(),
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_open_app_link),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        )
         ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }
