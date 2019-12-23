@@ -10,7 +10,7 @@ import android.net.NetworkCapabilities
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +41,7 @@ class ConnectivityManagerTest {
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns true
 
-        Assert.assertEquals(true, connectivityManager.isOnline(network))
+        assertEquals(true, connectivityManager.isOnline(network))
     }
 
     @Test
@@ -54,7 +54,7 @@ class ConnectivityManagerTest {
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns true
 
-        Assert.assertEquals(false, connectivityManager.isOnline(network))
+        assertEquals(false, connectivityManager.isOnline(network))
     }
 
     @Test
@@ -67,7 +67,7 @@ class ConnectivityManagerTest {
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns false
 
-        Assert.assertEquals(false, connectivityManager.isOnline(network))
+        assertEquals(false, connectivityManager.isOnline(network))
     }
 
     @Test
@@ -80,6 +80,6 @@ class ConnectivityManagerTest {
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns false
         every { networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns true
 
-        Assert.assertEquals(false, connectivityManager.isOnline(network))
+        assertEquals(false, connectivityManager.isOnline(network))
     }
 }
