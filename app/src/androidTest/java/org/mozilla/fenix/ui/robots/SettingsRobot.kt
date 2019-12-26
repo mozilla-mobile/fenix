@@ -123,7 +123,6 @@ class SettingsRobot {
         }
 
         fun openLoginsAndPasswordSubMenu(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {
-            mDevice.waitForIdle()
             fun loginsAndPasswordsButton() = onView(ViewMatchers.withText("Logins and passwords"))
             loginsAndPasswordsButton().click()
 

@@ -24,7 +24,6 @@ class SettingsTurnOnSyncRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBack(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().perform(ViewActions.click())
 
             SettingsSubMenuLoginsAndPasswordRobot().interact()

@@ -17,7 +17,7 @@ import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.helpers.click
 
 /**
- * Implementation of Robot Pattern for the settings logins and passwords sub menu.
+ * Implementation of Robot Pattern for the Privacy Settings > logins and passwords sub menu
  */
 class SettingsSubMenuLoginsAndPasswordRobot {
 
@@ -28,7 +28,6 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().perform(ViewActions.click())
 
             SettingsRobot().interact()
@@ -36,7 +35,6 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         }
 
         fun openSavedLogins(interact: SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.Transition {
-            mDevice.waitForIdle()
             fun savedLoginsButton() = onView(ViewMatchers.withText("Saved logins"))
             savedLoginsButton().click()
 
@@ -45,7 +43,6 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         }
 
         fun openSyncLogins(interact: SettingsTurnOnSyncRobot.() -> Unit): SettingsTurnOnSyncRobot.Transition {
-            mDevice.waitForIdle()
             fun syncLoginsButton() = onView(ViewMatchers.withText("Sync logins"))
             syncLoginsButton().click()
 

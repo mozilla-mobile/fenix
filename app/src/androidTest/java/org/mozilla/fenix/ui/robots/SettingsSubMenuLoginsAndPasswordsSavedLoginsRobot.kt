@@ -12,7 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import org.hamcrest.CoreMatchers
 
 /**
- * Implementation of Robot Pattern for the settings saved logins sub menu.
+ * Implementation of Robot Pattern for the Privacy Settings > saved logins sub menu
  */
 
 class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
@@ -22,7 +22,6 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
 
     class Transition {
         fun goBack(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().perform(ViewActions.click())
 
             SettingsSubMenuLoginsAndPasswordRobot().interact()
