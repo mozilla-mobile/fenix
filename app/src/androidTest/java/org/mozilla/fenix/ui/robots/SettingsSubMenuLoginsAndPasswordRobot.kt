@@ -52,6 +52,11 @@ class SettingsSubMenuLoginsAndPasswordRobot {
     }
 }
 
+fun settingsSubMenuLoginsAndPassword(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {
+    SettingsSubMenuLoginsAndPasswordRobot().interact()
+    return SettingsSubMenuLoginsAndPasswordRobot.Transition()
+}
+
 private fun goBackButton() =
         onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
 

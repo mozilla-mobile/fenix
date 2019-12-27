@@ -19,6 +19,7 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.accountSettings
+import org.mozilla.fenix.ui.robots.settingsSubMenuLoginsAndPassword
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -28,6 +29,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
 
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -82,6 +84,34 @@ class SyncIntegrationTest {
         }
     }
 
+    @Test
+    fun checkLoginsFromDesktopTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            TestHelper.scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+        }.openSyncLogins {
+            // Tap to sign in from Logins menu
+            tapOnUseEmailToSignIn()
+            typeEmail()
+            tapOnContinueButton()
+            typePassword()
+            tapOnSignIn()
+        }
+        // Automatically goes back to Logins and passwords view
+        settingsSubMenuLoginsAndPassword {
+            mDevice.waitNotNull(Until.findObjects(By.text("Sync logins")), TestAssetHelper.waitingTime)
+            verifyDefaultView()
+        }.openSavedLogins {
+            // Discard the secure your device message
+            tapSetupLater()
+            // Check the logins synced
+            mDevice.waitNotNull(Until.findObjects(By.text("https://accounts.google.com")), TestAssetHelper.waitingTime)
+        }
+    }
+
     /* These tests will be running in the future
     // once the test above runs successfully and
     // the environment is stable
@@ -115,6 +145,7 @@ class SyncIntegrationTest {
         emailInput.waitForExists(TestAssetHelper.waitingTime)
 
         val emailAddress = javaClass.classLoader.getResource("email.txt").readText()
+        // val emailAddress = "test-256a5b5b18@restmail.net"
         emailInput.setText(emailAddress)
     }
 
@@ -129,6 +160,7 @@ class SyncIntegrationTest {
                 .className(EditText::class.java))
 
         val passwordValue = javaClass.classLoader.getResource("password.txt").readText()
+        //val passwordValue = "nPuPEcoj"
         passwordInput.setText(passwordValue)
     }
 
@@ -187,7 +219,7 @@ class SyncIntegrationTest {
 }
 
 fun settingsAccount() = onView(allOf(withText("Turn on Sync"))).perform(click())
-fun tapInToolBar() = onView(withId(org.mozilla.fenix.R.id.toolbar_wrapper))
-fun awesomeBar() = onView(withId(org.mozilla.fenix.R.id.mozac_browser_toolbar_edit_url_view))
+fun tapInToolBar() = onView(withId(R.id.toolbar_wrapper))
+fun awesomeBar() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
 fun useEmailInsteadButton() = onView(withId(R.id.signInEmailButton)).perform(click())
 fun enterAccountSettings() = onView(withId(R.id.email)).perform(click())
