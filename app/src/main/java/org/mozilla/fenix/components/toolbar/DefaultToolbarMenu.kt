@@ -285,19 +285,16 @@ class DefaultToolbarMenu(
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_read),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
-        )
+        ),
+        isHighlighted = { true }
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
     }
 
-    private val readerAppearance = BrowserMenuHighlightableItem(
+    private val readerAppearance = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_read_appearance),
-        startImageResource = R.drawable.ic_readermode_appearance,
-        iconTintColorResource = primaryTextColor(),
-        highlight = BrowserMenuHighlight.LowPriority(
-            label = context.getString(R.string.browser_menu_read_appearance),
-            notificationTint = getColor(context, R.color.whats_new_notification_color)
-        )
+        imageResource = R.drawable.ic_readermode_appearance,
+        iconTintColorResource = primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.ReaderModeAppearance)
     }
@@ -309,7 +306,8 @@ class DefaultToolbarMenu(
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_open_app_link),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
-        )
+        ),
+        isHighlighted = { true }
         ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }
