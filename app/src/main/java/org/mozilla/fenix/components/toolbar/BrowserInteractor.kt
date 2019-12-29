@@ -20,6 +20,10 @@ open class BrowserInteractor(
         browserToolbarController.handleToolbarPasteAndGo(text)
     }
 
+    override fun onBrowserToolbarMoveTab() {
+        browserToolbarController.handleToolbarMoveTab()
+    }
+
     override fun onBrowserToolbarClicked() {
         browserToolbarController.handleToolbarClick()
     }

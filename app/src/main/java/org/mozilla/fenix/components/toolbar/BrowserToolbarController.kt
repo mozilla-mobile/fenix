@@ -50,6 +50,7 @@ interface BrowserToolbarController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
     fun handleToolbarClick()
     fun handleTabCounterClick()
+    fun handleToolbarMoveTab()
 }
 
 @Suppress("LargeClass")
@@ -95,6 +96,15 @@ class DefaultBrowserToolbarController(
 
         activity.components.core.sessionManager.selectedSession?.searchTerms = text
         activity.components.useCases.searchUseCases.defaultSearch.invoke(text)
+    }
+
+    override fun handleToolbarMoveTab() {
+        val session = currentSession ?: return
+        if (browsingModeManager.mode.isPrivate)
+            activity.components.useCases.tabsUseCases.addTab(session.url)
+        else
+            activity.components.useCases.tabsUseCases.addPrivateTab(session.url)
+        activity.components.useCases.tabsUseCases.removeTab(session.id)
     }
 
     override fun handleToolbarClick() {

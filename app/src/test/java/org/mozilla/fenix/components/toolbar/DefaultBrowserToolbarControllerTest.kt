@@ -72,6 +72,7 @@ class DefaultBrowserToolbarControllerTest {
     private val metrics: MetricController = mockk(relaxed = true)
     private val searchUseCases: SearchUseCases = mockk(relaxed = true)
     private val sessionUseCases: SessionUseCases = mockk(relaxed = true)
+    private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
     private val scope: LifecycleCoroutineScope = mockk(relaxed = true)
     private val adjustBackgroundAndNavigate: (NavDirections) -> Unit = mockk(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
@@ -117,6 +118,7 @@ class DefaultBrowserToolbarControllerTest {
         every { activity.components.analytics } returns analytics
         every { analytics.metrics } returns metrics
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
+        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
         every { activity.components.core.sessionManager.selectedSession } returns currentSession
         every { adjustBackgroundAndNavigate.invoke(any()) } just Runs
@@ -327,6 +329,36 @@ class DefaultBrowserToolbarControllerTest {
             adjustBackgroundAndNavigate.invoke(directions)
         }
         verify { browsingModeManager.mode = BrowsingMode.Private }
+    }
+
+    @Test
+    fun handleToolbarMovePrivateTabToNonPrivate() {
+        val sessionId = "mock-session-id"
+        val url = "https://mozilla.org"
+        every { browsingModeManager.mode } returns BrowsingMode.Private
+        every { currentSession.url } returns url
+        every { currentSession.private } returns true
+        every { currentSession.id } returns sessionId
+
+        controller.handleToolbarMoveTab()
+
+        verify { tabsUseCases.addTab(url) }
+        verify { tabsUseCases.removeTab(sessionId) }
+    }
+
+    @Test
+    fun handleToolbarMoveNonPrivateTabToPrivate() {
+        val sessionId = "mock-session-id"
+        val url = "https://mozilla.org"
+        every { browsingModeManager.mode } returns BrowsingMode.Normal
+        every { currentSession.url } returns url
+        every { currentSession.private } returns true
+        every { currentSession.id } returns sessionId
+
+        controller.handleToolbarMoveTab()
+
+        verify { tabsUseCases.addPrivateTab(url) }
+        verify { tabsUseCases.removeTab(sessionId) }
     }
 
     @Test

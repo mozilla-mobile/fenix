@@ -43,4 +43,14 @@
         android:textAllCaps="false"
         android:textColor="?primaryText"
         android:text="@string/browser_toolbar_long_press_popup_paste_and_go"/>
+    <Button
+        android:id="@+id/move_tab"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textAllCaps="false"
+        android:textColor="?primaryText"
+        android:text="@string/browser_toolbar_long_press_popup_make_tab_private"/>
 </LinearLayout>

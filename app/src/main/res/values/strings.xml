@@ -964,6 +964,10 @@
     <string name="browser_toolbar_long_press_popup_copy">Copy</string>
     <!-- Paste & go the text in the clipboard. '&amp;' is replaced with the ampersand symbol: & -->
     <string name="browser_toolbar_long_press_popup_paste_and_go">Paste &amp; Go</string>
+    <!-- Move a normal tab to private mode -->
+    <string name="browser_toolbar_long_press_popup_make_tab_private">As Private</string>
+    <!-- Move a private tab to normal mode -->
+    <string name="browser_toolbar_long_press_popup_make_tab_non_private">As Normal</string>
     <!-- Paste the text in the clipboard -->
     <string name="browser_toolbar_long_press_popup_paste">Paste</string>
     <!-- Snackbar message shown after an URL has been copied to clipboard. -->

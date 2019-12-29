@@ -39,6 +39,7 @@ interface BrowserToolbarViewInteractor {
     fun onBrowserToolbarClicked()
     fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
     fun onTabCounterClicked()
+    fun onBrowserToolbarMoveTab()
 }
 
 class BrowserToolbarView(
@@ -90,6 +91,16 @@ class BrowserToolbarView(
             customView.paste_and_go.isVisible =
                 !clipboard.text.isNullOrEmpty() && !isCustomTabSession
 
+            val session = if (isCustomTabSession) customTabSession else selectedSession
+            if (session != null) {
+                customView.move_tab.isVisible = true
+                customView.move_tab.text = view.context.resources.getString(
+                    if (session.private) R.string.browser_toolbar_long_press_popup_make_tab_non_private
+                    else R.string.browser_toolbar_long_press_popup_make_tab_private)
+            } else {
+                customView.move_tab.isVisible = false
+            }
+
             customView.copy.setOnClickListener {
                 popupWindow.dismiss()
                 if (isCustomTabSession) {
@@ -112,6 +123,11 @@ class BrowserToolbarView(
             customView.paste_and_go.setOnClickListener {
                 popupWindow.dismiss()
                 interactor.onBrowserToolbarPasteAndGo(clipboard.text!!)
+            }
+
+            customView.move_tab.setOnClickListener {
+                popupWindow.dismiss()
+                interactor.onBrowserToolbarMoveTab()
             }
 
             popupWindow.showAsDropDown(
