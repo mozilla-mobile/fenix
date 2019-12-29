@@ -12,6 +12,7 @@ import android.text.SpannableString
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
 import androidx.annotation.StringRes
 import java.util.Formatter
+import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -21,17 +22,17 @@ fun Resources.getSpannable(@StringRes id: Int, spanParts: List<Pair<Any, Iterabl
     val resultCreator = SpannableStringCreator()
     Formatter(
         SpannableAppendable(resultCreator, spanParts),
-        getLocale(configuration)
+        configuration.primaryLocale
     ).format(getString(id), *spanParts.map { it.first }.toTypedArray())
     return resultCreator.toSpannableString()
 }
 
-private fun getLocale(configuration: Configuration) =
+val Configuration.primaryLocale: Locale get() =
     if (SDK_INT >= Build.VERSION_CODES.N) {
-        configuration.locales[0]
+        locales[0]
     } else {
         @Suppress("Deprecation")
-        configuration.locale
+        locale
     }
 
 class SpannableStringCreator {

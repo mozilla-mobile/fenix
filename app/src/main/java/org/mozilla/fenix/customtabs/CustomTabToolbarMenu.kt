@@ -15,6 +15,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
+import org.mozilla.fenix.ext.primaryLocale
 import org.mozilla.fenix.theme.ThemeManager
 
 class CustomTabToolbarMenu(
@@ -23,6 +24,10 @@ class CustomTabToolbarMenu(
     private val sessionId: String?,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
 ) : ToolbarMenu {
+
+    private val appName = context.getString(R.string.app_name)
+    private val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     private val session: Session?
@@ -32,7 +37,7 @@ class CustomTabToolbarMenu(
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 session?.canGoBack ?: true
             },
@@ -48,7 +53,7 @@ class CustomTabToolbarMenu(
         val forward = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 session?.canGoForward ?: true
             },
@@ -64,13 +69,13 @@ class CustomTabToolbarMenu(
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
-            primaryImageTintResource = primaryTextColor(),
+            primaryImageTintResource = primaryTextColor,
             isInPrimaryState = {
                 session?.loading == false
             },
             secondaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_stop,
             secondaryContentDescription = context.getString(R.string.browser_menu_stop),
-            secondaryImageTintResource = primaryTextColor(),
+            secondaryImageTintResource = primaryTextColor,
             disableInSecondaryState = false
         ) {
             if (session?.loading == true) {
@@ -99,10 +104,12 @@ class CustomTabToolbarMenu(
     private val share = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_share),
         imageResource = R.drawable.mozac_ic_share,
-        textColorResource = primaryTextColor(),
-        iconTintColorResource = primaryTextColor()
+        textColorResource = primaryTextColor,
+        iconTintColorResource = primaryTextColor
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Share)
+    }.apply {
+        visible = { session?.customTabConfig?.showShareMenuItem ?: true }
     }
 
     private val desktopMode = BrowserMenuSwitch(
@@ -115,29 +122,22 @@ class CustomTabToolbarMenu(
     private val findInPage = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_find_in_page),
         imageResource = R.drawable.mozac_ic_search,
-        iconTintColorResource = primaryTextColor()
+        iconTintColorResource = primaryTextColor
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
     }
 
     private val openInFenix = SimpleBrowserMenuItem(
-        label = {
-            val appName = context.getString(R.string.app_name)
-            context.getString(R.string.browser_menu_open_in_fenix, appName)
-        }(),
-        textColorResource = primaryTextColor()
+        label = context.getString(R.string.browser_menu_open_in_fenix, appName),
+        textColorResource = primaryTextColor
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInFenix)
     }
 
     private val poweredBy = SimpleBrowserMenuItem(
-        label = {
-            val appName = context.getString(R.string.app_name)
-            context.getString(R.string.browser_menu_powered_by, appName).toUpperCase()
-        }(),
+        label = context.getString(R.string.browser_menu_powered_by, appName)
+            .toUpperCase(context.resources.configuration.primaryLocale),
         textSize = ToolbarMenu.CAPTION_TEXT_SIZE,
-        textColorResource = primaryTextColor()
+        textColorResource = primaryTextColor
     )
-
-    private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
 }
