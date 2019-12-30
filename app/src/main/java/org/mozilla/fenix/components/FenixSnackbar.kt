@@ -148,7 +148,11 @@ private class FenixSnackbarCallback(
     }
 }
 
-class FenixSnackbarPresenter(
+/**
+ * This snackbar presenter should be used when displaying a snackbar that will appear in
+ * the BrowserFragment as it takes into account the position of the BrowserToolbar
+ */
+class BrowserSnackbarPresenter(
     private val view: View
 ) {
     fun present(
@@ -158,20 +162,20 @@ class FenixSnackbarPresenter(
         actionName: String? = null,
         isError: Boolean = false
     ) {
-        val snackbar = FenixSnackbar.make(view, length, isError).setText(text).let {
-            if (action != null && actionName != null) it.setAction(actionName, action) else it
-        }
+        val shouldUseBottomToolbar = view.context.settings().shouldUseBottomToolbar
+        val toolbarHeight = view.context.resources
+            .getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
-        if (view.context.settings().shouldUseBottomToolbar) {
-            snackbar.view.setPadding(
+        FenixSnackbar.make(view, length, isError).apply {
+            if (action != null && actionName != null) setAction(actionName, action)
+            setText(text)
+            view.setPadding(
                 0,
                 0,
                 0,
-                view.context.resources.getDimensionPixelSize(R.dimen.browser_toolbar_height
-                )
+                if (shouldUseBottomToolbar) toolbarHeight else 0
             )
+            show()
         }
-
-        snackbar.show()
     }
 }

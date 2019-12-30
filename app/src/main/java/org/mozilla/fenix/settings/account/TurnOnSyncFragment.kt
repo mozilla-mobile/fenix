@@ -18,7 +18,7 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.FenixSnackbarPresenter
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
@@ -74,7 +74,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
     }
 
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-        FenixSnackbarPresenter(requireView()).present(
+        BrowserSnackbarPresenter(requireView()).present(
             text = requireContext().getString(R.string.sync_syncing_in_progress),
             length = FenixSnackbar.LENGTH_SHORT
         )
