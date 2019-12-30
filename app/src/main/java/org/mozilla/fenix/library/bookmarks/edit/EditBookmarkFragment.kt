@@ -37,7 +37,7 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.FenixSnackbarPresenter
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
@@ -185,17 +185,14 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                         launch(Main) {
                             Navigation.findNavController(requireActivity(), R.id.container)
                                 .popBackStack()
-                            activity.getRootView()?.let { rootView ->
-                                bookmarkNode?.let {
-                                    FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
-                                        .setText(
-                                            getString(
-                                                R.string.bookmark_deletion_snackbar_message,
-                                                it.url?.toShortUrl(context.components.publicSuffixList) ?: it.title
-                                            )
-                                        )
-                                        .show()
-                                }
+
+                            bookmarkNode?.let {
+                                FenixSnackbarPresenter(activity.getRootView()!!).present(
+                                    getString(
+                                        R.string.bookmark_deletion_snackbar_message,
+                                        it.url?.toShortUrl(context.components.publicSuffixList) ?: it.title
+                                    )
+                                )
                             }
                         }
                     }

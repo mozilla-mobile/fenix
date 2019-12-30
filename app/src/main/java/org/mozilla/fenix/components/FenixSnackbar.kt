@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fenix_snackbar.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
 
 @Mockable
@@ -157,8 +158,20 @@ class FenixSnackbarPresenter(
         actionName: String? = null,
         isError: Boolean = false
     ) {
-        FenixSnackbar.make(view, length, isError).setText(text).let {
+        val snackbar = FenixSnackbar.make(view, length, isError).setText(text).let {
             if (action != null && actionName != null) it.setAction(actionName, action) else it
-        }.show()
+        }
+
+        if (view.context.settings().shouldUseBottomToolbar) {
+            snackbar.view.setPadding(
+                0,
+                0,
+                0,
+                view.context.resources.getDimensionPixelSize(R.dimen.browser_toolbar_height
+                )
+            )
+        }
+
+        snackbar.show()
     }
 }
