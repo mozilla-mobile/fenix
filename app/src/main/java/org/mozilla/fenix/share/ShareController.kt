@@ -126,7 +126,9 @@ class DefaultShareController(
                 showFailureWithRetryOption { shareToDevicesWithRetry(shareOperation) }
                 ShareController.Result.DISMISSED
             }
-            dismiss(result)
+            if (navController.currentDestination?.id == R.id.shareFragment) {
+                dismiss(result)
+            }
         }
     }
 
