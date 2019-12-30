@@ -18,6 +18,8 @@ import org.hamcrest.CoreMatchers
 class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun verifySavedLoginsView() = assertSavedLoginsView()
 
+    fun verifySavedLoginsAfterSync() = assertSavedLoginAppears()
+
     fun tapSetupLater() = onView(ViewMatchers.withText("Later")).perform(ViewActions.click())
 
     class Transition {
@@ -35,3 +37,5 @@ private fun goBackButton() =
 
 private fun assertSavedLoginsView() = onView(ViewMatchers.withText("Secure your logins and passwords"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertSavedLoginAppears() = onView(ViewMatchers.withText("https://accounts.google.com"))

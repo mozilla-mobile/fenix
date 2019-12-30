@@ -104,11 +104,17 @@ class SyncIntegrationTest {
         settingsSubMenuLoginsAndPassword {
             mDevice.waitNotNull(Until.findObjects(By.text("Sync logins")), TestAssetHelper.waitingTime)
             verifyDefaultView()
+            mDevice.waitNotNull(Until.findObjects(By.text("Off")), TestAssetHelper.waitingTime)
         }.openSavedLogins {
             // Discard the secure your device message
             tapSetupLater()
             // Check the logins synced
             mDevice.waitNotNull(Until.findObjects(By.text("https://accounts.google.com")), TestAssetHelper.waitingTime)
+            verifySavedLoginsAfterSync()
+        }.goBack {
+            // After checking the synced logins
+            // on Logins and Passwords menu the Sync logins option is set to On
+            mDevice.waitNotNull(Until.findObjects(By.text("On")), TestAssetHelper.waitingTime)
         }
     }
 
