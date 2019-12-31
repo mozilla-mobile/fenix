@@ -17,7 +17,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
@@ -83,10 +82,9 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         // Since the snackbar can be presented in BrowserFragment or in SettingsFragment we must
         // base our display method on the padSnackbar argument
         if (args.padSnackbar) {
-            BrowserSnackbarPresenter(requireView()).present(
-                text = snackbarText,
-                length = snackbarLength
-            )
+            FenixSnackbar.makeWithToolbarPadding(requireView(), snackbarLength)
+                .setText(snackbarText)
+                .show()
         } else {
             FenixSnackbar.make(requireView(), snackbarLength)
                 .setText(snackbarText)

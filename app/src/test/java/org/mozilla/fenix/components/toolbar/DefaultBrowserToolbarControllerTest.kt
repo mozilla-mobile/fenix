@@ -42,7 +42,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.Analytics
-import org.mozilla.fenix.components.BrowserSnackbarPresenter
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -74,7 +74,7 @@ class DefaultBrowserToolbarControllerTest {
     private val sessionUseCases: SessionUseCases = mockk(relaxed = true)
     private val scope: LifecycleCoroutineScope = mockk(relaxed = true)
     private val adjustBackgroundAndNavigate: (NavDirections) -> Unit = mockk(relaxed = true)
-    private val snackbar = mockk<BrowserSnackbarPresenter>(relaxed = true)
+    private val snackbar = mockk<FenixSnackbar>(relaxed = true)
     private val tabCollectionStorage = mockk<TabCollectionStorage>(relaxed = true)
 
     private lateinit var controller: DefaultBrowserToolbarController

@@ -33,7 +33,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
-import org.mozilla.fenix.components.BrowserSnackbarPresenter
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -56,7 +56,7 @@ interface BrowserToolbarController {
 class DefaultBrowserToolbarController(
     private val store: BrowserFragmentStore,
     private val activity: Activity,
-    private val snackbar: BrowserSnackbarPresenter?,
+    private val snackbar: FenixSnackbar?,
     private val navController: NavController,
     private val readerModeController: ReaderModeController,
     private val browsingModeManager: BrowsingModeManager,

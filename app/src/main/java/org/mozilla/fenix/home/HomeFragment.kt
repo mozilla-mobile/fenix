@@ -62,7 +62,6 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
@@ -547,7 +546,7 @@ class HomeFragment : Fragment() {
                     deleteAndQuit(
                         activity,
                         lifecycleScope,
-                        view?.let { view -> BrowserSnackbarPresenter(view) }
+                        view?.let { view -> FenixSnackbar.makeWithToolbarPadding(view) }
                     )
                 }
             }
