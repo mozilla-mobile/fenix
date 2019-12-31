@@ -13,21 +13,17 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import com.jakewharton.rxbinding3.widget.textChanges
-import com.uber.autodispose.AutoDispose
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_edit_bookmark.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.UrlParseFailed
@@ -47,7 +43,6 @@ import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
-import java.util.concurrent.TimeUnit
 
 /**
  * Menu to edit the name, URL, and location of a bookmark item.
@@ -118,7 +113,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 }
             }
 
-        updateBookmarkFromObservableInput()
+        updateBookmarkFromTextChanges()
     }
 
     private fun initToolbar() {
@@ -139,21 +134,46 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         bookmarkUrlEdit.hideKeyboard()
     }
 
-    private fun updateBookmarkFromObservableInput() {
-        Observable.combineLatest(
-            bookmarkNameEdit.textChanges().skipInitialValue(),
-            bookmarkUrlEdit.textChanges().skipInitialValue(),
-            BiFunction { name: CharSequence, url: CharSequence ->
-                Pair(name.toString(), url.toString())
-            })
-            .filter { (name) -> name.isNotBlank() }
-            .debounce(debouncePeriodInMs, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .`as`(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this@EditBookmarkFragment)))
-            .subscribe { (name, url) ->
-                updateBookmarkNode(name, url)
+    private fun updateBookmarkFromTextChanges() {
+        var prevName: String? = null
+        var prevUrl: String? = null
+        var nameIgnored = false
+        var urlIgnored = false
+        var debounceJob: Job? = null
+
+        fun debounce(block: () -> Unit) {
+            debounceJob?.cancel()
+
+            debounceJob = lifecycleScope.launch {
+                delay(timeMillis = debouncePeriodInMs)
+                block()
             }
+        }
+
+        fun updateBookmark() {
+            if (prevName.isNullOrEmpty() || prevUrl == null) return
+            updateBookmarkNode(prevName, prevUrl)
+        }
+
+        bookmarkNameEdit.doOnTextChanged { text, _, _, _ ->
+            prevName = text.toString()
+            // Ignore initial text set
+            if (!nameIgnored) {
+                nameIgnored = true
+                return@doOnTextChanged
+            }
+            debounce { updateBookmark() }
+        }
+
+        bookmarkUrlEdit.doOnTextChanged { text, _, _, _ ->
+            prevUrl = text.toString()
+            // Ignore initial text set
+            if (!urlIgnored) {
+                urlIgnored = true
+                return@doOnTextChanged
+            }
+            debounce { updateBookmark() }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
