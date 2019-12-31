@@ -20,6 +20,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
@@ -146,9 +147,10 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
 
         updateItemCounts()
 
-        FenixSnackbar.make(view!!, FenixSnackbar.LENGTH_SHORT)
-            .setText(resources.getString(R.string.preferences_delete_browsing_data_snackbar))
-            .show()
+        BrowserSnackbarPresenter(requireView()).present(
+            text = resources.getString(R.string.preferences_delete_browsing_data_snackbar),
+            length = FenixSnackbar.LENGTH_SHORT
+        )
 
         if (popAfter) viewLifecycleOwner.lifecycleScope.launch(
             Dispatchers.Main

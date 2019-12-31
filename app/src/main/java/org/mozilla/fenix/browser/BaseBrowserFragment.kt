@@ -63,8 +63,8 @@ import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.BrowserSnackbarPresenter
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
@@ -80,7 +80,6 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -160,10 +159,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             // We need to show the snackbar while the browsing data is deleting(if "Delete
             // browsing data on quit" is activated). After the deletion is over, the snackbar
             // is dismissed.
-            val snackbar: FenixSnackbar? = requireActivity().getRootView()?.let { v ->
-                FenixSnackbar.make(v, Snackbar.LENGTH_INDEFINITE)
-                    .setText(v.context.getString(R.string.deleting_browsing_data_in_progress))
-            }
+            val snackbar = BrowserSnackbarPresenter(view)
 
             val browserToolbarController = DefaultBrowserToolbarController(
                 store = browserFragmentStore,

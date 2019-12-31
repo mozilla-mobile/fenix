@@ -5,23 +5,28 @@
 package org.mozilla.fenix.settings.deletebrowsingdata
 
 import android.app.Activity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.R
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.ext.settings
 
 /**
  * Deletes selected browsing data and finishes the activity.
  */
-fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: FenixSnackbar?) {
+fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: BrowserSnackbarPresenter?) {
     coroutineScope.launch {
         val settings = activity.settings()
         val controller = DefaultDeleteBrowsingDataController(activity, coroutineContext)
 
-        snackbar?.show()
+        snackbar?.present(
+            text = activity.getString(R.string.deleting_browsing_data_in_progress),
+            length = Snackbar.LENGTH_INDEFINITE
+        )
 
         DeleteBrowsingDataOnQuitType.values().map { type ->
             launch {
@@ -30,8 +35,6 @@ fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: 
                 }
             }
         }.joinAll()
-
-        snackbar?.dismiss()
 
         activity.finish()
     }

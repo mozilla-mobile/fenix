@@ -29,7 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.TestApplication
-import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.ext.clearAndCommit
 import org.mozilla.fenix.ext.components
@@ -51,7 +51,7 @@ class DeleteAndQuitTest {
     private val permissionStorage: PermissionStorage = mockk(relaxed = true)
     private val engine: Engine = mockk(relaxed = true)
     private val removeAllTabsUseCases: TabsUseCases.RemoveAllTabsUseCase = mockk(relaxed = true)
-    private val snackbar = mockk<FenixSnackbar>(relaxed = true)
+    private val snackbar = mockk<BrowserSnackbarPresenter>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -86,9 +86,8 @@ class DeleteAndQuitTest {
         deleteAndQuit(activity, this, snackbar)
 
         verifyOrder {
-            snackbar.show()
+            snackbar.present(any(), any(), any(), any(), any())
             removeAllTabsUseCases.invoke()
-            snackbar.dismiss()
             activity.finish()
         }
 
@@ -118,7 +117,7 @@ class DeleteAndQuitTest {
         deleteAndQuit(activity, this, snackbar)
 
         verify(exactly = 1) {
-            snackbar.show()
+            snackbar.present(any(), any(), any(), any(), any())
 
             engine.clearData(Engine.BrowsingData.allCaches())
 
@@ -140,8 +139,6 @@ class DeleteAndQuitTest {
             engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.DOM_STORAGES))
 
             historyStorage
-
-            snackbar.dismiss()
 
             activity.finish()
         }
