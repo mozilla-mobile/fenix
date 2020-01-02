@@ -496,7 +496,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         }
         // setStartupMetrics is not a fast function. It does not need to be done before we can consider
         // ourselves initialized. So, let's do it, well, later.
-        gleanSetStartupMetrics = MainScope().launch(IO){
+        gleanSetStartupMetrics = MainScope().launch(IO) {
             setStartupMetrics()
         }
 
