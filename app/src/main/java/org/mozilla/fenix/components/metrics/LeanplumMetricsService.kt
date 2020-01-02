@@ -10,6 +10,9 @@ import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
 import com.leanplum.annotations.Parser
 import com.leanplum.internal.LeanplumInternal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.ext.settings
 import java.util.UUID.randomUUID
@@ -70,17 +73,30 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
 
         LeanplumActivityHelper.enableLifecycleCallbacks(application)
 
-        val installedApps = MozillaProductDetector.getInstalledMozillaProducts(application)
+        Leanplum.start(application)
 
-        Leanplum.start(application, hashMapOf(
-            "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
-            "fennec_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.FIREFOX.productName),
-            "focus_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.FOCUS.productName),
-            "klar_installed" to installedApps.contains(MozillaProductDetector.MozillaProducts.KLAR.productName),
-            "fxa_signed_in" to application.settings().fxaSignedIn,
-            "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
-            "search_widget_installed" to application.settings().searchWidgetInstalled
-        ))
+        MainScope().launch(Dispatchers.IO) {
+            val installedApps = MozillaProductDetector.getInstalledMozillaProducts(application)
+
+            Leanplum.setUserAttributes(
+                hashMapOf(
+                    "default_browser" to
+                            MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
+                    "fennec_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.FIREFOX.productName),
+                    "focus_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.FOCUS.productName),
+                    "klar_installed" to
+                            installedApps.contains(MozillaProductDetector.MozillaProducts.KLAR.productName),
+                    "fxa_signed_in" to
+                            application.settings().fxaSignedIn,
+                    "fxa_has_synced_items" to
+                            application.settings().fxaHasSyncedItems,
+                    "search_widget_installed" to
+                            application.settings().searchWidgetInstalled
+                )
+            )
+        }
     }
 
     override fun stop() {
