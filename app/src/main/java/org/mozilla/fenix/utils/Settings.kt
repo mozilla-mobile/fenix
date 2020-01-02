@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.view.accessibility.AccessibilityManager
+import androidx.annotation.AnyThread
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -32,6 +33,7 @@ import java.security.InvalidParameterException
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
  */
+@AnyThread
 @Suppress("LargeClass", "TooManyFunctions")
 class Settings private constructor(
     context: Context,
