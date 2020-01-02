@@ -28,10 +28,9 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import org.jetbrains.anko.dimen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -129,7 +128,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
 
         browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
-            requireContext().dimen(R.dimen.browser_toolbar_height)
+            requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
         } else {
             0
         }
@@ -231,10 +230,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         private fun showTabSavedToCollectionSnackbar() {
             view?.let { view ->
-                FenixSnackbar.make(view, Snackbar.LENGTH_SHORT)
-                    .setText(view.context.getString(R.string.create_collection_tab_saved))
-                    .setAnchorView(browserToolbarView.getSnackbarAnchor())
-                    .show()
+                BrowserSnackbarPresenter(view).present(
+                    text = view.context.getString(R.string.create_collection_tab_saved),
+                    length = Snackbar.LENGTH_SHORT
+                )
             }
         }
     }
@@ -247,10 +246,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         context.components.useCases.tabsUseCases,
         context.components.useCases.contextMenuUseCases,
         view,
-        FenixSnackbarDelegate(
-            view,
-            browserToolbarView.getSnackbarAnchor()
-        )
+        FenixSnackbarDelegate(view)
     )
 
     companion object {

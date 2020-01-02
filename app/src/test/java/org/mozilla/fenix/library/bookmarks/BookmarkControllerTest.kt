@@ -22,13 +22,14 @@ import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.FenixSnackbarPresenter
+import org.mozilla.fenix.components.BrowserSnackbarPresenter
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -40,7 +41,7 @@ class BookmarkControllerTest {
 
     private val context: Context = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
-    private val snackbarPresenter: FenixSnackbarPresenter = mockk(relaxed = true)
+    private val snackbarPresenter: BrowserSnackbarPresenter = mockk(relaxed = true)
     private val deleteBookmarkNodes: (Set<BookmarkNode>, Event) -> Unit = mockk(relaxed = true)
     private val invokePendingDeletion: () -> Unit = mockk(relaxed = true)
 
@@ -101,9 +102,23 @@ class BookmarkControllerTest {
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
+    }
+
+    @Test
+    fun `handleBookmarkTapped should respect browsing mode`() {
+        // if in normal mode, should be in normal mode
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
+
+        controller.handleBookmarkTapped(item)
+        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
+
+        // if in private mode, should be in private mode
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+
+        controller.handleBookmarkTapped(item)
+        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
     }
 
     @Test

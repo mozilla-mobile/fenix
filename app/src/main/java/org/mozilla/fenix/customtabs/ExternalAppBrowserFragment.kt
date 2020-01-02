@@ -147,8 +147,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         }
                     }
             }
-
-            updateLayoutMargins(false)
         }
     }
 
@@ -194,9 +192,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         context,
         context.components.useCases.contextMenuUseCases,
         view,
-        FenixSnackbarDelegate(
-            view,
-            null
-        )
+        FenixSnackbarDelegate(view)
     )
 }

@@ -20,12 +20,16 @@ import mozilla.components.support.ktx.android.content.floatPreference
 import mozilla.components.support.ktx.android.content.intPreference
 import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
+import mozilla.components.support.utils.Browsers
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import java.security.InvalidParameterException
@@ -45,6 +49,7 @@ class Settings private constructor(
         const val autoBounceMaximumCount = 2
         const val trackingProtectionOnboardingMaximumCount = 2
         const val FENIX_PREFERENCES = "fenix_preferences"
+
         private const val BLOCKED_INT = 0
         private const val ASK_TO_ALLOW_INT = 1
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
@@ -371,6 +376,21 @@ class Settings private constructor(
         ).apply()
     }
 
+    fun unsetOpenLinksInAPrivateTabIfNecessary() {
+        if (Browsers.all(appContext).isDefaultBrowser) {
+            return
+        }
+
+        appContext.settings().openLinksInAPrivateTab = false
+        appContext.components.analytics.metrics.track(
+            Event.PreferenceToggled(
+                preferenceKey = appContext.getString(R.string.pref_key_open_links_in_a_private_tab),
+                enabled = false,
+                context = appContext
+            )
+        )
+    }
+
     private var showedPrivateModeContextualFeatureRecommender by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_showed_private_mode_cfr),
         default = false
@@ -399,4 +419,9 @@ class Settings private constructor(
 
             return false
         }
+
+    var openLinksInExternalApp by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app),
+        default = false
+    )
 }

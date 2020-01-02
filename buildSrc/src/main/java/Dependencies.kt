@@ -35,7 +35,7 @@ object Versions {
     const val androidx_work = "2.2.0"
     const val google_material = "1.1.0-beta01"
 
-    const val mozilla_android_components = "26.0.0-SNAPSHOT"
+    const val mozilla_android_components = "27.0.0-SNAPSHOT"
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
@@ -84,10 +84,6 @@ object Deps {
     const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
     const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
     const val rxBindings = "com.jakewharton.rxbinding3:rxbinding:${Versions.rxBindings}"
-
-    const val anko_commons = "org.jetbrains.anko:anko-commons:${Versions.anko}"
-    const val anko_sdk = "org.jetbrains.anko:anko-sdk25:${Versions.anko}"
-    const val anko_constraintlayout = "org.jetbrains.anko:anko-constraint-layout:${Versions.anko}"
 
     const val mozilla_concept_engine = "org.mozilla.components:concept-engine:${Versions.mozilla_android_components}"
     const val mozilla_concept_push = "org.mozilla.components:concept-push:${Versions.mozilla_android_components}"
@@ -206,6 +202,7 @@ object Deps {
     const val espresso_contrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso_version}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_version}"
     const val espresso_idling_resources = "androidx.test.espresso:espresso-idling-resource:${Versions.espresso_version}"
+    const val espresso_intents = "androidx.test.espresso:espresso-intents:${Versions.espresso_version}"
     const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebserver}"
     const val orchestrator = "androidx.test:orchestrator:${Versions.orchestrator}"
     const val tools_test_rules = "androidx.test:rules:${Versions.tools_test_rules}"
