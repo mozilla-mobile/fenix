@@ -27,8 +27,29 @@ object MozillaProductDetector {
         LOCKWISE("mozilla.lockbox")
     }
 
+    // The results of getInstalledMozillaProducts or getMozillaBrowserDefault can be cached. When
+    // either of those functions is called with the same context as the previous invocation, return
+    // the cached results from cachedMozillaProducts or cachedDefaultBrowserPackageName, respectively.
+    private var cachedContext: Context? = null
+    private var cachedMozillaProducts: MutableList<String>? = null
+    private var cachedDefaultBrowserPackageName: String? = null
+    private var cachedDefaultBrowserPackageNameSet: Boolean = false
+
+    /**
+     * Returns a list of the Mozilla products installed on the user's device.
+     */
+    @Synchronized
     fun getInstalledMozillaProducts(context: Context): List<String> {
-        val mozillaProducts = mutableListOf<String>()
+        // If there is a cached context and there is a cached list of products, return the cached
+        // list of products if _context_ and _cachedContext_ are equal.
+        if (cachedContext != null && cachedMozillaProducts != null && context == cachedContext) {
+            return cachedMozillaProducts!!
+        }
+
+        // Otherwise, set the cached context and build the list of installed products.
+        cachedContext = context
+
+        var mozillaProducts = mutableListOf<String>()
 
         for (product in MozillaProducts.values()) {
             if (packageIsInstalled(context, product.productName)) { mozillaProducts.add(product.productName) }
@@ -40,7 +61,8 @@ object MozillaProductDetector {
             }
         }
 
-        return mozillaProducts
+        cachedMozillaProducts = mozillaProducts
+        return cachedMozillaProducts!!
     }
 
     private fun packageIsInstalled(context: Context, packageName: String): Boolean {
@@ -56,8 +78,24 @@ object MozillaProductDetector {
     /**
      * Returns the default browser if and only if it is a Mozilla product.
      */
+    @Synchronized
     fun getMozillaBrowserDefault(context: Context): String? {
-        val browserPackageName = Browsers.all(context).defaultBrowser?.packageName
+        var browserPackageName: String?
+        // If there is a cached context and there is a cached default browser package name,
+        // use that to determine whether the default browser is a Mozilla product.
+        if (cachedContext != null && cachedDefaultBrowserPackageNameSet && cachedContext == context) {
+            browserPackageName = cachedDefaultBrowserPackageName
+        } else {
+            // Otherwise, store the context and the package name of the system's default browser
+            // in the cache. Also, set a flag that says this fetch has been done once. The flag
+            // is necessary because the user may not have a default browser set so the nullable
+            // cachedDefaultBrowserPackageName will continue to be null, rendering it useless to use
+            // as a condition here.
+            cachedContext = context
+            cachedDefaultBrowserPackageName = Browsers.all(context).defaultBrowser?.packageName
+            cachedDefaultBrowserPackageNameSet = true
+            browserPackageName = cachedDefaultBrowserPackageName
+        }
         return if (isMozillaProduct(browserPackageName)) { browserPackageName } else { null }
     }
 
