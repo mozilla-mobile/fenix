@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import kotlinx.android.synthetic.main.history_list_item.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
