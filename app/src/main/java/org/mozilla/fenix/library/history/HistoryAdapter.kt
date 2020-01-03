@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import kotlinx.android.synthetic.main.history_list_item.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
@@ -18,6 +19,8 @@ import java.util.Date
 
 enum class HistoryItemTimeGroup {
     Today, ThisWeek, ThisMonth, Older;
+
+    var groupVisible = true
 
     fun humanReadable(context: Context): String = when (this) {
         Today -> context.getString(R.string.history_24_hours)
@@ -29,7 +32,8 @@ enum class HistoryItemTimeGroup {
 
 class HistoryAdapter(
     private val historyInteractor: HistoryInteractor
-) : PagedListAdapter<HistoryItem, HistoryListItemViewHolder>(historyDiffCallback), SelectionHolder<HistoryItem> {
+) : PagedListAdapter<HistoryItem, HistoryListItemViewHolder>(historyDiffCallback),
+    SelectionHolder<HistoryItem> {
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     override val selectedItems get() = mode.selectedItems
@@ -53,8 +57,12 @@ class HistoryAdapter(
 
         val previousHeader = previous?.let(::timeGroupForHistoryItem)
         val currentHeader = timeGroupForHistoryItem(current)
-        val timeGroup = if (currentHeader != previousHeader) currentHeader else null
-        holder.bind(current, timeGroup, position == 0, mode)
+        val timeGroup = if (currentHeader != previousHeader) currentHeader else previousHeader
+
+        holder.bind(
+            current, timeGroup, position == 0, mode,
+            this, currentHeader != previousHeader
+        )
     }
 
     companion object {

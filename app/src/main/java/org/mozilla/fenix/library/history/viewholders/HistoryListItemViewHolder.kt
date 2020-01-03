@@ -12,11 +12,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.SelectionHolder
-import org.mozilla.fenix.library.history.HistoryInteractor
-import org.mozilla.fenix.library.history.HistoryItem
-import org.mozilla.fenix.library.history.HistoryItemMenu
-import org.mozilla.fenix.library.history.HistoryItemTimeGroup
-import org.mozilla.fenix.library.history.HistoryFragmentState
+import org.mozilla.fenix.library.history.*
 
 class HistoryListItemViewHolder(
     view: View,
@@ -43,17 +39,24 @@ class HistoryListItemViewHolder(
         item: HistoryItem,
         timeGroup: HistoryItemTimeGroup?,
         showDeleteButton: Boolean,
-        mode: HistoryFragmentState.Mode
+        mode: HistoryFragmentState.Mode,
+        adapter: HistoryAdapter?,
+        firstInGroup: Boolean
     ) {
         this.item = item
+
+        if (timeGroup != null && !timeGroup.groupVisible) {
+            itemView.history_layout.visibility = View.GONE
+        } else {
+            itemView.history_layout.visibility = View.VISIBLE
+        }
 
         itemView.history_layout.titleView.text = item.title
         itemView.history_layout.urlView.text = item.url
 
         toggleDeleteButton(showDeleteButton, mode === HistoryFragmentState.Mode.Normal)
 
-        val headerText = timeGroup?.humanReadable(itemView.context)
-        toggleHeader(headerText)
+        toggleHeader(firstInGroup, timeGroup, adapter)
 
         itemView.history_layout.setSelectionInteractor(item, selectionHolder, historyInteractor)
         itemView.history_layout.changeSelected(item in selectionHolder.selectedItems)
@@ -65,10 +68,22 @@ class HistoryListItemViewHolder(
         }
     }
 
-    private fun toggleHeader(headerText: String?) {
-        if (headerText != null) {
+    private fun toggleHeader(
+        firstInGroup: Boolean,
+        timeGroup: HistoryItemTimeGroup?,
+        adapter: HistoryAdapter?
+    ) {
+        if (firstInGroup) {
+            val headerText = timeGroup?.humanReadable(itemView.context)
+
             itemView.header_title.visibility = View.VISIBLE
             itemView.header_title.text = headerText
+            itemView.header_title.setOnClickListener {
+                if (timeGroup != null) {
+                    timeGroup.groupVisible = !timeGroup.groupVisible
+                }
+                adapter?.notifyDataSetChanged()
+            }
         } else {
             itemView.header_title.visibility = View.GONE
         }
