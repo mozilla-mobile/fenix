@@ -11,9 +11,11 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import mozilla.components.support.locale.LocaleManager
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.TestApplication
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -32,7 +34,12 @@ class LocaleManagerExtensionTest {
     @Config(qualifiers = "en-rUS")
     fun `build supported locale list`() {
         val list = LocaleManager.getSupportedLocales()
-        assertEquals(26, (list as ArrayList).size)
+
+        // Expect all supported locales + 'follow default option'
+        val expectedSize = BuildConfig.SUPPORTED_LOCALE_ARRAY.size + 1
+
+        assertEquals(expectedSize, list.size)
+        assertTrue(list.isNotEmpty())
     }
 
     @Test
