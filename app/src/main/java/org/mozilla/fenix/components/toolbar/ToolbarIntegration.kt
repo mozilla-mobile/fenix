@@ -44,21 +44,16 @@ abstract class ToolbarIntegration(
         )
     )
 
-    private var menuPresenter =
-        MenuPresenter(toolbar, context.components.core.sessionManager, sessionId)
-
     init {
         toolbar.display.menuBuilder = toolbarMenu.menuBuilder
         toolbar.private = isPrivate
     }
 
     override fun start() {
-        menuPresenter.start()
         toolbarPresenter.start()
     }
 
     override fun stop() {
-        menuPresenter.stop()
         toolbarPresenter.stop()
     }
 }
