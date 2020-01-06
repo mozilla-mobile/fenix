@@ -342,6 +342,11 @@ private fun assertStartBrowsingButton() =
     onView(CoreMatchers.allOf(withText("Start browsing")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
+const val PRIVATE_SESSION_MESSAGE = "Firefox Preview clears your search and browsing history " +
+        "when you quit the app or close all private tabs. While this doesn’t make you anonymous to websites or " +
+        "your internet service provider, it makes it easier to keep what you do online private from anyone else " +
+        "who uses this device."
+
 // Private mode elements
 private fun assertPrivateSessionHeader() =
     onView(CoreMatchers.allOf(withText("Private tabs")))
