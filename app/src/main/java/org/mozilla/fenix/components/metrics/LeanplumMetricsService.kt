@@ -10,6 +10,7 @@ import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
 import com.leanplum.annotations.Parser
 import com.leanplum.internal.LeanplumInternal
+import kotlinx.coroutines.CoroutineScope
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.ext.settings
 import java.util.UUID.randomUUID
@@ -53,7 +54,7 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
 
     private val token = Token(LeanplumId, LeanplumToken)
 
-    override fun start() {
+    override fun start(scope: CoroutineScope) {
         when (token.type) {
             Token.Type.Production -> Leanplum.setAppIdForProductionMode(token.id, token.token)
             Token.Type.Development -> Leanplum.setAppIdForDevelopmentMode(token.id, token.token)

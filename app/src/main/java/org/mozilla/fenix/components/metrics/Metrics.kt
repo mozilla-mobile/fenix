@@ -5,6 +5,9 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.toolbar.facts.ToolbarFacts
@@ -389,7 +392,7 @@ private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
 }
 
 interface MetricsService {
-    fun start()
+    fun start(scope: CoroutineScope)
     fun stop()
     fun track(event: Event)
     fun shouldTrack(event: Event): Boolean
@@ -400,6 +403,8 @@ interface MetricController {
     fun stop()
     fun track(event: Event)
 
+    var managedScope: CoroutineScope?
+
     companion object {
         fun create(services: List<MetricsService>, isTelemetryEnabled: () -> Boolean): MetricController {
             return if (BuildConfig.TELEMETRY) return ReleaseMetricController(services, isTelemetryEnabled)
@@ -409,6 +414,8 @@ interface MetricController {
 }
 
 private class DebugMetricController : MetricController {
+    override var managedScope: CoroutineScope? = null
+
     override fun start() {
         Logger.debug("DebugMetricController: start")
     }
@@ -428,6 +435,8 @@ private class ReleaseMetricController(
 ) : MetricController {
     private var initialized = false
 
+    override var managedScope: CoroutineScope? = null
+
     init {
         Facts.registerProcessor(object : FactProcessor {
             override fun process(fact: Fact) {
@@ -441,7 +450,11 @@ private class ReleaseMetricController(
     override fun start() {
         if (!isTelemetryEnabled.invoke() || initialized) { return }
 
-        services.forEach { it.start() }
+        val newManagedScope = CoroutineScope(Dispatchers.IO)
+
+        services.forEach { it.start(newManagedScope) }
+
+        managedScope = newManagedScope
         initialized = true
     }
 
@@ -449,6 +462,9 @@ private class ReleaseMetricController(
         if (!initialized) { return }
 
         services.forEach { it.stop() }
+        managedScope?.cancel()
+
+        managedScope = null
         initialized = false
     }
 

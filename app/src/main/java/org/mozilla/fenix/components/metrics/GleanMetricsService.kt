@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
@@ -474,7 +475,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
     private val activationPing = ActivationPing(context)
 
-    override fun start() {
+    override fun start(scope: CoroutineScope) {
         Glean.setUploadEnabled(true)
 
         if (initialized) return

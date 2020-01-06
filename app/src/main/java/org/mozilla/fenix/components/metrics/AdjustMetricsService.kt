@@ -11,12 +11,13 @@ import android.util.Log
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.LogLevel
+import kotlinx.coroutines.CoroutineScope
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.settings
 
 class AdjustMetricsService(private val application: Application) : MetricsService {
-    override fun start() {
+    override fun start(scope: CoroutineScope) {
         if ((BuildConfig.ADJUST_TOKEN.isNullOrEmpty())) {
             Log.i(LOGTAG, "No adjust token defined")
 
