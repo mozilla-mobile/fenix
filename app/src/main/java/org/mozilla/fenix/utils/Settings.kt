@@ -179,6 +179,11 @@ class Settings private constructor(
         default = true
     )
 
+    val shouldAllowForScreenLock by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_screen_lock),
+        true
+    )
+
     val shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
         default = false

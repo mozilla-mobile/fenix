@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -44,6 +45,7 @@ import org.mozilla.fenix.R.string.pref_key_passwords
 import org.mozilla.fenix.R.string.pref_key_privacy_link
 import org.mozilla.fenix.R.string.pref_key_rate
 import org.mozilla.fenix.R.string.pref_key_remote_debugging
+import org.mozilla.fenix.R.string.pref_key_screen_lock
 import org.mozilla.fenix.R.string.pref_key_search_settings
 import org.mozilla.fenix.R.string.pref_key_sign_in
 import org.mozilla.fenix.R.string.pref_key_site_permissions
@@ -72,7 +74,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             lifecycleScope.launch {
                 updateAccountUIState(
                     context = context,
-                    profile = profile ?: context.components.backgroundServices.accountManager.accountProfile()
+                    profile = profile
+                        ?: context.components.backgroundServices.accountManager.accountProfile()
                 )
             }
         }
@@ -107,7 +110,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 try {
                     context?.let { context ->
                         context.components.analytics.metrics.track(
-                            Event.PreferenceToggled(key, sharedPreferences.getBoolean(key, false), context)
+                            Event.PreferenceToggled(
+                                key,
+                                sharedPreferences.getBoolean(key, false),
+                                context
+                            )
                         )
                     }
                 } catch (e: IllegalArgumentException) {
@@ -299,9 +306,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupPreferences() {
         val leakKey = getPreferenceKey(pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(pref_key_remote_debugging)
+        val screenLockKey = getPreferenceKey(pref_key_screen_lock)
 
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
+        val preferenceScreenLocking = findPreference<Preference>(screenLockKey)
 
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
@@ -315,6 +324,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             preference.context.settings().preferences.edit()
                 .putBoolean(preference.key, newValue as Boolean).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
+            true
+        }
+
+        preferenceScreenLocking?.setOnPreferenceChangeListener { preference, newValue ->
+            preference.context.settings().preferences.edit()
+                .putBoolean(preference.key, newValue as Boolean).apply()
+            if (newValue) {
+                activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
             true
         }
     }

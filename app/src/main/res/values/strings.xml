@@ -729,6 +729,9 @@
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Font size will match your Android settings. Disable to manage font size here.</string>
 
+    <!-- Title for Screen blocking preference -->
+    <string name="preference_screen_lock">Allow for screen locking</string>
+
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Delete browsing data</string>
     <!-- Title for the tabs item in Delete browsing data -->
