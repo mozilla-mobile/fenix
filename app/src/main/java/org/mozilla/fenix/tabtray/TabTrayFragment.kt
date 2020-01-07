@@ -145,26 +145,32 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        updateUI(tabTrayStore.state)
+
+        consumeFrom(tabTrayStore) {
+            updateUI(it)
+        }
+    }
+
+    private fun updateUI(state: TabTrayFragmentState) {
         // Sets the navigation icon callback action
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
 
-        consumeFrom(tabTrayStore) {
-            tabTrayView.update(it, (activity as HomeActivity).browsingModeManager.mode)
+        tabTrayView.update(state, (activity as HomeActivity).browsingModeManager.mode)
 
-            // Set the title based on mode and number of selected tabs
-            activity?.title = it.appBarTitle(requireContext())
+        // Set the title based on mode and number of selected tabs
+        activity?.title = state.appBarTitle(requireContext())
 
-            // Set title bar colors
-            val (foregroundColor, backgroundColor) = it.appBarBackground(requireContext())
-            toolbar?.setToolbarColors(foregroundColor, backgroundColor)
+        // Set title bar colors
+        val (foregroundColor, backgroundColor) = state.appBarBackground(requireContext())
+        toolbar?.setToolbarColors(foregroundColor, backgroundColor)
 
-            // Sets the navigation icon to close
-            val icon = resources.getDrawable(it.appBarIcon(), requireContext().theme)
-            icon.setTint(foregroundColor)
-            toolbar?.setNavigationIcon(icon)
+        // Sets the navigation icon to close
+        val icon = resources.getDrawable(state.appBarIcon(), requireContext().theme)
+        icon.setTint(foregroundColor)
+        toolbar?.setNavigationIcon(icon)
 
-            updateMenuItems()
-        }
+        updateMenuItems()
     }
 
     override fun onResume() {

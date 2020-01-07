@@ -95,12 +95,12 @@ private fun tabTrayStateReducer(
 
 fun TabTrayFragmentState.appBarTitle(context: Context): String {
     return when (this.mode) {
-        is TabTrayFragmentState.Mode.Normal -> context.getString(R.string.tab_tray_title)
         is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
             context.getString(R.string.tab_tray_menu_item_save_select)
         } else {
             context.getString(R.string.history_multi_select_title, this.mode.selectedTabs.size)
         }
+        else -> context.getString(R.string.tab_tray_title)
     }
 }
 
