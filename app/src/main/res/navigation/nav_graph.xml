@@ -72,9 +72,7 @@
             app:popEnterAnim="@anim/fade_in" />
         <action
             android:id="@+id/action_homeFragment_to_tabTrayFragment"
-            app:destination="@id/tabTrayFragment"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in" />
+            app:destination="@id/tabTrayFragment" />
         <action
             android:id="@+id/action_homeFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
