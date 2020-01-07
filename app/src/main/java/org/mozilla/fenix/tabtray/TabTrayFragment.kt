@@ -153,6 +153,8 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
     }
 
     private fun updateUI(state: TabTrayFragmentState) {
+        tabTrayView.update(state, (activity as HomeActivity).browsingModeManager.mode)
+
         // Sets the navigation icon callback action
         val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
 
@@ -164,11 +166,6 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         // Set title bar colors
         val (foregroundColor, backgroundColor) = state.appBarBackground(requireContext())
         toolbar?.setToolbarColors(foregroundColor, backgroundColor)
-
-        // Sets the navigation icon to close
-        val icon = resources.getDrawable(state.appBarIcon(), requireContext().theme)
-        icon.setTint(foregroundColor)
-        toolbar?.setNavigationIcon(icon)
 
         updateMenuItems()
     }
