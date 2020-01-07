@@ -103,5 +103,7 @@
     <dimen name="locale_item_title_size">16sp</dimen>
     <dimen name="locale_item_subtitle_size">12sp</dimen>
 
+    <!-- Tab Tray Fragment -->
+    <dimen name="tab_tray_menu_height">56dp</dimen>
 
 </resources>

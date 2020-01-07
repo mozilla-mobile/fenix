@@ -329,9 +329,17 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             } else {
                 R.string.create_collection_tab_saved
             }
-            FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
-                .setText(view.context.getString(stringRes))
-                .show()
+
+            val snackbar = FenixSnackbar.make(view, Snackbar.LENGTH_LONG).setText(view.context.getString(stringRes))
+            snackbar.apply {
+                this.view.setPadding(
+                    0,
+                    0,
+                    0,
+                    this.view.context.resources.getDimensionPixelSize(R.dimen.tab_tray_menu_height)
+                )
+            }
+            snackbar.show()
         }
     }
 

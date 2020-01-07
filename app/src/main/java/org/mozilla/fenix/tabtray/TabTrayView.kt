@@ -88,6 +88,14 @@ class TabTrayView(
             onUndo,
             onCompletion
         )
+        snackbar.apply {
+            this?.view?.setPadding(
+                0,
+                0,
+                0,
+                view.context.resources.getDimensionPixelSize(R.dimen.tab_tray_menu_height)
+            )
+        }
     }
 
     fun hideSnackbar() {
