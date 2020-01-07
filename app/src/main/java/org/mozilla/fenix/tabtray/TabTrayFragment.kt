@@ -200,7 +200,7 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.share_menu_item_save -> {
+            R.id.tab_tray_share_menu_item_save -> {
                 share(tabTrayStore.state.mode.selectedTabs.toList())
                 true
             }
@@ -208,19 +208,19 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
                 tabTrayController.navigateToCollectionCreator()
                 true
             }
-            R.id.select_tabs_menu_item -> {
+            R.id.tab_tray_select_tabs_menu_item -> {
                 tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
                 true
             }
-            R.id.select_to_save_menu_item -> {
+            R.id.tab_tray_select_to_save_menu_item -> {
                 tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
                 true
             }
-            R.id.share_menu_item -> {
+            R.id.tab_tray_share_menu_item -> {
                 share(tabTrayStore.state.tabs.toList())
                 true
             }
-            R.id.close_menu_item -> {
+            R.id.tab_tray_close_menu_item -> {
                 tabTrayController.closeAllTabs()
                 true
             }
@@ -340,8 +340,11 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         val setupMenuIcon: (MenuItem) -> Unit = {
             it.isVisible = tabTrayStore.state.mode.isEditing
             it.isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
-            it.icon.setTint(foregroundColor)
-            it.icon.alpha = if (tabTrayStore.state.mode.selectedTabs.isNotEmpty()) {
+
+            // Mutate is used to prevent the icon tint and alpha from being changed everywhere in the app
+            // Drawables are a global state
+            it.icon.mutate().setTint(foregroundColor)
+            it.icon.mutate().alpha = if (tabTrayStore.state.mode.selectedTabs.isNotEmpty()) {
                 ICON_ENABLED_ALPHA
             } else {
                 ICON_DISABLED_ALPHA
@@ -355,16 +358,16 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             tabTrayStore.state.mode.isEditing && !inPrivateMode
 
         // Show the "share" button if in selection mode
-        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.also(setupMenuIcon)
-        this.tabTrayMenu?.findItem(R.id.share_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing
+        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item_save)?.also(setupMenuIcon)
+        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing
 
         // Hide all icons when in selection mode with nothing selected
         val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing && tabTrayStore.state.tabs.isNotEmpty()
-        this.tabTrayMenu?.findItem(R.id.select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
-        this.tabTrayMenu?.findItem(R.id.select_to_save_menu_item)?.isVisible =
-            showAnyOverflowIcons && !(activity as HomeActivity).browsingModeManager.mode.isPrivate
-        this.tabTrayMenu?.findItem(R.id.share_menu_item)?.isVisible = showAnyOverflowIcons
-        this.tabTrayMenu?.findItem(R.id.close_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.tab_tray_select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.tab_tray_select_to_save_menu_item)?.isVisible =
+            showAnyOverflowIcons && !inPrivateMode
+        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item)?.isVisible = showAnyOverflowIcons
+        this.tabTrayMenu?.findItem(R.id.tab_tray_close_menu_item)?.isVisible = showAnyOverflowIcons
 
         // Disable the bottom trash icon when there are no tabs open
         if (tabTrayStore.state.tabs.isNotEmpty()) {
