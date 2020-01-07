@@ -59,7 +59,7 @@ class DefaultTabTrayController(
     }
 
     override fun newTab() {
-        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(null)
+        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToHomeFragment()
         navController.navigate(directions)
     }
 
