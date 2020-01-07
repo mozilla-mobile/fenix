@@ -375,7 +375,7 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             view?.tab_tray_close_all?.isEnabled = true
         } else {
             view?.tab_tray_close_all?.alpha = CLOSE_ALL_DISABLED_ALPHA
-            view?.tab_tray_close_all?.isEnabled = true
+            view?.tab_tray_close_all?.isEnabled = false
         }
     }
 
