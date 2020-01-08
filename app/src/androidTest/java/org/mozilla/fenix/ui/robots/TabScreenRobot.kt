@@ -19,6 +19,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 
@@ -55,10 +56,20 @@ class TabScreenRobot {
             mDevice.waitForIdle()
             newTabButton().perform(click())
 
-            return searchScreen {
+            return openSearch {
                 typeSearch(url.toString())
             }.openBrowser(interact)
         }
+
+        private fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            navigationToolbar().perform(click())
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
+        }
+
+        private fun navigationToolbar() =
+            onView(CoreMatchers.allOf(withText("Search or enter address")))
     }
 }
 
