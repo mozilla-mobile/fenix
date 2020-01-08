@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.addons
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -17,9 +16,10 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_add_ons.*
+import kotlinx.android.synthetic.main.fragment_add_ons_management.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -27,14 +27,16 @@ import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.AddonsManagementFragment.CustomViewHolder.AddonViewHolder
+import org.mozilla.fenix.addons.AddonsManagementFragment.CustomViewHolder.SectionViewHolder
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.addons.AddonsFragment.CustomViewHolder.AddonViewHolder
-import org.mozilla.fenix.addons.AddonsFragment.CustomViewHolder.SectionViewHolder
+import org.mozilla.fenix.ext.showToolbar
 
 /**
  * Fragment use for managing add-ons.
  */
-class AddonsFragment : Fragment(), View.OnClickListener {
+@Suppress("TooManyFunctions")
+class AddonsManagementFragment : Fragment(), View.OnClickListener {
     private lateinit var recyclerView: RecyclerView
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -43,12 +45,17 @@ class AddonsFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_add_ons, container, false)
+        return inflater.inflate(R.layout.fragment_add_ons_management, container, false)
     }
 
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
         bindRecyclerView(rootView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showToolbar(getString(R.string.preferences_addons))
     }
 
     override fun onStart() {
@@ -67,7 +74,7 @@ class AddonsFragment : Fragment(), View.OnClickListener {
 
                 scope.launch(Dispatchers.Main) {
                     val adapter = AddonsAdapter(
-                        this@AddonsFragment,
+                        this@AddonsManagementFragment,
                         addons
                     )
                     recyclerView.adapter = adapter
@@ -237,7 +244,6 @@ class AddonsFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View) {
-        val context = view.context
         when (view.id) {
             R.id.add_button -> {
                 val addon = (((view.parent) as View).tag as Addon)
@@ -246,18 +252,30 @@ class AddonsFragment : Fragment(), View.OnClickListener {
             R.id.add_on_item -> {
                 val addon = view.tag as Addon
                 if (addon.isInstalled()) {
-                    val intent = Intent(context, InstalledAddonDetailsActivity::class.java)
-                    intent.putExtra("add_on", addon)
-                    context.startActivity(intent)
+                    showInstalledAddonDetailsFragment(addon)
                 } else {
-                    val intent = Intent(context, AddonDetailsActivity::class.java)
-                    intent.putExtra("add_on", addon)
-                    this.startActivity(intent)
+                    showDetailsFragment(addon)
                 }
             }
             else -> {
             }
         }
+    }
+
+    private fun showInstalledAddonDetailsFragment(addon: Addon) {
+        val directions =
+            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToInstalledAddonDetails(
+                addon
+            )
+        Navigation.findNavController(requireView()).navigate(directions)
+    }
+
+    private fun showDetailsFragment(addon: Addon) {
+        val directions =
+            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToAddonDetailsFragment(
+                addon
+            )
+        Navigation.findNavController(requireView()).navigate(directions)
     }
 
     private fun isAlreadyADialogCreated(): Boolean {
@@ -296,7 +314,7 @@ class AddonsFragment : Fragment(), View.OnClickListener {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                this@AddonsFragment.view?.let { view ->
+                this@AddonsManagementFragment.view?.let { view ->
                     bindRecyclerView(view)
                 }
 

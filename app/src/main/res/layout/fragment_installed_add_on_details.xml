@@ -39,8 +39,8 @@
                 android:text="@string/mozac_feature_addons_settings"
                 android:textColor="@drawable/addon_textview_selector"
                 android:textSize="18sp"
-                app:drawableStartCompat="@drawable/mozac_ic_preferences"
-                app:drawableTint="@android:color/black" />
+                app:drawableTint="?android:attr/textColorPrimary"
+                app:drawableStartCompat="@drawable/mozac_ic_preferences"  />
 
         <TextView
                 android:id="@+id/details"
@@ -54,7 +54,7 @@
                 android:textColor="@drawable/addon_textview_selector"
                 android:textSize="18sp"
                 app:drawableStartCompat="@drawable/mozac_ic_information"
-                app:drawableTint="@android:color/black" />
+                app:drawableTint="?android:attr/textColorPrimary" />
 
         <TextView
                 android:id="@+id/permissions"

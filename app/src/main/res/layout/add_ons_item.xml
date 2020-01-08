@@ -91,6 +91,6 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:contentDescription="@string/mozac_feature_addons_install_addon_content_description"
-            android:tint="@android:color/black"
+            android:tint="?android:attr/textColorPrimary"
             android:src="@drawable/mozac_ic_new" />
 </RelativeLayout>

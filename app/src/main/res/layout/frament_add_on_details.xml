@@ -112,7 +112,7 @@
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/mozac_feature_addons_home_page"
                 android:src="@drawable/mozac_ic_link"
-                android:tint="@android:color/black" />
+                android:tint="?android:attr/textColorPrimary" />
 
         <View
                 android:id="@+id/home_page_divider"

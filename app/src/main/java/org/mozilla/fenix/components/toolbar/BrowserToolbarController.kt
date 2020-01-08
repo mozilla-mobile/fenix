@@ -27,7 +27,6 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.addons.AddonsActivity
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -181,9 +180,11 @@ class DefaultBrowserToolbarController(
                 activity.components.useCases.tabsUseCases.addTab.invoke(getSupportUrl())
             }
             ToolbarMenu.Item.AddonsManager -> {
-                val intent = Intent(activity, AddonsActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                activity.startActivity(intent)
+                navController.nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections
+                        .actionBrowserFragmentToAddonsManagementFragment()
+                )
             }
             ToolbarMenu.Item.SaveToCollection -> {
                 activity.components.analytics.metrics

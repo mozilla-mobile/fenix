@@ -198,6 +198,9 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_addonsManagementFragment"
+            app:destination="@id/addonsManagementFragment" />
     </fragment>
 
     <fragment
@@ -402,7 +405,7 @@
             app:destination="@id/localeSettingsFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_addonsFragment"
-            app:destination="@id/addonsFragment" />
+            app:destination="@id/addonsManagementFragment" />
     </fragment>
     <fragment
         android:id="@+id/dataChoicesFragment"
@@ -698,7 +701,55 @@
         android:name="org.mozilla.fenix.settings.advanced.LocaleSettingsFragment"
         android:label="LanguageSettingsFragment" />
     <fragment
-        android:id="@+id/addonsFragment"
-        android:name="org.mozilla.fenix.addons.AddonsFragment"
-        android:label="Add-ons manager" />
+        android:id="@+id/addonsManagementFragment"
+        android:name="org.mozilla.fenix.addons.AddonsManagementFragment"
+        android:label="AddonsManagementFragment" >
+        <action
+            android:id="@+id/action_addonsManagementFragment_to_addonDetailsFragment"
+            app:destination="@id/addonDetailsFragment" />
+        <action
+            android:id="@+id/action_addonsManagementFragment_to_installedAddonDetails"
+            app:destination="@id/installedAddonDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addonDetailsFragment"
+        android:name="org.mozilla.fenix.addons.AddonDetailsFragment"
+        android:label="AddonDetailsFragment" >
+        <argument
+            android:name="addon"
+            app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
+    <fragment
+        android:id="@+id/installedAddonDetailsFragment"
+        android:name="org.mozilla.fenix.addons.InstalledAddonDetailsFragment"
+        android:label="InstalledAddonDetailsFragment" >
+        <action
+            android:id="@+id/action_installedAddonFragment_to_addonInternalSettingsFragment"
+            app:destination="@id/addonInternalSettingsFragment" />
+        <action
+            android:id="@+id/action_installedAddonFragment_to_addonDetailsFragment"
+            app:destination="@id/addonDetailsFragment" />
+        <action
+            android:id="@+id/action_installedAddonFragment_to_addonPermissionsDetailsFragment"
+            app:destination="@id/addonPermissionsDetailFragment" />
+        <argument
+            android:name="addon"
+            app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
+    <fragment
+        android:id="@+id/addonInternalSettingsFragment"
+        android:name="org.mozilla.fenix.addons.AddonInternalSettingsFragment"
+        android:label="AddonInternalSettingsFragment" >
+        <argument
+            android:name="addon"
+            app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
+    <fragment
+        android:id="@+id/addonPermissionsDetailFragment"
+        android:name="org.mozilla.fenix.addons.AddonPermissionsDetailsFragment"
+        android:label="AddonPermissionsDetailFragment" >
+        <argument
+            android:name="addon"
+            app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
 </navigation>

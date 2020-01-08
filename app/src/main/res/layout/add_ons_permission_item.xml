@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
-            android:textColor="@android:color/black"
             tools:text="Access your data for all websites" />
 
     <View

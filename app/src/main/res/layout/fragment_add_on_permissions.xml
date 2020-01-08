@@ -4,10 +4,9 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/add_ons_permissions"
@@ -25,7 +24,6 @@
             android:paddingEnd="16dp"
             android:background="?attr/selectableItemBackground"
             android:text="@string/mozac_feature_addons_learn_more"
-            app:drawableTint="@android:color/black"
-            android:textColor="@android:color/black" />
+            app:drawableTint="?android:attr/textColorPrimary" />
 
 </RelativeLayout>
