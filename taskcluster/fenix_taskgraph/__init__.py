@@ -36,6 +36,11 @@ def _import_modules(modules):
 
 
 def get_decision_parameters(graph_config, parameters):
+    # XXX HARDCODE VALUES FOR THE SAKE OF TESTING. DO NOT LAND.
+    parameters["tasks_for"] = "github-release"
+    parameters["head_tag"] = b"v99.98.97"
+
+
     head_tag = parameters["head_tag"].decode("utf-8")
     parameters["release_type"] = _resolve_release_type(head_tag)
     parameters["release_version"] = read_version_file()
