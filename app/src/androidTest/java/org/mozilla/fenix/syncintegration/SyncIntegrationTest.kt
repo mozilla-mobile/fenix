@@ -151,7 +151,6 @@ class SyncIntegrationTest {
         emailInput.waitForExists(TestAssetHelper.waitingTime)
 
         val emailAddress = javaClass.classLoader.getResource("email.txt").readText()
-        // val emailAddress = "test-256a5b5b18@restmail.net"
         emailInput.setText(emailAddress)
     }
 
@@ -166,7 +165,6 @@ class SyncIntegrationTest {
                 .className(EditText::class.java))
 
         val passwordValue = javaClass.classLoader.getResource("password.txt").readText()
-        //val passwordValue = "nPuPEcoj"
         passwordInput.setText(passwordValue)
     }
 
