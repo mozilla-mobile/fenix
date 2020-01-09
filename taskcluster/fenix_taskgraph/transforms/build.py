@@ -125,3 +125,11 @@ def add_artifacts(config, tasks):
                 apks[apk["abi"]] = apk_name
 
         yield task
+
+
+@transforms.add
+def filter_incomplete_translation(config, tasks):
+    for task in tasks:
+        if task.pop("filter-incomplete-translations", False):
+            task["run"]["pre-gradlew"].append(["python", "automation/taskcluster/l10n/filter-release-translations.py"])
+        yield task
