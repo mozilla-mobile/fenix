@@ -353,6 +353,11 @@ class Settings private constructor(
         default = false
     )
 
+    var shouldShowFirstTimePwaFragment by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_time_pwa),
+        default = true
+    )
+
     @VisibleForTesting(otherwise = PRIVATE)
     internal val trackingProtectionOnboardingCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),

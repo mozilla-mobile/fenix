@@ -9,8 +9,6 @@
     android:layout_marginBottom="16dp"
     android:background="@drawable/onboarding_button_background"
     android:backgroundTint="?accent"
-    android:clickable="true"
-    android:focusable="true"
     android:gravity="center"
     android:text="@string/onboarding_finish"
     android:textAllCaps="false"

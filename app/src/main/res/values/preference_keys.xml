@@ -137,4 +137,5 @@
     <string name="pref_key_total_uri" translatable="false">pref_key_total_uri</string>
 
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
+    <string name="pref_key_show_first_time_pwa" translatable="false">pref_key_show_first_time_pwa</string>
 </resources>

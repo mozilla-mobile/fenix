@@ -349,7 +349,6 @@
         <item name="android:minHeight">40dp</item>
         <item name="android:layout_marginTop">32dp</item>
         <item name="android:textColor">?accentUsedOnDarkBackground</item>
-
     </style>
 
     <style name="FirefoxAccountsDialogStyle" parent="DialogStyleBase">
