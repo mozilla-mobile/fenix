@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -79,23 +80,26 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
             return BookmarksRobot.Transition()
         }
 
-        fun clickOpenNewTab(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+        fun clickOpenNewTab(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
             openInNewTabButton().click()
-            mDevice.waitNotNull(Until.findObject(By.text("Collections")), waitingTime)
-
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
-        }
-
-        fun clickOpenPrivateTab(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            openInPrivateTabButton().click()
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/private_session_description")),
+                Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")),
                 waitingTime
             )
 
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            TabScreenRobot().interact()
+            return TabScreenRobot.Transition()
+        }
+
+        fun clickOpenPrivateTab(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
+            openInPrivateTabButton().click()
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")),
+                waitingTime
+            )
+
+            TabScreenRobot().interact()
+            return TabScreenRobot.Transition()
         }
     }
 }

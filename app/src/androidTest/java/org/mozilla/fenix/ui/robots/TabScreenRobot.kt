@@ -68,7 +68,7 @@ fun tabScreen(interact: TabScreenRobot.() -> Unit): TabScreenRobot.Transition {
     return TabScreenRobot.Transition()
 }
 
-private fun closeTabButton() = onView(withId(R.id.accessory_view))
+private fun closeTabButton() = onView(withId(R.id.close_tab_button))
 private fun privateBrowsingButton() = onView(withId(R.id.private_browsing_button))
 private fun newTabButton() = onView(withId(R.id.tab_tray_open_new_tab))
 

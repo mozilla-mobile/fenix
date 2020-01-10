@@ -245,7 +245,7 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab { }.openTabScreen {
+        }.clickOpenNewTab {
             verifyExistingTabList()
         }
     }
@@ -264,7 +264,7 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab { }.openTabScreen {
+        }.clickOpenPrivateTab {
             verifyExistingTabList()
         }
     }

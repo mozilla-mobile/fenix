@@ -157,7 +157,7 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {}.openTabScreen { verifyExistingTabList() }
+        }.clickOpenNewTab { verifyExistingTabList() }
     }
 
     @Test
@@ -175,7 +175,7 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab { }.openTabScreen {
+        }.clickOpenPrivateTab {
             verifyExistingTabList()
         }
     }
