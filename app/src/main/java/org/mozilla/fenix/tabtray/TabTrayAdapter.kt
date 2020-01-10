@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.save_tab_group_button.view.*
 import kotlinx.android.synthetic.main.tab_list_row.view.*
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.support.ktx.android.util.dpToFloat
@@ -20,6 +21,29 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
+import java.lang.IllegalStateException
+
+/**
+ * View to save tabs to collections
+ */
+class SaveTabGroupViewHolder(
+    view: View,
+    private val interactor: TabTrayViewInteractor
+) : RecyclerView.ViewHolder(view) {
+
+    init {
+        view.save_tab_group_button.setOnClickListener {
+            view.context.components.analytics.metrics
+                .track(Event.CollectionSaveButtonPressed(TELEMETRY_HOME_IDENTIFIER))
+            interactor.saveToCollectionsTapped()
+        }
+    }
+
+    companion object {
+        const val TELEMETRY_HOME_IDENTIFIER = "home"
+        const val LAYOUT_ID = R.layout.save_tab_group_button
+    }
+}
 
 /**
  * View that represents individual tab items
@@ -139,18 +163,29 @@ class TabItemViewHolder(
  */
 class TabTrayAdapter(
     private val interactor: TabTrayViewInteractor
-) : RecyclerView.Adapter<TabItemViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var state = TabTrayFragmentState(listOf())
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(TabItemViewHolder.LAYOUT_ID, parent, false)
-        return TabItemViewHolder(view, interactor)
+    override fun getItemViewType(position: Int): Int =
+        if (position < state.tabs.size) {
+            TabItemViewHolder.LAYOUT_ID
+        } else { SaveTabGroupViewHolder.LAYOUT_ID }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        return when (viewType) {
+            TabItemViewHolder.LAYOUT_ID -> TabItemViewHolder(view, interactor)
+            SaveTabGroupViewHolder.LAYOUT_ID -> SaveTabGroupViewHolder(view, interactor)
+            else -> throw IllegalStateException()
+        }
     }
 
-    override fun getItemCount() = state.tabs.size
+    override fun getItemCount() = if (state.tabs.isEmpty()) {
+        state.tabs.size
+    } else { state.tabs.size + 1 }
 
-    override fun onBindViewHolder(holder: TabItemViewHolder, position: Int) {
-        holder.bind(state.tabs[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as? TabItemViewHolder)?.bind(state.tabs[position])
     }
 
     fun updateState(state: TabTrayFragmentState) {

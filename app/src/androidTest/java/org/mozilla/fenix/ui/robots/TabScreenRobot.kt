@@ -19,7 +19,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 

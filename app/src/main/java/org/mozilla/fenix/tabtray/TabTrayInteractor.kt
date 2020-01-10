@@ -21,4 +21,5 @@ class TabTrayInteractor(
     override fun onPauseMediaClicked() { controller.pauseMedia() }
     override fun onPlayMediaClicked() { controller.playMedia() }
     override fun open(tab: Tab) { controller.openTab(tab) }
+    override fun saveToCollectionsTapped() { controller.navigateToCollectionCreator() }
 }

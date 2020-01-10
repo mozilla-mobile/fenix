@@ -34,6 +34,7 @@ interface TabTrayViewInteractor {
     fun newTabTapped()
     fun goHome()
     fun open(tab: Tab)
+    fun saveToCollectionsTapped()
 }
 
 /**

@@ -12,7 +12,6 @@ import io.mockk.verify
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.media.state.MediaState
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -173,7 +172,6 @@ class TabTrayControllerTest {
             navController.navigate(expectedDirections)
         }
     }
-
 
     @Test
     fun onNewTab() {
