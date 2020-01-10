@@ -4,89 +4,147 @@
 
 package org.mozilla.fenix.tabtray
 
+import android.graphics.Bitmap
+import android.graphics.Outline
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.tab_list_row.view.*
 import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
 import mozilla.components.feature.media.state.MediaState
+import mozilla.components.support.ktx.android.util.dpToFloat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.ui.SelectableListItemView
 import org.mozilla.fenix.components.ui.SelectionHolder
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
+import org.mozilla.fenix.ext.loadIntoView
 
 /**
  * View that represents individual tab items
  */
 class TabItemViewHolder(
-    private val view: SelectableListItemView,
+    private val view: View,
     private val interactor: TabTrayViewInteractor,
     private val selectionHolder: SelectionHolder<Tab>
-) : RecyclerView.ViewHolder(view) {
-    private var tab: Tab? = null
-    private var mode: TabTrayFragmentState.Mode? = null
+) :  RecyclerView.ViewHolder(view) {
+
+    internal var tab: Tab? = null
 
     init {
-        view.displayAs(SelectableListItemView.ItemType.CLOSABLE_ITEM)
-        view.accessoryView.setOnClickListener {
-            if (mode is TabTrayFragmentState.Mode.Editing) return@setOnClickListener
-            tab?.apply(interactor::closeButtonTapped)
+        view.setOnClickListener {
+            tab?.also(interactor::open)
         }
 
-        view.playPauseButton.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
+        view.setOnLongClickListener {
+            view.context.components.analytics.metrics.track(Event.CollectionTabLongPressed)
+//            tab?.aslo(interactor)
+//            interactor.onSaveToCollection(tab?.sessionId!!)
+            return@setOnLongClickListener true
+        }
 
-        view.playPauseButton.setOnClickListener {
+//        view.close_tab_button.setOnClickListener {
+//            tab?.also(interactor::closeButtonTapped)
+//        }
+
+        view.play_pause_button.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
+
+        view.play_pause_button.setOnClickListener {
             when (tab?.mediaState) {
                 is MediaState.Playing -> {
-                    it.context.components.analytics.metrics.track(Event.TabMediaPlay)
+                    it.context.components.analytics.metrics.track(Event.TabMediaPause)
                     interactor.onPauseMediaClicked()
                 }
 
                 is MediaState.Paused -> {
-                    it.context.components.analytics.metrics.track(Event.TabMediaPause)
+                    it.context.components.analytics.metrics.track(Event.TabMediaPlay)
                     interactor.onPlayMediaClicked()
                 }
             }
         }
-    }
 
-    fun bind(tab: Tab, mode: TabTrayFragmentState.Mode) {
-        this.tab = tab
-        this.mode = mode
-        view.title.text = tab.title
-        view.url.text = tab.url
-        view.loadFavicon(tab.url)
-        view.setSelectionInteractor(tab, selectionHolder, interactor)
-        view.changeSelected(tab in selectionHolder.selectedItems)
-        updatePlayPauseButton(tab.mediaState)
-        view.accessoryView.visibility = if (mode is TabTrayFragmentState.Mode.Normal) {
-            View.VISIBLE
-        } else {
-            View.INVISIBLE
-        }
-    }
-
-    fun updatePlayPauseButton(mediaState: MediaState) {
-        with(view.playPauseButton) {
-            isVisible = mediaState is MediaState.Playing || mediaState is MediaState.Paused
-
-            if (mediaState is MediaState.Playing) {
-                contentDescription =
-                    context.getString(R.string.mozac_feature_media_notification_action_pause)
-                setImageDrawable(context.getDrawable(R.drawable.pause_with_background))
-            } else {
-                contentDescription =
-                    context.getString(R.string.mozac_feature_media_notification_action_play)
-                setImageDrawable(context.getDrawable(R.drawable.play_with_background))
+        view.favicon_image.clipToOutline = true
+        view.favicon_image.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View?, outline: Outline?) {
+                outline?.setRoundRect(
+                    0,
+                    0,
+                    view!!.width,
+                    view.height,
+                    favIconBorderRadiusInPx.dpToFloat(view.context.resources.displayMetrics)
+                )
             }
         }
     }
 
+    internal fun bind(tab: Tab) {
+        updateTab(tab)
+        updateTitle(tab.title)
+        updateHostname(tab.hostname)
+        updateFavIcon(tab.url, tab.icon)
+        updateSelected(tab.selected)
+        updatePlayPauseButton(tab.mediaState)
+        view.item_tab.transitionName = "$TAB_ITEM_TRANSITION_NAME${tab.sessionId}"
+        updateCloseButtonDescription(tab.title)
+    }
+
+    internal fun updatePlayPauseButton(mediaState: MediaState) {
+        with(view.play_pause_button) {
+            visibility = if (mediaState is MediaState.Playing || mediaState is MediaState.Paused) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+            if (mediaState is MediaState.Playing) {
+                play_pause_button.contentDescription =
+                    context.getString(R.string.mozac_feature_media_notification_action_pause)
+                setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.pause_with_background))
+            } else {
+                play_pause_button.contentDescription =
+                    context.getString(R.string.mozac_feature_media_notification_action_play)
+                setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.play_with_background))
+            }
+        }
+    }
+
+    internal fun updateTab(tab: Tab) {
+        this.tab = tab
+    }
+    internal fun updateTitle(text: String) {
+        view.tab_title.text = text
+    }
+
+    internal fun updateHostname(text: String) {
+        view.hostname.text = text
+    }
+
+    internal fun updateFavIcon(url: String, icon: Bitmap?) {
+        if (icon == null) {
+            view.favicon_image.context.components.core.icons.loadIntoView(view.favicon_image, url)
+        } else {
+            view.favicon_image.setImageBitmap(icon)
+        }
+    }
+
+    internal fun updateSelected(selected: Boolean) {
+        view.selected_border.visibility = if (selected) View.VISIBLE else View.GONE
+    }
+    internal fun updateCloseButtonDescription(title: String) {
+        view.close_tab_button.contentDescription =
+            view.close_tab_button.context.getString(R.string.close_tab_title, title)
+    }
+
     companion object {
-        const val LAYOUT_ID = R.layout.selectable_list_item
+        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
+        const val LAYOUT_ID = R.layout.tab_list_row
+        const val favIconBorderRadiusInPx = 4
     }
 }
 
@@ -99,20 +157,14 @@ class TabTrayAdapter(
     private var state = TabTrayFragmentState(listOf(), TabTrayFragmentState.Mode.Normal)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
-        val view = SelectableListItemView(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-
+        val view = LayoutInflater.from(parent.context).inflate(TabItemViewHolder.LAYOUT_ID, parent, false)
         return TabItemViewHolder(view, interactor, this)
     }
 
     override fun getItemCount() = state.tabs.size
 
     override fun onBindViewHolder(holder: TabItemViewHolder, position: Int) {
-        holder.bind(state.tabs[position], state.mode)
+        holder.bind(state.tabs[position])
     }
 
     fun updateState(state: TabTrayFragmentState) {
