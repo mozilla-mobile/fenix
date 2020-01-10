@@ -10,13 +10,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.ui.SelectionInteractor
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.utils.allowUndo
 
@@ -53,6 +53,13 @@ class TabTrayView(
         view.tab_tray_list.apply {
             adapter = tabTrayAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            val itemTouchHelper =
+                ItemTouchHelper(
+                    SwipeToDeleteCallback(
+                        interactor
+                    )
+                )
+            itemTouchHelper.attachToRecyclerView(this)
         }
 
         view.private_browsing_button.setOnClickListener { interactor.privateModeButtonTapped() }

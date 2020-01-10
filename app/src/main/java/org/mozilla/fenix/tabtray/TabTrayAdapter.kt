@@ -27,7 +27,7 @@ import org.mozilla.fenix.ext.loadIntoView
 class TabItemViewHolder(
     private val view: View,
     private val interactor: TabTrayViewInteractor
-) :  RecyclerView.ViewHolder(view) {
+) : RecyclerView.ViewHolder(view) {
 
     internal var tab: Tab? = null
 
@@ -35,7 +35,6 @@ class TabItemViewHolder(
         view.setOnClickListener {
             tab?.also(interactor::open)
         }
-
 
         view.close_tab_button.setOnClickListener {
             tab?.also(interactor::closeButtonTapped)

@@ -15,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -32,7 +31,6 @@ import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.component_tab_tray.view.*
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -45,7 +43,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
-import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.settings
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")

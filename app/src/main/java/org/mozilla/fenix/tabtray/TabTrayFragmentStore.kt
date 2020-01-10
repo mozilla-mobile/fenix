@@ -6,7 +6,6 @@ package org.mozilla.fenix.tabtray
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.core.content.ContextCompat
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
@@ -15,7 +14,6 @@ import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.toShortUrl
 
 data class Tab(
