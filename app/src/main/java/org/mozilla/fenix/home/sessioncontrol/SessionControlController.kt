@@ -167,7 +167,8 @@ class DefaultSessionControlController(
             }
         }
 
-        scrollToTheTop()
+        navController.nav(R.id.homeFragment, HomeFragmentDirections.actionHomeFragmentToTabTrayFragment())
+
         metrics.track(Event.CollectionAllTabsRestored)
     }
 
