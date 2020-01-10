@@ -1135,6 +1135,6 @@
     <string name="tab_tray_menu_item_select">Select tabs</string>
     <!-- Shortcut action to open new tab -->
     <string name="tab_tray_menu_open_new_tab">New tab</string>
-
-
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Go home</string>
 </resources>

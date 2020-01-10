@@ -28,6 +28,7 @@ interface TabTrayController {
     fun newTab()
     fun enterPrivateBrowsingMode()
     fun exitPrivateBrowsingMode()
+    fun goHome()
 
     fun navigateToCollectionCreator()
     fun shouldAllowSelect(): Boolean
@@ -59,7 +60,7 @@ class DefaultTabTrayController(
     }
 
     override fun newTab() {
-        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToHomeFragment()
+        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(null)
         navController.navigate(directions)
     }
 
@@ -88,6 +89,10 @@ class DefaultTabTrayController(
         val isPrivate = browsingModeManager.mode.isPrivate
         val tabs = sessionManager.sessionsOfType(isPrivate)
         closeTabAction(tabs, isPrivate)
+    }
+
+    override fun goHome() {
+        navController.navigate(TabTrayFragmentDirections.actionTabTrayFragmentToHomeFragment())
     }
 
     override fun pauseMedia() { pauseMediaUseCase() }

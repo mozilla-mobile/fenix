@@ -226,7 +226,7 @@ class TabTrayControllerTest {
     @Test
     fun onNewTab() {
         val navController: NavController = mockk(relaxed = true)
-        val expectedDirections = TabTrayFragmentDirections.actionTabTrayFragmentToHomeFragment()
+        val expectedDirections = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(null)
         val controller = DefaultTabTrayController(
             navController,
             mockk(relaxed = true),

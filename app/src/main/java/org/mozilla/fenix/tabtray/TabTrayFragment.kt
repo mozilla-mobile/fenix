@@ -376,15 +376,6 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             showAnyOverflowIcons && !inPrivateMode
         this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item)?.isVisible = showAnyOverflowIcons
         this.tabTrayMenu?.findItem(R.id.tab_tray_close_menu_item)?.isVisible = showAnyOverflowIcons
-
-        // Disable the bottom trash icon when there are no tabs open
-        if (tabTrayStore.state.tabs.isNotEmpty()) {
-            view?.tab_tray_close_all?.alpha = CLOSE_ALL_ENABLED_ALPHA
-            view?.tab_tray_close_all?.isEnabled = true
-        } else {
-            view?.tab_tray_close_all?.alpha = CLOSE_ALL_DISABLED_ALPHA
-            view?.tab_tray_close_all?.isEnabled = false
-        }
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {

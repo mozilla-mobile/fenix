@@ -32,6 +32,7 @@ interface TabTrayViewInteractor : SelectionInteractor<Tab> {
     fun normalModeButtonTapped()
     fun closeAllTabsTapped()
     fun newTabTapped()
+    fun goHome()
 }
 
 /**
@@ -54,7 +55,7 @@ class TabTrayView(
         }
 
         view.private_browsing_button.setOnClickListener { interactor.privateModeButtonTapped() }
-        view.tab_tray_close_all.setOnClickListener { interactor.closeAllTabsTapped() }
+        view.tab_tray_go_home.setOnClickListener { interactor.goHome() }
         view.tab_tray_open_new_tab.setOnClickListener { interactor.newTabTapped() }
     }
 

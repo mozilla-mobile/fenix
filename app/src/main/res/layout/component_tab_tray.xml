@@ -62,12 +62,12 @@
             android:src="@drawable/private_browsing_button"
             android:layout_weight=".3333" />
         <ImageButton
-            android:id="@+id/tab_tray_close_all"
+            android:id="@+id/tab_tray_go_home"
             android:layout_width="@dimen/glyph_button_height"
             android:layout_height="@dimen/glyph_button_height"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/tab_tray_menu_item_close"
-            android:src="@drawable/ic_delete"
+            android:contentDescription="@string/tab_tray_menu_home"
+            android:src="@drawable/ic_home"
             android:layout_weight=".3333" />
         <ImageButton
             android:id="@+id/tab_tray_open_new_tab"

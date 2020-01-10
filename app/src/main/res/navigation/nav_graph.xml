@@ -719,7 +719,13 @@
             app:popEnterAnim="@anim/fade_in" />
         <action
             android:id="@+id/action_tabTrayFragment_to_homeFragment"
-            app:destination="@+id/homeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_tabTrayFragment_to_searchFragment"
+            app:destination="@+id/searchFragment"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in" />
     </fragment>

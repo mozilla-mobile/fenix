@@ -15,6 +15,7 @@ class TabTrayInteractor(
     override fun normalModeButtonTapped() { controller.exitPrivateBrowsingMode() }
     override fun privateModeButtonTapped() { controller.enterPrivateBrowsingMode() }
     override fun closeAllTabsTapped() { controller.closeAllTabs() }
+    override fun goHome() { controller.goHome() }
     override fun newTabTapped() { controller.newTab() }
     override fun closeButtonTapped(tab: Tab) { controller.closeTab(tab) }
     override fun onPauseMediaClicked() { controller.pauseMedia() }
