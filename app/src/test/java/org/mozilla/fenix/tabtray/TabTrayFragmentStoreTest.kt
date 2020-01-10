@@ -18,7 +18,7 @@ class TabTrayFragmentStoreTest {
     fun UpdateTabs() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayFragmentStore(initialState)
-        val tabs = listOf<Tab>(
+        val tabs = listOf(
             createTabWithId("1"),
             createTabWithId("2")
         )
@@ -27,71 +27,8 @@ class TabTrayFragmentStoreTest {
         assertNotSame(initialState, store.state)
     }
 
-    @Test
-    fun SelectTab() = runBlocking {
-        val initialState = emptyDefaultState()
-        val store = TabTrayFragmentStore(initialState)
-        val idToSelect = "2"
-        val tabToSelect = createTabWithId(idToSelect)
-        val tabs = listOf<Tab>(
-            createTabWithId("1"),
-            createTabWithId(idToSelect),
-            createTabWithId("3")
-        )
-
-        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs)).join()
-        store.dispatch(TabTrayFragmentAction.SelectTab(tab = tabToSelect)).join()
-
-        val selected = store.state.mode.selectedTabs
-        assertEquals(selected.toList().size, 1)
-        assertEquals(selected.first().sessionId, idToSelect)
-    }
-
-    @Test
-    fun DeselectTab() = runBlocking {
-        val initialState = emptyDefaultState()
-        val store = TabTrayFragmentStore(initialState)
-        val idToSelect = "2"
-        val tabToSelect = createTabWithId(idToSelect)
-        val tabs = listOf<Tab>(
-            createTabWithId("1"),
-            createTabWithId("3")
-        )
-
-        store.dispatch(TabTrayFragmentAction.UpdateTabs(tabs)).join()
-        store.dispatch(TabTrayFragmentAction.SelectTab(tab = tabToSelect)).join()
-        store.dispatch(TabTrayFragmentAction.DeselectTab(tab = tabToSelect)).join()
-
-        val selected = store.state.mode.selectedTabs
-        assertEquals(selected.toList().size, 0)
-    }
-
-    @Test
-    fun ExitEditMode() = runBlocking {
-        val initialState = emptyEditState()
-        val store = TabTrayFragmentStore(initialState)
-
-        store.dispatch(TabTrayFragmentAction.ExitEditMode).join()
-        assertFalse(store.state.mode.isEditing)
-    }
-
-    @Test
-    fun EnterEditMode() = runBlocking {
-        val initialState = emptyEditState()
-        val store = TabTrayFragmentStore(initialState)
-
-        store.dispatch(TabTrayFragmentAction.EnterEditMode).join()
-        assertTrue(store.state.mode.isEditing)
-    }
-
     private fun emptyDefaultState(): TabTrayFragmentState = TabTrayFragmentState(
-        tabs = listOf(),
-        mode = TabTrayFragmentState.Mode.Normal
-    )
-
-    private fun emptyEditState(): TabTrayFragmentState = TabTrayFragmentState(
-        tabs = listOf(),
-        mode = TabTrayFragmentState.Mode.Editing(setOf())
+        tabs = listOf()
     )
 
     private fun createTabWithId(id: String): Tab {

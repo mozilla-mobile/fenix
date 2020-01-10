@@ -49,6 +49,7 @@ class TabTrayControllerTest {
 
         val controller = DefaultTabTrayController(
             mockk(relaxed = true),
+            mockk(relaxed = true),
             sessionManager,
             store,
             browsingModeManager,
@@ -83,6 +84,7 @@ class TabTrayControllerTest {
 
         val controller = DefaultTabTrayController(
             mockk(relaxed = true),
+            mockk(relaxed = true),
             sessionManager,
             store,
             browsingModeManager,
@@ -109,6 +111,7 @@ class TabTrayControllerTest {
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
+            mockk(relaxed = true),
             { _, _ -> },
             { },
             pauseMediaUseCase = { pauseWasCalled = true }
@@ -122,6 +125,7 @@ class TabTrayControllerTest {
     fun onPlayMedia() {
         var playWasCalled = false
         val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
             mockk(relaxed = true),
@@ -152,6 +156,7 @@ class TabTrayControllerTest {
         val expectedDirections = TabTrayFragmentDirections.actionTabTrayFragmentToBrowserFragment(null)
 
         val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
             navController,
             sessionManager,
             store,
@@ -169,65 +174,13 @@ class TabTrayControllerTest {
         }
     }
 
-    @Test
-    fun onSelectTab() {
-        val tab = Tab(
-            sessionId = "1",
-            url = "",
-            hostname = "",
-            title = "",
-            selected = true,
-            mediaState = MediaState.None,
-            icon = null
-        )
-        val controller = DefaultTabTrayController(
-            mockk(relaxed = true),
-            mockk(relaxed = true),
-            store,
-            mockk(relaxed = true),
-            { _, _ -> },
-            { }
-        )
-
-        every { state.mode.isEditing } returns true
-
-        controller.selectTab(tab)
-        verify { store.dispatch(TabTrayFragmentAction.SelectTab(tab)) }
-    }
-
-    @Test
-    fun onDeselectTab() {
-        val tab = Tab(
-            sessionId = "1",
-            url = "",
-            hostname = "",
-            title = "",
-            selected = true,
-            mediaState = MediaState.None,
-            icon = null
-        )
-        val controller = DefaultTabTrayController(
-            mockk(relaxed = true),
-            mockk(relaxed = true),
-            store,
-            mockk(relaxed = true),
-            { _, _ -> },
-            { }
-        )
-
-        every { state.mode.isEditing } returns true
-
-        controller.deselectTab(tab)
-        verify {
-            store.dispatch(TabTrayFragmentAction.DeselectTab(tab))
-        }
-    }
 
     @Test
     fun onNewTab() {
         val navController: NavController = mockk(relaxed = true)
         val expectedDirections = TabTrayFragmentDirections.actionTabTrayFragmentToSearchFragment(null)
         val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
             navController,
             mockk(relaxed = true),
             store,
@@ -249,6 +202,7 @@ class TabTrayControllerTest {
         val controller = DefaultTabTrayController(
             mockk(relaxed = true),
             mockk(relaxed = true),
+            mockk(relaxed = true),
             store,
             mockk(relaxed = true),
             { _, _ -> },
@@ -265,6 +219,7 @@ class TabTrayControllerTest {
         val controller = DefaultTabTrayController(
             mockk(relaxed = true),
             mockk(relaxed = true),
+            mockk(relaxed = true),
             store,
             mockk(relaxed = true),
             { _, _ -> },
@@ -276,39 +231,11 @@ class TabTrayControllerTest {
     }
 
     @Test
-    fun onShouldAllowSelect() {
-        val controller = DefaultTabTrayController(
-            mockk(relaxed = true),
-            mockk(relaxed = true),
-            store,
-            mockk(relaxed = true),
-            { _, _ -> },
-            { }
-        )
-
-        every { state.mode.isEditing } returns true
-        var shouldAllowSelect = controller.shouldAllowSelect()
-        assertTrue(shouldAllowSelect)
-
-        every { state.mode.isEditing } returns false
-        shouldAllowSelect = controller.shouldAllowSelect()
-        assertFalse(shouldAllowSelect)
-    }
-
-    @Test
     fun onNavigateToCollectionCreator() {
         val navController: NavController = mockk(relaxed = true)
-        val tab = Tab(
-            sessionId = "1",
-            url = "",
-            hostname = "",
-            title = "",
-            selected = true,
-            mediaState = MediaState.None,
-            icon = null
-        )
 
         val controller = DefaultTabTrayController(
+            mockk(relaxed = true),
             navController,
             mockk(relaxed = true),
             store,
@@ -316,8 +243,6 @@ class TabTrayControllerTest {
             { _, _ -> },
             { }
         )
-
-        every { state.mode } returns TabTrayFragmentState.Mode.Editing(setOf<Tab>(tab))
 
         controller.navigateToCollectionCreator()
 
