@@ -56,20 +56,10 @@ class TabScreenRobot {
             mDevice.waitForIdle()
             newTabButton().perform(click())
 
-            return openSearch {
+            return searchScreen {
                 typeSearch(url.toString())
             }.openBrowser(interact)
         }
-
-        private fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            navigationToolbar().perform(click())
-
-            SearchRobot().interact()
-            return SearchRobot.Transition()
-        }
-
-        private fun navigationToolbar() =
-            onView(CoreMatchers.allOf(withText("Search or enter address")))
     }
 }
 
