@@ -158,7 +158,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
 
             nav(
                 R.id.historyFragment,
-                HistoryFragmentDirections.actionHistoryFragmentToHomeFragment()
+                HistoryFragmentDirections.actionHistoryFragmentToTabTrayFragment()
             )
             true
         }
@@ -174,7 +174,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
             }
             nav(
                 R.id.historyFragment,
-                HistoryFragmentDirections.actionHistoryFragmentToHomeFragment()
+                HistoryFragmentDirections.actionHistoryFragmentToTabTrayFragment()
             )
             true
         }
