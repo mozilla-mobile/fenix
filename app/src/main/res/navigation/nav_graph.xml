@@ -252,9 +252,7 @@
             app:destination="@id/browserFragment" />
         <action
             android:id="@+id/action_historyFragment_to_tabTrayFragment"
-            app:destination="@id/tabTrayFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="false" />
+            app:destination="@id/tabTrayFragment" />
         <action
             android:id="@+id/action_historyFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
@@ -277,8 +275,8 @@
             android:id="@+id/action_bookmarkFragment_to_bookmarkEditFragment"
             app:destination="@id/bookmarkEditFragment" />
         <action
-            android:id="@+id/action_bookmarkFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_bookmarkFragment_to_tabTrayFragment"
+            app:destination="@id/tabTrayFragment" />
         <action
             android:id="@+id/action_bookmarkFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
