@@ -11,16 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.tab_list_row.view.*
-import kotlinx.android.synthetic.main.tab_tray_list_item.view.*
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.support.ktx.android.util.dpToFloat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.ui.SelectableListItemView
-import org.mozilla.fenix.components.ui.SelectionHolder
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
@@ -30,8 +26,7 @@ import org.mozilla.fenix.ext.loadIntoView
  */
 class TabItemViewHolder(
     private val view: View,
-    private val interactor: TabTrayViewInteractor,
-    private val selectionHolder: SelectionHolder<Tab>
+    private val interactor: TabTrayViewInteractor
 ) :  RecyclerView.ViewHolder(view) {
 
     internal var tab: Tab? = null
@@ -41,16 +36,10 @@ class TabItemViewHolder(
             tab?.also(interactor::open)
         }
 
-        view.setOnLongClickListener {
-            view.context.components.analytics.metrics.track(Event.CollectionTabLongPressed)
-//            tab?.aslo(interactor)
-//            interactor.onSaveToCollection(tab?.sessionId!!)
-            return@setOnLongClickListener true
-        }
 
-//        view.close_tab_button.setOnClickListener {
-//            tab?.also(interactor::closeButtonTapped)
-//        }
+        view.close_tab_button.setOnClickListener {
+            tab?.also(interactor::closeButtonTapped)
+        }
 
         view.play_pause_button.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
 
@@ -89,7 +78,6 @@ class TabItemViewHolder(
         updateFavIcon(tab.url, tab.icon)
         updateSelected(tab.selected)
         updatePlayPauseButton(tab.mediaState)
-        view.item_tab.transitionName = "$TAB_ITEM_TRANSITION_NAME${tab.sessionId}"
         updateCloseButtonDescription(tab.title)
     }
 
@@ -141,7 +129,6 @@ class TabItemViewHolder(
     }
 
     companion object {
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
         const val LAYOUT_ID = R.layout.tab_list_row
         const val favIconBorderRadiusInPx = 4
@@ -153,12 +140,12 @@ class TabItemViewHolder(
  */
 class TabTrayAdapter(
     private val interactor: TabTrayViewInteractor
-) : RecyclerView.Adapter<TabItemViewHolder>(), SelectionHolder<Tab> {
-    private var state = TabTrayFragmentState(listOf(), TabTrayFragmentState.Mode.Normal)
+) : RecyclerView.Adapter<TabItemViewHolder>() {
+    private var state = TabTrayFragmentState(listOf())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(TabItemViewHolder.LAYOUT_ID, parent, false)
-        return TabItemViewHolder(view, interactor, this)
+        return TabItemViewHolder(view, interactor)
     }
 
     override fun getItemCount() = state.tabs.size
@@ -171,7 +158,4 @@ class TabTrayAdapter(
         this.state = state
         notifyDataSetChanged()
     }
-
-    override val selectedItems: Set<Tab>
-        get() = state.mode.selectedTabs
 }

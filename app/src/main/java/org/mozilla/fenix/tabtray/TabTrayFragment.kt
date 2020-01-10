@@ -111,13 +111,13 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         tabTrayStore = StoreProvider.get(this) {
             TabTrayFragmentStore(
                 TabTrayFragmentState(
-                    tabs = getListOfSessions().toTabs(),
-                    mode = TabTrayFragmentState.Mode.Normal
+                    tabs = getListOfSessions().toTabs()
                 )
             )
         }
 
         tabTrayController = DefaultTabTrayController(
+            tabCollectionStorage = requireComponents.core.tabCollectionStorage,
             browsingModeManager = (activity as HomeActivity).browsingModeManager,
             navController = findNavController(),
             sessionManager = sessionManager,
@@ -154,24 +154,12 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
 
     private fun updateUI(state: TabTrayFragmentState) {
         tabTrayView.update(state, (activity as HomeActivity).browsingModeManager.mode)
-
-        // Sets the navigation icon callback action
-        val toolbar = activity?.findViewById<Toolbar>(R.id.navigationToolbar)
-
-        tabTrayView.update(state, (activity as HomeActivity).browsingModeManager.mode)
-
-        // Set the title based on mode and number of selected tabs
-        activity?.title = state.appBarTitle(requireContext())
-
-        // Set title bar colors
-        val (foregroundColor, backgroundColor) = state.appBarBackground(requireContext())
-        toolbar?.setToolbarColors(foregroundColor, backgroundColor)
-
         updateMenuItems()
     }
 
     override fun onResume() {
         super.onResume()
+        activity?.title = requireContext().getString(R.string.tab_tray_title)
         (activity as AppCompatActivity).supportActionBar?.show()
     }
 
@@ -185,11 +173,6 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
     }
 
     override fun onBackPressed(): Boolean {
-        if (tabTrayStore.state.mode is TabTrayFragmentState.Mode.Editing) {
-            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
-            return true
-        }
-
         if (tabTrayStore.state.tabs.isEmpty()) {
             findNavController().popBackStack(R.id.homeFragment, false)
             return true
@@ -200,20 +183,8 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.tab_tray_share_menu_item_save -> {
-                share(tabTrayStore.state.mode.selectedTabs.toList())
-                true
-            }
-            R.id.tab_tray_menu_item_save -> {
-                tabTrayController.navigateToCollectionCreator()
-                true
-            }
-            R.id.tab_tray_select_tabs_menu_item -> {
-                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
-                true
-            }
             R.id.tab_tray_select_to_save_menu_item -> {
-                tabTrayStore.dispatch(TabTrayFragmentAction.EnterEditMode)
+                tabTrayController.navigateToCollectionCreator()
                 true
             }
             R.id.tab_tray_share_menu_item -> {
@@ -344,34 +315,10 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
     }
 
     private fun updateMenuItems() {
-        val (foregroundColor, _) = tabTrayStore.state.appBarBackground(requireContext())
-        val setupMenuIcon: (MenuItem) -> Unit = {
-            it.isVisible = tabTrayStore.state.mode.isEditing
-            it.isEnabled = tabTrayStore.state.mode.selectedTabs.isNotEmpty()
-
-            // Mutate is used to prevent the icon tint and alpha from being changed everywhere in the app
-            // Drawables are a global state
-            it.icon.mutate().setTint(foregroundColor)
-            it.icon.mutate().alpha = if (tabTrayStore.state.mode.selectedTabs.isNotEmpty()) {
-                ICON_ENABLED_ALPHA
-            } else {
-                ICON_DISABLED_ALPHA
-            }
-        }
         val inPrivateMode = (activity as HomeActivity).browsingModeManager.mode.isPrivate
 
-        // Shows the "save to collection menu item if in selection mode
-        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.also(setupMenuIcon)
-        this.tabTrayMenu?.findItem(R.id.tab_tray_menu_item_save)?.isVisible =
-            tabTrayStore.state.mode.isEditing && !inPrivateMode
-
-        // Show the "share" button if in selection mode
-        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item_save)?.also(setupMenuIcon)
-        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item_save)?.isVisible = tabTrayStore.state.mode.isEditing
-
         // Hide all icons when in selection mode with nothing selected
-        val showAnyOverflowIcons = !tabTrayStore.state.mode.isEditing && tabTrayStore.state.tabs.isNotEmpty()
-        this.tabTrayMenu?.findItem(R.id.tab_tray_select_tabs_menu_item)?.isVisible = showAnyOverflowIcons
+        val showAnyOverflowIcons = tabTrayStore.state.tabs.isNotEmpty()
         this.tabTrayMenu?.findItem(R.id.tab_tray_select_to_save_menu_item)?.isVisible =
             showAnyOverflowIcons && !inPrivateMode
         this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item)?.isVisible = showAnyOverflowIcons
@@ -381,13 +328,11 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
             emitSessionChanges()
-            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
             showSavedSnackbar(sessions.size)
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
             emitSessionChanges()
-            tabTrayStore.dispatch(TabTrayFragmentAction.ExitEditMode)
             showSavedSnackbar(sessions.size)
         }
     }

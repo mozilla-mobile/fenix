@@ -5,31 +5,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Share submission button -->
-    <item
-        android:id="@+id/tab_tray_share_menu_item_save"
-        android:title="@string/tab_tray_menu_item_share"
-        android:contentDescription="@string/tab_tray_menu_item_share"
-        android:icon="@drawable/ic_hollow_share"
-        android:visibility="gone"
-        app:showAsAction="always" />
-
-    <!-- Select submission button -->
-    <item
-        android:id="@+id/tab_tray_menu_item_save"
-        android:title="@string/tab_tray_menu_item_save"
-        android:contentDescription="@string/tab_tray_menu_item_save"
-        android:icon="@drawable/ic_tab_collection"
-        android:visibility="gone"
-        app:showAsAction="always" />
-
-    <!-- Select tabs -->
-    <item
-        android:id="@+id/tab_tray_select_tabs_menu_item"
-        android:title="@string/tab_tray_menu_item_select"
-        android:contentDescription="@string/tab_tray_menu_item_select"
-        app:showAsAction="never" />
-
     <!-- Save to collection -->
     <item
         android:id="@+id/tab_tray_select_to_save_menu_item"

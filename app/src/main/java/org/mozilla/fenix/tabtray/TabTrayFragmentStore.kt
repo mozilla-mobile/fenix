@@ -43,22 +43,10 @@ fun Session.toTab(publicSuffixList: PublicSuffixList, selected: Boolean, mediaSt
     )
 }
 
-data class TabTrayFragmentState(val tabs: List<Tab>, val mode: Mode) : State {
-    sealed class Mode {
-        open val selectedTabs = emptySet<Tab>()
-        object Normal : Mode()
-        data class Editing(override val selectedTabs: Set<Tab>) : Mode()
-
-        val isEditing: Boolean get() = this is Editing
-    }
-}
+data class TabTrayFragmentState(val tabs: List<Tab>) : State
 
 sealed class TabTrayFragmentAction : Action {
     data class UpdateTabs(val tabs: List<Tab>) : TabTrayFragmentAction()
-    data class SelectTab(val tab: Tab) : TabTrayFragmentAction()
-    data class DeselectTab(val tab: Tab) : TabTrayFragmentAction()
-    object ExitEditMode : TabTrayFragmentAction()
-    object EnterEditMode : TabTrayFragmentAction()
 }
 
 /**
@@ -75,51 +63,8 @@ private fun tabTrayStateReducer(
     action: TabTrayFragmentAction
 ): TabTrayFragmentState {
     return when (action) {
-        is TabTrayFragmentAction.EnterEditMode -> state.copy(
-            mode = TabTrayFragmentState.Mode.Editing(emptySet())
-        )
-        is TabTrayFragmentAction.SelectTab ->
-            state.copy(
-                mode = TabTrayFragmentState.Mode.Editing(state.mode.selectedTabs + action.tab)
-            )
-        is TabTrayFragmentAction.DeselectTab -> {
-            val selected = state.mode.selectedTabs - action.tab
-            state.copy(
-                mode = TabTrayFragmentState.Mode.Editing(selected)
-            )
-        }
-        is TabTrayFragmentAction.ExitEditMode -> state.copy(mode = TabTrayFragmentState.Mode.Normal)
         is TabTrayFragmentAction.UpdateTabs -> state.copy(tabs = action.tabs)
     }
 }
 
-fun TabTrayFragmentState.appBarTitle(context: Context): String {
-    return when (this.mode) {
-        is TabTrayFragmentState.Mode.Editing -> if (this.mode.selectedTabs.isEmpty()) {
-            context.getString(R.string.tab_tray_menu_item_save_select)
-        } else {
-            context.getString(R.string.history_multi_select_title, this.mode.selectedTabs.size)
-        }
-        else -> context.getString(R.string.tab_tray_title)
-    }
-}
-
-fun TabTrayFragmentState.appBarBackground(context: Context): Pair<Int, Int> {
-    return when (mode) {
-        is TabTrayFragmentState.Mode.Normal -> Pair(
-            context.getColorFromAttr(R.attr.primaryText),
-            context.getColorFromAttr(R.attr.foundation)
-        )
-        is TabTrayFragmentState.Mode.Editing -> Pair(
-            ContextCompat.getColor(context, R.color.white_color),
-            context.getColorFromAttr(R.attr.accentHighContrast)
-        )
-    }
-}
-
-fun TabTrayFragmentState.appBarIcon(): Int {
-    return when (this.mode) {
-        is TabTrayFragmentState.Mode.Normal -> R.drawable.mozac_ic_back
-        is TabTrayFragmentState.Mode.Editing -> R.drawable.ic_close
-    }
-}
+fun TabTrayFragmentState.appBarIcon(): Int = R.drawable.mozac_ic_back

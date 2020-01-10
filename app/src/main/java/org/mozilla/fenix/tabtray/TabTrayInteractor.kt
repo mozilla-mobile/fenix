@@ -20,8 +20,5 @@ class TabTrayInteractor(
     override fun closeButtonTapped(tab: Tab) { controller.closeTab(tab) }
     override fun onPauseMediaClicked() { controller.pauseMedia() }
     override fun onPlayMediaClicked() { controller.playMedia() }
-    override fun open(item: Tab) { controller.openTab(item) }
-    override fun select(item: Tab) { controller.selectTab(item) }
-    override fun shouldAllowSelect(): Boolean = controller.shouldAllowSelect()
-    override fun deselect(item: Tab) { controller.deselectTab(item) }
+    override fun open(tab: Tab) { controller.openTab(tab) }
 }

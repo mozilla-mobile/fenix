@@ -24,7 +24,7 @@ import org.mozilla.fenix.utils.allowUndo
  * Interface for the TabTrayViewInteractor. This interface is implemented by objects that want
  * to respond to user interaction on the TabTrayView
  */
-interface TabTrayViewInteractor : SelectionInteractor<Tab> {
+interface TabTrayViewInteractor {
     fun closeButtonTapped(tab: Tab)
     fun onPauseMediaClicked()
     fun onPlayMediaClicked()
@@ -33,6 +33,7 @@ interface TabTrayViewInteractor : SelectionInteractor<Tab> {
     fun closeAllTabsTapped()
     fun newTabTapped()
     fun goHome()
+    fun open(tab: Tab)
 }
 
 /**
@@ -61,7 +62,6 @@ class TabTrayView(
 
     fun update(state: TabTrayFragmentState, browsingMode: BrowsingMode) {
         tabTrayAdapter.updateState(state)
-        view.tab_tray_controls.isVisible = !state.mode.isEditing
         view.tab_tray_empty_view.isVisible = state.tabs.isEmpty()
         if (state.tabs.isEmpty()) {
             view.announceForAccessibility(view.context.getString(R.string.no_open_tabs_description))

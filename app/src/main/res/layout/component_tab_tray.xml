@@ -50,6 +50,7 @@
         android:layout_width="0dp"
         android:orientation="horizontal"
         android:gravity="center"
+        android:background="?bottomBarBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
