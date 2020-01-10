@@ -176,6 +176,19 @@ tasks:
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
+                                  # XXX Temporary hack. Do not merge on the master branch
+                                  - $if: 'level == "1"'
+                                    then:
+                                        - $if: 'tasks_for == "github-push"'
+                                          then:
+                                              - index.garbage.project.mobile.${project}.v2.branch.${short_head_branch}.latest.taskgraph.decision
+                                              - index.garbage.project.mobile.${project}.v2.branch.${short_head_branch}.revision.${head_sha}.taskgraph.decision
+                                        - $if: 'tasks_for == "cron"'
+                                          then:
+                                              # cron context provides ${head_branch} as a short one
+                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
+                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
+                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
                           scopes:
                               $if: 'tasks_for == "github-push"'
                               then:
