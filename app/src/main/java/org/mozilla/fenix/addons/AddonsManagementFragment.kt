@@ -48,9 +48,9 @@ class AddonsManagementFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.fragment_add_ons_management, container, false)
     }
 
-    override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(rootView, savedInstanceState)
-        bindRecyclerView(rootView)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindRecyclerView(view)
     }
 
     override fun onResume() {
@@ -65,8 +65,8 @@ class AddonsManagementFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun bindRecyclerView(rootView: View) {
-        recyclerView = rootView.findViewById(R.id.add_ons_list)
+    private fun bindRecyclerView(view: View) {
+        recyclerView = view.findViewById(R.id.add_ons_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         scope.launch {
             try {

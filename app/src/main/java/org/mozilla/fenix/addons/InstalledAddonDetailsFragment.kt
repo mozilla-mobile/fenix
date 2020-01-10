@@ -22,7 +22,6 @@ import org.mozilla.fenix.ext.showToolbar
  * An activity to show the details of a installed add-on.
  */
 class InstalledAddonDetailsFragment : Fragment() {
-
     private val addon: Addon by lazy {
         AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
     }
@@ -35,29 +34,24 @@ class InstalledAddonDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_installed_add_on_details, container, false)
     }
 
-    override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(rootView, savedInstanceState)
-        bind(addon, rootView)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind(addon, view)
     }
 
-    private fun bind(addon: Addon, rootView: View) {
+    private fun bind(addon: Addon, view: View) {
         val title = addon.translatableName.translate()
-
         showToolbar(title)
 
-        bindEnableSwitch(addon, rootView)
-
-        bindSettings(addon, rootView)
-
-        bindDetails(addon, rootView)
-
-        bindPermissions(addon, rootView)
-
-        bindRemoveButton(addon, rootView)
+        bindEnableSwitch(addon, view)
+        bindSettings(addon, view)
+        bindDetails(addon, view)
+        bindPermissions(addon, view)
+        bindRemoveButton(addon, view)
     }
 
-    private fun bindEnableSwitch(addon: Addon, rootView: View) {
-        val switch = rootView.findViewById<Switch>(R.id.enable_switch)
+    private fun bindEnableSwitch(addon: Addon, view: View) {
+        val switch = view.findViewById<Switch>(R.id.enable_switch)
         switch.setState(addon.isEnabled())
         switch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -100,40 +94,40 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindSettings(addOn: Addon, rootView: View) {
-        val view = rootView.findViewById<View>(R.id.settings)
-        view.isEnabled = addOn.installedState?.optionsPageUrl != null
-        view.setOnClickListener {
+    private fun bindSettings(addOn: Addon, view: View) {
+        val settingsView = view.findViewById<View>(R.id.settings)
+        settingsView.isEnabled = addOn.installedState?.optionsPageUrl != null
+        settingsView.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonInternalSettingsFragment(
                     addOn
                 )
-            Navigation.findNavController(view!!).navigate(directions)
+            Navigation.findNavController(settingsView!!).navigate(directions)
         }
     }
 
-    private fun bindDetails(addon: Addon, rootView: View) {
-        rootView.findViewById<View>(R.id.details).setOnClickListener {
+    private fun bindDetails(addon: Addon, view: View) {
+        view.findViewById<View>(R.id.details).setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view!!).navigate(directions)
+            Navigation.findNavController(view).navigate(directions)
         }
     }
 
-    private fun bindPermissions(addon: Addon, rootView: View) {
-        rootView.findViewById<View>(R.id.permissions).setOnClickListener {
+    private fun bindPermissions(addon: Addon, view: View) {
+        view.findViewById<View>(R.id.permissions).setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view!!).navigate(directions)
+            Navigation.findNavController(view).navigate(directions)
         }
     }
 
-    private fun bindRemoveButton(addon: Addon, rootView: View) {
-        rootView.findViewById<View>(R.id.remove_add_on).setOnClickListener {
+    private fun bindRemoveButton(addon: Addon, view: View) {
+        view.findViewById<View>(R.id.remove_add_on).setOnClickListener {
             requireContext().components.addonManager.uninstallAddon(
                 addon,
                 onSuccess = {
@@ -142,7 +136,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                         "Successfully uninstalled ${addon.translatableName.translate()}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    rootView.findNavController().popBackStack()
+                    view.findNavController().popBackStack()
                 },
                 onError = { _, _ ->
                     Toast.makeText(
