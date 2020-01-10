@@ -194,9 +194,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             R.id.mozac_feature_readerview_font_size_decrease,
             R.id.mozac_feature_readerview_font_size_increase
         ).map {
-            findViewById<Button>(it)
+            findViewById<Button?>(it)
         }.forEach {
-            it.setTextColor(
+            it?.setTextColor(
                 ContextCompat.getColorStateList(
                     context,
                     R.color.readerview_private_button_color
@@ -208,9 +208,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             R.id.mozac_feature_readerview_font_serif,
             R.id.mozac_feature_readerview_font_sans_serif
         ).map {
-            findViewById<RadioButton>(it)
+            findViewById<RadioButton?>(it)
         }.forEach {
-            it.setTextColor(
+            it?.setTextColor(
                 ContextCompat.getColorStateList(
                     context,
                     R.color.readerview_private_radio_color
