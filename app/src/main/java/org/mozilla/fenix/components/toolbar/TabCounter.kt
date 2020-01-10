@@ -186,10 +186,10 @@ open class TabCounter @JvmOverloads constructor(
         animatorSet.play(moveDown).before(moveUp)
     }
 
-    private fun formatForDisplay(count: Int): String {
-        return if (count > MAX_VISIBLE_TABS) {
-            SO_MANY_TABS_OPEN
-        } else NumberFormat.getInstance().format(count.toLong())
+    private fun formatForDisplay(count: Int): String = when {
+        count == 0 -> NO_TABS_OPEN
+        count > MAX_VISIBLE_TABS -> SO_MANY_TABS_OPEN
+        else -> NumberFormat.getInstance().format(count.toLong())
     }
 
     private fun adjustTextSize(newCount: Int) {
@@ -226,6 +226,7 @@ open class TabCounter @JvmOverloads constructor(
 
         internal const val MAX_VISIBLE_TABS = 99
 
+        internal const val NO_TABS_OPEN = ""
         internal const val SO_MANY_TABS_OPEN = "∞"
         internal const val DEFAULT_TABS_COUNTER_TEXT = ":)"
 
