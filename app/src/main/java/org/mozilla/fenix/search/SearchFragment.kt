@@ -45,6 +45,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.WaitableAsyncInflater
 
 @Suppress("TooManyFunctions", "LargeClass")
 class SearchFragment : Fragment(), UserInteractionHandler {
@@ -80,7 +81,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             ?.let(SearchFragmentArgs.Companion::fromBundle)
             ?.let { it.pastedText }
 
-        val view = inflater.inflate(R.layout.fragment_search, container, false)
+        val view = WaitableSearchFragmentInflater.get(context!!, container!!)
         val url = session?.url.orEmpty()
         val currentSearchEngine = SearchEngineSource.Default(
             requireComponents.search.provider.getDefaultEngine(requireContext())
@@ -349,6 +350,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     }
 
     companion object {
+        var WaitableSearchFragmentInflater = WaitableAsyncInflater(R.layout.fragment_search)
         private const val SHARED_TRANSITION_MS = 200L
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }

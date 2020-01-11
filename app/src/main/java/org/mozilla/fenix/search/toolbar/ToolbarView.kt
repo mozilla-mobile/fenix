@@ -6,7 +6,6 @@ package org.mozilla.fenix.search.toolbar
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
@@ -29,6 +28,7 @@ import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.WaitableAsyncInflater
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
@@ -75,9 +75,10 @@ class ToolbarView(
         else -> R.layout.component_browser_top_toolbar
     }
 
-    val view: BrowserToolbar = LayoutInflater.from(container.context)
-        .inflate(toolbarLayout, container, true)
-        .findViewById(R.id.toolbar)
+    val view by lazy {
+        ToolbarView.WaitableToolBarInflater.get(container.context, container)
+            .findViewById<BrowserToolbar>(R.id.toolbar)
+    }
 
     private var isInitialized = false
 
@@ -166,6 +167,9 @@ class ToolbarView(
 
     companion object {
         private const val TOOLBAR_ELEVATION_IN_DP = 16
+        // TODO
+        // Take into account the fact that the choice of layout is dynamic.
+        var WaitableToolBarInflater = WaitableAsyncInflater(R.layout.component_browser_top_toolbar)
     }
 }
 

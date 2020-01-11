@@ -41,12 +41,16 @@ import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.fragment_home.view.toolbar_wrapper
+import kotlinx.android.synthetic.main.fragment_search.view.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.session.Session
@@ -80,6 +84,8 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.search.SearchFragment
+import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.FragmentPreDrawManager
@@ -208,6 +214,22 @@ class HomeFragment : Fragment() {
 
         activity.themeManager.applyStatusBarTheme(activity)
 
+        MainScope().launch(Dispatchers.IO) {
+            container?.apply {
+                // Use a WaitableAsyncInflater in order to share the results with the SearchFragment
+                // later, but get the results immediately ...
+                val searchFragmentView = SearchFragment.WaitableSearchFragmentInflater.get(
+                    this.context,
+                    this,
+                    false
+                )
+                // ... they are needed right here because the toolbar has to be inflated with a very
+                // specific context or it won't appear.
+                ToolbarView.WaitableToolBarInflater.inflate(
+                    this.context, searchFragmentView.toolbar_component_wrapper, true
+                )
+            }
+        }
         return view
     }
 
