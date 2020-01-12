@@ -10,42 +10,24 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import kotlinx.android.synthetic.main.fragment_edit_bookmark.bookmarkNameEdit
-import kotlinx.android.synthetic.main.fragment_edit_bookmark.bookmarkParentFolderSelector
-import kotlinx.android.synthetic.main.fragment_edit_bookmark.bookmarkUrlEdit
-import kotlinx.android.synthetic.main.fragment_edit_bookmark.bookmarkUrlLabel
+import kotlinx.android.synthetic.main.fragment_edit_bookmark.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
-import mozilla.components.support.ktx.android.view.toScope
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -78,9 +60,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         setHasOptionsMenu(true)
     }
 
-    override fun onResume() {
-        super.onResume()
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initToolbar()
 
         guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
@@ -129,8 +110,6 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     }
                 }
             }
-
-        updateBookmarkFromTextChanges()
     }
 
     private fun initToolbar() {
@@ -149,31 +128,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         super.onPause()
         bookmarkNameEdit.hideKeyboard()
         bookmarkUrlEdit.hideKeyboard()
-    }
+        progress_bar_bookmark.visibility = View.GONE
 
-    private fun updateBookmarkFromTextChanges() {
-        fun EditText.observe() = channelFlow {
-            this@observe.doOnTextChanged { text, _, _, _ ->
-                runBlocking { send(text.toString()) }
-            }
-            awaitClose()
-        }
-
-        val nameText = bookmarkNameEdit.observe()
-        val urlText = bookmarkUrlEdit.observe()
-
-        bookmarkNameEdit.toScope().launch {
-            nameText.combine(urlText) { name, url -> name to url }
-                .drop(1)
-                .filter { (name) -> name.isNotBlank() }
-                .debounce(timeoutMillis = debouncePeriodInMs)
-                // TODO convert collect to lambda when Kotlin SAM conversions are supported
-                .collect(object : FlowCollector<Pair<String, String>> {
-                    override suspend fun emit(value: Pair<String, String>) {
-                        updateBookmarkNode(value.first, value.second)
-                    }
-                })
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -186,7 +142,28 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 displayDeleteBookmarkDialog()
                 true
             }
+            R.id.save_bookmark_button -> {
+                askToSave()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun askToSave() {
+        context?.let {activity ->
+            AlertDialog.Builder(activity).apply {
+                setMessage(R.string.bookmark_edit_confirmation)
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
+                setPositiveButton("Save") { it: DialogInterface, _ ->
+                    it.dismiss()
+                    updateBookmarkFromTextChanges()
+                }
+                create()
+            }.show()
         }
     }
 
@@ -225,6 +202,16 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         }
     }
 
+
+    private fun updateBookmarkFromTextChanges() {
+        progress_bar_bookmark.visibility = View.VISIBLE
+        val nameText = bookmarkNameEdit.text.toString()
+        val urlText = bookmarkUrlEdit.text.toString()
+        updateBookmarkNode(nameText,urlText)
+    }
+
+
+
     private fun updateBookmarkNode(title: String?, url: String?) {
         lifecycleScope.launch(IO) {
             try {
@@ -250,10 +237,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     bookmarkUrlEdit.error = getString(R.string.bookmark_invalid_url_error)
                 }
             }
+            progress_bar_bookmark.visibility=View.INVISIBLE
         }
     }
 
-    companion object {
-        private const val debouncePeriodInMs = 500L
-    }
 }

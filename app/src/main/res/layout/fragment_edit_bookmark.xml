@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/progress_bar_bookmark"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:indeterminate="true"
         android:layout_width="match_parent"
