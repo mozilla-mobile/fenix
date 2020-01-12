@@ -237,8 +237,9 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     bookmarkUrlEdit.error = getString(R.string.bookmark_invalid_url_error)
                 }
             }
-            progress_bar_bookmark.visibility=View.INVISIBLE
         }
+        progress_bar_bookmark.visibility=View.INVISIBLE
+
     }
 
 }
