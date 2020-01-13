@@ -35,7 +35,6 @@ private const val KEY_POSITIVE_BUTTON_RADIUS = "KEY_POSITIVE_BUTTON_RADIUS"
 private const val DEFAULT_VALUE = Int.MAX_VALUE
 
 internal class PermissionsDialogFragment : AppCompatDialogFragment() {
-
     internal var onPositiveButtonClicked: ((Addon) -> Unit)? = null
     internal var onNegativeButtonClicked: (() -> Unit)? = null
 
@@ -100,12 +99,12 @@ internal class PermissionsDialogFragment : AppCompatDialogFragment() {
         onNegativeButtonClicked?.invoke()
     }
 
-    private fun Dialog.setContainerView(rootView: View) {
+    private fun Dialog.setContainerView(view: View) {
         if (dialogShouldWidthMatchParent) {
-            setContentView(rootView)
+            setContentView(view)
         } else {
             addContentView(
-                rootView,
+                view,
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT
