@@ -35,7 +35,7 @@ object Versions {
     // Note that android-components also depends on application-services,
     // and in fact is our main source of appservices-related functionality.
     // The version number below tracks the application-services version
-    // that we depend on directly for the fenix-megazord (and for it's
+    // that we depend on directly for the fenix-megazord (and for its
     // forUnitTest variant), and it's important that it be kept in
     // sync with the version used by android-components above.
     const val mozilla_appservices = "0.48.1"
@@ -199,6 +199,7 @@ object Deps {
     const val androidx_junit = "androidx.test.ext:junit:${Versions.androidx_test_ext}"
     const val androidx_test_core = "androidx.test:core:${Versions.androidx_testing}"
 
+    const val appservices_native_support = "org.mozilla.appservices:native-support:${Versions.mozilla_appservices}"
     const val fenix_megazord = "org.mozilla.appservices:fenix-megazord:${Versions.mozilla_appservices}"
     const val fenix_megazord_forUnitTests = "org.mozilla.appservices:fenix-megazord-forUnitTests:${Versions.mozilla_appservices}"
 

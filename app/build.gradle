@@ -523,6 +523,18 @@ dependencies {
         }
     }
 
+    // However, gradle's `replacedBy` does not take version information into account.
+    // If we have one version of the fenix megazord as a direct dependency
+    // and a different version of the full megazord as a transitive dependency via android-components,
+    // then the above rules will produce a version mismatch error at runtime.
+    // As a light hack, use a strict version dependency on one of the appservices components
+    // to turn that into a build-time failure.
+    implementation(Deps.appservices_native_support) {
+      version {
+        strictly Versions.mozilla_appservices
+      }
+    }
+
     testImplementation Deps.mockito_core
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
@@ -629,11 +641,6 @@ def glean_android_components_tag = (
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 apply from: 'https://github.com/mozilla-mobile/android-components/raw/' + glean_android_components_tag + '/components/service/glean/scripts/sdk_generator.gradle'
-
-// For production builds, the native code for all `org.mozilla.appservices` dependencies gets compiled together
-// into a single "megazord" build, and different megazords are published for different subsets of features.
-// Ref https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
-// Substitute all appservices dependencies with an appropriate megazord.
 
 afterEvaluate {
 
