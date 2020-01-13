@@ -25,7 +25,6 @@ private const val LEARN_MORE_URL =
  * A fragment to show the permissions of an add-on.
  */
 class AddonPermissionsDetailsFragment : Fragment(), View.OnClickListener {
-
     private val addon: Addon by lazy {
         AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
     }
@@ -38,19 +37,19 @@ class AddonPermissionsDetailsFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.fragment_add_on_permissions, container, false)
     }
 
-    override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(rootView, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val title = addon.translatableName.translate()
         showToolbar(title)
 
-        bindPermissions(addon, rootView)
+        bindPermissions(addon, view)
 
-        bindLearnMore(rootView)
+        bindLearnMore(view)
     }
 
-    private fun bindPermissions(addon: Addon, rootView: View) {
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.add_ons_permissions)
+    private fun bindPermissions(addon: Addon, view: View) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.add_ons_permissions)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val sortedPermissions = addon.translatePermissions().map { stringId ->
             getString(stringId)
@@ -58,8 +57,8 @@ class AddonPermissionsDetailsFragment : Fragment(), View.OnClickListener {
         recyclerView.adapter = PermissionsAdapter(sortedPermissions)
     }
 
-    private fun bindLearnMore(rootView: View) {
-        rootView.findViewById<View>(R.id.learn_more_label).setOnClickListener(this)
+    private fun bindLearnMore(view: View) {
+        view.findViewById<View>(R.id.learn_more_label).setOnClickListener(this)
     }
 
     /**

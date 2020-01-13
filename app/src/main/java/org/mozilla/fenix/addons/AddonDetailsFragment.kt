@@ -26,7 +26,6 @@ import java.util.Locale
  * A fragment to show the details of an add-on.
  */
 class AddonDetailsFragment : Fragment() {
-
     private val addon: Addon by lazy {
         AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
     }
@@ -39,34 +38,27 @@ class AddonDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.frament_add_on_details, container, false)
     }
 
-    override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(rootView, savedInstanceState)
-        bind(addon, rootView)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind(addon, view)
     }
 
-    private fun bind(addon: Addon, rootView: View) {
-
+    private fun bind(addon: Addon, view: View) {
         val title = addon.translatableName.translate()
-
         showToolbar(title)
 
-        bindDetails(addon, rootView)
-
-        bindAuthors(addon, rootView)
-
-        bindVersion(addon, rootView)
-
-        bindLastUpdated(addon, rootView)
-
-        bindWebsite(addon, rootView)
-
-        bindRating(addon, rootView)
+        bindDetails(addon, view)
+        bindAuthors(addon, view)
+        bindVersion(addon, view)
+        bindLastUpdated(addon, view)
+        bindWebsite(addon, view)
+        bindRating(addon, view)
     }
 
-    private fun bindRating(addon: Addon, rootView: View) {
+    private fun bindRating(addon: Addon, view: View) {
         addon.rating?.let {
-            val ratingView = rootView.findViewById<RatingBar>(R.id.rating_view)
-            val userCountView = rootView.findViewById<TextView>(R.id.users_count)
+            val ratingView = view.findViewById<RatingBar>(R.id.rating_view)
+            val userCountView = view.findViewById<TextView>(R.id.users_count)
 
             val ratingContentDescription =
                 getString(R.string.mozac_feature_addons_rating_content_description)
@@ -77,26 +69,26 @@ class AddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindWebsite(addon: Addon, rootView: View) {
-        rootView.findViewById<View>(R.id.home_page_text).setOnClickListener {
+    private fun bindWebsite(addon: Addon, view: View) {
+        view.findViewById<View>(R.id.home_page_text).setOnClickListener {
             val intent =
                 Intent(Intent.ACTION_VIEW).setData(Uri.parse(addon.siteUrl))
             startActivity(intent)
         }
     }
 
-    private fun bindLastUpdated(addon: Addon, rootView: View) {
-        val lastUpdatedView = rootView.findViewById<TextView>(R.id.last_updated_text)
+    private fun bindLastUpdated(addon: Addon, view: View) {
+        val lastUpdatedView = view.findViewById<TextView>(R.id.last_updated_text)
         lastUpdatedView.text = formatDate(addon.updatedAt)
     }
 
-    private fun bindVersion(addon: Addon, rootView: View) {
-        val versionView = rootView.findViewById<TextView>(R.id.version_text)
+    private fun bindVersion(addon: Addon, view: View) {
+        val versionView = view.findViewById<TextView>(R.id.version_text)
         versionView.text = addon.version
     }
 
-    private fun bindAuthors(addon: Addon, rootView: View) {
-        val authorsView = rootView.findViewById<TextView>(R.id.author_text)
+    private fun bindAuthors(addon: Addon, view: View) {
+        val authorsView = view.findViewById<TextView>(R.id.author_text)
 
         val authorText = addon.authors.joinToString { author ->
             author.name + " \n"
@@ -105,8 +97,8 @@ class AddonDetailsFragment : Fragment() {
         authorsView.text = authorText
     }
 
-    private fun bindDetails(addon: Addon, rootView: View) {
-        val detailsView = rootView.findViewById<TextView>(R.id.details)
+    private fun bindDetails(addon: Addon, view: View) {
+        val detailsView = view.findViewById<TextView>(R.id.details)
         val detailsText = addon.translatableDescription.translate()
 
         val parsedText = detailsText.replace("\n", "<br/>")
