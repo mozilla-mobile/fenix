@@ -20,7 +20,7 @@ LANGUAGE_REGEX = re.compile('^[a-z]{2,3}$')
 LANGUAGE_REGION_REGEX = re.compile('^([a-z]{2})-r([A-Z]{2})$')
 
 # Get all resource directories that start with "values-" (and remove the "values-" prefix)
-resources_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'app', 'src', 'main', 'res')
+resources_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'app', 'src', 'main', 'res')
 locale_dirs = [localeDir.replace('values-', '') for localeDir in os.listdir(resources_dir)
                if os.path.isdir(os.path.join(resources_dir, localeDir))
                and localeDir.startswith('values-')]
