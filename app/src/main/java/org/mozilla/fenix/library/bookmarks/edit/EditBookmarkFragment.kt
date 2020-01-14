@@ -18,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_edit_bookmark.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,6 +29,7 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -64,7 +66,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
 
-        guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
+         guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
         lifecycleScope.launch(Main) {
             val context = requireContext()
 
@@ -92,10 +94,6 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
             bookmarkNode?.let { bookmarkNode ->
                 bookmarkNameEdit.setText(bookmarkNode.title)
                 bookmarkUrlEdit.setText(bookmarkNode.url)
-
-                if (sharedViewModel.selectedFolder != null && bookmarkNode.title != null) {
-                    updateBookmarkNode(bookmarkNode.title, bookmarkNode.url)
-                }
             }
 
             bookmarkParent?.let { node ->
@@ -240,6 +238,14 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         }
         progress_bar_bookmark.visibility=View.INVISIBLE
 
+        FenixSnackbar.makeWithToolbarPadding(requireView(), FenixSnackbar.LENGTH_SHORT)
+            .setText("Changes Saved Successfully.")
+            .show()
+
+
+        findNavController().popBackStack()
     }
+
+
 
 }
