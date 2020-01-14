@@ -29,8 +29,6 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper
-
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -89,8 +87,6 @@ class SyncIntegrationTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            // Necessary to scroll a little bit for all screen sizes
-            TestHelper.scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
         }.openSyncLogins {
             // Tap to sign in from Logins menu
@@ -102,19 +98,16 @@ class SyncIntegrationTest {
         }
         // Automatically goes back to Logins and passwords view
         settingsSubMenuLoginsAndPassword {
-            mDevice.waitNotNull(Until.findObjects(By.text("Sync logins")), TestAssetHelper.waitingTime)
             verifyDefaultView()
-            mDevice.waitNotNull(Until.findObjects(By.text("Off")), TestAssetHelper.waitingTime)
         }.openSavedLogins {
             // Discard the secure your device message
             tapSetupLater()
             // Check the logins synced
-            mDevice.waitNotNull(Until.findObjects(By.text("https://accounts.google.com")), TestAssetHelper.waitingTime)
             verifySavedLoginsAfterSync()
         }.goBack {
             // After checking the synced logins
             // on Logins and Passwords menu the Sync logins option is set to On
-            mDevice.waitNotNull(Until.findObjects(By.text("On")), TestAssetHelper.waitingTime)
+            verifyDefaultViewAfterSync()
         }
     }
 
