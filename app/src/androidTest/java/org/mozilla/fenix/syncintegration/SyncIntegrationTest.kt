@@ -99,6 +99,8 @@ class SyncIntegrationTest {
         // Automatically goes back to Logins and passwords view
         settingsSubMenuLoginsAndPassword {
             verifyDefaultView()
+            // Sync logings option is set to Off, no synced logins yet
+            verifyDefaultViewBeforeSyncComplete()
         }.openSavedLogins {
             // Discard the secure your device message
             tapSetupLater()

@@ -28,9 +28,12 @@ class SettingsSubMenuLoginsAndPasswordRobot {
     fun verifyDefaultView() {
         mDevice.waitNotNull(Until.findObjects(By.text("Sync logins")), TestAssetHelper.waitingTime)
         assertDefaultView()
-        mDevice.waitNotNull(Until.findObjects(By.text("Off")), TestAssetHelper.waitingTime)
     }
 
+    fun verifyDefaultViewBeforeSyncComplete() {
+        mDevice.waitNotNull(Until.findObjects(By.text("Off")), TestAssetHelper.waitingTime)
+
+    }
     fun verifyDefaultViewAfterSync() {
         mDevice.waitNotNull(Until.findObjects(By.text("On")), TestAssetHelper.waitingTime)
     }
