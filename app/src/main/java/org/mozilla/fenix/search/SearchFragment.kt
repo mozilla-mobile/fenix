@@ -38,6 +38,7 @@ import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
@@ -174,7 +175,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                             }
                             setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
                                 requireComponents.analytics.metrics.track(Event.QRScannerNavigationAllowed)
-                                (activity as HomeActivity)
+                                BrowserNavigation
                                     .openToBrowserAndLoad(
                                         searchTermOrURL = result,
                                         newTab = searchStore.state.session == null,
@@ -203,7 +204,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
         val stubListener = ViewStub.OnInflateListener { _, inflated ->
             inflated.learn_more.setOnClickListener {
-                (activity as HomeActivity)
+                BrowserNavigation
                     .openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                             SupportUtils.SumoTopic.SEARCH_SUGGESTION
@@ -238,7 +239,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         view.toolbar_wrapper.clipToOutline = false
 
         fill_link_from_clipboard.setOnClickListener {
-            (activity as HomeActivity)
+            BrowserNavigation
                 .openToBrowserAndLoad(
                     searchTermOrURL = requireContext().components.clipboardHandler.url ?: "",
                     newTab = searchStore.state.session == null,

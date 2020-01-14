@@ -307,7 +307,6 @@ class DefaultBrowserToolbarControllerTest {
         controller = DefaultBrowserToolbarController(
             activity = activity,
             navController = navController,
-            browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
             engineView = engineView,
             adjustBackgroundAndNavigate = adjustBackgroundAndNavigate,
@@ -546,7 +545,6 @@ class DefaultBrowserToolbarControllerTest {
         controller = DefaultBrowserToolbarController(
             activity = activity,
             navController = navController,
-            browsingModeManager = browsingModeManager,
             findInPageLauncher = findInPageLauncher,
             engineView = engineView,
             adjustBackgroundAndNavigate = adjustBackgroundAndNavigate,

@@ -47,7 +47,7 @@ class ExternalAppBrowserActivityTest {
     @Test
     fun `getNavDirections finishes activity if session ID is null`() {
         val activity = spy(object : ExternalAppBrowserActivity() {
-            public override fun getNavDirections(
+            override fun getNavDirections(
                 from: BrowserDirection,
                 customTabSessionId: String?
             ): NavDirections? {

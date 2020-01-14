@@ -17,8 +17,8 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
@@ -86,7 +86,7 @@ class ExceptionsFragment : Fragment() {
     }
 
     private fun openLearnMore() {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        BrowserNavigation.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
                 (SupportUtils.SumoTopic.TRACKING_PROTECTION),
             newTab = true,

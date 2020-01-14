@@ -6,9 +6,14 @@ package org.mozilla.fenix.home.intent
 
 import android.content.Intent
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,6 +22,11 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.browser.BrowserNavigation
+import org.mozilla.fenix.browser.DirectionsProvider
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.components.UseCases
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -29,6 +39,10 @@ class SpeechProcessingIntentProcessorTest {
     private val navController: NavController = mockk(relaxed = true)
     private val out: Intent = mockk(relaxed = true)
     private val metrics: MetricController = mockk(relaxed = true)
+    private var useCases: UseCases = mockk(relaxed = true)
+    private var navHost: NavHostFragment = mockk(relaxed = true)
+    private var createSessionObserver: () -> Unit = mockk(relaxed = true)
+    private var directionsProvider: DirectionsProvider = mockk(relaxed = true)
 
     @Test
     fun `do not process blank intents`() {
@@ -61,12 +75,17 @@ class SpeechProcessingIntentProcessorTest {
             putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
         }
         val processor = SpeechProcessingIntentProcessor(activity, metrics)
+        mockkObject(BrowserNavigation)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        every { createSessionObserver.invoke() } just Runs
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any()) } just Runs
         every { activity.components.search.provider.getDefaultEngine(activity) } returns mockk(relaxed = true)
 
         processor.process(intent, navController, out)
 
         verify {
-            activity.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = "",
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
@@ -75,6 +94,8 @@ class SpeechProcessingIntentProcessorTest {
         }
         verify { navController wasNot Called }
         verify { out.putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false) }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -84,17 +105,24 @@ class SpeechProcessingIntentProcessorTest {
             putExtra(SPEECH_PROCESSING, "hello world")
         }
         val processor = SpeechProcessingIntentProcessor(activity, metrics)
+        mockkObject(BrowserNavigation)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        every { createSessionObserver.invoke() } just Runs
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any()) } just Runs
         every { activity.components.search.provider.getDefaultEngine(activity) } returns mockk(relaxed = true)
 
         processor.process(intent, mockk(), mockk(relaxed = true))
 
         verify {
-            activity.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = "hello world",
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
                 forceSearch = true
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 }

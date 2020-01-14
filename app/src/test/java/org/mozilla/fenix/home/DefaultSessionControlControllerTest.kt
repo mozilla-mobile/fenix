@@ -7,8 +7,12 @@ package org.mozilla.fenix.home
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +29,7 @@ import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -153,15 +158,20 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handlePrivateBrowsingLearnMoreClicked() {
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
+
         controller.handlePrivateBrowsingLearnMoreClicked()
         verify {
-            activity.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
                     (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test

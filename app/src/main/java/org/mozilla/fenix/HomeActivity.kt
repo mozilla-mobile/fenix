@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.CallSuper
-import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.app.ActionBar
@@ -26,30 +25,25 @@ import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.navigationToolbarStub
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
-import mozilla.components.support.ktx.kotlin.isUrl
-import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-import mozilla.components.support.utils.Browsers
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
+import org.mozilla.fenix.browser.BrowserNavigation
+import org.mozilla.fenix.browser.DirectionsProvider
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
-import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
@@ -69,11 +63,10 @@ import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
-import java.lang.ref.WeakReference
 import org.mozilla.fenix.utils.BrowsersCache
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-open class HomeActivity : LocaleAwareAppCompatActivity() {
+open class HomeActivity : LocaleAwareAppCompatActivity(), DirectionsProvider {
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
@@ -97,7 +90,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             SpeechProcessingIntentProcessor(this, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
             DeepLinkIntentProcessor(this),
-            OpenBrowserIntentProcessor(this, ::getIntentSessionId)
+            OpenBrowserIntentProcessor(::getIntentSessionId)
         )
     }
 
@@ -117,6 +110,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
+
+        BrowserNavigation.init(navHost, components.useCases, this) {
+            if (sessionObserver == null) {
+                sessionObserver = UriOpenedObserver(this)
+            }
+        }
+
         Performance.instrumentColdStartupToHomescreenTime(this)
 
         externalSourceIntentProcessors.any { it.process(intent, navHost.navController, this.intent) }
@@ -141,6 +141,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        if (!BrowserNavigation.isObjectValid()) {
+            BrowserNavigation.init(navHost, components.useCases, this) {
+                if (sessionObserver == null) {
+                    sessionObserver = UriOpenedObserver(this)
+                }
+            }
+        }
+
         lifecycleScope.launch {
             with(components.backgroundServices) {
                 // Make sure accountManager is initialized.
@@ -164,6 +172,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     }
 
     final override fun onPause() {
+        // Need to destroy these objects because they are used in a singleton [BrowserNavigation]
+        // which survives us
+        BrowserNavigation.clearData()
         super.onPause()
 
         // Every time the application goes into the background, it is possible that the user
@@ -272,33 +283,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     protected open fun getIntentSessionId(intent: SafeIntent): String? = null
 
-    @Suppress("LongParameterList")
-    fun openToBrowserAndLoad(
-        searchTermOrURL: String,
-        newTab: Boolean,
-        from: BrowserDirection,
-        customTabSessionId: String? = null,
-        engine: SearchEngine? = null,
-        forceSearch: Boolean = false
-    ) {
-        openToBrowser(from, customTabSessionId)
-        load(searchTermOrURL, newTab, engine, forceSearch)
-    }
-
-    fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
-        if (sessionObserver == null) {
-            sessionObserver = UriOpenedObserver(this)
-        }
-
-        if (navHost.navController.alreadyOnDestination(R.id.browserFragment)) return
-        @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
-        val directions = getNavDirections(from, customTabSessionId)
-        if (directions != null) {
-            navHost.navController.nav(fragmentId, directions)
-        }
-    }
-
-    protected open fun getNavDirections(
+    override fun getNavDirections(
         from: BrowserDirection,
         customTabSessionId: String?
     ): NavDirections? = when (from) {
@@ -332,41 +317,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             SavedLoginsFragmentDirections.actionSavedLoginsFragmentToBrowserFragment(
                 customTabSessionId
             )
-    }
-
-    private fun load(
-        searchTermOrURL: String,
-        newTab: Boolean,
-        engine: SearchEngine?,
-        forceSearch: Boolean
-    ) {
-        val mode = DefaultBrowsingModeManager.mode
-
-        val loadUrlUseCase = if (newTab) {
-            when (mode) {
-                BrowsingMode.Private -> components.useCases.tabsUseCases.addPrivateTab
-                BrowsingMode.Normal -> components.useCases.tabsUseCases.addTab
-            }
-        } else components.useCases.sessionUseCases.loadUrl
-
-        val searchUseCase: (String) -> Unit = { searchTerms ->
-            if (newTab) {
-                components.useCases.searchUseCases.newTabSearch
-                    .invoke(
-                        searchTerms,
-                        Session.Source.USER_ENTERED,
-                        true,
-                        mode.isPrivate,
-                        searchEngine = engine
-                    )
-            } else components.useCases.searchUseCases.defaultSearch.invoke(searchTerms, engine)
-        }
-
-        if (!forceSearch && searchTermOrURL.isUrl()) {
-            loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl())
-        } else {
-            searchUseCase.invoke(searchTermOrURL)
-        }
     }
 
     fun updateThemeForSession(session: Session) {

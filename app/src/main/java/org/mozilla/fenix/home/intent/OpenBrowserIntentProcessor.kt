@@ -10,13 +10,14 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.browser.BrowserNavigation
 
 /**
  * The [org.mozilla.fenix.IntentReceiverActivity] may set the [HomeActivity.OPEN_TO_BROWSER] flag
  * when the browser should be opened in response to an intent.
  */
+@Suppress("UNUSED_PARAMETER")
 class OpenBrowserIntentProcessor(
-    private val activity: HomeActivity,
     private val getIntentSessionId: (SafeIntent) -> String?
 ) : HomeIntentProcessor {
 
@@ -24,7 +25,7 @@ class OpenBrowserIntentProcessor(
         return if (intent.extras?.getBoolean(HomeActivity.OPEN_TO_BROWSER) == true) {
             out.putExtra(HomeActivity.OPEN_TO_BROWSER, false)
 
-            activity.openToBrowser(BrowserDirection.FromGlobal, getIntentSessionId(intent.toSafeIntent()))
+            BrowserNavigation.openToBrowser(BrowserDirection.FromGlobal, getIntentSessionId(intent.toSafeIntent()))
             true
         } else {
             false

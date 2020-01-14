@@ -11,8 +11,7 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint.ACTION
@@ -47,7 +46,7 @@ class DefaultSearchController(
 
     override fun handleUrlCommitted(url: String) {
         if (url.isNotBlank()) {
-            (context as HomeActivity).openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = store.state.session == null,
                 from = BrowserDirection.FromSearch,
@@ -98,7 +97,7 @@ class DefaultSearchController(
     }
 
     override fun handleUrlTapped(url: String) {
-        (context as HomeActivity).openToBrowserAndLoad(
+        BrowserNavigation.openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = store.state.session == null,
             from = BrowserDirection.FromSearch
@@ -108,7 +107,7 @@ class DefaultSearchController(
     }
 
     override fun handleSearchTermsTapped(searchTerms: String) {
-        (context as HomeActivity).openToBrowserAndLoad(
+        BrowserNavigation.openToBrowserAndLoad(
             searchTermOrURL = searchTerms,
             newTab = store.state.session == null,
             from = BrowserDirection.FromSearch,
@@ -150,7 +149,7 @@ class DefaultSearchController(
 
     override fun handleExistingSessionSelected(session: Session) {
         context.components.core.sessionManager.select(session)
-        (context as HomeActivity).openToBrowser(
+        BrowserNavigation.openToBrowser(
             from = BrowserDirection.FromSearch
         )
     }

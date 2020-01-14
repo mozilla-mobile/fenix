@@ -12,6 +12,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 
 /**
@@ -34,7 +35,7 @@ class SpeechProcessingIntentProcessor(
             )
             searchEvent?.let { metrics.track(it) }
 
-            activity.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = intent.getStringExtra(SPEECH_PROCESSING).orEmpty(),
                 newTab = true,
                 from = BrowserDirection.FromGlobal,

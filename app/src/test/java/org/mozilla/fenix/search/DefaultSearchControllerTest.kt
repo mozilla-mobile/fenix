@@ -6,9 +6,14 @@ package org.mozilla.fenix.search
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import androidx.navigation.fragment.NavHostFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -22,8 +27,11 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.BrowserNavigation
+import org.mozilla.fenix.browser.DirectionsProvider
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.components.UseCases
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
@@ -46,6 +54,10 @@ class DefaultSearchControllerTest {
     private val searchEngine: SearchEngine = mockk(relaxed = true)
     private val metrics: MetricController = mockk(relaxed = true)
     private val sessionManager: SessionManager = mockk(relaxed = true)
+    private var useCases: UseCases = mockk(relaxed = true)
+    private var navHost: NavHostFragment = mockk(relaxed = true)
+    private var createSessionObserver: () -> Unit = mockk(relaxed = true)
+    private var directionsProvider: DirectionsProvider = mockk(relaxed = true)
 
     private lateinit var controller: DefaultSearchController
     private lateinit var settings: Settings
@@ -70,11 +82,16 @@ class DefaultSearchControllerTest {
     @Test
     fun handleUrlCommitted() {
         val url = "https://www.google.com/"
+        mockkObject(BrowserNavigation)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        every { createSessionObserver.invoke() } just Runs
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any()) } just Runs
 
         controller.handleUrlCommitted(url)
 
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = session == null,
                 from = BrowserDirection.FromSearch,
@@ -82,6 +99,8 @@ class DefaultSearchControllerTest {
             )
         }
         verify { metrics.track(Event.EnteredUrl(false)) }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -165,27 +184,39 @@ class DefaultSearchControllerTest {
     @Test
     fun handleUrlTapped() {
         val url = "https://www.google.com/"
+        mockkObject(BrowserNavigation)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        every { createSessionObserver.invoke() } just Runs
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
 
         controller.handleUrlTapped(url)
 
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = session == null,
                 from = BrowserDirection.FromSearch
             )
         }
         verify { metrics.track(Event.EnteredUrl(false)) }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
     fun handleSearchTermsTapped() {
         val searchTerms = "fenix"
+        mockkObject(BrowserNavigation)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        every { createSessionObserver.invoke() } just Runs
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any(), any()) } just Runs
 
         controller.handleSearchTermsTapped(searchTerms)
 
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = searchTerms,
                 newTab = session == null,
                 from = BrowserDirection.FromSearch,
@@ -193,6 +224,8 @@ class DefaultSearchControllerTest {
                 forceSearch = true
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -240,6 +273,6 @@ class DefaultSearchControllerTest {
         controller.handleExistingSessionSelected(session)
 
         verify { sessionManager.select(session) }
-        verify { context.openToBrowser(from = BrowserDirection.FromSearch) }
+        verify { BrowserNavigation.openToBrowser(from = BrowserDirection.FromSearch) }
     }
 }

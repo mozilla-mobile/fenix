@@ -11,6 +11,7 @@ import androidx.core.content.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
+import androidx.navigation.fragment.NavHostFragment
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -32,10 +33,13 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.BrowserNavigation
+import org.mozilla.fenix.browser.DirectionsProvider
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.Services
+import org.mozilla.fenix.components.UseCases
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.robolectric.RobolectricTestRunner
@@ -83,6 +87,11 @@ class BookmarkControllerTest {
         BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0, BookmarkRoot.Root.name, null, null
     )
 
+    private var useCases: UseCases = mockk(relaxed = true)
+    private var navHost: NavHostFragment = mockk(relaxed = true)
+    private var createSessionObserver: () -> Unit = mockk(relaxed = true)
+    private var directionsProvider: DirectionsProvider = mockk(relaxed = true)
+
     @Before
     fun setup() {
         // needed for mocking 'getSystemService<ClipboardManager>()'
@@ -107,27 +116,36 @@ class BookmarkControllerTest {
 
     @Test
     fun `handleBookmarkTapped should load the bookmark in a new tab`() {
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
+
         controller.handleBookmarkTapped(item)
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
+            BrowserNavigation.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
     fun `handleBookmarkTapped should respect browsing mode`() {
-        // if in normal mode, should be in normal mode
-        every { DefaultBrowsingModeManager.mode } returns BrowsingMode.Normal
+        mockkObject(BrowserNavigation)
+        DefaultBrowsingModeManager.initMode(BrowsingMode.Normal)
+        BrowserNavigation.init(navHost, useCases, directionsProvider, createSessionObserver)
+        every { createSessionObserver.invoke() } just Runs
 
         controller.handleBookmarkTapped(item)
         assertEquals(BrowsingMode.Normal, DefaultBrowsingModeManager.mode)
 
         // if in private mode, should be in private mode
-        every { DefaultBrowsingModeManager.mode } returns BrowsingMode.Private
+        DefaultBrowsingModeManager.mode = BrowsingMode.Private
 
         controller.handleBookmarkTapped(item)
         assertEquals(BrowsingMode.Private, DefaultBrowsingModeManager.mode)
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -209,31 +227,37 @@ class BookmarkControllerTest {
 
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Normal' tab`() {
+        mockkObject(BrowserNavigation)
         mockkObject(DefaultBrowsingModeManager)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
 
         controller.handleOpeningBookmark(item, BrowsingMode.Normal)
 
         verifyOrder {
             invokePendingDeletion.invoke()
             DefaultBrowsingModeManager.mode = BrowsingMode.Normal
-            homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
+            BrowserNavigation.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
 
+        unmockkObject(BrowserNavigation)
         unmockkObject(DefaultBrowsingModeManager)
     }
 
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Private' tab`() {
+        mockkObject(BrowserNavigation)
         mockkObject(DefaultBrowsingModeManager)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
 
         controller.handleOpeningBookmark(item, BrowsingMode.Private)
 
         verifyOrder {
             invokePendingDeletion.invoke()
             DefaultBrowsingModeManager.mode = BrowsingMode.Private
-            homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
+            BrowserNavigation.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
 
+        unmockkObject(BrowserNavigation)
         unmockkObject(DefaultBrowsingModeManager)
     }
 

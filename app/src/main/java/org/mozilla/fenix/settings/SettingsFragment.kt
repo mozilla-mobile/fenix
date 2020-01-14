@@ -25,7 +25,6 @@ import mozilla.components.concept.sync.Profile
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.application
@@ -37,6 +36,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.account.AccountAuthErrorPreference
 import org.mozilla.fenix.settings.account.AccountPreference
+import org.mozilla.fenix.browser.BrowserNavigation
 
 @Suppress("LargeClass")
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -193,7 +193,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToDataChoicesFragment()
             }
             resources.getString(R.string.pref_key_help) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
+                BrowserNavigation.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         context!!,
                         SupportUtils.SumoTopic.HELP
@@ -209,7 +209,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 } catch (e: ActivityNotFoundException) {
                     // Device without the play store installed.
                     // Opening the play store website.
-                    (activity as HomeActivity).openToBrowserAndLoad(
+                    BrowserNavigation.openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
                         newTab = true,
                         from = BrowserDirection.FromSettings

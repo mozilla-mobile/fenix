@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GlobalDirections
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.ext.alreadyOnDestination
@@ -67,7 +68,7 @@ class DeepLinkIntentProcessor(
             }
             "open" -> {
                 deepLink.getQueryParameter("url")?.let { searchTermOrUrl ->
-                    activity.openToBrowserAndLoad(
+                    BrowserNavigation.openToBrowserAndLoad(
                         searchTermOrUrl,
                         newTab = true,
                         from = BrowserDirection.FromGlobal

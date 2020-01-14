@@ -13,8 +13,8 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -70,7 +70,7 @@ class DefaultBrowserSettingsFragment : PreferenceFragmentCompat() {
             }
         } else {
             Preference.OnPreferenceClickListener {
-                (activity as HomeActivity).openToBrowserAndLoad(
+                BrowserNavigation.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         requireContext(),
                         SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER

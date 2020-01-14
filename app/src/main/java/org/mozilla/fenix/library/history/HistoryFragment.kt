@@ -25,6 +25,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.Components
@@ -186,7 +187,7 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
 
     private fun openItem(item: HistoryItem) {
         requireComponents.analytics.metrics.track(Event.HistoryItemOpened)
-        (activity as HomeActivity).openToBrowserAndLoad(
+        BrowserNavigation.openToBrowserAndLoad(
             searchTermOrURL = item.url,
             newTab = true,
             from = BrowserDirection.FromHistory

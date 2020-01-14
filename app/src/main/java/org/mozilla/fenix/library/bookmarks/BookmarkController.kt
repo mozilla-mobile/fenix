@@ -16,6 +16,7 @@ import mozilla.components.concept.storage.BookmarkNode
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
@@ -117,11 +118,8 @@ class DefaultBookmarkController(
         mode: BrowsingMode
     ) {
         invokePendingDeletion.invoke()
-
         DefaultBrowsingModeManager.mode = mode
-        with(activity) {
-            openToBrowserAndLoad(searchTermOrURL, newTab, from)
-        }
+        BrowserNavigation.openToBrowserAndLoad(searchTermOrURL, newTab, from)
     }
 
     private fun navigate(directions: NavDirections) {

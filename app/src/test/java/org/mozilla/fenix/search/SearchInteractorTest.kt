@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
@@ -24,6 +25,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
@@ -49,7 +51,8 @@ class SearchInteractorTest {
 
         every { context.metrics } returns mockk(relaxed = true)
         every { context.searchEngineManager } returns searchEngineManager
-        every { context.openToBrowserAndLoad(any(), any(), any(), any(), any(), any()) } just Runs
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any(), any(), any()) } just Runs
 
         every { store.state } returns state
         every { state.session } returns null
@@ -73,13 +76,15 @@ class SearchInteractorTest {
         interactor.onUrlCommitted("test")
 
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = "test",
                 newTab = true,
                 from = BrowserDirection.FromSearch,
                 engine = searchEngine.searchEngine
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -137,7 +142,8 @@ class SearchInteractorTest {
         val searchEngine = SearchEngineSource.Default(mockk(relaxed = true))
 
         every { context.metrics } returns mockk(relaxed = true)
-        every { context.openToBrowserAndLoad(any(), any(), any()) } just Runs
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
 
         every { store.state } returns state
         every { state.session } returns null
@@ -160,12 +166,14 @@ class SearchInteractorTest {
         interactor.onUrlTapped("test")
 
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 "test",
                 true,
                 BrowserDirection.FromSearch
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -179,7 +187,8 @@ class SearchInteractorTest {
 
         every { context.metrics } returns mockk(relaxed = true)
         every { context.searchEngineManager } returns searchEngineManager
-        every { context.openToBrowserAndLoad(any(), any(), any(), any(), any(), any()) } just Runs
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any(), any(), any(), any()) } just Runs
 
         every { store.state } returns state
         every { state.session } returns null
@@ -203,7 +212,7 @@ class SearchInteractorTest {
 
         interactor.onSearchTermsTapped("test")
         verify {
-            context.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = "test",
                 newTab = true,
                 from = BrowserDirection.FromSearch,
@@ -211,6 +220,8 @@ class SearchInteractorTest {
                 forceSearch = true
             )
         }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
@@ -277,7 +288,8 @@ class SearchInteractorTest {
         val applicationContext: FenixApplication = mockk(relaxed = true)
         every { context.applicationContext } returns applicationContext
         val store: SearchFragmentStore = mockk()
-        every { context.openToBrowser(any(), any()) } just Runs
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowser(any(), any()) } just Runs
 
         every { store.state } returns mockk(relaxed = true)
 
@@ -292,7 +304,9 @@ class SearchInteractorTest {
         interactor.onExistingSessionSelected(session)
 
         verify {
-            context.openToBrowser(BrowserDirection.FromSearch)
+            BrowserNavigation.openToBrowser(BrowserDirection.FromSearch)
         }
+
+        unmockkObject(BrowserNavigation)
     }
 }

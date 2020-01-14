@@ -10,8 +10,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -67,7 +67,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
             context!!.getPreferenceKey(R.string.pref_key_etp_learn_more)
         val learnMorePreference = findPreference<Preference>(trackingProtectionLearnMore)
         learnMorePreference?.setOnPreferenceClickListener {
-            (activity as HomeActivity).openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
                     (SupportUtils.SumoTopic.TRACKING_PROTECTION),
                 newTab = true,

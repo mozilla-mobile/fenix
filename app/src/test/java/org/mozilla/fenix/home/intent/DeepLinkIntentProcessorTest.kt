@@ -8,7 +8,12 @@ import android.content.Intent
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -19,6 +24,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.browser.BrowserNavigation
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -123,6 +129,9 @@ class DeepLinkIntentProcessorTest {
 
     @Test
     fun `process open deep link`() {
+        mockkObject(BrowserNavigation)
+        every { BrowserNavigation.openToBrowserAndLoad(any(), any(), any()) } just Runs
+
         assertTrue(processor.process(testIntent("fenix://open"), navController, out))
 
         verify { activity wasNot Called }
@@ -132,7 +141,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("fenix://open?url=test"), navController, out))
 
         verify {
-            activity.openToBrowserAndLoad(
+            BrowserNavigation.openToBrowserAndLoad(
                 "test",
                 newTab = true,
                 from = BrowserDirection.FromGlobal
@@ -140,6 +149,8 @@ class DeepLinkIntentProcessorTest {
         }
         verify { navController wasNot Called }
         verify { out wasNot Called }
+
+        unmockkObject(BrowserNavigation)
     }
 
     @Test
