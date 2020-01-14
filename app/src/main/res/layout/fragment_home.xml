@@ -59,6 +59,7 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
+        android:layout_marginBottom="32dp"
         android:padding="16dp"
         android:scrollbars="none"
         android:transitionGroup="false"
