@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.os.Build
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -134,9 +133,7 @@ class SessionControlView(
     override val containerView: View?
         get() = container
 
-    val view: RecyclerView = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_session_control, container, true)
-        .findViewById(R.id.home_component)
+    val view: RecyclerView = container as RecyclerView
 
     private val sessionControlAdapter = SessionControlAdapter(interactor)
 

@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.sessioncontrol
 
 import android.view.View
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -133,7 +132,6 @@ class DefaultSessionControlController(
     private val activity: HomeActivity,
     private val store: HomeFragmentStore,
     private val navController: NavController,
-    private val homeLayout: MotionLayout,
     private val browsingModeManager: BrowsingModeManager,
     private val lifecycleScope: CoroutineScope,
     private val closeTab: (sessionId: String) -> Unit,
@@ -308,7 +306,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleStartBrowsingClicked() {
-        homeLayout.progress = 0F
         hideOnboarding()
     }
 

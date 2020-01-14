@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.transition.TransitionInflater
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
@@ -85,6 +86,7 @@ import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
+import kotlin.math.abs
 import kotlin.math.min
 
 @ExperimentalCoroutinesApi
@@ -181,7 +183,6 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 store = homeFragmentStore,
                 navController = findNavController(),
-                homeLayout = view.homeLayout,
                 browsingModeManager = browsingModeManager,
                 lifecycleScope = viewLifecycleOwner.lifecycleScope,
                 closeTab = ::closeTab,
@@ -195,11 +196,11 @@ class HomeFragment : Fragment() {
             )
         )
 
-        sessionControlView = SessionControlView(homeFragmentStore, view.homeLayout, sessionControlInteractor)
+        sessionControlView = SessionControlView(homeFragmentStore, view.home_component, sessionControlInteractor)
 
         ConstraintSet().apply {
             clone(view.homeLayout)
-            connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
+            connect(sessionControlView.view.id, TOP, view.wordmark.id, BOTTOM)
             connect(sessionControlView.view.id, START, PARENT_ID, START)
             connect(sessionControlView.view.id, END, PARENT_ID, END)
             connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
@@ -207,6 +208,13 @@ class HomeFragment : Fragment() {
         }
 
         activity.themeManager.applyStatusBarTheme(activity)
+
+        view.home_app_bar.addOnOffsetChangedListener(
+            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                appBarLayout.alpha =
+                    1.0f - abs(verticalOffset / appBarLayout.totalScrollRange.toFloat())
+            }
+        )
 
         return view
     }
@@ -223,7 +231,6 @@ class HomeFragment : Fragment() {
             homeViewModel.layoutManagerState?.also { parcelable ->
                 sessionControlView.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
-            homeLayout?.progress = homeViewModel.motionLayoutProgress
             homeViewModel.layoutManagerState = null
         }
 
@@ -436,7 +443,6 @@ class HomeFragment : Fragment() {
         }
         homeViewModel.layoutManagerState =
             sessionControlView.view.layoutManager?.onSaveInstanceState()
-        homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
     }
 
     override fun onResume() {
