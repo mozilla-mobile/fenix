@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_add_on_internal_settings.*
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.ui.translate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar

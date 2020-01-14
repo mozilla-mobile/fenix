@@ -5,7 +5,6 @@
 package org.mozilla.fenix.addons
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +25,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
+import mozilla.components.feature.addons.ui.PermissionsDialogFragment
+import mozilla.components.feature.addons.ui.translate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.AddonsManagementFragment.CustomViewHolder.AddonViewHolder
 import org.mozilla.fenix.addons.AddonsManagementFragment.CustomViewHolder.SectionViewHolder
@@ -289,12 +290,6 @@ class AddonsManagementFragment : Fragment(), View.OnClickListener {
     private fun showPermissionDialog(addon: Addon) {
         val dialog = PermissionsDialogFragment.newInstance(
             addon = addon,
-            title = addon.translatableName.translate(),
-            permissions = addon.translatePermissions(),
-            promptsStyling = PermissionsDialogFragment.PromptsStyling(
-                gravity = Gravity.BOTTOM,
-                shouldWidthMatchParent = true
-            ),
             onPositiveButtonClicked = onPositiveButtonClicked
         )
 
