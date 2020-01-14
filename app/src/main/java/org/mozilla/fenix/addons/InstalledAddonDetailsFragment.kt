@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.ui.translate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
