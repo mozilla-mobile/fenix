@@ -46,4 +46,5 @@ for locale in locales_to_remove:
     path = os.path.join(resources_dir, folder)
 
     print "* Removing: ", path
+    # This modifies source, which could cause problems if we ever start caching source
     shutil.rmtree(path)
