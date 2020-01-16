@@ -358,7 +358,7 @@ class DefaultBrowserToolbarControllerTest {
         verify {
             val directions = BrowserFragmentDirections
                 .actionBrowserFragmentToSearchFragment(sessionId = null)
-            adjustBackgroundAndNavigate.invoke(directions)
+            navController.nav(R.id.browserFragment, directions)
         }
         verify { browsingModeManager.mode = BrowsingMode.Private }
     }
@@ -429,7 +429,7 @@ class DefaultBrowserToolbarControllerTest {
         verify {
             val directions = BrowserFragmentDirections
                 .actionBrowserFragmentToSearchFragment(sessionId = null)
-            adjustBackgroundAndNavigate.invoke(directions)
+            navController.nav(R.id.browserFragment, directions)
         }
         verify { browsingModeManager.mode = BrowsingMode.Normal }
     }

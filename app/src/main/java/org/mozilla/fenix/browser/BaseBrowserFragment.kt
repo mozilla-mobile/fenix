@@ -6,8 +6,6 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -15,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -462,9 +461,13 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private fun adjustBackgroundAndNavigate(directions: NavDirections) {
         context?.let {
-            swipeRefresh?.background = ColorDrawable(Color.TRANSPARENT)
-            engineView?.asView()?.visibility = View.GONE
-            findNavController().nav(R.id.browserFragment, directions)
+            engineView.captureThumbnail { bitmap ->
+                lifecycleScope.launch {
+                    swipeRefresh?.background = bitmap?.toDrawable(it.resources)
+                    engineView.asView().visibility = View.GONE
+                    findNavController().nav(R.id.browserFragment, directions)
+                }
+            }
         }
     }
 
@@ -518,9 +521,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     @CallSuper
     override fun onBackPressed(): Boolean {
         return findInPageIntegration.onBackPressed() ||
-                fullScreenFeature.onBackPressed() ||
-                sessionFeature.onBackPressed() ||
-                removeSessionIfNeeded()
+            fullScreenFeature.onBackPressed() ||
+            sessionFeature.onBackPressed() ||
+            removeSessionIfNeeded()
     }
 
     /**

@@ -6,11 +6,10 @@ package org.mozilla.fenix.components.toolbar
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
@@ -178,14 +177,18 @@ class DefaultBrowserToolbarController(
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
                     sessionId = null
                 )
-                adjustBackgroundAndNavigate.invoke(directions)
+
+                // Do not adjustBackground here or an exception gets thrown as we switch themes
+                navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Normal
             }
             ToolbarMenu.Item.NewPrivateTab -> {
                 val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
                     sessionId = null
                 )
-                adjustBackgroundAndNavigate.invoke(directions)
+
+                // Do not adjustBackground here or an exception gets thrown as we switch themes
+                navController.nav(R.id.browserFragment, directions)
                 browsingModeManager.mode = BrowsingMode.Private
             }
             ToolbarMenu.Item.FindInPage -> {
@@ -285,16 +288,20 @@ class DefaultBrowserToolbarController(
             browserLayout,
             "${TAB_ITEM_TRANSITION_NAME}${currentSession?.id}"
         ).build()
-        swipeRefresh.background = ColorDrawable(Color.TRANSPARENT)
-        engineView.asView().visibility = View.GONE
-        if (!navController.popBackStack(R.id.homeFragment, false)) {
-            navController.nav(
-                R.id.browserFragment,
-                R.id.action_browserFragment_to_homeFragment,
-                null,
-                options,
-                extras
-            )
+        engineView.captureThumbnail { bitmap ->
+            scope.launch {
+                swipeRefresh.background = bitmap?.toDrawable(activity.resources)
+                engineView.asView().visibility = View.GONE
+                if (!navController.popBackStack(R.id.homeFragment, false)) {
+                    navController.nav(
+                        R.id.browserFragment,
+                        R.id.action_browserFragment_to_homeFragment,
+                        null,
+                        options,
+                        extras
+                    )
+                }
+            }
         }
     }
 
