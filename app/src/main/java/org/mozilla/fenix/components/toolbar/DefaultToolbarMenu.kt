@@ -10,8 +10,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
+import mozilla.components.browser.menu.WebExtensionBrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableSwitch
@@ -45,7 +45,14 @@ class DefaultToolbarMenu(
     private var currentUrlIsBookmarked = false
     private var isBookmarkedJob: Job? = null
 
-    override val menuBuilder by lazy { BrowserMenuBuilder(menuItems, endOfMenuAlwaysVisible = true) }
+    override val menuBuilder by lazy {
+        WebExtensionBrowserMenuBuilder(
+            menuItems,
+            endOfMenuAlwaysVisible = true,
+            store = context.components.core.store,
+            appendExtensionActionAtStart = true
+        )
+    }
 
     override val menuToolbar by lazy {
         val forward = BrowserMenuItemToolbar.TwoStateButton(
