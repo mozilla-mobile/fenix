@@ -187,7 +187,7 @@ class HomeFragment : Fragment() {
                 closeTab = ::closeTab,
                 closeAllTabs = ::closeAllTabs,
                 getListOfTabs = ::getListOfTabs,
-                hideOnboarding = ::hideOnboarding,
+                hideOnboarding = ::hideOnboardingAndOpenSearch,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 scrollToTheTop = ::scrollToTheTop,
@@ -279,10 +279,7 @@ class HomeFragment : Fragment() {
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null
-            )
-            nav(R.id.homeFragment, directions)
+            navigateToSearch()
         }
 
         PrivateBrowsingButtonView(
@@ -481,13 +478,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) hideOnboarding()
+        if (!onboarding.userHasBeenOnboarded()) {
+            onboarding.finish()
+            homeFragmentStore.dispatch(
+                HomeFragmentAction.ModeChange(currentMode.getCurrentMode()))
+        }
     }
 
-    private fun hideOnboarding() {
-        onboarding.finish()
-        homeFragmentStore.dispatch(
-            HomeFragmentAction.ModeChange(currentMode.getCurrentMode()))
+    private fun hideOnboardingAndOpenSearch() {
+        hideOnboardingIfNeeded()
+        navigateToSearch()
+    }
+
+    private fun navigateToSearch() {
+        val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
+            sessionId = null
+        )
+        nav(R.id.homeFragment, directions)
     }
 
     private fun setupHomeMenu() {
