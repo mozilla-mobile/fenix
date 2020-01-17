@@ -6,9 +6,19 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import re
 
-# In Focus, this file contained a simple list of release locales. Fenix documents this list in
-# '/l10n.toml', so this file instead converts its values to be easily consumed from Python.
+OPEN_LOCALES = "locales = ["
+CLOSE_LOCALES = "]"
+
+def trim_to_locale(str):
+    match = re.search("  \"([a-z]{2,3}-?[A-Z]{0,3})\",", str)
+    if not match:
+        raise Exception("Failed parsing locale found in l10n.toml: " + str)
+    return match.group(1)
+
+
+# This file converts values from '/l10n.toml' to be easily consumed from Python.
 #
 # Alternatives to custom parsing that were considered:
 # - Using standard library module --- none exists to parse TOML
@@ -21,14 +31,28 @@ from __future__ import absolute_import, print_function, unicode_literals
 # algorithm will continue to work as it is changed.
 def get_release_locales():
     with open(r"l10n.toml") as f:
-        file = f.read()
+        file = f.read().splitlines()
 
-        locales_begin = file.find("locales = [") + len("locales = [")
-        locales_end = file.find("]", locales_begin)
+    locales_opened = False
+    locales_closed = False
 
-        locales = file[locales_begin:locales_end]
+    found_locales = []
 
-        return locales.split(",")
+    for line in file:
+        if line == OPEN_LOCALES:
+            locales_opened = True
+        elif line == CLOSE_LOCALES:
+            locales_closed = True
+            break
+        elif locales_opened:
+            found_locales.append(trim_to_locale(line))
+
+    if locales_opened == False:
+        raise Exception("Could not find `locales` open in l10n.toml")
+    if locales_closed == False:
+        raise Exception("Could not find `locales` close in l10n.toml")
+
+    return found_locales
 
 
 RELEASE_LOCALES = get_release_locales()
