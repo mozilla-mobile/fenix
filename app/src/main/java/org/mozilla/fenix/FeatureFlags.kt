@@ -38,4 +38,9 @@ object FeatureFlags {
      * Gives option in Settings to see logins and sync logins
      */
     val logins = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the new language picker
+     */
+    val fenixLanguagePicker = Config.channel.isNightlyOrDebug
 }
