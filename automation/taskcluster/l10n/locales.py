@@ -12,13 +12,17 @@ OPEN_LOCALES = "locales = ["
 CLOSE_LOCALES = "]"
 
 def trim_to_locale(str):
-    match = re.search("  \"([a-z]{2,3}-?[A-Z]{0,3})\",", str)
+    match = re.search('\s*"([a-z]+-?[A-Z]*)",\s*', str)
     if not match:
         raise Exception("Failed parsing locale found in l10n.toml: " + str)
     return match.group(1)
 
 
-# This file converts values from '/l10n.toml' to be easily consumed from Python.
+# This file is a dumb parser that converts values from '/l10n.toml' to be easily consumed from
+# Python.
+#
+# 'l10n.toml' has a very simple structure, and it is reasonable to believe that this (very basic)
+# algorithm will continue to work as it is changed.
 #
 # Alternatives to custom parsing that were considered:
 # - Using standard library module --- none exists to parse TOML
@@ -26,9 +30,6 @@ def trim_to_locale(str):
 #   security risk
 # - Vendoring a TOML module --- large amount of code given the use case. Introduces a security
 #   risk
-#
-# 'l10n.toml' has a very simple structure, and it is reasonable to believe that this (very basic)
-# algorithm will continue to work as it is changed.
 def get_release_locales():
     with open(r"l10n.toml") as f:
         file = f.read().splitlines()
