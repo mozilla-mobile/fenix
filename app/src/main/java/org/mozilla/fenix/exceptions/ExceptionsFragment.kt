@@ -75,8 +75,9 @@ class ExceptionsFragment : Fragment() {
     }
 
     private fun deleteOneItem(item: ExceptionsItem) {
-        // We can't currently delete one item in this Exceptions list with a URL with the GV API
-        // See https://github.com/mozilla-mobile/android-components/issues/4699
+        item.exception?.let {
+            trackingProtectionUseCases.removeException(item.exception)
+        }
         Log.e("Remove one exception", "$item")
         reloadExceptions()
     }
@@ -92,7 +93,7 @@ class ExceptionsFragment : Fragment() {
 
     private fun reloadExceptions() {
         trackingProtectionUseCases.fetchExceptions { resultList ->
-            val exceptionsList = resultList.map { ExceptionsItem(it) }
+            val exceptionsList = resultList.map { ExceptionsItem(it.url, it) }
             exceptionsStore.dispatch(ExceptionsFragmentAction.Change(exceptionsList))
         }
     }
