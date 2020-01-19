@@ -33,6 +33,8 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.StartupTimeline.Method.APP_ON_CREATE
 import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 
@@ -47,6 +49,8 @@ open class FenixApplication : LocaleAwareApplication() {
         private set
 
     override fun onCreate() {
+        StartupTimeline.instrumentStart(APP_ON_CREATE)
+
         super.onCreate()
 
         setupInAllProcesses()
@@ -81,6 +85,8 @@ open class FenixApplication : LocaleAwareApplication() {
         )
 
         setupInMainProcessOnly()
+
+        StartupTimeline.instrumentEnd(APP_ON_CREATE)
     }
 
     @CallSuper

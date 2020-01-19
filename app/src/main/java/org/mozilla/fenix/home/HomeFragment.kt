@@ -82,6 +82,12 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.StartupTimeline.Method.HOME_FRAGMENT_ON_CREATE
+import org.mozilla.fenix.perf.StartupTimeline.Method.HOME_FRAGMENT_ON_CREATE_VIEW
+import org.mozilla.fenix.perf.StartupTimeline.Method.HOME_FRAGMENT_ON_RESUME
+import org.mozilla.fenix.perf.StartupTimeline.Method.HOME_FRAGMENT_ON_START
+import org.mozilla.fenix.perf.StartupTimeline.Method.HOME_FRAGMENT_ON_VIEW_CREATED
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.FragmentPreDrawManager
@@ -135,6 +141,7 @@ class HomeFragment : Fragment() {
     private lateinit var currentMode: CurrentMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        StartupTimeline.instrumentStart(HOME_FRAGMENT_ON_CREATE)
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
         sharedElementEnterTransition =
@@ -150,6 +157,8 @@ class HomeFragment : Fragment() {
         if (!onboarding.userHasBeenOnboarded()) {
             requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
         }
+
+        StartupTimeline.instrumentEnd(HOME_FRAGMENT_ON_CREATE)
     }
 
     override fun onCreateView(
@@ -157,6 +166,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        StartupTimeline.instrumentStart(HOME_FRAGMENT_ON_CREATE_VIEW)
+
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
 
@@ -215,12 +226,14 @@ class HomeFragment : Fragment() {
 
         activity.themeManager.applyStatusBarTheme(activity)
 
+        StartupTimeline.instrumentEnd(HOME_FRAGMENT_ON_CREATE_VIEW)
         return view
     }
 
     @ExperimentalCoroutinesApi
     @SuppressWarnings("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        StartupTimeline.instrumentStart(HOME_FRAGMENT_ON_VIEW_CREATED)
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
@@ -310,6 +323,7 @@ class HomeFragment : Fragment() {
 
         // We need the shadow to be above the components.
         bottomBarShadow.bringToFront()
+        StartupTimeline.instrumentEnd(HOME_FRAGMENT_ON_VIEW_CREATED)
     }
 
     override fun onDestroyView() {
@@ -318,6 +332,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStart() {
+        StartupTimeline.instrumentStart(HOME_FRAGMENT_ON_START)
         super.onStart()
         subscribeToTabCollections()
 
@@ -352,6 +367,8 @@ class HomeFragment : Fragment() {
 
         // We only want this observer live just before we navigate away to the collection creation screen
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
+
+        StartupTimeline.instrumentEnd(HOME_FRAGMENT_ON_START)
     }
 
     private fun closeTab(sessionId: String) {
@@ -447,8 +464,12 @@ class HomeFragment : Fragment() {
     }
 
     override fun onResume() {
+        StartupTimeline.instrumentStart(HOME_FRAGMENT_ON_RESUME)
         super.onResume()
         hideToolbar()
+
+        StartupTimeline.instrumentEnd(HOME_FRAGMENT_ON_RESUME)
+        StartupTimeline.dumpInstrumentation()
     }
 
     private fun recommendPrivateBrowsingShortcut() {
