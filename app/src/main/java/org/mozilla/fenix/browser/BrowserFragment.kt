@@ -144,6 +144,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             (activity as HomeActivity).updateThemeForSession(it)
         }
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+        reloadIfATrackingProtectionSettingHasChanged()
     }
 
     override fun onBackPressed(): Boolean {
@@ -194,6 +195,20 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 FenixSnackbar.makeWithToolbarPadding(view, Snackbar.LENGTH_SHORT)
                     .setText(view.context.getString(R.string.create_collection_tab_saved))
                     .show()
+            }
+        }
+    }
+
+    /**
+     * We need to make sure the EngineView is visible before reloading Fenix issue #7636
+     * https://github.com/mozilla-mobile/fenix/issues/7636 more related information
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=1609701#cr-7
+     */
+    private fun reloadIfATrackingProtectionSettingHasChanged() {
+        context?.settings()?.shouldReload?.let {
+            if (it) {
+                requireComponents.useCases.sessionUseCases.reload.invoke()
+                context?.settings()?.shouldReload = false
             }
         }
     }

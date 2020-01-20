@@ -200,6 +200,14 @@ class Settings private constructor(
         default = false
     )
 
+    /**
+     * Indicates if we need to reload the selected session after a setting change.
+     */
+    var shouldReload by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_reload),
+        default = false
+    )
+
     val useStrictTrackingProtection by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
         true

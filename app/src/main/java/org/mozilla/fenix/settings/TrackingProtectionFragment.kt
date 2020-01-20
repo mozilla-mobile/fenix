@@ -143,7 +143,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         context?.components?.let {
             val policy = it.core.createTrackingProtectionPolicy()
             it.useCases.settingsUseCases.updateTrackingProtection.invoke(policy)
-            it.useCases.sessionUseCases.reload.invoke()
+            context?.settings()?.shouldReload = true
         }
     }
 
