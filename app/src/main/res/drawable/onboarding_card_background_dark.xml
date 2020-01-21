@@ -10,6 +10,6 @@
     <gradient
         android:angle="45"
         android:endColor="@color/accent_high_contrast_dark_theme"
-        android:startColor="@color/accent_bright_dark_theme" />
+        android:startColor="@color/accent_bright_light_theme" />
     <corners android:radius="8dp" />
 </shape>
