@@ -44,7 +44,7 @@
     <color name="inset_dark_theme">#3F3E46</color>
     <color name="above_dark_theme">#32313C</color>
     <color name="accent_dark_theme">#9059FF</color>
-    <color name="accent_bright_dark_theme">#592ACB</color>
+    <color name="accent_bright_dark_theme">#AB71FF</color>
     <color name="about_link_dark_theme">#AB71FF</color>
     <color name="accent_high_contrast_dark_theme">#AB71FF</color>
     <color name="tab_ring_dark_theme">@color/accent_dark_theme</color>
