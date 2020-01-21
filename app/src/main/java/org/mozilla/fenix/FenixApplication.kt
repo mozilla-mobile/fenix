@@ -35,6 +35,7 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
+import org.mozilla.fenix.utils.BrowsersCache
 
 @SuppressLint("Registered")
 @Suppress("TooManyFunctions")
@@ -99,6 +100,7 @@ open class FenixApplication : LocaleAwareApplication() {
 
             setDayNightTheme()
             enableStrictMode()
+            warmBrowsersCache()
 
             // Enable the service-experiments component
             if (settings().isExperimentationEnabled && Config.channel.isReleaseOrBeta) {
@@ -250,6 +252,14 @@ open class FenixApplication : LocaleAwareApplication() {
                     settings.shouldUseLightTheme = true
                 }
             }
+        }
+    }
+
+    private fun warmBrowsersCache() {
+        // We avoid blocking the main thread for BrowsersCache on startup by loading it on
+        // background thread.
+        GlobalScope.launch(Dispatchers.Default) {
+            BrowsersCache.all(this@FenixApplication)
         }
     }
 
