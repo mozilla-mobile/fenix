@@ -136,10 +136,11 @@ jobs:
         attributes:
             # TODO replace `nightly: true` by `release-type: beta` once the data migration
             # testing is over
+            # TODO when making the above change, uncomment `filter-incomplete-translations: true`
             nightly: true
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
+#        filter-incomplete-translations: true
         run:
             geckoview-engine: geckoBeta
             gradle-build-type: fennecBeta
@@ -150,10 +151,11 @@ jobs:
         attributes:
             # TODO replace `nightly: true` by `release-type: production` once the data migration
             # testing is over
+            # TODO when making the above change, uncomment `filter-incomplete-translations: true`
             nightly: true
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
+#        filter-incomplete-translations: true
         run:
             geckoview-engine: geckoBeta
             gradle-build-type: fennecProduction
