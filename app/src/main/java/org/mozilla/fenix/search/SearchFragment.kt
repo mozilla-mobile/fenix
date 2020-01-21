@@ -18,6 +18,7 @@ import android.view.ViewStub
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -132,7 +133,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             view.toolbar_component_wrapper,
             searchInteractor,
             historyStorageProvider(),
-            (activity as HomeActivity).browsingModeManager.mode.isPrivate
+            (activity as HomeActivity).browsingModeManager.mode.isPrivate,
+            ::animateBackButtonAway
         )
 
         val urlView = toolbarView.view
@@ -198,8 +200,11 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             qrFeature.get()?.scan(R.id.container)
         }
 
-        view.back_button.setOnClickListener {
-            findNavController().navigateUp()
+        view.back_button.apply {
+            setOnClickListener {
+                animateBackButtonAway()
+                findNavController().navigateUp()
+            }
         }
 
         val stubListener = ViewStub.OnInflateListener { _, inflated ->
@@ -352,7 +357,17 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
     }
 
+    private fun animateBackButtonAway() {
+        val xTranslation =
+            requireView().back_button.width.toFloat() * BACK_BUTTON_ANIMATION_WIDTH_MULTIPLIER
+
+        requireView().back_button
+            .animate()
+            .translationX(xTranslation).interpolator = FastOutSlowInInterpolator()
+    }
+
     companion object {
+        private const val BACK_BUTTON_ANIMATION_WIDTH_MULTIPLIER = -1.5f
         private const val SHARED_TRANSITION_MS = 200L
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
