@@ -192,12 +192,11 @@ class HomeFragment : Fragment() {
 
         sessionControlView = SessionControlView(homeFragmentStore, view.home_component, sessionControlInteractor)
 
-
-
         activity.themeManager.applyStatusBarTheme(activity)
 
         view.home_app_bar.addOnOffsetChangedListener(
-            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset -> appBarLayout.alpha =
+            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                appBarLayout.alpha =
                     1.0f - abs(verticalOffset / appBarLayout.totalScrollRange.toFloat())
             }
         )
