@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.exceptions
 
-import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
@@ -13,7 +12,7 @@ import mozilla.components.lib.state.Store
  * Class representing an exception item
  * @property url Host of the exception
  */
-data class ExceptionsItem(val url: String, val exception: TrackingProtectionException? = null)
+data class ExceptionsItem(val url: String)
 
 /**
  * The [Store] for holding the [ExceptionsFragmentState] and applying [ExceptionsFragmentAction]s.
