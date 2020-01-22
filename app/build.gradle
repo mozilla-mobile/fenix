@@ -50,7 +50,6 @@ android {
             pseudoLocalesEnabled true
         }
         forPerformanceTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
-            signingConfig signingConfigs.debug
             manifestPlaceholders.isRaptorEnabled = "true"
             applicationIdSuffix ".fenix.performancetest"
             debuggable true
