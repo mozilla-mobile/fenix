@@ -61,8 +61,7 @@ class ToolbarView(
     private val container: ViewGroup,
     private val interactor: ToolbarInteractor,
     private val historyStorage: HistoryStorage?,
-    private val isPrivate: Boolean,
-    private val animateBackButtonAway: () -> Unit
+    private val isPrivate: Boolean
 ) : LayoutContainer {
 
     override val containerView: View?
@@ -121,7 +120,6 @@ class ToolbarView(
 
             setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
                 override fun onCancelEditing(): Boolean {
-                    animateBackButtonAway()
                     interactor.onEditingCanceled()
                     // We need to return false to not show display mode
                     return false
