@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home
 
 import android.animation.Animator
+import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -24,6 +25,8 @@ import androidx.constraintlayout.widget.ConstraintSet.END
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.START
 import androidx.constraintlayout.widget.ConstraintSet.TOP
+import androidx.core.view.updateLayoutParams
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -48,7 +51,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.menu.BrowserMenu
+import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.sync.AccountObserver
@@ -58,6 +61,7 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -82,6 +86,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
@@ -115,8 +120,6 @@ class HomeFragment : Fragment() {
             showRenamedSnackbar()
         }
     }
-
-    private var homeMenu: HomeMenu? = null
 
     private val sessionManager: SessionManager
         get() = requireComponents.core.sessionManager
@@ -187,7 +190,7 @@ class HomeFragment : Fragment() {
                 closeTab = ::closeTab,
                 closeAllTabs = ::closeAllTabs,
                 getListOfTabs = ::getListOfTabs,
-                hideOnboarding = ::hideOnboarding,
+                hideOnboarding = ::hideOnboardingAndOpenSearch,
                 invokePendingDeleteJobs = ::invokePendingDeleteJobs,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 scrollToTheTop = ::scrollToTheTop,
@@ -199,11 +202,16 @@ class HomeFragment : Fragment() {
 
         ConstraintSet().apply {
             clone(view.homeLayout)
-            connect(sessionControlView.view.id, TOP, view.wordmark_spacer.id, BOTTOM)
+            connect(sessionControlView.view.id, TOP, view.wordmark.id, BOTTOM)
             connect(sessionControlView.view.id, START, PARENT_ID, START)
             connect(sessionControlView.view.id, END, PARENT_ID, END)
             connect(sessionControlView.view.id, BOTTOM, view.bottom_bar.id, TOP)
             applyTo(view.homeLayout)
+        }
+
+        @Suppress("MagicNumber") // we need constants if we define layouts in code.
+        sessionControlView.view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = 32.dpToPx(resources.displayMetrics)
         }
 
         activity.themeManager.applyStatusBarTheme(activity)
@@ -227,8 +235,6 @@ class HomeFragment : Fragment() {
             homeViewModel.layoutManagerState = null
         }
 
-        setupHomeMenu()
-
         viewLifecycleOwner.lifecycleScope.launch(IO) {
             // This is necessary due to a bug in viewLifecycleOwner. See:
             // https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/ext/Fragment.kt#L32-L56
@@ -247,18 +253,18 @@ class HomeFragment : Fragment() {
         }
 
         with(view.menuButton) {
-            var menu: PopupWindow? = null
-            setOnClickListener {
-                if (menu == null) {
-                    menu = homeMenu?.menuBuilder?.build(requireContext())?.show(
-                        anchor = it,
-                        orientation = BrowserMenu.Orientation.UP,
-                        onDismiss = { menu = null }
-                    )
-                } else {
-                    menu?.dismiss()
-                }
-            }
+            menuBuilder = createHomeMenu(context!!).menuBuilder
+
+            val primaryTextColor = ContextCompat.getColor(
+                context,
+                ThemeManager.resolveAttribute(R.attr.primaryText, context)
+            )
+
+            setColorFilter(primaryTextColor)
+
+            // Immediately check for `What's new` highlight. If home items that change over time
+            // are added, this will need to be called repeatedly.
+            setHighlight(menuBuilder?.items?.getHighlight())
         }
         view.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
@@ -279,10 +285,7 @@ class HomeFragment : Fragment() {
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null
-            )
-            nav(R.id.homeFragment, directions)
+            navigateToSearch()
         }
 
         PrivateBrowsingButtonView(
@@ -303,11 +306,6 @@ class HomeFragment : Fragment() {
 
         // We need the shadow to be above the components.
         bottomBarShadow.bringToFront()
-    }
-
-    override fun onDestroyView() {
-        homeMenu = null
-        super.onDestroyView()
     }
 
     override fun onStart() {
@@ -481,20 +479,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) hideOnboarding()
+        if (!onboarding.userHasBeenOnboarded()) {
+            onboarding.finish()
+            homeFragmentStore.dispatch(
+                HomeFragmentAction.ModeChange(
+                    mode = currentMode.getCurrentMode(),
+                    tabs = getListOfSessions().toTabs()))
+        }
     }
 
-    private fun hideOnboarding() {
-        onboarding.finish()
-        homeFragmentStore.dispatch(
-            HomeFragmentAction.ModeChange(
-                mode = currentMode.getCurrentMode(),
-                tabs = getListOfSessions().toTabs()))
+    private fun hideOnboardingAndOpenSearch() {
+        hideOnboardingIfNeeded()
+        navigateToSearch()
     }
 
-    private fun setupHomeMenu() {
-        val context = requireContext()
-        homeMenu = HomeMenu(context) {
+    private fun navigateToSearch() {
+        val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
+            sessionId = null
+        )
+        nav(R.id.homeFragment, directions)
+    }
+
+    private fun createHomeMenu(context: Context): HomeMenu {
+        return HomeMenu(context) {
             when (it) {
                 HomeMenu.Item.Settings -> {
                     invokePendingDeleteJobs()
@@ -536,7 +543,7 @@ class HomeFragment : Fragment() {
                     invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     WhatsNew.userViewedWhatsNew(context)
-                    context.metrics.track(Event.WhatsNewTapped(Event.WhatsNewTapped.Source.HOME))
+                    context.metrics.track(Event.WhatsNewTapped)
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
                         newTab = true,

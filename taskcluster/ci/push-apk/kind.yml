@@ -17,6 +17,7 @@ primary-dependency: signing
 group-by: build-type
 
 only-for-build-types:
+    - fennec-nightly
     - nightly
     - beta
     - production
@@ -28,6 +29,7 @@ job-template:
         commit: true
         channel:
             by-build-type:
+                fennec-nightly: fennec-nightly
                 nightly: nightly
                 beta: beta
                 production: production

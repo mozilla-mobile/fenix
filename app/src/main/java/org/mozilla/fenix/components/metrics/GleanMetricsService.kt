@@ -116,12 +116,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.FindInPageClosed -> EventWrapper<NoExtraKeys>(
             { FindInPage.closed.record(it) }
         )
-        is Event.FindInPageNext -> EventWrapper<NoExtraKeys>(
-            { FindInPage.nextResult.record(it) }
-        )
-        is Event.FindInPagePrevious -> EventWrapper<NoExtraKeys>(
-            { FindInPage.previousResult.record(it) }
-        )
         is Event.FindInPageSearchCommitted -> EventWrapper<NoExtraKeys>(
             { FindInPage.searchedPage.record(it) }
         )
@@ -365,9 +359,8 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PrivateBrowsingStaticShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingShortcut.staticShortcutPriv.record(it) }
         )
-        is Event.WhatsNewTapped -> EventWrapper(
-            { Events.whatsNewTapped.record(it) },
-            { Events.whatsNewTappedKeys.valueOf(it) }
+        is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
+            { Events.whatsNewTapped.record(it) }
         )
         is Event.TabMediaPlay -> EventWrapper<NoExtraKeys>(
             { Tab.mediaPlay.record(it) }
@@ -514,7 +507,13 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
             adjustCampaign.set(context.settings().adjustCampaignId)
             totalUriCount.set(context.settings().totalUriCount.toString())
-            toolbarPosition.set(context.settings().toolbarSettingString)
+            toolbarPosition.set(
+                if (context.settings().shouldUseBottomToolbar) {
+                    Event.ToolbarPositionChanged.Position.BOTTOM.name
+                } else {
+                    Event.ToolbarPositionChanged.Position.TOP.name
+                }
+            )
         }
 
         SearchDefaultEngine.apply {
