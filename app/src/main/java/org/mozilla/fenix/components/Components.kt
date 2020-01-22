@@ -6,6 +6,7 @@ package org.mozilla.fenix.components
 
 import android.content.Context
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.fenix.utils.ClipboardHandler
 
@@ -20,7 +21,7 @@ class Components(private val context: Context) {
             analytics.crashReporter,
             core.historyStorage,
             core.bookmarksStorage,
-            core.passwordsStorage,
+            core.syncablePasswordsStorage,
             core.getSecureAbove22Preferences()
         )
     }
@@ -44,10 +45,12 @@ class Components(private val context: Context) {
             useCases.sessionUseCases,
             useCases.searchUseCases,
             core.client,
-            core.customTabsStore
+            core.customTabsStore,
+            migrationStore
         )
     }
     val analytics by lazy { Analytics(context) }
     val publicSuffixList by lazy { PublicSuffixList(context) }
     val clipboardHandler by lazy { ClipboardHandler(context) }
+    val migrationStore by lazy { MigrationStore() }
 }

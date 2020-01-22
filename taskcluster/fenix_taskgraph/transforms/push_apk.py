@@ -41,6 +41,9 @@ def build_worker_definition(config, tasks):
         # Fenix production doesn't follow the rule {product}-{channel}
         if task["attributes"]["build-type"] == "production":
             worker_definition["certificate-alias"] = "fenix"
+        # Neither does Fennec nightly
+        elif task["attributes"]["build-type"] == "fennec-nightly":
+            worker_definition["certificate-alias"] = "fennec-nightly"
 
         task["worker"].update(worker_definition)
         yield task

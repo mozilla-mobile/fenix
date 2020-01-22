@@ -100,8 +100,6 @@ sealed class Event {
     object SearchWidgetVoiceSearchPressed : Event()
     object FindInPageOpened : Event()
     object FindInPageClosed : Event()
-    object FindInPageNext : Event()
-    object FindInPagePrevious : Event()
     object FindInPageSearchCommitted : Event()
     object PrivateBrowsingGarbageIconTapped : Event()
     object PrivateBrowsingSnackbarUndoTapped : Event()
@@ -139,8 +137,8 @@ sealed class Event {
     object ViewLoginPassword : Event()
     object CustomEngineAdded : Event()
     object CustomEngineDeleted : Event()
-    object SearchWithCustomEngine : Event()
     object PrivateBrowsingShowSearchSuggestions : Event()
+    object WhatsNewTapped : Event()
 
     // Interaction events with extras
 
@@ -195,12 +193,6 @@ sealed class Event {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB }
         override val extras: Map<Events.appOpenedKeys, String>?
             get() = hashMapOf(Events.appOpenedKeys.source to source.name)
-    }
-
-    data class WhatsNewTapped(val source: Source) : Event() {
-        enum class Source { ABOUT, HOME }
-        override val extras: Map<Events.whatsNewTappedKeys, String>?
-            get() = hashMapOf(Events.whatsNewTappedKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
@@ -271,37 +263,41 @@ sealed class Event {
                 }
         }
 
-        sealed class EventSource {
-            data class Suggestion(val engineSource: EngineSource) : EventSource()
-            data class Action(val engineSource: EngineSource) : EventSource()
-
-            private val source: EngineSource
-                get() = when (this) {
-                    is Suggestion -> engineSource
-                    is Action -> engineSource
-                }
+        sealed class EventSource(open val engineSource: EngineSource) {
+            data class Suggestion(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class Action(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class Widget(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class Shortcut(override val engineSource: EngineSource) : EventSource(engineSource)
+            data class Other(override val engineSource: EngineSource) : EventSource(engineSource)
 
             private val label: String
                 get() = when (this) {
                     is Suggestion -> "suggestion"
                     is Action -> "action"
+                    is Widget -> "widget"
+                    is Shortcut -> "shortcut"
+                    is Other -> "other"
                 }
 
             val countLabel: String
-                get() = "${source.identifier.toLowerCase(Locale.getDefault())}.$label"
+                get() = "${engineSource.identifier.toLowerCase(Locale.getDefault())}.$label"
 
             val sourceLabel: String
-                get() = "${source.descriptor}.$label"
+                get() = "${engineSource.descriptor}.$label"
+        }
+
+        enum class SearchAccessPoint {
+            SUGGESTION, ACTION, WIDGET, SHORTCUT, NONE
         }
 
         override val extras: Map<Events.performedSearchKeys, String>?
             get() = mapOf(Events.performedSearchKeys.source to eventSource.sourceLabel)
     }
 
-    // Track only built-in engine selection. Do not track user-added engines!
-    data class SearchShortcutSelected(val engine: String) : Event() {
+    data class SearchShortcutSelected(val engine: SearchEngine, val isCustom: Boolean) : Event() {
+        private val engineName = if (isCustom) "custom" else engine.name
         override val extras: Map<SearchShortcuts.selectedKeys, String>?
-            get() = mapOf(SearchShortcuts.selectedKeys.engine to engine)
+            get() = mapOf(SearchShortcuts.selectedKeys.engine to engineName)
     }
 
     class ContextMenuItemTapped private constructor(val item: String) : Event() {
@@ -348,8 +344,6 @@ sealed class Event {
 }
 
 private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
-    Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.PREVIOUS -> Event.FindInPagePrevious
-    Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.NEXT -> Event.FindInPageNext
     Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.CLOSE -> Event.FindInPageClosed
     Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.INPUT -> Event.FindInPageSearchCommitted
     Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {

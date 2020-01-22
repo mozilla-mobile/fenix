@@ -102,7 +102,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             AboutPageItem.Item(
                 AboutItem.ExternalLink(
                     WHATS_NEW,
-                    SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.WHATS_NEW)
+                    SupportUtils.getWhatsNewUrl(context)
                 ), getString(R.string.about_whats_new, getString(R.string.app_name))
             ),
             AboutPageItem.Item(
@@ -151,7 +151,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             is AboutItem.ExternalLink -> {
                 if (item.type == WHATS_NEW) {
                     WhatsNew.userViewedWhatsNew(requireContext())
-                    requireComponents.analytics.metrics.track(Event.WhatsNewTapped(Event.WhatsNewTapped.Source.ABOUT))
+                    requireComponents.analytics.metrics.track(Event.WhatsNewTapped)
                 }
 
                 openLinkInCustomTab(item.url)

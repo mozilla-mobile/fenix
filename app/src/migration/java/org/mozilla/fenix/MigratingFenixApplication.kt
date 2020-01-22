@@ -7,7 +7,6 @@ package org.mozilla.fenix
 import android.content.Context
 import kotlinx.coroutines.runBlocking
 import mozilla.components.support.migration.FennecMigrator
-import mozilla.components.support.migration.state.MigrationStore
 
 /**
  * An application class which knows how to migrate Fennec data.
@@ -19,15 +18,21 @@ class MigratingFenixApplication : FenixApplication() {
             .migrateHistory(this.components.core.historyStorage)
             .migrateBookmarks(this.components.core.bookmarksStorage)
             .migrateLogins(
-                this.components.core.passwordsStorage.store,
+                this.components.core.asyncPasswordsStorage,
                 this.components.core.passwordsEncryptionKey
             )
             .migrateFxa(this.components.backgroundServices.accountManager)
             .migrateAddons(this.components.core.engine)
+            .migrateTelemetryIdentifiers()
             .build()
     }
 
-    val migrationStore by lazy { MigrationStore() }
+    val migrationPushSubscriber by lazy {
+        MigrationPushRenewer(
+            components.backgroundServices.push,
+            components.migrationStore
+        )
+    }
 
     override fun setupInMainProcessOnly() {
         // These migrations need to run before regular initialization happens.
@@ -37,7 +42,8 @@ class MigratingFenixApplication : FenixApplication() {
         super.setupInMainProcessOnly()
 
         // The rest of the migrations can happen now.
-        migrator.startMigrationIfNeeded(migrationStore, MigrationService::class.java)
+        migrationPushSubscriber.start()
+        migrator.startMigrationIfNeeded(components.migrationStore, MigrationService::class.java)
     }
 
     private fun migrateBlocking() {
@@ -49,15 +55,11 @@ class MigratingFenixApplication : FenixApplication() {
             .build()
 
         runBlocking {
-            migrator.migrateAsync().await()
+            migrator.migrateAsync(components.migrationStore).await()
         }
     }
 }
 
 fun Context.getMigratorFromApplication(): FennecMigrator {
     return (applicationContext as MigratingFenixApplication).migrator
-}
-
-fun Context.getMigrationStoreFromApplication(): MigrationStore {
-    return (applicationContext as MigratingFenixApplication).migrationStore
 }

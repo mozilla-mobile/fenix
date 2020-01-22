@@ -8,11 +8,9 @@ import android.content.Context
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
-import mozilla.components.service.glean.BuildConfig
 import mozilla.components.service.glean.Glean
-import mozilla.components.service.glean.config.Configuration
-import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.private.NoExtraKeys
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
@@ -117,12 +115,6 @@ private val Event.wrapper: EventWrapper<*>?
         )
         is Event.FindInPageClosed -> EventWrapper<NoExtraKeys>(
             { FindInPage.closed.record(it) }
-        )
-        is Event.FindInPageNext -> EventWrapper<NoExtraKeys>(
-            { FindInPage.nextResult.record(it) }
-        )
-        is Event.FindInPagePrevious -> EventWrapper<NoExtraKeys>(
-            { FindInPage.previousResult.record(it) }
         )
         is Event.FindInPageSearchCommitted -> EventWrapper<NoExtraKeys>(
             { FindInPage.searchedPage.record(it) }
@@ -367,9 +359,8 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PrivateBrowsingStaticShortcutPrivateTab -> EventWrapper<NoExtraKeys>(
             { PrivateBrowsingShortcut.staticShortcutPriv.record(it) }
         )
-        is Event.WhatsNewTapped -> EventWrapper(
-            { Events.whatsNewTapped.record(it) },
-            { Events.whatsNewTappedKeys.valueOf(it) }
+        is Event.WhatsNewTapped -> EventWrapper<NoExtraKeys>(
+            { Events.whatsNewTapped.record(it) }
         )
         is Event.TabMediaPlay -> EventWrapper<NoExtraKeys>(
             { Tab.mediaPlay.record(it) }
@@ -461,9 +452,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.CustomEngineDeleted -> EventWrapper<NoExtraKeys>(
             { UserSpecifiedSearchEngines.customEngineDeleted.record(it) }
         )
-        is Event.SearchWithCustomEngine -> EventWrapper<NoExtraKeys>(
-            { UserSpecifiedSearchEngines.searchWithCustomEngine.record(it) }
-        )
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
         is Event.OpenedBookmark -> null
@@ -474,6 +462,7 @@ private val Event.wrapper: EventWrapper<*>?
     }
 
 class GleanMetricsService(private val context: Context) : MetricsService {
+    private val logger = Logger("GleanMetricsService")
     private var initialized = false
     /*
      * We need to keep an eye on when we are done starting so that we don't
@@ -485,6 +474,8 @@ class GleanMetricsService(private val context: Context) : MetricsService {
     private val activationPing = ActivationPing(context)
 
     override fun start() {
+        logger.debug("Enabling Glean.")
+        // Initialization of Glean already happened in FenixApplication.
         Glean.setUploadEnabled(true)
 
         if (initialized) return
@@ -497,11 +488,6 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         // can handle events being recorded before it's initialized.
         gleanInitializer = MainScope().launch {
             Glean.registerPings(Pings)
-            Glean.initialize(context,
-                Configuration(channel = BuildConfig.BUILD_TYPE,
-                    httpClient = ConceptFetchHttpUploader(
-                        lazy(LazyThreadSafetyMode.NONE) { context.components.core.client }
-                    )))
         }
         // setStartupMetrics is not a fast function. It does not need to be done before we can consider
         // ourselves initialized. So, let's do it, well, later.
@@ -521,7 +507,13 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
             adjustCampaign.set(context.settings().adjustCampaignId)
             totalUriCount.set(context.settings().totalUriCount.toString())
-            toolbarPosition.set(context.settings().toolbarSettingString)
+            toolbarPosition.set(
+                if (context.settings().shouldUseBottomToolbar) {
+                    Event.ToolbarPositionChanged.Position.BOTTOM.name
+                } else {
+                    Event.ToolbarPositionChanged.Position.TOP.name
+                }
+            )
         }
 
         SearchDefaultEngine.apply {

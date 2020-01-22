@@ -33,10 +33,14 @@
           We inherited this entry (${applicationId}.App) from Fennec. We need to keep this as our
           main launcher to avoid launcher icons on the home screen disappearing for all our users
           on a Fennec build.
+
+          !!HERE BE DRAGONS!!
+          We need the targetActivity to be IntentReceiverActivity so that we can check if we have
+          a migration in progress. If not, the HomeActivity is invoked.
         -->
         <activity-alias
             android:name="${applicationId}.App"
-            android:targetActivity=".HomeActivity">
+            android:targetActivity=".IntentReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -53,7 +57,8 @@
         -->
         <activity-alias
             android:name="org.mozilla.gecko.BrowserApp"
-            android:targetActivity=".IntentReceiverActivity">
+            android:targetActivity=".IntentReceiverActivity"
+            android:exported="true">
         </activity-alias>
 
         <activity
@@ -96,7 +101,7 @@
             android:taskAffinity=""
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
-        <activity android:name=".IntentReceiverActivity">
+        <activity android:name=".IntentReceiverActivity" android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -127,6 +132,18 @@
             </intent-filter>
 
             <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.WEB_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="mozilla.components.feature.pwa.VIEW_PWA" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="https" />
@@ -147,6 +164,13 @@
             <meta-data
                 android:name="com.android.systemui.action_assist_icon"
                 android:resource="@mipmap/ic_launcher" />
+
+        </activity>
+
+        <activity
+                android:name=".migration.MigrationProgressActivity"
+                android:launchMode="singleInstance"
+                android:exported="false">
         </activity>
 
         <activity android:name=".widget.VoiceSearchActivity" />
@@ -206,7 +230,7 @@
 
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
-            android:value="false" />
+            android:value="true" />
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
