@@ -18,12 +18,6 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
-import androidx.constraintlayout.widget.ConstraintSet.END
-import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
-import androidx.constraintlayout.widget.ConstraintSet.START
-import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -203,8 +197,7 @@ class HomeFragment : Fragment() {
         activity.themeManager.applyStatusBarTheme(activity)
 
         view.home_app_bar.addOnOffsetChangedListener(
-            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                appBarLayout.alpha =
+            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset -> appBarLayout.alpha =
                     1.0f - abs(verticalOffset / appBarLayout.totalScrollRange.toFloat())
             }
         )

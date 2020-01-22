@@ -21,7 +21,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|snap">
+            app:layout_scrollFlags="scroll|snap"
 
             <ImageButton
                 android:id="@+id/privateBrowsingButton"
@@ -32,7 +32,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/content_description_private_browsing_button"
                 app:srcCompat="@drawable/private_browsing_button"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="parallax"/>
 
             <ImageView
                 android:id="@+id/wordmark"
