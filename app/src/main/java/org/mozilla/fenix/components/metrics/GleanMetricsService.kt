@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
@@ -44,6 +45,7 @@ import org.mozilla.fenix.GleanMetrics.UserSpecifiedSearchEngines
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.OnVisualCompletenessExecutionQueue
 
 private class EventWrapper<T : Enum<T>>(
     private val recorder: ((Map<T, String>?) -> Unit),
@@ -490,16 +492,20 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         // because it calls Google ad APIs that must be called *off* of the main thread.
         // These two things actually happen in parallel, but that should be ok because Glean
         // can handle events being recorded before it's initialized.
-        gleanInitializer = MainScope().launch {
+        gleanInitializer = MainScope().launch(start = CoroutineStart.LAZY) {
             Glean.registerPings(Pings)
         }
+
         // setStartupMetrics is not a fast function. It does not need to be done before we can consider
         // ourselves initialized. So, let's do it, well, later.
-        gleanSetStartupMetrics = MainScope().launch {
+        gleanSetStartupMetrics = MainScope().launch(start = CoroutineStart.LAZY) {
             setStartupMetrics()
         }
 
         context.settings().totalUriCount = 0
+
+        OnVisualCompletenessExecutionQueue.add(gleanInitializer)
+        OnVisualCompletenessExecutionQueue.add(gleanSetStartupMetrics)
     }
 
     internal fun setStartupMetrics() {

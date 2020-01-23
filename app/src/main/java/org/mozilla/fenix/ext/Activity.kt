@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ext
 
 import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.view.WindowManager
 
@@ -22,3 +23,9 @@ fun Activity.enterToImmersiveMode() {
             or View.SYSTEM_UI_FLAG_FULLSCREEN
             or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 }
+
+/**
+ * Get the Activity as a Context.
+ */
+val Activity.asContext
+    get() = this as Context
