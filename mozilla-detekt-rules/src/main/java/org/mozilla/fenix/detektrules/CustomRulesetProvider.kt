@@ -11,10 +11,16 @@ import io.gitlab.arturbosch.detekt.api.RuleSetProvider
 class CustomRulesetProvider : RuleSetProvider {
     override val ruleSetId: String = "mozilla-detekt-rules"
 
-    override fun instance(config: Config): RuleSet = RuleSet(
-        ruleSetId,
-        listOf(
-            MozillaBannedPropertyAccess(config)
+    override fun instance(config: Config): RuleSet {
+        val providerList = listOf(
+            MozillaBannedPropertyAccess(config),
+            MozillaBannedMethodInvocation(config)
         )
-    )
+        providerList.forEach { it.configure() }
+        return RuleSet(
+            ruleSetId,
+            providerList.filter { it.validate() }
+        )
+    }
 }
+

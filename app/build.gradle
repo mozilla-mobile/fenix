@@ -9,6 +9,7 @@ apply plugin: 'jacoco'
 apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'io.gitlab.arturbosch.detekt'
 
 
 import com.android.build.OutputFile
@@ -362,6 +363,12 @@ androidExtensions {
 }
 
 dependencies {
+
+
+        detekt project(":mozilla-detekt-rules")
+        detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
+
+
     geckoNightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     geckoBetaImplementation Deps.mozilla_browser_engine_gecko_beta
 
@@ -693,4 +700,53 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
     ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
     apply from: "../${acSrcDir}/substitute-local-ac.gradle"
+}
+
+task detektWithAndroidContext() {
+
+    setGroup("verification")
+    setDescription("Run Detekt with a symbol-resolving Android   classpath in order to perform more precise checking.")
+
+    // Only execute these behaviors when the configuration phase of the gradle build lifecycle is complete.
+    doLast {
+        // Create a new Detekt task.
+        def t = this.project.tasks.create("testing", io.gitlab.arturbosch.detekt.Detekt)
+        // Configure that task according to our site specifications
+        t.configure {
+            def projectDir = this.project.getProjectDir().toString()
+
+            // Collect a classpath that uses each of the available variants. This classpath includes all the Android
+            // project's dependencies. This is only available after the configuration phase of the gradle build
+            // lifecycle is complete.
+            def fs = files()
+            android.applicationVariants.each {
+                // Check each element of the classpath to see if it exists before adding it to the list.
+                fs += it.javaCompile.classpath.filter { it.exists() }
+            }
+            // Set a classpath that includes the Android-specific classpath that we just built.
+            classpath.setFrom(fs)
+
+            // Replicate standard detekt configuration closure items.
+
+            // Put the equivalent to the 'input =' value from the detekt configuration closure here.
+            setSource(files("$projectDir/src/"))
+            // This include is the default for Detekt. It must be set explicitly because it does not
+            // get set here automatically like it does when the 'input =' line is set in the
+            // detekt configuration closure.
+            include("**/*.kt", "**/*.kts")
+            config.setFrom(files("$projectDir/config/detekt.yml"))
+            jvmTarget = "1.8"
+            reports {
+                html {
+                    enabled = true
+                    destination = file("$projectDir/build/reports/detekt.html")
+                }
+                xml {
+                    enabled = false
+                }
+            }
+        }
+        // Finally, call check on the Detekt task in order to execute.
+        t.check()
+    }
 }

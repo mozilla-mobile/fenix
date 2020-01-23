@@ -18,7 +18,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.0.0-RC16")
+    id("io.gitlab.arturbosch.detekt").version("1.3.1")
 }
 
 allprojects {
@@ -48,10 +48,9 @@ task clean(type: Delete) {
 
 detekt {
     // The version number is duplicated, please refer to plugins block for more details
-    version = "1.0.0-RC16"
+    version = "1.3.1"
     input = files("$projectDir/app/src")
-    config = files("$projectDir/config/detekt.yml")
-    filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+    config = files("$projectDir/app/config/detekt.yml")
 
     reports {
         html {

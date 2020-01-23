@@ -9,11 +9,10 @@ import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.api.Debt
 import io.gitlab.arturbosch.detekt.api.Entity
 import io.gitlab.arturbosch.detekt.api.Issue
-import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.Severity
 import org.jetbrains.kotlin.psi.*
 
-class MozillaBannedPropertyAccess(config: Config = Config.empty) : Rule(config) {
+class MozillaBannedPropertyAccess(config: Config = Config.empty) : MozillaRule(config) {
     override val issue = Issue(
         "MozillaBannedPropertyAccess",
         Severity.Defect,

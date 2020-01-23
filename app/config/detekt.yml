@@ -1,5 +1,8 @@
-autoCorrect: true
-failFast: false
+config:
+  validation: false
+
+formatting:
+  autoCorrect: true
 
 build:
   maxIssues: 0
@@ -26,13 +29,6 @@ console-reports:
   #  - 'NotificationReport'
   #  - 'FindingsReport'
   #  - 'BuildFailureReport'
-
-output-reports:
-  active: true
-  exclude:
-  #  - 'HtmlOutputReport'
-    - 'PlainOutputReport'
-    - 'XmlOutputReport'
 
 comments:
   active: true
@@ -114,6 +110,9 @@ mozilla-detekt-rules:
     # with the debuggable flag or not. Use a check for different build variants,
     # instead.
     bannedProperties: "BuildConfig.DEBUG"
+  MozillaBannedMethodInvocation:
+    active: true
+    bannedMethods: ".*action[a-zA-Z]+FragmentToBrowserFragment.*"
 
 empty-blocks:
   active: true

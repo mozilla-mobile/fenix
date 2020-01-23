@@ -1,3 +1,6 @@
   MozillaBannedPropertyAccess:
     active: true
     bannedProperties: "Sample.Banned"
+  MozillaBannedMethodInvocation:
+    active: true
+    bannedMethods: ".*Foo\\.bannedMethodX.*, .*Foo\\.bannedMethodY.*, .*forbidden.*, .*[mMisconfigured.*"
