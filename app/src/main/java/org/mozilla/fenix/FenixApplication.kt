@@ -35,6 +35,7 @@ import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
+import org.mozilla.fenix.utils.OnVisualCompletenessExecutionQueue
 
 @SuppressLint("Registered")
 @Suppress("TooManyFunctions")
@@ -45,6 +46,8 @@ open class FenixApplication : LocaleAwareApplication() {
 
     var visibilityLifecycleCallback: VisibilityLifecycleCallback? = null
         private set
+
+    var isApplicationVisuallyComplete = false
 
     override fun onCreate() {
         super.onCreate()
@@ -142,6 +145,20 @@ open class FenixApplication : LocaleAwareApplication() {
         // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
         //    runStorageMaintenance()
         // }
+    }
+
+    // This method will be invoked when the application is visually complete. It *should* only be
+    // invoked once, but we will use a flag to make sure that we only execute operations a single
+    // time.
+    fun onApplicationVisuallyComplete() {
+        if (!isApplicationVisuallyComplete) {
+            logger.info("Fenix is visually complete.")
+
+            // Restart any Jobs that are waiting for visual completeness to run.
+            OnVisualCompletenessExecutionQueue.start()
+
+            isApplicationVisuallyComplete = true
+        }
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.

@@ -14,12 +14,14 @@ import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -62,6 +64,8 @@ import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.ext.application
+import org.mozilla.fenix.ext.asContext
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
@@ -110,6 +114,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
         }
         supportActionBar?.hide()
+
+        // Just before the root container is drawn for the first time, consider Fenix to be visually
+        // complete.
+        rootContainer.doOnPreDraw {
+            this.asContext.application.onApplicationVisuallyComplete()
+        }
     }
 
     @CallSuper
