@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -37,21 +36,21 @@ class InstalledAddonDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bind(addon, view)
+        bind(view)
     }
 
-    private fun bind(addon: Addon, view: View) {
+    private fun bind(view: View) {
         val title = addon.translatableName.translate()
         showToolbar(title)
 
-        bindEnableSwitch(addon, view)
-        bindSettings(addon, view)
-        bindDetails(addon, view)
-        bindPermissions(addon, view)
-        bindRemoveButton(addon, view)
+        bindEnableSwitch(view)
+        bindSettings(view)
+        bindDetails(view)
+        bindPermissions(view)
+        bindRemoveButton(view)
     }
 
-    private fun bindEnableSwitch(addon: Addon, view: View) {
+    private fun bindEnableSwitch(view: View) {
         val switch = view.findViewById<Switch>(R.id.enable_switch)
         switch.setState(addon.isEnabled())
         switch.setOnCheckedChangeListener { _, isChecked ->
@@ -59,55 +58,51 @@ class InstalledAddonDetailsFragment : Fragment() {
                 requireContext().components.addonManager.enableAddon(
                     addon,
                     onSuccess = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Successfully enabled ${addon.translatableName.translate()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showSnackBar(
+                            view,
+                            "Successfully enabled ${addon.translatableName.translate()}"
+                        )
                     },
                     onError = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to enabled ${addon.translatableName.translate()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showSnackBar(
+                            view,
+                            "Failed to enable ${addon.translatableName.translate()}"
+                        )
                     }
                 )
             } else {
                 requireContext().components.addonManager.disableAddon(
                     addon,
                     onSuccess = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Successfully disabled ${addon.translatableName.translate()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showSnackBar(
+                            view,
+                            "Successfully disabled ${addon.translatableName.translate()}"
+                        )
                     },
                     onError = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to disabled ${addon.translatableName.translate()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showSnackBar(
+                            view,
+                            "Failed to disable ${addon.translatableName.translate()}"
+                        )
                     }
                 )
             }
         }
     }
 
-    private fun bindSettings(addOn: Addon, view: View) {
+    private fun bindSettings(view: View) {
         val settingsView = view.findViewById<View>(R.id.settings)
-        settingsView.isEnabled = addOn.installedState?.optionsPageUrl != null
+        settingsView.isEnabled = addon.installedState?.optionsPageUrl != null
         settingsView.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonInternalSettingsFragment(
-                    addOn
+                    addon
                 )
             Navigation.findNavController(settingsView!!).navigate(directions)
         }
     }
 
-    private fun bindDetails(addon: Addon, view: View) {
+    private fun bindDetails(view: View) {
         view.findViewById<View>(R.id.details).setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
@@ -117,7 +112,7 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindPermissions(addon: Addon, view: View) {
+    private fun bindPermissions(view: View) {
         view.findViewById<View>(R.id.permissions).setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
@@ -127,24 +122,19 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindRemoveButton(addon: Addon, view: View) {
+    private fun bindRemoveButton(view: View) {
         view.findViewById<View>(R.id.remove_add_on).setOnClickListener {
             requireContext().components.addonManager.uninstallAddon(
                 addon,
                 onSuccess = {
-                    Toast.makeText(
-                        requireContext(),
-                        "Successfully uninstalled ${addon.translatableName.translate()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showSnackBar(
+                        view,
+                        "Successfully uninstalled ${addon.translatableName.translate()}"
+                    )
                     view.findNavController().popBackStack()
                 },
                 onError = { _, _ ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to uninstall ${addon.translatableName.translate()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showSnackBar(view, "Failed to uninstall ${addon.translatableName.translate()}")
                 }
             )
         }
