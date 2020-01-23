@@ -8,9 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="20dp"
-        android:paddingTop="55dp"
+        android:paddingTop="32dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="67dp">
+        android:paddingBottom="32dp">
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/migration_firefox_logo"
@@ -55,7 +55,7 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/migration_status_list"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/migration_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
