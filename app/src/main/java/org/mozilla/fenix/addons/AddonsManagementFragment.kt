@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -90,7 +89,7 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
                 }
             } catch (e: AddonManagerException) {
                 scope.launch(Dispatchers.Main) {
-                    Toast.makeText(activity, "Failed to query Add-ons!", Toast.LENGTH_SHORT).show()
+                    showSnackBar(view, "Failed to query Add-ons!")
                 }
             }
         }
@@ -136,25 +135,17 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
         requireContext().components.addonManager.installAddon(
             addon,
             onSuccess = {
-                Toast.makeText(
-                    requireContext(),
-                    "Successfully installed: ${it.translatableName.translate()}",
-                    Toast.LENGTH_SHORT
-                ).show()
-
                 this@AddonsManagementFragment.view?.let { view ->
+                    showSnackBar(view, "Successfully installed: ${it.translatableName.translate()}")
                     bindRecyclerView(view)
                 }
 
                 addonProgressOverlay.visibility = View.GONE
             },
             onError = { _, _ ->
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to install: ${addon.translatableName.translate()}",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                this@AddonsManagementFragment.view?.let { view ->
+                    showSnackBar(view, "Failed to install: ${addon.translatableName.translate()}")
+                }
                 addonProgressOverlay.visibility = View.GONE
             }
         )
@@ -162,8 +153,6 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
 
     companion object {
         private const val PERMISSIONS_DIALOG_FRAGMENT_TAG = "ADDONS_PERMISSIONS_DIALOG_FRAGMENT"
-        private const val VIEW_HOLDER_TYPE_SECTION = 0
-        private const val VIEW_HOLDER_TYPE_ADDON = 1
     }
 
     private inner class Section(@StringRes val title: Int)
