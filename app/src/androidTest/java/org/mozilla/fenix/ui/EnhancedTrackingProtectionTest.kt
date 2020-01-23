@@ -13,11 +13,11 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.settingsSubMenuEnhancedTrackingProtection
+import org.mozilla.fenix.utils.Settings
 
 /**
  *  Tests for verifying basic UI functionality of Enhanced Tracking Protection
@@ -46,10 +46,12 @@ class EnhancedTrackingProtectionTest {
         }
 
         // Reset on-boarding notification for each test
-        TestHelper.setPreference(
-            InstrumentationRegistry.getInstrumentation().context,
-            "pref_key_tracking_protection_onboarding", 0
-        )
+        Settings.getInstance(InstrumentationRegistry.getInstrumentation().context).apply {
+            this.preferences.edit().putInt(
+                "pref_key_tracking_protection_onboarding",
+                0
+            ).apply()
+        }
     }
 
     @After

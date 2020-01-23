@@ -4,10 +4,8 @@
 
 package org.mozilla.fenix.helpers
 
-import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -39,13 +37,6 @@ object TestHelper {
                 withText(url.toString())
             )
         ).perform(longClick())
-    }
-
-    fun setPreference(context: Context, pref: String, value: Int) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = preferences.edit()
-        editor.putInt(pref, value)
-        editor.apply()
     }
 
     fun getPermissionAllowID(): String {
