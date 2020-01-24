@@ -2,6 +2,10 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!-- using an AppBarLayout to replace MotionLayout was done in order to improve Fenix
+     start up performance. The use of a MotionLayout was worsening our layout measures, especially
+      with the recycler view -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +15,7 @@
     android:background="?homeBackground">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/home_app_bar"
+        android:id="@+id/homeAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
@@ -54,7 +58,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/session_control_recycler_view"
+        android:id="@+id/sessionControlRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
