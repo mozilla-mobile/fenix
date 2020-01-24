@@ -190,7 +190,8 @@ class HomeFragment : Fragment() {
             )
         )
 
-        sessionControlView = SessionControlView(homeFragmentStore, view.session_control_recycler_view, sessionControlInteractor)
+        sessionControlView = SessionControlView(homeFragmentStore,
+            view.session_control_recycler_view, sessionControlInteractor)
 
         activity.themeManager.applyStatusBarTheme(activity)
 
