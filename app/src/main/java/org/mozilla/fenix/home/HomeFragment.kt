@@ -5,6 +5,7 @@
 package org.mozilla.fenix.home
 
 import android.animation.Animator
+import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -220,7 +221,7 @@ class HomeFragment : Fragment() {
             homeViewModel.layoutManagerState = null
         }
 
-        setupHomeMenu()
+        setupHomeMenu(view.context)
 
         viewLifecycleOwner.lifecycleScope.launch(IO) {
             // This is necessary due to a bug in viewLifecycleOwner. See:
@@ -491,8 +492,7 @@ class HomeFragment : Fragment() {
         nav(R.id.homeFragment, directions)
     }
 
-    private fun setupHomeMenu() {
-        val context = requireContext()
+    private fun setupHomeMenu(context: Context) {
         homeMenu = HomeMenu(context) {
             when (it) {
                 HomeMenu.Item.Settings -> {
