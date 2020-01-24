@@ -51,6 +51,10 @@
         android:id="@+id/action_global_homeFragment"
         app:destination="@id/homeFragment" />
 
+    <action
+        android:id="@+id/action_global_webExtensionActionPopupFragment"
+        app:destination="@id/webExtensionActionPopupFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="org.mozilla.fenix.home.HomeFragment"
@@ -753,5 +757,17 @@
         <argument
             android:name="addon"
             app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
+    <fragment
+        android:id="@+id/webExtensionActionPopupFragment"
+        android:name="org.mozilla.fenix.addons.WebExtensionActionPopupFragment"
+        android:label="WebExtensionActionPopupFragment" >
+        <argument
+            android:name="webExtensionId"
+            app:argType="string" />
+        <argument
+            android:name="webExtensionTitle"
+            app:argType="string"
+            app:nullable="true"/>
     </fragment>
 </navigation>
