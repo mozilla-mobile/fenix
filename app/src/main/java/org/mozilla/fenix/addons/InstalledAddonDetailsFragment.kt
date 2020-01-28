@@ -17,6 +17,7 @@ import mozilla.components.feature.addons.ui.translate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import mozilla.components.feature.addons.ui.translatedName
 
 /**
  * An activity to show the details of a installed add-on.
@@ -60,13 +61,13 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onSuccess = {
                         showSnackBar(
                             view,
-                            "Successfully enabled ${addon.translatableName.translate()}"
+                            getString(R.string.mozac_feature_addons_successfully_enabled, addon.translatedName)
                         )
                     },
                     onError = {
                         showSnackBar(
                             view,
-                            "Failed to enable ${addon.translatableName.translate()}"
+                            getString(R.string.mozac_feature_addons_failed_to_enable, addon.translatedName)
                         )
                     }
                 )
@@ -76,13 +77,13 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onSuccess = {
                         showSnackBar(
                             view,
-                            "Successfully disabled ${addon.translatableName.translate()}"
+                            getString(R.string.mozac_feature_addons_successfully_disabled, addon.translatedName)
                         )
                     },
                     onError = {
                         showSnackBar(
                             view,
-                            "Failed to disable ${addon.translatableName.translate()}"
+                            getString(R.string.mozac_feature_addons_failed_to_disable, addon.translatedName)
                         )
                     }
                 )
@@ -129,12 +130,18 @@ class InstalledAddonDetailsFragment : Fragment() {
                 onSuccess = {
                     showSnackBar(
                         view,
-                        "Successfully uninstalled ${addon.translatableName.translate()}"
+                        getString(R.string.mozac_feature_addons_successfully_uninstalled, addon.translatedName)
                     )
                     view.findNavController().popBackStack()
                 },
                 onError = { _, _ ->
-                    showSnackBar(view, "Failed to uninstall ${addon.translatableName.translate()}")
+                    showSnackBar(
+                        view,
+                        getString(
+                            R.string.mozac_feature_addons_failed_to_uninstall,
+                            addon.translatedName
+                        )
+                    )
                 }
             )
         }

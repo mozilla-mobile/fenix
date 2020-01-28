@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +21,7 @@ import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
-import mozilla.components.feature.addons.ui.translate
+import mozilla.components.feature.addons.ui.translatedName
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
@@ -72,6 +71,10 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
         showPermissionDialog(addon)
     }
 
+    override fun onNotYetSupportedSectionClicked(unsupportedAddons: ArrayList<Addon>) {
+        showNotYetSupportedAddonFragment(unsupportedAddons)
+    }
+
     private fun bindRecyclerView(view: View) {
         recyclerView = view.findViewById(R.id.add_ons_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -89,7 +92,7 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
                 }
             } catch (e: AddonManagerException) {
                 scope.launch(Dispatchers.Main) {
-                    showSnackBar(view, "Failed to query Add-ons!")
+                    showSnackBar(view, getString(R.string.mozac_feature_addons_failed_to_query_add_ons))
                 }
             }
         }
@@ -107,6 +110,14 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
         val directions =
             AddonsManagementFragmentDirections.actionAddonsManagementFragmentToAddonDetailsFragment(
                 addon
+            )
+        Navigation.findNavController(requireView()).navigate(directions)
+    }
+
+    private fun showNotYetSupportedAddonFragment(unsupportedAddons: ArrayList<Addon>) {
+        val directions =
+            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToNotYetSupportedAddonFragment(
+                unsupportedAddons.toTypedArray()
             )
         Navigation.findNavController(requireView()).navigate(directions)
     }
@@ -136,7 +147,13 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
             addon,
             onSuccess = {
                 this@AddonsManagementFragment.view?.let { view ->
-                    showSnackBar(view, "Successfully installed: ${it.translatableName.translate()}")
+                    showSnackBar(
+                        view,
+                        getString(
+                            R.string.mozac_feature_addons_successfully_installed,
+                            it.translatedName
+                        )
+                    )
                     bindRecyclerView(view)
                 }
 
@@ -144,7 +161,7 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
             },
             onError = { _, _ ->
                 this@AddonsManagementFragment.view?.let { view ->
-                    showSnackBar(view, "Failed to install: ${addon.translatableName.translate()}")
+                    showSnackBar(view, getString(R.string.mozac_feature_addons_failed_to_install, addon.translatedName))
                 }
                 addonProgressOverlay.visibility = View.GONE
             }
@@ -154,6 +171,4 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
     companion object {
         private const val PERMISSIONS_DIALOG_FRAGMENT_TAG = "ADDONS_PERMISSIONS_DIALOG_FRAGMENT"
     }
-
-    private inner class Section(@StringRes val title: Int)
 }
