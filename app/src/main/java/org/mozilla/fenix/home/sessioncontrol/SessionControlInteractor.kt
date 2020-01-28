@@ -7,6 +7,7 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.view.View
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
 
 /**
  * Interface for collection related actions in the [SessionControlInteractor].
@@ -150,14 +151,41 @@ interface TabSessionInteractor {
 }
 
 /**
+ * Interface for top site related actions in the [SessionControlInteractor].
+ */
+interface TopSiteInteractor {
+    /**
+     * Opens the given top site in private mode. Called when an user clicks on the "Open in private
+     * tab" top site menu item.
+     *
+     * @param topSite The top site that will be open in private mode.
+     */
+    fun onOpenInPrivateTabClicked(topSite: TopSite)
+
+    /**
+     * Removes the given top site. Called when an user clicks on the "Remove" top site menu item.
+     *
+     * @param topSite The top site that will be removed.
+     */
+    fun onRemoveTopSiteClicked(topSite: TopSite)
+
+    /**
+     * Selects the given top site. Called when a user clicks on a top site.
+     *
+     * @param url The URL of the top site.
+     */
+    fun onSelectTopSite(url: String)
+}
+
+/**
  * Interactor for the Home screen.
- * Provides implementations for the CollectionInteractor, OnboardingInteractor and
- * TabSessionInteractor.
+ * Provides implementations for the CollectionInteractor, OnboardingInteractor,
+ * TabSessionInteractor and TopSiteInteractor.
  */
 @SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
     private val controller: SessionControlController
-) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor {
+) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor, TopSiteInteractor {
     override fun onCloseTab(sessionId: String) {
         controller.handleCloseTab(sessionId)
     }
@@ -190,6 +218,10 @@ class SessionControlInteractor(
         controller.handleDeleteCollectionTapped(collection)
     }
 
+    override fun onOpenInPrivateTabClicked(topSite: TopSite) {
+        controller.handleOpenInPrivateTabClicked(topSite)
+    }
+
     override fun onPauseMediaClicked() {
         controller.handlePauseMediaClicked()
     }
@@ -202,6 +234,10 @@ class SessionControlInteractor(
         controller.handlePrivateBrowsingLearnMoreClicked()
     }
 
+    override fun onRemoveTopSiteClicked(topSite: TopSite) {
+        controller.handleRemoveTopSiteClicked(topSite)
+    }
+
     override fun onRenameCollectionTapped(collection: TabCollection) {
         controller.handleRenameCollectionTapped(collection)
     }
@@ -212,6 +248,10 @@ class SessionControlInteractor(
 
     override fun onSelectTab(tabView: View, sessionId: String) {
         controller.handleSelectTab(tabView, sessionId)
+    }
+
+    override fun onSelectTopSite(url: String) {
+        controller.handleSelectTopSite(url)
     }
 
     override fun onShareTabs() {

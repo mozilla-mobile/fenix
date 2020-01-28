@@ -40,6 +40,13 @@ enum class ReleaseChannel {
             else -> false
         }
 
+    val isBeta: Boolean
+        get() = when (this) {
+            FennecBeta -> true
+            FenixBeta -> true
+            else -> false
+        }
+
     val isNightlyOrDebug: Boolean
         get() = when (this) {
             FenixNightly -> true
@@ -50,6 +57,9 @@ enum class ReleaseChannel {
 
     val isFennec: Boolean
         get() = this in fennecChannels
+
+    val isFenix: Boolean
+        get() = !isFennec
 }
 
 object Config {
