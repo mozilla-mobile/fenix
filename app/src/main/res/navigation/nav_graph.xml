@@ -716,6 +716,9 @@
         <action
             android:id="@+id/action_addonsManagementFragment_to_installedAddonDetails"
             app:destination="@id/installedAddonDetailsFragment" />
+        <action
+            android:id="@+id/action_addonsManagementFragment_to_notYetSupportedAddonFragment"
+            app:destination="@id/notYetSupportedAddonFragment" />
     </fragment>
     <fragment
         android:id="@+id/addonDetailsFragment"
@@ -741,6 +744,14 @@
         <argument
             android:name="addon"
             app:argType="mozilla.components.feature.addons.Addon" />
+    </fragment>
+    <fragment
+        android:id="@+id/notYetSupportedAddonFragment"
+        android:name="org.mozilla.fenix.addons.NotYetSupportedAddonFragment"
+        android:label="NotYetSupportedAddonFragment" >
+        <argument
+            android:name="addons"
+            app:argType="mozilla.components.feature.addons.Addon[]" />
     </fragment>
     <fragment
         android:id="@+id/addonInternalSettingsFragment"
