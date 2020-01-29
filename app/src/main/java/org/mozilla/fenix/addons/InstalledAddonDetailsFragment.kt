@@ -23,15 +23,17 @@ import mozilla.components.feature.addons.ui.translatedName
  * An activity to show the details of a installed add-on.
  */
 class InstalledAddonDetailsFragment : Fragment() {
-    private val addon: Addon by lazy {
-        AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
-    }
+    private lateinit var addon: Addon
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        if (!::addon.isInitialized) {
+            addon = AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
+        }
+
         return inflater.inflate(R.layout.fragment_installed_add_on_details, container, false)
     }
 
@@ -59,6 +61,8 @@ class InstalledAddonDetailsFragment : Fragment() {
                 requireContext().components.addonManager.enableAddon(
                     addon,
                     onSuccess = {
+                        switch.setState(true)
+                        this.addon = it
                         showSnackBar(
                             view,
                             getString(R.string.mozac_feature_addons_successfully_enabled, addon.translatedName)
@@ -75,6 +79,8 @@ class InstalledAddonDetailsFragment : Fragment() {
                 requireContext().components.addonManager.disableAddon(
                     addon,
                     onSuccess = {
+                        switch.setState(false)
+                        this.addon = it
                         showSnackBar(
                             view,
                             getString(R.string.mozac_feature_addons_successfully_disabled, addon.translatedName)
