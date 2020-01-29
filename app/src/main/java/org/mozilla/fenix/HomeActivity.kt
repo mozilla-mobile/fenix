@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.fxa.sync.SyncReason
@@ -40,6 +41,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
+import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -85,6 +87,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     private var isToolbarInflated = false
 
+    private val webExtensionPopupFeature by lazy {
+        WebExtensionPopupFeature(components.core.store, ::openPopup)
+    }
+
     private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
@@ -123,6 +129,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
         }
         supportActionBar?.hide()
+
+        lifecycle.addObserver(webExtensionPopupFeature)
     }
 
     @CallSuper
@@ -149,17 +157,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     final override fun onPostResume() {
         super.onPostResume()
         hotStartMonitor.onPostResumeFinalMethodCall()
-    }
-
-    @kotlinx.coroutines.ExperimentalCoroutinesApi
-    override fun onStart() {
-        super.onStart()
-        webExtScope = observeWebExtensionPopups()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        webExtScope?.cancel()
     }
 
     final override fun onPause() {
@@ -384,25 +381,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
-    @kotlinx.coroutines.ExperimentalCoroutinesApi
-    private fun observeWebExtensionPopups(): CoroutineScope {
-        return components.core.store.flowScoped { flow ->
-            flow.ifChanged { it.extensions }
-                .map { it.extensions.filterValues { extension -> extension.popupSession != null } }
-                .ifChanged()
-                .collect { extensionStates ->
-                    if (extensionStates.values.isNotEmpty()) {
-                        // We currently limit to one active popup session at a time
-                        val webExtensionState = extensionStates.values.first()
-
-                        val action = NavGraphDirections.actionGlobalWebExtensionActionPopupFragment(
-                            webExtensionId = webExtensionState.id,
-                            webExtensionTitle = webExtensionState.name
-                        )
-                        navHost.navController.navigate(action)
-                    }
-                }
-        }
+    private fun openPopup(webExtensionState: WebExtensionState) {
+        val action = NavGraphDirections.actionGlobalWebExtensionActionPopupFragment(
+            webExtensionId = webExtensionState.id,
+            webExtensionTitle = webExtensionState.name
+        )
+        navHost.navController.navigate(action)
     }
 
     companion object {
