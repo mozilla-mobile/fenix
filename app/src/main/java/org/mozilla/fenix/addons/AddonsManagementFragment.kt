@@ -157,13 +157,13 @@ class AddonsManagementFragment : Fragment(), AddonsManagerAdapterDelegate {
                     bindRecyclerView(view)
                 }
 
-                addonProgressOverlay.visibility = View.GONE
+                addonProgressOverlay?.visibility = View.GONE
             },
             onError = { _, _ ->
                 this@AddonsManagementFragment.view?.let { view ->
                     showSnackBar(view, getString(R.string.mozac_feature_addons_failed_to_install, addon.translatedName))
                 }
-                addonProgressOverlay.visibility = View.GONE
+                addonProgressOverlay?.visibility = View.GONE
             }
         )
     }
