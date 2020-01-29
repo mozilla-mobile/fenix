@@ -8,6 +8,7 @@ import android.animation.Animator
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -19,6 +20,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -90,7 +93,7 @@ import kotlin.math.min
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
-
+    private var offSet = 0
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
             if (deleteAllSessionsJob == null) emitSessionChanges()
@@ -194,17 +197,29 @@ class HomeFragment : Fragment() {
             )
         )
 
-        sessionControlView = SessionControlView(homeFragmentStore,
-            view.sessionControlRecyclerView, sessionControlInteractor)
-
-        activity.themeManager.applyStatusBarTheme(activity)
-
         view.homeAppBar.addOnOffsetChangedListener(
             AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
                 appBarLayout.alpha =
                     1.0f - abs(verticalOffset / appBarLayout.totalScrollRange.toFloat())
             }
         )
+
+        if(::sessionControlView.isInitialized) {
+            if(offSet <= 0 || offSet == 1){
+                (view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams).behavior = AppBarLayout.Behavior()
+                val behavior = ((view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams).behavior as AppBarLayout.Behavior)
+                behavior.topAndBottomOffset = offSet
+                behavior.onNestedPreScroll(view as CoordinatorLayout, view.homeAppBar, sessionControlView.view,0 , 1, intArrayOf(2), ViewCompat.TYPE_NON_TOUCH)
+            }else{
+                view.homeAppBar.setExpanded(false)
+            }
+        }
+
+        sessionControlView = SessionControlView(homeFragmentStore,
+                                view.sessionControlRecyclerView, sessionControlInteractor)
+
+        activity.themeManager.applyStatusBarTheme(activity)
+
 
         return view
     }
@@ -436,6 +451,14 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         hideToolbar()
+    }
+
+    override  fun onPause(){
+        super.onPause()
+        val rect = Rect()
+        view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect);
+        offSet =  rect.height() -
+                  view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange + 1
     }
 
     private fun recommendPrivateBrowsingShortcut() {
