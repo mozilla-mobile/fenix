@@ -211,7 +211,7 @@ class HomeFragment : Fragment() {
                     .behavior as AppBarLayout.Behavior)
                 behavior.topAndBottomOffset = offSet
                 behavior.onNestedPreScroll(view as CoordinatorLayout, view.homeAppBar,
-                    sessionControlView.view ,0 , 1 , intArrayOf(2) ,
+                    sessionControlView.view, 0, 1, intArrayOf(2),
                     ViewCompat.TYPE_NON_TOUCH)
             } else {
                 view.homeAppBar.setExpanded(false)
@@ -453,11 +453,11 @@ class HomeFragment : Fragment() {
         hideToolbar()
     }
 
-    override  fun onPause() {
+    override fun onPause() {
         super.onPause()
         val rect = Rect()
         view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect)
-        offSet =  rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange + 1
+        offSet = rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange + 1
     }
 
     private fun recommendPrivateBrowsingShortcut() {
