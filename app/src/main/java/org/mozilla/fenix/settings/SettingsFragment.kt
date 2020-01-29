@@ -186,7 +186,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(getPreferenceKey(pref_key_passwords))?.apply {
             isVisible = FeatureFlags.logins
         }
-        findPreference<PreferenceCategory>(getPreferenceKey(R.string.pref_key_advanced))?.apply {
+        findPreference<Preference>(getPreferenceKey(pref_key_language))?.apply {
             isVisible = FeatureFlags.fenixLanguagePicker
         }
     }
