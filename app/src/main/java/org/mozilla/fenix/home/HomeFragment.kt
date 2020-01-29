@@ -204,14 +204,15 @@ class HomeFragment : Fragment() {
         )
 
         if (::sessionControlView.isInitialized) {
-            if(offSet <= 0 || offSet == 1) {
+            if (offSet <= 0 || offSet == 1) {
                 (view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
                     .behavior = AppBarLayout.Behavior()
                 val behavior = ((view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
                     .behavior as AppBarLayout.Behavior)
                 behavior.topAndBottomOffset = offSet
                 behavior.onNestedPreScroll(view as CoordinatorLayout, view.homeAppBar,
-                    sessionControlView.view,0 , 1, intArrayOf(2), ViewCompat.TYPE_NON_TOUCH)
+                    sessionControlView.view ,0 , 1 , intArrayOf(2) ,
+                    ViewCompat.TYPE_NON_TOUCH)
             } else {
                 view.homeAppBar.setExpanded(false)
             }
@@ -220,8 +221,6 @@ class HomeFragment : Fragment() {
         sessionControlView = SessionControlView(homeFragmentStore,
                                 view.sessionControlRecyclerView, sessionControlInteractor)
         activity.themeManager.applyStatusBarTheme(activity)
-
-
         return view
     }
 
@@ -454,12 +453,11 @@ class HomeFragment : Fragment() {
         hideToolbar()
     }
 
-    override  fun onPause(){
+    override  fun onPause() {
         super.onPause()
         val rect = Rect()
-        view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect);
-        offSet =  rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar)
-            .totalScrollRange + 1
+        view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect)
+        offSet =  rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange + 1
     }
 
     private fun recommendPrivateBrowsingShortcut() {
