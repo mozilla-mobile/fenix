@@ -10,11 +10,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.ui.AddonPermissionsAdapter
 import mozilla.components.feature.addons.ui.translate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.showToolbar
@@ -40,12 +40,9 @@ class AddonPermissionsDetailsFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val title = addon.translatableName.translate()
-        showToolbar(title)
+        showToolbar(addon.translatableName.translate())
 
         bindPermissions(addon, view)
-
         bindLearnMore(view)
     }
 
@@ -55,46 +52,12 @@ class AddonPermissionsDetailsFragment : Fragment(), View.OnClickListener {
         val sortedPermissions = addon.translatePermissions().map { stringId ->
             getString(stringId)
         }.sorted()
-        recyclerView.adapter = PermissionsAdapter(sortedPermissions)
+        recyclerView.adapter = AddonPermissionsAdapter(sortedPermissions)
     }
 
     private fun bindLearnMore(view: View) {
         view.findViewById<View>(R.id.learn_more_label).setOnClickListener(this)
     }
-
-    /**
-     * An adapter for displaying the permissions of an add-on.
-     */
-    class PermissionsAdapter(
-        private val permissions: List<String>
-    ) :
-        RecyclerView.Adapter<PermissionViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PermissionViewHolder {
-            val context = parent.context
-            val inflater = LayoutInflater.from(context)
-            val view = inflater.inflate(R.layout.add_ons_permission_item, parent, false)
-            val titleView = view.findViewById<TextView>(R.id.permission)
-            return PermissionViewHolder(
-                view,
-                titleView
-            )
-        }
-
-        override fun getItemCount() = permissions.size
-
-        override fun onBindViewHolder(holder: PermissionViewHolder, position: Int) {
-            val permission = permissions[position]
-            holder.textView.text = permission
-        }
-    }
-
-    /**
-     * A view holder for displaying the permissions of an add-on.
-     */
-    class PermissionViewHolder(
-        val view: View,
-        val textView: TextView
-    ) : RecyclerView.ViewHolder(view)
 
     override fun onClick(v: View?) {
         val intent =
