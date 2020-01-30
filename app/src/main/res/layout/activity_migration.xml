@@ -2,6 +2,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -33,7 +34,7 @@
                 android:layout_marginStart="24dp"
                 android:maxLines="2"
                 android:text="@string/migration_title"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="Sharp Sans"
                 android:textColor="@color/button_text_color"
                 android:textStyle="bold"
                 android:textSize="20sp"
@@ -46,16 +47,17 @@
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/migration_description"
                 android:layout_width="0dp"
+                android:fontFamily="Inter UI"
+                android:justificationMode="inter_word"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/migration_description"
                 android:textColor="@color/text_scale_example_text_color"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-light"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/migration_firefox_logo" />
+                app:layout_constraintTop_toBottomOf="@+id/migration_firefox_logo"
+                tools:targetApi="o" />
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/migration_status_list"
