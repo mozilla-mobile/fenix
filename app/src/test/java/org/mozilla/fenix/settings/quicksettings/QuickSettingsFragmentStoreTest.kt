@@ -79,6 +79,7 @@ class QuickSettingsFragmentStoreTest {
         assertAll {
             assertThat(state).isNotNull()
             assertThat(state.websiteUrl).isSameAs(websiteUrl)
+            assertThat(state.websiteTitle).isSameAs(websiteTitle)
             assertThat(state.securityInfoRes).isEqualTo(secureStringRes)
             assertThat(state.iconRes).isEqualTo(secureDrawableRes)
             assertThat(state.iconTintRes).isEqualTo(secureColorRes)
@@ -96,6 +97,7 @@ class QuickSettingsFragmentStoreTest {
         assertAll {
             assertThat(state).isNotNull()
             assertThat(state.websiteUrl).isSameAs(websiteUrl)
+            assertThat(state.websiteTitle).isSameAs(websiteTitle)
             assertThat(state.securityInfoRes).isEqualTo(insecureStringRes)
             assertThat(state.iconRes).isEqualTo(insecureDrawableRes)
             assertThat(state.iconTintRes).isEqualTo(insecureColorRes)
