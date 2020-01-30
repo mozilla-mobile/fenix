@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
@@ -22,7 +23,7 @@ import org.mozilla.fenix.ext.showToolbar
 /**
  * A fragment to show the web extension action popup with [EngineView].
  */
-class WebExtensionActionPopupFragment : Fragment() {
+class WebExtensionActionPopupFragment : Fragment(), EngineSession.Observer {
     private val webExtensionTitle: String? by lazy {
         WebExtensionActionPopupFragmentArgs.fromBundle(requireNotNull(arguments)).webExtensionTitle
     }
@@ -48,6 +49,22 @@ class WebExtensionActionPopupFragment : Fragment() {
         showToolbar(title)
     }
 
+    override fun onStart() {
+        super.onStart()
+        engineSession?.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        engineSession?.unregister(this)
+    }
+
+    override fun onWindowRequest(windowRequest: WindowRequest) {
+        if (windowRequest.type == WindowRequest.Type.CLOSE) {
+            activity?.onBackPressed()
+        }
+    }
+
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,8 +79,9 @@ class WebExtensionActionPopupFragment : Fragment() {
                     extState.popupSession?.let {
                         if (engineSession == null) {
                             addonSettingsEngineView.render(it)
-                            engineSession = it
+                            it.register(this)
                             consumePopupSession()
+                            engineSession = it
                         }
                     }
                 }
