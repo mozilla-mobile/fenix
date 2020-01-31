@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
@@ -26,6 +27,8 @@ class SettingsSubMenuEnhancedTrackingProtectionRobot {
     fun verifyEnhancedTrackingProtectionOptions() = assertEnhancedTrackingProtectionOptions()
 
     fun verifyEnhancedTrackingProtectionDefaults() = assertEnhancedTrackingProtectionDefaults()
+
+    fun clickEnhancedTrackingProtectionSwitch() = toggleEnhancedTrackingProtectionSwitch()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
@@ -75,6 +78,11 @@ private fun assertEnhancedTrackingProtectionDefaults() {
             )
         )
     )
+}
+
+private fun toggleEnhancedTrackingProtectionSwitch() {
+    onView(withResourceName("switch_widget"))
+        .perform(click())
 }
 
 fun settingsSubMenuEnhancedTrackingProtection(interact: SettingsSubMenuEnhancedTrackingProtectionRobot.() -> Unit): SettingsSubMenuEnhancedTrackingProtectionRobot.Transition {

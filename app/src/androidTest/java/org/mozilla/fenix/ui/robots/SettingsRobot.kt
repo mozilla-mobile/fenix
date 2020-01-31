@@ -145,7 +145,44 @@ class SettingsRobot {
             SettingsSubMenuLoginsAndPasswordRobot().interact()
             return SettingsSubMenuLoginsAndPasswordRobot.Transition()
         }
+
+        fun openSitePermissionsSubMenu(interact: SettingsSubMenuSitePermissionsRobot.() -> Unit): SettingsSubMenuSitePermissionsRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("Site permissions")
+            fun sitePermissionsButton() = onView(ViewMatchers.withText("Site permissions"))
+            sitePermissionsButton().click()
+
+            SettingsSubMenuSitePermissionsRobot().interact()
+            return SettingsSubMenuSitePermissionsRobot.Transition()
+        }
+
+        fun openDeleteBrowsingDataSubMenu(interact: SettingsSubMenuDeleteBrowsingDataRobot.() -> Unit): SettingsSubMenuDeleteBrowsingDataRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("Delete browsing data")
+
+            onView(ViewMatchers.withText("Delete browsing data"))
+                .click()
+
+            SettingsSubMenuDeleteBrowsingDataRobot().interact()
+            return SettingsSubMenuDeleteBrowsingDataRobot.Transition()
+        }
+
+        fun openDataCollectionSubMenu(interact: SettingsSubMenuDataCollectionRobot.() -> Unit): SettingsSubMenuDataCollectionRobot.Transition {
+            mDevice.waitForIdle()
+            TestHelper.scrollToElementByText("Data collection")
+
+            onView(ViewMatchers.withText("Data collection"))
+                .click()
+
+            SettingsSubMenuDataCollectionRobot().interact()
+            return SettingsSubMenuDataCollectionRobot.Transition()
+        }
     }
+}
+
+fun settingsScreen(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
+    SettingsRobot().interact()
+    return SettingsRobot.Transition()
 }
 
 private fun assertSettingsView() {
@@ -230,8 +267,11 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
 private fun assertDataCollectionButton() = onView(ViewMatchers.withText("Data collection"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertLeakCanaryButton() = onView(ViewMatchers.withText("LeakCanary"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertLeakCanaryButton() {
+    TestHelper.scrollToElementByText("LeakCanary")
+    onView(ViewMatchers.withText("LeakCanary"))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 // DEVELOPER TOOLS SECTION
 private fun assertDeveloperToolsHeading() {

@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -34,6 +35,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.doesViewExist
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.components.Search
 import org.mozilla.fenix.helpers.withBitmapDrawable
@@ -49,9 +51,11 @@ class HomeScreenRobot {
     fun verifyOpenTabsHeader() = assertOpenTabsHeader()
     fun verifyAddTabButton() = assertAddTabButton()
     fun verifyNoTabsOpenedText() = assertNoTabsOpenedText()
+    fun verifyNoTabsOpened() = assertNoTabsOpened()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsHeader() = assertNoCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
+    fun verifyNoCollectionsOpened() = assertNoCollectionsOpened()
     fun verifyNoTabsOpenedHeader() = assertNoTabsOpenedHeader()
     fun verifyHomeWordmark() = assertHomeWordmark()
     fun verifyHomeToolbar() = assertHomeToolbar()
@@ -103,24 +107,24 @@ class HomeScreenRobot {
     }
 
     fun selectRenameCollection() {
-        onView(allOf(ViewMatchers.withText("Rename collection"))).click()
+        onView(allOf(withText("Rename collection"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("name_collection_edittext")))
     }
 
     fun selectDeleteCollection() {
-        onView(allOf(ViewMatchers.withText("Delete collection"))).click()
+        onView(allOf(withText("Delete collection"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("message")), waitingTime)
     }
 
     fun confirmDeleteCollection() {
-        onView(allOf(ViewMatchers.withText("DELETE"))).click()
+        onView(allOf(withText("DELETE"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("collections_header")), waitingTime)
     }
 
     fun typeCollectionName(name: String) {
         mDevice.wait(Until.findObject(By.res("name_collection_edittext")), waitingTime)
         collectionNameTextField().perform(ViewActions.replaceText(name))
-        collectionNameTextField().perform(ViewActions.pressImeActionButton())
+        collectionNameTextField().perform(pressImeActionButton())
     }
 
     fun scrollToElementByText(text: String): UiScrollable {
@@ -262,12 +266,17 @@ private fun assertAddTabButton() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertNoTabsOpenedHeader() =
-    onView(CoreMatchers.allOf(withText("No open tabs")))
+    onView(withText("No open tabs"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertNoTabsOpenedText() {
-    onView(CoreMatchers.allOf(withText("Your open tabs will be shown here.")))
+    onView(withText("Your open tabs will be shown here."))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertNoTabsOpened() {
+    assertNoTabsOpenedHeader()
+    assertNoTabsOpenedText()
 }
 
 private fun assertCollectionsHeader() =
@@ -288,6 +297,11 @@ private fun assertNoCollectionsText() =
 
 private fun assertHomeComponent() = onView(ViewMatchers.withResourceName("sessionControlRecyclerView"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertNoCollectionsOpened() {
+    assertNoCollectionsHeader()
+    assertNoCollectionsText()
+}
 
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
 
@@ -448,6 +462,27 @@ private fun collectionThreeDotButton() =
 
 private fun collectionNameTextField() =
     onView(allOf(ViewMatchers.withResourceName("name_collection_edittext")))
+
+private fun saveToCollectionButton() = onView(allOf(withText("Save to collection")))
+
+fun saveCollection(page1: String, page2: String) {
+    saveToCollectionButton().click()
+
+    onView(allOf(withText(page1)))
+        .click()
+    onView(allOf(withText(page2)))
+        .click()
+    onView(allOf(withId(R.id.save_button)))
+        .click()
+
+    val addNewCollectionView = onView(withText("Add new collection"))
+    if (addNewCollectionView.doesViewExist()) {
+        addNewCollectionView.perform(click())
+    }
+
+    onView(withId(R.id.name_collection_edittext))
+        .perform(pressImeActionButton())
+}
 
 private fun closeTabViaX(title: String) {
     val closeButton = onView(

@@ -5,7 +5,6 @@
 package org.mozilla.fenix.helpers
 
 import android.net.Uri
-
 import okhttp3.mockwebserver.MockWebServer
 import org.mozilla.fenix.helpers.ext.toUri
 import java.util.concurrent.TimeUnit
@@ -21,7 +20,7 @@ object TestAssetHelper {
     data class TestAsset(val url: Uri, val content: String)
 
     /**
-     * Hosts 3 simple websites, found at androidTest/assets/pages/generic[1|2|3].html
+     * Hosts 4 simple websites, found at androidTest/assets/pages/generic[1|2|3|4].html
      * Returns a list of TestAsset, which can be used to navigate to each and
      * assert that the correct information is being displayed.
      *
@@ -80,6 +79,18 @@ object TestAssetHelper {
 
     fun getImageAsset(server: MockWebServer): TestAsset {
         val url = server.url("resources/rabbit.jpg").toString().toUri()!!
+
+        return TestAsset(url, "")
+    }
+
+    fun getSitePermissionsAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/site_permissions.html").toString().toUri()!!
+
+        return TestAsset(url, "")
+    }
+
+    fun getVideoAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/video.html").toString().toUri()!!
 
         return TestAsset(url, "")
     }

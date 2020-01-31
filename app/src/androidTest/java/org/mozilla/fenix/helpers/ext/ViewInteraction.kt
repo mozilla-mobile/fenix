@@ -4,9 +4,11 @@
 
 package org.mozilla.fenix.helpers
 
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 
 fun ViewInteraction.click(): ViewInteraction = this.perform(ViewActions.click())!!
 
@@ -20,4 +22,13 @@ fun ViewInteraction.assertIsChecked(isChecked: Boolean): ViewInteraction {
 
 fun ViewInteraction.assertIsSelected(isSelected: Boolean): ViewInteraction {
     return this.check(matches(isSelected(isSelected)))!!
+}
+
+fun ViewInteraction.doesViewExist(): Boolean {
+    try {
+        this.check(matches(ViewMatchers.isDisplayed()))
+    } catch (exception: NoMatchingViewException) {
+        return false
+    }
+    return true
 }
