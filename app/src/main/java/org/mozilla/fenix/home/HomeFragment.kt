@@ -204,7 +204,7 @@ class HomeFragment : Fragment() {
         )
 
         if (::sessionControlView.isInitialized) {
-            if (offSet <= 0 || offSet == 1) {
+            if (offSet < 0) {
                 (view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
                     .behavior = AppBarLayout.Behavior()
                 val behavior = ((view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
@@ -457,7 +457,7 @@ class HomeFragment : Fragment() {
         super.onPause()
         val rect = Rect()
         view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect)
-        offSet = rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange + 1
+        offSet = rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange
     }
 
     private fun recommendPrivateBrowsingShortcut() {
