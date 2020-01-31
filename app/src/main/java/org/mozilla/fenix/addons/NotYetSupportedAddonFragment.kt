@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.addons
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,9 @@ import mozilla.components.feature.addons.ui.UnsupportedAddonsAdapterDelegate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+
+private const val LEARN_MORE_URL =
+    "https://support.mozilla.org/kb/add-compatibility-firefox-preview"
 
 /**
  * Fragment for displaying and managing add-ons that are not yet supported by the browser.
@@ -44,6 +49,11 @@ class NotYetSupportedAddonFragment : Fragment(), UnsupportedAddonsAdapterDelegat
             unsupportedAddonsAdapterDelegate = this@NotYetSupportedAddonFragment,
             unsupportedAddons = addons
         )
+
+        view.findViewById<View>(R.id.learn_more_label).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(LEARN_MORE_URL))
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
