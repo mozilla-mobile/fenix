@@ -92,7 +92,7 @@ import kotlin.math.min
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
-    private var offSet = 0
+    private var homeAppBarOffset = 0
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
             if (deleteAllSessionsJob == null) emitSessionChanges()
@@ -130,7 +130,7 @@ class HomeFragment : Fragment() {
     private val onboarding by lazy { FenixOnboarding(requireContext()) }
     private lateinit var homeFragmentStore: HomeFragmentStore
     private lateinit var sessionControlInteractor: SessionControlInteractor
-    private lateinit var sessionControlView: SessionControlView
+    private var sessionControlView: SessionControlView? = null
     private lateinit var currentMode: CurrentMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -203,20 +203,7 @@ class HomeFragment : Fragment() {
             }
         )
 
-        if (::sessionControlView.isInitialized) {
-            if (offSet < 0) {
-                (view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
-                    .behavior = AppBarLayout.Behavior()
-                val behavior = ((view.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
-                    .behavior as AppBarLayout.Behavior)
-                behavior.topAndBottomOffset = offSet
-                behavior.onNestedPreScroll(view as CoordinatorLayout, view.homeAppBar,
-                    sessionControlView.view, 0, 1, intArrayOf(2),
-                    ViewCompat.TYPE_NON_TOUCH)
-            } else {
-                view.homeAppBar.setExpanded(false)
-            }
-        }
+        setOffset(view)
 
         sessionControlView = SessionControlView(homeFragmentStore,
                                 view.sessionControlRecyclerView, sessionControlInteractor)
@@ -234,7 +221,7 @@ class HomeFragment : Fragment() {
                 ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
             }
             homeViewModel.layoutManagerState?.also { parcelable ->
-                sessionControlView.view.layoutManager?.onRestoreInstanceState(parcelable)
+                sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
             homeViewModel.layoutManagerState = null
         }
@@ -316,6 +303,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         homeMenu = null
+        sessionControlView = null
         super.onDestroyView()
     }
 
@@ -445,7 +433,7 @@ class HomeFragment : Fragment() {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
         }
         homeViewModel.layoutManagerState =
-            sessionControlView.view.layoutManager?.onSaveInstanceState()
+            sessionControlView!!.view.layoutManager?.onSaveInstanceState()
     }
 
     override fun onResume() {
@@ -455,9 +443,7 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        val rect = Rect()
-        view!!.findViewById<AppBarLayout>(R.id.homeAppBar).getGlobalVisibleRect(rect)
-        offSet = rect.height() - view!!.findViewById<AppBarLayout>(R.id.homeAppBar).totalScrollRange
+        calculateNewOffset()
     }
 
     private fun recommendPrivateBrowsingShortcut() {
@@ -685,7 +671,7 @@ class HomeFragment : Fragment() {
     private fun scrollToTheTop() {
         lifecycleScope.launch(Main) {
             delay(ANIM_SCROLL_DELAY)
-            sessionControlView.view.smoothScrollToPosition(0)
+            sessionControlView!!.view.smoothScrollToPosition(0)
         }
     }
 
@@ -695,7 +681,7 @@ class HomeFragment : Fragment() {
     ) {
         if (view != null) {
             viewLifecycleOwner.lifecycleScope.launch {
-                val recyclerView = sessionControlView.view
+                val recyclerView = sessionControlView!!.view
                 delay(ANIM_SCROLL_DELAY)
                 val tabsSize = getListOfSessions().size
 
@@ -738,7 +724,7 @@ class HomeFragment : Fragment() {
     private fun animateCollection(addedTabsSize: Int, indexOfCollection: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val viewHolder =
-                sessionControlView.view.findViewHolderForAdapterPosition(indexOfCollection)
+                sessionControlView!!.view.findViewHolderForAdapterPosition(indexOfCollection)
             val border =
                 (viewHolder as? CollectionViewHolder)?.view?.findViewById<View>(R.id.selected_border)
             val listener = object : Animator.AnimatorListener {
@@ -802,6 +788,23 @@ class HomeFragment : Fragment() {
             }
 
             it.toTab(requireContext(), it == selected, mediaState)
+        }
+    }
+
+    private fun calculateNewOffset(){
+        homeAppBarOffset = ((view!!.findViewById<AppBarLayout>(R.id.homeAppBar)
+                                .layoutParams as CoordinatorLayout.LayoutParams)
+                                .behavior as AppBarLayout.Behavior).topAndBottomOffset
+    }
+
+    private fun setOffset(currentView: View){
+        if (homeAppBarOffset <= 0) {
+            (currentView.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
+                .behavior = AppBarLayout.Behavior().apply {
+                topAndBottomOffset = this@HomeFragment.homeAppBarOffset
+            }
+        } else {
+            currentView.homeAppBar.setExpanded(false)
         }
     }
 

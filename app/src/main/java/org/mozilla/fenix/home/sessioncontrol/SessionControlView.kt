@@ -134,20 +134,18 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
 @ExperimentalCoroutinesApi
 class SessionControlView(
     private val homeFragmentStore: HomeFragmentStore,
-    private val container: ViewGroup,
+    override val containerView: View?,
     interactor: SessionControlInteractor
 ) : LayoutContainer {
-    override val containerView: View?
-        get() = container
 
-    val view: RecyclerView = container as RecyclerView
+    val view: RecyclerView = containerView as RecyclerView
 
     private val sessionControlAdapter = SessionControlAdapter(interactor)
 
     init {
         view.apply {
             adapter = sessionControlAdapter
-            layoutManager = LinearLayoutManager(container.context)
+            layoutManager = LinearLayoutManager(containerView!!.context)
             val itemTouchHelper =
                 ItemTouchHelper(
                     SwipeToDeleteCallback(
