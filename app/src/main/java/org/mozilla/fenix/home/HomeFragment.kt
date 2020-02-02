@@ -8,7 +8,6 @@ import android.animation.Animator
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -21,7 +20,6 @@ import android.widget.PopupWindow
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -791,13 +789,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun calculateNewOffset(){
+    private fun calculateNewOffset() {
         homeAppBarOffset = ((view!!.findViewById<AppBarLayout>(R.id.homeAppBar)
                                 .layoutParams as CoordinatorLayout.LayoutParams)
                                 .behavior as AppBarLayout.Behavior).topAndBottomOffset
     }
 
-    private fun setOffset(currentView: View){
+    private fun setOffset(currentView: View) {
         if (homeAppBarOffset <= 0) {
             (currentView.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams)
                 .behavior = AppBarLayout.Behavior().apply {

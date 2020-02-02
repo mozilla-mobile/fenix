@@ -6,7 +6,6 @@ package org.mozilla.fenix.home.sessioncontrol
 
 import android.os.Build
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
