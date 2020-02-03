@@ -31,6 +31,7 @@ android {
         manifestPlaceholders.isRaptorEnabled = "false"
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
+        testInstrumentationRunnerArgument "notAnnotation", "androidx.test.filters.FlakyTest"
     }
 
     def releaseTemplate = {

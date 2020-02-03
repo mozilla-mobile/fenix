@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import kotlinx.coroutines.runBlocking
 import mozilla.appservices.places.BookmarkRoot
@@ -316,6 +317,7 @@ class BookmarksTest {
     }
 
     @Test
+    @FlakyTest
     fun multipleBookmarkDeletions() {
         homeScreen {
         }.openThreeDotMenu {
