@@ -61,6 +61,7 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.HotStartPerformanceMonitor
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.search.SearchFragmentDirections
+import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.settings.DefaultBrowserSettingsFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
@@ -86,6 +87,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     private val webExtensionPopupFeature by lazy {
         WebExtensionPopupFeature(components.core.store, ::openPopup)
     }
+
+    private var isFirstPrivateLoad = true
 
     private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
@@ -343,6 +346,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     ) {
         val mode = browsingModeManager.mode
 
+        setupNotificationObserverIfNecessary(mode)
+
         val loadUrlUseCase = if (newTab) {
             when (mode) {
                 BrowsingMode.Private -> components.useCases.tabsUseCases.addPrivateTab
@@ -375,6 +380,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         if (sessionMode != browsingModeManager.mode) {
             browsingModeManager.mode = sessionMode
         }
+    }
+
+    /**
+     * Registers the notification observer if necessary.
+     * This is done the first time a private tab is loaded.
+     */
+    private fun setupNotificationObserverIfNecessary(mode: BrowsingMode) {
+        if (!isFirstPrivateLoad || !mode.isPrivate) {
+            return
+        }
+
+        components.core.sessionManager.register(NotificationSessionObserver(applicationContext))
+        isFirstPrivateLoad = false
     }
 
     protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
