@@ -164,6 +164,7 @@ android {
         }
         fennecBeta {
             java.srcDirs = ['src/migration/java']
+            res.srcDirs = ['src/fenixBeta/res']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         fennecProduction {
