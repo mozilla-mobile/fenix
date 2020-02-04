@@ -124,6 +124,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             FenixOnboarding(this).finish()
         }
 
+        if(intent.getBooleanExtra(EXTRA_NO_TP, false)){
+            settings().shouldUseTrackingProtection = false
+        }
+
         if (settings().isTelemetryEnabled) {
             lifecycle.addObserver(BreadcrumbsRecorder(components.analytics.crashReporter,
                 navHost.navController, ::getBreadcrumbMessage))
@@ -403,5 +407,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
         const val EXTRA_FINISH_ONBOARDING = "finishonboarding"
+        const val EXTRA_NO_TP = "notrackingprotection"
     }
 }
