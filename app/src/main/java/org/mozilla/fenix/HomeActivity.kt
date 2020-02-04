@@ -124,7 +124,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             FenixOnboarding(this).finish()
         }
 
-        if(intent.getBooleanExtra(EXTRA_NO_TP, false)){
+        if (intent.getBooleanExtra(EXTRA_NO_TP, false)) {
             settings().shouldUseTrackingProtection = false
         }
 
