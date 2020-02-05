@@ -45,6 +45,9 @@ def get_decision_parameters(graph_config, parameters):
     pr_number = os.environ.get("MOBILE_PULL_REQUEST_NUMBER", None)
     parameters["pull_request_number"] = None if pr_number is None else int(pr_number)
 
+    # XXX force raptor on PRs
+    parameters["target_tasks_method"] = "raptor"
+
     if parameters["tasks_for"] == "github-release":
         for param_name in ("release_type", "release_version"):
             if not parameters[param_name]:
