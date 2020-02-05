@@ -24,16 +24,17 @@ import org.mozilla.fenix.search.SearchFragment
 
 @ExperimentalCoroutinesApi
 @RequiresApi(Build.VERSION_CODES.M)
-class VisualMetricsInstrumentation(private val naviageToUrl: String): FragmentManager.FragmentLifecycleCallbacks(){
+class VisualMetricsInstrumentation(private val naviageToUrl: String) :
+    FragmentManager.FragmentLifecycleCallbacks() {
 
-    private  var runnableEvent : Thread
+    private var runnableEvent: Thread
 
-    init{
+    init {
         runnableEvent = Thread {
-            try{
+            try {
                 val inst = Instrumentation()
                 inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER)
-            }catch(e: InterruptedException){
+            } catch (e: InterruptedException) {
                 Log.e("error dispatching key", "test failed")
             }
         }
@@ -42,11 +43,11 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String): FragmentMa
 
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
         super.onFragmentCreated(fm, f, savedInstanceState)
-        if (f is SearchFragment){
+        if (f is SearchFragment) {
             runBlocking {
                 f.activity!!.window.decorView.foreground = ColorDrawable(Color.GREEN)
             }
-        } else if (f is BaseBrowserFragment){
+        } else if (f is BaseBrowserFragment) {
             runBlocking {
                 f.activity!!.window.decorView.foreground = ColorDrawable(Color.RED)
             }
@@ -55,22 +56,23 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String): FragmentMa
 
     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
         super.onFragmentResumed(fm, f)
-        if(f is HomeFragment){
-            f.view!!.post{
+        if (f is HomeFragment) {
+            f.view!!.post {
                 f.activity!!.window.decorView.foreground = null
-                f.view!!.postOnAnimation{
+                f.view!!.postOnAnimation {
                     f.view!!.toolbar_wrapper.callOnClick()
                 }
             }
-        } else if(f is SearchFragment) {
-            f.view!!.post{
+        } else if (f is SearchFragment) {
+            f.view!!.post {
                 f.activity!!.window.decorView.foreground = null
             }
             f.view!!.postOnAnimationDelayed({
-                f.view!!.post{
+                f.view!!.post {
                     (f.view!! as ViewGroup).children.iterator().forEach {
-                        if(it.resources.getResourceName(it.id).contains("toolbar_wrapper")){
-                            val toolBar = ((it as ViewGroup).getChildAt(0) as ViewGroup).getChildAt(0) as BrowserToolbar
+                        if (it.resources.getResourceName(it.id).contains("toolbar_wrapper")) {
+                            val toolBar =
+                                ((it as ViewGroup).getChildAt(0) as ViewGroup).getChildAt(0) as BrowserToolbar
                             val url = toolBar.findViewById<InlineAutocompleteEditText>(
                                 R.id.mozac_browser_toolbar_edit_url_view
                             )
@@ -80,8 +82,8 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String): FragmentMa
                     }
                 }
             }, 1000)
-        } else if(f is BrowserFragment){
-            f.view!!.post{
+        } else if (f is BrowserFragment) {
+            f.view!!.post {
                 f.activity!!.window.decorView.foreground = null
             }
         }
