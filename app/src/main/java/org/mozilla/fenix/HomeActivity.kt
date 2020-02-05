@@ -391,15 +391,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
-
     @ExperimentalCoroutinesApi
-    private fun performanceTestingIntentProcessing(intent: Intent){
+    private fun performanceTestingIntentProcessing(intent: Intent) {
 
         if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false)) {
             FenixOnboarding(this).finish()
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false)) {
                 window.decorView.foreground = ColorDrawable(Color.BLUE)
                 val url = intent.getStringExtra(URL_TO_NAVIGATE)

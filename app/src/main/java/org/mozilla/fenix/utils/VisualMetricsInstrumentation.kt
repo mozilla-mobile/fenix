@@ -13,7 +13,8 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.R
@@ -39,7 +40,6 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String) :
             }
         }
     }
-
 
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
         super.onFragmentCreated(fm, f, savedInstanceState)
