@@ -21,7 +21,10 @@ import org.mozilla.fenix.ext.setBounds
 class OnboardingPrivateBrowsingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
-        view.header_text.setOnboardingIcon(R.drawable.ic_onboarding_private_browsing)
+        view.header_text.setOnboardingIcon(
+            R.drawable.ic_onboarding_private_browsing,
+            R.color.onboarding_card_icon
+        )
 
         // Display a private browsing icon as a character inside the description text.
         val inlineIcon = PrivateBrowsingImageSpan(

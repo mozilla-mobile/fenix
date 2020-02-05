@@ -22,7 +22,10 @@ class OnboardingTrackingProtectionViewHolder(view: View) : RecyclerView.ViewHold
     private var trackingProtectionToggle: Switch
 
     init {
-        view.header_text.setOnboardingIcon(R.drawable.ic_onboarding_tracking_protection)
+        view.header_text.setOnboardingIcon(
+            R.drawable.ic_onboarding_tracking_protection,
+            R.color.onboarding_card_icon
+        )
 
         trackingProtectionToggle = view.tracking_protection_toggle
         standardTrackingProtection = view.tracking_protection_standard_option
