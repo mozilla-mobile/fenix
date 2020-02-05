@@ -7,6 +7,9 @@ package org.mozilla.fenix
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -24,6 +27,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.navigationToolbarStub
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -69,6 +73,7 @@ import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.VisualMetricsInstrumentation
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
@@ -109,24 +114,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         super.applyOverrideConfiguration(overrideConfiguration)
     }
 
+    @ExperimentalCoroutinesApi
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        performanceTestingIntentProcessing(intent)
         components.publicSuffixList.prefetch()
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
+
         Performance.instrumentColdStartupToHomescreenTime(this)
 
         externalSourceIntentProcessors.any { it.process(intent, navHost.navController, this.intent) }
-
-        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false)) {
-            FenixOnboarding(this).finish()
-        }
-
-        if (intent.getBooleanExtra(EXTRA_NO_TP, false)) {
-            settings().shouldUseTrackingProtection = false
-        }
 
         if (settings().isTelemetryEnabled) {
             lifecycle.addObserver(BreadcrumbsRecorder(components.analytics.crashReporter,
@@ -391,6 +391,30 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
+
+    @ExperimentalCoroutinesApi
+    private fun performanceTestingIntentProcessing(intent: Intent){
+
+        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false)) {
+            FenixOnboarding(this).finish()
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false)) {
+                window.decorView.foreground = ColorDrawable(Color.BLUE)
+                val url = intent.getStringExtra(URL_TO_NAVIGATE)
+                supportFragmentManager.registerFragmentLifecycleCallbacks(
+                    VisualMetricsInstrumentation(
+                        url
+                    ), true)
+            }
+        }
+
+        if (intent.getBooleanExtra(EXTRA_NO_TP, false)) {
+            settings().shouldUseTrackingProtection = false
+        }
+    }
+
     private fun openPopup(webExtensionState: WebExtensionState) {
         val action = NavGraphDirections.actionGlobalWebExtensionActionPopupFragment(
             webExtensionId = webExtensionState.id,
@@ -398,7 +422,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         )
         navHost.navController.navigate(action)
     }
-
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
@@ -408,5 +431,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
         const val EXTRA_FINISH_ONBOARDING = "finishonboarding"
         const val EXTRA_NO_TP = "notrackingprotection"
+        const val EXTRA_VISUAL_METRICS = "visualmetricsenabled"
+        const val URL_TO_NAVIGATE = "url"
     }
 }
