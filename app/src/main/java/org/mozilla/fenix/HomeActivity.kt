@@ -405,10 +405,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             val isAdbenabled = Settings.Global.getInt(baseContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0)
 
             performanceTestingOn = (isPhonePlugged == BatteryManager.BATTERY_PLUGGED_USB) && (isAdbenabled == 1)
-
-            if (!performanceTestingOn) {
-                performanceTestingOn = isEmulator()
-            }
         }
         if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false) && performanceTestingOn) {
             FenixOnboarding(this).finish()
@@ -430,25 +426,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             webExtensionTitle = webExtensionState.name
         )
         navHost.navController.navigate(action)
-    }
-
-    private fun isEmulator(): Boolean {
-        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
-                Build.FINGERPRINT.startsWith("generic") ||
-                Build.FINGERPRINT.startsWith("unknown") ||
-                Build.HARDWARE.contains("goldfish") ||
-                Build.HARDWARE.contains("ranchu") ||
-                Build.MODEL.contains("google_sdk") ||
-                Build.MODEL.contains("Emulator") ||
-                Build.MODEL.contains("Android SDK built for x86") ||
-                Build.MANUFACTURER.contains("Genymotion") ||
-                Build.PRODUCT.contains("sdk_google") ||
-                Build.PRODUCT.contains("google_sdk") ||
-                Build.PRODUCT.contains("sdk") ||
-                Build.PRODUCT.contains("sdk_x86") ||
-                Build.PRODUCT.contains("vbox86p") ||
-                Build.PRODUCT.contains("emulator") ||
-                Build.PRODUCT.contains("simulator")
     }
 
     companion object {
