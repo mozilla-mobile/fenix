@@ -431,7 +431,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         navHost.navController.navigate(action)
     }
 
-    private fun isEmulator() : Boolean {
+    private fun isEmulator(): Boolean {
         return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
                 Build.FINGERPRINT.startsWith("generic") ||
                 Build.FINGERPRINT.startsWith("unknown") ||
