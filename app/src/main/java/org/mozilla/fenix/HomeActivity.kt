@@ -410,10 +410,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 performanceTestingOn = isEmulator()
             }
         }
-        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false) && Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED != 0 && performanceTestingOn) {
+        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false) && performanceTestingOn) {
             FenixOnboarding(this).finish()
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false) && performanceTestingOn) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false) && performanceTestingOn) {
             window.decorView.foreground = ColorDrawable(Color.BLUE)
             val url = intent.getStringExtra(URL_TO_NAVIGATE)
             supportFragmentManager.registerFragmentLifecycleCallbacks(VisualMetricsInstrumentation(url), true)
