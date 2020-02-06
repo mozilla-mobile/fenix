@@ -106,7 +106,7 @@ private fun assertFontSize() {
 
 private fun assertSliderBar() {
     onView(withId(org.mozilla.fenix.R.id.sampleText))
-        .check(matches(withText("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.")))
+        .check(matches(withText("This is sample text. It is here to show how text will appear when you increase or decrease the size with this setting.")))
 
     onView(withId(org.mozilla.fenix.R.id.seekbar_value))
         .check(matches(withText("100%")))

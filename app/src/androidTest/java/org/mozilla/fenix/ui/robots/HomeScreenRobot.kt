@@ -217,7 +217,6 @@ class HomeScreenRobot {
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
         }
-
     }
 }
 
@@ -461,4 +460,3 @@ private fun closeTabViaX(title: String) {
 }
 
 private fun assertPrivateTabsCloseTabsButton() = onView(allOf(withId(R.id.close_tabs_button)))
-
