@@ -15,10 +15,7 @@ import org.mozilla.fenix.settings.SupportUtils
 class OnboardingWhatsNewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
-        view.header_text.setOnboardingIcon(
-            R.drawable.ic_whats_new,
-            R.color.onboarding_card_icon
-        )
+        view.header_text.setOnboardingIcon(R.drawable.ic_whats_new)
 
         val appName = view.context.getString(R.string.app_name)
         view.description_text.text = view.context.getString(R.string.onboarding_whats_new_description, appName)
