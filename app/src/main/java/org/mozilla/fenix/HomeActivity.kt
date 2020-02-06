@@ -77,7 +77,6 @@ import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.VisualMetricsInstrumentation
-import java.io.File
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
@@ -400,14 +399,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         var performanceTestingOn = false
 
-        if (intent.getBooleanExtra(EXTRA_PERFORMANCE_TEST, false)){
+        if (intent.getBooleanExtra(EXTRA_PERFORMANCE_TEST, false)) {
             val batteryStatus = baseContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             val isPhonePlugged = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-            val isAdbenabled = Settings.Global.getInt(baseContext.getContentResolver(),Settings.Global.ADB_ENABLED, 0)
+            val isAdbenabled = Settings.Global.getInt(baseContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0)
 
             performanceTestingOn = (isPhonePlugged == BatteryManager.BATTERY_PLUGGED_USB) && (isAdbenabled == 1)
 
-            if(performanceTestingOn == false) {
+            if (performanceTestingOn == false) {
                 performanceTestingOn = isEmulator()
             }
         }
@@ -432,24 +431,23 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         navHost.navController.navigate(action)
     }
 
-    //checks if device is an emulator to enable testing
     private fun isEmulator() : Boolean {
-        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
-                || Build.FINGERPRINT.startsWith("generic")
-                || Build.FINGERPRINT.startsWith("unknown")
-                || Build.HARDWARE.contains("goldfish")
-                || Build.HARDWARE.contains("ranchu")
-                || Build.MODEL.contains("google_sdk")
-                || Build.MODEL.contains("Emulator")
-                || Build.MODEL.contains("Android SDK built for x86")
-                || Build.MANUFACTURER.contains("Genymotion")
-                || Build.PRODUCT.contains("sdk_google")
-                || Build.PRODUCT.contains("google_sdk")
-                || Build.PRODUCT.contains("sdk")
-                || Build.PRODUCT.contains("sdk_x86")
-                || Build.PRODUCT.contains("vbox86p")
-                || Build.PRODUCT.contains("emulator")
-                || Build.PRODUCT.contains("simulator");
+        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+                Build.FINGERPRINT.startsWith("generic") ||
+                Build.FINGERPRINT.startsWith("unknown") ||
+                Build.HARDWARE.contains("goldfish") ||
+                Build.HARDWARE.contains("ranchu") ||
+                Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK built for x86") ||
+                Build.MANUFACTURER.contains("Genymotion") ||
+                Build.PRODUCT.contains("sdk_google") ||
+                Build.PRODUCT.contains("google_sdk") ||
+                Build.PRODUCT.contains("sdk") ||
+                Build.PRODUCT.contains("sdk_x86") ||
+                Build.PRODUCT.contains("vbox86p") ||
+                Build.PRODUCT.contains("emulator") ||
+                Build.PRODUCT.contains("simulator")
     }
 
     companion object {
