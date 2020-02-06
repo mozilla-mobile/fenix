@@ -22,6 +22,7 @@ import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.search.SearchFragment
+import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
 @RequiresApi(Build.VERSION_CODES.M)
@@ -81,11 +82,15 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String) :
                         }
                     }
                 }
-            }, 1000)
+            }, TimeUnit.MILLISECONDS.toMillis(DELAY_ANIMATION))
         } else if (f is BrowserFragment) {
             f.view!!.post {
                 f.activity!!.window.decorView.foreground = null
             }
         }
+    }
+
+    companion object{
+        const val DELAY_ANIMATION = 1000L
     }
 }

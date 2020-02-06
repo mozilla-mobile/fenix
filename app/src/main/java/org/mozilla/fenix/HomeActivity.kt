@@ -398,17 +398,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             FenixOnboarding(this).finish()
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false)) {
-                window.decorView.foreground = ColorDrawable(Color.BLUE)
-                val url = intent.getStringExtra(URL_TO_NAVIGATE)
-                supportFragmentManager.registerFragmentLifecycleCallbacks(
-                    VisualMetricsInstrumentation(
-                        url
-                    ), true)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false)) {
+            window.decorView.foreground = ColorDrawable(Color.BLUE)
+            val url = intent.getStringExtra(URL_TO_NAVIGATE)
+            supportFragmentManager.registerFragmentLifecycleCallbacks(VisualMetricsInstrumentation(url), true)
         }
-
+        
         if (intent.getBooleanExtra(EXTRA_NO_TP, false)) {
             settings().shouldUseTrackingProtection = false
         }
