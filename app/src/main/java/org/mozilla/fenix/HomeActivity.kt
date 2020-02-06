@@ -406,7 +406,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
             performanceTestingOn = (isPhonePlugged == BatteryManager.BATTERY_PLUGGED_USB) && (isAdbenabled == 1)
 
-            if (performanceTestingOn == false) {
+            if (!performanceTestingOn) {
                 performanceTestingOn = isEmulator()
             }
         }
@@ -463,6 +463,5 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val EXTRA_NO_TP = "notrackingprotection"
         const val EXTRA_VISUAL_METRICS = "visualmetricsenabled"
         const val URL_TO_NAVIGATE = "url"
-        const val PERFORMANCE_FILE = "isperformance"
     }
 }
