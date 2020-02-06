@@ -25,7 +25,7 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.theme.ThemeManager

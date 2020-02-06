@@ -18,7 +18,7 @@ import androidx.annotation.StyleRes
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.ext.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 
 abstract class ThemeManager {
 

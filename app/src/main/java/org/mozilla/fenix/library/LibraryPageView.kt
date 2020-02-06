@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.asActivity
-import org.mozilla.fenix.ext.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.ext.setToolbarColors
 
 open class LibraryPageView(

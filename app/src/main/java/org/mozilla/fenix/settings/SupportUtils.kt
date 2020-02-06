@@ -13,7 +13,7 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder

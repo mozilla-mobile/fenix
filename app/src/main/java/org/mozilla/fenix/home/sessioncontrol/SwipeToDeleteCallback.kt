@@ -11,7 +11,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
 
