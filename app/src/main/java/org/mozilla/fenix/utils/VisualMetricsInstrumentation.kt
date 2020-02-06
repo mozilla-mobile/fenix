@@ -90,7 +90,7 @@ class VisualMetricsInstrumentation(private val naviageToUrl: String) :
         }
     }
 
-    companion object{
+    companion object {
         const val DELAY_ANIMATION = 1000L
     }
 }
