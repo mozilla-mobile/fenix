@@ -6,11 +6,14 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.CallSuper
@@ -74,6 +77,7 @@ import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.VisualMetricsInstrumentation
+import java.io.File
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
@@ -393,15 +397,29 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     @ExperimentalCoroutinesApi
     private fun performanceTestingIntentProcessing(intent: Intent) {
-        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false)) {
+
+        var performanceTestingOn = false
+
+        if (intent.getBooleanExtra(EXTRA_PERFORMANCE_TEST, false)){
+            val batteryStatus = baseContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            val isPhonePlugged = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
+            val isAdbenabled = Settings.Global.getInt(baseContext.getContentResolver(),Settings.Global.ADB_ENABLED, 0)
+
+            performanceTestingOn = (isPhonePlugged == BatteryManager.BATTERY_PLUGGED_USB) && (isAdbenabled == 1)
+
+            if(performanceTestingOn == false) {
+                performanceTestingOn = isEmulator()
+            }
+        }
+        if (intent.getBooleanExtra(EXTRA_FINISH_ONBOARDING, false) && Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED != 0 && performanceTestingOn) {
             FenixOnboarding(this).finish()
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.getBooleanExtra(EXTRA_VISUAL_METRICS, false) && performanceTestingOn) {
             window.decorView.foreground = ColorDrawable(Color.BLUE)
             val url = intent.getStringExtra(URL_TO_NAVIGATE)
             supportFragmentManager.registerFragmentLifecycleCallbacks(VisualMetricsInstrumentation(url), true)
         }
-        if (intent.getBooleanExtra(EXTRA_NO_TP, false)) {
+        if (intent.getBooleanExtra(EXTRA_NO_TP, false) && performanceTestingOn) {
             settings().shouldUseTrackingProtection = false
         }
     }
@@ -413,6 +431,27 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         )
         navHost.navController.navigate(action)
     }
+
+    //checks if device is an emulator to enable testing
+    private fun isEmulator() : Boolean {
+        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.HARDWARE.contains("goldfish")
+                || Build.HARDWARE.contains("ranchu")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || Build.PRODUCT.contains("sdk_google")
+                || Build.PRODUCT.contains("google_sdk")
+                || Build.PRODUCT.contains("sdk")
+                || Build.PRODUCT.contains("sdk_x86")
+                || Build.PRODUCT.contains("vbox86p")
+                || Build.PRODUCT.contains("emulator")
+                || Build.PRODUCT.contains("simulator");
+    }
+
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
@@ -420,9 +459,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
+        const val EXTRA_PERFORMANCE_TEST = "performancetest"
         const val EXTRA_FINISH_ONBOARDING = "finishonboarding"
         const val EXTRA_NO_TP = "notrackingprotection"
         const val EXTRA_VISUAL_METRICS = "visualmetricsenabled"
         const val URL_TO_NAVIGATE = "url"
+        const val PERFORMANCE_FILE = "isperformance"
     }
 }
