@@ -94,6 +94,7 @@ private fun fileToBytes(file: InputStream): Buffer? {
 
 private fun contentType(path: String): String? {
     return when {
+        path.endsWith(".mp4") -> "video/mp4"
         path.endsWith(".png") -> "image/png"
         path.endsWith(".jpg") -> "image/jpeg"
         path.endsWith(".jpeg") -> "image/jpeg"

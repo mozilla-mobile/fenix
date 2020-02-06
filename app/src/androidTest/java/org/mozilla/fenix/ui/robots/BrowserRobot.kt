@@ -10,6 +10,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.BundleMatchers
@@ -40,10 +41,15 @@ class BrowserRobot {
     fun verifyTrackingProtectionIsOn() = assertTrackingProtectionIsOn()
     fun verifyTrackingProtectionIsOff() = assertTrackingProtectionIsOff()
     fun verifyDialogIsNotOpened(component: String) = assertDialogIsNotOpened(component)
-    fun allowSitePermission(componentName: String) = applySitePermission(componentName)
+    fun allowSitePermission(componentName: String, rememberDecision: Boolean = false) =
+        allowWebsiteDialogPrompt(componentName, rememberDecision)
+    fun denySitePermission(componentName: String, rememberDecision: Boolean = false) =
+        refuseWebsiteDialogPrompt(componentName, rememberDecision)
+    fun verifyPermissionsInDoorhanger() = assertPermissionsInDoorhanger()
     fun allowGeolocationSitePermission() = applyGeolocationSitePermission()
     fun pressComponentButton(componentName: String) = pressButton(componentName)
-    fun allowNotificationSitePermission() = applyNotificationSitePermission()
+    fun allowNotificationSitePermission() = acceptNotificationSitePermission()
+    fun denyNotificationSitePermission() = refuseNotificationSitePermission()
     fun verifyNotificationDialogIsNotOpened() = assertNotificationDialogIsNotOpened()
 
     fun verifyBrowserScreen() {
@@ -276,44 +282,83 @@ class BrowserRobot {
         mDevice.findObject(By.text(component)).click()
     }
 
-    private fun applySitePermission(text: String) {
-        allowAndroidDialogPrompt()
-        allowWebsiteDialogPrompt(text)
-    }
+//    private fun applySitePermission(text: String) {
+////        allowAndroidDialogPrompt()
+////        allowWebsiteDialogPrompt(text)
+//    }
 
     private fun applyGeolocationSitePermission() {
         // For some reason the Geolocation prompts the user with the website dialog first, then the android device dialog
-        allowWebsiteDialogPrompt("Location")
+//        allowWebsiteDialogPrompt("Location")
         allowAndroidDialogPrompt()
     }
 
-    private fun allowAndroidDialogPrompt() {
+    fun allowAndroidDialogPrompt() {
         // Android dialog prompt asking to allow or deny the permission
-        if (mDevice.isObjectNotNull(Until.findObject(By.text("ALLOW")), TestAssetHelper.waitingTime))
+        if (mDevice.isObjectNotNull(
+                Until.findObject(By.text("ALLOW")),
+                TestAssetHelper.waitingTime
+            )
+        )
             mDevice.findObject(By.text("ALLOW")).click()
     }
 
-    private fun allowWebsiteDialogPrompt(componentName: String, websiteName: String = "localhost") {
+    fun refuseAndroidDialogPrompt() {
+        // Android dialog prompt asking to allow or deny the permission
+        if (mDevice.isObjectNotNull(
+                Until.findObject(By.text("Don't ask again")),
+                TestAssetHelper.waitingTime
+            )
+        )
+            mDevice.findObject(By.text("Don't ask again")).click()
+
+        if (mDevice.isObjectNotNull(Until.findObject(By.text("DENY")), TestAssetHelper.waitingTime))
+            mDevice.findObject(By.text("DENY")).click()
+    }
+
+    private fun allowWebsiteDialogPrompt(
+        componentName: String,
+        rememberDecision: Boolean,
+        websiteName: String = "localhost"
+    ) {
+        verifyDialogPrompt(componentName, rememberDecision, websiteName)
+        mDevice.findObject(By.text("Allow")).click()
+    }
+
+    private fun refuseWebsiteDialogPrompt(
+        componentName: String,
+        rememberDecision: Boolean,
+        websiteName: String = "localhost"
+    ) {
+        verifyDialogPrompt(componentName, rememberDecision, websiteName)
+        mDevice.findObject(By.text("Don’t allow")).click()
+    }
+
+    private fun verifyDialogPrompt(
+        componentName: String,
+        rememberDecision: Boolean,
+        websiteName: String
+    ) {
         mDevice.waitNotNull(
             Until.findObject(By.text("Allow $websiteName to use your ${componentName.toLowerCase()}?")),
             TestAssetHelper.waitingTime
         )
+
         mDevice.waitNotNull(
             Until.findObject(By.text("Remember decision for this site")),
             TestAssetHelper.waitingTime
         )
-        mDevice.waitNotNull(Until.findObject(By.textContains("allow")), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.text("Don’t allow")), TestAssetHelper.waitingTime)
         mDevice.waitNotNull(Until.findObject(By.text("Allow")), TestAssetHelper.waitingTime)
-        mDevice.findObject(By.text("Remember decision for this site")).click()
-        mDevice.findObject(By.text("Allow")).click()
+        if (rememberDecision)
+            mDevice.findObject(By.text("Remember decision for this site")).click()
     }
 
     private fun assertDialogIsNotOpened(text: String, websiteName: String = "localhost") {
         mDevice.assertObjectDoesNotExist(By.text("Allow $websiteName to use your ${text.toLowerCase()}?"))
     }
 
-    private fun applyNotificationSitePermission(websiteName: String = "localhost") {
-        // Android dialog prompt - possibly flaky, could take a while to pop up, or may never pop up
+    private fun acceptNotificationSitePermission(websiteName: String = "localhost") {
         mDevice.waitNotNull(
             Until.findObject(By.text("Allow $websiteName to send notifications?")),
             TestAssetHelper.waitingTime
@@ -322,8 +367,38 @@ class BrowserRobot {
         mDevice.findObject(By.text("Always")).click()
     }
 
+    private fun refuseNotificationSitePermission(websiteName: String = "localhost") {
+        mDevice.waitNotNull(
+            Until.findObject(By.text("Allow $websiteName to send notifications?")),
+            TestAssetHelper.waitingTime
+        )
+        mDevice.waitNotNull(Until.findObject(By.text("Never")), TestAssetHelper.waitingTime)
+        mDevice.findObject(By.text("Never")).click()
+    }
+
     private fun assertNotificationDialogIsNotOpened(websiteName: String = "localhost") {
         mDevice.assertObjectDoesNotExist(By.text("Allow $websiteName to send notifications?"))
+    }
+
+    private fun assertPermissionsInDoorhanger() {
+        toolbarSecurityIndicator()
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .perform(click())
+
+        // Verify permissions
+        onView(withId(R.id.cameraLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.camerStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+        onView(withId(R.id.microphoneLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.microphoneStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+        onView(withId(R.id.locationLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.locationStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+        onView(withId(R.id.notificationLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.notificationStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+
     }
 
     class Transition {
@@ -401,3 +476,6 @@ private fun assertTrackingProtectionIsOff() {
 fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
 
 private fun tabsCounter() = onView(withId(R.id.counter_box))
+
+private fun toolbarSecurityIndicator() =
+    onView(withId(R.id.mozac_browser_toolbar_security_indicator))

@@ -9,6 +9,7 @@ package org.mozilla.fenix.ui.robots
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Bitmap
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
@@ -32,6 +33,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.SnackbarIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
@@ -480,8 +482,13 @@ fun saveCollection(page1: String, page2: String) {
         addNewCollectionView.perform(click())
     }
 
+    val idlingResource = SnackbarIdlingResource()
+    IdlingRegistry.getInstance().register(idlingResource)
+
     onView(withId(R.id.name_collection_edittext))
         .perform(pressImeActionButton())
+
+    IdlingRegistry.getInstance().unregister(idlingResource)
 }
 
 private fun closeTabViaX(title: String) {

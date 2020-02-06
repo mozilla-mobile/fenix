@@ -6,17 +6,25 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.widget.LinearLayout
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.anyOf
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.R
 
@@ -27,7 +35,9 @@ class SettingsSubMenuSitePermissionsExceptionsRobot {
 
     fun verifyDefault() = assertExceptionDefault()!!
 
-    fun verifyListedExceptionURL(url: String) = assertExceptionURL(url)
+    fun verifyExceptionURL(url: String) = assertExceptionURL(url)
+
+    fun clickExceptionURL(url: String) = selectExceptionURL(url)
 
     fun verifyEmptyExceptionList() = assertEmptyExceptionList()
 
@@ -35,8 +45,11 @@ class SettingsSubMenuSitePermissionsExceptionsRobot {
 
     fun clearAllPermissionsOnSite(website: String) = deleteAllPermissionsOnSite(website)
 
-    fun clearSinglePermissionsOnSite(website: String, permission: String) =
-        deleteSinglePermissionsOnSite(website, permission)
+    fun clearSinglePermissionOnSite(website: String, permission: String) =
+        deleteSinglePermissionOnSite(website, permission)
+
+    fun verifySitePermissionRow(permission: String, state: String) =
+        assertSitePermissionRow(permission, state)
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
@@ -57,13 +70,17 @@ private fun assertEmptyExceptionList() {
 }
 
 private fun goBackButton() =
-    onView(CoreMatchers.allOf(withContentDescription("Navigate up")))
+    onView(allOf(withContentDescription("Navigate up")))
 
 private fun assertExceptionDefault() =
-    onView(CoreMatchers.allOf(withText("Exceptions let you disable tracking protection for selected sites.")))
+    onView(allOf(withText("Exceptions let you disable tracking protection for selected sites.")))
 
-private fun assertExceptionURL(url: String) {
-    onView(CoreMatchers.allOf(withText(url)))
+private fun selectExceptionURL(url: String) {
+    assertExceptionURL(url).perform(click())
+}
+
+private fun assertExceptionURL(url: String): ViewInteraction {
+    return onView(withText(url))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -90,12 +107,14 @@ private fun deleteAllSitePermissions() {
 }
 
 private fun deleteAllPermissionsOnSite(website: String) {
-    onView(CoreMatchers.allOf(withText(website)))
+    onView(withText(website))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         .click()
 
-    // Verify each permission has an icon
-    // Verify each permission shows allowed/blocked state
+    assertSitePermissionRow("Camera")
+    assertSitePermissionRow("Location")
+    assertSitePermissionRow("Microphone")
+    assertSitePermissionRow("Notification")
 
     onView(withText("Clear permissions"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -120,8 +139,43 @@ private fun deleteAllPermissionsOnSite(website: String) {
         .click()
 }
 
-private fun deleteSinglePermissionsOnSite(website: String, permission: String) {
-    onView(CoreMatchers.allOf(withText(website)))
+private fun assertSitePermissionRow(permission: String) {
+    onView(
+        allOf(
+            withParent(withResourceName("recycler_view")),
+            isAssignableFrom(LinearLayout::class.java),
+            hasDescendant(withText(permission)),
+            hasDescendant(
+                anyOf(
+                    withText("Allowed"),
+                    withText("Blocked"),
+                    withText("Blocked by Android"),
+                    withText("Ask to allow")
+                )
+            ),
+            hasDescendant(withResourceName("icon"))
+        )
+    )
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertSitePermissionRow(permission: String, state: String) {
+    onView(
+        allOf(
+            withParent(withResourceName("recycler_view")),
+            isAssignableFrom(LinearLayout::class.java),
+            hasDescendant(withText(permission)),
+            hasDescendant(
+                withText(state)
+            ),
+            hasDescendant(withResourceName("icon"))
+        )
+    )
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun deleteSinglePermissionOnSite(website: String, permission: String) {
+    onView(allOf(withText(website)))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         .click()
 
