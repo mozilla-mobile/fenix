@@ -34,13 +34,9 @@ class InstalledAddonDetailsFragment : Fragment() {
         if (!::addon.isInitialized) {
             addon = AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
         }
-
-        return inflater.inflate(R.layout.fragment_installed_add_on_details, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        bind(view)
+        val rootView = inflater.inflate(R.layout.fragment_installed_add_on_details, container, false)
+        bind(rootView)
+        return rootView
     }
 
     private fun bind(view: View) {
@@ -59,12 +55,13 @@ class InstalledAddonDetailsFragment : Fragment() {
         switch.setState(addon.isEnabled())
         switch.setOnCheckedChangeListener { v, isChecked ->
             val addonManager = v.context.components.addonManager
+            switch.isEnabled = false
             if (isChecked) {
                 addonManager.enableAddon(
                     addon,
                     onSuccess = {
                         runIfFragmentIsAttached {
-                            switch.setState(true)
+                            switch.setText(R.string.mozac_feature_addons_settings_on)
                             this.addon = it
                             showSnackBar(
                                 view,
@@ -92,7 +89,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     addon,
                     onSuccess = {
                         runIfFragmentIsAttached {
-                            switch.setState(false)
+                            switch.setText(R.string.mozac_feature_addons_settings_off)
                             this.addon = it
                             showSnackBar(
                                 view,
