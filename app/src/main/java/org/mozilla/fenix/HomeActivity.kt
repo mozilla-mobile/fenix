@@ -29,9 +29,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.navigationToolbarStub
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -416,7 +414,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             supportFragmentManager.registerFragmentLifecycleCallbacks(VisualMetricsInstrumentation(url), true)
         }
         if (intent.getBooleanExtra(EXTRA_NO_TP, false) && performanceTestingOn) {
-            settings().shouldUseTrackingProtection = false
+            MainScope().launch(Dispatchers.IO) {
+                settings().incrementTrackingProtectionOnboardingCount()
+                settings().incrementTrackingProtectionOnboardingCount()
+            }
         }
     }
 
