@@ -4,15 +4,23 @@
 
 package org.mozilla.fenix.perf
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import androidx.core.view.doOnPreDraw
 import kotlinx.android.synthetic.main.activity_home.*
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.onboarding.FenixOnboarding
+import android.provider.Settings as AndroidSettings
+import org.mozilla.fenix.utils.Settings
 
 /**
  * A collection of objects related to app performance.
  */
 object Performance {
     const val TAG = "FenixPerf"
+    const val EXTRA_IS_PERFORMANCE_TEST = "performancetest"
 
     /**
      * Instruments cold startup time for use with our internal measuring system, FNPRMS. This may
@@ -35,6 +43,27 @@ object Performance {
         // Unfortunately, this is tightly coupled to the root view of HomeActivity's view hierarchy
         activity.rootContainer.doOnPreDraw {
             activity.reportFullyDrawn()
+        }
+    }
+
+    /**
+     * Processes intent for Performance testing to remove protection pop up ( but keeps the TP
+     * on) and removes the onboarding screen.
+     */
+    fun processIntentIfPerformanceTest(intent: Intent, context: Context) {
+        if (!intent.getBooleanExtra(EXTRA_IS_PERFORMANCE_TEST, true)) {
+            return
+        }
+
+        val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val isPhonePlugged = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ==
+                BatteryManager.BATTERY_PLUGGED_USB
+        val isAdbEnabled = AndroidSettings.Global.getInt(context.contentResolver,
+            AndroidSettings.Global.ADB_ENABLED, 0)
+
+        if (isPhonePlugged && (isAdbEnabled == 1)) {
+            FenixOnboarding(context).finish()
+            Settings.getInstance(context).isOverrideTPPopupsForPerformanceTest = true
         }
     }
 }
