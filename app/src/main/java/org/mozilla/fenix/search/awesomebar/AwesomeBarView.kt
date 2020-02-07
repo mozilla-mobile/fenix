@@ -134,7 +134,6 @@ class AwesomeBarView(
 
         sessionProvider =
             SessionSuggestionProvider(
-                context.resources,
                 components.core.sessionManager,
                 selectTabUseCase,
                 components.core.icons,
