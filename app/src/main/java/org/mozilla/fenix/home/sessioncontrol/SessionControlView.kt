@@ -106,7 +106,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 
     items.addAll(listOf(
         AdapterItem.OnboardingSectionHeader {
-            val appName = it.getString(R.string.app_name)
+            val appName = it.getString(R.string.app_name_2)
             it.getString(R.string.onboarding_feature_section_header, appName)
         },
         AdapterItem.OnboardingWhatsNew,

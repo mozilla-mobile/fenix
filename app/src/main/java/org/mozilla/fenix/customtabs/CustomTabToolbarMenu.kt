@@ -39,7 +39,7 @@ class CustomTabToolbarMenu(
 
     /** Gets the current custom tab session */
     private val session: Session? get() = sessionId?.let { sessionManager.findSessionById(it) }
-    private val appName = context.getString(R.string.app_name)
+    private val appName = context.getString(R.string.app_name_2)
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(

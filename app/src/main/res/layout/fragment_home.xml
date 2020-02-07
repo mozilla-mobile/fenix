@@ -49,7 +49,7 @@
                 android:layout_marginBottom="32dp"
                 android:adjustViewBounds="true"
                 android:clickable="false"
-                android:contentDescription="@string/app_name"
+                android:contentDescription="@string/app_name_2"
                 android:focusable="false"
                 android:importantForAccessibility="no"
                 app:srcCompat="?fenixLogo"

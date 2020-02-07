@@ -77,7 +77,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
                 setMessage(
                     it.getString(
                         R.string.delete_browsing_data_prompt_message_3,
-                        it.getString(R.string.app_name)
+                        it.getString(R.string.app_name_2)
                     )
                 )
 

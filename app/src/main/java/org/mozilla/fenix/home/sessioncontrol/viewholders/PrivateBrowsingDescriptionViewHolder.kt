@@ -20,7 +20,7 @@ class PrivateBrowsingDescriptionViewHolder(
 
     init {
         val resources = view.context.resources
-        val appName = resources.getString(R.string.app_name)
+        val appName = resources.getString(R.string.app_name_2)
         view.private_session_description.text = resources.getString(
             R.string.private_browsing_placeholder_description, appName
         )

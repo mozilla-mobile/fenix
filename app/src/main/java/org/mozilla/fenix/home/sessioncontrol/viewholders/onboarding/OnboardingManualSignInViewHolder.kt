@@ -23,7 +23,7 @@ class OnboardingManualSignInViewHolder(private val view: View) : RecyclerView.Vi
     }
 
     fun bind() {
-        val appName = view.context.getString(R.string.app_name)
+        val appName = view.context.getString(R.string.app_name_2)
         view.header_text.text = view.context.getString(R.string.onboarding_firefox_account_header, appName)
         val icon = AppCompatResources.getDrawable(view.context, R.drawable.ic_onboarding_firefox_accounts)
         icon?.setTint(ContextCompat.getColor(view.context, R.color.white_color))

@@ -223,6 +223,7 @@ class DefaultToolbarMenu(
 
     private val addToTopSites = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_top_sites),
+
         imageResource = R.drawable.ic_home,
         iconTintColorResource = primaryTextColor()
     ) {

@@ -162,7 +162,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                             val spannable = resources.getSpannable(
                                 R.string.qr_scanner_confirmation_dialog_message,
                                 listOf(
-                                    getString(R.string.app_name) to listOf(StyleSpan(BOLD)),
+                                    getString(R.string.app_name_2) to listOf(StyleSpan(BOLD)),
                                     result to listOf(StyleSpan(ITALIC))
                                 )
                             )
@@ -226,7 +226,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             }
 
             inflated.text.text =
-                getString(R.string.search_suggestions_onboarding_text, getString(R.string.app_name))
+                getString(R.string.search_suggestions_onboarding_text, getString(R.string.app_name_2))
 
             inflated.title.text =
                 getString(R.string.search_suggestions_onboarding_title)

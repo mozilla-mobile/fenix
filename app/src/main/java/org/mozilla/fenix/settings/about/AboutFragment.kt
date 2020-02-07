@@ -43,7 +43,7 @@ class AboutFragment : Fragment(), AboutPageListener {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_about, container, false)
-        appName = getString(R.string.app_name)
+        appName = getString(R.string.app_name_2)
         activity?.title = getString(R.string.preferences_about, appName)
 
         return rootView
@@ -103,7 +103,7 @@ class AboutFragment : Fragment(), AboutPageListener {
                 AboutItem.ExternalLink(
                     WHATS_NEW,
                     SupportUtils.getWhatsNewUrl(context)
-                ), getString(R.string.about_whats_new, getString(R.string.app_name))
+                ), getString(R.string.about_whats_new, getString(R.string.app_name_2))
             ),
             AboutPageItem.Item(
                 AboutItem.ExternalLink(

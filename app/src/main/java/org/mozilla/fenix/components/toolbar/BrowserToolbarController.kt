@@ -147,7 +147,7 @@ class DefaultBrowserToolbarController(
                         topSiteStorage.addTopSite(it.title, it.url)
                     }
                     MainScope().launch {
-                        val appName = swipeRefresh.context.getString(R.string.app_name)
+                        val appName = swipeRefresh.context.getString(R.string.app_name_2)
                         FenixSnackbar.makeWithToolbarPadding(swipeRefresh, Snackbar.LENGTH_SHORT)
                             .setText(
                                 swipeRefresh.context.getString(

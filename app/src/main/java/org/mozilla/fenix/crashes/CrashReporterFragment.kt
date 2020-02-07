@@ -28,7 +28,7 @@ class CrashReporterFragment : Fragment(R.layout.fragment_crash_reporter) {
         val args: CrashReporterFragmentArgs by navArgs()
         val crash = Crash.fromIntent(args.crashIntent)
 
-        title.text = getString(R.string.tab_crash_title_2, getString(R.string.app_name))
+        title.text = getString(R.string.tab_crash_title_2, getString(R.string.app_name_2))
 
         val controller = CrashReporterController(
             crash,

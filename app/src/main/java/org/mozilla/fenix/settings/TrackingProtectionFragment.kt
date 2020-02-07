@@ -77,7 +77,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         }
         learnMorePreference?.summary = getString(
             R.string.preference_enhanced_tracking_protection_explanation,
-            getString(R.string.app_name)
+            getString(R.string.app_name_2)
         )
 
         val exceptions = getPreferenceKey(R.string.pref_key_tracking_protection_exceptions)

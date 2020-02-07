@@ -52,7 +52,7 @@ class TrackingProtectionOverlay(
         layout.onboarding_message.text =
             context.getString(
                 R.string.etp_onboarding_message_2,
-                context.getString(R.string.app_name)
+                context.getString(R.string.app_name_2)
             )
 
         val res = context.resources

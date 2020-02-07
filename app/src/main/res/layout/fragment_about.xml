@@ -24,7 +24,7 @@
             android:layout_marginStart="@dimen/about_header_icon_margin_start_end"
             android:layout_marginTop="@dimen/about_header_icon_margin_top"
             android:layout_marginEnd="@dimen/about_header_icon_margin_start_end"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/app_name_2"
             android:importantForAccessibility="no"
             app:srcCompat="?fenixLogo"
             app:layout_constraintEnd_toEndOf="parent"

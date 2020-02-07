@@ -15,7 +15,7 @@ class OnboardingPrivacyNoticeViewHolder(view: View) : RecyclerView.ViewHolder(vi
     init {
         view.header_text.setOnboardingIcon(R.drawable.ic_onboarding_privacy_notice)
 
-        val appName = view.context.getString(R.string.app_name)
+        val appName = view.context.getString(R.string.app_name_2)
         view.description_text.text = view.context.getString(R.string.onboarding_privacy_notice_description, appName)
 
         view.read_button.setOnClickListener {

@@ -12,7 +12,7 @@ import org.mozilla.fenix.R
 class OnboardingHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
-        val appName = view.context.getString(R.string.app_name)
+        val appName = view.context.getString(R.string.app_name_2)
         view.header_text.text = view.context.getString(R.string.onboarding_header, appName)
     }
 

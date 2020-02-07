@@ -17,7 +17,7 @@ class OnboardingWhatsNewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     init {
         view.header_text.setOnboardingIcon(R.drawable.ic_whats_new)
 
-        val appName = view.context.getString(R.string.app_name)
+        val appName = view.context.getString(R.string.app_name_2)
         view.description_text.text = view.context.getString(R.string.onboarding_whats_new_description, appName)
 
         val getAnswersText = view.get_answers.text.toString()

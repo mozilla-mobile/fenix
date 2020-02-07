@@ -53,7 +53,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
         findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_telemetry))?.apply {
             isChecked = context.settings().isTelemetryEnabled
 
-            val appName = context.getString(R.string.app_name)
+            val appName = context.getString(R.string.app_name_2)
             summary = context.getString(R.string.preferences_usage_data_description, appName)
 
             onPreferenceChangeListener = SharedPreferenceUpdater()

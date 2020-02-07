@@ -55,7 +55,7 @@ class PoweredByNotification(
         val channelId = ensureChannelExists()
 
         with(applicationContext) {
-            val appName = getString(R.string.app_name)
+            val appName = getString(R.string.app_name_2)
             return NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_status_logo)
                 .setContentTitle(getString(R.string.browser_menu_powered_by2, appName))

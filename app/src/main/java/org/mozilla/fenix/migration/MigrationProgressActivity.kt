@@ -40,7 +40,7 @@ class MigrationProgressActivity : AbstractMigrationProgressActivity() {
     }
 
     fun init() {
-        val appName = migration_description.context.getString(R.string.app_name)
+        val appName = migration_description.context.getString(R.string.app_name_2)
 
         migration_description.apply {
             text = context.getString(R.string.migration_description, appName)
@@ -74,7 +74,7 @@ class MigrationProgressActivity : AbstractMigrationProgressActivity() {
         // Enable clicking the finish button
         migration_button.apply {
             isEnabled = true
-            text = getString(R.string.migration_update_app_button, getString(R.string.app_name))
+            text = getString(R.string.migration_update_app_button, getString(R.string.app_name_2))
             setBackgroundColor(ContextCompat.getColor(context, R.color.button_text_color))
             setTextColor(ContextCompat.getColor(context, R.color.white_color))
         }

@@ -26,7 +26,7 @@ class OnboardingTrackingProtectionViewHolder(view: View) : RecyclerView.ViewHold
         standardTrackingProtection = view.tracking_protection_standard_option
         strictTrackingProtection = view.tracking_protection_strict_default
 
-        val appName = view.context.getString(R.string.app_name)
+        val appName = view.context.getString(R.string.app_name_2)
         view.description_text.text = view.context.getString(
             R.string.onboarding_tracking_protection_description1,
             appName

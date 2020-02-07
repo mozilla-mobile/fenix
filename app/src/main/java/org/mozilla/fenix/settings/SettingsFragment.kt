@@ -157,7 +157,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         themesPreference?.summary = context?.settings()?.themeSettingString
 
         val aboutPreference = findPreference<Preference>(getPreferenceKey(pref_key_about))
-        val appName = getString(R.string.app_name)
+        val appName = getString(R.string.app_name_2)
         aboutPreference?.title = getString(R.string.preferences_about, appName)
 
         val deleteBrowsingDataPreference =

@@ -60,7 +60,7 @@ class SavedLoginsView(
         }
 
         with(view.saved_passwords_empty_message) {
-            val appName = context.getString(R.string.app_name)
+            val appName = context.getString(R.string.app_name_2)
             text = context.getString(
                 R.string.preferences_passwords_saved_logins_description_empty_text,
                 appName
