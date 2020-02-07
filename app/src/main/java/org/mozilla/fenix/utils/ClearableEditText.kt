@@ -17,6 +17,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
 
+
 /**
  * An [AppCompatEditText] that shows a clear button to the user.
  */

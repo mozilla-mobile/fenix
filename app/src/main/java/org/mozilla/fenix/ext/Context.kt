@@ -101,11 +101,5 @@ fun Context.share(text: String, subject: String = ""): Boolean {
 fun Context.getRootView(): View? =
     asActivity()?.window?.decorView?.findViewById<View>(android.R.id.content) as? ViewGroup
 
-/**
- * Returns the color int corresponding to the attribute.
- */
-@ColorInt
-fun Context.getColorFromAttr(@AttrRes attr: Int) = getColorFromAttr(attr)
-
 fun Context.settings(isCrashReportEnabledInBuild: Boolean = BuildConfig.CRASH_REPORTING && Config.channel.isReleased) =
     Settings.getInstance(this, isCrashReportEnabledInBuild)
