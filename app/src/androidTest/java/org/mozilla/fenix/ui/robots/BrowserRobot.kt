@@ -25,7 +25,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.By
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
@@ -43,13 +42,12 @@ class BrowserRobot {
     fun verifyDialogIsNotOpened(component: String) = assertDialogIsNotOpened(component)
     fun allowSitePermission(componentName: String, rememberDecision: Boolean = false) =
         allowWebsiteDialogPrompt(componentName, rememberDecision)
+
     fun denySitePermission(componentName: String, rememberDecision: Boolean = false) =
         refuseWebsiteDialogPrompt(componentName, rememberDecision)
+
     fun verifyPermissionsInDoorhanger() = assertPermissionsInDoorhanger()
-    fun allowGeolocationSitePermission() = applyGeolocationSitePermission()
     fun pressComponentButton(componentName: String) = pressButton(componentName)
-    fun allowNotificationSitePermission() = acceptNotificationSitePermission()
-    fun denyNotificationSitePermission() = refuseNotificationSitePermission()
     fun verifyNotificationDialogIsNotOpened() = assertNotificationDialogIsNotOpened()
 
     fun verifyBrowserScreen() {
@@ -282,17 +280,6 @@ class BrowserRobot {
         mDevice.findObject(By.text(component)).click()
     }
 
-//    private fun applySitePermission(text: String) {
-////        allowAndroidDialogPrompt()
-////        allowWebsiteDialogPrompt(text)
-//    }
-
-    private fun applyGeolocationSitePermission() {
-        // For some reason the Geolocation prompts the user with the website dialog first, then the android device dialog
-//        allowWebsiteDialogPrompt("Location")
-        allowAndroidDialogPrompt()
-    }
-
     fun allowAndroidDialogPrompt() {
         // Android dialog prompt asking to allow or deny the permission
         if (mDevice.isObjectNotNull(
@@ -321,8 +308,12 @@ class BrowserRobot {
         rememberDecision: Boolean,
         websiteName: String = "localhost"
     ) {
-        verifyDialogPrompt(componentName, rememberDecision, websiteName)
-        mDevice.findObject(By.text("Allow")).click()
+        if (componentName == "Notification") {
+            acceptNotificationSitePermission()
+        } else {
+            verifyDialogPrompt(componentName, rememberDecision, websiteName)
+            mDevice.findObject(By.text("Allow")).click()
+        }
     }
 
     private fun refuseWebsiteDialogPrompt(
@@ -330,8 +321,12 @@ class BrowserRobot {
         rememberDecision: Boolean,
         websiteName: String = "localhost"
     ) {
-        verifyDialogPrompt(componentName, rememberDecision, websiteName)
-        mDevice.findObject(By.text("Don’t allow")).click()
+        if (componentName == "Notification") {
+            refuseNotificationSitePermission()
+        } else {
+            verifyDialogPrompt(componentName, rememberDecision, websiteName)
+            mDevice.findObject(By.text("Don’t allow")).click()
+        }
     }
 
     private fun verifyDialogPrompt(
@@ -387,24 +382,30 @@ class BrowserRobot {
 
         // Verify permissions
         onView(withId(R.id.cameraLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.camerStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.cameraStatus))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .check(matches(withText("Allowed")))
 
         onView(withId(R.id.microphoneLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.microphoneStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.microphoneStatus))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .check(matches(withText("Allowed")))
 
         onView(withId(R.id.locationLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.locationStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.locationStatus))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .check(matches(withText("Allowed")))
 
         onView(withId(R.id.notificationLabel)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.notificationStatus)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-
+        onView(withId(R.id.notificationStatus))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .check(matches(withText("Allowed")))
     }
 
     class Transition {
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         private fun threeDotButton() = onView(
-            CoreMatchers.allOf(
+            allOf(
                 withContentDescription(
                     "Menu"
                 )
@@ -413,7 +414,7 @@ class BrowserRobot {
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle()
-            threeDotButton().perform(ViewActions.click())
+            threeDotButton().perform(click())
 
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
@@ -421,7 +422,7 @@ class BrowserRobot {
 
         fun openBrowserThreeDotMenu(interact: ThreeDotMenuBrowserRobot.() -> Unit): ThreeDotMenuBrowserRobot.Transition {
             mDevice.waitForIdle()
-            threeDotButton().perform(ViewActions.click())
+            threeDotButton().perform(click())
 
             ThreeDotMenuBrowserRobot().interact()
             return ThreeDotMenuBrowserRobot.Transition()

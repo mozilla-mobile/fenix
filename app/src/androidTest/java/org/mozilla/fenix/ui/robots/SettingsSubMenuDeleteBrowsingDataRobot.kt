@@ -29,8 +29,8 @@ import org.mozilla.fenix.helpers.isChecked
  */
 class SettingsSubMenuDeleteBrowsingDataRobot {
 
-    fun verifyBrowsingData(numOfTabs: Int, numOfAddresses: Int, numOfCollections: Int) =
-        assertBrowsingData(numOfTabs, numOfAddresses, numOfCollections)
+    fun verifyBrowsingData(numOfTabs: Int, numOfAddresses: Int) =
+        assertBrowsingData(numOfTabs, numOfAddresses)
 
     fun deleteOpenTabs() = clearOpenTabs()
 
@@ -83,14 +83,11 @@ private fun deleteBrowsingData() {
         .waitUntilGone(5000)
 }
 
-private fun assertBrowsingData(numOfTabs: Int, numOfAddresses: Int, numOfCollections: Int) {
+private fun assertBrowsingData(numOfTabs: Int, numOfAddresses: Int) {
     onView(withText("$numOfTabs tabs"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     onView(withText("$numOfAddresses addresses"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-    onView(withText("$numOfCollections collections"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

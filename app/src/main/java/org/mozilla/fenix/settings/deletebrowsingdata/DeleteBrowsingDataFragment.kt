@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.*
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.view.*
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
@@ -139,7 +138,6 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
 
         FenixSnackbar.makeWithToolbarPadding(requireView(), FenixSnackbar.LENGTH_SHORT)
             .setText(resources.getString(R.string.preferences_delete_browsing_data_snackbar))
-            .setAnchorView(bottom_bar)
             .show()
 
         if (popAfter) viewLifecycleOwner.lifecycleScope.launch(

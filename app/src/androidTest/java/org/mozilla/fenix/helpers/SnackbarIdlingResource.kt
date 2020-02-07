@@ -10,7 +10,7 @@ class SnackbarIdlingResource : IdlingResource {
     }
 
     override fun isIdleNow(): Boolean {
-        Thread.sleep(50000)
+//        Thread.sleep(5000)
         resourceCallback.onTransitionToIdle()
         return true
     }
@@ -22,5 +22,4 @@ class SnackbarIdlingResource : IdlingResource {
             else -> this.resourceCallback = callback
         }
     }
-
 }

@@ -482,6 +482,9 @@ fun saveCollection(page1: String, page2: String) {
         addNewCollectionView.perform(click())
     }
 
+//    mDevice.findObject(UiSelector().text(""))
+//        .waitUntilGone(5000)
+
     val idlingResource = SnackbarIdlingResource()
     IdlingRegistry.getInstance().register(idlingResource)
 

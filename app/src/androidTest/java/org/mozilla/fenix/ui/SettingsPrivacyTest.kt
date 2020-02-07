@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -100,7 +101,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    // ****
     @Test
     fun verifyCameraSitePermission() {
         val testWebpage = getSitePermissionsAsset(mockWebServer).url
@@ -189,7 +189,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    // ****
     @Test
     fun verifyNotificationSitePermission() {
         val testWebpage = getSitePermissionsAsset(mockWebServer).url
@@ -197,12 +196,12 @@ class SettingsPrivacyTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testWebpage) {
             verifyPageContent(testWebpage.toString())
-            pressComponentButton("Notifications")
-            allowNotificationSitePermission()
+            pressComponentButton("Notification")
+            allowSitePermission("Notification")
         }.openBrowserThreeDotMenu {
         }.refreshPage {
-            pressComponentButton("Notifications")
-            verifyDialogIsNotOpened("Notifications")
+            pressComponentButton("Notification")
+            verifyNotificationDialogIsNotOpened()
         }.openThreeDotMenu {
         }.openSettings {
         }.openSitePermissionsSubMenu {
@@ -213,8 +212,8 @@ class SettingsPrivacyTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testWebpage) {
-            pressComponentButton("Notifications")
-            verifyDialogIsNotOpened("Notifications")
+            pressComponentButton("Notification")
+            verifyNotificationDialogIsNotOpened()
         }
     }
 
@@ -246,7 +245,7 @@ class SettingsPrivacyTest {
         }.enterURLAndEnterToBrowser(testWebpage) {
             pressComponentButton("Camera")
             denySitePermission("Camera", true)
-            Thread.sleep(10000)
+//            Thread.sleep(10000)
         }.openThreeDotMenu {
         }.openSettings {
         }.openSitePermissionsSubMenu {
@@ -303,6 +302,7 @@ class SettingsPrivacyTest {
             pressComponentButton("Location")
             allowSitePermission("Location")
             allowAndroidDialogPrompt()
+//            Thread.sleep(40000)
         }.openBrowserThreeDotMenu {
         }.refreshPage {
             pressComponentButton("Location")
@@ -330,7 +330,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    // ****
     @Test
     fun verifyNotificationPermissionPrompts() {
         val testWebpage = getSitePermissionsAsset(mockWebServer).url
@@ -339,32 +338,28 @@ class SettingsPrivacyTest {
         }.enterURLAndEnterToBrowser(testWebpage) {
             verifyPageContent(testWebpage.toString())
             pressComponentButton("Notification")
-            allowAndroidDialogPrompt()
-            allowNotificationSitePermission()
-        }.openBrowserThreeDotMenu {
-        }.refreshPage {
-            pressComponentButton("Notification")
-            denyNotificationSitePermission()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSitePermissionsSubMenu {
-        }.openExceptions {
-            verifyEmptyExceptionList()
-        }.goBack {
-        }.goBack {
-        }.goBack {
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(testWebpage) {
-            pressComponentButton("Notification")
-            denySitePermission("Notification", true)
+            allowSitePermission("Notification")
         }.openThreeDotMenu {
         }.openSettings {
         }.openSitePermissionsSubMenu {
         }.openExceptions {
             clickExceptionURL("localhost")
-            verifySitePermissionRow("Notification", "Blocked")
+            verifySitePermissionRow("Notification", "Allowed")
+            clearSinglePermissionOnSite("Notification")
+            Espresso.pressBack()
+        }.goBack {
+        }.goBack {
+        }.goBack {
+        }
+
+        browserScreen {
+        }.openBrowserThreeDotMenu {
+        }.refreshPage {
+            pressComponentButton("Notification")
+            denySitePermission("Notification")
+        }.openBrowserThreeDotMenu {
+        }.refreshPage {
+            verifyNotificationDialogIsNotOpened()
         }
     }
 
@@ -378,7 +373,7 @@ class SettingsPrivacyTest {
             pressComponentButton("Camera and microphone")
             allowAndroidDialogPrompt() // Allow Video
             allowAndroidDialogPrompt() // Allow Audio
-            //website prompt camera and microphone
+            // website prompt camera and microphone
             allowSitePermission("camera and microphone")
         }.openBrowserThreeDotMenu {
         }.refreshPage {
@@ -428,7 +423,7 @@ class SettingsPrivacyTest {
         }.openBrowserThreeDotMenu {
         }.refreshPage {
             pressComponentButton("Notification")
-            allowNotificationSitePermission()
+            allowSitePermission("Notification")
             verifyPermissionsInDoorhanger()
         }
     }
@@ -487,7 +482,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    // ****
     @Test
     fun clearAllPermissionsOnSite() {
         val testWebpage = getSitePermissionsAsset(mockWebServer).url
@@ -501,6 +495,7 @@ class SettingsPrivacyTest {
         }.openBrowserThreeDotMenu {
         }.refreshPage {
             pressComponentButton("Microphone")
+            allowAndroidDialogPrompt()
             allowSitePermission("Microphone")
         }.openThreeDotMenu {
         }.openSettings {
@@ -526,7 +521,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    // ****
     @Test
     fun clearASingleSitePermission() {
         val testWebpage = getSitePermissionsAsset(mockWebServer).url
@@ -540,20 +534,20 @@ class SettingsPrivacyTest {
         }.openBrowserThreeDotMenu {
         }.refreshPage {
             pressComponentButton("Microphone")
+            allowAndroidDialogPrompt()
             allowSitePermission("Microphone")
         }.openThreeDotMenu {
         }.openSettings {
         }.openSitePermissionsSubMenu {
         }.openExceptions {
-            verifyExceptionURL("localhost")
-            clearSinglePermissionOnSite("localhost", "Camera")
+            clickExceptionURL("localhost")
+            clearSinglePermissionOnSite("Camera")
         }.goBack {
         }.goBack {
         }.goBack {
         }
     }
 
-    // ****
     @Test
     fun deleteBrowsingData() {
         val page1 = getGenericAsset(mockWebServer, 1)
@@ -573,18 +567,16 @@ class SettingsPrivacyTest {
         }.openNewTabAndEnterToBrowser(page2.url) {
         }.openHomeScreen {
             saveCollection("Test_Page_1", "Test_Page_2")
-
         }
 
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openDeleteBrowsingDataSubMenu {
-            verifyBrowsingData(0, 2, 2)
+            verifyBrowsingData(0, 2)
         }.clearBrowsingData {
         }.goBack {
             verifyNoTabsOpened()
-            verifyNoCollectionsOpened()
         }.openThreeDotMenu {
         }.openHistory {
             verifyEmptyHistoryView()
@@ -699,12 +691,10 @@ class SettingsPrivacyTest {
         }
     }
 
-    @Ignore("Autoplay currently doesn't seem to work for some videos, need to investigate. ")
+    @Ignore("Autoplay currently doesn't seem to work for some videos, need to investigate.")
     @Test
     fun verifyAutoplayPermissions() {
-
         val testWebpage = getVideoAsset(mockWebServer).url
-
 
         homeScreen {
         }.openThreeDotMenu {
@@ -718,8 +708,7 @@ class SettingsPrivacyTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testWebpage) {
             verifyPageContent(testWebpage.toString())
-
-            Thread.sleep(5000)
+            // Thread.sleep(5000)
             // Verify if the video autoplayed
         }.openBrowserThreeDotMenu {
         }.clickSettings {

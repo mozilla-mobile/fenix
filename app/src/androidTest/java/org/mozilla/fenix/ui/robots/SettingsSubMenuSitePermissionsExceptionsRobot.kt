@@ -45,8 +45,8 @@ class SettingsSubMenuSitePermissionsExceptionsRobot {
 
     fun clearAllPermissionsOnSite(website: String) = deleteAllPermissionsOnSite(website)
 
-    fun clearSinglePermissionOnSite(website: String, permission: String) =
-        deleteSinglePermissionOnSite(website, permission)
+    fun clearSinglePermissionOnSite(permission: String) =
+        deleteSinglePermissionOnSite(permission)
 
     fun verifySitePermissionRow(permission: String, state: String) =
         assertSitePermissionRow(permission, state)
@@ -174,11 +174,7 @@ private fun assertSitePermissionRow(permission: String, state: String) {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun deleteSinglePermissionOnSite(website: String, permission: String) {
-    onView(allOf(withText(website)))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        .click()
-
+private fun deleteSinglePermissionOnSite(permission: String) {
     onView(withText(permission))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         .click()
