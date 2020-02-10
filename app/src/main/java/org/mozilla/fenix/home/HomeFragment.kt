@@ -31,7 +31,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,8 +57,8 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -299,11 +298,7 @@ class HomeFragment : Fragment() {
             val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
                 sessionId = null
             )
-            val extras =
-                FragmentNavigator.Extras.Builder()
-                    .addSharedElement(toolbar_wrapper, "toolbar_wrapper_transition")
-                    .build()
-            nav(R.id.homeFragment, directions, extras)
+            nav(R.id.homeFragment, directions)
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
