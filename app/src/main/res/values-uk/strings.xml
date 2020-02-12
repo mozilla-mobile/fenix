@@ -63,6 +63,10 @@
     <string name="browser_menu_bookmark">Додати закладку</string>
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Змінити закладку</string>
+    <!-- Browser menu button that opens the addon manager -->
+    <string name="browser_menu_addon_manager">Менеджер додатків</string>
+    <!-- Text displayed when there are no add-ons to be shown -->
+    <string name="no_add_ons">Немає додатків</string>
     <!-- Browser menu button that sends a user to help articles -->
     <string name="browser_menu_help">Допомога</string>
     <!-- Browser menu button that sends a to a the what's new article -->
@@ -156,6 +160,8 @@
     <string name="settings">Налаштування</string>
     <!-- Preference category for basic settings -->
     <string name="preferences_category_basics">Загальні</string>
+    <!-- Preference category for general settings -->
+    <string name="preferences_category_general">Загальні</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Про програму</string>
     <!-- Preference for settings related to changing the default search engine -->
@@ -186,8 +192,12 @@
     <string name="preferences_category_advanced">Додатково</string>
     <!-- Preference category for privacy settings -->
     <string name="preferences_category_privacy">Приватність</string>
+    <!-- Preference category for privacy and security settings -->
+    <string name="preferences_category_privacy_security">Приватність та безпека</string>
     <!-- Preference for advanced site permissions -->
     <string name="preferences_site_permissions">Дозволи сайту</string>
+    <!-- Preference for private browsing options -->
+    <string name="preferences_private_browsing_options">Приватний перегляд</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Відкривати посилання в приватній вкладці</string>
     <!-- Preference for adding private browsing shortcut -->
@@ -203,6 +213,8 @@
     <string name="preferences_toolbar">Панель інструментів</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
+    <!-- Preference for settings related to visual options -->
+    <string name="preferences_customize">Пристосування</string>
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description">Синхронізуйте закладки, історію та інші дані з Обліковим записом Firefox</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
@@ -239,6 +251,9 @@
     <string name="preferences_account_settings">Налаштування облікового запису</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Відкривати посилання в програмах</string>
+
+    <!-- Preference for add_ons -->
+    <string name="preferences_addons">Додатки</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -313,6 +328,10 @@
     <string name="preference_usage_data">Використання й технічні дані</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Надсилає в Mozilla дані про використання, швидкодію, апаратне забезпечення та налаштування браузера, щоб допомогти вдосконалити %1$s</string>
+    <!-- Preference switch for marketing data collection -->
+    <string name="preferences_marketing_data">Маркетингові дані</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">Надсилання даних про функції, які ви використовуєте в %1$s, нашій компанії з мобільного маркетингу Leanplum.</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Експерименти</string>
     <!-- Summary for experiments preferences -->
@@ -425,5 +444,24 @@
     <string name="current_session_save">Зберегти</string>
     <!-- Button in the current session menu. Opens the share menu when pressed -->
     <string name="current_session_share">Поділитися</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
+    <string name="current_session_image">Зображення поточного сеансу</string>
+    <!-- Button to save the current set of tabs into a collection -->
+    <string name="save_to_collection">Зберегти до збірки</string>
+    <!-- Text for the menu button to delete a collection -->
+    <string name="collection_delete">Видалити збірку</string>
+    <!-- Text for the menu button to rename a collection -->
+    <string name="collection_rename">Перейменувати збірку</string>
+    <!-- Text for the button to open tabs of the selected collection -->
+    <string name="collection_open_tabs">Відкрити вкладки</string>
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">Вилучити</string>
+
+    <!-- History -->
+    <!-- Text for the button to clear all history -->
+    <string name="history_delete_all">Видалити історію</string>
+    <!-- Text for the dialog to confirm clearing all history -->
+    <string name="history_delete_all_dialog">Ви впевнені, що хочете стерти свою історію?</string>
 
     </resources>
