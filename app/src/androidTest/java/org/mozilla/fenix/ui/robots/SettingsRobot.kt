@@ -19,6 +19,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -153,6 +154,13 @@ class SettingsRobot {
 
             SettingsTurnOnSyncRobot().interact()
             return SettingsTurnOnSyncRobot.Transition()
+        }
+
+        fun openAddonsManagerMenu(interact: AddonsManagerRobot.() -> Unit): AddonsManagerRobot.Transition {
+            addonsManagerButton().click()
+
+            AddonsManagerRobot().interact()
+            return AddonsManagerRobot.Transition()
         }
     }
 }
@@ -296,6 +304,8 @@ fun isPackageInstalled(packageName: String): Boolean {
         false
     }
 }
+
+private fun addonsManagerButton() = onView(withText(R.string.preferences_addons))
 
 private fun goBackButton() =
     onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))

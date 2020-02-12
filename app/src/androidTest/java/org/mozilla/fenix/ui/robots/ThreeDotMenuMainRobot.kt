@@ -208,6 +208,17 @@ class ThreeDotMenuMainRobot {
             ReaderViewRobot().interact()
             return ReaderViewRobot.Transition()
         }
+
+        fun openAddonsManagerMenu(interact: AddonsManagerRobot.() -> Unit): AddonsManagerRobot.Transition {
+            addonsManagerButton().click()
+            mDevice.waitNotNull(
+                Until.findObject(By.text("Recommended")),
+                waitingTime
+            )
+
+            AddonsManagerRobot().interact()
+            return AddonsManagerRobot.Transition()
+        }
     }
 }
 
@@ -314,3 +325,4 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) = readerViewAppea
     .check(
         if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)) else ViewAssertions.doesNotExist()
     )
+private fun addonsManagerButton() = onView(withText(R.string.browser_menu_addon_manager))
