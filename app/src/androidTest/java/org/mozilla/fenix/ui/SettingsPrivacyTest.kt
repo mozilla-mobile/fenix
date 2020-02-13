@@ -143,14 +143,42 @@ class SettingsPrivacyTest {
         val saveLoginTest =
                 TestAssetHelper.getSaveLoginAsset(mockWebServer)
 
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+                mDevice.waitNotNull(Until.findObjects(By.text("test@example.com")), TestAssetHelper.waitingTime)
+                val submitButton = mDevice.findObject(By.res("submit"))
+                submitButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
+                // Click save to save the login
+                mDevice.waitNotNull(Until.findObjects(By.text("Save")))
+                mDevice.findObject(By.text("Save")).click()
+            }.openHomeScreen {
+            }.openThreeDotMenu {
+            }.openSettings {
+                TestHelper.scrollToElementByText("Logins and passwords")
+            }.openLoginsAndPasswordSubMenu {
+                verifyDefaultView()
+                verifyDefaultValueSyncLogins()
+            }.openSavedLogins {
+            verifySavedLoginsView()
+            tapSetupLater()
+            // Verify that the login appears correctly
+            verifySavedLoginFromPrompt()
+        }
+    }
+
+    @Test
+    fun doNotSaveLoginFromPromptTest() {
+        val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             mDevice.waitNotNull(Until.findObjects(By.text("test@example.com")), TestAssetHelper.waitingTime)
+
             val submitButton = mDevice.findObject(By.res("submit"))
             submitButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
             // Click save to save the login
             mDevice.waitNotNull(Until.findObjects(By.text("Save")))
-            mDevice.findObject(By.text("Save")).click()
+            mDevice.findObject(By.text("Don’t save")).click()
         }.openHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -161,8 +189,21 @@ class SettingsPrivacyTest {
         }.openSavedLogins {
             verifySavedLoginsView()
             tapSetupLater()
-            // Verify that the login appears correctly
-            mDevice.waitNotNull(Until.findObjects(By.text("test@example.com")))
+            // Verify that the login list is empty
+            verifyNotSavedLoginFromPromt()
+        }
+    }
+
+    @Test
+    fun saveLoginsAndPasswordsOptions() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            TestHelper.scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+        }.saveLoginsAndPasswordsOptions {
+            verifySaveLoginsOptionsView()
         }
     }
 

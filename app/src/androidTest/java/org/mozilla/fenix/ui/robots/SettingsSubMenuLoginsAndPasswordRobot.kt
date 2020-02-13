@@ -65,6 +65,14 @@ class SettingsSubMenuLoginsAndPasswordRobot {
             SettingsTurnOnSyncRobot().interact()
             return SettingsTurnOnSyncRobot.Transition()
         }
+
+        fun saveLoginsAndPasswordsOptions(interact: SettingsSubMenuLoginsAndPasswordsOptionsToSaveRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordsOptionsToSaveRobot.Transition {
+            fun saveLoginsAndPasswordButton() = onView(ViewMatchers.withText("Save logins and passwords"))
+            saveLoginsAndPasswordButton().click()
+
+            SettingsSubMenuLoginsAndPasswordsOptionsToSaveRobot().interact()
+            return SettingsSubMenuLoginsAndPasswordsOptionsToSaveRobot.Transition()
+        }
     }
 }
 
