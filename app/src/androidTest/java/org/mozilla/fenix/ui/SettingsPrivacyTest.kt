@@ -145,6 +145,7 @@ class SettingsPrivacyTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+            mDevice.waitNotNull(Until.findObjects(By.text("test@example.com")), TestAssetHelper.waitingTime)
             val submitButton = mDevice.findObject(By.res("submit"))
             submitButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
             // Click save to save the login
