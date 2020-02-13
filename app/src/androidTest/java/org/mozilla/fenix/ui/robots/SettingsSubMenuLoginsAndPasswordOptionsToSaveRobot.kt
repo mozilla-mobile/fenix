@@ -15,7 +15,7 @@ import org.hamcrest.CoreMatchers
  * Implementation of Robot Pattern for the Privacy Settings > saved logins sub menu
  */
 
-class SettingsSubMenuLoginsAndPasswordsOptionsToSaveRobot {
+class SettingsSubMenuLoginsAndPasswordOptionsToSaveRobot {
     fun verifySaveLoginsOptionsView() {
         onView(ViewMatchers.withText("Ask to save"))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
