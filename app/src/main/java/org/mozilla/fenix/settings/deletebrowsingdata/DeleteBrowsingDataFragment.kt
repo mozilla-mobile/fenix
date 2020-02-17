@@ -22,6 +22,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.home.HomeFragmentDirections
 
 @SuppressWarnings("TooManyFunctions")
 class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_data) {
@@ -218,11 +219,19 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         // and we want to prevent a crash by defaulting to pop home behavior
         if (checkIfFragmentInBackStack(R.id.deleteBrowsingDataFragment)) {
             // If Settings is in the backstack then we can continue with intended behavior
-            if (checkIfFragmentInBackStack(R.id.browserFragment)) findNavController().popBackStack(
-                R.id.homeFragment,
-                false
-            )
-            else findNavController().popBackStack()
+            if (checkIfFragmentInBackStack(R.id.browserFragment)) {
+                findNavController().popBackStack(
+                    R.id.homeFragment,
+                    false
+                )
+                while (findNavController().currentDestination?.id == R.id.homeFragment) {
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
+                    )
+                }
+            } else {
+                findNavController().popBackStack()
+            }
         } else {
             findNavController().popBackStack(
                 R.id.homeFragment,
