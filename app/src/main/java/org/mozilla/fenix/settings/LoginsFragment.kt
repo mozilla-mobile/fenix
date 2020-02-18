@@ -149,9 +149,9 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
         // Temporary fix for certain devices that can't use the current biometrics library
         // https://github.com/mozilla-mobile/fenix/issues/7603
         when {
-            Build.MANUFACTURER.toLowerCase().contains("oneplus") -> {
-                false
-            }
+//            Build.MANUFACTURER.toLowerCase().contains("oneplus") -> {
+//                false
+//            }
             Build.VERSION.SDK_INT >= M -> {
                 context?.let {
                     val bm = BiometricManager.from(it)
