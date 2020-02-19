@@ -39,7 +39,7 @@ object Versions {
     // that we depend on directly for the fenix-megazord (and for it's
     // forUnitTest variant), and it's important that it be kept in
     // sync with the version used by android-components above.
-    const val mozilla_appservices = "0.50.0"
+    const val mozilla_appservices = "0.51.1"
 
     const val mozilla_glean = "25.0.0"
 
