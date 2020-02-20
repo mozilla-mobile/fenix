@@ -207,7 +207,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 container = view.browserLayout,
                 shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
-                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
+                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+                lifecycleOwner = this
             )
 
             toolbarIntegration.set(
