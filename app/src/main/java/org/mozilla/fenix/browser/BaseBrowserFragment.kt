@@ -32,6 +32,7 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -96,8 +97,12 @@ import org.mozilla.fenix.utils.FragmentPreDrawManager
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, SessionManager.Observer {
     protected lateinit var browserFragmentStore: BrowserFragmentStore
-    protected lateinit var browserInteractor: BrowserToolbarViewInteractor
-    protected lateinit var browserToolbarView: BrowserToolbarView
+    private var _browserInteractor: BrowserToolbarViewInteractor? = null
+    protected val browserInteractor: BrowserToolbarViewInteractor
+        get() = _browserInteractor!!
+    private var _browserToolbarView: BrowserToolbarView? = null
+    protected val browserToolbarView: BrowserToolbarView
+        get() = _browserToolbarView!!
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 
@@ -117,6 +122,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private var browserInitialized: Boolean = false
     private var initUIJob: Job? = null
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _browserToolbarView = null
+        _browserInteractor = null
+    }
 
     @CallSuper
     override fun onCreateView(
@@ -199,15 +210,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 topSiteStorage = requireComponents.core.topSiteStorage
             )
 
-            browserInteractor = BrowserInteractor(
+            _browserInteractor = BrowserInteractor(
                 browserToolbarController = browserToolbarController
             )
 
-            browserToolbarView = BrowserToolbarView(
+            _browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
                 shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
-                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) }
+                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+                lifecycleOwner = this.viewLifecycleOwner
             )
 
             toolbarIntegration.set(
