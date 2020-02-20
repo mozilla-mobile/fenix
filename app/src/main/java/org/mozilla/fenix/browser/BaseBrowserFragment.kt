@@ -96,8 +96,12 @@ import org.mozilla.fenix.utils.FragmentPreDrawManager
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, SessionManager.Observer {
     protected lateinit var browserFragmentStore: BrowserFragmentStore
-    protected lateinit var browserInteractor: BrowserToolbarViewInteractor
-    protected lateinit var browserToolbarView: BrowserToolbarView
+    protected var _browserInteractor: BrowserToolbarViewInteractor? = null
+    protected val browserInteractor: BrowserToolbarViewInteractor
+        get() = _browserInteractor!!
+    protected var _browserToolbarView: BrowserToolbarView? = null
+    protected val browserToolbarView: BrowserToolbarView
+        get() = _browserToolbarView!!
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 
@@ -199,16 +203,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 topSiteStorage = requireComponents.core.topSiteStorage
             )
 
-            browserInteractor = BrowserInteractor(
+            _browserInteractor = BrowserInteractor(
                 browserToolbarController = browserToolbarController
             )
 
-            browserToolbarView = BrowserToolbarView(
+            _browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
                 shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                lifecycleOwner = this
+                lifecycleOwner = this.viewLifecycleOwner
             )
 
             toolbarIntegration.set(
@@ -465,6 +469,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             (activity as HomeActivity).updateThemeForSession(session)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _browserInteractor = null
+        _browserToolbarView = null
     }
 
     /**
