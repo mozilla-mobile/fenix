@@ -31,6 +31,7 @@ import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.robolectric.testContext
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
@@ -78,6 +79,12 @@ class DefaultQuickSettingsControllerTest {
         dismiss = dismiss
     )
 
+    @Before
+    fun setup() {
+        // For using the SitePermissions.toggle(..) extension method we need a static mock of SitePermissions.
+        mockkStatic("org.mozilla.fenix.settings.ExtensionsKt")
+    }
+
     @Test
     fun `handlePermissionsShown should delegate to an injected parameter`() {
         controller.handlePermissionsShown()
@@ -114,8 +121,6 @@ class DefaultQuickSettingsControllerTest {
         every { websitePermission.isBlockedByAndroid } returns false
         every { websitePermission.name } returns permissionName
         every { store.dispatch(any()) } returns mockk()
-        // For using the SitePermissions.toggle(..) extension method we need a static mock of SitePermissions.
-        mockkStatic("org.mozilla.fenix.settings.ExtensionsKt")
 
         controller.handlePermissionToggled(websitePermission)
 
