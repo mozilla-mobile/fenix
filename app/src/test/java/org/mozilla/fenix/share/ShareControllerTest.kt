@@ -49,6 +49,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 @ExperimentalCoroutinesApi
+
 class ShareControllerTest {
     // Need a valid context to retrieve Strings for example, but we also need it to return our "metrics"
     private val context: Context = spyk(testContext)
@@ -121,7 +122,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `handleShareToApp should dismiss with an error start when a security exception occurs`() {
+    fun `handleShareToApp should dismiss with an error start when a security exception occurs`() = runBlocking {
         val appPackageName = "package"
         val appClassName = "activity"
         val appShareOption = AppShareOption("app", mockk(), appPackageName, appClassName)
@@ -147,7 +148,7 @@ class ShareControllerTest {
 
     @Test
     @Suppress("DeferredResultUnused")
-    fun `handleShareToDevice should share to account device, inform callbacks and dismiss`() {
+    fun `handleShareToDevice should share to account device, inform callbacks and dismiss`() = runBlocking {
         val deviceToShareTo = Device(
             "deviceId", "deviceName", DeviceType.UNKNOWN, false, 0L, emptyList(), false, null)
         val deviceId = slot<String>()
@@ -171,7 +172,7 @@ class ShareControllerTest {
 
     @Test
     @Suppress("DeferredResultUnused")
-    fun `handleShareToAllDevices calls handleShareToDevice multiple times`() {
+    fun `handleShareToAllDevices calls handleShareToDevice multiple times`() = runBlocking {
         val devicesToShareTo = listOf(
             Device("deviceId0", "deviceName0", DeviceType.UNKNOWN, false, 0L, emptyList(), false, null),
             Device("deviceId1", "deviceName1", DeviceType.UNKNOWN, true, 1L, emptyList(), false, null)
@@ -192,7 +193,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `handleSignIn should navigate to the Sync Fragment and dismiss this one`() {
+    fun `handleSignIn should navigate to the Sync Fragment and dismiss this one`() = runBlocking {
         controller.handleSignIn()
 
         verifyOrder {
@@ -206,7 +207,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `handleReauth should navigate to the Account Problem Fragment and dismiss this one`() {
+    fun `handleReauth should navigate to the Account Problem Fragment and dismiss this one`() = runBlocking {
         controller.handleReauth()
 
         verifyOrder {
@@ -219,7 +220,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `showSuccess should show a snackbar with a success message`() {
+    fun `showSuccess should show a snackbar with a success message`() = runBlocking {
         val expectedMessage = controller.getSuccessMessage()
         val expectedTimeout = Snackbar.LENGTH_SHORT
 
@@ -232,7 +233,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `showFailureWithRetryOption should show a snackbar with a retry action`() {
+    fun `showFailureWithRetryOption should show a snackbar with a retry action`() = runBlocking {
         val expectedMessage = context.getString(R.string.sync_sent_tab_error_snackbar)
         val expectedTimeout = Snackbar.LENGTH_LONG
         val operation: () -> Unit = { println("Hello World") }
@@ -252,7 +253,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `getSuccessMessage should return different strings depending on the number of shared tabs`() {
+    fun `getSuccessMessage should return different strings depending on the number of shared tabs`() = runBlocking {
         val controllerWithOneSharedTab = DefaultShareController(
             context,
             listOf(ShareData(url = "url0", title = "title0")),
@@ -278,12 +279,12 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `getShareText should respect concatenate shared tabs urls`() {
+    fun `getShareText should respect concatenate shared tabs urls`() = runBlocking {
         assertThat(controller.getShareText()).isEqualTo(textToShare)
     }
 
     @Test
-    fun `ShareTab#toTabData maps a list of ShareTab to a TabData list`() {
+    fun `ShareTab#toTabData maps a list of ShareTab to a TabData list`() = runBlocking {
         var tabData: List<TabData>
 
         with(controller) {
@@ -294,7 +295,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `ShareTab#toTabData creates a data url from text if no url is specified`() {
+    fun `ShareTab#toTabData creates a data url from text if no url is specified`() = runBlocking {
         var tabData: List<TabData>
         val expected = listOf(
             TabData(title = "title0", url = ""),
