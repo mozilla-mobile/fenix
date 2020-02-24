@@ -93,7 +93,15 @@ class CustomTabToolbarMenu(
             }
         }
 
-        BrowserMenuItemToolbar(listOf(back, forward, refresh))
+        val share = BrowserMenuItemToolbar.Button(
+            imageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_share,
+            contentDescription = context.getString(R.string.browser_menu_share),
+            iconTintColorResource = primaryTextColor()
+        ) {
+            onItemTapped.invoke(ToolbarMenu.Item.Share)
+        }
+
+        BrowserMenuItemToolbar(listOf(back, forward, refresh, share))
     }
 
     private val menuItems by lazy {
