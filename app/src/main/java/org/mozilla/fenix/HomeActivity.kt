@@ -15,6 +15,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -22,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.navigationToolbarStub
+import kotlinx.android.synthetic.main.navigation_toolbar.navigationToolbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
@@ -68,6 +70,8 @@ import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
@@ -200,6 +204,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 return
             }
         }
+
+        // Temporary disable back button in action bar to prevent multiple navigation on fast consecutive clicks.
+        // See #8460
+        navigationToolbar?.setChildrenClickable(false, 0)
+        navigationToolbar?.setChildrenClickable(true, THROTTLE_TIME_MS)
         super.onBackPressed()
     }
 
@@ -387,6 +396,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         navHost.navController.navigate(action)
     }
 
+    private fun Toolbar.setChildrenClickable(boolean: Boolean, delayTime: Long) {
+        Timer().schedule(delayTime) {
+            this@setChildrenClickable.children.forEach {
+                it.isClickable = boolean
+            }
+        }
+    }
+
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
@@ -394,5 +411,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
+        const val THROTTLE_TIME_MS = 500L
     }
 }
