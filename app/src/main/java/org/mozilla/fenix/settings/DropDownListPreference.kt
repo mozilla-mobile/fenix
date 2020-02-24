@@ -7,8 +7,8 @@ package org.mozilla.fenix.settings
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.preference.DropDownPreference
+import androidx.preference.ListPreference
 import org.mozilla.fenix.R
 
 class DropDownListPreference @JvmOverloads constructor(
@@ -25,12 +25,18 @@ class DropDownListPreference @JvmOverloads constructor(
     }
 }
 
-fun DropDownListPreference.findEntriesValue(newValue: Any?): CharSequence? {
-    val newValueString = newValue as? String ?: return null
-    val index = this.findIndexOfValue(newValueString)
-    return if (index != Spinner.INVALID_POSITION) {
-        this.entries[index] ?: null
-    } else {
-        null
-    }
+/**
+ * Return the (human-readable) entry that is matched to the (backing key) entryValue.
+ *
+ * E.g.
+ *   entryValues == listOf("private", "normal")
+ *   entries == listOf("Use private mode", "Use normal mode")
+ *
+ *   findEntry("private) == "Use Private Mode"
+ */
+fun ListPreference.findEntry(key: Any?): CharSequence? {
+    if (key !is String) return null
+
+    val index = entryValues.indexOf(key)
+    return this.entries.getOrNull(index)
 }

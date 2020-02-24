@@ -230,7 +230,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         customCookiesSelect.onPreferenceChangeListener = object : StringSharedPreferenceUpdater() {
             override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                 updateTrackingProtectionPolicy()
-                val newValueEntry = (preference as DropDownListPreference).findEntriesValue(newValue)
+                val newValueEntry = (preference as DropDownListPreference).findEntry(key = newValue)
                 return super.onPreferenceChange(preference, newValueEntry)
             }
         }
@@ -238,7 +238,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         customTrackingSelect.onPreferenceChangeListener = object : StringSharedPreferenceUpdater() {
             override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                 updateTrackingProtectionPolicy()
-                val newValueEntry = (preference as DropDownListPreference).findEntriesValue(newValue)
+                val newValueEntry = (preference as DropDownListPreference).findEntry(key = newValue)
 
                 return super.onPreferenceChange(preference, newValueEntry)
             }
