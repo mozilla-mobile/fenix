@@ -112,6 +112,8 @@ class DefaultBrowserToolbarController(
         activity.components.analytics.metrics.track(
             Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)
         )
+
+        // TODO: This is what I'm looking at. Add an animation here.
         adjustBackgroundAndNavigate.invoke(
             BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(currentSession?.id)
         )

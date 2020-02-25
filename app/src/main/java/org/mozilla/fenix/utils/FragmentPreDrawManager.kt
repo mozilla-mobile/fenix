@@ -19,9 +19,11 @@ class FragmentPreDrawManager(
         fragment.postponeEnterTransition()
     }
 
-    fun execute(code: () -> Unit) {
+    fun execute(code: suspend () -> Unit) {
         fragment.view?.doOnPreDraw {
             fragment.viewLifecycleOwner.lifecycleScope.launch {
+                // We need a delay here to wait for the view to resize after dismissing the keyboard
+                // so that our sharedElements transition properly
                 code()
                 fragment.startPostponedEnterTransition()
             }

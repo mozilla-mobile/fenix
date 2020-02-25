@@ -179,6 +179,8 @@
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_browserFragment_to_searchFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
             app:destination="@id/searchFragment" />
         <argument
             android:name="activeSessionId"

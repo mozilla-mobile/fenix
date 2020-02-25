@@ -60,8 +60,8 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -262,6 +262,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
+            delay(50L)
             val homeViewModel: HomeScreenViewModel by activityViewModels {
                 ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
             }
@@ -308,14 +309,7 @@ class HomeFragment : Fragment() {
         view.toolbar_wrapper.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null
-            )
-            val extras =
-                FragmentNavigator.Extras.Builder()
-                    .addSharedElement(toolbar_wrapper, "toolbar_wrapper_transition")
-                    .build()
-            nav(R.id.homeFragment, directions, extras)
+            navigateToSearch()
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
@@ -549,7 +543,12 @@ class HomeFragment : Fragment() {
         val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
             sessionId = null
         )
-        nav(R.id.homeFragment, directions)
+
+        val extras = FragmentNavigator.Extras.Builder()
+                .addSharedElement(toolbar_wrapper, "toolbar_wrapper_transition")
+                .build()
+
+        nav(R.id.homeFragment, directions, extras)
     }
 
     private fun openSettingsScreen() {
