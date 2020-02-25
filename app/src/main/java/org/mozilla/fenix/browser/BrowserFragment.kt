@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import mozilla.components.browser.session.Session
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -37,6 +38,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
+import org.mozilla.fenix.utils.FragmentPreDrawManager
 
 /**
  * Fragment used for browsing the web within the main app.
@@ -64,6 +66,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        FragmentPreDrawManager(this).execute {
+            delay(50L)
+        }
+
         view.browserLayout.transitionName = "$TAB_ITEM_TRANSITION_NAME${getSessionById()?.id}"
         startPostponedEnterTransition()
         return view

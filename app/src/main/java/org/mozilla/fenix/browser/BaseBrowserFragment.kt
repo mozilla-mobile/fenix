@@ -6,8 +6,6 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -15,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -494,9 +491,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     ): List<ContextMenuCandidate>
 
     private fun adjustBackgroundAndNavigate(directions: NavDirections) {
-
         // TODO: Potentially allow others to pass extras in
 
+        val extras =
+            FragmentNavigator.Extras.Builder()
+                .addSharedElement(browserToolbarView.view, "toolbar_wrapper_transition_2")
+                .build()
+
+        nav(R.id.browserFragment, directions, extras)
+
+        /*
         context?.let {
             viewLifecycleOwner.lifecycleScope.launch {
                 // isAdded check is necessary because of a bug in viewLifecycleOwner. See AC#3828
@@ -521,6 +525,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 }
             }
         }
+
+         */
     }
 
     @CallSuper

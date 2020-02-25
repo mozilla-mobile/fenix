@@ -8,7 +8,7 @@
     android:id="@+id/search_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?foundation"
+    android:background="@android:color/transparent"
     tools:context=".search.SearchFragment">
 
     <ViewStub
@@ -35,6 +35,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar_wrapper"
         android:layout_width="0dp"
+        android:elevation="10dp"
         android:layout_height="@dimen/browser_toolbar_height"
         android:layout_margin="0dp"
         android:outlineProvider="paddedBounds"
@@ -45,6 +46,7 @@
 
         <FrameLayout
             android:id="@+id/toolbar_component_wrapper"
+            android:elevation="10dp"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -150,7 +152,7 @@
         android:id="@+id/pill_wrapper"
         android:layout_width="0dp"
         android:layout_height="@dimen/search_fragment_pill_height"
-        android:background="?foundation"
+        android:background="@android:color/transparent"
         android:orientation="horizontal"
         android:paddingStart="@dimen/search_fragment_pill_padding_start"
         android:paddingTop="@dimen/search_fragment_pill_padding_vertical"

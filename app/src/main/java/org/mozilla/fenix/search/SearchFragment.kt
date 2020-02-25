@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.search_suggestions_onboarding.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFrom
@@ -46,6 +47,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.FragmentPreDrawManager
 
 @Suppress("TooManyFunctions", "LargeClass")
 class SearchFragment : Fragment(), UserInteractionHandler {
@@ -143,7 +145,13 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        FragmentPreDrawManager(this).execute {
+            delay(50L)
+        }
+
         search_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
+
+
 
         qrFeature.set(
             QrFeature(
