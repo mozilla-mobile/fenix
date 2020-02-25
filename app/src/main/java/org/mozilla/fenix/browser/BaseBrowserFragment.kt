@@ -218,31 +218,87 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 lifecycleOwner = this.viewLifecycleOwner
             )
 
-            toolbarIntegration.set(
-                feature = browserToolbarView.toolbarIntegration,
-                owner = this,
-                view = view
-            )
+            browserToolbarView.loadAsync { toolbarView ->
+                toolbarIntegration.set(
+                    feature = browserToolbarView.toolbarIntegration,
+                    owner = this@BaseBrowserFragment,
+                    view = view
+                )
 
-            findInPageIntegration.set(
-                feature = FindInPageIntegration(
-                    store = store,
-                    sessionId = customTabSessionId,
-                    stub = view.stubFindInPage,
-                    engineView = view.engineView,
-                    toolbar = browserToolbarView.view
-                ),
-                owner = this,
-                view = view
-            )
+                findInPageIntegration.set(
+                    feature = FindInPageIntegration(
+                        store = store,
+                        sessionId = customTabSessionId,
+                        stub = view.stubFindInPage,
+                        engineView = view.engineView,
+                        toolbar = toolbarView
+                    ),
+                    owner = this@BaseBrowserFragment,
+                    view = view
+                )
 
-            browserToolbarView.view.display.setOnSiteSecurityClickedListener {
-                showQuickSettingsDialog()
-            }
+                toolbarView.display.setOnSiteSecurityClickedListener {
+                    showQuickSettingsDialog()
+                }
 
-            browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
-                context.metrics.track(Event.TrackingProtectionIconPressed)
-                showTrackingProtectionPanel()
+                toolbarView.display.setOnTrackingProtectionClickedListener {
+                    context.metrics.track(Event.TrackingProtectionIconPressed)
+                    showTrackingProtectionPanel()
+                }
+
+                fullScreenFeature.set(
+                    feature = FullScreenFeature(
+                        sessionManager,
+                        SessionUseCases(sessionManager),
+                        customTabSessionId
+                    ) { inFullScreen ->
+                        if (inFullScreen) {
+                            FenixSnackbar.make(view.rootView, Snackbar.LENGTH_SHORT)
+                                .setText(getString(R.string.full_screen_notification))
+                                .show()
+                            activity?.enterToImmersiveMode()
+                            toolbarView.visibility = View.GONE
+
+                            if (FeatureFlags.dynamicBottomToolbar) {
+                                engineView.setDynamicToolbarMaxHeight(0)
+                                // TODO We need to call force expand here to update verticalClipping #8697
+                                // Without this, fullscreen has a margin at the top.
+                                engineView.setVerticalClipping(0)
+                            }
+                        } else {
+                            activity?.exitImmersiveModeIfNeeded()
+                            (activity as? HomeActivity)?.let { activity ->
+                                activity.themeManager.applyStatusBarTheme(activity)
+                            }
+                            toolbarView.visibility = View.VISIBLE
+                            if (FeatureFlags.dynamicBottomToolbar) {
+                                engineView.setDynamicToolbarMaxHeight(toolbarHeight)
+                            }
+                        }
+                        if (!FeatureFlags.dynamicBottomToolbar) {
+                            updateLayoutMargins(inFullScreen)
+                        }
+                    },
+                    owner = this@BaseBrowserFragment,
+                    view = view
+                )
+
+                session.register(observer = object : Session.Observer {
+                    override fun onLoadRequest(
+                        session: Session,
+                        url: String,
+                        triggeredByRedirect: Boolean,
+                        triggeredByWebContent: Boolean
+                    ) {
+                        browserToolbarView.expand()
+                    }
+                }, owner = viewLifecycleOwner)
+
+                sessionManager.register(observer = object : SessionManager.Observer {
+                    override fun onSessionSelected(session: Session) {
+                        browserToolbarView.expand()
+                    }
+                }, owner = viewLifecycleOwner)
             }
 
             contextMenuFeature.set(
@@ -390,60 +446,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 owner = this,
                 view = view
             )
-
-            fullScreenFeature.set(
-                feature = FullScreenFeature(
-                    sessionManager,
-                    SessionUseCases(sessionManager),
-                    customTabSessionId
-                ) { inFullScreen ->
-                    if (inFullScreen) {
-                        FenixSnackbar.make(view.rootView, Snackbar.LENGTH_SHORT)
-                            .setText(getString(R.string.full_screen_notification))
-                            .show()
-                        activity?.enterToImmersiveMode()
-                        browserToolbarView.view.visibility = View.GONE
-
-                        if (FeatureFlags.dynamicBottomToolbar) {
-                            engineView.setDynamicToolbarMaxHeight(0)
-                            // TODO We need to call force expand here to update verticalClipping #8697
-                            // Without this, fullscreen has a margin at the top.
-                            engineView.setVerticalClipping(0)
-                        }
-                    } else {
-                        activity?.exitImmersiveModeIfNeeded()
-                        (activity as? HomeActivity)?.let { activity ->
-                            activity.themeManager.applyStatusBarTheme(activity)
-                        }
-                        browserToolbarView.view.visibility = View.VISIBLE
-                        if (FeatureFlags.dynamicBottomToolbar) {
-                            engineView.setDynamicToolbarMaxHeight(toolbarHeight)
-                        }
-                    }
-                    if (!FeatureFlags.dynamicBottomToolbar) {
-                        updateLayoutMargins(inFullScreen)
-                    }
-                },
-                owner = this,
-                view = view
-            )
-
-            session.register(observer = object : Session.Observer {
-                override fun onLoadRequest(
-                    session: Session,
-                    url: String,
-                    triggeredByRedirect: Boolean,
-                    triggeredByWebContent: Boolean
-                ) {
-                    browserToolbarView.expand()
-                }
-            }, owner = viewLifecycleOwner)
-
-            sessionManager.register(observer = object : SessionManager.Observer {
-                override fun onSessionSelected(session: Session) {
-                    browserToolbarView.expand()
-                }
-            }, owner = viewLifecycleOwner)
 
             @Suppress("ConstantConditionIf")
             if (FeatureFlags.pullToRefreshEnabled) {
