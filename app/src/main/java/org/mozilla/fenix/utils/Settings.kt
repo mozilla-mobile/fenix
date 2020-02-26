@@ -457,7 +457,7 @@ class Settings private constructor(
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
             // TODO autoplayInaudible will be hardcoded until additional options are added in #8017
-            autoplayInaudible = AutoplayAction.ALLOWED
+            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE)
         )
     }
 
