@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -273,7 +272,7 @@ class HomeFragment : Fragment() {
             }
             homeViewModel.layoutManagerState = null
 
-            Log.d("Sawyer", "delaying...")
+            // We have to delay so that the keyboard collapses and the view is resized before the animation happens
             delay(100L)
         }
 

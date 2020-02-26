@@ -4,15 +4,22 @@
 
 package org.mozilla.fenix.browser
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.animation.doOnEnd
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +33,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
@@ -144,6 +152,24 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         browserInitialized = initializeUI(view) != null
     }
 
+    private fun animateBrowserEngine(browserEngine: View) {
+        val valueAnimator = ValueAnimator.ofFloat(0f, 200f)
+        Log.d("Sawyer", "starting animation")
+
+        valueAnimator.addUpdateListener {
+            browserEngine.alpha = it.animatedFraction
+        }
+
+        valueAnimator.doOnEnd {
+            engineView.asView().visibility = View.VISIBLE
+            swipeRefresh.background = null
+        }
+
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration = 150L
+        valueAnimator.start()
+    }
+
     @Suppress("ComplexMethod", "LongMethod")
     @CallSuper
     protected open fun initializeUI(view: View): Session? {
@@ -154,6 +180,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
         initializeEngineView(toolbarHeight)
+
+        // TODO: Delay 100MS then fade the engine in otherwise it feels like it "flickers" white
+        // TODO: Look at how the GV team said to handle this
+
+        // TODO: one possible solution is *screenshot the engine* once it's loading or just "fade in" a white view?
+        // TODO: Remember I can maybe just launch this on first page load?
+
+
+        lifecycleScope.launch(Main) {
+            delay(50)
+            makeBrowserEngineViewStaticAndFadeIn()
+        }
 
         return getSessionById()?.also { session ->
             val browserToolbarController = DefaultBrowserToolbarController(
@@ -489,6 +527,30 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         view: View
     ): List<ContextMenuCandidate>
 
+    /**
+     * Makes the swipeRefresh background an image of the engineView in its current state.
+     * This allows us to "animate" the engineView.
+     */
+    private fun makeBrowserEngineViewStaticAndFadeIn() {
+        context?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                // isAdded check is necessary because of a bug in viewLifecycleOwner. See AC#3828
+                if (!this@BaseBrowserFragment.isAdded) return@launch
+                engineView.captureThumbnail { bitmap ->
+                    if (!this@BaseBrowserFragment.isAdded) return@captureThumbnail
+
+                    swipeRefresh.alpha = 0f
+                    // If the bitmap is null, the best we can do to reduce the flash is set transparent
+                    swipeRefresh.background = bitmap?.toDrawable(it.resources)
+                        ?: ColorDrawable(Color.TRANSPARENT)
+
+                    Log.d("Sawyer", "makeBrowserViewStatic")
+                    animateBrowserEngine(swipeRefresh)
+                }
+            }
+        }
+    }
+
     private fun adjustBackgroundAndNavigate(directions: NavDirections) {
         // TODO: Potentially allow others to pass extras in
 
@@ -502,9 +564,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
          */
 
-        nav(R.id.browserFragment, directions)
+       //nav(R.id.browserFragment, directions)
 
-        /*
         context?.let {
             viewLifecycleOwner.lifecycleScope.launch {
                 // isAdded check is necessary because of a bug in viewLifecycleOwner. See AC#3828
@@ -519,18 +580,19 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
                     engineView.asView().visibility = View.GONE
 
+                    /*
                     val extras =
                         FragmentNavigator.Extras.Builder()
                             .addSharedElement(browserToolbarView.view, "toolbar_wrapper_transition_2")
                             .build()
 
-                    nav(R.id.browserFragment, directions, extras)
+
+                     */
+                    nav(R.id.browserFragment, directions)
                     //findNavController().nav(R.id.browserFragment, directions, extras)
                 }
             }
         }
-
-         */
     }
 
     @CallSuper

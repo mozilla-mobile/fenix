@@ -4,9 +4,10 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.animation.ValueAnimator
 import android.view.View
+import android.view.animation.LinearInterpolator
 import androidx.navigation.NavController
-import androidx.navigation.fragment.FragmentNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -335,15 +336,59 @@ class DefaultSessionControlController(
         invokePendingDeleteJobs()
         val session = sessionManager.findSessionById(sessionId)
         sessionManager.select(session!!)
+
+        // TODO: Uncomment to get "zoom" effect
+        //animateTabZoom(tabView)
         val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
-        val extras =
-            FragmentNavigator.Extras.Builder()
-                .addSharedElement(
-                    tabView,
-                    "$TAB_ITEM_TRANSITION_NAME$sessionId"
-                )
-                .build()
-        navController.nav(R.id.homeFragment, directions, extras)
+        navController.nav(R.id.homeFragment, directions, null)
+
+
+        /*
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            animateTabZoom(tabView)
+            delay(150)
+            val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
+            navController.nav(R.id.homeFragment, directions, null)
+        }
+
+         */
+
+
+        /*
+        val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
+        navController.nav(R.id.homeFragment, directions, null)
+
+         */
+        // The animation does not really get started when we nav. Is there a way to tie animations to fragment transition?
+       // delay(100)
+
+    }
+
+    private fun animateTabZoom(tabView: View) {
+        val valueAnimator = ValueAnimator.ofFloat(0f, 200f)
+        valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            tabView.scaleX = it.animatedFraction * 1.5f + 1
+            tabView.scaleY = it.animatedFraction * 1.5f + 1
+            tabView.translationY = -value * 1.5f
+            tabView.alpha = 1 - it.animatedFraction
+        }
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration = 200
+        valueAnimator.start()
+    }
+
+    private fun animateTab(tabView: View) {
+        val valueAnimator = ValueAnimator.ofFloat(0f, 200f)
+        valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            tabView.translationY = -value
+            tabView.alpha = 1 - it.animatedFraction
+        }
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration = 350L
+        valueAnimator.start()
     }
 
     override fun handleSelectTopSite(url: String) {
