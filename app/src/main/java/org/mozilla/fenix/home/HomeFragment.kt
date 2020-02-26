@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +39,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import androidx.transition.TransitionInflater
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -145,9 +145,12 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
+        /*
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
                 .setDuration(SHARED_TRANSITION_MS)
+
+         */
 
         val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
             emitSessionChanges()
@@ -262,7 +265,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         FragmentPreDrawManager(this).execute {
-            delay(50L)
             val homeViewModel: HomeScreenViewModel by activityViewModels {
                 ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
             }
@@ -270,6 +272,9 @@ class HomeFragment : Fragment() {
                 sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
             homeViewModel.layoutManagerState = null
+
+            Log.d("Sawyer", "delaying...")
+            delay(100L)
         }
 
         viewLifecycleOwner.lifecycleScope.launch(IO) {

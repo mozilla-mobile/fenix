@@ -47,7 +47,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.utils.FragmentPreDrawManager
 
 @Suppress("TooManyFunctions", "LargeClass")
 class SearchFragment : Fragment(), UserInteractionHandler {
@@ -144,14 +143,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     @SuppressWarnings("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        FragmentPreDrawManager(this).execute {
-            delay(50L)
-        }
-
         search_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
-
-
 
         qrFeature.set(
             QrFeature(

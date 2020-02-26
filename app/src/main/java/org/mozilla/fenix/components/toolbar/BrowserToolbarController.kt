@@ -14,8 +14,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -300,12 +298,15 @@ class DefaultBrowserToolbarController(
 
     private fun animateTabAndNavigateHome() {
         // We need to dynamically add the options here because if you do it in XML it overwrites
+        /*
         val options = NavOptions.Builder().setPopUpTo(R.id.nav_graph, false)
             .setEnterAnim(R.anim.fade_in).build()
         val extras = FragmentNavigator.Extras.Builder().addSharedElement(
             browserLayout,
             "${TAB_ITEM_TRANSITION_NAME}${currentSession?.id}"
         ).build()
+
+         */
         engineView.captureThumbnail { bitmap ->
             scope.launch {
                 // If the bitmap is null, the best we can do to reduce the flash is set transparent
@@ -317,8 +318,8 @@ class DefaultBrowserToolbarController(
                         R.id.browserFragment,
                         R.id.action_browserFragment_to_homeFragment,
                         null,
-                        options,
-                        extras
+                        null,
+                        null
                     )
                 }
             }

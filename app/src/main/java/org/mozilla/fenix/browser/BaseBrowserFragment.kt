@@ -17,7 +17,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
@@ -493,12 +492,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private fun adjustBackgroundAndNavigate(directions: NavDirections) {
         // TODO: Potentially allow others to pass extras in
 
+        /*
         val extras =
             FragmentNavigator.Extras.Builder()
-                .addSharedElement(browserToolbarView.view, "toolbar_wrapper_transition_2")
+                .addSharedElement(browserToolbarView.view, "hello_world")
                 .build()
 
         nav(R.id.browserFragment, directions, extras)
+
+         */
+
+        nav(R.id.browserFragment, directions)
 
         /*
         context?.let {
