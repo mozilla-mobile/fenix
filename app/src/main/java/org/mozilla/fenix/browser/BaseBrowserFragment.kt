@@ -154,7 +154,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private fun animateBrowserEngine(browserEngine: View) {
         val valueAnimator = ValueAnimator.ofFloat(0f, 500f)
-        Log.d("Sawyer", "starting animation")
 
         valueAnimator.addUpdateListener {
             browserEngine.scaleX = .95f + .05f * it.animatedFraction
@@ -168,7 +167,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         }
 
         valueAnimator.interpolator = DecelerateInterpolator()
-        valueAnimator.duration = 125L
+        valueAnimator.duration = 115L
         valueAnimator.start()
 
         /*

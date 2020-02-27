@@ -338,6 +338,7 @@ class DefaultSessionControlController(
         sessionManager.select(session!!)
 
         // TODO: Uncomment to get "zoom" effect
+        // TODO: Try translating the toolbar off the page
         //animateTab(tabView)
         val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
         navController.nav(R.id.homeFragment, directions, null)
