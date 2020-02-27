@@ -73,8 +73,8 @@
         <action
             android:id="@+id/action_homeFragment_to_browserFragment"
             app:destination="@id/browserFragment"
+            app:exitAnim="@anim/fade_out"
             app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/zoom_in_fade"
             app:popEnterAnim="@anim/fade_in" />
         <action
             android:id="@+id/action_homeFragment_to_libraryFragment"
@@ -180,9 +180,6 @@
         tools:layout="@layout/fragment_browser">
         <action
             android:id="@+id/action_browserFragment_to_homeFragment"
-            app:popEnterAnim="@anim/zoom_out_fade"
-            app:enterAnim="@anim/zoom_out_fade"
-            app:exitAnim="@anim/zoom_out_fade"
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_browserFragment_to_searchFragment"

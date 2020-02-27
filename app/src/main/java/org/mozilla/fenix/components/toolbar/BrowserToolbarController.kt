@@ -318,8 +318,9 @@ class DefaultBrowserToolbarController(
                 swipeRefresh.background = bitmap?.toDrawable(activity.resources)
                     ?: ColorDrawable(Color.TRANSPARENT)
                 engineView.asView().visibility = View.GONE
+                navController.popBackStack()
 
-                animateBrowserEngine(swipeRefresh)
+                //animateBrowserEngine(swipeRefresh)
                 /*
                 if (!navController.popBackStack(R.id.homeFragment, false)) {
                     Log.d("Sawyer", "popping back!")

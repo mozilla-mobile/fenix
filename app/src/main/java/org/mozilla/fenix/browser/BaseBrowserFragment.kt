@@ -15,7 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
@@ -162,15 +162,25 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             browserEngine.alpha = it.animatedFraction
         }
 
-        /* Translate Y
-        val startingY = browserEngine.y + 250
-        valueAnimator.addUpdateListener {
-            val value = it.animatedValue as Float
-            browserEngine.y = startingY - value/2
-            browserEngine.alpha = it.animatedFraction
+        valueAnimator.doOnEnd {
+            engineView.asView().visibility = View.VISIBLE
+            swipeRefresh.background = null
         }
 
-         */
+        valueAnimator.interpolator = DecelerateInterpolator()
+        valueAnimator.duration = 200L
+        valueAnimator.start()
+
+        /*
+
+val startingY = browserEngine.y + 250
+valueAnimator.addUpdateListener {
+    val value = it.animatedValue as Float
+    browserEngine.y = startingY - value/2
+    browserEngine.alpha = it.animatedFraction
+}
+*/
+
 
         /* Zoom
         valueAnimator.addUpdateListener {
@@ -206,14 +216,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
          */
 
-        valueAnimator.doOnEnd {
-            engineView.asView().visibility = View.VISIBLE
-            swipeRefresh.background = null
-        }
 
-        valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration = 150L
-        valueAnimator.start()
     }
 
     @Suppress("ComplexMethod", "LongMethod")
