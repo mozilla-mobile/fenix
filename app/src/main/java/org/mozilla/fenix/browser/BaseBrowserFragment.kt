@@ -168,7 +168,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         }
 
         valueAnimator.interpolator = DecelerateInterpolator()
-        valueAnimator.duration = 200L
+        valueAnimator.duration = 100L
         valueAnimator.start()
 
         /*

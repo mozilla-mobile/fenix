@@ -73,7 +73,7 @@
         <action
             android:id="@+id/action_homeFragment_to_browserFragment"
             app:destination="@id/browserFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/zoom_in_fade"
             app:enterAnim="@anim/fade_in"
             app:popEnterAnim="@anim/fade_in" />
         <action
