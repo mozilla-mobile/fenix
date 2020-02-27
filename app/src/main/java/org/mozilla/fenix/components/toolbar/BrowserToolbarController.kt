@@ -37,6 +37,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 
@@ -159,6 +160,7 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.AddToHomeScreen -> {
+                activity.settings().installPwaOpened = true
                 MainScope().launch {
                     with(activity.components.useCases.webAppUseCases) {
                         if (isInstallable()) {
@@ -267,6 +269,8 @@ class DefaultBrowserToolbarController(
                 deleteAndQuit(activity, scope, snackbar)
             }
             is ToolbarMenu.Item.ReaderMode -> {
+                activity.settings().readerModeOpened = true
+
                 val enabled = currentSession?.readerMode
                     ?: activity.components.core.sessionManager.selectedSession?.readerMode
                     ?: false
@@ -281,6 +285,8 @@ class DefaultBrowserToolbarController(
                 readerModeController.showControls()
             }
             ToolbarMenu.Item.OpenInApp -> {
+                activity.settings().openInAppOpened = true
+
                 val appLinksUseCases =
                     activity.components.useCases.appLinksUseCases
                 val getRedirect = appLinksUseCases.appLinkRedirect
