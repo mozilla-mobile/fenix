@@ -153,12 +153,50 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun animateBrowserEngine(browserEngine: View) {
-        val valueAnimator = ValueAnimator.ofFloat(0f, 200f)
+        val valueAnimator = ValueAnimator.ofFloat(0f, 500f)
         Log.d("Sawyer", "starting animation")
 
+        val startingY = browserEngine.y + 250
+        valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            browserEngine.y = startingY - value/2
+            browserEngine.alpha = it.animatedFraction
+        }
+
+        /* Zoom
+        val startingY = browserEngine.y + 250
+        valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            browserEngine.y = startingY - value/2
+            browserEngine.alpha = it.animatedFraction
+        }
+         */
+
+        /* Zoom & wipe up
+            val startingY = browserEngine.y + 250
+            valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            browserEngine.y = startingY - value/2
+            browserEngine.scaleX = .95f + .05f * it.animatedFraction
+            browserEngine.scaleY = .95f + .05f * it.animatedFraction
+            browserEngine.alpha = it.animatedFraction
+        }
+         */
+
+        /* Subtle zoom animation
+        valueAnimator.addUpdateListener {
+            browserEngine.scaleX = .95f + .05f * it.animatedFraction
+            browserEngine.scaleY = .95f + .05f * it.animatedFraction
+            browserEngine.alpha = it.animatedFraction
+        }
+         */
+
+        /* Fade animation
         valueAnimator.addUpdateListener {
             browserEngine.alpha = it.animatedFraction
         }
+
+         */
 
         valueAnimator.doOnEnd {
             engineView.asView().visibility = View.VISIBLE

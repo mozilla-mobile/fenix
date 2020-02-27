@@ -338,7 +338,7 @@ class DefaultSessionControlController(
         sessionManager.select(session!!)
 
         // TODO: Uncomment to get "zoom" effect
-        //animateTabZoom(tabView)
+        animateTab(tabView)
         val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
         navController.nav(R.id.homeFragment, directions, null)
 
@@ -375,7 +375,7 @@ class DefaultSessionControlController(
             tabView.alpha = 1 - it.animatedFraction
         }
         valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration = 200
+        valueAnimator.duration = 200L
         valueAnimator.start()
     }
 
@@ -387,7 +387,7 @@ class DefaultSessionControlController(
             tabView.alpha = 1 - it.animatedFraction
         }
         valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration = 350L
+        valueAnimator.duration = 200L
         valueAnimator.start()
     }
 
