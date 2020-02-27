@@ -4,13 +4,17 @@
 
 package org.mozilla.fenix.components.toolbar
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import androidx.annotation.VisibleForTesting
+import androidx.core.animation.doOnEnd
 import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -309,21 +313,47 @@ class DefaultBrowserToolbarController(
          */
         engineView.captureThumbnail { bitmap ->
             scope.launch {
+                Log.d("Sawyer", "animateTabAndNavHome")
                 // If the bitmap is null, the best we can do to reduce the flash is set transparent
                 swipeRefresh.background = bitmap?.toDrawable(activity.resources)
                     ?: ColorDrawable(Color.TRANSPARENT)
                 engineView.asView().visibility = View.GONE
+
+                animateBrowserEngine(swipeRefresh)
+                /*
                 if (!navController.popBackStack(R.id.homeFragment, false)) {
+                    Log.d("Sawyer", "popping back!")
+                    val directions = BrowserFragmentDirections.actionBrowserFragmentToHomeFragment()
                     navController.nav(
                         R.id.browserFragment,
-                        R.id.action_browserFragment_to_homeFragment,
-                        null,
-                        null,
+                        directions,
                         null
                     )
                 }
+
+                 */
             }
         }
+    }
+
+    private fun animateBrowserEngine(browserEngine: View) {
+        val valueAnimator = ValueAnimator.ofFloat(0f, 500f)
+        Log.d("Sawyer", "starting animation in browser")
+
+        // TODO: Tweak this... the popAnimations won't work :(
+        valueAnimator.addUpdateListener {
+            browserEngine.scaleX = 1f - .1f * it.animatedFraction
+            browserEngine.scaleY = 1f - .1f * it.animatedFraction
+            browserEngine.alpha = 1 - it.animatedFraction
+        }
+
+        valueAnimator.doOnEnd {
+            navController.popBackStack()
+        }
+
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration = 150L
+        valueAnimator.start()
     }
 
     @SuppressWarnings("ComplexMethod")

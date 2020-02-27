@@ -57,6 +57,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
+        app:popEnterAnim="@anim/menu_enter_bottom"
         android:name="org.mozilla.fenix.home.HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -174,9 +175,14 @@
     <fragment
         android:id="@+id/browserFragment"
         android:name="org.mozilla.fenix.browser.BrowserFragment"
+        app:popEnterAnim="@anim/menu_enter_bottom"
+        app:popExitAnim="@anim/menu_enter_bottom"
         tools:layout="@layout/fragment_browser">
         <action
             android:id="@+id/action_browserFragment_to_homeFragment"
+            app:popEnterAnim="@anim/zoom_out_fade"
+            app:enterAnim="@anim/zoom_out_fade"
+            app:exitAnim="@anim/zoom_out_fade"
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_browserFragment_to_searchFragment"

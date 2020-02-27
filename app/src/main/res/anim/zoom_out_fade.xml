@@ -5,15 +5,15 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <alpha
         android:interpolator="@android:interpolator/linear"
-        android:fromAlpha="1.0" android:toAlpha="0"
+        android:fromAlpha="0" android:toAlpha="1"
         android:duration="@android:integer/config_shortAnimTime" />
     <scale
         android:interpolator="@android:interpolator/linear"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:fromXScale="100%"
-        android:toXScale="150%"
-        android:fromYScale="100%"
-        android:toYScale="150%"
+        android:fromXScale="150%"
+        android:toXScale="100%"
+        android:fromYScale="150%"
+        android:toYScale="100%"
         android:duration="@android:integer/config_shortAnimTime" />
 </set>
