@@ -156,6 +156,13 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         val valueAnimator = ValueAnimator.ofFloat(0f, 500f)
         Log.d("Sawyer", "starting animation")
 
+        valueAnimator.addUpdateListener {
+            browserEngine.scaleX = .95f + .05f * it.animatedFraction
+            browserEngine.scaleY = .95f + .05f * it.animatedFraction
+            browserEngine.alpha = it.animatedFraction
+        }
+
+        /* Translate Y
         val startingY = browserEngine.y + 250
         valueAnimator.addUpdateListener {
             val value = it.animatedValue as Float
@@ -163,11 +170,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             browserEngine.alpha = it.animatedFraction
         }
 
+         */
+
         /* Zoom
-        val startingY = browserEngine.y + 250
         valueAnimator.addUpdateListener {
-            val value = it.animatedValue as Float
-            browserEngine.y = startingY - value/2
+            browserEngine.scaleX = .95f + .05f * it.animatedFraction
+            browserEngine.scaleY = .95f + .05f * it.animatedFraction
             browserEngine.alpha = it.animatedFraction
         }
          */

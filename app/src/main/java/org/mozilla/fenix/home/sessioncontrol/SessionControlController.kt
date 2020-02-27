@@ -338,7 +338,7 @@ class DefaultSessionControlController(
         sessionManager.select(session!!)
 
         // TODO: Uncomment to get "zoom" effect
-        animateTab(tabView)
+        //animateTab(tabView)
         val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
         navController.nav(R.id.homeFragment, directions, null)
 
