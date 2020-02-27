@@ -6,7 +6,7 @@
     <alpha
         android:interpolator="@android:interpolator/linear"
         android:fromAlpha="1.0" android:toAlpha="0"
-        android:duration="@android:integer/config_shortAnimTime" />
+        android:duration="125" />
     <scale
         android:interpolator="@android:interpolator/linear"
         android:pivotX="50%"
@@ -15,5 +15,5 @@
         android:toXScale="125%"
         android:fromYScale="100%"
         android:toYScale="125%"
-        android:duration="@android:integer/config_shortAnimTime" />
+        android:duration="125" />
 </set>
