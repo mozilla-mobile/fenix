@@ -30,6 +30,11 @@ object FeatureFlags {
     val progressiveWebApps = Config.channel.isNightlyOrDebug
 
     /**
+     * Gives option in Settings to see logins and sync logins
+     */
+    val logins = Config.channel.isNightlyOrDebug
+
+    /**
      * Disables FxA Application Services Web Channels feature
      */
     const val asFeatureWebChannelsDisabled = false

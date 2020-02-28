@@ -34,6 +34,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -257,6 +258,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
         val loginsNameKey = getPreferenceKey(R.string.pref_key_sync_logins)
         findPreference<CheckBoxPreference>(loginsNameKey)?.apply {
+            isVisible = FeatureFlags.logins
             isEnabled = syncEnginesStatus.containsKey(SyncEngine.Passwords)
             isChecked = syncEnginesStatus.getOrElse(SyncEngine.Passwords) { true }
         }
