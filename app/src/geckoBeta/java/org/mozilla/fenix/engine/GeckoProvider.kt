@@ -13,6 +13,7 @@ import mozilla.components.service.sync.logins.AsyncLoginsStorage
 import mozilla.components.service.sync.logins.GeckoLoginStorageDelegate
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
@@ -70,7 +71,11 @@ object GeckoProvider {
         val loginStorageDelegate = GeckoLoginStorageDelegate(
             storage,
             securePreferences,
-            { context.settings().shouldAutofillLogins && context.settings().shouldPromptToSaveLogins }
+            {
+                FeatureFlags.logins &&
+                        context.settings().shouldAutofillLogins &&
+                        context.settings().shouldPromptToSaveLogins
+            }
         )
         geckoRuntime.loginStorageDelegate = GeckoLoginDelegateWrapper(loginStorageDelegate)
 

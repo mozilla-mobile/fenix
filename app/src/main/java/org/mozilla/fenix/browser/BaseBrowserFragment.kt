@@ -319,7 +319,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         context.components.core.getSecureAbove22Preferences()
                     ),
                     isSaveLoginEnabled = {
-                        context.settings().shouldPromptToSaveLogins
+                        FeatureFlags.logins && context.settings().shouldPromptToSaveLogins
                     },
                     shareDelegate = object : ShareDelegate {
                         override fun showShareSheet(
