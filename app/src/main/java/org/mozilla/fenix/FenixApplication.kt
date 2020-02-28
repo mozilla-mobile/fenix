@@ -43,7 +43,7 @@ import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 
 @SuppressLint("Registered")
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 open class FenixApplication : LocaleAwareApplication() {
     private val logger = Logger("FenixApplication")
 
