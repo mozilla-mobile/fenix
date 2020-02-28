@@ -42,7 +42,7 @@ import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 
 @SuppressLint("Registered")
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 open class FenixApplication : LocaleAwareApplication() {
     private val logger = Logger("FenixApplication")
 
@@ -318,6 +318,9 @@ open class FenixApplication : LocaleAwareApplication() {
                     _, sessionId ->
                         val selected = components.core.sessionManager.findSessionById(sessionId)
                         selected?.let { components.tabsUseCases.selectTab(it) }
+                },
+                onExtensionsLoaded = { extensions ->
+                    components.addonUpdater.registerForFutureUpdates(extensions)
                 }
             )
         } catch (e: UnsupportedOperationException) {
