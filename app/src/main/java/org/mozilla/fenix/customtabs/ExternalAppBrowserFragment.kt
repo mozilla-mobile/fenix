@@ -70,7 +70,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         activity = activity,
                         engineLayout = view.swipeRefresh,
                         onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
-                        isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate,
+                        isPrivate = it.private,
                         shouldReverseItems = !activity.settings().shouldUseBottomToolbar
                     ),
                     owner = this,
@@ -122,7 +122,13 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                             requireComponents.core.sessionManager,
                             requireComponents.useCases.sessionUseCases.reload,
                             customTabSessionId,
-                            manifest
+                            manifest,
+                            WebAppSiteControlsBuilder(
+                                requireComponents.core.sessionManager,
+                                requireComponents.useCases.sessionUseCases.reload,
+                                customTabSessionId,
+                                manifest
+                            )
                         )
                     )
                 } else {
