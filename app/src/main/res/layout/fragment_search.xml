@@ -43,8 +43,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scrollable_area"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        >
+            android:layout_height="wrap_content">
                 <ViewStub
                     android:id="@+id/search_suggestions_onboarding"
                     android:layout_width="match_parent"
@@ -71,13 +70,11 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/search_fragment_clipboard_item_height"
                     android:layout_marginStart="@dimen/search_fragment_clipboard_item_horizontal_margin"
-                    android:layout_marginTop="@dimen/search_fragment_clipboard_item_vertical_margin"
                     android:layout_marginEnd="@dimen/search_fragment_clipboard_item_horizontal_margin"
                     android:background="?selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/awesomeBar_barrier"
                     app:layout_constraintEnd_toEndOf="@id/scrollable_area"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/scrollable_area">
@@ -135,12 +132,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/search_fragment_shortcuts_label_margin_horizontal"
-                    android:layout_marginTop="@dimen/search_fragment_shortcuts_label_margin_vertical"
                     android:layout_marginEnd="@dimen/search_fragment_shortcuts_label_margin_horizontal"
                     android:visibility="gone"
                     android:text="@string/search_shortcuts_search_with_2"
                     app:layout_constraintStart_toStartOf="@id/scrollable_area"
-                    app:layout_constraintTop_toBottomOf="@id/awesomeBar_barrier"
+                    app:layout_constraintTop_toBottomOf="@id/divider_line"
                     tools:text="This time, search with:" />
 
                 <androidx.constraintlayout.widget.Barrier
@@ -148,7 +144,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="fill_link_from_clipboard,search_suggestions_onboarding" />
+                    app:constraint_referenced_ids="fill_link_from_clipboard,search_with_shortcuts,search_suggestions_onboarding" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
