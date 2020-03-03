@@ -20,6 +20,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment_manage_site_permissions_feature_phone.view.ask_to_allow_radio
+import kotlinx.android.synthetic.main.fragment_manage_site_permissions_feature_phone.view.block_radio
+import kotlinx.android.synthetic.main.fragment_manage_site_permissions_feature_phone.view.fourth_radio
+import kotlinx.android.synthetic.main.fragment_manage_site_permissions_feature_phone.view.third_radio
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
@@ -28,6 +32,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
 import org.mozilla.fenix.utils.Settings
@@ -62,6 +67,8 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
 
         initFirstRadio(rootView)
         initSecondRadio(rootView)
+        initThirdRadio(rootView)
+        initFourthRadio(rootView)
         bindBlockedByAndroidContainer(rootView)
 
         return rootView
@@ -73,41 +80,22 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initFirstRadio(rootView: View) {
-        val radio = rootView.findViewById<RadioButton>(R.id.ask_to_allow_radio)
-        val askToAllowText = when (phoneFeature) {
-            PhoneFeature.AUTOPLAY_AUDIBLE ->
-                getString(R.string.preference_option_autoplay_blocked)
-            else -> getString(R.string.preference_option_phone_feature_ask_to_allow)
+        val (label, expectedAction) = if (phoneFeature == AUTOPLAY_AUDIBLE) {
+            getString(R.string.preference_option_autoplay_allowed2) to BLOCKED // TODO not blocked
+        } else {
+            getCombinedLabel(
+                getString(R.string.preference_option_phone_feature_ask_to_allow),
+                getString(R.string.phone_feature_recommended)
+            ) to ASK_TO_ALLOW
         }
-        val recommendedText = getString(R.string.phone_feature_recommended)
-        val recommendedTextSize =
-            resources.getDimensionPixelSize(R.dimen.phone_feature_label_recommended_text_size)
-        val recommendedSpannable = SpannableString(recommendedText)
 
-        recommendedSpannable.setSpan(
-            ForegroundColorSpan(Color.GRAY),
-            0,
-            recommendedSpannable.length,
-            SPAN_EXCLUSIVE_INCLUSIVE
-        )
-
-        recommendedSpannable.setSpan(
-            AbsoluteSizeSpan(recommendedTextSize), 0,
-            recommendedSpannable.length,
-            SPAN_EXCLUSIVE_INCLUSIVE
-        )
-
-        radio.text = with(SpannableStringBuilder()) {
-            append(askToAllowText)
-            append("\n")
-            append(recommendedSpannable)
-            this
+        with (rootView.ask_to_allow_radio) {
+            text = label
+            setOnClickListener {
+                saveActionInSettings(expectedAction)
+            }
+            restoreState(expectedAction) // TODO different for autoplay
         }
-        val expectedAction = if (phoneFeature == PhoneFeature.AUTOPLAY_AUDIBLE) BLOCKED else ASK_TO_ALLOW
-        radio.setOnClickListener {
-            saveActionInSettings(expectedAction)
-        }
-        radio.restoreState(expectedAction)
     }
 
     private fun RadioButton.restoreState(action: SitePermissionsRules.Action) {
@@ -118,17 +106,52 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initSecondRadio(rootView: View) {
-        val radio = rootView.findViewById<RadioButton>(R.id.block_radio)
-        radio.text = when (phoneFeature) {
-            PhoneFeature.AUTOPLAY_AUDIBLE, PhoneFeature.AUTOPLAY_INAUDIBLE ->
-                getString(R.string.preference_option_autoplay_allowed)
-            else -> getString(R.string.preference_option_phone_feature_blocked)
+        val (label, expectedAction) = if (phoneFeature == AUTOPLAY_AUDIBLE) {
+            getString(R.string.preference_option_autoplay_allowed_wifi_only2) to ALLOWED // TODO not allowed
+        } else {
+            getString(R.string.preference_option_phone_feature_blocked) to BLOCKED
         }
-        val expectedAction = if (phoneFeature == PhoneFeature.AUTOPLAY_AUDIBLE) ALLOWED else BLOCKED
-        radio.setOnClickListener {
-            saveActionInSettings(expectedAction)
+
+        with (rootView.block_radio) {
+            text = label
+            setOnClickListener {
+                saveActionInSettings(expectedAction)
+            }
+            restoreState(expectedAction) // TODO different for autoplay
         }
-        radio.restoreState(expectedAction)
+    }
+
+    private fun initThirdRadio(rootView: View) {
+        with (rootView.third_radio) {
+            if (phoneFeature == AUTOPLAY_AUDIBLE) {
+                visibility = View.VISIBLE
+                text = getString(R.string.preference_option_autoplay_block_audio)
+                setOnClickListener {
+                    // TODO
+                }
+                // TODO restore state
+            } else {
+                visibility = View.GONE
+            }
+        }
+    }
+
+    private fun initFourthRadio(rootView: View) {
+        with(rootView.fourth_radio) {
+            if (phoneFeature == AUTOPLAY_AUDIBLE) {
+                visibility = View.VISIBLE
+                text = getCombinedLabel(
+                    getString(R.string.preference_option_autoplay_blocked2),
+                    getString(R.string.phone_feature_recommended)
+                )
+                setOnClickListener {
+                    // TODO
+                }
+                // TODO restore state
+            } else {
+                visibility = View.GONE
+            }
+        }
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {
@@ -160,5 +183,34 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
 
     private fun saveActionInSettings(action: SitePermissionsRules.Action) {
         settings.setSitePermissionsPhoneFeatureAction(phoneFeature, action)
+    }
+
+    /**
+     * Returns a [CharSequence] that arranges and styles [mainText], a line break, and then [subText]
+     */
+    private fun getCombinedLabel(mainText: CharSequence, subText: CharSequence): CharSequence {
+        val subTextSize =
+            resources.getDimensionPixelSize(R.dimen.phone_feature_label_recommended_text_size)
+        val recommendedSpannable = SpannableString(subText)
+
+        recommendedSpannable.setSpan(
+            ForegroundColorSpan(Color.GRAY),
+            0,
+            recommendedSpannable.length,
+            SPAN_EXCLUSIVE_INCLUSIVE
+        )
+
+        recommendedSpannable.setSpan(
+            AbsoluteSizeSpan(subTextSize), 0,
+            recommendedSpannable.length,
+            SPAN_EXCLUSIVE_INCLUSIVE
+        )
+
+        return with(SpannableStringBuilder()) {
+            append(mainText)
+            append("\n")
+            append(recommendedSpannable)
+            this
+        }
     }
 }
