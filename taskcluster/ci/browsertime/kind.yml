@@ -21,6 +21,8 @@ job-defaults:
     dependencies:
         geckoview-nightly: geckoview-nightly
         linux64-minidump-stackwalk: toolchain-linux64-minidump-stackwalk
+        linux64-geckodriver: toolchain-linux64-geckodriver
+        linux64-node: toolchain-linux64-node
         browsertime: toolchain-browsertime
     notify:
         by-level:
@@ -86,6 +88,10 @@ job-defaults:
             - artifact: minidump_stackwalk.tar.xz
         browsertime:
             - artifact: browsertime.tar.bz2
+        linux64-geckodriver:
+            - artifact: geckodriver.tar.bz2
+        linux64-node:
+            - artifact: node.tar.bz2
         #     - linux64-node
         #     - linux64-geckodriver
         # fetch:

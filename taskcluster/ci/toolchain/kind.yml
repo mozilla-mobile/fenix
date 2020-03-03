@@ -10,6 +10,14 @@ jobs:
         index-search:
             - gecko.cache.level-3.toolchains.v3.linux64-minidump-stackwalk.latest
     browsertime:
-        description: "browsertime toolchain"
+        description: "Browsertime toolchain"
         index-search:
             - gecko.cache.level-3.toolchains.v3.browsertime.latest
+    linux64-node:
+        description: "Node.js toolchain"
+        index-search:
+            - gecko.cache.level-3.toolchains.v3.linux64-node-10.latest
+    linux64-geckodriver:
+        description: "Geckodriver toolchain"
+        index-search:
+            - gecko.cache.level-3.toolchains.v3.linux64-geckodriver.latest
