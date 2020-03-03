@@ -84,8 +84,10 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             requireComponents.search.provider.getDefaultEngine(requireContext())
         )
 
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+
         val showSearchSuggestions =
-            if ((activity as HomeActivity).browsingModeManager.mode.isPrivate) {
+            if (isPrivate) {
                 requireContext().settings().shouldShowSearchSuggestions &&
                         requireContext().settings().shouldShowSearchSuggestionsInPrivate
             } else {
@@ -127,7 +129,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             view.toolbar_component_wrapper,
             searchInteractor,
             historyStorageProvider(),
-            (activity as HomeActivity).browsingModeManager.mode.isPrivate,
+            isPrivate,
             requireComponents.core.engine
         )
 
@@ -135,6 +137,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
         urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
 
+        requireComponents.core.engine.speculativeCreateSession(isPrivate)
         startPostponedEnterTransition()
         return view
     }
