@@ -13,7 +13,6 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -33,7 +32,6 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -127,17 +125,17 @@ class HomeScreenRobot {
     }
 
     fun selectRenameCollection() {
-        onView(allOf(ViewMatchers.withText("Rename collection"))).click()
+        onView(allOf(withText("Rename collection"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("name_collection_edittext")))
     }
 
     fun selectDeleteCollection() {
-        onView(allOf(ViewMatchers.withText("Delete collection"))).click()
+        onView(allOf(withText("Delete collection"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("message")), waitingTime)
     }
 
     fun confirmDeleteCollection() {
-        onView(allOf(ViewMatchers.withText("DELETE"))).click()
+        onView(allOf(withText("DELETE"))).click()
         mDevice.waitNotNull(Until.findObject(By.res("collections_header")), waitingTime)
     }
 
@@ -180,13 +178,13 @@ class HomeScreenRobot {
 
     fun verifySnackBarText(expectedText: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(By.text(expectedText)), TestAssetHelper.waitingTime)
+        mDevice.waitNotNull(Until.findObject(By.text(expectedText)), waitingTime)
     }
 
     fun snackBarButtonClick(expectedText: String) {
         onView(allOf(withId(R.id.snackbar_btn), withText(expectedText))).check(
-            matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
-        ).perform(ViewActions.click())
+            matches(withEffectiveVisibility(Visibility.VISIBLE))
+        ).perform(click())
     }
 
     class Transition {
@@ -507,7 +505,7 @@ private fun assertTakePositionBottomRadioButton() = onView(ViewMatchers.withReso
 // Private mode elements
 private fun assertPrivateSessionHeader() =
     onView(allOf(withText("Private tabs")))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 const val PRIVATE_SESSION_MESSAGE = "Firefox Preview clears your search and browsing history " +
         "when you quit the app or close all private tabs. While this doesn’t make you anonymous to websites or " +
@@ -537,11 +535,9 @@ private fun assertExistingTabList() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertExistingOpenTabs(title: String) =
-    onView(withId(R.id.sessionControlRecyclerView)).perform(
-        RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-            ViewMatchers.hasDescendant(withText(title))
-        )
-    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withId(R.id.sessionControlRecyclerView))
+        .check(matches(hasItem(hasDescendant(withText(title)))))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun tabsListThreeDotButton() = onView(allOf(withId(R.id.tabs_overflow_button)))
 

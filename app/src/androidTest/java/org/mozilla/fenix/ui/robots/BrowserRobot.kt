@@ -15,8 +15,10 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.BundleMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -31,8 +33,7 @@ import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.LongClickDuration
-import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -51,13 +52,14 @@ class BrowserRobot {
 
     fun verifyUrl(url: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        mDevice.waitForIdle()
+
         mDevice.waitNotNull(
             Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
             waitingTime
         )
-        TestAssetHelper.waitingTime
         onView(withId(R.id.mozac_browser_toolbar_url_view))
-                .check(matches(withText(containsString(url))))
+            .check(matches(withText(containsString(url))))
     }
 
     fun verifyHelpUrl() {
@@ -97,7 +99,7 @@ class BrowserRobot {
     fun verifyLinkContextMenuItems(containsURL: Uri) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mDevice.waitNotNull(
-            Until.findObject(By.textContains(containsURL.toString())),
+            Until.findObject(text(containsURL.toString())),
             waitingTime
         )
         mDevice.waitNotNull(
@@ -108,40 +110,79 @@ class BrowserRobot {
             Until.findObject(text("Open link in private tab")),
             waitingTime
         )
-        mDevice.waitNotNull(Until.findObject(text("Copy link")), waitingTime)
-        mDevice.waitNotNull(Until.findObject(text("Share link")), waitingTime)
+        mDevice.waitNotNull(
+            Until.findObject(text("Copy link")),
+            waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(text("Share link")),
+            waitingTime
+        )
     }
 
     fun verifyLinkImageContextMenuItems(containsURL: Uri) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(By.textContains(containsURL.toString())))
         mDevice.waitNotNull(
-            Until.findObject(text("Open link in new tab")), waitingTime
+            Until.findObject(
+                text(containsURL.toString())
+            ), waitingTime
         )
         mDevice.waitNotNull(
-            Until.findObject(text("Open link in private tab")), waitingTime
+            Until.findObject(
+                text("Open link in new tab")
+            ), waitingTime
         )
-        mDevice.waitNotNull(Until.findObject(text("Copy link")), waitingTime)
-        mDevice.waitNotNull(Until.findObject(text("Share link")), waitingTime)
         mDevice.waitNotNull(
-            Until.findObject(text("Open image in new tab")), waitingTime
+            Until.findObject(
+                text("Open link in private tab")
+            ), waitingTime
         )
-        mDevice.waitNotNull(Until.findObject(text("Save image")), waitingTime)
         mDevice.waitNotNull(
-            Until.findObject(text("Copy image location")), waitingTime
+            Until.findObject(
+                text("Copy link")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Share link")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Open image in new tab")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Save image")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Copy image location")
+            ), waitingTime
         )
     }
 
-    fun verifyNoLinkImageContextMenuItems(containsTitle: String) {
+    fun verifyNoLinkImageContextMenuItems(containsURL: Uri) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(By.textContains(containsTitle)))
         mDevice.waitNotNull(
-            Until.findObject(text("Open image in new tab")),
-            waitingTime
+            Until.findObject(By.textContains(containsURL.toString()))
         )
-        mDevice.waitNotNull(Until.findObject(text("Save image")), waitingTime)
         mDevice.waitNotNull(
-            Until.findObject(text("Copy image location")), waitingTime
+            Until.findObject(
+                text("Open image in new tab")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Save image")
+            ), waitingTime
+        )
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Copy image location")
+            ), waitingTime
         )
     }
 
@@ -153,8 +194,9 @@ class BrowserRobot {
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mDevice.waitNotNull(
-            Until.findObject(text("Open link in new tab")),
-            waitingTime
+            Until.findObject(
+                text("Open link in new tab")
+            ), waitingTime
         )
 
         val menuOpenInNewTab = mDevice.findObject(text("Open link in new tab"))
@@ -164,8 +206,9 @@ class BrowserRobot {
     fun clickContextOpenLinkInPrivateTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mDevice.waitNotNull(
-            Until.findObject(text("Open link in private tab")),
-            waitingTime
+            Until.findObject(
+                text("Open link in private tab")
+            ), waitingTime
         )
 
         val menuOpenInPrivateTab = mDevice.findObject(text("Open link in private tab"))
@@ -174,7 +217,11 @@ class BrowserRobot {
 
     fun clickContextCopyLink() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text("Copy link")), waitingTime)
+        mDevice.waitNotNull(
+            Until.findObject(
+                text("Copy link")
+            ), waitingTime
+        )
 
         val menuCopyLink = mDevice.findObject(text("Copy link"))
         menuCopyLink.click()
@@ -234,7 +281,10 @@ class BrowserRobot {
 
     fun clickContextSaveImage() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text("Save image")), waitingTime)
+        mDevice.waitNotNull(
+            Until.findObject(text("Save image")),
+            waitingTime
+        )
 
         val menuSaveImage = mDevice.findObject(text("Save image"))
         menuSaveImage.click()
@@ -257,7 +307,11 @@ class BrowserRobot {
 
     fun clickLinkMatchingText(expectedText: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
+        mDevice.waitNotNull(
+            Until.findObject(
+                text(expectedText)
+            ), waitingTime
+        )
 
         val element = mDevice.findObject(text(expectedText))
         element.click()
@@ -268,7 +322,7 @@ class BrowserRobot {
         mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
 
         val element = mDevice.findObject(text(expectedText))
-        element.click(LongClickDuration.LONG_CLICK_DURATION)
+        element.click(LONG_CLICK_DURATION)
     }
 
     fun snackBarButtonClick(expectedText: String) {
@@ -287,6 +341,13 @@ class BrowserRobot {
 
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
         mDevice.findObject(text(optionToSaveLogin)).click()
+    }
+
+    fun dismissContentContextMenu(containsURL: Uri) {
+        onView(withText(containsURL.toString()))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+            .perform(ViewActions.pressBack())
     }
 
     class Transition {
@@ -308,7 +369,7 @@ class BrowserRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-
+            mDevice.waitForIdle()
             navURLBar().click()
 
             NavigationToolbarRobot().interact()

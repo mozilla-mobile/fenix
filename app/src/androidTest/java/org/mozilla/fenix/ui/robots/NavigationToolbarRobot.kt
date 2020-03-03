@@ -60,6 +60,8 @@ class NavigationToolbarRobot {
             )
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
+            mDevice.waitForIdle()
+
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
@@ -91,6 +93,9 @@ class NavigationToolbarRobot {
             )
             clearAddressBar().click()
 
+            onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
+                .check(matches(withText("")))
+
             mDevice.waitNotNull(
                 Until.findObject(By.res("org.mozilla.fenix.debug:id/clipboard_title")),
                 waitingTime
@@ -101,6 +106,8 @@ class NavigationToolbarRobot {
                 waitingTime
             )
             fillLinkButton().click()
+
+            mDevice.waitForIdle()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()

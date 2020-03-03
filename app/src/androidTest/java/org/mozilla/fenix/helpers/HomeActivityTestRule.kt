@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.helpers
 
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.rule.ActivityTestRule
 import org.mozilla.fenix.HomeActivity
@@ -27,4 +28,17 @@ class HomeActivityTestRule(initialTouchMode: Boolean = false, launchActivity: Bo
  */
 
 class HomeActivityIntentTestRule(initialTouchMode: Boolean = false, launchActivity: Boolean = true) :
-    IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity)
+    IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
+
+    lateinit var loadingIdlingResource: SessionLoadedIdlingResource
+
+    override fun beforeActivityLaunched() {
+        loadingIdlingResource = SessionLoadedIdlingResource().also {
+            IdlingRegistry.getInstance().register(it)
+        }
+    }
+
+    override fun afterActivityFinished() {
+        IdlingRegistry.getInstance().unregister(loadingIdlingResource)
+    }
+}

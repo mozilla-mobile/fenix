@@ -9,7 +9,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -53,7 +52,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Disabling because of intermittent failures https://github.com/mozilla-mobile/fenix/issues/8663")
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -98,7 +96,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent failure - https://github.com/mozilla-mobile/fenix/issues/8832")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =
@@ -135,7 +132,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7687")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -155,7 +151,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7687")
     @Test
     fun verifyContextCopyImageLocation() {
         val pageLinks =
@@ -176,7 +171,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7666")
     @Test
     fun verifyContextSaveImage() {
         val pageLinks =
@@ -201,7 +195,6 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7693")
     @Test
     fun verifyContextMixedVariations() {
         val pageLinks =
@@ -216,12 +209,13 @@ class ContextMenusTest {
             verifyPageContent(pageLinks.content)
             longClickMatchingText("Link 1")
             verifyLinkContextMenuItems(genericURL.url)
-            mDevice.pressBack()
+            dismissContentContextMenu(genericURL.url)
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
-            mDevice.pressBack()
+            dismissContentContextMenu(imageResource.url)
             longClickMatchingText("test_no_link_image")
-            verifyNoLinkImageContextMenuItems("test_no_link_image")
+            verifyNoLinkImageContextMenuItems(imageResource.url)
+            dismissContentContextMenu(imageResource.url)
         }
     }
 }
