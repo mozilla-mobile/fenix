@@ -9,3 +9,7 @@ jobs:
         description: "minidump_stackwalk toolchain"
         index-search:
             - gecko.cache.level-3.toolchains.v3.linux64-minidump-stackwalk.latest
+    browsertime:
+        description: "browsertime toolchain"
+        index-search:
+            - gecko.cache.level-3.toolchains.v3.browsertime.latest
