@@ -5,19 +5,23 @@ transforms:
     - taskgraph.transforms.task:transforms
 
 jobs:
-    linux64-minidump-stackwalk:
-        description: "minidump_stackwalk toolchain"
-        index-search:
-            - gecko.cache.level-3.toolchains.v3.linux64-minidump-stackwalk.latest
     browsertime:
         description: "Browsertime toolchain"
         index-search:
             - gecko.cache.level-3.toolchains.v3.browsertime.latest
-    linux64-node:
-        description: "Node.js toolchain"
+    linux64-ffmpeg-4.1.4:
+        description: "Geckodriver toolchain"
         index-search:
-            - gecko.cache.level-3.toolchains.v3.linux64-node-10.latest
+            - gecko.cache.level-3.content.v1.linux64-ffmpeg-4.1.4.latest
     linux64-geckodriver:
         description: "Geckodriver toolchain"
         index-search:
             - gecko.cache.level-3.toolchains.v3.linux64-geckodriver.latest
+    linux64-minidump-stackwalk:
+        description: "minidump_stackwalk toolchain"
+        index-search:
+            - gecko.cache.level-3.toolchains.v3.linux64-minidump-stackwalk.latest
+    linux64-node:
+        description: "Node.js toolchain"
+        index-search:
+            - gecko.cache.level-3.toolchains.v3.linux64-node-10.latest
