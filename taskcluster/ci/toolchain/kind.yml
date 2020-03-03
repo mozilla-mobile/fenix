@@ -10,7 +10,9 @@ jobs:
         index-search:
             - gecko.cache.level-3.toolchains.v3.browsertime.latest
     linux64-ffmpeg-4.1.4:
-        description: "Geckodriver toolchain"
+        description: "FFMPEG fetch"
+        attributes:
+            artifact_prefix: 'public'
         index-search:
             - gecko.cache.level-3.content.v1.linux64-ffmpeg-4.1.4.latest
     linux64-geckodriver:
