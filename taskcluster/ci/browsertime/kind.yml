@@ -89,9 +89,9 @@ job-defaults:
         browsertime:
             - artifact: browsertime.tar.bz2
         linux64-geckodriver:
-            - artifact: geckodriver.tar.bz2
+            - artifact: geckodriver.tar.xz
         linux64-node:
-            - artifact: node.tar.bz2
+            - artifact: node.tar.xz
         #     - linux64-node
         #     - linux64-geckodriver
         # fetch:
