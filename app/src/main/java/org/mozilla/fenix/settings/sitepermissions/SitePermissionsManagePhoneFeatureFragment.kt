@@ -33,9 +33,15 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
+import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
 import org.mozilla.fenix.utils.Settings
+
+private const val AUTOPLAY_ALLOW_ALL = 0
+private const val AUTOPLAY_ALLOW_ON_WIFI = 1
+private const val AUTOPLAY_BLOCK_AUDIBLE = 2
+private const val AUTOPLAY_BLOCK_ALL = 4
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsManagePhoneFeatureFragment : Fragment() {
@@ -80,44 +86,42 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initFirstRadio(rootView: View) {
-        val (label, expectedAction) = if (phoneFeature == AUTOPLAY_AUDIBLE) {
-            getString(R.string.preference_option_autoplay_allowed2) to BLOCKED // TODO not blocked
-        } else {
-            getCombinedLabel(
-                getString(R.string.preference_option_phone_feature_ask_to_allow),
-                getString(R.string.phone_feature_recommended)
-            ) to ASK_TO_ALLOW
-        }
-
         with (rootView.ask_to_allow_radio) {
-            text = label
-            setOnClickListener {
-                saveActionInSettings(expectedAction)
+            if (phoneFeature == AUTOPLAY_AUDIBLE) {
+                text = getString(R.string.preference_option_autoplay_allowed2)
+                setOnClickListener {
+                    saveActionInSettings(AUTOPLAY_ALLOW_ALL)
+                }
+                restoreState(AUTOPLAY_ALLOW_ALL)
+            } else {
+                text = getCombinedLabel(
+                    getString(R.string.preference_option_phone_feature_ask_to_allow),
+                    getString(R.string.phone_feature_recommended)
+                )
+                setOnClickListener {
+                    saveActionInSettings(ASK_TO_ALLOW)
+                }
+                restoreState(ASK_TO_ALLOW)
             }
-            restoreState(expectedAction) // TODO different for autoplay
-        }
-    }
-
-    private fun RadioButton.restoreState(action: SitePermissionsRules.Action) {
-        if (phoneFeature.getAction(settings) == action) {
-            this.isChecked = true
-            this.setStartCheckedIndicator()
         }
     }
 
     private fun initSecondRadio(rootView: View) {
-        val (label, expectedAction) = if (phoneFeature == AUTOPLAY_AUDIBLE) {
-            getString(R.string.preference_option_autoplay_allowed_wifi_only2) to ALLOWED // TODO not allowed
-        } else {
-            getString(R.string.preference_option_phone_feature_blocked) to BLOCKED
-        }
-
         with (rootView.block_radio) {
-            text = label
-            setOnClickListener {
-                saveActionInSettings(expectedAction)
+            if (phoneFeature == AUTOPLAY_AUDIBLE) {
+                text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
+                setOnClickListener {
+                    saveActionInSettings(AUTOPLAY_ALLOW_ON_WIFI)
+                }
+                restoreState(AUTOPLAY_ALLOW_ON_WIFI)
+
+            } else {
+                text = getString(R.string.preference_option_phone_feature_blocked)
+                setOnClickListener {
+                    saveActionInSettings(BLOCKED)
+                }
+                restoreState(BLOCKED)
             }
-            restoreState(expectedAction) // TODO different for autoplay
         }
     }
 
@@ -127,9 +131,9 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                 visibility = View.VISIBLE
                 text = getString(R.string.preference_option_autoplay_block_audio)
                 setOnClickListener {
-                    // TODO
+                    saveActionInSettings(AUTOPLAY_BLOCK_AUDIBLE)
                 }
-                // TODO restore state
+                restoreState(AUTOPLAY_BLOCK_AUDIBLE)
             } else {
                 visibility = View.GONE
             }
@@ -145,13 +149,50 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                     getString(R.string.phone_feature_recommended)
                 )
                 setOnClickListener {
-                    // TODO
+                    saveActionInSettings(AUTOPLAY_BLOCK_ALL)
                 }
-                // TODO restore state
+                restoreState(AUTOPLAY_BLOCK_ALL)
             } else {
                 visibility = View.GONE
             }
         }
+    }
+
+    private fun RadioButton.restoreState(buttonAction: SitePermissionsRules.Action) {
+        if (phoneFeature.getAction(settings) == buttonAction) {
+            this.isChecked = true
+            this.setStartCheckedIndicator()
+        }
+    }
+
+    private fun RadioButton.restoreState(buttonAutoplaySetting: Int) {
+        if (settings.getAutoplayUserSetting(AUTOPLAY_BLOCK_ALL) == buttonAutoplaySetting) {
+            this.isChecked = true
+            this.setStartCheckedIndicator()
+        }
+    }
+
+    private fun saveActionInSettings(action: SitePermissionsRules.Action) {
+        settings.setSitePermissionsPhoneFeatureAction(phoneFeature, action)
+    }
+
+    /**
+     * @param TODO
+     */
+    private fun saveActionInSettings(autoplaySetting: Int) {
+        settings.setAutoplayUserSetting(autoplaySetting)
+        val (audible, inaudible) = when (autoplaySetting) {
+            AUTOPLAY_ALLOW_ALL -> ALLOWED to ALLOWED
+            AUTOPLAY_ALLOW_ON_WIFI -> {
+                // TODO set up wifi weirdness
+                return
+            }
+            AUTOPLAY_BLOCK_AUDIBLE -> BLOCKED to ALLOWED
+            AUTOPLAY_BLOCK_ALL -> BLOCKED to BLOCKED
+            else -> return
+        }
+        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, audible)
+        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, inaudible)
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {
@@ -179,10 +220,6 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         val uri = Uri.fromParts("package", requireContext().packageName, null)
         intent.data = uri
         startActivity(intent)
-    }
-
-    private fun saveActionInSettings(action: SitePermissionsRules.Action) {
-        settings.setSitePermissionsPhoneFeatureAction(phoneFeature, action)
     }
 
     /**
