@@ -18,6 +18,12 @@ only-for-abis:
     - arm64-v8a
 
 job-defaults:
+    dependencies:
+        geckoview-nightly: geckoview-nightly
+        linux64-minidump-stackwalk: toolchain-linux64-minidump-stackwalk
+        linux64-geckodriver: toolchain-linux64-geckodriver
+        linux64-node: toolchain-linux64-node
+        browsertime: toolchain-browsertime
     notify:
         by-level:
             '3':
