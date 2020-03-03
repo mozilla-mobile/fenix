@@ -21,6 +21,7 @@ job-defaults:
     dependencies:
         geckoview-nightly: geckoview-nightly
         linux64-minidump-stackwalk: toolchain-linux64-minidump-stackwalk
+        browsertime: browsertime
     notify:
         by-level:
             '3':
