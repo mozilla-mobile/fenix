@@ -67,6 +67,7 @@ import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
+import org.mozilla.fenix.settings.sitepermissions.SitePermissionsManagePhoneFeatureFragment
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
@@ -137,6 +138,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
         }
         supportActionBar?.hide()
+
+        components.performance.visualCompletenessTaskManager.add {
+            SitePermissionsManagePhoneFeatureFragment.maybeAddWifiConnectedListener(application)
+        }
 
         lifecycle.addObserver(webExtensionPopupFeature)
         StartupTimeline.onActivityCreateEndHome(this)

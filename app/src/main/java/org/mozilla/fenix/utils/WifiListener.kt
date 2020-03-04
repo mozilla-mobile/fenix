@@ -10,19 +10,27 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
+import android.net.NetworkInfo
+import android.net.wifi.WifiInfo
+import android.content.Context.WIFI_SERVICE
+import androidx.core.content.ContextCompat.getSystemService
+import android.net.wifi.WifiManager
+
+
 
 /**
  * TODO
  */
 class WifiConnectivityMonitor(app: Application) {
-
     private val callbacks = mutableSetOf(
         OnWifiChanged { lastKnownState = it }
     )
 
-    private var lastKnownState: Boolean? = null
+    private var lastKnownState: Boolean
 
     init {
+        // TODO move this setup code into the adapter
         val request = NetworkRequest.Builder()
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
@@ -30,16 +38,19 @@ class WifiConnectivityMonitor(app: Application) {
 
         val cm = app.getSystemService(Context.CONNECTIVITY_SERVICE) as
                 ConnectivityManager
+
+        lastKnownState = adapter.networkIsUnmetered(app)
+
         cm.registerNetworkCallback(request, adapter)
     }
 
-    // TODO make sure the permission listener gets added during app init
     /**
      * TODO mention that it calls on add
      */
     fun addOnWifiConnectedChangedListener(onWifiChanged: OnWifiChanged) {
-        lastKnownState?.let { onWifiChanged(it) }
-        callbacks.add(onWifiChanged)
+        if (callbacks.add(onWifiChanged)) {
+            onWifiChanged(lastKnownState)
+        }
     }
 
     /**
@@ -54,6 +65,7 @@ class WifiConnectivityMonitor(app: Application) {
  * TODO
  */
 private class FrameworkAdapter(private val getCallbacks: () -> Set<OnWifiChanged>) :  ConnectivityManager.NetworkCallback () {
+    // TODO listener checks for wifi, `networkIsUnmetered` checks for unmetered.  Decide on one, and be consistent
 
     override fun onLost(network: Network?) {
         getCallbacks().forEach { it(false) }
@@ -61,5 +73,22 @@ private class FrameworkAdapter(private val getCallbacks: () -> Set<OnWifiChanged
 
     override fun onAvailable(network: Network?) {
         getCallbacks().forEach { it(true) }
+    }
+
+    fun networkIsUnmetered(app: Application): Boolean {
+        val cm = app.getSystemService(Context.CONNECTIVITY_SERVICE) as
+                ConnectivityManager
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm.getNetworkCapabilities(cm.activeNetwork)
+                .hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+        } else {
+            // TODO not sure this else branch even works
+            val wifiManager = app.getSystemService(WIFI_SERVICE) as WifiManager
+            val state = WifiInfo
+                .getDetailedStateOf(wifiManager.connectionInfo.supplicantState)
+
+            state == NetworkInfo.DetailedState.CONNECTED
+        }
     }
 }

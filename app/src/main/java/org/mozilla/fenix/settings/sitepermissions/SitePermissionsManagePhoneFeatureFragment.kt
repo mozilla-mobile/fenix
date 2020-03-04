@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -30,6 +31,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.AL
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -52,10 +54,38 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private lateinit var settings: Settings
     private lateinit var blockedByAndroidView: View
 
-    private val wifiConnectedListener = OnWifiChanged { connected ->
-        val setting = if (connected) ALLOWED else BLOCKED
-        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, setting)
-        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, setting)
+    companion object {
+
+        private var wifiConnectedListener: OnWifiChanged? = null
+
+        fun maybeAddWifiConnectedListener(app: Application) {
+            if (app.settings().getAutoplayUserSetting(AUTOPLAY_BLOCK_ALL) == AUTOPLAY_ALLOW_ON_WIFI) {
+                addWifiConnectedListener(app)
+            }
+        }
+
+        private fun getWifiConnectedListener(settings: Settings): OnWifiChanged {
+            if (wifiConnectedListener == null) {
+                wifiConnectedListener = OnWifiChanged { connected ->
+                    val setting = if (connected) ALLOWED else BLOCKED
+                    settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, setting)
+                    settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, setting)
+                }
+            }
+            return wifiConnectedListener!!
+        }
+
+        private fun removeWifiConnectedListener(app: Application) {
+            app.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(
+                getWifiConnectedListener(app.settings())
+            )
+        }
+
+        private fun addWifiConnectedListener(app: Application) {
+            app.components.wifiConnectionListener.addOnWifiConnectedChangedListener(
+                getWifiConnectedListener(app.settings())
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,14 +222,14 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         val (audible, inaudible) = when (autoplaySetting) {
             AUTOPLAY_ALLOW_ALL -> ALLOWED to ALLOWED
             AUTOPLAY_ALLOW_ON_WIFI -> {
-                context.components.wifiConnectionListener.addOnWifiConnectedChangedListener(wifiConnectedListener)
+                addWifiConnectedListener(context.application)
                 return
             }
             AUTOPLAY_BLOCK_AUDIBLE -> BLOCKED to ALLOWED
             AUTOPLAY_BLOCK_ALL -> BLOCKED to BLOCKED
             else -> return
         }
-        context.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(wifiConnectedListener)
+        removeWifiConnectedListener(context.application)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, audible)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, inaudible)
     }
