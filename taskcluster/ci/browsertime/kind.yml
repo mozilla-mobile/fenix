@@ -18,13 +18,6 @@ only-for-abis:
     - arm64-v8a
 
 job-defaults:
-    dependencies:
-        browsertime: toolchain-browsertime
-        geckoview-nightly: geckoview-nightly
-        # linux64-ffmpeg-4.1.4: toolchain-linux64-ffmpeg-4.1.4
-        linux64-geckodriver: toolchain-linux64-geckodriver
-        linux64-minidump-stackwalk: toolchain-linux64-minidump-stackwalk
-        linux64-node: toolchain-linux64-node
     notify:
         by-level:
             '3':
@@ -89,16 +82,12 @@ job-defaults:
             - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
             - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
     fetches:
-        browsertime:
-            - artifact: browsertime.tar.bz2
-        # linux64-ffmpeg-4.1.4:
-        #     - artifact: ffmpeg-4.1.4-i686-static.tar.xz
-        linux64-geckodriver:
-            - artifact: geckodriver.tar.xz
-        linux64-minidump-stackwalk:
-            - artifact: minidump_stackwalk.tar.xz
-        linux64-node:
-            - artifact: node.tar.xz
+        toolchain:
+            - browsertime
+            - linux64-ffmpeg-4.1.4
+            - linux64-geckodriver
+            - linux64-minidump-stackwalk
+            - linux64-node
 
 jobs:
     tp6m-1-cold:
