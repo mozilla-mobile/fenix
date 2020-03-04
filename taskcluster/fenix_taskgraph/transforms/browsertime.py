@@ -48,7 +48,7 @@ def add_variants(config, tasks):
 def build_browsertime_task(config, tasks):
     for task in tasks:
         signing = task.pop("primary-dependency")
-        task["dependencies"]["signing"] = signing.label
+        task.setdefault("dependencies", {})["signing"] = signing.label
         build_type = task["attributes"]["build-type"]
         abi = task["attributes"]["abi"]
         apk = task["attributes"]["apk"]
