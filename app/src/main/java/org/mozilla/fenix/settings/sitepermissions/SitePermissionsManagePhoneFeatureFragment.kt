@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -29,6 +30,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.AL
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
@@ -36,6 +38,7 @@ import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
+import org.mozilla.fenix.utils.OnWifiChanged
 import org.mozilla.fenix.utils.Settings
 
 private const val AUTOPLAY_ALLOW_ALL = 0
@@ -48,6 +51,12 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private lateinit var phoneFeature: PhoneFeature
     private lateinit var settings: Settings
     private lateinit var blockedByAndroidView: View
+
+    private val wifiConnectedListener = OnWifiChanged { connected ->
+        val setting = if (connected) ALLOWED else BLOCKED
+        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, setting)
+        settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, setting)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +99,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 text = getString(R.string.preference_option_autoplay_allowed2)
                 setOnClickListener {
-                    saveActionInSettings(AUTOPLAY_ALLOW_ALL)
+                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ALL)
                 }
                 restoreState(AUTOPLAY_ALLOW_ALL)
             } else {
@@ -111,10 +120,9 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
                 setOnClickListener {
-                    saveActionInSettings(AUTOPLAY_ALLOW_ON_WIFI)
+                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ON_WIFI)
                 }
                 restoreState(AUTOPLAY_ALLOW_ON_WIFI)
-
             } else {
                 text = getString(R.string.preference_option_phone_feature_blocked)
                 setOnClickListener {
@@ -131,7 +139,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                 visibility = View.VISIBLE
                 text = getString(R.string.preference_option_autoplay_block_audio)
                 setOnClickListener {
-                    saveActionInSettings(AUTOPLAY_BLOCK_AUDIBLE)
+                    saveActionInSettings(it.context, AUTOPLAY_BLOCK_AUDIBLE)
                 }
                 restoreState(AUTOPLAY_BLOCK_AUDIBLE)
             } else {
@@ -149,7 +157,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                     getString(R.string.phone_feature_recommended)
                 )
                 setOnClickListener {
-                    saveActionInSettings(AUTOPLAY_BLOCK_ALL)
+                    saveActionInSettings(it.context, AUTOPLAY_BLOCK_ALL)
                 }
                 restoreState(AUTOPLAY_BLOCK_ALL)
             } else {
@@ -179,18 +187,19 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     /**
      * @param TODO
      */
-    private fun saveActionInSettings(autoplaySetting: Int) {
+    private fun saveActionInSettings(context: Context, autoplaySetting: Int) {
         settings.setAutoplayUserSetting(autoplaySetting)
         val (audible, inaudible) = when (autoplaySetting) {
             AUTOPLAY_ALLOW_ALL -> ALLOWED to ALLOWED
             AUTOPLAY_ALLOW_ON_WIFI -> {
-                // TODO set up wifi weirdness
+                context.components.wifiConnectionListener.addOnWifiConnectedChangedListener(wifiConnectedListener)
                 return
             }
             AUTOPLAY_BLOCK_AUDIBLE -> BLOCKED to ALLOWED
             AUTOPLAY_BLOCK_ALL -> BLOCKED to BLOCKED
             else -> return
         }
+        context.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(wifiConnectedListener)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, audible)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, inaudible)
     }

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
@@ -19,6 +20,7 @@ import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.fenix.utils.ClipboardHandler
+import org.mozilla.fenix.utils.WifiConnectivityMonitor
 import java.util.concurrent.TimeUnit
 
 private const val DAY_IN_MINUTES = 24 * 60L
@@ -96,4 +98,5 @@ class Components(private val context: Context) {
     val migrationStore by lazy { MigrationStore() }
     val performance by lazy { PerformanceComponent() }
     val push by lazy { Push(context, analytics.crashReporter) }
+    val wifiConnectionListener by lazy { WifiConnectivityMonitor(context as Application) }
 }
