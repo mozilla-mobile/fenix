@@ -60,6 +60,7 @@ def tps_config(fxa_account, monkeypatch):
     monkeypatch.setenv('FXA_EMAIL', fxa_account.email)
     monkeypatch.setenv('FXA_PASSWORD', fxa_account.password)
 
+    # Go to resources folder
     os.chdir('../../../../..')
     resources = r'resources'
     resourcesDir = os.path.join(os.getcwd(), resources)
@@ -70,10 +71,11 @@ def tps_config(fxa_account, monkeypatch):
     with open (os.path.join(resourcesDir, 'password.txt'), "w") as f:
         f.write(fxa_account.password)
 
+    # Set the path where tests are
     os.chdir('../')
     currentDir = os.getcwd()
-    scriptDir = currentDir + "/androidTest/java/org/mozilla/fenix/syncintegration"
-    os.chdir(scriptDir)
+    testsDir = currentDir + "/androidTest/java/org/mozilla/fenix/syncintegration"
+    os.chdir(testsDir)
 
     yield {'fx_account': {
         'username': fxa_account.email,

@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 def test_sync_account_settings(tps, gradlewbuild):
     gradlewbuild.test('checkAccountSettings')
 
