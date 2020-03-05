@@ -40,13 +40,12 @@ import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
-import org.mozilla.fenix.utils.OnWifiChanged
 import org.mozilla.fenix.utils.Settings
 
-private const val AUTOPLAY_ALLOW_ALL = 0
-private const val AUTOPLAY_ALLOW_ON_WIFI = 1
-private const val AUTOPLAY_BLOCK_AUDIBLE = 2
-private const val AUTOPLAY_BLOCK_ALL = 4
+const val AUTOPLAY_BLOCK_ALL = 0
+const val AUTOPLAY_BLOCK_AUDIBLE = 1
+const val AUTOPLAY_ALLOW_ON_WIFI = 2
+const val AUTOPLAY_ALLOW_ALL = 3
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsManagePhoneFeatureFragment : Fragment() {
@@ -56,17 +55,21 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
 
     companion object {
 
-        private var wifiConnectedListener: OnWifiChanged? = null
+        private var wifiConnectedListener: ((Boolean) -> Unit)? = null
 
+        /**
+         * If autoplay is only enabled on WIFI, sets a WIFI listener to set them accordingly.
+         */
         fun maybeAddWifiConnectedListener(app: Application) {
             if (app.settings().getAutoplayUserSetting(AUTOPLAY_BLOCK_ALL) == AUTOPLAY_ALLOW_ON_WIFI) {
                 addWifiConnectedListener(app)
             }
         }
 
-        private fun getWifiConnectedListener(settings: Settings): OnWifiChanged {
+        @Synchronized
+        private fun getWifiConnectedListener(settings: Settings): (Boolean) -> Unit {
             if (wifiConnectedListener == null) {
-                wifiConnectedListener = OnWifiChanged { connected ->
+                wifiConnectedListener = { connected ->
                     val setting = if (connected) ALLOWED else BLOCKED
                     settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, setting)
                     settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, setting)
@@ -75,14 +78,14 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             return wifiConnectedListener!!
         }
 
-        private fun removeWifiConnectedListener(app: Application) {
-            app.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(
+        private fun addWifiConnectedListener(app: Application) {
+            app.components.wifiConnectionListener.addOnWifiConnectedChangedListener(
                 getWifiConnectedListener(app.settings())
             )
         }
 
-        private fun addWifiConnectedListener(app: Application) {
-            app.components.wifiConnectionListener.addOnWifiConnectedChangedListener(
+        private fun removeWifiConnectedListener(app: Application) {
+            app.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(
                 getWifiConnectedListener(app.settings())
             )
         }
@@ -125,7 +128,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initFirstRadio(rootView: View) {
-        with (rootView.ask_to_allow_radio) {
+        with(rootView.ask_to_allow_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 text = getString(R.string.preference_option_autoplay_allowed2)
                 setOnClickListener {
@@ -146,7 +149,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initSecondRadio(rootView: View) {
-        with (rootView.block_radio) {
+        with(rootView.block_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
                 setOnClickListener {
@@ -164,7 +167,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initThirdRadio(rootView: View) {
-        with (rootView.third_radio) {
+        with(rootView.third_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 visibility = View.VISIBLE
                 text = getString(R.string.preference_option_autoplay_block_audio)
@@ -215,7 +218,10 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     /**
-     * @param TODO
+     * Saves the user selected autoplay setting.
+     *
+     * See [Settings.setAutoplayUserSetting] kdoc for an explanation of why this cannot follow the
+     * same code path as other permissions.
      */
     private fun saveActionInSettings(context: Context, autoplaySetting: Int) {
         settings.setAutoplayUserSetting(autoplaySetting)
@@ -235,7 +241,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun bindBlockedByAndroidContainer(rootView: View) {
-        blockedByAndroidView = rootView.findViewById<View>(R.id.permissions_blocked_container)
+        blockedByAndroidView = rootView.findViewById(R.id.permissions_blocked_container)
         initSettingsButton(blockedByAndroidView)
     }
 

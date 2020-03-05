@@ -28,6 +28,8 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
+import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import java.security.InvalidParameterException
 
@@ -455,7 +457,13 @@ class Settings private constructor(
         preferences.getInt(feature.getPreferenceKey(appContext), default.toInt()).toAction()
 
     /**
-     * TODO explain why these exist
+     * Saves the user selected autoplay setting.
+     *
+     * Under the hood, autoplay is represented by two settings, [AUTOPLAY_AUDIBLE] and
+     * [AUTOPLAY_INAUDIBLE]. The user selection cannot be inferred from the combination of these
+     * settings because, while on [AUTOPLAY_ALLOW_ON_WIFI], they will be indistinguishable from
+     * either [AUTOPLAY_ALLOW_ALL] or [AUTOPLAY_BLOCK_ALL]. Because of this, we are forced to save
+     * the user selected setting as well.
      */
     fun setAutoplayUserSetting(
         autoplaySetting: Int
@@ -464,7 +472,13 @@ class Settings private constructor(
     }
 
     /**
-     * TODO explain why these exist
+     * Gets the user selected autoplay setting.
+     *
+     * Under the hood, autoplay is represented by two settings, [AUTOPLAY_AUDIBLE] and
+     * [AUTOPLAY_INAUDIBLE]. The user selection cannot be inferred from the combination of these
+     * settings because, while on [AUTOPLAY_ALLOW_ON_WIFI], they will be indistinguishable from
+     * either [AUTOPLAY_ALLOW_ALL] or [AUTOPLAY_BLOCK_ALL]. Because of this, we are forced to save
+     * the user selected setting as well.
      */
     fun getAutoplayUserSetting(
         default: Int
