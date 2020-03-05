@@ -19,12 +19,7 @@ only-for-abis:
 
 job-defaults:
     dependencies:
-        browsertime: toolchain-browsertime
         geckoview-nightly: geckoview-nightly
-        linux64-ffmpeg-4.1.4: toolchain-linux64-ffmpeg-4.1.4
-        linux64-geckodriver: toolchain-linux64-geckodriver
-        linux64-minidump-stackwalk: toolchain-linux64-minidump-stackwalk
-        linux64-node: toolchain-linux64-node
     notify:
         by-level:
             '3':
