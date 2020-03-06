@@ -36,6 +36,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -79,7 +80,9 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toTab
+import org.mozilla.fenix.home.sessioncontrol.AdapterItem
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.home.sessioncontrol.SessionControlAdapter
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
@@ -487,6 +490,11 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         hideToolbar()
+        val safeArguments = arguments?.let { navArgs<HomeFragmentArgs>().value }
+        val shouldScrollToSelectedTab = safeArguments?.shouldScrollToSelectedTab ?: false
+        if (shouldScrollToSelectedTab) {
+            scrollToSelectedTab()
+        }
     }
 
     override fun onPause() {
@@ -899,6 +907,17 @@ class HomeFragment : Fragment() {
             }
     }
 
+    private fun scrollToSelectedTab() {
+        val position = (sessionControlView!!.view.adapter as SessionControlAdapter)
+            .currentList.indexOfFirst {
+            it is AdapterItem.TabItem && it.tab.selected == true
+        }
+        if (position > 0) {
+            (sessionControlView!!.view.layoutManager as LinearLayoutManager)
+                .scrollToPositionWithOffset(position, SELECTED_TAB_OFFSET)
+        }
+    }
+
     companion object {
         private const val ANIMATION_DELAY = 100L
 
@@ -909,6 +928,7 @@ class HomeFragment : Fragment() {
         private const val ANIM_SNACKBAR_DELAY = 100L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
+        private const val SELECTED_TAB_OFFSET = 20
 
         // Layout
         private const val HEADER_MARGIN = 60
