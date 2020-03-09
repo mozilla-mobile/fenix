@@ -92,9 +92,9 @@ def build_browsertime_task(config, tasks):
 
         # Setup visual metrics
         run_visual_metrics = task.pop("run-visual-metrics", False)
-        task["attributes"]["run-visual-metrics"] = run_visual_metrics
         if run_visual_metrics:
             task["run"]["command"].append("--browsertime-video")
+            task["attributes"]["run-visual-metrics"] = True
 
         yield task
 
