@@ -5,8 +5,8 @@ MAINTAINER Gregory Mierzwinski <gmierzwinski@mozilla.com>
 # run-task expects to run as root
 USER root
 
-RUN apt-get update && \
-    apt-get install \
+RUN apt-get update -qq && \
+    apt-get install -y \
       ffmpeg \
       imagemagick \
       pyssim \
