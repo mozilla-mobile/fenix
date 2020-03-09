@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.utils
+package org.mozilla.fenix.wifi
 
 import android.app.Application
 import android.content.Context
@@ -69,6 +69,7 @@ class WifiConnectionMonitor(app: Application) {
         }
 
         connectivityManager.registerNetworkCallback(request, frameworkListener)
+        isRegistered = true
     }
 
     /**
@@ -79,6 +80,7 @@ class WifiConnectionMonitor(app: Application) {
         // Framework code will throw if an unregistered listener attempts to unregister.
         if (!isRegistered) return
         connectivityManager.unregisterNetworkCallback(frameworkListener)
+        isRegistered = false
     }
 
     /**

@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -31,7 +30,6 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.AL
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -52,44 +50,6 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private lateinit var phoneFeature: PhoneFeature
     private lateinit var settings: Settings
     private lateinit var blockedByAndroidView: View
-
-    companion object {
-
-        private var wifiConnectedListener: ((Boolean) -> Unit)? = null
-
-        /**
-         * If autoplay is only enabled on WIFI, sets a WIFI listener to set them accordingly.
-         */
-        fun maybeAddWifiConnectedListener(app: Application) {
-            if (app.settings().getAutoplayUserSetting(AUTOPLAY_BLOCK_ALL) == AUTOPLAY_ALLOW_ON_WIFI) {
-                addWifiConnectedListener(app)
-            }
-        }
-
-        @Synchronized
-        private fun getWifiConnectedListener(settings: Settings): (Boolean) -> Unit {
-            if (wifiConnectedListener == null) {
-                wifiConnectedListener = { connected ->
-                    val setting = if (connected) ALLOWED else BLOCKED
-                    settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, setting)
-                    settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, setting)
-                }
-            }
-            return wifiConnectedListener!!
-        }
-
-        private fun addWifiConnectedListener(app: Application) {
-            app.components.wifiConnectionListener.addOnWifiConnectedChangedListener(
-                getWifiConnectedListener(app.settings())
-            )
-        }
-
-        private fun removeWifiConnectedListener(app: Application) {
-            app.components.wifiConnectionListener.removeOnWifiConnectedChangedListener(
-                getWifiConnectedListener(app.settings())
-            )
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,7 +111,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private fun initSecondRadio(rootView: View) {
         with(rootView.block_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
-                text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
+                text = getString(R.string.preference_option_autoplay_allowed_wifi_only)
                 setOnClickListener {
                     saveActionInSettings(it.context, AUTOPLAY_ALLOW_ON_WIFI)
                 }
@@ -228,14 +188,14 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         val (audible, inaudible) = when (autoplaySetting) {
             AUTOPLAY_ALLOW_ALL -> ALLOWED to ALLOWED
             AUTOPLAY_ALLOW_ON_WIFI -> {
-                addWifiConnectedListener(context.application)
+                context.components.wifiIntegration.addWifiConnectedListener()
                 return
             }
             AUTOPLAY_BLOCK_AUDIBLE -> BLOCKED to ALLOWED
             AUTOPLAY_BLOCK_ALL -> BLOCKED to BLOCKED
             else -> return
         }
-        removeWifiConnectedListener(context.application)
+        context.components.wifiIntegration.removeWifiConnectedListener()
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_AUDIBLE, audible)
         settings.setSitePermissionsPhoneFeatureAction(AUTOPLAY_INAUDIBLE, inaudible)
     }

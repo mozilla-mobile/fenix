@@ -56,7 +56,7 @@ enum class PhoneFeature(val id: Int, val androidPermissionsList: Array<String>) 
                     AUTOPLAY_AUDIBLE -> {
                         when (settings?.getAutoplayUserSetting(default = AUTOPLAY_BLOCK_ALL) ?: AUTOPLAY_BLOCK_ALL) {
                             AUTOPLAY_ALLOW_ALL -> R.string.preference_option_autoplay_allowed2
-                            AUTOPLAY_ALLOW_ON_WIFI -> R.string.preference_option_autoplay_allowed_wifi_only2
+                            AUTOPLAY_ALLOW_ON_WIFI -> R.string.preference_option_autoplay_allowed_wifi_only
                             AUTOPLAY_BLOCK_AUDIBLE -> R.string.preference_option_autoplay_block_audio
                             AUTOPLAY_BLOCK_ALL -> R.string.preference_option_autoplay_blocked2
                             else -> R.string.preference_option_autoplay_blocked2
