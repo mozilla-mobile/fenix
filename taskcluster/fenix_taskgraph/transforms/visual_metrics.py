@@ -52,10 +52,9 @@ def make_label(config, jobs):
 def run_visual_metrics(config, jobs):
     for job in jobs:
         dep_job = job.pop('primary-dependency', None)
-        print(job['label'])
-        print(job['attributes'])
-        print(dep_job)
+        print("here1")
         if dep_job is not None:
+        	print("here2")
             platform = dep_job.task['extra']['treeherder-platform']
             job['dependencies'] = {dep_job.label: dep_job.label}
             job['fetches'][dep_job.label] = ['/public/test_info/browsertime-results.tgz']
