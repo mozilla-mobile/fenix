@@ -12,9 +12,6 @@ transforms:
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
-only-for-attributes:
-    - run-visual-metrics
-
 job-template:
     description: "Run visual metrics calculations on Raptor"
     run-on-projects: []
