@@ -62,7 +62,7 @@ def run_visual_metrics(config, jobs):
 			print(job['fetches'])
 			attributes = dict(dep_job.attributes)
 			attributes['platform'] = platform
-			job['label'] = LABEL % (platform, label)
+			job['label'] = LABEL % (platform, dep_job.label)
 			treeherder_info = dict(dep_job.task['extra']['treeherder'])
 			job['treeherder']['symbol'] = SYMBOL % treeherder_info
 
