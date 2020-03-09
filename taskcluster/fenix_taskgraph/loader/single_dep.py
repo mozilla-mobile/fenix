@@ -8,8 +8,8 @@ import copy
 
 from voluptuous import Required
 
-from ..task import Task
-from ..util.schema import Schema
+from taskgraph.task import Task
+from taskgraph.util.schema import Schema
 
 schema = Schema({
     Required('primary-dependency', 'primary dependency task'): Task,

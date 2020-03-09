@@ -7,6 +7,9 @@ loader: fenix_taskgraph.loader.single_dep:loader
 kind-dependencies:
     - browsertime
 
+only-for-attributes:
+    - run-visual-metrics
+
 transforms:
     - fenix_taskgraph.transforms.visual_metrics:transforms
     - taskgraph.transforms.job:transforms
