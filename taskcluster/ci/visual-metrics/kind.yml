@@ -4,6 +4,9 @@
 ---
 loader: taskgraph.loader.transform:loader
 
+kind-dependencies:
+    - test
+
 transforms:
     - fenix_taskgraph.transforms.visual_metrics:transforms
     - taskgraph.transforms.job:transforms
