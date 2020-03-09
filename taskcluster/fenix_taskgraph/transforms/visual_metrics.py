@@ -7,6 +7,8 @@ Uses attributes from `primary-dependency`.
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
+import os
+
 from taskgraph.transforms.base import TransformSequence
 
 transforms = TransformSequence()
@@ -119,91 +121,91 @@ def script_url(config, script):
 	return '{}/raw-file/{}/src/taskgraph/run-task/{}'.format(taskgraph_repo, taskgraph_rev, script)
 
 
-@run_job_using("docker-worker", "run-task", schema=run_task_schema, defaults=worker_defaults)
-def docker_worker_run_task(config, job, taskdesc):
-	run = job['run']
-	worker = taskdesc['worker'] = job['worker']
-	command = ['/usr/local/bin/run-task']
-	common_setup(config, job, taskdesc, command)
+# @run_job_using("docker-worker", "run-task", schema=run_task_schema, defaults=worker_defaults)
+# def docker_worker_run_task(config, job, taskdesc):
+# 	run = job['run']
+# 	worker = taskdesc['worker'] = job['worker']
+# 	command = ['/usr/local/bin/run-task']
+# 	common_setup(config, job, taskdesc, command)
 
-	if run.get('cache-dotcache'):
-		worker['caches'].append({
-			'type': 'persistent',
-			'name': '{project}-dotcache'.format(**config.params),
-			'mount-point': '{workdir}/.cache'.format(**run),
-			'skip-untrusted': True,
-		})
+# 	if run.get('cache-dotcache'):
+# 		worker['caches'].append({
+# 			'type': 'persistent',
+# 			'name': '{project}-dotcache'.format(**config.params),
+# 			'mount-point': '{workdir}/.cache'.format(**run),
+# 			'skip-untrusted': True,
+# 		})
 
-	run_command = run['command']
+# 	run_command = run['command']
 
-	# dict is for the case of `{'task-reference': basestring}`.
-	if isinstance(run_command, (basestring, dict)):
-		run_command = ['bash', '-cx', run_command]
-	command.append('--fetch-hgfingerprint')
-	if run['run-as-root']:
-		command.extend(('--user', 'root', '--group', 'root'))
-	command.append('--')
-	command.extend(run_command)
-	worker['command'] = command
+# 	# dict is for the case of `{'task-reference': basestring}`.
+# 	if isinstance(run_command, (basestring, dict)):
+# 		run_command = ['bash', '-cx', run_command]
+# 	command.append('--fetch-hgfingerprint')
+# 	if run['run-as-root']:
+# 		command.extend(('--user', 'root', '--group', 'root'))
+# 	command.append('--')
+# 	command.extend(run_command)
+# 	worker['command'] = command
 
 
-@run_job_using("generic-worker", "run-task", schema=run_task_schema, defaults=worker_defaults)
-def generic_worker_run_task(config, job, taskdesc):
-	run = job['run']
-	worker = taskdesc['worker'] = job['worker']
-	is_win = worker['os'] == 'windows'
-	is_mac = worker['os'] == 'macosx'
-	is_bitbar = worker['os'] == 'linux-bitbar'
+# @run_job_using("generic-worker", "run-task", schema=run_task_schema, defaults=worker_defaults)
+# def generic_worker_run_task(config, job, taskdesc):
+# 	run = job['run']
+# 	worker = taskdesc['worker'] = job['worker']
+# 	is_win = worker['os'] == 'windows'
+# 	is_mac = worker['os'] == 'macosx'
+# 	is_bitbar = worker['os'] == 'linux-bitbar'
 
-	if is_win:
-		command = ['C:/mozilla-build/python3/python3.exe', 'run-task']
-	elif is_mac:
-		command = ['/tools/python36/bin/python3', 'run-task']
-	else:
-		command = ['./run-task']
+# 	if is_win:
+# 		command = ['C:/mozilla-build/python3/python3.exe', 'run-task']
+# 	elif is_mac:
+# 		command = ['/tools/python36/bin/python3', 'run-task']
+# 	else:
+# 		command = ['./run-task']
 
-	common_setup(config, job, taskdesc, command)
+# 	common_setup(config, job, taskdesc, command)
 
-	worker.setdefault('mounts', [])
-	if run.get('cache-dotcache'):
-		worker['mounts'].append({
-			'cache-name': '{project}-dotcache'.format(**config.params),
-			'directory': '{workdir}/.cache'.format(**run),
-		})
-	worker['mounts'].append({
-		'content': {
-			'url': script_url(config, 'run-task'),
-		},
-		'file': './run-task',
-	})
-	if worker.get('env', {}).get('MOZ_FETCHES'):
-		worker['mounts'].append({
-			'content': {
-				'url': script_url(config, 'fetch-content'),
-			},
-			'file': './fetch-content',
-		})
+# 	worker.setdefault('mounts', [])
+# 	if run.get('cache-dotcache'):
+# 		worker['mounts'].append({
+# 			'cache-name': '{project}-dotcache'.format(**config.params),
+# 			'directory': '{workdir}/.cache'.format(**run),
+# 		})
+# 	worker['mounts'].append({
+# 		'content': {
+# 			'url': script_url(config, 'run-task'),
+# 		},
+# 		'file': './run-task',
+# 	})
+# 	if worker.get('env', {}).get('MOZ_FETCHES'):
+# 		worker['mounts'].append({
+# 			'content': {
+# 				'url': script_url(config, 'fetch-content'),
+# 			},
+# 			'file': './fetch-content',
+# 		})
 
-	run_command = run['command']
+# 	run_command = run['command']
 
-	if isinstance(run_command, basestring):
-		if is_win:
-			run_command = '"{}"'.format(run_command)
-		run_command = ['bash', '-cx', run_command]
+# 	if isinstance(run_command, basestring):
+# 		if is_win:
+# 			run_command = '"{}"'.format(run_command)
+# 		run_command = ['bash', '-cx', run_command]
 
-	if run['run-as-root']:
-		command.extend(('--user', 'root', '--group', 'root'))
-	command.append('--')
-	if is_bitbar:
-		# Use the bitbar wrapper script which sets up the device and adb
-		# environment variables
-		command.append('/builds/taskcluster/script.py')
-	command.extend(run_command)
+# 	if run['run-as-root']:
+# 		command.extend(('--user', 'root', '--group', 'root'))
+# 	command.append('--')
+# 	if is_bitbar:
+# 		# Use the bitbar wrapper script which sets up the device and adb
+# 		# environment variables
+# 		command.append('/builds/taskcluster/script.py')
+# 	command.extend(run_command)
 
-	if is_win:
-		worker['command'] = [' '.join(command)]
-	else:
-		worker['command'] = [
-			['chmod', '+x', 'run-task'],
-			command,
-		]
+# 	if is_win:
+# 		worker['command'] = [' '.join(command)]
+# 	else:
+# 		worker['command'] = [
+# 			['chmod', '+x', 'run-task'],
+# 			command,
+# 		]
