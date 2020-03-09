@@ -2,7 +2,8 @@
 FROM $DOCKER_IMAGE_PARENT
 MAINTAINER Gregory Mierzwinski <gmierzwinski@mozilla.com>
 
-USER worker:worker
+# run-task expects to run as root
+USER root
 
 RUN apt-get update && \
     apt-get install \
@@ -27,6 +28,3 @@ RUN chmod +x /builds/worker/bin/run-visual-metrics.py
 COPY performance-artifact-schema.json /builds/worker/performance-artifact-schema.json
 
 VOLUME /builds/worker/artifacts/
-
-# run-task expects to run as root
-USER root
