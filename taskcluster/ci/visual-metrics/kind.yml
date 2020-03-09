@@ -33,7 +33,8 @@ job-template:
               name: public/summary.json
               path: /builds/worker/artifacts/summary.json
     fetches:
-        - visual-metrics
+        toolchain:
+            - visual-metrics
     run:
         using: run-task
         command: /builds/worker/bin/run-visual-metrics.py -- --orange --perceptual --contentful --force --renderignore 5 --json --viewport
