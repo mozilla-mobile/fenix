@@ -90,6 +90,12 @@ def build_browsertime_task(config, tasks):
         task["run"]["command"].append("--test={}".format(test_name))
         task["run"]["command"].extend(task.pop("args", []))
 
+        # Setup visual metrics
+        run_visual_metrics = task.pop("run-visual-metrics", False)
+        task["attributes"]["run-visual-metrics"] = run_visual_metrics
+        if run_visual_metrics:
+            task["run"]["command"].append("--browsertime-video")
+
         yield task
 
 

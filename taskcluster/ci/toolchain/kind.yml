@@ -34,7 +34,7 @@ jobs:
     linux64-minidump-stackwalk:
         description: "minidump_stackwalk toolchain"
         attributes:
-            toolchain-artifact: public/build/minidump_stackwalk.tar.xz
+            toolchain-artifact: public/build/minidump_stackwalk.tar.xz about:crashparent
         run:
             index-search:
                 - gecko.cache.level-3.toolchains.v3.linux64-minidump-stackwalk.latest
@@ -45,3 +45,10 @@ jobs:
         run:
             index-search:
                 - gecko.cache.level-3.toolchains.v3.linux64-node-10.latest
+    visual-metrics:
+        description: "Browsertime visual metrics analsyis script"
+        attributes:
+            toolchain-artifact: public/visualmetrics.py
+        run:
+            index-search:
+                - gecko.cache.level-3.content.v1.visual-metrics.latest
