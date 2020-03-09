@@ -18,7 +18,7 @@ transforms:
 job-template:
     description: "Run visual metrics calculations on Raptor"
     run-on-projects: []
-    worker-type: t-linux-xlarge
+    worker-type: b-android
     treeherder:
         tier: 3
         kind: other
