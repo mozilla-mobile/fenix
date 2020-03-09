@@ -19,7 +19,7 @@ transforms:
 job-template:
     description: "Run visual metrics calculations on Raptor"
     run-on-projects: []
-    worker-type: t-bitbar-gw-perf-g5
+    worker-type: vismet
     treeherder:
         tier: 3
         kind: other
