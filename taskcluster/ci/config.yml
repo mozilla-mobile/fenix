@@ -65,6 +65,11 @@ workers:
             implementation: generic-worker
             os: linux-bitbar
             worker-type: 'gecko-{alias}'
+        vismet:
+            provisioner: 'mobile-{level}'
+            implementation: generic-worker
+            os: linux
+            worker-type: 'b-linux'
 
 scriptworker:
     scope-prefix: project:mobile:fenix:releng

@@ -19,7 +19,7 @@ transforms:
 job-template:
     description: "Run visual metrics calculations on Raptor"
     run-on-projects: []
-    worker-type: b-android
+    worker-type: t-bitbar-gw-perf-g5
     treeherder:
         tier: 3
         kind: other
@@ -40,3 +40,4 @@ job-template:
         using: run-task
         command: /builds/worker/bin/run-visual-metrics.py -- --orange --perceptual --contentful --force --renderignore 5 --json --viewport
         checkout: false
+        run-as-root: true
