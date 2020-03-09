@@ -58,7 +58,7 @@ def run_visual_metrics(config, jobs):
 			platform = dep_job.task['extra']['treeherder-platform']
 			job['dependencies'] = {dep_job.label: dep_job.label}
 			print(job['fetches'])
-			job['fetches'][dep_job.label] = ['/public/test_info/browsertime-results.tgz']
+			# job['fetches'][dep_job.label] = ['public/test_info/browsertime-results.tgz']
 			print(job['fetches'])
 			attributes = dict(dep_job.attributes)
 			attributes['platform'] = platform
