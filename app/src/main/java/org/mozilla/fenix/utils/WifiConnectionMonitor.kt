@@ -22,36 +22,63 @@ import android.net.NetworkRequest
  *      downloadThing()
  *    }
  *  }
+ *  app.components.wifiConnectionListener.start()
  * ```
  */
 class WifiConnectionMonitor(app: Application) {
     private val callbacks = mutableSetOf<(Boolean) -> Unit>()
+    private val connectivityManager = app.getSystemService(Context.CONNECTIVITY_SERVICE) as
+            ConnectivityManager
 
-    private var lastKnownStateWasAvailable = false
+    private var lastKnownStateWasAvailable: Boolean? = null
+    private var isRegistered = false
 
-    init {
-        object : ConnectivityManager.NetworkCallback() {
-            init {
-                val request = NetworkRequest.Builder()
-                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                    .build()
-
-                val cm = app.getSystemService(Context.CONNECTIVITY_SERVICE) as
-                        ConnectivityManager
-
-                cm.registerNetworkCallback(request, this)
-            }
-
-            override fun onLost(network: Network?) {
-                callbacks.forEach { it(false) }
-                lastKnownStateWasAvailable = false
-            }
-
-            override fun onAvailable(network: Network?) {
-                callbacks.forEach { it(true) }
-                lastKnownStateWasAvailable = true
-            }
+    private val frameworkListener = object : ConnectivityManager.NetworkCallback() {
+        override fun onLost(network: Network?) {
+            callbacks.forEach { it(false) }
+            lastKnownStateWasAvailable = false
         }
+
+        override fun onAvailable(network: Network?) {
+            callbacks.forEach { it(true) }
+            lastKnownStateWasAvailable = true
+        }
+    }
+
+    /**
+     * Attaches the [WifiConnectionMonitor] to the application. After this has been called, callbacks
+     * added via [addOnWifiConnectedChangedListener] will be called until either the app exits, or
+     * [stop] is called.
+     *
+     * Any existing callbacks will be called with the current state when this is called.
+     */
+    fun start() {
+        // Framework code throws if a listener is registered twice without unregistering.
+        if (isRegistered) return
+        val request = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+
+        // AFAICT, the framework does not send an event when a new NetworkCallback is registered
+        // while the WIFI is not connected, so we push this manually. If the WIFI is on, it will send
+        // a follow up event shortly
+        val noCallbacksReceivedYet = lastKnownStateWasAvailable == null
+        if (noCallbacksReceivedYet) {
+            lastKnownStateWasAvailable = false
+            callbacks.forEach { it(false) }
+        }
+
+        connectivityManager.registerNetworkCallback(request, frameworkListener)
+    }
+
+    /**
+     * Detatches the [WifiConnectionMonitor] from the app. No callbacks added via
+     * [addOnWifiConnectedChangedListener] will be called after this has been called.
+     */
+    fun stop() {
+        // Framework code will throw if an unregistered listener attempts to unregister.
+        if (!isRegistered) return
+        connectivityManager.unregisterNetworkCallback(frameworkListener)
     }
 
     /**
@@ -62,8 +89,9 @@ class WifiConnectionMonitor(app: Application) {
      * called with the last known state.
      */
     fun addOnWifiConnectedChangedListener(onWifiChanged: (Boolean) -> Unit) {
-        if (callbacks.add(onWifiChanged)) {
-            onWifiChanged(lastKnownStateWasAvailable)
+        val lastKnownState = lastKnownStateWasAvailable
+        if (callbacks.add(onWifiChanged) && lastKnownState != null) {
+            onWifiChanged(lastKnownState)
         }
     }
 

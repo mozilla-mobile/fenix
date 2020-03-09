@@ -68,6 +68,7 @@ import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.settings.sitepermissions.SitePermissionsManagePhoneFeatureFragment
+import org.mozilla.fenix.settings.sitepermissions.SitePermissionsManagePhoneFeatureFragment.Companion.maybeAddWifiConnectedListener
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
@@ -139,10 +140,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
         supportActionBar?.hide()
 
-        components.performance.visualCompletenessTaskManager.add {
-            SitePermissionsManagePhoneFeatureFragment.maybeAddWifiConnectedListener(application)
-        }
-
         lifecycle.addObserver(webExtensionPopupFeature)
         StartupTimeline.onActivityCreateEndHome(this)
     }
@@ -172,6 +169,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         //
         // NB: There are ways for the user to install new products without leaving the browser.
         BrowsersCache.resetAll()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        with (application.components.wifiConnectionListener) {
+            maybeAddWifiConnectedListener(application)
+            start()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        components.wifiConnectionListener.stop()
     }
 
     /**
