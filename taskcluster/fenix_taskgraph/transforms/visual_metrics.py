@@ -50,26 +50,26 @@ def make_label(config, jobs):
 
 @transforms.add
 def run_visual_metrics(config, jobs):
-    for job in jobs:
-        dep_job = job.pop('primary-dependency', None)
-        print("here1")
-        if dep_job is not None:
-        	print("here2")
-            platform = dep_job.task['extra']['treeherder-platform']
-            job['dependencies'] = {dep_job.label: dep_job.label}
-            job['fetches'][dep_job.label] = ['/public/test_info/browsertime-results.tgz']
-            attributes = dict(dep_job.attributes)
-            attributes['platform'] = platform
-            job['label'] = LABEL % attributes
-            treeherder_info = dict(dep_job.task['extra']['treeherder'])
-            job['treeherder']['symbol'] = SYMBOL % treeherder_info
+	for job in jobs:
+		dep_job = job.pop('primary-dependency', None)
+		print("here1")
+		if dep_job is not None:
+			print("here2")
+			platform = dep_job.task['extra']['treeherder-platform']
+			job['dependencies'] = {dep_job.label: dep_job.label}
+			job['fetches'][dep_job.label] = ['/public/test_info/browsertime-results.tgz']
+			attributes = dict(dep_job.attributes)
+			attributes['platform'] = platform
+			job['label'] = LABEL % attributes
+			treeherder_info = dict(dep_job.task['extra']['treeherder'])
+			job['treeherder']['symbol'] = SYMBOL % treeherder_info
 
-            # vismet runs on Linux but we want to have it displayed
-            # alongside the job it was triggered by to make it easier for
-            # people to find it back.
-            job['treeherder']['platform'] = platform
+			# vismet runs on Linux but we want to have it displayed
+			# alongside the job it was triggered by to make it easier for
+			# people to find it back.
+			job['treeherder']['platform'] = platform
 
-            # run-on-projects needs to be set based on the dependent task
-            job['run-on-projects'] = attributes['run_on_projects']
+			# run-on-projects needs to be set based on the dependent task
+			job['run-on-projects'] = attributes['run_on_projects']
 
-            yield job
+			yield job
