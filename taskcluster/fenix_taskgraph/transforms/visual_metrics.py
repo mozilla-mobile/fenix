@@ -13,7 +13,7 @@ transforms = TransformSequence()
 
 SYMBOL = "%(groupSymbol)s(%(symbol)s-vismet)"
 # the test- prefix makes the task SETA-optimized.
-LABEL = "test-vismet-%(platform)s-%(raptor_try_name)s"
+LABEL = "test-vismet-%(platform)s-%(label)s"
 
 
 @transforms.add
@@ -62,7 +62,7 @@ def run_visual_metrics(config, jobs):
 			print(job['fetches'])
 			attributes = dict(dep_job.attributes)
 			attributes['platform'] = platform
-			job['label'] = LABEL % (platform, dep_job.label)
+			job['label'] = LABEL % {'platform': platform, 'label': dep_job.label}
 			treeherder_info = dict(dep_job.task['extra']['treeherder'])
 			job['treeherder']['symbol'] = SYMBOL % treeherder_info
 
