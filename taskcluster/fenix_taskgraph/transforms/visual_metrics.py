@@ -62,12 +62,16 @@ def run_visual_metrics(config, jobs):
 			print(job['fetches'])
 			job['fetches'][dep_job.label] = []
 			job['fetches'][dep_job.label].append({
-				'attributes': {'toolchain-artifact': 'public/test_info/browsertime-results.tgz'}
+				'artifact': 'public/test_info/browsertime-results.tgz',
+				'extract': True
 			})
 			print(job['fetches'])
 
 			attributes = dict(dep_job.attributes)
 			attributes['platform'] = platform
+			job.setdefault('attributes', {})
+			job['attributes']['artifact_prefix'] = ''
+
 			job['label'] = LABEL % {'platform': platform, 'label': dep_job.label}
 			treeherder_info = dict(dep_job.task['extra']['treeherder'])
 			job['treeherder']['symbol'] = SYMBOL % treeherder_info
