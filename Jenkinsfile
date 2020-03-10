@@ -13,7 +13,7 @@ pipeline {
             steps {
                 dir('app/src/androidTest/java/org/mozilla/fenix/syncIntegration') {
                     sh 'pipenv install'
-                    sh 'pipenv check'
+                    sh 'pipenv check -i 37752 // Ignoring vulnerability due to https://github.com/pypa/pipenv/issues/4147'
                     sh 'pipenv run pytest'
                 }
             }
@@ -39,7 +39,7 @@ pipeline {
                 if (env.BRANCH_NAME == 'master') {
                     slackSend(
                         color: 'danger',
-                        message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                        message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}HTML_20Report/)")
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
         fixed {
             slackSend(
                 color: 'good',
-                message: "FIXED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                message: "FIXED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}HTML_20Report/)")
         }
     }
 }
