@@ -62,7 +62,7 @@ def run_visual_metrics(config, jobs):
 			print(job['fetches'])
 			job['fetches'][dep_job.label] = []
 			job['fetches'][dep_job.label].append({
-				'artifact': 'public/test_info/browsertime-results.tgz',
+				'artifact': 'browsertime-results.tgz',
 				'extract': True
 			})
 			print(job['fetches'])
@@ -70,7 +70,7 @@ def run_visual_metrics(config, jobs):
 			attributes = dict(dep_job.attributes)
 			attributes['platform'] = platform
 			job.setdefault('attributes', {})
-			job['attributes']['artifact_prefix'] = ''
+			job['attributes']['artifact_prefix'] = 'public/test_info'
 
 			job['label'] = LABEL % {'platform': platform, 'label': dep_job.label}
 			treeherder_info = dict(dep_job.task['extra']['treeherder'])
