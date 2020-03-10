@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
@@ -94,6 +95,10 @@ import kotlin.math.min
 @ExperimentalCoroutinesApi
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
+    private val homeViewModel: HomeScreenViewModel by viewModels {
+        ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+    }
+
     private val snackbarAnchorView: View?
         get() {
             return if (requireContext().settings().shouldUseBottomToolbar) {
@@ -205,7 +210,8 @@ class HomeFragment : Fragment() {
         setOffset(view)
         sessionControlView = SessionControlView(
             homeFragmentStore,
-            view.sessionControlRecyclerView, sessionControlInteractor
+            view.sessionControlRecyclerView, sessionControlInteractor,
+            homeViewModel
         )
         activity.themeManager.applyStatusBarTheme(activity)
 
