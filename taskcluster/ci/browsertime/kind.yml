@@ -65,6 +65,7 @@ job-defaults:
             - name: public/test_info/
               path: workspace/build/blobber_upload_dir
               type: directory
+    run-visual-metrics: True
     run:
         using: run-task
         checkout: false
@@ -94,7 +95,6 @@ job-defaults:
 jobs:
     tp6m-1-cold:
         test-name: amazon
-        run-visual-metrics: True
         treeherder:
             symbol: 'Btime(tp6m-1-c)'
 
