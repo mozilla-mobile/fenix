@@ -43,6 +43,7 @@ import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
+import mozilla.components.service.experiments.Experiments
 
 @SuppressLint("Registered")
 @Suppress("TooManyFunctions", "LargeClass")
@@ -147,9 +148,23 @@ open class FenixApplication : LocaleAwareApplication() {
         //    runStorageMaintenance()
         // }
 
+        val taskManager = components.performance.visualCompletenessTaskManager
         registerActivityLifecycleCallbacks(
-            PerformanceActivityLifecycleCallbacks(components.performance.visualCompletenessTaskManager)
+            PerformanceActivityLifecycleCallbacks(taskManager)
         )
+
+        // Enable the service-experiments component to be initialized after visual completeness
+        // for performance wins.
+        if (settings().isExperimentationEnabled && Config.channel.isReleaseOrBeta) {
+            taskManager.add {
+                Experiments.initialize(
+                    applicationContext,
+                    mozilla.components.service.experiments.Configuration(
+                        httpClient = lazy(LazyThreadSafetyMode.NONE) { components.core.client }
+                    )
+                )
+            }
+        }
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
