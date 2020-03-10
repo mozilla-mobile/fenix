@@ -62,8 +62,7 @@ def run_visual_metrics(config, jobs):
 			print(job['fetches'])
 			job['fetches'][dep_job.label] = []
 			job['fetches'][dep_job.label].append({
-				'artifact': 'public/test_info/browsertime-results.tgz',
-				'extract': True
+				'toolchain-artifact': 'public/test_info/browsertime-results.tgz'
 			})
 			print(job['fetches'])
 
