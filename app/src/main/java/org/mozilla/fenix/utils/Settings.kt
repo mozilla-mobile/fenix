@@ -12,6 +12,7 @@ import android.content.SharedPreferences
 import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.lifecycle.LifecycleOwner
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
@@ -28,9 +29,8 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
-import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
+import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import java.security.InvalidParameterException
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
@@ -178,10 +178,6 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_experimentation),
         default = true
     )
-
-    val isAutoPlayEnabled = getSitePermissionsPhoneFeatureAction(
-        PhoneFeature.AUTOPLAY_AUDIBLE, Action.BLOCKED
-    ) != Action.BLOCKED
 
     private var trackingProtectionOnboardingShownThisSession = false
     var isOverrideTPPopupsForPerformanceTest = false
@@ -505,6 +501,21 @@ class Settings private constructor(
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
             autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE)
         )
+    }
+
+    fun setSitePermissionSettingListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
+        val sitePermissionKeys = listOf(
+            PhoneFeature.NOTIFICATION,
+            PhoneFeature.MICROPHONE,
+            PhoneFeature.LOCATION,
+            PhoneFeature.CAMERA,
+            PhoneFeature.AUTOPLAY_AUDIBLE,
+            PhoneFeature.AUTOPLAY_INAUDIBLE
+        ).map { it.getPreferenceKey(appContext) }
+
+        preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
+            if (key in sitePermissionKeys) listener.invoke()
+        }
     }
 
     var shouldPromptToSaveLogins by booleanPreference(
