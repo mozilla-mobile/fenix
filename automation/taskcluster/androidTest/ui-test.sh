@@ -72,16 +72,18 @@ echo
 # and try to download the artifacts. We will exit with the actual error code later.
 set +e
 
-if [[ "${device_type}" =~ ^(arm64-v8a|armeabi-v7a|x86_64|x86)$ ]]; then
-    flank_template="${PATH_TEST}/flank-${device_type}.yml"
-elif [[ "${device_type}" == "x86-start-test" ]]; then
-    flank_template="${PATH_TEST}/flank-x86-start-test.yml"
-elif [[ "${device_type}" == "arm-start-test" ]]; then
-    flank_template="${PATH_TEST}/flank-armeabi-v7a-start-test.yml"
-else
-    echo "NOT FOUND"
-    exitcode=1
-fi
+#if [[ "${device_type}" =~ ^(arm64-v8a|armeabi-v7a|x86_64|x86)$ ]]; then
+#    flank_template="${PATH_TEST}/flank-${device_type}.yml"
+#elif [[ "${device_type}" == "x86-start-test" ]]; then
+#    flank_template="${PATH_TEST}/flank-x86-start-test.yml"
+#elif [[ "${device_type}" == "arm-start-test" ]]; then
+#    flank_template="${PATH_TEST}/flank-armeabi-v7a-start-test.yml"
+#else
+#    echo "NOT FOUND"
+#    exitcode=1
+#fi
+
+flank_template="${PATH_TEST}/flank-demo.yml"
 
 APK_APP="$(get_abs_filename $APK_APP)"
 APK_TEST="$(get_abs_filename $APK_TEST)"
