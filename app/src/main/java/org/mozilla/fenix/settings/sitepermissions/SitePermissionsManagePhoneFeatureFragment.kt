@@ -90,11 +90,14 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private fun initFirstRadio(rootView: View) {
         with(rootView.ask_to_allow_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
-                text = getString(R.string.preference_option_autoplay_allowed2)
-                setOnClickListener {
-                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ALL)
-                }
-                restoreState(AUTOPLAY_ALLOW_ALL)
+                // Disabled because GV does not allow this setting. TODO Reenable after
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed
+//                text = getString(R.string.preference_option_autoplay_allowed2)
+//                setOnClickListener {
+//                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ALL)
+//                }
+//                restoreState(AUTOPLAY_ALLOW_ALL)
+                visibility = View.GONE
             } else {
                 text = getCombinedLabel(
                     getString(R.string.preference_option_phone_feature_ask_to_allow),
@@ -104,6 +107,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                     saveActionInSettings(ASK_TO_ALLOW)
                 }
                 restoreState(ASK_TO_ALLOW)
+                visibility = View.VISIBLE
             }
         }
     }
@@ -115,7 +119,10 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
                 setOnClickListener {
                     saveActionInSettings(it.context, AUTOPLAY_ALLOW_ON_WIFI)
                 }
-                restoreState(AUTOPLAY_ALLOW_ON_WIFI)
+                // TODO replace with AUTOPLAY_ALLOW_ON_WIFI when
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed. This GV bug
+                // makes ALLOW_ALL behave as ALLOW_ON_WIFI
+                restoreState(AUTOPLAY_ALLOW_ALL)
             } else {
                 text = getString(R.string.preference_option_phone_feature_blocked)
                 setOnClickListener {
