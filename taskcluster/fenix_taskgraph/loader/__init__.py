@@ -49,3 +49,27 @@ def build_type_grouping(config, tasks):
         groups.setdefault(build_type, []).append(task)
 
     return groups
+
+
+@group_by('attributes')
+def attributes_grouping(config, tasks):
+    groups = {}
+    kind_dependencies = config.get('kind-dependencies')
+    only_attributes = config.get('only-for-attributes')
+
+    for task in tasks:
+        if task.kind not in kind_dependencies:
+            continue
+
+        group_attr = None
+        if only_attributes:
+            for attr in only_attributes:
+                if attr in task.attributes:
+                    group_attr = attr
+                    break
+        if not group_attr:
+            continue
+
+        groups.setdefault(group_attr, []).append(task)
+
+    return groups

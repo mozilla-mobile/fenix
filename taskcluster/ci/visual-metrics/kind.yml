@@ -2,16 +2,22 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ---
-loader: fenix_taskgraph.loader.single_dep:loader
+loader: fenix_taskgraph.loader.multi_dep:loader
 
 kind-dependencies:
     - browsertime
     - toolchain
 
+primary-dependency:
+    - browsertime
+
+group-by: attributes
+
 only-for-attributes:
     - run-visual-metrics
 
 transforms:
+    - fenix_taskgraph.transforms.multi_dep:transforms
     - fenix_taskgraph.transforms.visual_metrics:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
