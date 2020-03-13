@@ -10,6 +10,8 @@ kind-dependencies:
     - signing
     - toolchain
 
+primary-dependency: signing
+
 only-for-build-types:
     - performance-test
 
