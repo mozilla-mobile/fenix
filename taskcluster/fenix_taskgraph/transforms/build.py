@@ -70,7 +70,7 @@ def build_gradle_command(config, tasks):
     for task in tasks:
         gradle_build_type = task["run"]["gradle-build-type"]
         geckoview_engine = task["run"]["geckoview-engine"]
-        variant_config = get_variant(gradle_build_type, geckoview_engine)
+        variant_config = get_variant(config.params, gradle_build_type, geckoview_engine)
 
         task["run"]["gradlew"] = [
             "clean",
@@ -107,7 +107,7 @@ def add_artifacts(config, tasks):
     for task in tasks:
         gradle_build_type = task["run"].pop("gradle-build-type")
         geckoview_engine = task["run"].pop("geckoview-engine")
-        variant_config = get_variant(gradle_build_type, geckoview_engine)
+        variant_config = get_variant(config.params, gradle_build_type, geckoview_engine)
         artifacts = task.setdefault("worker", {}).setdefault("artifacts", [])
         task["attributes"]["apks"] = apks = {}
 

@@ -27,6 +27,7 @@ def register(graph_config):
         Required("pull_request_number"): Any(All(int, Range(min=1)), None),
         Required("release_type"): text_type,
         Required("release_version"): text_type,
+        Required('gradle_variants'): object,
     })
 
 
@@ -55,6 +56,8 @@ def get_decision_parameters(graph_config, parameters):
                 )
         parameters["target_tasks_method"] = "release"
 
+    from .gradle import _fetch_all_variants
+    parameters['gradle_variants'] = _fetch_all_variants()
 
 def read_version_file():
     with open(os.path.join(os.path.dirname(__file__), '..', '..', 'version.txt')) as f:

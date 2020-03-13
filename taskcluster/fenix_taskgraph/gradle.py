@@ -11,8 +11,8 @@ from taskgraph.util.memoize import memoize
 
 
 
-def get_variant(build_type, engine):
-    all_variants = _fetch_all_variants()
+def get_variant(parameters, build_type, engine):
+    all_variants = parameters['gradle_variants']
     matching_variants = [
         variant for variant in all_variants
         if variant["build_type"] == build_type and variant["engine"] == engine
