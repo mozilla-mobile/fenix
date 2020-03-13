@@ -17,7 +17,6 @@ only-for-attributes:
     - run-visual-metrics
 
 transforms:
-    - fenix_taskgraph.transforms.multi_dep:transforms
     - fenix_taskgraph.transforms.visual_metrics:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
