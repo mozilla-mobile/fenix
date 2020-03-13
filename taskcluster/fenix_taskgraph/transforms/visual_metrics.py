@@ -83,4 +83,8 @@ def run_visual_metrics(config, jobs):
             attributes = dict(dep_job.attributes)
             job['run-on-projects'] = attributes['run_on_projects']
 
+            # We can't use the multi_dep transforms which remove this
+            # field, so we remove the dependent-tasks entry here
+            del job['dependent-tasks']
+
             yield job
