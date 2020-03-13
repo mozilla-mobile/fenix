@@ -72,8 +72,6 @@ def get_primary_dep(config, dep_tasks):
         assert len(dep_tasks) == 1, "Must define a primary-dependency!"
         return dep_tasks.values()[0]
     primary_dep = None
-    print(primary_dependencies)
-    print(dep_tasks)
     for primary_kind in primary_dependencies:
         for dep_kind in dep_tasks:
             if dep_kind == primary_kind:
