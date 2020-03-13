@@ -117,7 +117,10 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 text = getString(R.string.preference_option_autoplay_allowed_wifi_only)
                 setOnClickListener {
-                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ON_WIFI)
+                    // TODO replace with AUTOPLAY_ALLOW_ON_WIFI when
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed. This GV bug
+                    // makes ALLOW_ALL behave as ALLOW_ON_WIFI
+                    saveActionInSettings(it.context, AUTOPLAY_ALLOW_ALL)
                 }
                 // TODO replace with AUTOPLAY_ALLOW_ON_WIFI when
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed. This GV bug

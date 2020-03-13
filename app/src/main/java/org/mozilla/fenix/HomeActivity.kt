@@ -169,20 +169,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowsersCache.resetAll()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        with(application.components.wifiIntegration) {
-            maybeAddWifiConnectedListener()
-            start()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        components.wifiIntegration.stop()
-    }
-
     /**
      * Handles intents received when the activity is open.
      */

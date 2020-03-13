@@ -47,6 +47,10 @@ class WifiIntegration(private val settings: Settings, private val wifiConnection
         wifiConnectionMonitor.removeOnWifiConnectedChangedListener(wifiConnectedListener)
     }
 
+    // Until https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed, AUTOPLAY_ALLOW_ALL
+    // only works while WIFI is active, so we are not using AUTOPLAY_ALLOW_ON_WIFI (or this class).
+    // Once that is fixed, [start] and [maybeAddWifiConnectedListener] will need to be called on
+    // activity startup.
     fun start() { wifiConnectionMonitor.start() }
 
     fun stop() { wifiConnectionMonitor.stop() }
