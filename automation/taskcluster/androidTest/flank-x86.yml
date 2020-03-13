@@ -9,7 +9,7 @@ gcloud:
   # will start test then close socket. no reports will be generated.
   # to retrieve results later, use the "refresh" command
   # reports will be generated from /results/matrix_ids.json
-  #async: true 
+  #async: true
   # will start test then leave socket open. reports will be published
   # to /results
   # see: https://github.com/TestArmada/flank/issues/339
@@ -17,16 +17,16 @@ gcloud:
 
   # results-history-name
   # by default, set to app name
-  # declare results-history-name to create a separate dropdown menu in Firebase 
+  # declare results-history-name to create a separate dropdown menu in Firebase
   # see: https://github.com/TestArmada/flank/issues/341
-  #results-history-name: tmp_parallel 
+  #results-history-name: tmp_parallel
 
   # The number of times a TestExecution should be re-attempted if one or more\nof its test cases fail for any reason.
   # The maximum number of reruns allowed is 10. Default is 0, which implies no reruns.
   num-flaky-test-attempts: 2
 
   # test and app are the only required args
-  app: /app/path 
+  app: /app/path
   test: /test/path
 
   auto-google-login: true
@@ -41,16 +41,16 @@ gcloud:
    - package org.mozilla.fenix.ui
 
   device:
-   - model: Nexus6 
+   - model: Nexus6
      version: 25
-   - model: Pixel2 
+   - model: Pixel2
      version: 28
 
 flank:
   project: GOOGLE_PROJECT
   # test shards - the amount of groups to split the test suite into
   # set to -1 to use one shard per test.
-  max-test-shards: -1 
+  max-test-shards: 42
   # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
   num-test-runs: 1
