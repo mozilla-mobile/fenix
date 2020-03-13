@@ -28,6 +28,7 @@ class FenixSnackbar private constructor(
     contentViewCallback: FenixSnackbarCallback,
     isError: Boolean
 ) : BaseTransientBottomBar<FenixSnackbar>(parent, content, contentViewCallback) {
+    var shouldShowSnackbar = false
 
     init {
         view.background = null
@@ -43,6 +44,8 @@ class FenixSnackbar private constructor(
             stepGranularity,
             TypedValue.COMPLEX_UNIT_SP
         )
+
+        setDismissListenerForNewSnackbars()
     }
 
     fun setAppropriateBackground(isError: Boolean) {
@@ -69,6 +72,47 @@ class FenixSnackbar private constructor(
                 action.invoke()
                 dismiss()
             }
+        }
+    }
+
+    private fun setDismissListenerForNewSnackbars() {
+        addCallback(object : BaseCallback<FenixSnackbar>() {
+            override fun onDismissed(transientBottomBar: FenixSnackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+
+                if (shouldShowSnackbar) {
+                    shouldShowSnackbar = false
+                    // onDismissed() is called for us while the previous snackbar is still on screen.
+                    // Showing a new snackbar now means the new one will very soon be removed from the screen
+                    // (the same underlying object is used)
+                    // We need to wait until the previous is actually removed from the screen to show a new one.
+                    view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+                        override fun onViewDetachedFromWindow(v: View?) {
+                            view.removeOnAttachStateChangeListener(this)
+
+                            super@FenixSnackbar.show()
+                        }
+
+                        override fun onViewAttachedToWindow(v: View?) {
+                            // no-op
+                        }
+                    })
+                }
+            }
+
+            override fun onShown(transientBottomBar: FenixSnackbar?) {
+                // no-op
+            }
+        })
+    }
+
+    override fun show() {
+        // If there is a previous snackbar still on screen
+        // let's just make a note to show the one after the current is fully dismissed.
+        if (view.isShown) {
+            shouldShowSnackbar = true
+        } else {
+            super.show()
         }
     }
 
