@@ -47,7 +47,7 @@ def add_variants(config, tasks):
 @transforms.add
 def build_browsertime_task(config, tasks):
     for task in tasks:
-        signing = task.get("primary-dependency")
+        signing = task.pop("primary-dependency")
         task.setdefault("dependencies", {})["signing"] = signing.label
         build_type = task["attributes"]["build-type"]
         abi = task["attributes"]["abi"]
