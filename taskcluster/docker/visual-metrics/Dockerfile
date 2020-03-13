@@ -20,7 +20,7 @@ WORKDIR /builds/worker
 USER worker:worker
 
 COPY requirements.txt /builds/worker/requirements.txt
-RUN pip3 install setuptools==42.0.2
+RUN pip3 install setuptools==46.0.0
 RUN pip3 install --require-hashes -r /builds/worker/requirements.txt && \
     rm /builds/worker/requirements.txt
 
