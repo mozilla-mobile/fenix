@@ -25,11 +25,14 @@ RUN pip3 install --require-hashes -r /builds/worker/requirements.txt && \
     rm /builds/worker/requirements.txt
 
 COPY run-visual-metrics.py /builds/worker/bin/run-visual-metrics.py
-RUN chmod +x /builds/worker/bin/run-visual-metrics.py
-
 COPY fetch-content /usr/local/bin/fetch-content
-RUN chmod +x /usr/local/bin/fetch-content
 
 COPY performance-artifact-schema.json /builds/worker/performance-artifact-schema.json
+
+USER root
+RUN chmod +x /builds/worker/bin/run-visual-metrics.py
+RUN chmod +x /usr/local/bin/fetch-content
+
+USER worker:worker
 
 VOLUME /builds/worker/artifacts/
