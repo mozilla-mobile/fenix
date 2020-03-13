@@ -70,6 +70,6 @@ def attributes_grouping(config, tasks):
         if not group_attr:
             continue
 
-        groups.setdefault(group_attr, []).append(task)
+        groups.setdefault(task.label, []).append(task)
 
     return groups
