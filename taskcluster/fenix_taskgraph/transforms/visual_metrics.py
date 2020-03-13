@@ -85,8 +85,6 @@ def run_visual_metrics(config, jobs):
 
             # The run-on-tasks-for also needs to be setup here
             job['run-on-tasks-for'] = attributes.get('run_on_tasks_for', [])
-            if not job['run-on-tasks-for']:
-                print(dep_job['run-on-tasks-for'])
 
             # We can't use the multi_dep transforms which remove this
             # field, so we remove the dependent-tasks entry here
