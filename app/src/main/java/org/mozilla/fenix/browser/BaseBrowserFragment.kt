@@ -392,6 +392,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             )
 
             context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
+                // If the user connects to WIFI while on the BrowserFragment, this will update the
+                // SitePermissionsRules (specifically autoplay) accordingly
                 this.context?.let { assignSitePermissionsRules(it) }
             }
             assignSitePermissionsRules(context)
