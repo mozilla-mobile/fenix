@@ -344,6 +344,11 @@ class DefaultSessionControlController(
     }
 
     override fun handleSelectTopSite(url: String) {
+        if (url == "add to top sites") {
+            // add to top sites
+            return
+        }
+
         invokePendingDeleteJobs()
         metrics.track(Event.TopSiteOpenInNewTab)
         if (url == SupportUtils.POCKET_TRENDING_URL) { metrics.track(Event.PocketTopSiteClicked) }

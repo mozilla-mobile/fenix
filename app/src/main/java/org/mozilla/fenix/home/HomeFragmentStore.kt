@@ -39,6 +39,15 @@ data class TopSiteItem(
     override val url: String
 ) : TopSite
 
+/**
+ * TODO
+ */
+object AddToTopSites: TopSite {
+    override val id: Long = -1
+    override val title: String = "add to top sites" // TODO
+    override val url: String = "add to top sites" // TODO
+}
+
 fun List<Tab>.toSessionBundle(sessionManager: SessionManager): List<Session> {
     return this.mapNotNull { sessionManager.findSessionById(it.sessionId) }
 }
@@ -88,7 +97,7 @@ private fun homeFragmentStateReducer(
             collections = action.collections,
             mode = action.mode,
             tabs = action.tabs,
-            topSites = action.topSites
+            topSites = action.topSites + AddToTopSites
         )
         is HomeFragmentAction.CollectionExpanded -> {
             val newExpandedCollection = state.expandedCollections.toMutableSet()
@@ -104,6 +113,6 @@ private fun homeFragmentStateReducer(
         is HomeFragmentAction.CollectionsChange -> state.copy(collections = action.collections)
         is HomeFragmentAction.ModeChange -> state.copy(mode = action.mode, tabs = action.tabs)
         is HomeFragmentAction.TabsChange -> state.copy(tabs = action.tabs)
-        is HomeFragmentAction.TopSitesChange -> state.copy(topSites = action.topSites)
+        is HomeFragmentAction.TopSitesChange -> state.copy(topSites = action.topSites + AddToTopSites)
     }
 }

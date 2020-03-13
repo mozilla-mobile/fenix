@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.topsites
 
 import android.content.Context
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.top_site_item.view.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -16,6 +17,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.theme.ThemeManager
 
 class TopSiteItemViewHolder(
     private val view: View,
@@ -47,8 +49,24 @@ class TopSiteItemViewHolder(
     fun bind(topSite: TopSite) {
         this.topSite = topSite
         view.top_site_title.text = topSite.title
-        when {
-            topSite.url == SupportUtils.POCKET_TRENDING_URL -> {
+
+
+        when (topSite.url) {
+            "add to top sites" -> {
+                val primaryTextColor = ContextCompat.getColor(
+                    view.context,
+                    ThemeManager.resolveAttribute(R.attr.primaryText, view.context)
+                )
+                val drawable = view.context.getDrawable(R.drawable.ic_new)?.apply {
+                    setTint(primaryTextColor)
+                }
+
+                view.favicon_image.apply {
+                    // todo make it smaller
+                    setImageDrawable(drawable)
+                }
+            }
+            SupportUtils.POCKET_TRENDING_URL -> {
                 view.favicon_image.setImageDrawable(view.context.getDrawable(R.drawable.ic_pocket))
             }
             else -> {
