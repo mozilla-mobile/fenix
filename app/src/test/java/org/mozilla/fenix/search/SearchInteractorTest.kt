@@ -5,6 +5,7 @@
 package org.mozilla.fenix.search
 
 import android.content.Context
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,6 +15,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.Session
@@ -24,10 +27,8 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.TestApplication
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore.PREF_FILE_SEARCH_ENGINES
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.searchEngineManager
 import org.mozilla.fenix.ext.settings
@@ -35,9 +36,14 @@ import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.whatsnew.clear
 import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
 class SearchInteractorTest {
+
+    private val lifecycleScope: LifecycleCoroutineScope = mockk(relaxed = true)
+    private val clearToolbarFocus = { }
+
     @Test
     fun onUrlCommitted() {
         val context: HomeActivity = mockk(relaxed = true)
@@ -66,7 +72,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
 
@@ -83,7 +91,7 @@ class SearchInteractorTest {
     }
 
     @Test
-    fun onEditingCanceled() {
+    fun onEditingCanceled() = runBlockingTest {
         val navController: NavController = mockk(relaxed = true)
         val store: SearchFragmentStore = mockk(relaxed = true)
 
@@ -92,14 +100,18 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             mockk(),
             store,
-            navController
+            navController,
+            this,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
 
         interactor.onEditingCanceled()
+        advanceTimeBy(DefaultSearchController.KEYBOARD_ANIMATION_DELAY)
 
         verify {
-            navController.navigateUp()
+            clearToolbarFocus()
+            navController.popBackStack()
         }
     }
 
@@ -109,9 +121,6 @@ class SearchInteractorTest {
         val context: HomeActivity = mockk(relaxed = true)
         val settings = testContext.settings().apply { testContext.settings().clear() }
 
-        val browsingModeManager: DefaultBrowsingModeManager = mockk(relaxed = true)
-        every { context.components.browsingModeManager } returns browsingModeManager
-
         mockkObject(Settings)
         every { Settings.getInstance(context = context) } returns settings
 
@@ -120,7 +129,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
 
@@ -154,7 +165,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
 
@@ -197,7 +210,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            lifecycleScope,
+            clearToolbarFocus
         )
 
         val interactor = SearchInteractor(searchController)
@@ -228,7 +243,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            mockk()
+            mockk(),
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
         val searchEngine: SearchEngine = mockk(relaxed = true)
@@ -258,7 +275,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             mockk(),
             store,
-            navController
+            navController,
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
 
@@ -285,7 +304,9 @@ class SearchInteractorTest {
         val searchController: SearchController = DefaultSearchController(
             context,
             store,
-            navController
+            navController,
+            lifecycleScope,
+            clearToolbarFocus
         )
         val interactor = SearchInteractor(searchController)
         val session = Session("http://mozilla.org", false)

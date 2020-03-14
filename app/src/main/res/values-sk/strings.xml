@@ -613,9 +613,9 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Vypnutá</string>
 
-    <!-- Label that indicates video and audio autoplay is blocked -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked">Blokované pre videá a zvuky</string>
-    <!-- Label that indicates video and audio autoplay is allowed -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed">Povolené pre videá a zvuky</string>
 
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
@@ -1101,7 +1101,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Neukladať</string>
     <!-- Preference for autofilling saved logins in Fenix -->
-    <string name="preferences_passwords_autofill">Automatické vypĺňanie</string>
+    <string name="preferences_passwords_autofill">Automatické dopĺňanie</string>
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synchronizácia prihlasovacích údajov</string>
     <!-- Syncing saved logins in Fenix is on -->
@@ -1207,6 +1207,11 @@
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Ďalšie informácie</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">Podrobnosti vlastného vyhľadávacieho modulu</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">Odkaz s ďalšími podrobnosťami</string>
+
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Zadajte názov vyhľadávacieho modulu</string>
     <!-- Text shown when a user tries to add a search engine that already exists -->
@@ -1269,4 +1274,8 @@
     <string name="certificate_info_verified_by">Overil ju: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Odstrániť</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">Naozaj chcete odstrániť tieto prihlasovacie údaje?</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">Odstrániť</string>
 </resources>

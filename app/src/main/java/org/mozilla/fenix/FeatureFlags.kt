@@ -45,6 +45,11 @@ object FeatureFlags {
     const val asFeatureFxAPairingDisabled = false
 
     /**
+     * Enables dynamic bottom toolbar
+     */
+    val dynamicBottomToolbar = Config.channel.isNightlyOrDebug
+
+    /**
      * Enables the new language picker
      */
     val fenixLanguagePicker = Config.channel.isNightlyOrDebug
@@ -53,4 +58,13 @@ object FeatureFlags {
      * Enables deleting individual tracking protection exceptions.
      */
     val deleteIndividualTrackingProtectionExceptions = Config.channel.isNightlyOrDebug
+
+    /**
+     * Integration of push support provided by `feature-push` component into the Gecko engine.
+     *
+     * Behind nightly flag until all fatal bugs are resolved.
+     *
+     * https://github.com/mozilla-mobile/fenix/issues/9059
+     */
+    val webPushIntegration = Config.channel.isNightlyOrDebug
 }

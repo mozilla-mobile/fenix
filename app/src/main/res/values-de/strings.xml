@@ -617,11 +617,19 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Aus</string>
 
-    <!-- Label that indicates video and audio autoplay is blocked -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked">Video und Audio blockiert</string>
-    <!-- Label that indicates video and audio autoplay is allowed -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed">Video und Audio erlaubt</string>
 
+    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <string name="preference_option_autoplay_allowed2">Audio und Video erlauben</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over WIFI -->
+    <string name="preference_option_autoplay_allowed_wifi_only">Audio und Video nur per WLAN zulassen</string>
+    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="preference_option_autoplay_block_audio">Audio blockieren</string>
+    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <string name="preference_option_autoplay_blocked2">Video und Audio blockieren</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Ein</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -1189,7 +1197,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Sichern Sie Ihre Zugangsdaten und Passwörter</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Zugangsdaten und Kennwörter zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
+    <string name="logins_warning_dialog_message">Richten Sie ein Gerätesperrmuster, eine PIN oder ein Passwort ein, um zu verhindern, dass auf Ihre gespeicherten Zugangsdaten und Passwörter zugegriffen wird, wenn jemand anderes über Ihr Gerät verfügt.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Später</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1224,6 +1232,11 @@
     <string name="search_add_custom_engine_search_string_example">Anfrage durch „%s“ ersetzen. Beispiel:\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Weitere Informationen</string>
+
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">Details zur benutzerdefinierten Suchmaschine</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">Link zu weiteren Informationen</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Name der Suchmaschine eingeben</string>
@@ -1287,4 +1300,8 @@
     <string name="certificate_info_verified_by">Verifiziert von: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Entfernen</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">Sollen diese Zugangsdaten wirklich gelöscht werden?</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">Löschen</string>
 </resources>

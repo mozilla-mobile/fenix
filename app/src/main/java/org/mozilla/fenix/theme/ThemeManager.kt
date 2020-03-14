@@ -15,10 +15,10 @@ import android.util.TypedValue
 import android.view.View
 import android.view.Window
 import androidx.annotation.StyleRes
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.ext.getColorFromAttr
 
 abstract class ThemeManager {
 
@@ -111,8 +111,6 @@ class DefaultThemeManager(
         set(value) {
             if (currentTheme != value) {
                 field = value
-
-                setActivityTheme(activity)
 
                 val intent = activity.intent ?: Intent().also { activity.intent = it }
                 intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, value == BrowsingMode.Private)

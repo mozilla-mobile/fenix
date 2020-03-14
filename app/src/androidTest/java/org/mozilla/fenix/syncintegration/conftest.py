@@ -2,6 +2,7 @@ import io
 import json
 import os
 import time
+import os.path as path
 
 from mozdownload import DirectScraper, FactoryScraper
 from mozprofile import Profile
@@ -58,11 +59,23 @@ def tps_addon(pytestconfig, tmpdir_factory):
 def tps_config(fxa_account, monkeypatch):
     monkeypatch.setenv('FXA_EMAIL', fxa_account.email)
     monkeypatch.setenv('FXA_PASSWORD', fxa_account.password)
-    with open ("/Users/synctesting/.jenkins/workspace/fenix/app/src/androidTest/resources/email.txt", "w") as f:
+
+    # Go to resources folder
+    os.chdir('../../../../..')
+    resources = r'resources'
+    resourcesDir = os.path.join(os.getcwd(), resources)
+
+    with open (os.path.join(resourcesDir, 'email.txt'), "w") as f:
         f.write(fxa_account.email)
 
-    with open ("/Users/synctesting/.jenkins/workspace/fenix/app/src/androidTest/resources/password.txt", "w") as f:
+    with open (os.path.join(resourcesDir, 'password.txt'), "w") as f:
         f.write(fxa_account.password)
+
+    # Set the path where tests are
+    os.chdir('../')
+    currentDir = os.getcwd()
+    testsDir = currentDir + "/androidTest/java/org/mozilla/fenix/syncintegration"
+    os.chdir(testsDir)
 
     yield {'fx_account': {
         'username': fxa_account.email,
@@ -93,7 +106,7 @@ def tps_profile(pytestconfig, tps_addon, tps_config, tps_log, fxa_urls):
         # 'devtools.debugger.remote-enabled': True,
         'engine.bookmarks.repair.enabled': False,
         'extensions.autoDisableScopes': 10,
-        'extensions.legacy.enabled': True,
+        'extensions.experiments.enabled': True,
         'extensions.update.enabled': False,
         'extensions.update.notifyUser': False,
         # While this line is commented prod is launched instead of stage

@@ -15,7 +15,6 @@ import org.mozilla.fenix.GlobalDirections
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.alreadyOnDestination
-import org.mozilla.fenix.ext.components
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.
@@ -33,6 +32,7 @@ class DeepLinkIntentProcessor(
         }
     }
 
+    @Suppress("ComplexMethod")
     private fun handleDeepLink(deepLink: Uri, navController: NavController) {
         handleDeepLinkSideEffects(deepLink)
 
@@ -43,6 +43,7 @@ class DeepLinkIntentProcessor(
             "settings_search_engine" -> GlobalDirections.SearchEngine
             "settings_accessibility" -> GlobalDirections.Accessibility
             "settings_delete_browsing_data" -> GlobalDirections.DeleteData
+            "settings_addon_manager" -> GlobalDirections.SettingsAddonManager
             else -> return
         }
 
@@ -57,7 +58,7 @@ class DeepLinkIntentProcessor(
     private fun handleDeepLinkSideEffects(deepLink: Uri) {
         when (deepLink.host) {
             "enable_private_browsing" -> {
-                activity.components.browsingModeManager.mode = BrowsingMode.Private
+                activity.browsingModeManager.mode = BrowsingMode.Private
             }
             "make_default_browser" -> {
                 if (SDK_INT >= Build.VERSION_CODES.N) {

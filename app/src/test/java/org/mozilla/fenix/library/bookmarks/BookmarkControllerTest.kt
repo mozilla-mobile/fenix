@@ -29,7 +29,6 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.components.metrics.Event
@@ -48,7 +47,6 @@ class BookmarkControllerTest {
 
     private val homeActivity: HomeActivity = mockk(relaxed = true)
     private val services: Services = mockk(relaxed = true)
-    private val browsingModeManager: DefaultBrowsingModeManager = mockk(relaxed = true)
 
     private val item =
         BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0, "Mozilla", "http://mozilla.org", null)
@@ -85,8 +83,6 @@ class BookmarkControllerTest {
             "org.mozilla.fenix.ext.ContextKt"
         )
 
-        every { homeActivity.components.browsingModeManager } returns browsingModeManager
-
         every { homeActivity.components.services } returns services
         every { navController.currentDestination } returns NavDestination("").apply {
             id = R.id.bookmarkFragment
@@ -114,16 +110,16 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkTapped should respect browsing mode`() {
         // if in normal mode, should be in normal mode
-        every { context.components.browsingModeManager.mode } returns BrowsingMode.Normal
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
 
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Normal, context.components.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
 
         // if in private mode, should be in private mode
-        every { context.components.browsingModeManager.mode } returns BrowsingMode.Private
+        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
 
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Private, context.components.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
     }
 
     @Test
@@ -209,7 +205,7 @@ class BookmarkControllerTest {
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            browsingModeManager.mode = BrowsingMode.Normal
+            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
     }
@@ -220,7 +216,7 @@ class BookmarkControllerTest {
 
         verifyOrder {
             invokePendingDeletion.invoke()
-            browsingModeManager.mode = BrowsingMode.Private
+            homeActivity.browsingModeManager.mode = BrowsingMode.Private
             homeActivity.openToBrowserAndLoad(item.url!!, true, BrowserDirection.FromBookmarks)
         }
     }

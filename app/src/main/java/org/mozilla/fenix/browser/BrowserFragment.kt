@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
@@ -26,6 +25,7 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -47,23 +47,14 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        postponeEnterTransition()
-        sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                .setDuration(
-                    SHARED_TRANSITION_MS
-                )
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view.browserLayout.transitionName = "$TAB_ITEM_TRANSITION_NAME${getSessionById()?.id}"
+
+        startPostponedEnterTransition()
         return view
     }
 
@@ -127,12 +118,14 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private fun updateEngineBottomMargin() {
-        val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+        if (!FeatureFlags.dynamicBottomToolbar) {
+            val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
 
-        browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
-            requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
-        } else {
-            0
+            browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
+                requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+            } else {
+                0
+            }
         }
 
         val toolbarSessionObserver = TrackingProtectionOverlay(
@@ -147,11 +140,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun onResume() {
         super.onResume()
         getSessionById()?.let {
-            /**
-             * The session mode may be changed if the user is originally in Normal Mode and then
-             * opens a 3rd party link in Private Browsing Mode. Hence, we update the theme here.
-             * This fixes issue #5254.
-             */
             (activity as HomeActivity).updateThemeForSession(it)
         }
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)

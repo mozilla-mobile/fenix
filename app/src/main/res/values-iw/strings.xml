@@ -522,9 +522,9 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">כבויה</string>
 
-    <!-- Label that indicates video and audio autoplay is blocked -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked">וידאו ושמע חסומים</string>
-    <!-- Label that indicates video and audio autoplay is allowed -->
+    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed">וידאו ושמע מאופשרים</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">פעיל</string>
@@ -591,6 +591,8 @@
     <string name="sync_sign_in">התחברות אל Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">שליחה לכל המכשירים</string>
+    <!-- An option from the share dialog to reconnect to sync -->
+    <string name="sync_reconnect">התחברות מחדש אל Sync</string>
     <!-- Text displayed when sync is offline and cannot be accessed -->
     <string name="sync_offline">לא־מקוון</string>
     <!-- An option to connect additional devices -->
@@ -743,8 +745,12 @@
     <string name="onboarding_firefox_account_signing_in">בתהליך התחברות…</string>
     <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
     <string name="onboarding_firefox_account_sign_in">התחברות אל Firefox</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">הסנכרון פעיל</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">ההתחברות נכשלה</string>
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header">הגנת מעקב</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_tracking_protection_description1">‏%s עוזר למנוע מאתרים לעקוב אחריך ברשת.</string>
@@ -818,6 +824,8 @@
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
     <string name="etp_settings">הגדרות הגנה</string>
+    <!-- Preference title for enhanced tracking protection settings -->
+    <string name="preference_enhanced_tracking_protection">הגנת מעקב מתקדמת</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title">לגלוש מבלי שעוקבים אחריך</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
@@ -890,6 +898,8 @@
     <string name="etp_panel_on">ההגנות פעילות עבור אתר זה</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
     <string name="etp_panel_off">ההגנות כבויות עבור אתר זה</string>
+    <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
+    <string name="enhanced_tracking_protection_exceptions">הגנת מעקב מתקדמת כבויה עבור האתרים האלו</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">הזכויות שלך</string>
     <!-- About page link text to open open source licenses screen -->
@@ -1030,6 +1040,11 @@
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">מידע נוסף</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">פרטי מנוע חיפוש מותאם אישית</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">קישור למידע נוסף</string>
+
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">נא להקליד שם למנוע החיפוש</string>
     <!-- Text shown when a user tries to add a search engine that already exists -->
@@ -1079,4 +1094,8 @@
     <string name="certificate_info_verified_by">אומת על־ידי %1$s </string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">מחיקה</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">האם ברצונך למחוק את כניסה זו?</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">מחיקה</string>
 </resources>

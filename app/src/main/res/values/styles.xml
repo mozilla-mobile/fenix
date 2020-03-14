@@ -6,6 +6,7 @@
 
     <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Android system styling -->
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -21,7 +22,7 @@
         <item name="android:splitMotionEvents">false</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
-        <item name="android:colorControlActivated">@color/accent_high_contrast_normal_theme</item>
+        <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_normal_theme</item>
         <!-- Inactive track color(30% transparency) -->
@@ -56,6 +57,9 @@
         <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="menuCategoryText">@color/menu_category_normal_theme</item>
+        <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
+        <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
+        <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -98,6 +102,7 @@
 
     <style name="PrivateThemeBase" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <!-- Android system styling -->
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -105,7 +110,7 @@
         <item name="android:windowBackground">@color/foundation_private_theme</item>
         <item name="android:colorEdgeEffect">@color/accent_private_theme</item>
         <item name="android:colorAccent">@color/primary_text_private_theme</item>
-        <item name="android:colorControlActivated">@color/accent_high_contrast_private_theme</item>
+        <item name="colorControlActivated">@color/accent_high_contrast_private_theme</item>
         <item name="android:textColorPrimary">@color/state_list_text_color</item>
         <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
         <item name="alertDialogStyle">@style/DialogStyleDark</item>
@@ -147,6 +152,9 @@
         <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_private_theme</item>
         <item name="menuCategoryText">@color/menu_category_private_theme</item>
+        <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
+        <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
+        <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -409,5 +417,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
     </style>
 </resources>

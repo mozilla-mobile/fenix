@@ -9,6 +9,7 @@ pipeline {
     }
     stages {
         stage('test') {
+        when { branch 'master' }
             steps {
                 dir('app/src/androidTest/java/org/mozilla/fenix/syncIntegration') {
                     sh 'pipenv install'
@@ -21,26 +22,32 @@ pipeline {
     post {
         always {
             script {
+                 if (env.BRANCH_NAME == 'master') {
                  publishHTML(target: [
                      allowMissing: false,
                      alwaysLinkToLastBuild: true,
                      keepAll: true,
-                     reportDir: '/Users/synctesting/.jenkins/workspace/fenix/app/src/androidTest/java/org/mozilla/fenix/syncintegration/results',
+                     reportDir: 'app/src/androidTest/java/org/mozilla/fenix/syncintegration/results',
                      reportFiles: 'index.html',
                      reportName: 'HTML Report'])
+                 }
             }
         }
 
         failure {
-            slackSend(
-                color: 'danger',
-                message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            script {
+                if (env.BRANCH_NAME == 'master') {
+                    slackSend(
+                        color: 'danger',
+                        message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}HTML_20Report/)")
+                }
+            }
         }
 
         fixed {
             slackSend(
                 color: 'good',
-                message: "FIXED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                message: "FIXED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}HTML_20Report/)")
         }
     }
 }

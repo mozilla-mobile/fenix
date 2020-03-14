@@ -6,9 +6,13 @@ package org.mozilla.fenix.settings.logins
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,7 +26,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.appservices.logins.ServerPassword
+import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -47,6 +51,11 @@ class SavedLoginsFragment : Fragment() {
         showToolbar(getString(R.string.preferences_passwords_saved_logins))
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,7 +65,8 @@ class SavedLoginsFragment : Fragment() {
         savedLoginsStore = StoreProvider.get(this) {
             SavedLoginsFragmentStore(
                 SavedLoginsFragmentState(
-                    items = listOf()
+                    items = listOf(),
+                    filteredItems = listOf()
                 )
             )
         }
@@ -73,6 +83,25 @@ class SavedLoginsFragment : Fragment() {
         consumeFrom(savedLoginsStore) {
             savedLoginsView.update(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.login_list, menu)
+        val searchItem = menu.findItem(R.id.search)
+        val searchView: SearchView = searchItem.actionView as SearchView
+        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
+        searchView.queryHint = getString(R.string.preferences_passwords_saved_logins_search)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                savedLoginsStore.dispatch(SavedLoginsFragmentAction.FilterLogins(newText))
+                return false
+            }
+        })
     }
 
     /**
@@ -103,18 +132,16 @@ class SavedLoginsFragment : Fragment() {
     }
 
     private fun loadAndMapLogins() {
-        var deferredLogins: Deferred<List<ServerPassword>>? = null
+        var deferredLogins: Deferred<List<Login>>? = null
         val fetchLoginsJob = lifecycleScope.launch(IO) {
             deferredLogins = async {
-                requireContext().components.core.syncablePasswordsStorage.withUnlocked {
-                    it.list().await()
-                }
+                requireContext().components.core.passwordsStorage.list()
             }
             val logins = deferredLogins?.await()
             logins?.let {
                 withContext(Main) {
                     savedLoginsStore.dispatch(SavedLoginsFragmentAction.UpdateLogins(logins.map { item ->
-                        SavedLoginsItem(item.hostname, item.username, item.password, item.id)
+                        SavedLoginsItem(item.origin, item.username, item.password, item.guid!!)
                     }))
                 }
             }

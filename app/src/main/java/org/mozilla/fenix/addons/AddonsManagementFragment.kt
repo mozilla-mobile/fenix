@@ -5,6 +5,7 @@
 package org.mozilla.fenix.addons
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -13,24 +14,26 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_add_ons_management.*
 import kotlinx.android.synthetic.main.fragment_add_ons_management.view.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.CoroutineScope
-import mozilla.components.lib.state.ext.flowScoped
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translatedName
+import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Fragment use for managing add-ons.
@@ -105,6 +108,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                             this@AddonsManagementFragment,
                             addons
                         )
+                        isInstallationInProgress = false
                         view.add_ons_progress_bar.isVisible = false
                         view.add_ons_empty_message.isVisible = false
 
@@ -115,6 +119,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         showSnackBar(view, getString(R.string.mozac_feature_addons_failed_to_query_add_ons))
+                        isInstallationInProgress = false
                         view.add_ons_progress_bar.isVisible = false
                         view.add_ons_empty_message.isVisible = true
                     }
@@ -159,6 +164,19 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         if (!isInstallationInProgress && !hasExistingPermissionDialogFragment()) {
             val dialog = PermissionsDialogFragment.newInstance(
                 addon = addon,
+                promptsStyling = PermissionsDialogFragment.PromptsStyling(
+                    gravity = Gravity.BOTTOM,
+                    shouldWidthMatchParent = true,
+                    positiveButtonBackgroundColor = ThemeManager.resolveAttribute(
+                        R.attr.accent,
+                        requireContext()
+                    ),
+                    positiveButtonTextColor = ThemeManager.resolveAttribute(
+                        R.attr.contrastText,
+                        requireContext()
+                    ),
+                    positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
+                ),
                 onPositiveButtonClicked = onPositiveButtonClicked
             )
             dialog.show(parentFragmentManager, PERMISSIONS_DIALOG_FRAGMENT_TAG)
@@ -173,8 +191,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             addon,
             onSuccess = {
                 this@AddonsManagementFragment.view?.let { view ->
+                    val rootView = activity?.getRootView() ?: view
                     showSnackBar(
-                        view,
+                        rootView,
                         getString(
                             R.string.mozac_feature_addons_successfully_installed,
                             it.translatedName
@@ -187,7 +206,11 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             },
             onError = { _, _ ->
                 this@AddonsManagementFragment.view?.let { view ->
-                    showSnackBar(view, getString(R.string.mozac_feature_addons_failed_to_install, addon.translatedName))
+                    val rootView = activity?.getRootView() ?: view
+                    showSnackBar(
+                        rootView,
+                        getString(R.string.mozac_feature_addons_failed_to_install, addon.translatedName)
+                    )
                     addonProgressOverlay?.visibility = View.GONE
                     isInstallationInProgress = false
                 }

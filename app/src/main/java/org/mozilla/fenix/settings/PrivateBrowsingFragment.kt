@@ -39,10 +39,7 @@ class PrivateBrowsingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_open_links_in_a_private_tab))?.apply {
-            setOnPreferenceClickListener {
-                onPreferenceChangeListener = SharedPreferenceUpdater()
-                true
-            }
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }
 }

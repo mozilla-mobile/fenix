@@ -55,6 +55,9 @@ class HomeScreenRobot {
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsHeader() = assertNoCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
+    fun verifyNoCollectionsHeaderIsNotShown() = assertNoCollectionsHeaderIsNotVisible()
+    fun verifyCollectionsHeaderIsNotShown() = assertCollectionsHeaderIsNotVisible()
+    fun verifyNoCollectionsTextIsNotShown() = assertNoCollectionsTextIsNotVisible()
     fun verifyNoTabsOpenedHeader() = assertNoTabsOpenedHeader()
     fun verifyHomeWordmark() = assertHomeWordmark()
     fun verifyHomeToolbar() = assertHomeToolbar()
@@ -79,14 +82,27 @@ class HomeScreenRobot {
     fun verifyTrackingProtectionToggle() = assertTrackingProtectionToggle()
     fun verifyProtectYourselfText() = assertProtectYourselfText()
 
+    // What's new elements
+    fun verifyWhatsNewHeader() = assertWhatsNewHeather()
+    fun verifyWhatsNewLink() = assertWhatsNewLink()
+
+    // Browse privately
     fun verifyBrowsePrivatelyHeader() = assertBrowsePrivatelyHeader()
     fun verifyBrowsePrivatelyText() = assertBrowsePrivatelyText()
+
+    // Take a position
+    fun verifyTakePositionHeader() = assertTakePositionheader()
+    fun verifyTakePositionElements() {
+        assertTakePositionBottomRadioButton()
+        assertTakePositionTopRadioButton()
+    }
+
+    // Your privacy
     fun verifyYourPrivacyHeader() = assertYourPrivacyHeader()
     fun verifyYourPrivacyText() = assertYourPrivacyText()
     fun verifyPrivacyNoticeButton() = assertPrivacyNoticeButton()
     fun verifyStartBrowsingButton() = assertStartBrowsingButton()
 
-    // Private mode elements
     fun verifyPrivateSessionHeader() = assertPrivateSessionHeader()
 
     fun verifyPrivateSessionMessage(visible: Boolean = true) = assertPrivateSessionMessage(visible)
@@ -150,7 +166,7 @@ class HomeScreenRobot {
             .perform(click())
     }
 
-    fun swipeToBottom() = onView(withId(R.id.sessionControlRecyclerView)).perform(ViewActions.swipeUp())
+    fun swipeToBottom() = onView(withId(R.id.homeLayout)).perform(ViewActions.swipeUp())
 
     fun swipeToTop() = onView(withId(R.id.sessionControlRecyclerView)).perform(ViewActions.swipeDown())
 
@@ -261,6 +277,14 @@ class HomeScreenRobot {
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
+
+        fun openCommonMythsLink(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            onView(withId(R.id.private_session_common_myths))
+                    .perform(click())
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -322,13 +346,29 @@ private fun assertNoCollectionsHeader() =
     onView(allOf(withText("No collections")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
+private fun assertNoCollectionsHeaderIsNotVisible() =
+    onView(allOf(withText("No collections")))
+        .check(doesNotExist())
+
+private fun assertCollectionsHeaderIsNotVisible() =
+    onView(allOf(withText("Collections")))
+        .check(doesNotExist())
+
 private fun assertNoCollectionsText() =
+        onView(
+            allOf(
+                withText("Collect the things that matter to you. To start, save open tabs to a new collection.")
+            )
+        )
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertNoCollectionsTextIsNotVisible() =
     onView(
         allOf(
             withText("Collect the things that matter to you. To start, save open tabs to a new collection.")
         )
     )
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(doesNotExist())
 
 private fun assertHomeComponent() = onView(ViewMatchers.withResourceName("sessionControlRecyclerView"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -370,7 +410,7 @@ private fun assertChooseThemeHeader() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertChooseThemeText() =
-    onView(allOf(withText("Try dark theme: easier on your battery and your eyes.")))
+    onView(allOf(withText("Save some battery and your eyesight by enabling dark mode.")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertLightThemeToggle() =
@@ -390,7 +430,7 @@ private fun assertDarkThemeDescription() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertAutomaticThemeToggle() =
-    onView(ViewMatchers.withResourceName("theme_automatic_radio_button"))
+    onView(withId(R.id.theme_automatic_radio_button))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertAutomaticThemeDescription() =
@@ -410,7 +450,7 @@ private fun assertProtectYourselfText() {
     onView(
         allOf(
             withText(
-                "Firefox Preview blocks ad trackers that follow you around the web."
+                "Firefox Preview helps stop websites from tracking you online."
             )
         )
     )
@@ -422,7 +462,7 @@ private fun assertBrowsePrivatelyHeader() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertBrowsePrivatelyText() =
-    onView(allOf(withText(containsString("private browsing is just a tap away."))))
+    onView(allOf(withText(containsString("Update your private browsing settings."))))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertYourPrivacyHeader() =
@@ -443,8 +483,25 @@ private fun assertPrivacyNoticeButton() =
     onView(allOf(withText("Read our privacy notice")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
+// What's new elements
+private fun assertWhatsNewHeather() = onView(allOf(withText("See what’s new")))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertWhatsNewLink() = onView(allOf(withText("Get answers here")))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
 private fun assertStartBrowsingButton() =
     onView(allOf(withText("Start browsing")))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+// Take a position
+private fun assertTakePositionheader() = onView(allOf(withText("Take a position")))
+        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertTakePositionTopRadioButton() = onView(ViewMatchers.withResourceName("toolbar_top_radio_button"))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertTakePositionBottomRadioButton() = onView(ViewMatchers.withResourceName("toolbar_bottom_radio_button"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 // Private mode elements
@@ -463,9 +520,10 @@ private fun assertPrivateSessionMessage(visible: Boolean) =
             if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else doesNotExist()
         )
 
-private fun assertShareTabsButton(visible: Boolean) =
-    onView(allOf(withId(R.id.share_tabs_button), isDisplayed()))
-        .check(matches(withEffectiveVisibility(visibleOrGone(visible))))
+private fun assertShareTabsButton(visible: Boolean) = onView(allOf(withId(R.id.share_tabs_button)))
+        .check(
+                if (visible) matches(withEffectiveVisibility(Visibility.VISIBLE)) else matches(withEffectiveVisibility(Visibility.INVISIBLE))
+        )
 
 private fun assertCloseTabsButton(title: String) =
     onView(allOf(withId(R.id.close_tab_button), withContentDescription("Close tab $title")))

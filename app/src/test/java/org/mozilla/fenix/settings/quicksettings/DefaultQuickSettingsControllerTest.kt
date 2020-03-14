@@ -9,7 +9,6 @@ import androidx.navigation.NavDirections
 import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isFailure
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isSameAs
 import assertk.assertions.isTrue
@@ -31,6 +30,7 @@ import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.robolectric.testContext
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.TestApplication
@@ -106,6 +106,7 @@ class DefaultQuickSettingsControllerTest {
     }
 
     @Test
+    @Ignore("Disabling because of intermittent failures https://github.com/mozilla-mobile/fenix/issues/8621")
     fun `handlePermissionToggled allowed by Android should toggle the permissions and modify View's state`() {
         val permissionName = "CAMERA"
         val websitePermission = mockk<WebsitePermission.Camera>()
@@ -219,6 +220,7 @@ class DefaultQuickSettingsControllerTest {
 
     @Test
     @ExperimentalCoroutinesApi
+    @Ignore("Intermittently failing; https://github.com/mozilla-mobile/fenix/issues/8621")
     fun `handlePermissionsChange should store the updated permission and reload webpage`() =
         runBlocking {
             val testPermissions = mockk<SitePermissions>()
@@ -268,8 +270,10 @@ class DefaultQuickSettingsControllerTest {
                     .isInstanceOf(WebsitePermission.Notification::class)
                 assertThat(PhoneFeature.LOCATION.getCorrespondingPermission())
                     .isInstanceOf(WebsitePermission.Location::class)
-                assertThat { PhoneFeature.AUTOPLAY.getCorrespondingPermission() }
-                    .isFailure().isInstanceOf(KotlinNullPointerException::class)
+                assertThat(PhoneFeature.AUTOPLAY_AUDIBLE.getCorrespondingPermission())
+                    .isInstanceOf(WebsitePermission.AutoplayAudible::class)
+                assertThat(PhoneFeature.AUTOPLAY_INAUDIBLE.getCorrespondingPermission())
+                    .isInstanceOf(WebsitePermission.AutoplayInaudible::class)
             }
         }
     }

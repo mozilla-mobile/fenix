@@ -18,14 +18,17 @@ import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
 
-val noTabMessage = AdapterItem.NoContentMessage(
+val noTabMessage = AdapterItem.NoContentMessageWithAction(
     R.drawable.ic_tabs,
     R.string.no_open_tabs_header_2,
-    R.string.no_open_tabs_description
+    R.string.no_open_tabs_description,
+    R.drawable.ic_new,
+    R.string.home_screen_shortcut_open_new_tab_2
 )
 
 val noCollectionMessage = AdapterItem.NoContentMessage(
@@ -48,29 +51,55 @@ private fun normalModeAdapterItems(
 
     items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
 
-    if (tabs.isNotEmpty()) {
-        items.addAll(tabs.reversed().map(AdapterItem::TabItem))
-        items.add(AdapterItem.SaveTabGroup)
-    } else {
-        items.add(noTabMessage)
-    }
-
-    items.add(AdapterItem.CollectionHeader)
-    if (collections.isNotEmpty()) {
-        // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
-        collections.map {
-            AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), tabs.isNotEmpty())
-        }.forEach {
-            items.add(it)
-            if (it.expanded) {
-                items.addAll(collectionTabItems(it.collection))
-            }
+    when {
+        tabs.isNotEmpty() && collections.isNotEmpty() -> {
+            showTabs(items, tabs)
+            showCollections(collections, expandedCollections, tabs, items)
         }
-    } else {
-        items.add(noCollectionMessage)
+
+        tabs.isNotEmpty() && collections.isEmpty() -> {
+            showTabs(items, tabs)
+            items.add(AdapterItem.CollectionHeader)
+            items.add(noCollectionMessage)
+        }
+
+        tabs.isEmpty() && collections.isNotEmpty() -> {
+            items.add(noTabMessage)
+            showCollections(collections, expandedCollections, tabs, items)
+        }
+
+        tabs.isEmpty() && collections.isEmpty() -> {
+            items.add(noTabMessage)
+        }
     }
 
     return items
+}
+
+private fun showTabs(
+    items: MutableList<AdapterItem>,
+    tabs: List<Tab>
+) {
+    items.addAll(tabs.reversed().map(AdapterItem::TabItem))
+    items.add(AdapterItem.SaveTabGroup)
+}
+
+private fun showCollections(
+    collections: List<TabCollection>,
+    expandedCollections: Set<Long>,
+    tabs: List<Tab>,
+    items: MutableList<AdapterItem>
+) {
+    // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
+    items.add(AdapterItem.CollectionHeader)
+    collections.map {
+        AdapterItem.CollectionItem(it, expandedCollections.contains(it.id), tabs.isNotEmpty())
+    }.forEach {
+        items.add(it)
+        if (it.expanded) {
+            items.addAll(collectionTabItems(it.collection))
+        }
+    }
 }
 
 private fun privateModeAdapterItems(tabs: List<Tab>): List<AdapterItem> {
@@ -135,7 +164,8 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
 class SessionControlView(
     private val homeFragmentStore: HomeFragmentStore,
     override val containerView: View?,
-    interactor: SessionControlInteractor
+    interactor: SessionControlInteractor,
+    private var homeScreenViewModel: HomeScreenViewModel
 ) : LayoutContainer {
 
     val view: RecyclerView = containerView as RecyclerView
@@ -165,6 +195,22 @@ class SessionControlView(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             sessionControlAdapter.submitList(null)
         }
-        sessionControlAdapter.submitList(state.toAdapterList())
+
+        val stateAdapterList = state.toAdapterList()
+
+        if (homeScreenViewModel.shouldScrollToTopSites) {
+            sessionControlAdapter.submitList(stateAdapterList) {
+
+                val loadedTopSites = stateAdapterList.find { adapterItem ->
+                    adapterItem is AdapterItem.TopSiteList && adapterItem.topSites.isNotEmpty()
+                }
+                loadedTopSites?.run {
+                    homeScreenViewModel.shouldScrollToTopSites = false
+                    view.scrollToPosition(stateAdapterList.indexOf(this))
+                }
+            }
+        } else {
+            sessionControlAdapter.submitList(stateAdapterList)
+        }
     }
 }

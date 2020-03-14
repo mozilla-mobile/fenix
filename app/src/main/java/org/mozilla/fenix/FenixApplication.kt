@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.push.PushProcessor
+import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
@@ -32,15 +33,20 @@ import mozilla.components.support.locale.LocaleAwareApplication
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.fenix.FeatureFlags.webPushIntegration
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.push.PushFxaIntegration
+import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.NotificationSessionObserver
+import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.Settings
 
 @SuppressLint("Registered")
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 open class FenixApplication : LocaleAwareApplication() {
     private val logger = Logger("FenixApplication")
 
@@ -141,6 +147,10 @@ open class FenixApplication : LocaleAwareApplication() {
         // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
         //    runStorageMaintenance()
         // }
+
+        registerActivityLifecycleCallbacks(
+            PerformanceActivityLifecycleCallbacks(components.performance.visualCompletenessTaskManager)
+        )
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -168,14 +178,22 @@ open class FenixApplication : LocaleAwareApplication() {
         // Sets the PushFeature as the singleton instance for push messages to go to.
         // We need the push feature setup here to deliver messages in the case where the service
         // starts up the app first.
-        components.backgroundServices.push?.let { autoPushFeature ->
+        components.push.feature?.let {
             Logger.info("AutoPushFeature is configured, initializing it...")
 
             // Install the AutoPush singleton to receive messages.
-            PushProcessor.install(autoPushFeature)
+            PushProcessor.install(it)
+
+            if (webPushIntegration) {
+                // WebPush integration to observe and deliver push messages to engine.
+                WebPushEngineIntegration(components.core.engine, it).start()
+            }
+
+            // Perform a one-time initialization of the account manager if a message is received.
+            PushFxaIntegration(it, lazy { components.backgroundServices.accountManager }).launch()
 
             // Initialize the service. This could potentially be done in a coroutine in the future.
-            autoPushFeature.initialize()
+            it.initialize()
         }
     }
 
@@ -189,10 +207,10 @@ open class FenixApplication : LocaleAwareApplication() {
     /**
      * Initiate Megazord sequence! Megazord Battle Mode!
      *
-     * The application-services combined libraries are known as the "megazord". The default megazord
-     * contains several features that fenix doesn't need, and so we swap out with a customized fenix-specific
-     * version of the megazord. The best explanation for what this is, and why it's done is the a-s
-     * documentation on the topic:
+     * The application-services combined libraries are known as the "megazord". We use the default `full`
+     * megazord - it contains everything that fenix needs, and (currently) nothing more.
+     *
+     * Documentation on what megazords are, and why they're needed:
      * - https://github.com/mozilla/application-services/blob/master/docs/design/megazords.md
      * - https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
      */
@@ -209,8 +227,10 @@ open class FenixApplication : LocaleAwareApplication() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
+
         runOnlyInMainProcess {
-            components.core.sessionManager.onLowMemory()
+            components.core.icons.onTrimMemory(level)
+            components.core.sessionManager.onTrimMemory(level)
         }
     }
 
@@ -288,12 +308,24 @@ open class FenixApplication : LocaleAwareApplication() {
 
     private fun initializeWebExtensionSupport() {
         try {
+            GlobalAddonDependencyProvider.initialize(
+                components.addonManager,
+                components.addonUpdater,
+                onCrash = { exception ->
+                    components.analytics.crashReporter.submitCaughtException(exception)
+                }
+            )
             WebExtensionSupport.initialize(
                 components.core.engine,
                 components.core.store,
                 onNewTabOverride = {
                     _, engineSession, url ->
-                        val session = Session(url, components.browsingModeManager.mode.isPrivate)
+                        val shouldCreatePrivateSession =
+                            components.core.sessionManager.selectedSession?.private
+                                ?: Settings.instance?.openLinksInAPrivateTab
+                                ?: false
+
+                        val session = Session(url, shouldCreatePrivateSession)
                         components.core.sessionManager.add(session, true, engineSession)
                         session.id
                 },
@@ -304,7 +336,12 @@ open class FenixApplication : LocaleAwareApplication() {
                     _, sessionId ->
                         val selected = components.core.sessionManager.findSessionById(sessionId)
                         selected?.let { components.tabsUseCases.selectTab(it) }
-                }
+                },
+                onExtensionsLoaded = { extensions ->
+                    components.addonUpdater.registerForFutureUpdates(extensions)
+                    components.supportedAddChecker.registerForChecks()
+                },
+                onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest
             )
         } catch (e: UnsupportedOperationException) {
             Logger.error("Failed to initialize web extension support", e)

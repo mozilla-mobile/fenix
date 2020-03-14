@@ -24,24 +24,16 @@ object Versions {
     const val androidx_fragment = "1.2.1"
     const val androidx_navigation = "2.2.1"
     const val androidx_recyclerview = "1.1.0"
-    const val androidx_testing = "1.2.1-alpha02"
+    const val androidx_testing = "1.3.0-alpha04"
     const val androidx_test_ext = "1.0.0"
     const val androidx_core = "1.2.0"
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.3.0"
     const val androidx_work = "2.2.0"
     const val google_material = "1.1.0"
+    const val google_flexbox = "2.0.1"
 
-    const val mozilla_android_components = "34.0.0-SNAPSHOT"
-    // Note that android-components also depends on application-services,
-    // and in fact is our main source of appservices-related functionality.
-    // The version number below tracks the application-services version
-    // that we depend on directly for the fenix-megazord (and for it's
-    // forUnitTest variant), and it's important that it be kept in
-    // sync with the version used by android-components above.
-    const val mozilla_appservices = "0.50.0"
-
-    const val mozilla_glean = "25.0.0"
+    const val mozilla_android_components = "37.0.0-SNAPSHOT"
 
     const val adjust = "4.18.3"
     const val installreferrer = "1.0"
@@ -134,7 +126,6 @@ object Deps {
         "org.mozilla.components:service-sync-logins:${Versions.mozilla_android_components}"
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"
     const val mozilla_service_glean = "org.mozilla.components:service-glean:${Versions.mozilla_android_components}"
-    const val mozilla_service_glean_forUnitTests = "org.mozilla.telemetry:glean-forUnitTests:${Versions.mozilla_glean}"
     const val mozilla_service_experiments = "org.mozilla.components:service-experiments:${Versions.mozilla_android_components}"
     const val mozilla_service_location = "org.mozilla.components:service-location:${Versions.mozilla_android_components}"
 
@@ -184,6 +175,7 @@ object Deps {
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
+    const val google_flexbox = "com.google.android:flexbox:${Versions.google_flexbox}"
 
     const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
@@ -206,9 +198,6 @@ object Deps {
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val androidx_junit = "androidx.test.ext:junit:${Versions.androidx_test_ext}"
     const val androidx_test_core = "androidx.test:core:${Versions.androidx_testing}"
-
-    const val fenix_megazord = "org.mozilla.appservices:fenix-megazord:${Versions.mozilla_appservices}"
-    const val fenix_megazord_forUnitTests = "org.mozilla.appservices:fenix-megazord-forUnitTests:${Versions.mozilla_appservices}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
 

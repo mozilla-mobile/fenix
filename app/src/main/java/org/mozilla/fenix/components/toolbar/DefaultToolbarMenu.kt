@@ -22,11 +22,15 @@ import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.storage.BookmarksStorage
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 
@@ -59,7 +63,7 @@ class DefaultToolbarMenu(
     override val menuBuilder by lazy {
         WebExtensionBrowserMenuBuilder(
             menuItems,
-            endOfMenuAlwaysVisible = true,
+            endOfMenuAlwaysVisible = !shouldReverseItems,
             store = context.components.core.store,
             appendExtensionActionAtStart = !shouldReverseItems
         )
@@ -125,13 +129,41 @@ class DefaultToolbarMenu(
             onItemTapped.invoke(ToolbarMenu.Item.Bookmark)
         }
 
-        BrowserMenuItemToolbar(listOf(forward, bookmark, share, refresh))
+        BrowserMenuItemToolbar(listOf(bookmark, share, forward, refresh))
     }
+
+    internal fun getLowPrioHighlightItems(): List<ToolbarMenu.Item> {
+        val lowPrioHighlightItems: MutableList<ToolbarMenu.Item> = mutableListOf()
+        if (shouldShowAddToHomescreen() && addToHomescreen.isHighlighted()) {
+            lowPrioHighlightItems.add(ToolbarMenu.Item.AddToHomeScreen)
+        }
+        if (shouldShowReaderMode() && readerMode.isHighlighted()) {
+            lowPrioHighlightItems.add(ToolbarMenu.Item.ReaderMode(false))
+        }
+        if (shouldShowOpenInApp() && openInApp.isHighlighted()) {
+            lowPrioHighlightItems.add(ToolbarMenu.Item.OpenInApp)
+        }
+        return lowPrioHighlightItems
+    }
+
+    // Predicates that need to be repeatedly called as the session changes
+    private fun shouldShowAddToHomescreen(): Boolean =
+        session != null && context.components.useCases.webAppUseCases.isPinningSupported()
+
+    private fun shouldShowReaderMode(): Boolean = session?.readerable ?: false
+
+    private fun shouldShowOpenInApp(): Boolean = session?.let { session ->
+        val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
+        appLink(session.url).hasExternalApp()
+    } ?: false
+
+    private fun shouldShowReaderAppearance(): Boolean = session?.readerMode ?: false
+    // End of predicates //
 
     private val menuItems by lazy {
         // Predicates that are called once, during screen init
-        val shouldShowSaveToCollection =
-            context.components.browsingModeManager.mode == BrowsingMode.Normal
+        val shouldShowSaveToCollection = (context.asActivity() as? HomeActivity)
+            ?.browsingModeManager?.mode == BrowsingMode.Normal
         val shouldDeleteDataOnQuit = Settings.getInstance(context)
             .shouldDeleteBrowsingDataOnQuit
         val shouldShowWebcompatReporter = Config.channel !in setOf(
@@ -139,33 +171,21 @@ class DefaultToolbarMenu(
             ReleaseChannel.FennecProduction
         )
 
-        // Predicates that need to be repeatedly called as the session changes
-        fun shouldShowAddToHomescreen(): Boolean =
-            session != null && context.components.useCases.webAppUseCases.isPinningSupported()
-        fun shouldShowReaderMode(): Boolean = session?.readerable ?: false
-        fun shouldShowOpenInApp(): Boolean = session?.let { session ->
-            val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
-            appLink(session.url).hasExternalApp()
-        } ?: false
-        fun shouldShowReaderAppearance(): Boolean = session?.readerMode ?: false
-
         val menuItems = listOfNotNull(
-            help,
-            settings,
             library,
-            desktopMode,
+            addons,
+            settings,
+            if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
+            BrowserMenuDivider(),
+            if (shouldShowWebcompatReporter) reportIssue else null,
+            findInPage,
             addToTopSites,
             addToHomescreen.apply { visible = ::shouldShowAddToHomescreen },
-            addons,
-            findInPage,
-            privateTab,
-            newTab,
-            if (shouldShowWebcompatReporter) reportIssue else null,
             if (shouldShowSaveToCollection) saveToCollection else null,
-            if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
+            desktopMode,
+            openInApp.apply { visible = ::shouldShowOpenInApp },
             readerMode.apply { visible = ::shouldShowReaderMode },
             readerAppearance.apply { visible = ::shouldShowReaderAppearance },
-            openInApp.apply { visible = ::shouldShowOpenInApp },
             BrowserMenuDivider(),
             menuToolbar
         )
@@ -181,26 +201,18 @@ class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.AddonsManager)
     }
 
-    private val help = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_help),
-        imageResource = R.drawable.ic_help,
-        iconTintColorResource = primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.Help)
-    }
-
     private val settings = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_settings),
         startImageResource = R.drawable.ic_settings,
         iconTintColorResource = if (hasAccountProblem)
-            R.color.sync_error_text_color else
+            ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
             primaryTextColor(),
         textColorResource = if (hasAccountProblem)
-            R.color.sync_error_text_color else
+            ThemeManager.resolveAttribute(R.attr.primaryText, context) else
             primaryTextColor(),
         highlight = BrowserMenuHighlight.HighPriority(
-            endImageResource = R.drawable.ic_alert,
-            backgroundTint = R.color.sync_error_background_color
+            endImageResource = R.drawable.ic_sync_disconnected,
+            backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground)
         ),
         isHighlighted = { hasAccountProblem }
     ) {
@@ -243,7 +255,9 @@ class DefaultToolbarMenu(
         ),
         isHighlighted = {
             val webAppUseCases = context.components.useCases.webAppUseCases
-            webAppUseCases.isPinningSupported() && webAppUseCases.isInstallable()
+            webAppUseCases.isPinningSupported() &&
+                    webAppUseCases.isInstallable() &&
+                    !context.settings().installPwaOpened
         }
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
@@ -255,22 +269,6 @@ class DefaultToolbarMenu(
         iconTintColorResource = primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
-    }
-
-    private val privateTab = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_private_tab),
-        imageResource = R.drawable.ic_private_browsing,
-        iconTintColorResource = primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.NewPrivateTab)
-    }
-
-    private val newTab = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_new_tab),
-        imageResource = R.drawable.ic_new,
-        iconTintColorResource = primaryTextColor()
-    ) {
-        onItemTapped.invoke(ToolbarMenu.Item.NewTab)
     }
 
     private val reportIssue = BrowserMenuImageText(
@@ -307,7 +305,7 @@ class DefaultToolbarMenu(
             label = context.getString(R.string.browser_menu_read),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
-        isHighlighted = { true }
+        isHighlighted = { !context.settings().readerModeOpened }
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.ReaderMode(checked))
     }
@@ -328,7 +326,7 @@ class DefaultToolbarMenu(
             label = context.getString(R.string.browser_menu_open_app_link),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
-        isHighlighted = { true }
+        isHighlighted = { !context.settings().openInAppOpened }
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }

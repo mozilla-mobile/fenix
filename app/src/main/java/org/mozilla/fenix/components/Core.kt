@@ -5,10 +5,10 @@
 package org.mozilla.fenix.components
 
 import GeckoProvider
+import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import io.sentry.Sentry
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,9 +24,6 @@ import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.CookiePolicy
-import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
@@ -40,8 +37,7 @@ import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.lib.dataprotect.generateEncryptionKey
-import mozilla.components.service.sync.logins.AsyncLoginsStorageAdapter
-import mozilla.components.service.sync.logins.SyncableLoginsStore
+import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -49,7 +45,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.test.Mockable
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
@@ -66,22 +61,19 @@ class Core(private val context: Context) {
             requestInterceptor = AppRequestInterceptor(context),
             remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled,
             testingModeEnabled = false,
-            trackingProtectionPolicy = createTrackingProtectionPolicy(),
+            trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(historyStorage),
             preferredColorScheme = getPreferredColorScheme(),
             automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
             fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = !FeatureFlags.mediaIntegration,
-            allowAutoplayMedia = context.settings().isAutoPlayEnabled,
             forceUserScalableContent = context.settings().forceEnableZoom
         )
 
         GeckoEngine(
             context,
             defaultSettings,
-            GeckoProvider.getOrCreateRuntime(
-                context, asyncPasswordsStorage, getSecureAbove22Preferences()
-            )
+            GeckoProvider.getOrCreateRuntime(context, passwordsStorage)
         ).also {
             WebCompatFeature.install(it)
         }
@@ -93,11 +85,7 @@ class Core(private val context: Context) {
     val client: Client by lazy {
         GeckoViewFetchClient(
             context,
-            GeckoProvider.getOrCreateRuntime(
-                context,
-                asyncPasswordsStorage,
-                getSecureAbove22Preferences()
-            )
+            GeckoProvider.getOrCreateRuntime(context, passwordsStorage)
         )
     }
 
@@ -116,6 +104,11 @@ class Core(private val context: Context) {
      * The [CustomTabsServiceStore] holds global custom tabs related data.
      */
     val customTabsStore by lazy { CustomTabsServiceStore() }
+
+    /**
+     * The [PendingSessionDeletionManager] maintains a set of sessionIds that are marked for deletion
+     */
+    val pendingSessionDeletionManager by lazy { PendingSessionDeletionManager(context as Application) }
 
     /**
      * The session manager component provides access to a centralized registry of
@@ -141,6 +134,12 @@ class Core(private val context: Context) {
                         snapshot,
                         updateSelection = (sessionManager.selectedSession == null)
                     )
+                }
+
+                pendingSessionDeletionManager.getSessionsToDelete(context).forEach {
+                    sessionManager.findSessionById(it)?.let { session ->
+                        sessionManager.remove(session)
+                    }
                 }
 
                 // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
@@ -193,6 +192,8 @@ class Core(private val context: Context) {
 
     val bookmarksStorage by lazy { PlacesBookmarksStorage(context) }
 
+    val passwordsStorage by lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+
     val tabCollectionStorage by lazy { TabCollectionStorage(context, sessionManager) }
 
     val topSiteStorage by lazy { TopSiteStorage(context) }
@@ -201,36 +202,19 @@ class Core(private val context: Context) {
 
     val webAppManifestStorage by lazy { ManifestStorage(context) }
 
-    val asyncPasswordsStorage by lazy {
-        AsyncLoginsStorageAdapter.forDatabase(
-            File(
-                context.filesDir,
-                "logins.sqlite"
-            ).canonicalPath
-        )
-    }
-
-    val syncablePasswordsStorage by lazy {
-        SyncableLoginsStore(
-            asyncPasswordsStorage
-        ) {
-            CompletableDeferred(passwordsEncryptionKey)
-        }
-    }
-
     /**
      * Shared Preferences that encrypt/decrypt using Android KeyStore and lib-dataprotect for 23+
      * only on Nightly/Debug for now, otherwise simply stored.
      * See https://github.com/mozilla-mobile/fenix/issues/8324
      */
-    fun getSecureAbove22Preferences() =
+    private fun getSecureAbove22Preferences() =
         SecureAbove22Preferences(
             context = context,
             name = KEY_STORAGE_NAME,
             forceInsecure = !Config.channel.isNightlyOrDebug
         )
 
-    val passwordsEncryptionKey: String =
+    private val passwordsEncryptionKey by lazy {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
                 if (context.settings().passwordsEncryptionKeyGenerated) {
@@ -240,75 +224,9 @@ class Core(private val context: Context) {
                 context.settings().recordPasswordsEncryptionKeyGenerated()
                 getSecureAbove22Preferences().putString(PASSWORDS_KEY, it)
             }
-
-    /**
-     * Constructs a [TrackingProtectionPolicy] based on current preferences.
-     *
-     * @param normalMode whether or not tracking protection should be enabled
-     * in normal browsing mode, defaults to the current preference value.
-     * @param privateMode whether or not tracking protection should be enabled
-     * in private browsing mode, default to the current preference value.
-     * @return the constructed tracking protection policy based on preferences.
-     */
-    @Suppress("ComplexMethod")
-    fun createTrackingProtectionPolicy(
-        normalMode: Boolean = context.settings().shouldUseTrackingProtection,
-        privateMode: Boolean = true
-    ): TrackingProtectionPolicy {
-        val trackingProtectionPolicy =
-            when {
-                context.settings().useStrictTrackingProtection -> TrackingProtectionPolicy.strict()
-                context.settings().useCustomTrackingProtection -> return TrackingProtectionPolicy.select(
-                    cookiePolicy = geCustomCookiePolicy(),
-                    trackingCategories = getCustomTrackingCategories()
-                ).apply {
-                    if (context.settings().blockTrackingContentSelectionInCustomTrackingProtection == "private") {
-                        forPrivateSessionsOnly()
-                    }
-                }
-                else -> TrackingProtectionPolicy.recommended()
-            }
-
-        return when {
-            normalMode && privateMode -> trackingProtectionPolicy
-            normalMode && !privateMode -> trackingProtectionPolicy.forRegularSessionsOnly()
-            !normalMode && privateMode -> trackingProtectionPolicy.forPrivateSessionsOnly()
-            else -> TrackingProtectionPolicy.none()
-        }
     }
 
-    private fun geCustomCookiePolicy(): CookiePolicy {
-            return when (context.settings().blockCookiesSelectionInCustomTrackingProtection) {
-                "all" -> CookiePolicy.ACCEPT_NONE
-                "social" -> CookiePolicy.ACCEPT_NON_TRACKERS
-                "unvisited" -> CookiePolicy.ACCEPT_VISITED
-                "third-party" -> CookiePolicy.ACCEPT_ONLY_FIRST_PARTY
-                else -> CookiePolicy.ACCEPT_NONE
-            }
-    }
-
-    private fun getCustomTrackingCategories(): Array<TrackingCategory> {
-        val categories = arrayListOf(
-            TrackingCategory.AD,
-            TrackingCategory.ANALYTICS,
-            TrackingCategory.SOCIAL,
-            TrackingCategory.MOZILLA_SOCIAL
-        )
-
-        if (context.settings().blockTrackingContentInCustomTrackingProtection) {
-            categories.add(TrackingCategory.SCRIPTS_AND_SUB_RESOURCES)
-        }
-
-        if (context.settings().blockFingerprintersInCustomTrackingProtection) {
-            categories.add(TrackingCategory.FINGERPRINTING)
-        }
-
-        if (context.settings().blockCryptominersInCustomTrackingProtection) {
-            categories.add(TrackingCategory.CRYPTOMINING)
-        }
-
-        return categories.toTypedArray()
-    }
+    val trackingProtectionPolicyFactory = TrackingProtectionPolicyFactory(context.settings())
 
     /**
      * Sets Preferred Color scheme based on Dark/Light Theme Settings or Current Configuration

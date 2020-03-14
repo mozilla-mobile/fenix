@@ -8,7 +8,6 @@ import android.content.Intent
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import io.mockk.Called
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertFalse
@@ -21,8 +20,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
-import org.mozilla.fenix.ext.components
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -117,12 +114,9 @@ class DeepLinkIntentProcessorTest {
 
     @Test
     fun `process enable_private_browsing deep link`() {
-        val browsingModeManager: DefaultBrowsingModeManager = mockk(relaxed = true)
-        every { activity.components.browsingModeManager } returns browsingModeManager
-
         assertTrue(processor.process(testIntent("fenix://enable_private_browsing"), navController, out))
 
-        verify { browsingModeManager.mode = BrowsingMode.Private }
+        verify { activity.browsingModeManager.mode = BrowsingMode.Private }
         verify { navController.navigate(NavGraphDirections.actionGlobalHomeFragment()) }
         verify { out wasNot Called }
     }
@@ -153,6 +147,14 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("fenix://make_default_browser"), navController, out))
 
         verify { navController wasNot Called }
+        verify { out wasNot Called }
+    }
+
+    @Test
+    fun `process settings_addon_manager deep link`() {
+        assertTrue(processor.process(testIntent("fenix://settings_addon_manager"), navController, out))
+
+        verify { navController.navigate(NavGraphDirections.actionGlobalSettingsAddonsManagementFragment()) }
         verify { out wasNot Called }
     }
 

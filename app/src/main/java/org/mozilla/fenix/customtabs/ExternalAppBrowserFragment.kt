@@ -27,6 +27,8 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
+import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
@@ -68,7 +70,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         activity = activity,
                         engineLayout = view.swipeRefresh,
                         onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
-                        isPrivate = requireComponents.browsingModeManager.mode.isPrivate,
+                        isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate,
                         shouldReverseItems = !activity.settings().shouldUseBottomToolbar
                     ),
                     owner = this,
@@ -92,7 +94,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         customTabSessionId,
                         trustedScopes
                     ) { toolbarVisible ->
-                        updateLayoutMargins(inFullScreen = !toolbarVisible)
+                        if (!FeatureFlags.dynamicBottomToolbar) { updateLayoutMargins(inFullScreen = !toolbarVisible) }
                     },
                     owner = this,
                     view = toolbar

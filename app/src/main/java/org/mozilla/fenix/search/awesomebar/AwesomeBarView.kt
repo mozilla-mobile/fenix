@@ -28,7 +28,9 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
@@ -66,6 +68,11 @@ interface AwesomeBarInteractor {
      * Called whenever an existing session is selected from the sessionSuggestionProvider
      */
     fun onExistingSessionSelected(session: Session)
+
+    /**
+     * Called whenever an existing session is selected from the sessionSuggestionProvider
+     */
+    fun onExistingSessionSelected(tabId: String)
 
     /**
      * Called whenever the Shortcuts button is clicked
@@ -118,6 +125,10 @@ class AwesomeBarView(
         override fun invoke(session: Session) {
             interactor.onExistingSessionSelected(session)
         }
+
+        override fun invoke(tabId: String) {
+            interactor.onExistingSessionSelected(tabId)
+        }
     }
 
     init {
@@ -130,10 +141,11 @@ class AwesomeBarView(
         val draw = getDrawable(context, R.drawable.ic_link)!!
         draw.colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
 
+        val engineForSpeculativeConnects = if (!isBrowsingModePrivate()) components.core.engine else null
         sessionProvider =
             SessionSuggestionProvider(
                 context.resources,
-                components.core.sessionManager,
+                components.core.store,
                 selectTabUseCase,
                 components.core.icons,
                 excludeSelectedSession = true
@@ -143,14 +155,16 @@ class AwesomeBarView(
             HistoryStorageSuggestionProvider(
                 components.core.historyStorage,
                 loadUrlUseCase,
-                components.core.icons
+                components.core.icons,
+                engineForSpeculativeConnects
             )
 
         bookmarksStorageSuggestionProvider =
             BookmarksStorageSuggestionProvider(
                 components.core.bookmarksStorage,
                 loadUrlUseCase,
-                components.core.icons
+                components.core.icons,
+                engineForSpeculativeConnects
             )
 
         val searchDrawable = getDrawable(context, R.drawable.ic_search)!!
@@ -165,7 +179,8 @@ class AwesomeBarView(
                 mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                 limit = 3,
                 icon = searchDrawable.toBitmap(),
-                showDescription = false
+                showDescription = false,
+                engine = engineForSpeculativeConnects
             )
 
         shortcutsEnginePickerProvider =
@@ -303,7 +318,10 @@ class AwesomeBarView(
         return providersToRemove
     }
 
-    private fun isBrowsingModePrivate(): Boolean = container.context.components.browsingModeManager.mode.isPrivate
+    private fun isBrowsingModePrivate(): Boolean {
+        return (container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate
+            ?: false
+    }
 
     private fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): SearchSuggestionProvider? {
         return when (state.searchEngineSource) {
@@ -330,6 +348,8 @@ class AwesomeBarView(
             val draw = getDrawable(context, R.drawable.ic_search)
             draw?.colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
 
+            val engineForSpeculativeConnects = if (!isBrowsingModePrivate()) components.core.engine else null
+
             SearchSuggestionProvider(
                 components.search.provider.installedSearchEngines(context).list.find { it.name == engine.name }
                     ?: components.search.provider.getDefaultEngine(context),
@@ -337,7 +357,8 @@ class AwesomeBarView(
                 components.core.client,
                 limit = 3,
                 mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
-                icon = draw?.toBitmap()
+                icon = draw?.toBitmap(),
+                engine = engineForSpeculativeConnects
             )
         }
     }

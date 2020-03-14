@@ -6,7 +6,6 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -16,13 +15,14 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import kotlinx.android.synthetic.main.activity_home.navigationToolbarStub
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
@@ -33,6 +33,7 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.contextmenu.ext.DefaultSelectionActionDelegate
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
@@ -41,7 +42,8 @@ import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeListener
+import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
@@ -57,8 +59,8 @@ import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
-import org.mozilla.fenix.perf.HotStartPerformanceMonitor
 import org.mozilla.fenix.perf.Performance
+import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.settings.DefaultBrowserSettingsFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -68,17 +70,20 @@ import org.mozilla.fenix.settings.logins.SavedLoginsFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.StartupTaskManager
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
-    private val browsingModeManager get() = components.browsingModeManager
+    lateinit var browsingModeManager: BrowsingModeManager
+
+    private var isVisuallyComplete = false
+
+    private var visualCompletenessTaskManager: StartupTaskManager? = null
 
     private var sessionObserver: SessionManager.Observer? = null
-
-    private val hotStartMonitor = HotStartPerformanceMonitor()
 
     private var isToolbarInflated = false
 
@@ -99,21 +104,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         )
     }
 
-    private val browsingModeListener = object : BrowsingModeListener {
-        override fun onBrowsingModeChange(newMode: BrowsingMode) {
-            themeManager.currentTheme = newMode
-        }
-    }
-
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        if (overrideConfiguration != null) {
-            val uiMode = overrideConfiguration.uiMode
-            overrideConfiguration.setTo(baseContext.resources.configuration)
-            overrideConfiguration.uiMode = uiMode
-        }
-        super.applyOverrideConfiguration(overrideConfiguration)
-    }
-
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -121,7 +111,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
-        Performance.instrumentColdStartupToHomescreenTime(this)
+
+        // Must be after we set the content view
+        if (isVisuallyComplete) {
+            rootContainer.doOnPreDraw {
+                // This delay is temporary. We are delaying 5 seconds until the performance
+                // team can locate the real point of visual completeness.
+                it.postDelayed({
+                    visualCompletenessTaskManager!!.start()
+                }, delay)
+            }
+        }
 
         externalSourceIntentProcessors.any { it.process(intent, navHost.navController, this.intent) }
 
@@ -139,6 +139,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         supportActionBar?.hide()
 
         lifecycle.addObserver(webExtensionPopupFeature)
+        StartupTimeline.onActivityCreateEndHome(this)
     }
 
     @CallSuper
@@ -155,26 +156,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 }
             }
         }
-    }
-
-    final override fun onRestart() {
-        hotStartMonitor.onRestartFirstMethodCall()
-        super.onRestart()
-    }
-
-    final override fun onPostResume() {
-        super.onPostResume()
-        hotStartMonitor.onPostResumeFinalMethodCall()
-    }
-
-    final override fun onStart() {
-        super.onStart()
-        browsingModeManager.registerBrowsingModeListener(browsingModeListener)
-    }
-
-    final override fun onStop() {
-        super.onStop()
-        browsingModeManager.unregisterBrowsingModeListener(browsingModeListener)
     }
 
     final override fun onPause() {
@@ -214,7 +195,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 store = components.core.store,
                 context = context,
                 appName = getString(R.string.app_name)
-            )
+            ) {
+                share(it)
+            }
         }.asView()
         else -> super.onCreateView(parent, name, context, attrs)
     }
@@ -259,7 +242,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
         settings().lastKnownMode = mode
-        browsingModeManager.mode = mode
+        browsingModeManager = createBrowsingModeManager(mode)
         themeManager = createThemeManager()
         themeManager.setActivityTheme(this)
         themeManager.applyStatusBarTheme(this)
@@ -325,7 +308,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowserDirection.FromGlobal ->
             NavGraphDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHome ->
-            HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId)
+            HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId, true)
         BrowserDirection.FromSearch ->
             SearchFragmentDirections.actionSearchFragmentToBrowserFragment(customTabSessionId)
         BrowserDirection.FromSettings ->
@@ -391,7 +374,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
     fun updateThemeForSession(session: Session) {
         val sessionMode = BrowsingMode.fromBoolean(session.private)
-            browsingModeManager.mode = sessionMode
+        browsingModeManager.mode = sessionMode
+    }
+
+    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+        return DefaultBrowsingModeManager(initialMode) { newMode ->
+            themeManager.currentTheme = newMode
+        }
     }
 
     protected open fun createThemeManager(): ThemeManager {
@@ -406,6 +395,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         navHost.navController.navigate(action)
     }
 
+    /**
+     * The root container is null at this point, so let the HomeActivity know that
+     * we are visually complete.
+     */
+    fun postVisualCompletenessQueue(visualCompletenessTaskManager: StartupTaskManager) {
+        isVisuallyComplete = true
+        this.visualCompletenessTaskManager = visualCompletenessTaskManager
+    }
+
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
@@ -413,5 +411,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
+        const val delay = 5000L
     }
 }

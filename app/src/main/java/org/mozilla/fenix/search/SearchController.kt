@@ -7,6 +7,9 @@ package org.mozilla.fenix.search
 
 import android.content.Context
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.support.ktx.kotlin.isUrl
@@ -34,13 +37,16 @@ interface SearchController {
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
     fun handleExistingSessionSelected(session: Session)
+    fun handleExistingSessionSelected(tabId: String)
     fun handleSearchShortcutsButtonClicked()
 }
 
 class DefaultSearchController(
     private val context: Context,
     private val store: SearchFragmentStore,
-    private val navController: NavController
+    private val navController: NavController,
+    private val lifecycleScope: CoroutineScope,
+    private val clearToolbarFocus: () -> Unit
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String) {
@@ -74,22 +80,33 @@ class DefaultSearchController(
     }
 
     override fun handleEditingCancelled() {
-        navController.navigateUp()
+        lifecycleScope.launch {
+            clearToolbarFocus()
+            // Delay a short amount so the keyboard begins animating away. This makes exit animation
+            // much smoother instead of having two separate parts (keyboard hides THEN animation)
+            delay(KEYBOARD_ANIMATION_DELAY)
+            navController.popBackStack()
+        }
     }
 
     override fun handleTextChanged(text: String) {
+        // Display the search shortcuts on each entry of the search fragment (see #5308)
+        val textMatchesCurrentUrl = store.state.session?.url ?: "" == text
+        val textMatchesCurrentSearch = store.state.session?.searchTerms ?: "" == text
+
         store.dispatch(SearchFragmentAction.UpdateQuery(text))
         store.dispatch(
             SearchFragmentAction.ShowSearchShortcutEnginePicker(
-                text.isEmpty() && context.settings().shouldShowSearchShortcuts
+                (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
+                    context.settings().shouldShowSearchShortcuts
             )
         )
         store.dispatch(
             SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                 text.isNotEmpty() &&
-                        context.components.browsingModeManager.mode.isPrivate &&
-                        !context.settings().shouldShowSearchSuggestionsInPrivate &&
-                        !context.settings().showSearchSuggestionsInPrivateOnboardingFinished
+                (context as HomeActivity).browsingModeManager.mode.isPrivate &&
+                !context.settings().shouldShowSearchSuggestionsInPrivate &&
+                !context.settings().showSearchSuggestionsInPrivateOnboardingFinished
             )
         )
     }
@@ -150,5 +167,16 @@ class DefaultSearchController(
         (context as HomeActivity).openToBrowser(
             from = BrowserDirection.FromSearch
         )
+    }
+
+    override fun handleExistingSessionSelected(tabId: String) {
+        val session = context.components.core.sessionManager.findSessionById(tabId)
+        if (session != null) {
+            handleExistingSessionSelected(session)
+        }
+    }
+
+    companion object {
+        internal const val KEYBOARD_ANIMATION_DELAY = 5L
     }
 }

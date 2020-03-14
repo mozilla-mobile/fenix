@@ -21,24 +21,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
+import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import androidx.transition.TransitionInflater
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -60,8 +60,8 @@ import mozilla.components.feature.media.ext.getSession
 import mozilla.components.feature.media.state.MediaState
 import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -96,6 +96,10 @@ import kotlin.math.min
 @ExperimentalCoroutinesApi
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
+    private val homeViewModel: HomeScreenViewModel by viewModels {
+        ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+    }
+
     private val snackbarAnchorView: View?
         get() {
             return if (requireContext().settings().shouldUseBottomToolbar) {
@@ -105,7 +109,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private val browsingModeManager get() = requireComponents.browsingModeManager
+    private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
     private var homeAppBarOffset = 0
     private val singleSessionObserver = object : Session.Observer {
         override fun onTitleChanged(session: Session, title: String) {
@@ -145,9 +149,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
-        sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                .setDuration(SHARED_TRANSITION_MS)
 
         val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
             emitSessionChanges()
@@ -202,14 +203,16 @@ class HomeFragment : Fragment() {
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 scrollToTheTop = ::scrollToTheTop,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
-                openSettingsScreen = :: openSettingsScreen
+                openSettingsScreen = ::openSettingsScreen,
+                openSearchScreen = ::navigateToSearch
             )
         )
         updateLayout(view)
         setOffset(view)
         sessionControlView = SessionControlView(
             homeFragmentStore,
-            view.sessionControlRecyclerView, sessionControlInteractor
+            view.sessionControlRecyclerView, sessionControlInteractor,
+            homeViewModel
         )
         activity.themeManager.applyStatusBarTheme(activity)
 
@@ -230,8 +233,11 @@ class HomeFragment : Fragment() {
 
             ConstraintSet().apply {
                 clone(view.toolbarLayout)
+                clear(view.bottom_bar.id, BOTTOM)
                 clear(view.bottomBarShadow.id, BOTTOM)
+                connect(view.bottom_bar.id, TOP, PARENT_ID, TOP)
                 connect(view.bottomBarShadow.id, TOP, view.bottom_bar.id, BOTTOM)
+                connect(view.bottomBarShadow.id, BOTTOM, PARENT_ID, BOTTOM)
                 applyTo(view.toolbarLayout)
             }
 
@@ -269,6 +275,10 @@ class HomeFragment : Fragment() {
                 sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
             homeViewModel.layoutManagerState = null
+
+            // We have to delay so that the keyboard collapses and the view is resized before the
+            // animation from SearchFragment happens
+            delay(ANIMATION_DELAY)
         }
 
         viewLifecycleOwner.lifecycleScope.launch(IO) {
@@ -277,7 +287,8 @@ class HomeFragment : Fragment() {
             // TODO remove when viewLifecycleOwner is fixed
             val context = context ?: return@launch
 
-            val iconSize = context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
+            val iconSize =
+                context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
 
             val searchEngine = context.components.search.provider.getDefaultEngine(context)
             val searchIcon = BitmapDrawable(context.resources, searchEngine.icon)
@@ -307,14 +318,7 @@ class HomeFragment : Fragment() {
         view.toolbar_wrapper.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null
-            )
-            val extras =
-                FragmentNavigator.Extras.Builder()
-                    .addSharedElement(toolbar_wrapper, "toolbar_wrapper_transition")
-                    .build()
-            nav(R.id.homeFragment, directions, extras)
+            navigateToSearch()
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
@@ -336,7 +340,8 @@ class HomeFragment : Fragment() {
 
             if (onboarding.userHasBeenOnboarded()) {
                 homeFragmentStore.dispatch(
-                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode)))
+                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
+                )
             }
         }
     }
@@ -355,12 +360,14 @@ class HomeFragment : Fragment() {
         val context = requireContext()
         val components = context.components
 
-        homeFragmentStore.dispatch(HomeFragmentAction.Change(
-            collections = components.core.tabCollectionStorage.cachedTabCollections,
-            mode = currentMode.getCurrentMode(),
-            tabs = getListOfSessions().toTabs(),
-            topSites = components.core.topSiteStorage.cachedTopSites
-        ))
+        homeFragmentStore.dispatch(
+            HomeFragmentAction.Change(
+                collections = components.core.tabCollectionStorage.cachedTabCollections,
+                mode = currentMode.getCurrentMode(),
+                tabs = getListOfSessions().toTabs(),
+                topSites = components.core.topSiteStorage.cachedTopSites
+            )
+        )
 
         requireComponents.backgroundServices.accountManager.register(currentMode, owner = this)
         requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
@@ -377,7 +384,8 @@ class HomeFragment : Fragment() {
         }, owner = this)
 
         if (context.settings().showPrivateModeContextualFeatureRecommender &&
-            browsingModeManager.mode.isPrivate) {
+            browsingModeManager.mode.isPrivate
+        ) {
             recommendPrivateBrowsingShortcut()
         }
 
@@ -517,7 +525,8 @@ class HomeFragment : Fragment() {
             // Otherwise, we will encounter an activity token error.
             privateBrowsingButton.post {
                 privateBrowsingRecommend.showAsDropDown(
-                    privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END)
+                    privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
+                )
             }
         }
     }
@@ -528,7 +537,9 @@ class HomeFragment : Fragment() {
             homeFragmentStore.dispatch(
                 HomeFragmentAction.ModeChange(
                     mode = currentMode.getCurrentMode(),
-                    tabs = getListOfSessions().toTabs()))
+                    tabs = getListOfSessions().toTabs()
+                )
+            )
         }
     }
 
@@ -541,6 +552,7 @@ class HomeFragment : Fragment() {
         val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
             sessionId = null
         )
+
         nav(R.id.homeFragment, directions)
     }
 
@@ -549,6 +561,7 @@ class HomeFragment : Fragment() {
         nav(R.id.homeFragment, directions)
     }
 
+    @SuppressWarnings("ComplexMethod")
     private fun createHomeMenu(context: Context): HomeMenu {
         return HomeMenu(context) {
             when (it) {
@@ -609,6 +622,14 @@ class HomeFragment : Fragment() {
                         view?.let { view -> FenixSnackbar.makeWithToolbarPadding(view) }
                     )
                 }
+                HomeMenu.Item.Sync -> {
+                    invokePendingDeleteJobs()
+                    hideOnboardingIfNeeded()
+                    nav(
+                        R.id.homeFragment,
+                        HomeFragmentDirections.actionHomeFragmentToAccountProblemFragment()
+                    )
+                }
             }
         }
     }
@@ -633,10 +654,16 @@ class HomeFragment : Fragment() {
 
     private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
         homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(emptyList()))
+        listOfSessionsToDelete.forEach {
+            requireComponents.core.pendingSessionDeletionManager.addSession(
+                it.id
+            )
+        }
 
         val deleteOperation: (suspend () -> Unit) = {
             listOfSessionsToDelete.forEach {
                 sessionManager.remove(it)
+                requireComponents.core.pendingSessionDeletionManager.removeSession(it.id)
             }
         }
         deleteAllSessionsJob = deleteOperation
@@ -651,6 +678,11 @@ class HomeFragment : Fragment() {
             view!!,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
+                listOfSessionsToDelete.forEach {
+                    requireComponents.core.pendingSessionDeletionManager.removeSession(
+                        it.id
+                    )
+                }
                 if (private) {
                     requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
                 }
@@ -664,11 +696,13 @@ class HomeFragment : Fragment() {
 
     private fun removeTabWithUndo(sessionId: String, private: Boolean) {
         val sessionManager = requireComponents.core.sessionManager
+        requireComponents.core.pendingSessionDeletionManager.addSession(sessionId)
         val deleteOperation: (suspend () -> Unit) = {
             sessionManager.findSessionById(sessionId)
                 ?.let { session ->
                     pendingSessionDeletion = null
                     sessionManager.remove(session)
+                    requireComponents.core.pendingSessionDeletionManager.removeSession(sessionId)
                 }
         }
 
@@ -684,6 +718,7 @@ class HomeFragment : Fragment() {
             view!!,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo), {
+                requireComponents.core.pendingSessionDeletionManager.removeSession(sessionId)
                 pendingSessionDeletion = null
                 emitSessionChanges()
             },
@@ -777,8 +812,12 @@ class HomeFragment : Fragment() {
                     border?.visibility = View.GONE
                 }
 
-                override fun onAnimationStart(animation: Animator?) { /* noop */ }
-                override fun onAnimationRepeat(animation: Animator?) { /* noop */ }
+                override fun onAnimationStart(animation: Animator?) { /* noop */
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) { /* noop */
+                }
+
                 override fun onAnimationEnd(animation: Animator?) {
                     border?.animate()?.alpha(0.0F)?.setStartDelay(ANIM_ON_SCREEN_DELAY)
                         ?.setDuration(FADE_ANIM_DURATION)
@@ -861,12 +900,13 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
+        private const val ANIMATION_DELAY = 100L
+
         private const val NON_TAB_ITEM_NUM = 3
         private const val ANIM_SCROLL_DELAY = 100L
         private const val ANIM_ON_SCREEN_DELAY = 200L
         private const val FADE_ANIM_DURATION = 150L
         private const val ANIM_SNACKBAR_DELAY = 100L
-        private const val SHARED_TRANSITION_MS = 200L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
 

@@ -21,11 +21,14 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.util.dpToPx
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.theme.ThemeManager
@@ -61,7 +64,8 @@ class ToolbarView(
     private val container: ViewGroup,
     private val interactor: ToolbarInteractor,
     private val historyStorage: HistoryStorage?,
-    private val isPrivate: Boolean
+    private val isPrivate: Boolean,
+    engine: Engine
 ) : LayoutContainer {
 
     override val containerView: View?
@@ -135,7 +139,11 @@ class ToolbarView(
             })
         }
 
-        ToolbarAutocompleteFeature(view).apply {
+        val engineForSpeculativeConnects = if (!isPrivate) engine else null
+        ToolbarAutocompleteFeature(
+            view,
+            engineForSpeculativeConnects
+        ).apply {
             addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })
             historyStorage?.also(::addHistoryStorageProvider)
         }
@@ -150,6 +158,10 @@ class ToolbarView(
             if (searchState.pastedText.isNullOrEmpty()) {
                 view.setSearchTerms(searchState.session?.searchTerms.orEmpty())
             }
+
+            // We must trigger an onTextChanged so when search terms are set when transitioning to `editMode`
+            // we have the most up to date text
+            interactor.onTextChanged(view.url.toString())
 
             view.editMode()
             isInitialized = true
@@ -180,6 +192,12 @@ class ToolbarView(
 fun BrowserToolbar.setScrollFlagsForTopToolbar() {
     // Don't set scroll flags for bottom toolbar
     if (context.settings().shouldUseBottomToolbar) {
+        if (FeatureFlags.dynamicBottomToolbar && layoutParams is CoordinatorLayout.LayoutParams) {
+            (layoutParams as CoordinatorLayout.LayoutParams).apply {
+                behavior = BrowserToolbarBottomBehavior(context, null)
+            }
+        }
+
         return
     }
 

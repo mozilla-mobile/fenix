@@ -13,7 +13,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.fragment_installed_add_on_details.*
 import kotlinx.android.synthetic.main.fragment_installed_add_on_details.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +31,7 @@ import org.mozilla.fenix.ext.showToolbar
 /**
  * An activity to show the details of a installed add-on.
  */
+@Suppress("LargeClass", "TooManyFunctions")
 class InstalledAddonDetailsFragment : Fragment() {
     private lateinit var addon: Addon
     private var scope: CoroutineScope? = null
@@ -199,12 +199,12 @@ class InstalledAddonDetailsFragment : Fragment() {
 
     private fun bindRemoveButton(view: View) {
         view.remove_add_on.setOnClickListener {
-            enable_switch.isClickable = false
+            setAllInteractiveViewsClickable(view, false)
             requireContext().components.addonManager.uninstallAddon(
                 addon,
                 onSuccess = {
                     runIfFragmentIsAttached {
-                        enable_switch.isClickable = true
+                        setAllInteractiveViewsClickable(view, true)
                         showSnackBar(
                             view,
                             getString(
@@ -217,7 +217,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 },
                 onError = { _, _ ->
                     runIfFragmentIsAttached {
-                        enable_switch.isClickable = true
+                        setAllInteractiveViewsClickable(view, true)
                         showSnackBar(
                             view,
                             getString(
@@ -229,6 +229,14 @@ class InstalledAddonDetailsFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private fun setAllInteractiveViewsClickable(view: View, clickable: Boolean) {
+        view.enable_switch.isClickable = clickable
+        view.settings.isClickable = clickable
+        view.details.isClickable = clickable
+        view.permissions.isClickable = clickable
+        view.remove_add_on.isClickable = clickable
     }
 
     private fun Switch.setState(checked: Boolean) {
