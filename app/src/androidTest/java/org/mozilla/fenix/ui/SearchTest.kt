@@ -4,8 +4,8 @@
 
 package org.mozilla.fenix.ui
 
-import org.junit.Ignore
 import org.junit.Rule
+import org.junit.Ignore
 import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.ui.robots.homeScreen

@@ -14,9 +14,9 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Ignore
 import org.junit.Before
 import org.junit.After
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.Rule
 import org.mozilla.fenix.R
@@ -33,6 +33,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 
+@Ignore("Disabled for logic errors")
 class CollectionTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -55,7 +56,6 @@ class CollectionTest {
     }
 
     @Test
-    @Ignore("Temp disable test - see: https://github.com/mozilla-mobile/fenix/issues/5793")
     // open a webpage, and add currently opened tab to existing collection
     fun addTabToCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -122,7 +122,6 @@ class CollectionTest {
     }
 
     @Test
-    @Ignore("Temp disable test - see: https://github.com/mozilla-mobile/fenix/issues/5793")
     // Rename Collection from the Homescreen
     fun renameCollectionTest() {
 
@@ -144,7 +143,6 @@ class CollectionTest {
     }
 
     @Test
-    @Ignore("Temp disable test - see: https://github.com/mozilla-mobile/fenix/issues/5793")
     // Delete Collection from the Homescreen
     fun deleteCollectionTest() {
 
@@ -166,7 +164,6 @@ class CollectionTest {
     }
 
     @Test
-    @Ignore("Temp disable test - see: https://github.com/mozilla-mobile/fenix/issues/5793")
     fun createCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
