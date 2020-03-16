@@ -24,7 +24,8 @@ class StoreProviderTest {
 
     private class BasicState : State
 
-    private val basicStore = Store(BasicState()) { state, _: Action -> state }
+    //private val basicStore = Store(BasicState()) { state, _: Action -> state }
+    private val basicStore = Store(BasicState(), { state, _: Action -> state })
 
     @Test
     fun `factory returns store provider`() {
