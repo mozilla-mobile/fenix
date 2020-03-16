@@ -11,6 +11,10 @@
         android:key="@string/pref_key_sign_out"
         android:title="@string/preferences_sign_out" />
 
+    <androidx.preference.EditTextPreference
+        android:key="@string/pref_key_sync_device_name"
+        android:title="@string/preferences_sync_device_name" />
+
     <androidx.preference.PreferenceCategory
         android:key="@string/preferences_sync_category"
         android:title="@string/preferences_sync_category">
@@ -29,10 +33,6 @@
             android:defaultValue="true"
             android:key="@string/pref_key_sync_logins"
             android:title="@string/preferences_sync_logins" />
-
-        <androidx.preference.EditTextPreference
-            android:key="@string/pref_key_sync_device_name"
-            android:title="@string/preferences_sync_device_name" />
 
     </androidx.preference.PreferenceCategory>
 </PreferenceScreen>
