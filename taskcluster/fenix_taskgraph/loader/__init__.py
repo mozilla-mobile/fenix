@@ -63,11 +63,9 @@ def attributes_grouping(config, tasks):
 
         group_attr = None
         if only_attributes:
-            for attr in only_attributes:
-                if attr in task.attributes:
-                    group_attr = attr
-                    break
-        if not group_attr:
+            if not any(attr in task.attributes for attr in only_attributes):
+                continue
+        else:
             continue
 
         groups.setdefault(task.label, []).append(task)
