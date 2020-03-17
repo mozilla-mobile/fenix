@@ -37,9 +37,10 @@ gcloud:
     - /sdcard/screenshots
   performance-metrics: true
 
+  test-targets:
+    - package org.mozilla.fenix.ui
+
   device:
-   - model: walleye 
-     version: 26
    - model: walleye 
      version: 28
 
