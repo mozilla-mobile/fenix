@@ -556,15 +556,19 @@ class HomeFragment : Fragment() {
             sessionId = null
         )
 
+        nav(R.id.homeFragment, directions, getToolbarNavOptions())
+    }
+
+    private fun getToolbarNavOptions(): NavOptions {
         if (!requireContext().settings().shouldUseBottomToolbar) {
             navOptions.setEnterAnim(R.anim.fade_in)
             navOptions.setExitAnim(R.anim.fade_out)
-        }else{
+        } else {
             navOptions.setEnterAnim(R.anim.fade_in_up)
             navOptions.setExitAnim(R.anim.fade_out_down)
         }
 
-        nav(R.id.homeFragment, directions, navOptions.build())
+        return navOptions.build()
     }
 
     private fun openSettingsScreen() {
