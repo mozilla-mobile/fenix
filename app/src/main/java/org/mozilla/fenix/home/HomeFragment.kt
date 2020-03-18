@@ -35,6 +35,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -145,6 +146,8 @@ class HomeFragment : Fragment() {
     private lateinit var sessionControlInteractor: SessionControlInteractor
     private var sessionControlView: SessionControlView? = null
     private lateinit var currentMode: CurrentMode
+    private val navOptions by lazy { NavOptions.Builder() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -553,7 +556,15 @@ class HomeFragment : Fragment() {
             sessionId = null
         )
 
-        nav(R.id.homeFragment, directions)
+        if (!requireContext().settings().shouldUseBottomToolbar) {
+            navOptions.setEnterAnim(R.anim.fade_in)
+            navOptions.setExitAnim(R.anim.fade_out)
+        }else{
+            navOptions.setEnterAnim(R.anim.fade_in_up)
+            navOptions.setExitAnim(R.anim.fade_out_down)
+        }
+
+        nav(R.id.homeFragment, directions, navOptions.build())
     }
 
     private fun openSettingsScreen() {

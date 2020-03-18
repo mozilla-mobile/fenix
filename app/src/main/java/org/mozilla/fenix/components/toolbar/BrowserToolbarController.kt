@@ -8,6 +8,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -76,6 +77,8 @@ class DefaultBrowserToolbarController(
     private val currentSession
         get() = customTabSession ?: activity.components.core.sessionManager.selectedSession
 
+    private val navOptions by lazy { NavOptions.Builder() }
+
     // We hold onto a reference of the inner scope so that we can override this with the
     // TestCoroutineScope to ensure sequential execution. If we didn't have this, our tests
     // would fail intermittently due to the async nature of coroutine scheduling.
@@ -89,7 +92,15 @@ class DefaultBrowserToolbarController(
                 pastedText = text
             )
 
-            navController.nav(R.id.browserFragment, directions)
+            if (!activity.settings().shouldUseBottomToolbar) {
+                navOptions.setEnterAnim(R.anim.fade_in)
+                navOptions.setExitAnim(R.anim.fade_out)
+            }else{
+                navOptions.setEnterAnim(R.anim.fade_in_up)
+                navOptions.setExitAnim(R.anim.fade_out_down)
+            }
+
+            navController.nav(R.id.browserFragment, directions, navOptions.build())
         }
     }
 
@@ -114,7 +125,15 @@ class DefaultBrowserToolbarController(
                 currentSession?.id
             )
 
-            navController.nav(R.id.browserFragment, directions)
+            if (!activity.settings().shouldUseBottomToolbar) {
+                navOptions.setEnterAnim(R.anim.fade_in)
+                navOptions.setExitAnim(R.anim.fade_out)
+            }else{
+                navOptions.setEnterAnim(R.anim.fade_in_up)
+                navOptions.setExitAnim(R.anim.fade_out_down)
+            }
+
+            navController.nav(R.id.browserFragment, directions, navOptions.build())
         }
     }
 
