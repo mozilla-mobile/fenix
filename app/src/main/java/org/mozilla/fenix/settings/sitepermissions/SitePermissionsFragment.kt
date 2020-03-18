@@ -64,7 +64,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
         // Remove autoplaySummary after https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed
         val autoplaySummary =
             if (summary == context.getString(R.string.preference_option_autoplay_allowed2)) {
-                context.getString(R.string.preference_option_autoplay_allowed_wifi_only)
+                context.getString(R.string.preference_option_autoplay_allowed_wifi_only2)
             } else {
                 null
             }

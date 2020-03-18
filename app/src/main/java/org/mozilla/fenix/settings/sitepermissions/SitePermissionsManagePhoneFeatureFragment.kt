@@ -115,7 +115,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private fun initSecondRadio(rootView: View) {
         with(rootView.block_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
-                text = getString(R.string.preference_option_autoplay_allowed_wifi_only)
+                text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
                 setOnClickListener {
                     // TODO replace with AUTOPLAY_ALLOW_ON_WIFI when
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed. This GV bug
@@ -140,7 +140,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
         with(rootView.third_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 visibility = View.VISIBLE
-                text = getString(R.string.preference_option_autoplay_block_audio)
+                text = getString(R.string.preference_option_autoplay_block_audio2)
                 setOnClickListener {
                     saveActionInSettings(it.context, AUTOPLAY_BLOCK_AUDIBLE)
                 }
@@ -156,7 +156,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
                 visibility = View.VISIBLE
                 text = getCombinedLabel(
-                    getString(R.string.preference_option_autoplay_blocked2),
+                    getString(R.string.preference_option_autoplay_blocked3),
                     getString(R.string.phone_feature_recommended)
                 )
                 setOnClickListener {
