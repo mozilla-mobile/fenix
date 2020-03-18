@@ -94,15 +94,7 @@ class DefaultBrowserToolbarController(
                 pastedText = text
             )
 
-            if (!activity.settings().shouldUseBottomToolbar) {
-                navOptions.setEnterAnim(R.anim.fade_in)
-                navOptions.setExitAnim(R.anim.fade_out)
-            }else{
-                navOptions.setEnterAnim(R.anim.fade_in_up)
-                navOptions.setExitAnim(R.anim.fade_out_down)
-            }
-
-            navController.nav(R.id.browserFragment, directions, navOptions.build())
+            navController.nav(R.id.browserFragment, directions, getToolbarNavOptions())
         }
     }
 
@@ -127,16 +119,20 @@ class DefaultBrowserToolbarController(
                 currentSession?.id
             )
 
-            if (!activity.settings().shouldUseBottomToolbar) {
-                navOptions.setEnterAnim(R.anim.fade_in)
-                navOptions.setExitAnim(R.anim.fade_out)
-            }else{
-                navOptions.setEnterAnim(R.anim.fade_in_up)
-                navOptions.setExitAnim(R.anim.fade_out_down)
-            }
-
-            navController.nav(R.id.browserFragment, directions, navOptions.build())
+            navController.nav(R.id.browserFragment, directions, getToolbarNavOptions())
         }
+    }
+
+    private fun getToolbarNavOptions(): NavOptions {
+        if (!activity.settings().shouldUseBottomToolbar) {
+            navOptions.setEnterAnim(R.anim.fade_in)
+            navOptions.setExitAnim(R.anim.fade_out)
+        } else {
+            navOptions.setEnterAnim(R.anim.fade_in_up)
+            navOptions.setExitAnim(R.anim.fade_out_down)
+        }
+
+        return navOptions.build()
     }
 
     override fun handleTabCounterClick() {
