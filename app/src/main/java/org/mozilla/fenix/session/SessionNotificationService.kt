@@ -49,14 +49,6 @@ class SessionNotificationService : Service() {
             ACTION_ERASE -> {
                 metrics.track(Event.PrivateBrowsingNotificationTapped)
                 components.core.sessionManager.removeAndCloseAllPrivateSessions()
-
-                if (!VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
-                    startActivity(
-                        Intent(this, HomeActivity::class.java).apply {
-                            this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                    )
-                }
             }
 
             else -> throw IllegalStateException("Unknown intent: $intent")
