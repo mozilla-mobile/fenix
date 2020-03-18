@@ -1,7 +1,0 @@
-{
-    "parameters": {
-        "optimize_target_tasks": true,
-        "target_tasks_method": "raptor"
-    },
-    "version": 2
-}
