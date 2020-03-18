@@ -53,7 +53,8 @@ class HomeMenu(
             iconTintColorResource = syncDisconnectedColor,
             textColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.HighPriority(
-                backgroundTint = syncDisconnectedBackgroundColor
+                backgroundTint = syncDisconnectedBackgroundColor,
+                canPropagate = false
             ),
             isHighlighted = { true }
         ) {
