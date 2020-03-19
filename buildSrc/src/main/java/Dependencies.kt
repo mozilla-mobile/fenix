@@ -45,7 +45,7 @@ object Versions {
     const val assertk = "0.19"
 
     const val espresso_version = "3.2.0"
-    const val mockwebserver = "3.11.0"
+    const val mockwebserver = "3.14.7"
     const val orchestrator = "1.3.0-alpha02"
     const val tools_test_rules = "1.3.0-alpha02"
     const val tools_test_runner = "1.3.0-alpha02"

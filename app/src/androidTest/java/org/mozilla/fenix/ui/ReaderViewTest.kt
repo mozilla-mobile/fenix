@@ -9,7 +9,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -166,7 +165,6 @@ class ReaderViewTest {
     }
 
     @Test
-    @Ignore("Intermittent failure. Fix in https://github.com/mozilla-mobile/fenix/issues/9188")
     fun verifyReaderViewAppearanceFontToggle() {
         val readerViewPage =
             TestAssetHelper.getLoremIpsumAsset(mockWebServer)
