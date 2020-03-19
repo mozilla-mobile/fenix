@@ -1,0 +1,7 @@
+{
+    "parameters": {
+        "optimize_target_tasks": true,
+        "target_tasks_method": "bump_android_components"
+    },
+    "version": 2
+}
