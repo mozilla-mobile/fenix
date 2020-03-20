@@ -115,7 +115,10 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     private fun initSecondRadio(rootView: View) {
         with(rootView.block_radio) {
             if (phoneFeature == AUTOPLAY_AUDIBLE) {
-                text = getString(R.string.preference_option_autoplay_allowed_wifi_only2)
+                text = getCombinedLabel(
+                    getString(R.string.preference_option_autoplay_allowed_wifi_only2),
+                    getString(R.string.preference_option_autoplay_allowed_wifi_subtext)
+                )
                 setOnClickListener {
                     // TODO replace with AUTOPLAY_ALLOW_ON_WIFI when
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed. This GV bug
