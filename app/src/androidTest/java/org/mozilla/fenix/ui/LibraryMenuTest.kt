@@ -37,6 +37,7 @@ class LibraryMenuTest {
     }
 
     @Test
+    @Ignore("Intermittently failing. See https://github.com/mozilla-mobile/fenix/issues/9287")
     fun libraryMenuItemsTest() {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
