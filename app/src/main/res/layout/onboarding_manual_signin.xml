@@ -34,7 +34,7 @@
         android:padding="10dp"
         android:text="@string/onboarding_firefox_account_sign_in"
         android:textAllCaps="false"
-        android:textColor="@color/button_text_color"
+        android:textColor="@color/neutral_button_text_color"
         android:textSize="14sp"
         android:textStyle="bold"
         app:backgroundTint="@color/foundation_light_theme" />

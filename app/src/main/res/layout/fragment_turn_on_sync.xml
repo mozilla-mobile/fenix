@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp">
+        android:layout_margin="16dp">
 
         <TextView
             android:id="@+id/title_sign_in"
@@ -77,11 +77,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signInEmailButton"
-            style="@style/ThemeIndependentMaterialGreyButton"
+            style="@style/ThemeIndependentNeutralButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:layout_marginTop="8dp"
             android:text="@string/sign_in_with_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3,7 +3,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/reset_permission"
-    style="@style/ThemeIndependentMaterialGreyButton"
+    style="@style/ThemeIndependentNeutralButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"

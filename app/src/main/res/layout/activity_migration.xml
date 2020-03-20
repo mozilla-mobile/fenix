@@ -30,7 +30,7 @@
         android:fontFamily="sans-serif-medium"
         android:maxLines="2"
         android:text="@string/migration_title"
-        android:textColor="@color/button_text_color"
+        android:textColor="@color/neutral_button_text_color"
         android:textSize="@dimen/migration_welcome_title_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/migration_description"
@@ -101,7 +101,7 @@
             android:text="@string/migration_updating_app_button_text"
             android:textAllCaps="false"
             android:textStyle="bold"
-            android:textColor="@color/button_text_color"
+            android:textColor="@color/neutral_button_text_color"
             tools:text="Updating Firefox…" />
 
     </LinearLayout>

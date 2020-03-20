@@ -62,6 +62,10 @@
     <dimen name="sign_in_button_margin_top">32dp</dimen>
     <dimen name="sign_in_button_margin">16dp</dimen>
 
+    <!-- Button Component -->
+    <dimen name="button_padding">10dp</dimen>
+    <dimen name="button_margin">8dp</dimen>
+
     <!-- ETP Onboarding Popup -->
     <dimen name="etp_onboarding_popup_width">256dp</dimen>
 

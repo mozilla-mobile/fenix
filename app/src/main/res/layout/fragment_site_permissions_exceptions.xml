@@ -23,7 +23,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/delete_all_site_permissions_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
+        style="@style/ThemeIndependentNeutralButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

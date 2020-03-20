@@ -73,7 +73,7 @@
 
             <Button
                 android:id="@+id/remove_add_on"
-                style="@style/ThemeIndependentMaterialGreyButtonDestructive"
+                style="@style/ThemeIndependentGreyButtonDestructive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/permissions"
