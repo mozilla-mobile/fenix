@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tip_card"
+    style="@style/OnboardingCardLight"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tip_header_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:drawableStart="@drawable/ic_whats_new"
+        android:drawablePadding="12dp"
+        android:textAppearance="@style/HeaderTextStyle"
+        android:gravity="center_vertical"
+        android:lines="1"
+        tools:text="Header text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/tip_close"
+        app:srcCompat="@drawable/ic_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/create_collection_close"
+        android:layout_width="12dp"
+        android:layout_height="12dp" />
+
+    <TextView
+        android:id="@+id/tip_description_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Body14TextStyle"
+        android:layout_marginTop="12dp"
+        tools:text="Tip description"
+        app:layout_constraintTop_toBottomOf="@id/tip_header_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tip_button"/>
+
+    <Button
+        android:id="@+id/tip_button"
+        style="@style/ThemeIndependentMaterialGreyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Call to action"
+        app:layout_constraintTop_toBottomOf="@id/tip_description_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,9 @@ import kotlinx.android.synthetic.main.onboarding_whats_new.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.SupportUtils
 
-class OnboardingWhatsNewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class OnboardingWhatsNewViewHolder(
+    view: View
+) : RecyclerView.ViewHolder(view) {
 
     init {
         view.header_text.setOnboardingIcon(R.drawable.ic_whats_new)

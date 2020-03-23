@@ -16,7 +16,6 @@ class OnboardingToolbarPositionPickerViewHolder(view: View) : RecyclerView.ViewH
     init {
         val radioTopToolbar = view.toolbar_top_radio_button
         val radioBottomToolbar = view.toolbar_bottom_radio_button
-
         radioTopToolbar.addToRadioGroup(radioBottomToolbar)
         radioBottomToolbar.addToRadioGroup(radioTopToolbar)
 

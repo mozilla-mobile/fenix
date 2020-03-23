@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.CheckBoxPreference
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -44,6 +45,13 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
+
+        val displayTips = getPreferenceKey(R.string.pref_key_display_tips)
+        val displayTipsPreference = requireNotNull(findPreference<CheckBoxPreference>(displayTips))
+        displayTipsPreference.setOnPreferenceClickListener {
+            requireContext().settings().setDisplayTips(displayTipsPreference.isChecked)
+            true
+        }
     }
 
     private fun setupRadioGroups() {

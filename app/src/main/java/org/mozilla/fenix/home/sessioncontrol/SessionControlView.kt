@@ -22,6 +22,7 @@ import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Tip
 
 val noTabMessage = AdapterItem.NoContentMessageWithAction(
     R.string.no_open_tabs_header_2,
@@ -39,15 +40,19 @@ private fun normalModeAdapterItems(
     tabs: List<Tab>,
     topSites: List<TopSite>,
     collections: List<TabCollection>,
-    expandedCollections: Set<Long>
+    expandedCollections: Set<Long>,
+    tips: List<Tip>?
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
+
+    tips?.forEach { items.add(AdapterItem.TipItem(it)) }
 
     if (topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSiteList(topSites))
     }
 
     items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
+
 
     when {
         tabs.isNotEmpty() && collections.isNotEmpty() -> {
@@ -149,7 +154,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 }
 
 private fun HomeFragmentState.toAdapterList(): List<AdapterItem> = when (mode) {
-    is Mode.Normal -> normalModeAdapterItems(tabs, topSites, collections, expandedCollections)
+    is Mode.Normal -> normalModeAdapterItems(tabs, topSites, collections, expandedCollections, tips)
     is Mode.Private -> privateModeAdapterItems(tabs)
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
 }
@@ -194,6 +199,7 @@ class SessionControlView(
             sessionControlAdapter.submitList(null)
         }
 
+        // TODO: this may be helpful
         val stateAdapterList = state.toAdapterList()
 
         if (homeScreenViewModel.shouldScrollToTopSites) {

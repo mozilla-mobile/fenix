@@ -100,6 +100,7 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlAdapter
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.TipManager
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
@@ -203,7 +204,8 @@ class HomeFragment : Fragment() {
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
                     tabs = emptyList(),
-                    topSites = requireComponents.core.topSiteStorage.cachedTopSites
+                    topSites = requireComponents.core.topSiteStorage.cachedTopSites,
+                    tips = TipManager(requireContext()).getTipOrCriticalMessage()
                 )
             )
         }

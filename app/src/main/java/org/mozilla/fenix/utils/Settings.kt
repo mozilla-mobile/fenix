@@ -132,6 +132,13 @@ class Settings private constructor(
         default = false
     )
 
+    fun setDisplayTips(value: Boolean) {
+        preferences.edit().putBoolean(appContext.getString(R.string.pref_key_display_tips), value).apply()
+    }
+
+    fun shouldDisplayTips() : Boolean =
+        preferences.getBoolean(appContext.getString(R.string.pref_key_display_tips), true)
+
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
         default = ""

@@ -43,9 +43,9 @@
             <ImageView
                 android:id="@+id/wordmark"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="32dp"
                 android:adjustViewBounds="true"
                 android:clickable="false"
@@ -54,7 +54,7 @@
                 android:importantForAccessibility="no"
                 app:srcCompat="?fenixLogo"
                 app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier=".1"/>
+                app:layout_collapseParallaxMultiplier=".8"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

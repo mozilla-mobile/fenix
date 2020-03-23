@@ -40,10 +40,12 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTh
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
-
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Tip
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.TipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
+    data class TipItem(val tip: Tip) : AdapterItem(TipViewHolder.LAYOUT_ID)
     data class TabHeader(val isPrivate: Boolean, val hasTabs: Boolean) : AdapterItem(TabHeaderViewHolder.LAYOUT_ID)
     data class TabItem(val tab: Tab) : AdapterItem(TabViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) = other is TabItem && tab.sessionId == other.tab.sessionId
@@ -162,6 +164,7 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
+            TipViewHolder.LAYOUT_ID -> TipViewHolder(view, interactor)
             TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, interactor)
             TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor)
             TopSiteViewHolder.LAYOUT_ID -> TopSiteViewHolder(view, interactor)
@@ -183,6 +186,7 @@ class SessionControlAdapter(
             OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, interactor)
             OnboardingWhatsNewViewHolder.LAYOUT_ID -> OnboardingWhatsNewViewHolder(view)
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(view)
+            // TODO: interactor
             else -> throw IllegalStateException()
         }
     }
@@ -193,6 +197,10 @@ class SessionControlAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
+            is TipViewHolder -> {
+                val tipItem = item as AdapterItem.TipItem
+                holder.bind(tipItem.tip)
+            }
             is TabHeaderViewHolder -> {
                 val tabHeader = item as AdapterItem.TabHeader
                 holder.bind(tabHeader.isPrivate, tabHeader.hasTabs)

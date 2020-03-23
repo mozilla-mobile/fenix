@@ -8,6 +8,7 @@ import android.view.View
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Tip
 
 /**
  * Interface for collection related actions in the [SessionControlInteractor].
@@ -92,6 +93,13 @@ interface OnboardingInteractor {
      * Hides the onboarding and navigates to Settings. Called when a user clicks on the "Open settings" button.
      */
     fun onOpenSettingsClicked()
+}
+
+interface TipInteractor {
+    /**
+     * Dismisses the tip view adapter
+     */
+    fun onCloseTip(tip: Tip)
 }
 
 /**
@@ -195,7 +203,7 @@ interface TopSiteInteractor {
 @SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
     private val controller: SessionControlController
-) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor, TopSiteInteractor {
+) : CollectionInteractor, OnboardingInteractor, TabSessionInteractor, TopSiteInteractor, TipInteractor {
     override fun onCloseTab(sessionId: String) {
         controller.handleCloseTab(sessionId)
     }
@@ -282,5 +290,9 @@ class SessionControlInteractor(
 
     override fun onOpenNewTabClicked() {
         controller.handleonOpenNewTabClicked()
+    }
+
+    override fun onCloseTip(tip: Tip) {
+        controller.handleCloseTip(tip)
     }
 }

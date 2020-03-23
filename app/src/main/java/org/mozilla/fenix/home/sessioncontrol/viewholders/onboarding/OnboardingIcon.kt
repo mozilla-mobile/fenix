@@ -15,10 +15,14 @@ import org.mozilla.fenix.ext.setBounds
 /**
  * Sets the drawableStart of a header in an onboarding card.
  */
-fun TextView.setOnboardingIcon(@DrawableRes id: Int) {
+fun TextView.setOnboardingIcon(@DrawableRes id: Int, shouldTint: Boolean = true) {
     val icon = AppCompatResources.getDrawable(context, id)
     val size = context.resources.getDimensionPixelSize(R.dimen.onboarding_header_icon_height_width)
     icon?.setBounds(size)
-    icon?.setTint(ContextCompat.getColor(context, R.color.onboarding_card_icon))
+
+    if (shouldTint) {
+        icon?.setTint(ContextCompat.getColor(context, R.color.onboarding_card_icon))
+    }
+
     putCompoundDrawablesRelative(start = icon)
 }

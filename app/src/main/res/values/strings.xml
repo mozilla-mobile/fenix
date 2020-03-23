@@ -214,6 +214,8 @@
     <string name="preferences_sign_in">Sign in</string>
     <!-- Preference for changing where the toolbar is positioned -->
     <string name="preferences_toolbar">Toolbar</string>
+    <!-- Preferences related to customizing the home screen -->
+    <string name="preferences_home_screen">Home screen</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Theme</string>
     <!-- Preference for settings related to visual options -->
@@ -376,6 +378,10 @@
     <string name="preference_auto_battery_theme">Set by Battery Saver</string>
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Follow device theme</string>
+
+    <!-- Homescreen Preferences -->
+    <!-- Preference for displaying tips -->
+    <string name="preference_display_tips">Display tips</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -832,6 +838,32 @@
     <string name="preferences_delete_browsing_data_snackbar">Browsing data deleted</string>
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Deleting browsing data&#8230;</string>
+
+    <!-- Tips -->
+    <!-- text for the whats new tip header -->
+    <string name="tip_whats_new_header">What’s new</string>
+    <!-- text for whats new tip description -->
+    <string name="tip_whats_new_description">We’ve added: animations, tip cards, and much more!</string>
+    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <string name="tip_whats_new_button">View changes</string>
+    <!-- text for the whats new tip header -->
+    <string name="tip_default_browser_header">Default to fast</string>
+    <!-- text for whats new tip description -->
+    <string name="tip_default_browser_description">Get the most out of %s by setting it as your default browser.</string>
+    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <string name="tip_default_browser_button">Open default browser settings</string>
+    <!-- text for the whats new tip header -->
+    <string name="tip_fenix_moving_header">%s is moving</string>
+    <!-- text for whats new tip description -->
+    <string name="tip_fenix_moving_description">%s is moving to Firefox Nightly. Download to continue receiving updates.</string>
+    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <string name="tip_fenix_moving_button">Download Firefox Nightly</string>
+    <!-- text for the whats new tip header -->
+    <string name="tip_always_private_tab_header">Open links privately</string>
+    <!-- text for whats new tip description -->
+    <string name="tip_always_private_tab_description">With %s you can open all your external links privately letting you browse without worry.</string>
+    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <string name="tip_always_private_tab_buton">Always open links in private mode</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
