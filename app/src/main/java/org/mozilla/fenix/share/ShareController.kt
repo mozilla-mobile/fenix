@@ -14,11 +14,7 @@ import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
@@ -40,6 +36,7 @@ interface ShareController {
     fun handleReauth()
     fun handleShareClosed()
     fun handleShareToApp(app: AppShareOption)
+    fun handleDeleteRecentApp(app: AppShareOption)
     fun handleAddNewDevice()
     fun handleShareToDevice(device: Device)
     fun handleShareToAllDevices(devices: List<Device>)
@@ -104,6 +101,12 @@ class DefaultShareController(
             ShareController.Result.SHARE_ERROR
         }
         dismiss(result)
+    }
+
+    override  fun handleDeleteRecentApp(app: AppShareOption) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            recentAppsStorage.deleteRecentApp(app.packageName)
+        }
     }
 
     override fun handleAddNewDevice() {

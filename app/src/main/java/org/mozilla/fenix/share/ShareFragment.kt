@@ -81,7 +81,8 @@ class ShareFragment : AppCompatDialogFragment() {
                     }
                 }
                 super.dismiss()
-            }
+            },
+            viewModel
         )
 
         view.shareWrapper.setOnClickListener { shareInteractor.onShareClosed() }

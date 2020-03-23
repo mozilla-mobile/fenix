@@ -25,6 +25,12 @@ class AppViewHolder(
                 interactor.onShareToApp(app)
             }
         }
+        itemView.setOnLongClickListener{
+            application?.let { app ->
+                interactor.onDeleteShareOption(app)
+            }
+            true
+        }
     }
 
     fun bind(item: AppShareOption) {

@@ -104,6 +104,23 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun reloadRecentApps() {
+        viewModelScope.launch(IO) {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            val shareAppsActivities = getIntentActivities(shareIntent, getApplication())
+            var apps = buildAppsList(shareAppsActivities, getApplication())
+            recentAppsStorage.updateDatabaseWithNewApps(apps.map { app -> app.packageName })
+            val recentApps = buildRecentAppsList(apps)
+            apps = filterOutRecentApps(apps, recentApps)
+
+            recentAppsListLiveData.postValue(recentApps)
+            appsListLiveData.postValue(apps)
+        }
+    }
+
     private fun filterOutRecentApps(
         apps: List<AppShareOption>,
         recentApps: List<AppShareOption>

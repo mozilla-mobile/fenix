@@ -18,6 +18,7 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
  */
 interface ShareToAppsInteractor {
     fun onShareToApp(appToShareTo: AppShareOption)
+    fun onDeleteShareOption(appToDelete: AppShareOption)
 }
 
 class ShareToAppsView(
@@ -45,6 +46,7 @@ class ShareToAppsView(
 
     fun setRecentShareTargets(recentTargets: List<AppShareOption>) {
         if (recentTargets.isEmpty()) {
+            recentAppsContainer.visibility = View.GONE
             return
         }
         progressBar.visibility = View.GONE

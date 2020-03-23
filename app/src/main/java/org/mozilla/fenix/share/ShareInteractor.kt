@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.share
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.sync.Device
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -11,7 +13,8 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
  * Interactor for the share screen.
  */
 class ShareInteractor(
-    private val controller: ShareController
+    private val controller: ShareController,
+    private val shareViewModel: ShareViewModel
 ) : ShareCloseInteractor, ShareToAccountDevicesInteractor, ShareToAppsInteractor {
     override fun onReauth() {
         controller.handleReauth()
@@ -39,5 +42,10 @@ class ShareInteractor(
 
     override fun onShareToApp(appToShareTo: AppShareOption) {
         controller.handleShareToApp(appToShareTo)
+    }
+
+    override fun onDeleteShareOption(appToDelete: AppShareOption) {
+        controller.handleDeleteRecentApp(appToDelete)
+        shareViewModel.reloadRecentApps()
     }
 }
