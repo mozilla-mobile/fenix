@@ -85,6 +85,7 @@ import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 
 /**
@@ -118,6 +119,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
+    private val sitePermissionWifiIntegration = ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
 
     var customTabSessionId: String? = null
 
@@ -391,6 +393,15 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
+            sitePermissionWifiIntegration.set(
+                feature = SitePermissionsWifiIntegration(
+                    settings = context.settings(),
+                    wifiConnectionMonitor = context.components.wifiConnectionMonitor
+                ),
+                owner = this,
+                view = view
+            )
+
             context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
                 // If the user connects to WIFI while on the BrowserFragment, this will update the
                 // SitePermissionsRules (specifically autoplay) accordingly
@@ -535,6 +546,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     override fun onStart() {
         super.onStart()
         requireComponents.core.sessionManager.register(this, this, autoPause = true)
+        sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
     }
 
     @CallSuper
