@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.share
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import mozilla.components.concept.sync.Device
 import org.mozilla.fenix.share.listadapters.AppShareOption
 

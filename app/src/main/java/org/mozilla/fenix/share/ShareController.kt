@@ -103,7 +103,7 @@ class DefaultShareController(
         dismiss(result)
     }
 
-    override  fun handleDeleteRecentApp(app: AppShareOption) {
+    override fun handleDeleteRecentApp(app: AppShareOption) {
         lifecycleScope.launch(Dispatchers.IO) {
             recentAppsStorage.deleteRecentApp(app.packageName)
         }
