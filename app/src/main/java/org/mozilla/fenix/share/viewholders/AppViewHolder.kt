@@ -25,7 +25,7 @@ class AppViewHolder(
                 interactor.onShareToApp(app)
             }
         }
-        itemView.setOnLongClickListener{
+        itemView.setOnLongClickListener {
             application?.let { app ->
                 interactor.onDeleteShareOption(app)
             }
