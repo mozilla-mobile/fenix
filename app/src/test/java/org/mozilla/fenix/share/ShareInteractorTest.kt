@@ -12,7 +12,8 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
 
 class ShareInteractorTest {
     private val controller = mockk<ShareController>(relaxed = true)
-    private val interactor = ShareInteractor(controller)
+    private val viewModel = mockk<ShareViewModel>(relaxed = true)
+    private val interactor = ShareInteractor(controller, viewModel)
 
     @Test
     fun onShareClosed() {
