@@ -53,7 +53,6 @@ private fun normalModeAdapterItems(
 
     items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
 
-
     when {
         tabs.isNotEmpty() && collections.isNotEmpty() -> {
             showTabs(items, tabs)
@@ -199,7 +198,6 @@ class SessionControlView(
             sessionControlAdapter.submitList(null)
         }
 
-        // TODO: this may be helpful
         val stateAdapterList = state.toAdapterList()
 
         if (homeScreenViewModel.shouldScrollToTopSites) {

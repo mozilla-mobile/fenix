@@ -20,7 +20,6 @@ import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.TipManager
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.wifi.WifiConnectionMonitor

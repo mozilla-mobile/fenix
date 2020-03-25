@@ -136,7 +136,7 @@ class Settings private constructor(
         preferences.edit().putBoolean(appContext.getString(R.string.pref_key_display_tips), value).apply()
     }
 
-    fun shouldDisplayTips() : Boolean =
+    fun shouldDisplayTips(): Boolean =
         preferences.getBoolean(appContext.getString(R.string.pref_key_display_tips), true)
 
     var defaultSearchEngineName by stringPreference(
@@ -251,6 +251,11 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
         default = true
     )
+
+    fun isDefaultBrowser(): Boolean {
+        val browsers = BrowsersCache.all(appContext)
+        return browsers.isDefaultBrowser
+    }
 
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),

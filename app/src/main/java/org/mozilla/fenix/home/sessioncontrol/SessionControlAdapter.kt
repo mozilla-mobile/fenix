@@ -186,7 +186,6 @@ class SessionControlAdapter(
             OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, interactor)
             OnboardingWhatsNewViewHolder.LAYOUT_ID -> OnboardingWhatsNewViewHolder(view)
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(view)
-            // TODO: interactor
             else -> throw IllegalStateException()
         }
     }
