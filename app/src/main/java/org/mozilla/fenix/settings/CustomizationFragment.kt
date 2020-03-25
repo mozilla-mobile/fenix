@@ -45,9 +45,14 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
+        setupHomeScreen()
+    }
 
+    private fun setupHomeScreen() {
         val displayTips = getPreferenceKey(R.string.pref_key_display_tips)
         val displayTipsPreference = requireNotNull(findPreference<CheckBoxPreference>(displayTips))
+
+        displayTipsPreference.isChecked = requireContext().settings().shouldDisplayTips()
         displayTipsPreference.setOnPreferenceClickListener {
             requireContext().settings().setDisplayTips(displayTipsPreference.isChecked)
             true
