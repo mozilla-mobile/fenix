@@ -345,6 +345,11 @@
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">Remove account</string>
 
+    <!-- Header of Offline preference view -->
+    <string name="preferences_offline_title">Offline</string>
+    <!-- Description text of Offline preference view -->
+    <string name="preferences_offline_summary">Connect to network and sync bookmarks, history, and more with your Firefox Account</string>
+
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions"><![CDATA[Visit <b>firefox.com/pair</b> in Firefox on your computer to get your QR code.]]></string>

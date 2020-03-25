@@ -7,9 +7,13 @@ package org.mozilla.fenix.settings
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -49,15 +53,39 @@ import org.mozilla.fenix.settings.account.AccountPreference
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    private val connectivityManager by lazy { requireContext().getSystemService<ConnectivityManager>() }
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onLost(network: Network?) {
+            connectedToNetwork = false
+            updateAccountUIState(
+                context!!,
+                requireComponents.backgroundServices.accountManager.accountProfile(),
+                connectedToNetwork
+            )
+        }
+
+        override fun onAvailable(network: Network?) {
+            connectedToNetwork = true
+            updateAccountUIState(
+                context!!,
+                requireComponents.backgroundServices.accountManager.accountProfile(),
+                connectedToNetwork
+            )
+        }
+    }
+
+    private var connectedToNetwork: Boolean = false
+
     private val accountObserver = object : AccountObserver {
         private fun updateAccountUi(profile: Profile? = null) {
             val context = context ?: return
             lifecycleScope.launch {
-                updateAccountUIState(
-                    context = context,
-                    profile = profile
-                        ?: context.components.backgroundServices.accountManager.accountProfile()
-                )
+                    updateAccountUIState(
+                        context = context,
+                        profile = profile
+                            ?: context.components.backgroundServices.accountManager.accountProfile(),
+                        connectedToNetwork = connectedToNetwork
+                    )
             }
         }
 
@@ -76,15 +104,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
             owner = this,
             autoPause = true
         )
+        val networkRequest = NetworkRequest.Builder().build()
+
+        // check if networkCallback already registered
+        try {
+            connectivityManager?.unregisterNetworkCallback(networkCallback)
+        } catch (e: IllegalArgumentException) {
+            // networkCallback was not registered or already unregistered
+        }
+        connectivityManager?.registerNetworkCallback(networkRequest, networkCallback)
 
         // It's important to update the account UI state in onCreate, even though we also call it in onResume, since
         // that ensures we'll never display an incorrect state in the UI. For example, if user is signed-in, and we
         // don't perform this call in onCreate, we'll briefly display a "Sign In" preference, which will then get
         // replaced by the correct account information once this call is ran in onResume shortly after.
-        updateAccountUIState(
-            context!!,
-            requireComponents.backgroundServices.accountManager.accountProfile()
-        )
+            updateAccountUIState(
+                context!!,
+                requireComponents.backgroundServices.accountManager.accountProfile(),
+                connectedToNetwork
+            )
 
         preferenceManager.sharedPreferences
             .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
@@ -156,10 +194,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setupPreferences()
 
-        updateAccountUIState(
-            context!!,
-            requireComponents.backgroundServices.accountManager.accountProfile()
-        )
+            updateAccountUIState(
+                context!!,
+                requireComponents.backgroundServices.accountManager.accountProfile(),
+                connectedToNetwork
+            )
     }
 
     private fun updatePreferenceVisibilityForFeatureFlags() {
@@ -326,7 +365,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
      * Updates the UI to reflect current account state.
      * Possible conditions are logged-in without problems, logged-out, and logged-in but needs to re-authenticate.
      */
-    private fun updateAccountUIState(context: Context, profile: Profile?) {
+    private fun updateAccountUIState(context: Context, profile: Profile?, connectedToNetwork: Boolean) {
         val preferenceSignIn =
             findPreference<Preference>(context.getPreferenceKey(R.string.pref_key_sign_in))
         val preferenceFirefoxAccount =
@@ -337,6 +376,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     R.string.pref_key_account_auth_error
                 )
             )
+        val preferenceOffline =
+            findPreference<Preference>(context.getPreferenceKey(R.string.pref_key_offline))
         val accountPreferenceCategory =
             findPreference<PreferenceCategory>(context.getPreferenceKey(R.string.pref_key_account_category))
 
@@ -344,8 +385,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val account = accountManager.authenticatedAccount()
 
         // Signed-in, no problems.
-        if (account != null && !accountManager.accountNeedsReauth()) {
+        if (account != null && !accountManager.accountNeedsReauth() && connectedToNetwork) {
             preferenceSignIn?.isVisible = false
+            preferenceOffline?.isVisible = false
 
             profile?.avatar?.url?.let {
                 lifecycleScope.launch(IO) {
@@ -368,7 +410,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             preferenceFirefoxAccount?.email = profile?.email
 
             // Signed-in, need to re-authenticate.
-        } else if (account != null && accountManager.accountNeedsReauth()) {
+        } else if (account != null && accountManager.accountNeedsReauth() && connectedToNetwork) {
+            preferenceOffline?.isVisible = false
             preferenceFirefoxAccount?.isVisible = false
             preferenceFirefoxAccountAuthError?.isVisible = true
             accountPreferenceCategory?.isVisible = true
@@ -379,12 +422,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
             preferenceFirefoxAccountAuthError?.email = profile?.email
 
             // Signed-out.
-        } else {
+        } else if (connectedToNetwork) {
+            preferenceOffline?.isVisible = false
             preferenceSignIn?.isVisible = true
             preferenceSignIn?.onPreferenceClickListener = getClickListenerForSignIn()
             preferenceFirefoxAccount?.isVisible = false
             preferenceFirefoxAccountAuthError?.isVisible = false
             accountPreferenceCategory?.isVisible = false
+        } else {
+            preferenceOffline?.isVisible = true
+            preferenceSignIn?.isVisible = false
+            preferenceFirefoxAccount?.isVisible = false
+            preferenceFirefoxAccountAuthError?.isVisible = false
+            accountPreferenceCategory?.isVisible = false
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        try {
+            connectivityManager?.unregisterNetworkCallback(networkCallback)
+        } catch (e: IllegalArgumentException) {
+            // networkCallback already unregistered
         }
     }
 

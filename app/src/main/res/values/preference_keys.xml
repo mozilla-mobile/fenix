@@ -37,6 +37,7 @@
     <string name="pref_key_your_rights" translatable="false">pref_key_your_rights</string>
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>
+    <string name="pref_key_offline" translatable="false">pref_key_offline</string>
     <string name="pref_key_account_auth_error" translatable="false">pref_key_account_auth_error</string>
     <string name="pref_key_private_mode" translatable="false">pref_key_private_mode</string>
     <string name="pref_key_customize" translatable="false">pref_key_customize</string>

@@ -14,6 +14,13 @@
         android:summary="@string/preferences_sign_in_description"
         android:title="@string/preferences_sync" />
 
+    <androidx.preference.Preference
+        app:allowDividerBelow="false"
+        android:key="@string/pref_key_offline"
+        android:icon="@drawable/mozac_ic_warning"
+        android:summary="@string/preferences_offline_summary"
+        android:title="@string/preferences_offline_title" />
+
     <androidx.preference.PreferenceCategory
         android:key="@string/pref_key_account_category"
         android:title="@string/preferences_category_account"
