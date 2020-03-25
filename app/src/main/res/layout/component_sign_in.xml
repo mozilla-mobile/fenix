@@ -16,7 +16,8 @@
     android:paddingTop="@dimen/sign_in_button_padding"
     android:text="@string/bookmark_sign_in_button"
     android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:rippleColor="?secondaryText"/>
