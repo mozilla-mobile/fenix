@@ -55,25 +55,27 @@ import kotlinx.android.synthetic.main.fragment_home.view.sessionControlRecyclerV
 import kotlinx.android.synthetic.main.fragment_home.view.toolbar
 import kotlinx.android.synthetic.main.fragment_home.view.toolbarLayout
 import kotlinx.android.synthetic.main.fragment_home.view.toolbar_wrapper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
-import mozilla.components.feature.media.ext.getSession
-import mozilla.components.feature.media.state.MediaState
-import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -105,7 +107,6 @@ import org.mozilla.fenix.whatsnew.WhatsNew
 import kotlin.math.abs
 import kotlin.math.min
 
-@ExperimentalCoroutinesApi
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
     private val homeViewModel: HomeScreenViewModel by viewModels {
@@ -162,7 +163,11 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
 
-        val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
+        val sessionObserver = BrowserSessionsObserver(
+            sessionManager,
+            requireComponents.core.store,
+            singleSessionObserver
+        ) {
             emitSessionChanges()
         }
 
@@ -202,8 +207,9 @@ class HomeFragment : Fragment() {
 
         sessionControlInteractor = SessionControlInteractor(
             DefaultSessionControlController(
+                store = requireComponents.core.store,
                 activity = activity,
-                store = homeFragmentStore,
+                fragmentStore = homeFragmentStore,
                 navController = findNavController(),
                 browsingModeManager = browsingModeManager,
                 lifecycleScope = viewLifecycleOwner.lifecycleScope,
@@ -274,7 +280,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @ExperimentalCoroutinesApi
     @SuppressWarnings("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -887,16 +892,9 @@ class HomeFragment : Fragment() {
 
     private fun List<Session>.toTabs(): List<Tab> {
         val selected = sessionManager.selectedSession
-        val mediaStateSession = MediaStateMachine.state.getSession()
 
-        return this.map {
-            val mediaState = if (mediaStateSession?.id == it.id) {
-                MediaStateMachine.state
-            } else {
-                null
-            }
-
-            it.toTab(requireContext(), it == selected, mediaState)
+        return map {
+            it.toTab(requireContext(), it == selected)
         }
     }
 
@@ -953,18 +951,24 @@ class HomeFragment : Fragment() {
  */
 private class BrowserSessionsObserver(
     private val manager: SessionManager,
+    private val store: BrowserStore,
     private val observer: Session.Observer,
     private val onChanged: () -> Unit
 ) : LifecycleObserver {
+    private var scope: CoroutineScope? = null
 
     /**
      * Start observing
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        MediaStateMachine.register(managerObserver)
         manager.register(managerObserver)
         subscribeToAll()
+
+        scope = store.flowScoped { flow ->
+            flow.ifChanged { it.media.aggregate }
+                .collect { onChanged() }
+        }
     }
 
     /**
@@ -972,7 +976,7 @@ private class BrowserSessionsObserver(
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
-        MediaStateMachine.unregister(managerObserver)
+        scope?.cancel()
         manager.unregister(managerObserver)
         unsubscribeFromAll()
     }
@@ -993,11 +997,7 @@ private class BrowserSessionsObserver(
         session.unregister(observer)
     }
 
-    private val managerObserver = object : SessionManager.Observer, MediaStateMachine.Observer {
-        override fun onStateChanged(state: MediaState) {
-            onChanged()
-        }
-
+    private val managerObserver = object : SessionManager.Observer {
         override fun onSessionAdded(session: Session) {
             subscribeTo(session)
             onChanged()
