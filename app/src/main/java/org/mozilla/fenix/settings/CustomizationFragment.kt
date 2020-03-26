@@ -8,9 +8,11 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.CheckBoxPreference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -50,7 +52,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
 
     private fun setupHomeScreen() {
         val displayTips = getPreferenceKey(R.string.pref_key_display_tips)
-        val displayTipsPreference = requireNotNull(findPreference<CheckBoxPreference>(displayTips))
+        val displayTipsPreference = requireNotNull(findPreference<SwitchPreference>(displayTips))
 
         displayTipsPreference.isChecked = requireContext().settings().shouldDisplayTips()
         displayTipsPreference.setOnPreferenceClickListener {

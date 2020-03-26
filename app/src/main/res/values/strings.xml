@@ -844,26 +844,33 @@
     <string name="tip_whats_new_header">What’s new</string>
     <!-- text for whats new tip description -->
     <string name="tip_whats_new_description">We’ve added: animations, tip cards, and much more!</string>
-    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <!-- text for the whats new button in a tip -->
     <string name="tip_whats_new_button">View changes</string>
-    <!-- text for the whats new tip header -->
+    <!-- text for the default browser tip header -->
     <string name="tip_default_browser_header">Default to fast</string>
-    <!-- text for whats new tip description -->
+    <!-- text for default browser tip description -->
     <string name="tip_default_browser_description">Get the most out of %s by setting it as your default browser.</string>
-    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <!-- text for open default browser settings tip button -->
     <string name="tip_default_browser_button">Open default browser settings</string>
     <!-- text for the whats new tip header -->
     <string name="tip_fenix_moving_header">%s is moving</string>
     <!-- text for whats new tip description -->
     <string name="tip_fenix_moving_description">%s is moving to Firefox Nightly. Download to continue receiving updates.</string>
-    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
+    <!-- text for the fenix moving tip button -->
     <string name="tip_fenix_moving_button">Download Firefox Nightly</string>
-    <!-- text for the whats new tip header -->
+    <!-- text for the open links in a private tab tip header -->
     <string name="tip_always_private_tab_header">Open links privately</string>
-    <!-- text for whats new tip description -->
+    <!-- text for the open links in a private tab tip description -->
     <string name="tip_always_private_tab_description">With %s, you can open all of your external links privately, letting you browse without worry.</string>
-    <!-- text for underlined clickable link that is part of "what's new" tip card description that links to the release notes -->
-    <string name="tip_always_private_tab_buton">Always open links in private mode</string>
+    <!-- text for the open links in a private tab switch -->
+    <string name="tip_always_private_tab_button">Always open links in private mode</string>
+    <!-- text for the hide tips tip header -->
+    <string name="tip_hide_tips_header">Hide homescreen tips</string>
+    <!-- text for the hide tips tip description -->
+    <string name="tip_hide_tips_description">Don’t want to see tips anymore? Disable them below.</string>
+    <!-- text for the hide tips switch -->
+    <string name="tip_hide_tips_button">Show tips on the homescreen</string>
+
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message

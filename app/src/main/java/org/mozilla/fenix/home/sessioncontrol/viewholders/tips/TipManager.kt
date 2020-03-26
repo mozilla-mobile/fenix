@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import org.mozilla.fenix.BrowserDirection
@@ -27,7 +26,7 @@ enum class TipPriority {
 
 enum class Type {
     BUTTON,
-    SWITCH
+    SWITCH // *Must* include a pref key
 }
 
 open class Tip(
@@ -70,16 +69,15 @@ class TipManager(val context: Context) {
         }
 
     private val openLinksInPrivateBrowsingTip =
-        // TODO: Perhaps we should have a toggle here?
         Tip(
             icon = R.drawable.ic_private_browsing,
             title = R.string.tip_always_private_tab_header,
             description = R.string.tip_always_private_tab_description,
-            button = R.string.tip_always_private_tab_buton,
+            button = R.string.preferences_open_links_in_a_private_tab,
             preferenceKey = R.string.pref_key_open_links_in_a_private_tab,
             priority = TipPriority.LOW,
             type = Type.SWITCH
-        ) { context.settings().openLinksInAPrivateTab = true }
+        ) { }
 
     private val whatsNewTip =
         Tip(
@@ -99,20 +97,14 @@ class TipManager(val context: Context) {
         }
     private val hideTipsTip =
         Tip(
-            icon = R.drawable.ic_whats_new,
-            title = R.string.tip_whats_new_header,
-            description = R.string.tip_whats_new_description,
-            button = R.string.tip_whats_new_button,
-            priority = TipPriority.MEDIUM
-        ) {
-            (context.asActivity() as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
-                newTab = true,
-                from = BrowserDirection.FromHome
-            )
-
-            WhatsNew.userViewedWhatsNew(context)
-        }
+            icon = R.drawable.ic_info,
+            title = R.string.tip_hide_tips_header,
+            description = R.string.tip_hide_tips_description,
+            button = R.string.preference_display_tips,
+            priority = TipPriority.LOW,
+            type = Type.SWITCH,
+            preferenceKey = R.string.pref_key_display_tips
+        ) { }
 
     private val fenixMovingTip =
         Tip(
@@ -123,20 +115,19 @@ class TipManager(val context: Context) {
             priority = TipPriority.HIGH
         ) {
             (context.asActivity() as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
+                searchTermOrURL = SupportUtils.FIREFOX_BETA_PLAY_STORE_URL,
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
         }
 
-    init { populateTipList() }
+    init { forceAddAllTips() }
 
     // Returns a tip, critical message, or nothing if there are no tips available
     fun getTipOrCriticalMessage(): List<Tip> {
         if (tipList.isEmpty() || !context.settings().shouldDisplayTips()) { return listOf() }
 
         tipList.forEach {
-            Log.d("Sawyer", "element: $it")
             if (it.priority == TipPriority.HIGH) { return listOf(it) }
         }
 
@@ -147,7 +138,8 @@ class TipManager(val context: Context) {
         return listOf(tipList.random())
     }
 
-    fun getAllTips(): List<Tip> = tipList
+    fun getAllTips(): List<Tip> =
+        if (context.settings().shouldDisplayTips()) { tipList } else { listOf() }
 
     // In an ideal world we could populate tips from a server
     private fun populateTipList() {
@@ -159,6 +151,24 @@ class TipManager(val context: Context) {
             tipList.add(whatsNewTip)
         }
 
-        tipList.add(openLinksInPrivateBrowsingTip)
+        tipList.addAll(
+            listOf(
+                openLinksInPrivateBrowsingTip,
+                hideTipsTip
+            )
+        )
+    }
+
+    // Helper function for testing & demoing
+    private fun forceAddAllTips() {
+        tipList.addAll(
+            listOf(
+                defaultBrowserTip,
+                whatsNewTip,
+                openLinksInPrivateBrowsingTip,
+                hideTipsTip,
+                fenixMovingTip
+            )
+        )
     }
 }

@@ -27,11 +27,11 @@ class TipSwitchViewHolder(
             val preferenceKey = context.getString(tip.preferenceKey!!)
 
             tip_header_text.text = view.context.getString(tip.title, appName)
+            tip_header_text.setOnboardingIcon(tip.icon, tip.shouldColorIcon)
+
             tip_description_text.text = view.context.getString(tip.description, appName)
 
             tip_switch_description.text = view.context.getString(tip.button)
-
-            tip_header_text.setOnboardingIcon(tip.icon, tip.shouldColorIcon)
 
             tip_switch.isChecked = context.settings().preferences.getBoolean(preferenceKey, false)
 

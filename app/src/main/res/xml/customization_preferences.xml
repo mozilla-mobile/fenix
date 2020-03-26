@@ -47,8 +47,8 @@
         android:title="@string/preferences_home_screen"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="false">
-        <CheckBoxPreference
-            android:layout="@layout/checkbox_left_preference"
+        <SwitchPreference
+            app:iconSpaceReserved="false"
             android:key="@string/pref_key_display_tips"
             android:title="@string/preference_display_tips" />
     </androidx.preference.PreferenceCategory>
