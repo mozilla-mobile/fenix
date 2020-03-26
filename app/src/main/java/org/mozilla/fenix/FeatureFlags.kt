@@ -8,7 +8,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    const val pullToRefreshEnabled = false
+    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
 
     /**
      * Integration of media features provided by `feature-media` component:
