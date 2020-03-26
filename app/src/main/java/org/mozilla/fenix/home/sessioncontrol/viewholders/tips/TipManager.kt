@@ -25,13 +25,20 @@ enum class TipPriority {
     LOW
 }
 
+enum class Type {
+    BUTTON,
+    SWITCH
+}
+
 open class Tip(
     @DrawableRes val icon: Int,
     @StringRes val title: Int,
     @StringRes val description: Int,
     @StringRes val button: Int,
+    @StringRes val preferenceKey: Int? = null,
     val shouldColorIcon: Boolean = true,
     val priority: TipPriority,
+    val type: Type = Type.BUTTON,
     val action: () -> Unit
 )
 
@@ -69,7 +76,9 @@ class TipManager(val context: Context) {
             title = R.string.tip_always_private_tab_header,
             description = R.string.tip_always_private_tab_description,
             button = R.string.tip_always_private_tab_buton,
-            priority = TipPriority.LOW
+            preferenceKey = R.string.pref_key_open_links_in_a_private_tab,
+            priority = TipPriority.LOW,
+            type = Type.SWITCH
         ) { context.settings().openLinksInAPrivateTab = true }
 
     private val whatsNewTip =
@@ -85,6 +94,24 @@ class TipManager(val context: Context) {
                 newTab = true,
                 from = BrowserDirection.FromHome
             )
+
+            WhatsNew.userViewedWhatsNew(context)
+        }
+    private val hideTipsTip =
+        Tip(
+            icon = R.drawable.ic_whats_new,
+            title = R.string.tip_whats_new_header,
+            description = R.string.tip_whats_new_description,
+            button = R.string.tip_whats_new_button,
+            priority = TipPriority.MEDIUM
+        ) {
+            (context.asActivity() as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
+                newTab = true,
+                from = BrowserDirection.FromHome
+            )
+
+            WhatsNew.userViewedWhatsNew(context)
         }
 
     private val fenixMovingTip =
@@ -124,7 +151,7 @@ class TipManager(val context: Context) {
 
     // In an ideal world we could populate tips from a server
     private fun populateTipList() {
-        if (context.settings().isDefaultBrowser()) {
+        if (!context.settings().isDefaultBrowser()) {
             tipList.add(defaultBrowserTip)
         }
 

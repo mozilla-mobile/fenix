@@ -205,7 +205,7 @@ class HomeFragment : Fragment() {
                     mode = currentMode.getCurrentMode(),
                     tabs = emptyList(),
                     topSites = requireComponents.core.topSiteStorage.cachedTopSites,
-                    tips = TipManager(requireContext()).getTipOrCriticalMessage()
+                    tips = TipManager(requireContext()).getAllTips()
                 )
             )
         }

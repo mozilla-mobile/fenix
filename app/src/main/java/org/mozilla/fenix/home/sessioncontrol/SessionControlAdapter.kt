@@ -41,10 +41,12 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTo
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Tip
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.TipSwitchViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.TipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
+    data class TipSwitchitem(val tip: Tip) : AdapterItem(TipSwitchViewHolder.LAYOUT_ID)
     data class TipItem(val tip: Tip) : AdapterItem(TipViewHolder.LAYOUT_ID)
     data class TabHeader(val isPrivate: Boolean, val hasTabs: Boolean) : AdapterItem(TabHeaderViewHolder.LAYOUT_ID)
     data class TabItem(val tab: Tab) : AdapterItem(TabViewHolder.LAYOUT_ID) {
@@ -164,6 +166,7 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
+            TipSwitchViewHolder.LAYOUT_ID -> TipSwitchViewHolder(view, interactor)
             TipViewHolder.LAYOUT_ID -> TipViewHolder(view, interactor)
             TabHeaderViewHolder.LAYOUT_ID -> TabHeaderViewHolder(view, interactor)
             TabViewHolder.LAYOUT_ID -> TabViewHolder(view, interactor)
@@ -196,6 +199,10 @@ class SessionControlAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
+            is TipSwitchViewHolder -> {
+                val tipSwitchitem = item as AdapterItem.TipSwitchitem
+                holder.bind(tipSwitchitem.tip)
+            }
             is TipViewHolder -> {
                 val tipItem = item as AdapterItem.TipItem
                 holder.bind(tipItem.tip)

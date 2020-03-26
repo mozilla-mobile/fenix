@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?><!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding_card"
+    style="@style/OnboardingCardLight"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tip_header_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:text="@string/onboarding_tracking_protection_header"
+        android:textAppearance="@style/HeaderTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:drawableStart="@drawable/ic_onboarding_tracking_protection" />
+
+    <ImageButton
+        android:id="@+id/tip_close"
+        app:srcCompat="@drawable/ic_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/create_collection_close"
+        android:layout_width="12dp"
+        android:layout_height="12dp" />
+
+    <TextView
+        android:id="@+id/tip_description_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/Body14TextStyle"
+        app:layout_constraintStart_toStartOf="@id/tip_header_text"
+        app:layout_constraintTop_toBottomOf="@id/tip_header_text"
+        tools:text="Description of the feature" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/neutralFaded"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tip_description_text" />
+
+    <TextView
+        android:id="@+id/tip_switch_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/Body14TextStyle"
+        app:layout_constraintStart_toStartOf="@id/tip_header_text"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintEnd_toStartOf="@id/tip_switch"
+        tools:text="Switch explanation" />
+
+    <Switch
+        android:id="@+id/tip_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tip_switch_description"
+        app:layout_constraintBottom_toBottomOf="@id/tip_switch_description"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

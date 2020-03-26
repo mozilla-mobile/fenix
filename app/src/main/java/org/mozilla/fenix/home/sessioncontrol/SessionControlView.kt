@@ -23,6 +23,7 @@ import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Tip
+import org.mozilla.fenix.home.sessioncontrol.viewholders.tips.Type
 
 val noTabMessage = AdapterItem.NoContentMessageWithAction(
     R.string.no_open_tabs_header_2,
@@ -45,7 +46,12 @@ private fun normalModeAdapterItems(
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
 
-    tips?.forEach { items.add(AdapterItem.TipItem(it)) }
+    tips?.forEach {
+        when (it.type) {
+            Type.BUTTON -> { items.add(AdapterItem.TipItem(it)) }
+            Type.SWITCH -> { items.add(AdapterItem.TipSwitchitem(it)) }
+        }
+    }
 
     if (topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSiteList(topSites))
