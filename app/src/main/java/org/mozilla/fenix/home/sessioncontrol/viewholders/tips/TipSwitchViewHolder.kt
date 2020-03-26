@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.tip_item.view.tip_description_text
 import kotlinx.android.synthetic.main.tip_item.view.tip_header_text
 import kotlinx.android.synthetic.main.tip_switch_item.view.*
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.setOnboardingIcon
@@ -48,8 +47,6 @@ class TipSwitchViewHolder(
 
                 else -> {
                     tip_close.visibility = View.VISIBLE
-
-                    tip_close.increaseTapArea(36)
 
                     tip_close.setOnClickListener {
                         interactor.onCloseTip(tip)

@@ -124,16 +124,13 @@ class TipManager(val context: Context) {
     init { forceAddAllTips() }
 
     // Returns a tip, critical message, or nothing if there are no tips available
+    @Suppress("ReturnCount")
     fun getTipOrCriticalMessage(): List<Tip> {
         if (tipList.isEmpty() || !context.settings().shouldDisplayTips()) { return listOf() }
 
-        tipList.forEach {
-            if (it.priority == TipPriority.HIGH) { return listOf(it) }
-        }
+        tipList.forEach { if (it.priority == TipPriority.HIGH) { return listOf(it) } }
 
-        tipList.forEach {
-            if (it.priority == TipPriority.MEDIUM) { return listOf(it) }
-        }
+        tipList.forEach { if (it.priority == TipPriority.MEDIUM) { return listOf(it) } }
 
         return listOf(tipList.random())
     }

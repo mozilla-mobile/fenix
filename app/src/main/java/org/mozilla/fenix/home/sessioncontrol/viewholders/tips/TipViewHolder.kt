@@ -4,7 +4,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.tip_item.view.*
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.setOnboardingIcon
 
@@ -37,8 +36,6 @@ class TipViewHolder(
 
                 else -> {
                     tip_close.visibility = View.VISIBLE
-
-                    tip_close.increaseTapArea(36)
 
                     tip_close.setOnClickListener {
                         interactor.onCloseTip(tip)
