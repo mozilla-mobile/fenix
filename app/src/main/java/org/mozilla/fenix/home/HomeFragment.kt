@@ -387,7 +387,8 @@ class HomeFragment : Fragment() {
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
                 tabs = getListOfSessions().toTabs(),
-                topSites = components.core.topSiteStorage.cachedTopSites
+                topSites = components.core.topSiteStorage.cachedTopSites,
+                tips = TipManager(requireContext()).getAllTips()
             )
         )
 

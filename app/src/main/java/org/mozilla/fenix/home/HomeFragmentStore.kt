@@ -92,7 +92,8 @@ private fun homeFragmentStateReducer(
             collections = action.collections,
             mode = action.mode,
             tabs = action.tabs,
-            topSites = action.topSites
+            topSites = action.topSites,
+            tips = action.tips
         )
         is HomeFragmentAction.CollectionExpanded -> {
             val newExpandedCollection = state.expandedCollections.toMutableSet()
