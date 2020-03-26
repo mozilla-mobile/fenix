@@ -1,0 +1,10 @@
+{
+	"version": 2,
+	"parameters": {
+		"existing_tasks": {
+			"signing-debug": "Qr7UkICXQK-k9vM739dLgg",
+			"build-docker-image-ui-tests": "ZC5xu9Q_TqaniuRKSCBkMw",
+			"signing-android-test-debug": "bWf5Buk1RC-JQfI8wmKz6Q"
+		}
+	}
+}
