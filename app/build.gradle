@@ -518,6 +518,8 @@ dependencies {
     implementation Deps.google_material
 
     implementation Deps.google_flexbox
+    implementation 'com.android.volley:volley:1.1.1'
+    compile 'com.google.code.gson:gson:2.8.2'
 
     implementation Deps.lottie
 
