@@ -37,7 +37,7 @@
           inside their source set.
         -->
         <activity-alias
-            android:name="${applicationId}.App"
+            android:name=".App"
             android:targetActivity=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
