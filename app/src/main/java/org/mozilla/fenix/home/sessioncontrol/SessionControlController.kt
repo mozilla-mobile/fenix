@@ -370,7 +370,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleCloseTip(tip: Tip) {
-        store.dispatch(HomeFragmentAction.RemoveTip(tip))
+        fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip))
     }
 
     private fun showCollectionCreationFragment(
