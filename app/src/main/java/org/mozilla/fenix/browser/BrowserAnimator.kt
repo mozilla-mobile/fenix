@@ -131,13 +131,9 @@ class BrowserAnimator(
         unwrappedEngineView?.asView()?.context.let {
             viewLifeCycleScope?.launch {
                 // isAdded check is necessary because of a bug in viewLifecycleOwner. See AC#3828
-                if (!fragment.isAdded()) {
-                    return@launch
-                }
+                if (!fragment.isAdded()) { return@launch }
                 unwrappedEngineView?.captureThumbnail { bitmap ->
-                    if (!fragment.isAdded()) {
-                        return@captureThumbnail
-                    }
+                    if (!fragment.isAdded()) { return@captureThumbnail }
 
                     unwrappedSwipeRefresh?.apply {
                         alpha = 0f
