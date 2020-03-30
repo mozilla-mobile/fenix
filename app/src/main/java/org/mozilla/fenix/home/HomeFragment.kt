@@ -80,6 +80,8 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserAnimator
+import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
@@ -163,8 +165,6 @@ class HomeFragment : Fragment() {
     private lateinit var sessionControlInteractor: SessionControlInteractor
     private var sessionControlView: SessionControlView? = null
     private lateinit var currentMode: CurrentMode
-    private val navOptions by lazy { NavOptions.Builder() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,9 +249,9 @@ class HomeFragment : Fragment() {
 
         if (!shouldUseBottomToolbar) {
             view.toolbarLayout.layoutParams = CoordinatorLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-            )
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT
+                )
                 .apply {
                     gravity = Gravity.TOP
                 }
@@ -594,19 +594,7 @@ class HomeFragment : Fragment() {
             sessionId = null
         )
 
-        nav(R.id.homeFragment, directions, getToolbarNavOptions())
-    }
-
-    private fun getToolbarNavOptions(): NavOptions {
-        if (!requireContext().settings().shouldUseBottomToolbar) {
-            navOptions.setEnterAnim(R.anim.fade_in)
-            navOptions.setExitAnim(R.anim.fade_out)
-        } else {
-            navOptions.setEnterAnim(R.anim.fade_in_up)
-            navOptions.setExitAnim(R.anim.fade_out_down)
-        }
-
-        return navOptions.build()
+        nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
     }
 
     private fun openSettingsScreen() {
