@@ -8,7 +8,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -133,8 +132,7 @@ class DefaultBrowserToolbarController(
                 ToolbarMenu.Item.AddToHomeScreen -> activity.settings().installPwaOpened = true
                 is ToolbarMenu.Item.ReaderMode -> activity.settings().readerModeOpened = true
                 ToolbarMenu.Item.OpenInApp -> activity.settings().openInAppOpened = true
-                else -> {
-                }
+                else -> { }
             }
         }
     }
