@@ -96,7 +96,7 @@ class UriOpenedObserver(
                             // JSON Stuff
                             val root = JSONObject(my_string)
                             val results = root.getJSONArray("items")
-                            for (i in 0 until (results.length()-1)) {
+                            for (i in 0 until 10) {
                                 val urlTitle = JSONObject(results[i].toString()).get("link").toString()
                                 Log.d("HELLO", urlTitle)
                                 context.components.useCases.tabsUseCases.addTab.invoke(urlTitle, false)
