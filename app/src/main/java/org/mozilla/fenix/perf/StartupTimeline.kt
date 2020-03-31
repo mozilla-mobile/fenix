@@ -30,6 +30,8 @@ import org.mozilla.fenix.perf.StartupTimelineStateMachine.StartupState
 object StartupTimeline {
 
     private var state: StartupState = StartupState.Cold(StartupDestination.UNKNOWN)
+
+    val homeActivityLifecycleObserver = StartupHomeActivityLifecycleObserver()
     private val reportFullyDrawn = StartupReportFullyDrawn()
 
     fun onActivityCreateEndIntentReceiver() {
@@ -96,3 +98,20 @@ object StartupTimeline {
 }
 
 typealias MeasuredFunction<R> = () -> R
+
+/**
+ * A [LifecycleObserver] for [HomeActivity] focused on startup performance measurement.
+ */
+class StartupHomeActivityLifecycleObserver : LifecycleObserver {
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        // Startup metrics placed in the Activity should be re-recorded each time the Activity
+        // is started so we need to clear the ping lifetime by submitting once per each startup.
+        // It's less complex to add it here rather than the visual completeness task manager.
+        //
+        // N.B.: this submission location may need to be changed if we add metrics outside of the
+        // HomeActivity startup path (e.g. if the user goes directly to a separate activity and
+        // closes the app, they will never hit this) to appropriately adjust for the ping lifetimes.
+        Pings.startupTimeline.submit()
+    }
+}
