@@ -10,7 +10,9 @@ import mozilla.components.concept.storage.LoginsStorage
 import mozilla.components.lib.crash.handler.CrashHandlerService
 import mozilla.components.service.sync.logins.GeckoLoginStorageDelegate
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.StartupTimeline.geckoInitMainThreadInitial
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
@@ -55,7 +57,9 @@ object GeckoProvider {
             runtimeSettings.fontSizeFactor = fontSize
         }
 
-        val geckoRuntime = GeckoRuntime.create(context, runtimeSettings)
+        val geckoRuntime = StartupTimeline.measure(geckoInitMainThreadInitial) {
+            GeckoRuntime.create(context, runtimeSettings)
+        }
         // As a quick fix for #8967 we are conflating "should autofill" with "should save logins"
         val loginStorageDelegate = GeckoLoginStorageDelegate(
             storage,
