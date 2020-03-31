@@ -5,6 +5,11 @@
 package org.mozilla.fenix.perf
 
 import androidx.annotation.UiThread
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import mozilla.components.service.glean.private.TimespanMetricType
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.TopSiteItemViewHolder
 import org.mozilla.fenix.perf.StartupTimelineStateMachine.StartupActivity
@@ -44,4 +49,50 @@ object StartupTimeline {
     private fun advanceState(startingActivity: StartupActivity) {
         state = StartupTimelineStateMachine.getNextState(state, startingActivity)
     }
+
+    /**
+     * Measures the given [measuredFunction] under the given [metric].
+     *
+     * For debug purposes, measured values may be logged to logcat or seen in the Glean Debug View by:
+     * - Enabling telemetry if it's not already enabled
+     * - Following the steps in the Glean docs:
+     *   https://mozilla.github.io/glean/book/user/debugging/android.html
+     *
+     * We prefer to aggregate all measurements through this class, rather than using the metrics
+     * directly, in order to:
+     * - Centralize startup performance analysis in this class
+     * - Be able to quickly find all startup measurements with tooling (i.e. "find usages")
+     * - Easily modify the code that runs for all measurements
+     *
+     * We use Glean for all of our measurements to avoid reimplementing non-trivial measurement code
+     * that already exists and to ensure the values reported by telemetry are the same that are
+     * extracted by our perf test CI.
+     *
+     * Example usage:
+     * ```
+     * import ...Telemetry.geckoRuntimeCreate
+     *
+     * val runtime = StartupTimeline.measure(geckoRuntimeCreate) {
+     *     GeckoRuntime.create()
+     * }
+     * ```
+     *
+     * @return the return value of [measuredFunction].
+     */
+    @Suppress("TooGenericExceptionCaught") // we need to catch everything to cancel correctly.
+    inline fun <R> measure(metric: TimespanMetricType, measuredFunction: MeasuredFunction<R>): R {
+        metric.start()
+
+        val returnValue = try {
+            measuredFunction()
+        } catch (e: Exception) {
+            metric.cancel()
+            throw e
+        }
+
+        metric.stop()
+        return returnValue
+    }
 }
+
+typealias MeasuredFunction<R> = () -> R
