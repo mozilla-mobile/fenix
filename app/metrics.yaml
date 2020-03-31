@@ -1856,3 +1856,21 @@ installation:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
+
+startup.timeline:
+  gecko_init_main_thread_initial:
+    send_in_pings:
+      - startup-timeline
+    type: timespan
+    time_unit: nanosecond
+    description: >
+      The initial duration Gecko initialization blocks the main thread before
+      continuing on a background thread.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/8803
+    data_reviews:
+      - TODO
+    notification_emails:
+      - perf-android-fe@mozilla.com
+      - esmyth@mozilla.com
+    expires: "2020-09-01"
