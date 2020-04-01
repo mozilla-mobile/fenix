@@ -26,6 +26,7 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -43,6 +44,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.copy
+import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.paste
+import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.paste_and_go
 import kotlinx.android.synthetic.main.fragment_home.homeAppBar
 import kotlinx.android.synthetic.main.fragment_home.privateBrowsingButton
 import kotlinx.android.synthetic.main.fragment_home.search_engine_icon
@@ -75,15 +79,18 @@ import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint.ACTION
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -337,6 +344,64 @@ class HomeFragment : Fragment() {
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
+        view.toolbar_wrapper.setOnLongClickListener {
+            val clipboard = view.context.components.clipboardHandler
+            val customView = LayoutInflater.from(view.context)
+                .inflate(R.layout.browser_toolbar_popup_window, null)
+            val popupWindow = PopupWindow(
+                customView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                view.context.resources.getDimensionPixelSize(R.dimen.context_menu_height),
+                true
+            )
+
+            val selectedSession = view.context.components.core.sessionManager.selectedSession
+
+            popupWindow.elevation =
+                view.context.resources.getDimension(R.dimen.mozac_browser_menu_elevation)
+
+            customView.copy.isVisible = false
+            customView.paste.isVisible = !clipboard.text.isNullOrEmpty()
+            customView.paste_and_go.isVisible =
+                !clipboard.text.isNullOrEmpty()
+
+            customView.copy.setOnClickListener {
+                popupWindow.dismiss()
+                clipboard.text = selectedSession?.url
+
+                FenixSnackbar.makeWithToolbarPadding(
+                        view.rootView.findViewById(android.R.id.content),
+                        Snackbar.LENGTH_SHORT
+                    )
+                    .setText(view.context.getString(R.string.browser_toolbar_url_copied_to_clipboard_snackbar))
+                    .show()
+            }
+
+            customView.paste.setOnClickListener {
+                popupWindow.dismiss()
+                val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
+                    sessionId = null,
+                    pastedText = clipboard.text
+                )
+                nav(R.id.homeFragment, directions)
+            }
+
+            customView.paste_and_go.setOnClickListener {
+                popupWindow.dismiss()
+
+                handleToolbarPasteAndGo(clipboard.text!!)
+            }
+
+            popupWindow.showAsDropDown(
+                view.toolbarLayout,
+                view.context.resources.getDimensionPixelSize(R.dimen.context_menu_x_offset),
+                0,
+                Gravity.START
+            )
+
+            true
+        }
+
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
@@ -579,6 +644,33 @@ class HomeFragment : Fragment() {
     private fun hideOnboardingAndOpenSearch() {
         hideOnboardingIfNeeded()
         navigateToSearch()
+    }
+
+    private fun handleToolbarPasteAndGo(url: String) {
+        val context = requireContext()
+
+        (context as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = url,
+            newTab = true,
+            from = BrowserDirection.FromHome,
+            engine = context.components.search.provider.getDefaultEngine(context)
+        )
+
+        val event = if (url.isUrl()) {
+            Event.EnteredUrl(false)
+        } else {
+            val searchAccessPoint = ACTION
+
+            searchAccessPoint.let { sap ->
+                MetricsUtils.createSearchEvent(
+                    context.components.search.provider.getDefaultEngine(context),
+                    context,
+                    sap
+                )
+            }
+        }
+
+        event?.let { requireContext().metrics.track(it) }
     }
 
     private fun navigateToSearch() {
