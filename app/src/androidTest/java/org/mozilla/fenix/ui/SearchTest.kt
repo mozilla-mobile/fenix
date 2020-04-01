@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.ui
 
-import org.junit.Ignore
+import androidx.test.filters.RequiresDevice
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -35,8 +35,8 @@ class SearchTest {
         }
     }
 
-    @Ignore("This test cannot run on virtual devices due to camera permissions being required")
     @Test
+    @RequiresDevice
     fun scanButtonTest() {
         homeScreen {
         }.openSearch {
