@@ -63,7 +63,6 @@ class TrackingProtectionOverlay(
         ).apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             isOutsideTouchable = true
-            isFocusable = true
             elevation = res.getDimension(R.dimen.mozac_browser_menu_elevation)
             animationStyle = R.style.Mozac_Browser_Menu_Animation_OverflowMenuBottom
         }
