@@ -27,6 +27,7 @@ object SupportUtils {
     const val FIREFOX_BETA_PLAY_STORE_URL = "market://details?id=org.mozilla.firefox_beta"
     const val FIREFOX_NIGHTLY_PLAY_STORE_URL = "market://details?id=org.mozilla.fennec_aurora"
     const val YOUTUBE_URL = "https://www.youtube.com/"
+    const val ADD_SITE_MOCK_URL = "add_site_mock_url"
 
     enum class SumoTopic(internal val topicStr: String) {
         FENIX_MOVING("sync-delist"),

@@ -7,6 +7,7 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.topsites
 import android.content.Context
 import android.view.View
 import kotlinx.android.synthetic.main.top_site_item.*
+import android.widget.ImageView.ScaleType
 import kotlinx.android.synthetic.main.top_site_item.view.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
@@ -51,6 +52,11 @@ class TopSiteItemViewHolder(
         when (topSite.url) {
             SupportUtils.POCKET_TRENDING_URL -> {
                 favicon_image.setImageDrawable(itemView.context.getDrawable(R.drawable.ic_pocket))
+            }
+            SupportUtils.ADD_SITE_MOCK_URL -> {
+                favicon_image.setImageDrawable(itemView.context.getDrawable(R.drawable.ic_new))
+                favicon_image.scaleType = ScaleType.CENTER_INSIDE
+                top_site_title.text = itemView.context.getString(R.string.add_site_item_title)
             }
             else -> {
                 itemView.context.components.core.icons.loadIntoView(favicon_image, topSite.url)

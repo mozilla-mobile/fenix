@@ -346,6 +346,15 @@ class DefaultSessionControlController(
 
     override fun handleSelectTopSite(url: String, isDefault: Boolean) {
         invokePendingDeleteJobs()
+        when (url) {
+            SupportUtils.ADD_SITE_MOCK_URL -> {
+                return
+            }
+            SupportUtils.POCKET_TRENDING_URL -> {
+                metrics.track(Event.PocketTopSiteClicked)
+            }
+        }
+
         metrics.track(Event.TopSiteOpenInNewTab)
         if (isDefault) { metrics.track(Event.TopSiteOpenDefault) }
         if (url == SupportUtils.POCKET_TRENDING_URL) { metrics.track(Event.PocketTopSiteClicked) }

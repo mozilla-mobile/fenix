@@ -22,6 +22,8 @@ import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.TopSiteItem
+import org.mozilla.fenix.settings.SupportUtils.ADD_SITE_MOCK_URL
 
 val noTabMessage = AdapterItem.NoContentMessageWithAction(
     R.string.no_open_tabs_header_2,
@@ -52,7 +54,15 @@ private fun normalModeAdapterItems(
 
     if (topSites.isNotEmpty()) {
         items.add(AdapterItem.TopSiteHeader)
-        items.add(AdapterItem.TopSiteList(topSites))
+        val topSitesList = topSites + listOf(
+            TopSiteItem(
+                -1,
+                "",
+                ADD_SITE_MOCK_URL,
+                true
+            )
+        )
+        items.add(AdapterItem.TopSiteList(topSitesList))
     }
 
     val useNewTabTray = context.settings().useNewTabTray
