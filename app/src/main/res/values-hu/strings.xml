@@ -65,7 +65,7 @@
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Könyvjelző szerkesztése</string>
     <!-- Browser menu button that opens the addon manager -->
-    <string name="browser_menu_addon_manager">Kiegészítőkezelő</string>
+    <string name="browser_menu_add_ons">Kiegészítők</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nincsenek kiegészítők</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -75,7 +75,7 @@
     <!-- Browser menu button that opens the settings menu -->
     <string name="browser_menu_settings">Beállítások</string>
     <!-- Browser menu button that opens a user's library -->
-    <string name="browser_menu_your_library">Az Ön könyvtára</string>
+    <string name="browser_menu_library">Könyvtár</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Asztali oldal</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
@@ -89,7 +89,7 @@
     <!-- Browser menu button that creates a new tab -->
     <string name="browser_menu_new_tab">Új lap</string>
     <!-- Browser menu button that saves the current tab to a collection -->
-    <string name="browser_menu_save_to_collection">Gyűjteménybe mentés</string>
+    <string name="browser_menu_save_to_collection_2">Gyűjteménybe mentés</string>
     <!-- Browser menu button that opens a dialog to report issues with the current site -->
     <string name="browser_menu_report_issue">Hibás webhely bejelentése</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -155,6 +155,9 @@
     <!-- Text preview for larger sized widgets -->
     <string name="search_widget_text_long">Keresés a weben</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Hangalapú keresés</string>
+
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Beállítások</string>
@@ -203,6 +206,12 @@
     <string name="preferences_add_private_browsing_shortcut">Privát böngészési parancsikon hozzáadása</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Akadálymentesítés</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Egyéni Firefox-fiókkiszolgáló</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Egyéni Sync kiszolgáló</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">A Firefox-fiók/Sync-kiszolgáló módosítva. Kilépés az alkalmazásból a változások érvényesítéséhez…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Fiók</string>
     <!-- Preference shown on banner to sign into account -->
@@ -462,6 +471,14 @@
     <string name="history_delete_all_dialog">Biztos, hogy törli az előzményeket?</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Törlés</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">Másolás</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">Megosztás</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">Megnyitás új lapon</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">Megnyitás privát lapon</string>
     <!-- Text for the button to delete a single history item -->
     <string name="history_delete_item">Törlés</string>
     <!-- History multi select title in app bar
@@ -608,19 +625,16 @@
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Ki</string>
 
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked">Videó és hang blokkolva</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
-    <string name="preference_option_autoplay_allowed">Videó és hang engedélyezve</string>
-
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Hang és videó engedélyezése</string>
-    <!-- Label that indicates that video and audio autoplay is only allowed over WIFI -->
-    <string name="preference_option_autoplay_allowed_wifi_only">Hang és videó engedélyezése csak Wi-Fin</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Hang és videó blokkolása csak mobil-adatkapcsolaton</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">A hang és videó Wi-Fi-n lesz lejátszva</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
-    <string name="preference_option_autoplay_block_audio">Hang blokkolása</string>
+    <string name="preference_option_autoplay_block_audio2">Csak a hang blokkolása</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked2">Hang és videó blokkolása</string>
+    <string name="preference_option_autoplay_blocked3">Hang és videó blokkolása</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Be</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -911,6 +925,9 @@
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Olvassa el az adatvédelmi nyilatkozatunkat</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">Bezárás</string>
+
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Böngészés megkezdése</string>
 
@@ -1051,6 +1068,9 @@
 
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">A továbbfejlesztett követés elleni védelem ki van kapcsolva ezeken a webhelyeken</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Navigálás visszafelé</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">Az Ön jogai</string>
     <!-- About page link text to open open source licenses screen -->
@@ -1071,6 +1091,11 @@
     <string name="about_licensing_information">Licencinformációk</string>
     <!-- About page link text to open a screen with libraries that are used -->
     <string name="about_other_open_source_libraries">Az általunk használt programkönyvtárak</string>
+
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Hibakeresési menü: %1$d kattintás van hátra az engedélyezésig</string>
+    <string name="about_debug_menu_toast_done">Hibakeresési menü engedélyezve</string>
 
     <!-- Content description of the tab counter toolbar button when one tab is open -->
     <string name="tab_counter_content_description_one_tab">1 lap</string>

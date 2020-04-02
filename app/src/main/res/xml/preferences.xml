@@ -18,7 +18,8 @@
         android:key="@string/pref_key_account_category"
         android:title="@string/preferences_category_account"
         app:iconSpaceReserved="false"
-        app:isPreferenceVisible="false">
+        app:isPreferenceVisible="false"
+        android:layout="@layout/preference_cat_style" >
 
         <org.mozilla.fenix.settings.account.AccountPreference
             android:icon="@drawable/ic_account"
@@ -29,9 +30,24 @@
             android:key="@string/pref_key_account_auth_error"/>
     </androidx.preference.PreferenceCategory>
 
+    <androidx.preference.EditTextPreference
+        android:key="@string/pref_key_override_fxa_server"
+        android:title="@string/preferences_override_fxa_server"
+        android:inputType="textUri"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false"/>
+
+    <androidx.preference.EditTextPreference
+        android:key="@string/pref_key_override_sync_tokenserver"
+        android:title="@string/preferences_override_sync_tokenserver"
+        android:inputType="textUri"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false"/>
+
     <androidx.preference.PreferenceCategory
         android:title="@string/preferences_category_general"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_cat_style" >
         <androidx.preference.Preference
             android:icon="@drawable/ic_search"
             android:key="@string/pref_key_search_settings"
@@ -65,7 +81,8 @@
 
     <androidx.preference.PreferenceCategory
         android:title="@string/preferences_category_privacy_security"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_cat_style">
 
         <androidx.preference.Preference
             android:icon="@drawable/ic_private_browsing"
@@ -103,6 +120,18 @@
             android:key="@string/pref_key_open_links_in_external_app"
             android:title="@string/preferences_open_links_in_apps" />
 
+    </androidx.preference.PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preferences_category_advanced"
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_advanced"
+        android:layout="@layout/preference_cat_style">
+        <androidx.preference.Preference
+            android:icon="@drawable/mozac_ic_extensions_black"
+            android:key="@string/pref_key_addons"
+            android:title="@string/preferences_addons" />
+
         <androidx.preference.SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_info"
@@ -110,21 +139,6 @@
             android:title="@string/preference_leakcanary"
             app:isPreferenceVisible="@bool/IS_DEBUG" />
 
-    </androidx.preference.PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/preferences_category_advanced"
-        app:iconSpaceReserved="false"
-        android:key="@string/pref_key_advanced">
-        <androidx.preference.Preference
-            android:icon="@drawable/mozac_ic_extensions_black"
-            android:key="@string/pref_key_addons"
-            android:title="@string/preferences_addons" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/developer_tools_category"
-        app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:icon="@drawable/ic_energy"
             android:key="@string/pref_key_remote_debugging"
@@ -134,7 +148,8 @@
 
     <androidx.preference.PreferenceCategory
         android:title="@string/preferences_category_about"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_cat_style">
         <androidx.preference.Preference
             android:icon="@drawable/ic_bookmark_outline"
             android:key="@string/pref_key_rate"

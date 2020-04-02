@@ -15,7 +15,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.fragment_installed_add_on_details.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -51,7 +50,6 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
     override fun onStart() {
         super.onStart()
         scope = requireContext().components.core.store.flowScoped { flow ->
@@ -101,7 +99,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onSuccess = {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
-                            switch.setText(R.string.mozac_feature_addons_settings_on)
+                            switch.setText(R.string.mozac_feature_addons_enabled)
                             view.settings.isVisible = true
                             view.remove_add_on.isEnabled = true
                             this.addon = it
@@ -135,7 +133,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onSuccess = {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
-                            switch.setText(R.string.mozac_feature_addons_settings_off)
+                            switch.setText(R.string.mozac_feature_addons_disabled)
                             view.remove_add_on.isEnabled = true
                             this.addon = it
                             showSnackBar(
@@ -258,9 +256,9 @@ class InstalledAddonDetailsFragment : Fragment() {
 
     private fun Switch.setState(checked: Boolean) {
         val text = if (checked) {
-            R.string.mozac_feature_addons_settings_on
+            R.string.mozac_feature_addons_enabled
         } else {
-            R.string.mozac_feature_addons_settings_off
+            R.string.mozac_feature_addons_disabled
         }
         setText(text)
         isChecked = checked

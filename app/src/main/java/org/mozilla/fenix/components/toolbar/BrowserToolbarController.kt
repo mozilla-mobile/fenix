@@ -24,6 +24,7 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
+import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -37,6 +38,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 
@@ -70,7 +72,8 @@ class DefaultBrowserToolbarController(
     private val bookmarkTapped: (Session) -> Unit,
     private val scope: CoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage,
-    private val topSiteStorage: TopSiteStorage
+    private val topSiteStorage: TopSiteStorage,
+    private val sharedViewModel: SharedViewModel
 ) : BrowserToolbarController {
 
     private val currentSession
@@ -89,7 +92,7 @@ class DefaultBrowserToolbarController(
                 pastedText = text
             )
 
-            navController.nav(R.id.browserFragment, directions)
+            navController.nav(R.id.browserFragment, directions, getToolbarNavOptions(activity))
         }
     }
 
@@ -114,11 +117,12 @@ class DefaultBrowserToolbarController(
                 currentSession?.id
             )
 
-            navController.nav(R.id.browserFragment, directions)
+            navController.nav(R.id.browserFragment, directions, getToolbarNavOptions(activity))
         }
     }
 
     override fun handleTabCounterClick() {
+        sharedViewModel.shouldScrollToSelectedTab = true
         animateTabAndNavigateHome()
     }
 
@@ -128,7 +132,7 @@ class DefaultBrowserToolbarController(
                 ToolbarMenu.Item.AddToHomeScreen -> activity.settings().installPwaOpened = true
                 is ToolbarMenu.Item.ReaderMode -> activity.settings().readerModeOpened = true
                 ToolbarMenu.Item.OpenInApp -> activity.settings().openInAppOpened = true
-                else -> {}
+                else -> { }
             }
         }
     }
@@ -162,7 +166,7 @@ class DefaultBrowserToolbarController(
                         topSiteStorage.addTopSite(it.title, it.url)
                     }
                     MainScope().launch {
-                        FenixSnackbar.make(swipeRefresh, Snackbar.LENGTH_SHORT)
+                        FenixSnackbar.makeWithToolbarPadding(swipeRefresh, Snackbar.LENGTH_SHORT)
                             .setText(
                                 swipeRefresh.context.getString(R.string.snackbar_added_to_top_sites)
                             )

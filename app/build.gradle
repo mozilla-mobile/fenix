@@ -47,9 +47,10 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
+        buildConfigField "String", "AMO_COLLECTION", "\"7e8d6dc651b54ab385fb8791bf9dac\""
         manifestPlaceholders = [
                 "isRaptorEnabled": "false",
-                "deepLinkScheme": "fenix"
+                "deepLinkScheme": "fenix-dev"
         ]
     }
 
@@ -73,6 +74,13 @@ android {
             manifestPlaceholders.isRaptorEnabled = "true"
             applicationIdSuffix ".fenix.performancetest"
             debuggable true
+            manifestPlaceholders = [
+                // Since we configure this build to behave like a "fennec" flavored build, we need
+                // to set a shared user id for the manifest. The actual values does not matter.
+                // However we pick a unique value to not "clash" with other Fenix/Fennec builds
+                // installed on the device.
+                "sharedUserId": "org.mozilla.fenix.performancetest.sharedID"
+            ]
         }
         fenixNightly releaseTemplate >> {
             applicationIdSuffix ".fenix.nightly"
@@ -87,6 +95,7 @@ android {
         fenixProduction releaseTemplate >> {
             applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            manifestPlaceholders = ["deepLinkScheme": "fenix"]
         }
         fennecProduction releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -99,7 +108,8 @@ android {
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
-                    "sharedUserId": "org.mozilla.firefox.sharedID"
+                    "sharedUserId": "org.mozilla.firefox.sharedID",
+                    "deepLinkScheme": "fenix"
             ]
         }
         fennecBeta releaseTemplate >> {
@@ -113,7 +123,8 @@ android {
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
-                    "sharedUserId": "org.mozilla.firefox.sharedID"
+                    "sharedUserId": "org.mozilla.firefox.sharedID",
+                    "deepLinkScheme": "fenix-beta"
             ]
         }
         fennecNightly releaseTemplate >> {
@@ -127,7 +138,8 @@ android {
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
-                    "sharedUserId": "org.mozilla.fennec.sharedID"
+                    "sharedUserId": "org.mozilla.fennec.sharedID",
+                    "deepLinkScheme": "fenix-nightly"
             ]
         }
     }
@@ -169,6 +181,14 @@ android {
         }
     }
 
+    aaptOptions {
+        // All JavaScript code used internally by GeckoView is packaged in a
+        // file called omni.ja. If this file is compressed in the APK,
+        // GeckoView must uncompress it before it can do anything else which
+        // causes a significant delay on startup.
+        noCompress 'ja'
+    }
+
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests.includeAndroidResources = true
@@ -190,6 +210,12 @@ android {
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
         fennecProduction {
+            java.srcDirs = ['src/migration/java']
+            manifest.srcFile "src/migration/AndroidManifest.xml"
+        }
+        forPerformanceTest {
+            // We want our performance test builds to use the same code as our "fennec" flavor builds
+            // since those builds will ship to our large user base.
             java.srcDirs = ['src/migration/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
@@ -568,6 +594,8 @@ dependencies {
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
     testImplementation "org.mozilla.telemetry:glean-forUnitTests:${project.ext.glean_version}"
+
+    lintChecks project(":mozilla-lint-rules")
 }
 
 if (project.hasProperty("raptor")) {
@@ -712,4 +740,9 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
     ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
     apply from: "../${acSrcDir}/substitute-local-ac.gradle"
+}
+
+if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
+    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
+    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
 }

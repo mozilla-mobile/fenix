@@ -15,6 +15,7 @@ import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
@@ -56,6 +57,7 @@ import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
@@ -83,8 +85,10 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 
 /**
@@ -118,6 +122,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
+    private val sitePermissionWifiIntegration = ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
 
     var customTabSessionId: String? = null
 
@@ -126,6 +131,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     // We need this so we don't accidentally remove all external sessions on back press
     private var sessionRemoved = false
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     @CallSuper
     override fun onCreateView(
@@ -203,7 +210,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 bookmarkTapped = { lifecycleScope.launch { bookmarkTapped(it) } },
                 scope = lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
-                topSiteStorage = requireComponents.core.topSiteStorage
+                topSiteStorage = requireComponents.core.topSiteStorage,
+                sharedViewModel = sharedViewModel
             )
 
             _browserInteractor = BrowserInteractor(
@@ -331,7 +339,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     customTabId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
                     loginValidationDelegate = DefaultLoginValidationDelegate(
-                        context.components.core.passwordsStorage
+                        context.components.core.lazyPasswordsStorage
                     ),
                     isSaveLoginEnabled = {
                         context.settings().shouldPromptToSaveLogins
@@ -391,6 +399,22 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
+            sitePermissionWifiIntegration.set(
+                feature = SitePermissionsWifiIntegration(
+                    settings = context.settings(),
+                    wifiConnectionMonitor = context.components.wifiConnectionMonitor
+                ),
+                owner = this,
+                view = view
+            )
+
+            context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
+                // If the user connects to WIFI while on the BrowserFragment, this will update the
+                // SitePermissionsRules (specifically autoplay) accordingly
+                this.context?.let { assignSitePermissionsRules(it) }
+            }
+            assignSitePermissionsRules(context)
+
             fullScreenFeature.set(
                 feature = FullScreenFeature(
                     sessionManager,
@@ -406,7 +430,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
                         if (FeatureFlags.dynamicBottomToolbar) {
                             engineView.setDynamicToolbarMaxHeight(0)
-                            // TODO We need to call force expand here to update verticalClipping #8697
+                            browserToolbarView.expand()
                             // Without this, fullscreen has a margin at the top.
                             engineView.setVerticalClipping(0)
                         }
@@ -429,6 +453,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             )
 
             session.register(observer = object : Session.Observer {
+                override fun onNavigationStateChanged(
+                    session: Session,
+                    canGoBack: Boolean,
+                    canGoForward: Boolean
+                ) {
+                    // Once https://bugzilla.mozilla.org/show_bug.cgi?id=1626338 is fixed, we can
+                    // rely solely on `onLoadRequest` entirely, but as it stands that is not called
+                    // for history navigation (back or forward).
+                    browserToolbarView.expand()
+                }
+
                 override fun onLoadRequest(
                     session: Session,
                     url: String,
@@ -474,6 +509,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         requireComponents.core.engine,
                         requireComponents.core.sessionManager,
                         requireComponents.backgroundServices.accountManager,
+                        requireComponents.backgroundServices.serverConfig,
                         setOf(FxaCapability.CHOOSE_WHAT_TO_SYNC)
                     ),
                     owner = this,
@@ -527,6 +563,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     override fun onStart() {
         super.onStart()
         requireComponents.core.sessionManager.register(this, this, autoPause = true)
+        sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
     }
 
     @CallSuper
@@ -540,13 +577,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             components.useCases.sessionUseCases.reload()
         }
         hideToolbar()
-
-        assignSitePermissionsRules()
     }
 
     @CallSuper
     final override fun onPause() {
         super.onPause()
+        if (findNavController().currentDestination?.id != R.id.searchFragment) {
+            view?.hideKeyboard()
+        }
         fullScreenFeature.onBackPressed()
     }
 
@@ -672,8 +710,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     /**
      * Updates the site permissions rules based on user settings.
      */
-    private fun assignSitePermissionsRules() {
-        val settings = requireContext().settings()
+    private fun assignSitePermissionsRules(context: Context) {
+        val settings = context.settings()
 
         val rules: SitePermissionsRules = settings.getSitePermissionsCustomSettingsRules()
 
@@ -747,7 +785,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 requireComponents.analytics.metrics.track(Event.AddBookmark)
 
                 view?.let { view ->
-                    FenixSnackbar.make(view, FenixSnackbar.LENGTH_LONG)
+                    FenixSnackbar.makeWithToolbarPadding(view, FenixSnackbar.LENGTH_LONG)
                         .setText(getString(R.string.bookmark_saved_snackbar))
                         .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
                             nav(

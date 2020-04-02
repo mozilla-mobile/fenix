@@ -27,9 +27,8 @@ import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
-import mozilla.components.feature.media.MediaFeature
 import mozilla.components.feature.media.RecordingDevicesNotificationFeature
-import mozilla.components.feature.media.state.MediaStateMachine
+import mozilla.components.feature.media.middleware.MediaMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.session.HistoryDelegate
@@ -44,6 +43,7 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.media.MediaService
 import org.mozilla.fenix.test.Mockable
 import java.util.concurrent.TimeUnit
 
@@ -62,18 +62,18 @@ class Core(private val context: Context) {
             remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled,
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
-            historyTrackingDelegate = HistoryDelegate(historyStorage),
+            historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
             preferredColorScheme = getPreferredColorScheme(),
             automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
             fontInflationEnabled = context.settings().shouldUseAutoSize,
-            suspendMediaWhenInactive = !FeatureFlags.mediaIntegration,
+            suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom
         )
 
         GeckoEngine(
             context,
             defaultSettings,
-            GeckoProvider.getOrCreateRuntime(context, passwordsStorage)
+            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage)
         ).also {
             WebCompatFeature.install(it)
         }
@@ -85,7 +85,7 @@ class Core(private val context: Context) {
     val client: Client by lazy {
         GeckoViewFetchClient(
             context,
-            GeckoProvider.getOrCreateRuntime(context, passwordsStorage)
+            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage)
         )
     }
 
@@ -97,7 +97,11 @@ class Core(private val context: Context) {
      * The [BrowserStore] holds the global [BrowserState].
      */
     val store by lazy {
-        BrowserStore()
+        BrowserStore(
+            middleware = listOf(
+                MediaMiddleware(context, MediaService::class.java)
+            )
+        )
     }
 
     /**
@@ -150,14 +154,6 @@ class Core(private val context: Context) {
                     .whenSessionsChange()
             }
 
-            if (FeatureFlags.mediaIntegration) {
-                MediaStateMachine.start(sessionManager)
-
-                // Enable media features like showing an ongoing notification with media controls when
-                // media in web content is playing.
-                MediaFeature(context).enable()
-            }
-
             WebNotificationFeature(
                 context, engine, icons, R.drawable.ic_status_logo,
                 HomeActivity::class.java
@@ -184,15 +180,19 @@ class Core(private val context: Context) {
         )
     }
 
-    /**
-     * The storage component to persist browsing history (with the exception of
-     * private sessions).
-     */
-    val historyStorage by lazy { PlacesHistoryStorage(context) }
+    // Lazy wrappers around storage components are used to pass references to these components without
+    // initializing them until they're accessed.
+    // Use these for startup-path code, where we don't want to do any work that's not strictly necessary.
+    // For example, this is how the GeckoEngine delegates (history, logins) are configured.
+    // We can fully initialize GeckoEngine without initialized our storage.
+    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context) }
+    val lazyBookmarksStorage = lazy { PlacesBookmarksStorage(context) }
+    val lazyPasswordsStorage = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
 
-    val bookmarksStorage by lazy { PlacesBookmarksStorage(context) }
-
-    val passwordsStorage by lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+    // For most other application code (non-startup), these wrappers are perfectly fine and more ergonomic.
+    val historyStorage by lazy { lazyHistoryStorage.value }
+    val bookmarksStorage by lazy { lazyBookmarksStorage.value }
+    val passwordsStorage by lazy { lazyPasswordsStorage.value }
 
     val tabCollectionStorage by lazy { TabCollectionStorage(context, sessionManager) }
 

@@ -10,7 +10,10 @@ import android.view.ViewOutlineProvider
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.tab_in_collection.*
+import kotlinx.android.synthetic.main.list_element.list_element_title
+import kotlinx.android.synthetic.main.list_element.list_item_action_button
+import kotlinx.android.synthetic.main.list_element.list_item_favicon
+import kotlinx.android.synthetic.main.list_element.list_item_url
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.util.dpToFloat
@@ -25,6 +28,7 @@ import mozilla.components.feature.tab.collections.Tab as ComponentTab
 class TabInCollectionViewHolder(
     val view: View,
     val interactor: CollectionInteractor,
+    private val differentLastItem: Boolean = false,
     override val containerView: View? = view
 ) : RecyclerView.ViewHolder(view), LayoutContainer {
 
@@ -32,11 +36,11 @@ class TabInCollectionViewHolder(
         private set
     lateinit var tab: ComponentTab
         private set
-    var isLastTab = false
+    var isLastItem = false
 
     init {
-        collection_tab_icon.clipToOutline = true
-        collection_tab_icon.outlineProvider = object : ViewOutlineProvider() {
+        list_item_favicon.clipToOutline = true
+        list_item_favicon.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline?) {
                 outline?.setRoundRect(
                     0,
@@ -52,8 +56,8 @@ class TabInCollectionViewHolder(
             interactor.onCollectionOpenTabClicked(tab)
         }
 
-        collection_tab_close_button.increaseTapArea(buttonIncreaseDps)
-        collection_tab_close_button.setOnClickListener {
+        list_item_action_button.increaseTapArea(buttonIncreaseDps)
+        list_item_action_button.setOnClickListener {
             interactor.onCollectionRemoveTab(collection, tab)
         }
     }
@@ -61,28 +65,26 @@ class TabInCollectionViewHolder(
     fun bindSession(collection: TabCollection, tab: ComponentTab, isLastTab: Boolean) {
         this.collection = collection
         this.tab = tab
-        this.isLastTab = isLastTab
+        this.isLastItem = isLastTab
         updateTabUI()
     }
 
     private fun updateTabUI() {
-        collection_tab_hostname.text = tab.url.toShortUrl(view.context.components.publicSuffixList)
+        list_item_url.text = tab.url.toShortUrl(view.context.components.publicSuffixList)
 
-        collection_tab_title.text = tab.title
-        collection_tab_icon.context.components.core.icons.loadIntoView(collection_tab_icon, tab.url)
+        list_element_title.text = tab.title
+        list_item_favicon.context.components.core.icons.loadIntoView(list_item_favicon, tab.url)
 
-        // If I'm the last one...
-        if (isLastTab) {
+        // If last item and we want to change UI for it
+        if (isLastItem && differentLastItem) {
             view.background = AppCompatResources.getDrawable(view.context, R.drawable.rounded_bottom_corners)
-            divider_line.visibility = View.GONE
         } else {
             view.setBackgroundColor(view.context.getColorFromAttr(R.attr.above))
-            divider_line.visibility = View.VISIBLE
         }
     }
 
     companion object {
         const val buttonIncreaseDps = 12
-        const val LAYOUT_ID = R.layout.tab_in_collection
+        const val LAYOUT_ID = R.layout.list_element
     }
 }

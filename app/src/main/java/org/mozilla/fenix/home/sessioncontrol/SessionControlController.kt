@@ -10,11 +10,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.media.ext.playIfPaused
-import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.tab.collections.ext.restore
 import mozilla.components.feature.top.sites.TopSite
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -156,8 +157,9 @@ interface SessionControlController {
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class DefaultSessionControlController(
+    private val store: BrowserStore,
     private val activity: HomeActivity,
-    private val store: HomeFragmentStore,
+    private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val browsingModeManager: BrowsingModeManager,
     private val lifecycleScope: CoroutineScope,
@@ -200,27 +202,21 @@ class DefaultSessionControlController(
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
         invokePendingDeleteJobs()
 
-        val session = tab.restore(
-            context = activity,
-            engine = activity.components.core.engine,
-            tab = tab,
-            restoreSessionId = false
+        sessionManager.restore(
+            activity,
+            activity.components.core.engine,
+            tab,
+            onTabRestored = {
+                activity.openToBrowser(BrowserDirection.FromHome)
+            },
+            onFailure = {
+                activity.openToBrowserAndLoad(
+                    searchTermOrURL = tab.url,
+                    newTab = true,
+                    from = BrowserDirection.FromHome
+                )
+            }
         )
-
-        if (session == null) {
-            // We were unable to create a snapshot, so just load the tab instead
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = tab.url,
-                newTab = true,
-                from = BrowserDirection.FromHome
-            )
-        } else {
-            sessionManager.add(
-                session,
-                true
-            )
-            activity.openToBrowser(BrowserDirection.FromHome)
-        }
 
         metrics.track(Event.CollectionTabRestored)
     }
@@ -228,24 +224,14 @@ class DefaultSessionControlController(
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
         invokePendingDeleteJobs()
 
-        collection.tabs.reversed().forEach {
-            val session = it.restore(
-                context = activity,
-                engine = activity.components.core.engine,
-                tab = it,
-                restoreSessionId = false
-            )
-
-            if (session == null) {
-                // We were unable to create a snapshot, so just load the tab instead
-                activity.components.useCases.tabsUseCases.addTab.invoke(it.url)
-            } else {
-                sessionManager.add(
-                    session,
-                    activity.components.core.sessionManager.selectedSession == null
-                )
+        sessionManager.restore(
+            activity,
+            activity.components.core.engine,
+            collection,
+            onFailure = { url ->
+                activity.components.useCases.tabsUseCases.addTab.invoke(url)
             }
-        }
+        )
 
         scrollToTheTop()
         metrics.track(Event.CollectionAllTabsRestored)
@@ -281,11 +267,11 @@ class DefaultSessionControlController(
     }
 
     override fun handlePauseMediaClicked() {
-        MediaStateMachine.state.pauseIfPlaying()
+        store.state.media.pauseIfPlaying()
     }
 
     override fun handlePlayMediaClicked() {
-        MediaStateMachine.state.playIfPaused()
+        store.state.media.playIfPaused()
     }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {
@@ -373,7 +359,7 @@ class DefaultSessionControlController(
     }
 
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
-        store.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
+        fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
     }
 
     override fun handleonOpenNewTabClicked() {

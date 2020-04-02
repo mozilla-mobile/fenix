@@ -6,22 +6,32 @@ package org.mozilla.fenix.home
 
 import android.content.Context
 import androidx.core.content.ContextCompat.getColor
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
+import mozilla.components.browser.menu.ext.getHighlight
 import mozilla.components.browser.menu.item.BrowserMenuCategory
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageText
+import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.whatsnew.WhatsNew
 
 class HomeMenu(
+    private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
-    private val onItemTapped: (Item) -> Unit = {}
+    private val onItemTapped: (Item) -> Unit = {},
+    private val onMenuBuilderChanged: (BrowserMenuBuilder) -> Unit = {},
+    private val onHighlightPresent: (BrowserMenuHighlight) -> Unit = {}
 ) {
     sealed class Item {
         object WhatsNew : Item()
@@ -34,9 +44,6 @@ class HomeMenu(
         object Sync : Item()
     }
 
-    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
-
-    private val hasAccountProblem get() = context.components.backgroundServices.accountManager.accountNeedsReauth()
     private val primaryTextColor =
         ThemeManager.resolveAttribute(R.attr.primaryText, context)
     private val syncDisconnectedColor = ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
@@ -44,22 +51,36 @@ class HomeMenu(
 
     private val menuCategoryTextColor =
         ThemeManager.resolveAttribute(R.attr.menuCategoryText, context)
+    private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
 
-    private val menuItems by lazy {
-
-        val reconnectToSyncItem = BrowserMenuHighlightableItem(
+    // 'Reconnect' and 'Quit' items aren't needed most of the time, so we'll only create the if necessary.
+    private val reconnectToSyncItem by lazy {
+        BrowserMenuHighlightableItem(
             context.getString(R.string.sync_reconnect),
             R.drawable.ic_sync_disconnected,
             iconTintColorResource = syncDisconnectedColor,
             textColorResource = primaryTextColor,
             highlight = BrowserMenuHighlight.HighPriority(
-                backgroundTint = syncDisconnectedBackgroundColor
+                backgroundTint = syncDisconnectedBackgroundColor,
+                canPropagate = false
             ),
             isHighlighted = { true }
         ) {
             onItemTapped.invoke(Item.Sync)
         }
+    }
 
+    private val quitItem by lazy {
+        BrowserMenuImageText(
+            context.getString(R.string.delete_browsing_data_on_quit_action),
+            R.drawable.ic_exit,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.Quit)
+        }
+    }
+
+    private val coreMenuItems by lazy {
         val whatsNewItem = BrowserMenuHighlightableItem(
             context.getString(R.string.browser_menu_whats_new),
             R.drawable.ic_whats_new,
@@ -80,10 +101,11 @@ class HomeMenu(
             onItemTapped.invoke(Item.Bookmarks)
         }
 
-        val libraryItem = BrowserMenuImageText(
+        val historyItem = BrowserMenuImageText(
             context.getString(R.string.library_history),
             R.drawable.ic_history,
-            primaryTextColor) {
+            primaryTextColor
+        ) {
             onItemTapped.invoke(Item.History)
         }
 
@@ -103,30 +125,82 @@ class HomeMenu(
             onItemTapped.invoke(Item.Help)
         }
 
-        val quitItem = BrowserMenuImageText(
-            context.getString(R.string.delete_browsing_data_on_quit_action),
-            R.drawable.ic_exit,
-            primaryTextColor
-        ) {
-            onItemTapped.invoke(Item.Quit)
+        // Only query account manager if it has been initialized.
+        // We don't want to cause its initialization just for this check.
+        val accountAuthItem = if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()) {
+            if (context.components.backgroundServices.accountManager.accountNeedsReauth()) reconnectToSyncItem else null
+        } else {
+            null
         }
 
-        val items = listOfNotNull(
-            if (hasAccountProblem) reconnectToSyncItem else null,
-            whatsNewItem,
-            BrowserMenuDivider(),
-            BrowserMenuCategory(
-                context.getString(R.string.browser_menu_your_library),
-                textColorResource = menuCategoryTextColor
-            ),
-            bookmarksItem,
-            libraryItem,
-            BrowserMenuDivider(),
-            settingsItem,
-            helpItem,
-            if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null
-        )
+        if (shouldUseBottomToolbar) {
+            listOfNotNull(
+                accountAuthItem,
+                whatsNewItem,
+                BrowserMenuDivider(),
+                BrowserMenuCategory(
+                    context.getString(R.string.browser_menu_library),
+                    textColorResource = menuCategoryTextColor
+                ),
+                bookmarksItem,
+                historyItem,
+                BrowserMenuDivider(),
+                settingsItem,
+                helpItem,
+                if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null
+            ).also { items ->
+                items.getHighlight()?.let { onHighlightPresent(it) }
+            }
+        } else {
+            listOfNotNull(
+                if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null,
+                helpItem,
+                settingsItem,
+                accountAuthItem,
+                BrowserMenuDivider(),
+                BrowserMenuCategory(
+                    context.getString(R.string.browser_menu_library),
+                    textColorResource = menuCategoryTextColor
+                ),
+                bookmarksItem,
+                historyItem,
+                BrowserMenuDivider(),
+                whatsNewItem
+            ).also { items ->
+                items.getHighlight()?.let { onHighlightPresent(it) }
+            }
+        }
+    }
 
-        items
+    init {
+        // Report initial state.
+        onMenuBuilderChanged(BrowserMenuBuilder(coreMenuItems))
+
+        // Observe account state changes, and update menu item builder with a new set of items.
+        context.components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
+            // This task isn't relevant if our parent fragment isn't around anymore.
+            if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED) {
+                return@runIfReadyOrQueue
+            }
+            context.components.backgroundServices.accountManager.register(object : AccountObserver {
+                override fun onAuthenticationProblems() {
+                    onMenuBuilderChanged(BrowserMenuBuilder(
+                        listOf(reconnectToSyncItem) + coreMenuItems
+                    ))
+                }
+
+                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                    onMenuBuilderChanged(BrowserMenuBuilder(
+                        coreMenuItems
+                    ))
+                }
+
+                override fun onLoggedOut() {
+                    onMenuBuilderChanged(BrowserMenuBuilder(
+                        coreMenuItems
+                    ))
+                }
+            }, lifecycleOwner)
+        }
     }
 }

@@ -32,6 +32,7 @@ import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
+import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.FeatureFlags.webPushIntegration
 import org.mozilla.fenix.components.Components
@@ -149,8 +150,25 @@ open class FenixApplication : LocaleAwareApplication() {
         // }
 
         registerActivityLifecycleCallbacks(
-            PerformanceActivityLifecycleCallbacks(components.performance.visualCompletenessTaskManager)
+            PerformanceActivityLifecycleCallbacks(components.performance.visualCompletenessQueue)
         )
+
+        components.performance.visualCompletenessQueue.runIfReadyOrQueue {
+            GlobalScope.launch(Dispatchers.IO) {
+                logger.info("Running post-visual completeness tasks...")
+                logElapsedTime(logger, "Storage initialization") {
+                    components.core.historyStorage.warmUp()
+                    components.core.bookmarksStorage.warmUp()
+                    components.core.passwordsStorage.warmUp()
+                }
+            }
+            // Account manager initialization needs to happen on the main thread.
+            GlobalScope.launch(Dispatchers.Main) {
+                logElapsedTime(logger, "Kicking-off account manager") {
+                    components.backgroundServices.accountManager
+                }
+            }
+        }
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.

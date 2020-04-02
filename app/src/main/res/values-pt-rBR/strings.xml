@@ -60,7 +60,7 @@
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Editar favorito</string>
     <!-- Browser menu button that opens the addon manager -->
-    <string name="browser_menu_addon_manager">Extensões</string>
+    <string name="browser_menu_add_ons">Extensões</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Nenhuma extensão aqui</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -70,7 +70,7 @@
     <!-- Browser menu button that opens the settings menu -->
     <string name="browser_menu_settings">Configurações</string>
     <!-- Browser menu button that opens a user's library -->
-    <string name="browser_menu_your_library">Sua biblioteca</string>
+    <string name="browser_menu_library">Biblioteca</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Site do desktop</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
@@ -84,9 +84,9 @@
     <!-- Browser menu button that creates a new tab -->
     <string name="browser_menu_new_tab">Nova aba</string>
     <!-- Browser menu button that saves the current tab to a collection -->
-    <string name="browser_menu_save_to_collection">Salvar em coleção</string>
+    <string name="browser_menu_save_to_collection_2">Salvar em coleção</string>
     <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Relatar problema no site</string>
+    <string name="browser_menu_report_issue">Relatar problema</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Compartilhar</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -149,6 +149,9 @@
     <!-- Text preview for larger sized widgets -->
     <string name="search_widget_text_long">Pesquisar na web</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Pesquisa por voz</string>
+
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Configurações</string>
@@ -188,7 +191,7 @@
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Privacidade e segurança</string>
     <!-- Preference for advanced site permissions -->
-    <string name="preferences_site_permissions">Permissões do site</string>
+    <string name="preferences_site_permissions">Permissões de sites</string>
     <!-- Preference for private browsing options -->
     <string name="preferences_private_browsing_options">Navegação privativa</string>
     <!-- Preference for opening links in a private tab-->
@@ -197,6 +200,12 @@
     <string name="preferences_add_private_browsing_shortcut">Adicionar atalho para navegação privativa</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Acessibilidade</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Servidor personalizado de Conta Firefox</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Servidor personalizado de sincronização</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Servidor de Conta Firefox/Sync alterado. Saindo do aplicativo para aplicar as mudanças…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Conta</string>
     <!-- Preference shown on banner to sign into account -->
@@ -453,6 +462,14 @@
     <string name="history_delete_all_dialog">Tem certeza que deseja limpar seu histórico?</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Limpar</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">Copiar</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">Compartilhar</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">Abrir em nova aba</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">Abrir em aba privativa</string>
     <!-- Text for the button to delete a single history item -->
     <string name="history_delete_item">Excluir</string>
     <!-- History multi select title in app bar
@@ -566,7 +583,7 @@
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Recomendado</string>
     <!-- button that allows editing site permissions settings -->
-    <string name="quick_settings_sheet_manage_site_permissions">Gerenciar permissões do site</string>
+    <string name="quick_settings_sheet_manage_site_permissions">Gerenciar permissões de sites</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Limpar permissões</string>
     <!-- Button label for clearing a site permission-->
@@ -598,18 +615,16 @@
     <string name="tracking_protection_on">Ativada</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Desativada</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked">Vídeo e áudio bloqueados</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
-    <string name="preference_option_autoplay_allowed">Vídeo e áudio permitidos</string>
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Permitir áudio e vídeo</string>
-    <!-- Label that indicates that video and audio autoplay is only allowed over WIFI -->
-    <string name="preference_option_autoplay_allowed_wifi_only">Permitir áudio e vídeo somente em Wi-Fi</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Bloquear áudio e vídeo apenas em rede móvel</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Áudio e vídeo são reproduzidos em Wi-Fi</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
-    <string name="preference_option_autoplay_block_audio">Bloquear áudio</string>
+    <string name="preference_option_autoplay_block_audio2">Bloquear apenas áudio</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked2">Bloquear áudio e vídeo</string>
+    <string name="preference_option_autoplay_blocked3">Bloquear áudio e vídeo</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Ativado</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -798,7 +813,7 @@
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Libera espaço de armazenamento</string>
     <!-- Title for the site permissions item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_site_permissions">Permissões do site</string>
+    <string name="preferences_delete_browsing_data_site_permissions">Permissões de sites</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Excluir dados de navegação</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -897,6 +912,9 @@
     </string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Leia nosso aviso de privacidade</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">Fechar</string>
 
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Iniciar navegação</string>
@@ -1041,6 +1059,9 @@
     <string name="etp_panel_off">As proteções estão DESATIVADAS neste site</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">A proteção aprimorada contra rastreamento está desativada nesses sites</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Voltar à página anterior</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">Seus direitos</string>
     <!-- About page link text to open open source licenses screen -->
@@ -1061,6 +1082,11 @@
     <string name="about_licensing_information">Informações de licenciamento</string>
     <!-- About page link text to open a screen with libraries that are used -->
     <string name="about_other_open_source_libraries">Bibliotecas que usamos</string>
+
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Menu de depuração: %1$d clique(s) restante(s) para ativar</string>
+    <string name="about_debug_menu_toast_done">Menu de depuração ativado</string>
 
     <!-- Content description of the tab counter toolbar button when one tab is open -->
     <string name="tab_counter_content_description_one_tab">1 aba</string>
@@ -1263,7 +1289,7 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Tem certeza que deseja excluir este favorito?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Adicionar site preferido</string>
+    <string name="browser_menu_add_to_top_sites">Adicionar preferido</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Homologado por: %1$s </string>

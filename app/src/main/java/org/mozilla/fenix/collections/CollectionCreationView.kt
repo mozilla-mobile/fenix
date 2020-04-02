@@ -20,8 +20,20 @@ import androidx.transition.AutoTransition
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_collection_creation.*
-import kotlinx.android.synthetic.main.component_collection_creation.view.*
+import kotlinx.android.synthetic.main.component_collection_creation.back_button
+import kotlinx.android.synthetic.main.component_collection_creation.collection_constraint_layout
+import kotlinx.android.synthetic.main.component_collection_creation.name_collection_edittext
+import kotlinx.android.synthetic.main.component_collection_creation.save_button
+import kotlinx.android.synthetic.main.component_collection_creation.select_all_button
+import kotlinx.android.synthetic.main.component_collection_creation.view.bottom_bar_icon_button
+import kotlinx.android.synthetic.main.component_collection_creation.view.bottom_bar_text
+import kotlinx.android.synthetic.main.component_collection_creation.view.bottom_button_bar_layout
+import kotlinx.android.synthetic.main.component_collection_creation.view.collection_constraint_layout
+import kotlinx.android.synthetic.main.component_collection_creation.view.collections_list
+import kotlinx.android.synthetic.main.component_collection_creation.view.name_collection_edittext
+import kotlinx.android.synthetic.main.component_collection_creation.view.select_all_button
+import kotlinx.android.synthetic.main.component_collection_creation.view.tab_list
+import mozilla.components.browser.state.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
@@ -54,6 +66,7 @@ class CollectionCreationView(
 
     init {
         transition.duration = TRANSITION_DURATION
+        transition.excludeTarget(back_button, true)
 
         selectTabsConstraints.clone(collection_constraint_layout)
         selectCollectionConstraints.clone(
@@ -148,10 +161,6 @@ class CollectionCreationView(
             interactor.close()
         }
 
-        TransitionManager.beginDelayedTransition(
-            view.collection_constraint_layout,
-            transition
-        )
         val constraint = selectTabsConstraints
         constraint.applyTo(view.collection_constraint_layout)
 
@@ -232,22 +241,8 @@ class CollectionCreationView(
                 interactor.onBackPressed(SaveCollectionStep.NameCollection)
             }, TRANSITION_DURATION)
         }
-        transition.addListener(object : Transition.TransitionListener {
-            override fun onTransitionStart(transition: Transition) { /* noop */ }
 
-            override fun onTransitionEnd(transition: Transition) {
-                view.name_collection_edittext.showKeyboard()
-                transition.removeListener(this)
-            }
-
-            override fun onTransitionCancel(transition: Transition) { /* noop */ }
-            override fun onTransitionPause(transition: Transition) { /* noop */ }
-            override fun onTransitionResume(transition: Transition) { /* noop */ }
-        })
-        TransitionManager.beginDelayedTransition(
-            view.collection_constraint_layout,
-            transition
-        )
+        view.name_collection_edittext.showKeyboard()
         val constraint = nameCollectionConstraints
         constraint.applyTo(view.collection_constraint_layout)
         name_collection_edittext.setText(
@@ -270,7 +265,8 @@ class CollectionCreationView(
                     tab.id.toString(),
                     tab.url,
                     tab.url.toShortUrl(view.context.components.publicSuffixList),
-                    tab.title
+                    tab.title,
+                    mediaState = MediaState.State.NONE
                 )
             }.let { tabs ->
                 collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)

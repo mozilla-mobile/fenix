@@ -56,7 +56,7 @@
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">بُک مارک کی تدوین کریں</string>
     <!-- Browser menu button that opens the addon manager -->
-    <string name="browser_menu_addon_manager">ایڈ اون منتظم</string>
+    <string name="browser_menu_add_ons">ایڈ اون</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">یہاں کوئی ایڈونس نہیں ہے</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -66,7 +66,7 @@
     <!-- Browser menu button that opens the settings menu -->
     <string name="browser_menu_settings">سیٹنگز</string>
     <!-- Browser menu button that opens a user's library -->
-    <string name="browser_menu_your_library">آپ کی لائبریری</string>
+    <string name="browser_menu_library">لائبریری</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">ڈیسک ٹاپ سائٹ</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
@@ -79,9 +79,9 @@
     <string name="browser_menu_private_tab">نجی ٹیب</string>
     <!-- Browser menu button that creates a new tab -->
     <string name="browser_menu_new_tab">نیا ٹیب</string>
-    <!-- Browser menu button that saves the current tab to a collection -->
-    <string name="browser_menu_save_to_collection">مجموعہ میں محفوظ کریں</string>
 
+    <!-- Browser menu button that saves the current tab to a collection -->
+    <string name="browser_menu_save_to_collection_2">مجموعہ میں محفوظ کریں</string>
     <!-- Browser menu button that opens a dialog to report issues with the current site -->
     <string name="browser_menu_report_issue">سائٹ مسلہ رپورٹ کریں</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -208,6 +208,8 @@
     <string name="preferences_sign_in_description">اپنے Firefox Account کے ساتھ بک مارکس ، سابقات اور بہت کچھ sync کریں</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox اکاؤنٹ</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">سینک کرنے کو دوبارہ شروع کرنے کے لئے پھر سے جوڑیں</string>
     <!-- Preference for language -->
     <string name="preferences_language">زبان</string>
     <!-- Preference for data choices -->
@@ -261,14 +263,25 @@
     <!-- Label indicating that sync is in progress -->
     <string name="sync_syncing_in_progress">sync ہو رہا ہے…</string>
 
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">سینک ناکام رہا۔ آخری کامیابی: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_failed_never_synced_summary">سینک ناکام رہا۔ آخری بار سینک کیا گیا: کبھی نہیں</string>
     <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
     <string name="sync_last_synced_summary">آخری بار synced: %s</string>
 
+    <!-- Label summary showing never synced -->
+    <string name="sync_never_synced_summary">آخری بار سینک کیا گیا: کبھی نہیں</string>
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
     <string name="default_device_name">%s پر %s%s</string>
 
+    <!-- Send Tab -->
+    <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_name">موصول شدہ ٹیب</string>
+    <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_description">دوسرے Firefox آلات سے موصول ہونے والے ٹیب کے بارے میں اطلاعات۔</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">ٹیب حاصل ہوا</string>
     <!-- When multiple tabs have been received -->
@@ -281,20 +294,37 @@
     <string name="preferences_tracking_protection_settings">سراغ کاری حفاظت</string>
     <!-- Preference switch for tracking protection -->
     <string name="preferences_tracking_protection">سراغ کاری حفاظت</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">آپ کو آن لائن ٹریک کرنے والے مواد اور اسکرپٹ کو مسدود کریں</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">استثنيات</string>
+    <!-- Preference description for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions_description">ان ویب سائٹوں کے لیے سراغ کاری تحفظ بند ہے</string>
     <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
     <string name="preferences_tracking_protection_exceptions_turn_on_for_all">تمام سائٹوں کے لئے آن کریں</string>
+    <!-- Text displayed when there are no exceptions -->
+    <string name="exceptions_empty_message_description">استثنیات آپ کو منتخب کردہ سائٹوں کے لئے سراغ کاری تحفظ کو غیر فعال کرنے دیتے ہیں۔</string>
     <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
     <string name="exceptions_empty_message_learn_more_link">مزید سیکھیں</string>
 
+    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
+    <string name="preferences_tracking_protection_turned_off_globally">سبھی کے لیے بند ہو گیا، اسے شروع کرنے کے لیے سیٹنگس میں جائیں۔</string>
+
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">ٹیلیمیٹری</string>
+    <!-- Preference switch for usage and technical data collection -->
+    <string name="preference_usage_data">استعمال شدہ اور تکنیکی کوائف</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">%1$s کو بہتر بنانے میں ہماری مدد کرنے کے لیے آپ کے براؤزر کی کارکردگی، استعمال شدہ، ہارڈویئر اور تخصیص کاری کی کوائف کو Mozilla کے ساتھ بانٹتا ہے۔</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">مارکیٹنگ کا ڈیٹا</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">ہمارے موبائل مارکیٹنگ کے وینڈر، Leanplum کے ساتھ %1$s میں آپکے ذریعہ استعمال کی جانے والی خصوصیات کے کوائف کو بانٹتا ہے۔</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">تجربات</string>
 
+    <!-- Summary for experiments preferences -->
+    <string name="preference_experiments_summary">Mozilla کو آزمائشی خصوصیات کو انسٹال کرنے اور اس کے کوائف کو جمع کرنے کی اجازت دیں</string>
     <!-- Preference switch for crash reporter -->
     <string name="preferences_crash_reporter">کریش رپورٹر</string>
 
@@ -306,11 +336,18 @@
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">سینک آن کریں</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">ڈیسک ٹاپ کے لئے Firefox میں جوڑا سازی کے کوڈ کو اسکین کریں</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">سائن ان کریں</string>
+    <!-- Preference for reconnecting to FxA sync -->
+    <string name="preferences_sync_sign_in_to_reconnect">دوبارہ جڑنے کے لیئے سائن ان کریں</string>
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">اکائونٹ ہٹائیں</string>
 
+    <!-- Pairing Feature strings -->
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions"><![CDATA[اپنے QR کوڈ کو حاصل کرنے کے لیے اپنے کمپیوٹر کے Firefox میں <b>firefox.com/pair</b> پر جائیں۔]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">کیمرا کھولیں</string>
     <!-- Button to cancel pairing -->
@@ -437,6 +474,11 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">یہاں کوئی سابقات نہیں ہے</string>
 
+    <!-- Crashes -->
+    <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
+    <string name="tab_crash_title_2">معاف کریں۔ %1$s اس صفحہ کو لوڈ نہیں کر سکتا ہے۔</string>
+    <!-- Description text displayed on the tab crash page -->
+    <string name="tab_crash_description">نیچے میں آپ اس ٹیب کو پھر سے بحال یا بند کرنے کی کوشش کر سکتے ہیں۔</string>
     <!-- Send crash report checkbox text on the tab crash page -->
     <string name="tab_crash_send_report">تباہی کی رپورٹ Mozilla کو ارسال کریں</string>
     <!-- Close tab button text on the tab crash page -->
@@ -560,23 +602,24 @@
     <string name="tracking_protection_on">چالو</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">بند</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked">ویڈیو اور آڈیو مسدود ہے</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
-    <string name="preference_option_autoplay_allowed">ویڈیو اور آڈیو کی اجازت ہے</string>
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">آڈیو اور ویڈیو کی اجازت دیں</string>
-    <!-- Label that indicates that video and audio autoplay is only allowed over WIFI -->
-    <string name="preference_option_autoplay_allowed_wifi_only">آڈیو اور ویڈیو کو صرف Wi-Fi پر اجازت دیں</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">صرف سیلولر ڈیٹا پر آڈیو اور ویڈیو بلاک کریں</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Wi-Fi پر آڈیو اور ویڈیو چلے گی</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
-    <string name="preference_option_autoplay_block_audio">آڈیو کو مسدود کریں</string>
+    <string name="preference_option_autoplay_block_audio2">صرف آڈیو بلاک کریں</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked2">ویڈیو اور آڈیو کو مسدود کریں</string>
+    <string name="preference_option_autoplay_blocked3">آڈیو اور ویڈیو بلاک کریں</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">چالو</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
     <string name="delete_browsing_data_quit_off">بند</string>
 
+    <!-- Collections -->
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="collections_description">اپنے لئے اہم چیزوں کو جمع کریں۔ شروع کرنے کے لیے، کھلے ہوئے ٹیب کو ایک نئے مجموعہ میں محفوظ کریں۔</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">مجموعے</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
@@ -645,6 +688,8 @@
     <string name="sync_offline">آف لائن</string>
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">ایک اور آلہ جوڑیں</string>
+    <!-- The dialog text shown when additional devices are not available -->
+    <string name="sync_connect_device_dialog">کسی ٹیب کو بھیجنے کے لئے، کم سے کم ایک اور آلہ پر Firefox میں سائن ان کریں۔</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">ٹھیک ہے!</string>
     <!-- Share error message -->
@@ -653,6 +698,8 @@
     <string name="sync_add_new_device_title">آلہ پر بھیجیں</string>
     <!-- Text for the warning message on the Add new device screen -->
     <string name="sync_add_new_device_message">کوئی آلات جڑے ہوئے نہیں ہیں</string>
+    <!-- Text for the button to learn about sending tabs -->
+    <string name="sync_add_new_device_learn_button">ٹیب بھیجنے کے بارے میں جانیں…</string>
     <!-- Text for the button to connect another device -->
     <string name="sync_add_new_device_connect_button">ایک اور آلہ جوڑیں…</string>
 
@@ -712,10 +759,20 @@
     <string name="tab_collection_dialog_positive">مٹائیں</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
     <string name="tab_collection_dialog_negative">منسوخ کریں</string>
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">فل سکرین موڈ میں داخل ہو رہا ہے</string>
     <!-- Message for copying the URL via long press on the toolbar -->
     <string name="url_copied">نقل شدہ URL</string>
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_text_size_summary">ویبسائٹ پر موجود متن کو بڑا یا چھوٹا کریں</string>
     <!-- Title for Accessibility Text Size Scaling Preference -->
     <string name="preference_accessibility_font_size_title">حرف کا سائز</string>
+
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size">خودکار فونٹ سائز تبدیلی</string>
+
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">فونٹ سائز آپکے Android کی سیٹنگس سے مشابہ ہوگا۔ یہاں فونٹ سائز بدلنے کے لیے غیر فعال کریں۔</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">براؤزنگ کا ڈیٹا مٹائیں</string>
@@ -735,6 +792,12 @@
     <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d صفحات</string>
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">کوکیز</string>
+    <!-- Subtitle for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_subtitle">آپ کو زیادہ تر سائٹوں سے لاگ آؤٹ کر دیا جائےگا</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">کیشہ شدہ تصاویر اور فائلیں</string>
+    <!-- Subtitle for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files_subtitle">ذخیرہ کار جگہ کو خالی کرتا ہے</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">سائٹ کی اجازت</string>
     <!-- Text for the button to delete browsing data -->
@@ -746,6 +809,10 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">بند کریں</string>
 
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">یہ آپ کی براؤزنگ کے سبھی کوائف کو حذف کر دے گا۔</string>
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">%s منتخب شدہ براؤزنگ کے کوائف کو حذف کر دے گا۔</string>
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">منسوخ کریں</string>
     <!-- Text for the allow button for the data deletion dialog -->
@@ -769,6 +836,9 @@
     <string name="onboarding_whats_new_header1">دیکھیں نیا کیا ہے</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">یہاں جوابات حاصل کریں</string>
+    <!-- text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">%s کا زیادہ سے زیادہ فائدہ اٹھائیں۔</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">ہاں ، مجھے سائن ان کریں</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -783,10 +853,17 @@
     <string name="onboarding_firefox_account_automatic_signin_failed">سائن ان کرنے میں ناکام</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">خود کی حفاظت کریں</string>
+    <!-- text for the tracking protection card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_tracking_protection_description1">%s ویبسائٹوں کو آن لائن آپ کو ٹریک کرنے سے روکنے میں مدد کرتا ہے۔</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button">معیاری</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">سخت (سفارش شدا)</string>
+    <!-- text for the toolbar position card header
+        In English this is an idiom for "choose a side as in an argument or fight"
+        but it is ok to make this more literally about "choosing a position in a physical space -->
+    <string name="onboarding_toolbar_position_header">ایک پہلو چنے</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">رازداری سے براؤز کریں</string>
 
@@ -826,10 +903,15 @@
     <string name="sign_in_instructions"><![CDATA[اپنے کمپیوٹر پر Firefox کھولیں اور <b>https://firefox.com/pair</b> پر جائیں]]></string>
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">سکین کرنے کے لئے تیار</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">اس کے بجائے ای میل کا استعمال کریں</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">منقطع کریں</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
     <string name="sign_out_cancel">منسوخ کریں</string>
+
+    <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
+    <string name="bookmark_cannot_edit_root">طے شدہ فولڈروں میں ترمیم نہیں کی جاسکتی ہے</string>
 
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
@@ -846,21 +928,37 @@
     <string name="preference_enhanced_tracking_protection_standard">معیاری (سفارش شدا)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description">تحفظ اور کارکردگی کیلئے متوازن۔</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_2">صفحات عمومی طور سے لوڈ ہوں گے، لیکن کچھ ٹریکر کو مسدود کریں گے۔</string>
+    <!--  Accessibility text for the Standard protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_standard_info_button">معیاری سراغ کاری تحفظ کے ذریعہ کیا مسدود ہے</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">سخت</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
     <string name="preference_enhanced_tracking_protection_strict_default">سخت (طے شدہ)</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_default_description">مضبوط سراغ کاری تحفظ اور تیز کارکردگی، پر شاید کچھ سائٹیں ٹھیک طرح سے کام نہیں کریں گی۔</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_recommended">سخت (سفارش شدا)</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_strict_info_button">سخت سراغ کاری تحفظ کے ذریعہ کیا مسدود ہے</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">مخصوص</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_description">منتخب کریں کہ کون سے ٹریکرز اور اسکرپٹ کو مسدود کرنا ہے</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_custom_info_button">مخصوص سراغ کاری تحفظ کے ذریعہ کیا مسدود ہے</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">کوکیز</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_1">کراس سائٹ اور سوشل میڈیا ٹریکرز</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_2">نا دیکھے گئے سائٹوں کے کوکیز</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">تمام تیسری تنظیم کے کوکیز (ویب سائٹس کے ٹوٹنے کا سبب بن سکتی ہے)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_4">تمام کوکیز (ویب سائٹس کے ٹوٹنے کا سبب بن سکتی ہے)</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">ٹریکنگ مواد</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -879,6 +977,8 @@
 
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">سوشل میڈیا ٹریکرز</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">ویب پر آپ کی براؤزنگ کی سرگرمی کو ٹریک کرنے والے سوشل نیٹورک کی صلاحیت کو محدود کرتا ہے۔</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">کراس-سائٹ ٹریکنگ کوکیز</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
@@ -948,6 +1048,8 @@
     <string name="preferences_passwords_logins_and_passwords">لاگ ان اور پاس ورڈ</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">لاگ ان اور پاس ورڈ کو محفوظ کریں</string>
+    <!-- Preference option for asking to save passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_ask_to_save">محفوظ کرنے کے لئے پوچھیں</string>
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">کبھِی بھی محفوظ مت کریں</string>
     <!-- Preference for autofilling saved logins in Fenix -->
@@ -990,6 +1092,8 @@
     <string name="preferences_passwords_saved_logins_enter_pin_description">اپنے محفوظ کردہ لاگ انز کو دیکھنے کے لئے انلاک کریں</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning_learn_more">مزید سیکھیں</string>
+    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
+    <string name="logins_doorhanger_save">کیا آپ چاہتے ہیں کہ %s اس لاگ ان کو محفوظ کرے؟</string>
     <!-- Positive confirmation that Fenix should save the new or updated login -->
     <string name="logins_doorhanger_save_confirmation">محفوظ کریں</string>
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
@@ -1019,6 +1123,9 @@
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_set_up_now">ابھی سیٹ اپ کریں</string>
 
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
+    <string name="logins_biometric_prompt_message_pin">اپنے آلے کو ان لاک کریں</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">تلاش انجن شامل کریں</string>
     <!-- Title of the Edit search engine screen -->
@@ -1042,8 +1149,15 @@
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">مزید سیکھیں</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">مخصوص تلاش انجن کی تفصلات</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">مزید لنک سیکھیں</string>
+
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">تلاش انجن کا نام داخل کریں</string>
+    <!-- Text shown when a user tries to add a search engine that already exists -->
+    <string name="search_add_custom_engine_error_existing_name">“%s” نام والا تلاش انجن پہلے سے موجود ہے۔</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">ایک تلاشی سٹرنگ داخل کریں</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
@@ -1055,10 +1169,14 @@
     <!-- Text shown when a user successfully deletes a custom search engine -->
     <string name="search_delete_search_engine_success_message">حذف شدہ %s</string>
 
+    <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
+    <string name="migration_title">بالکل نئی %s میں خوش آمدید</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">%s تازہ کارى کر رہا ہے…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
     <string name="migration_update_app_button">%s شروع کریں</string>
+    <!-- Accessibility description text for a completed migration item -->
+    <string name="migration_icon_description">منتقلی مکمل ہو گی</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
     <string name="migration_text_passwords">پاس ورڈ</string>
 
@@ -1066,6 +1184,9 @@
     <string name="phone_feature_blocked_intro">اس کی اجازت دینے کے لئے:</string>
     <!-- First step for the allowing a permission -->
     <string name="phone_feature_blocked_step_settings">1. Android کی ترتیبات پر جائیں</string>
+
+    <!-- Third step for the allowing a permission (Fore example: Camera) -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b> کو چالو کرنے کے لئے ٹو گل کریں]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
     <string name="quick_settings_sheet_secure_connection">مھفوظ کنکشن</string>

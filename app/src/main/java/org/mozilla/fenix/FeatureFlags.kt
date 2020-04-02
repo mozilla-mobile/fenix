@@ -11,20 +11,6 @@ object FeatureFlags {
     const val pullToRefreshEnabled = false
 
     /**
-     * Integration of media features provided by `feature-media` component:
-     * - Background playback without the app getting killed
-     * - Media notification with play/pause controls
-     * - Audio Focus handling (pausing/resuming in agreement with other media apps)
-     * - Support for hardware controls to toggle play/pause (e.g. buttons on a headset)
-     *
-     * Behind nightly flag until all related Android Components issues are fixed and QA has signed
-     * off.
-     *
-     * https://github.com/mozilla-mobile/fenix/issues/4431
-     */
-    const val mediaIntegration = true
-
-    /**
      * Allows Progressive Web Apps to be installed to the device home screen.
      */
     val progressiveWebApps = Config.channel.isNightlyOrDebug
@@ -53,11 +39,6 @@ object FeatureFlags {
      * Enables the new language picker
      */
     val fenixLanguagePicker = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables deleting individual tracking protection exceptions.
-     */
-    val deleteIndividualTrackingProtectionExceptions = Config.channel.isNightlyOrDebug
 
     /**
      * Integration of push support provided by `feature-push` component into the Gecko engine.

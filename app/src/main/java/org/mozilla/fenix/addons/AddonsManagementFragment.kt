@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.fragment_add_ons_management.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -57,7 +56,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         showToolbar(getString(R.string.preferences_addons))
     }
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
     override fun onStart() {
         super.onStart()
         findPreviousDialogFragment()?.let { dialog ->
@@ -106,7 +104,15 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                         val adapter = AddonsManagerAdapter(
                             requireContext().components.addonCollectionProvider,
                             this@AddonsManagementFragment,
-                            addons
+                            addons,
+                            style = AddonsManagerAdapter.Style(
+                                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext()),
+                                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext()),
+                                ThemeManager.resolveAttribute(
+                                    R.attr.secondaryText,
+                                    requireContext()
+                                )
+                            )
                         )
                         isInstallationInProgress = false
                         view.add_ons_progress_bar.isVisible = false

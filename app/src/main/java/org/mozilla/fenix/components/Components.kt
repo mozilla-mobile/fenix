@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
@@ -16,9 +17,11 @@ import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.test.Mockable
 import org.mozilla.fenix.utils.ClipboardHandler
+import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
 private const val DAY_IN_MINUTES = 24 * 60L
@@ -33,9 +36,9 @@ class Components(private val context: Context) {
             context,
             push,
             analytics.crashReporter,
-            core.historyStorage,
-            core.bookmarksStorage,
-            core.passwordsStorage
+            core.lazyHistoryStorage,
+            core.lazyBookmarksStorage,
+            core.lazyPasswordsStorage
         )
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
@@ -65,7 +68,16 @@ class Components(private val context: Context) {
     }
 
     val addonCollectionProvider by lazy {
-        AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
+        if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
+            AddonCollectionProvider(
+                context,
+                core.client,
+                collectionName = BuildConfig.AMO_COLLECTION,
+                maxCacheAgeInMinutes = DAY_IN_MINUTES
+            )
+        } else {
+            AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
+        }
     }
 
     @Suppress("MagicNumber")
@@ -96,4 +108,5 @@ class Components(private val context: Context) {
     val migrationStore by lazy { MigrationStore() }
     val performance by lazy { PerformanceComponent() }
     val push by lazy { Push(context, analytics.crashReporter) }
+    val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context as Application) }
 }

@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.library_site_item.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
+import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryInteractor
@@ -45,8 +46,6 @@ class HistoryListItemViewHolder(
         showDeleteButton: Boolean,
         mode: HistoryFragmentState.Mode
     ) {
-        this.item = item
-
         itemView.history_layout.titleView.text = item.title
         itemView.history_layout.urlView.text = item.url
 
@@ -57,12 +56,18 @@ class HistoryListItemViewHolder(
 
         itemView.history_layout.setSelectionInteractor(item, selectionHolder, historyInteractor)
         itemView.history_layout.changeSelected(item in selectionHolder.selectedItems)
-        itemView.history_layout.loadFavicon(item.url)
-        if (mode === HistoryFragmentState.Mode.Normal) {
+
+        if (this.item?.url != item.url) {
+            itemView.history_layout.loadFavicon(item.url)
+        }
+
+        if (item !in selectionHolder.selectedItems) {
             itemView.overflow_menu.showAndEnable()
         } else {
             itemView.overflow_menu.hideAndDisable()
         }
+
+        this.item = item
     }
 
     private fun toggleHeader(headerText: String?) {
@@ -98,7 +103,12 @@ class HistoryListItemViewHolder(
     private fun setupMenu() {
         val historyMenu = HistoryItemMenu(itemView.context) {
             val item = this.item ?: return@HistoryItemMenu
-            when (it) {
+
+            Do exhaustive when (it) {
+                HistoryItemMenu.Item.Copy -> historyInteractor.onCopyPressed(item)
+                HistoryItemMenu.Item.Share -> historyInteractor.onSharePressed(item)
+                HistoryItemMenu.Item.OpenInNewTab -> historyInteractor.onOpenInNormalTab(item)
+                HistoryItemMenu.Item.OpenInPrivateTab -> historyInteractor.onOpenInPrivateTab(item)
                 HistoryItemMenu.Item.Delete -> historyInteractor.onDeleteSome(setOf(item))
             }
         }

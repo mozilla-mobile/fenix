@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
+import kotlinx.android.synthetic.main.component_saved_logins.view.progress_bar
 import org.mozilla.fenix.R
 
 /**
@@ -69,8 +70,13 @@ class SavedLoginsView(
     }
 
     fun update(state: SavedLoginsFragmentState) {
-        view.saved_logins_list.isVisible = state.items.isNotEmpty()
-        view.saved_passwords_empty_view.isVisible = state.items.isEmpty()
+        if (state.isLoading) {
+            view.progress_bar.isVisible = true
+        } else {
+            view.progress_bar.isVisible = false
+            view.saved_logins_list.isVisible = state.items.isNotEmpty()
+            view.saved_passwords_empty_view.isVisible = state.items.isEmpty()
+        }
         loginsAdapter.submitList(state.filteredItems)
     }
 }

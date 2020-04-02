@@ -20,7 +20,6 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
@@ -62,7 +61,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
-@UseExperimental(ObsoleteCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 class DefaultBrowserToolbarControllerTest {
@@ -111,7 +109,8 @@ class DefaultBrowserToolbarControllerTest {
             bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
-            store = mockk()
+            store = mockk(),
+            sharedViewModel = mockk()
         )
 
         mockkStatic(
@@ -205,7 +204,8 @@ class DefaultBrowserToolbarControllerTest {
             bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
-            store = mockk()
+            store = mockk(),
+            sharedViewModel = mockk()
         )
 
         controller.handleBrowserMenuDismissed(itemList)
@@ -223,10 +223,10 @@ class DefaultBrowserToolbarControllerTest {
 
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
         verify {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                    sessionId = "1"
-                )
-                navController.nav(R.id.browserFragment, directions)
+            val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+                sessionId = "1"
+            )
+            navController.nav(R.id.browserFragment, directions)
         }
     }
 
@@ -357,7 +357,8 @@ class DefaultBrowserToolbarControllerTest {
             bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
-            store = mockk()
+            store = mockk(),
+            sharedViewModel = mockk()
         )
         controller.ioScope = this
 
@@ -441,10 +442,16 @@ class DefaultBrowserToolbarControllerTest {
 
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(
-            Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
-        verify { metrics.track(
-            Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)) }
+        verify {
+            metrics.track(
+                Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)
+            )
+        }
+        verify {
+            metrics.track(
+                Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)
+            )
+        }
         verify {
             val directions =
                 BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
@@ -467,8 +474,13 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
-        verify { metrics.track(Event.CollectionSaveButtonPressed(
-            DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)) }
+        verify {
+            metrics.track(
+                Event.CollectionSaveButtonPressed(
+                    DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER
+                )
+            )
+        }
         verify {
             val directions =
                 BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
@@ -500,7 +512,8 @@ class DefaultBrowserToolbarControllerTest {
             bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
-            store = mockk()
+            store = mockk(),
+            sharedViewModel = mockk()
         )
 
         val sessionManager: SessionManager = mockk(relaxed = true)
@@ -541,7 +554,8 @@ class DefaultBrowserToolbarControllerTest {
             bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
-            store = mockk()
+            store = mockk(),
+            sharedViewModel = mockk()
         )
 
         controller.handleToolbarItemInteraction(item)

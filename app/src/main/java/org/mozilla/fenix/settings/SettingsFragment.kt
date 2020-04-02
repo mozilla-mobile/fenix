@@ -10,6 +10,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
+import android.os.Handler
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -20,11 +22,9 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -37,7 +37,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.decodeUrlToRoundedDrawable
+import org.mozilla.fenix.ext.toRoundedDrawable
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
@@ -45,6 +45,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.account.AccountAuthErrorPreference
 import org.mozilla.fenix.settings.account.AccountPreference
+import kotlin.system.exitProcess
 
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -67,6 +68,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         override fun onAuthenticationProblems() = updateAccountUi()
     }
 
+    // A flag used to track if we're going through the onCreate->onStart->onResume lifecycle chain.
+    // If it's set to `true`, code in `onResume` can assume that `onCreate` executed a moment prior.
+    // This flag is set to `false` at the end of `onResume`.
+    private var creatingFragment = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,10 +83,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             autoPause = true
         )
 
-        // It's important to update the account UI state in onCreate, even though we also call it in onResume, since
-        // that ensures we'll never display an incorrect state in the UI. For example, if user is signed-in, and we
-        // don't perform this call in onCreate, we'll briefly display a "Sign In" preference, which will then get
-        // replaced by the correct account information once this call is ran in onResume shortly after.
+        // It's important to update the account UI state in onCreate since that ensures we'll never
+        // display an incorrect state in the UI. We take care to not also call it as part of onResume
+        // if it was just called here (via the 'creatingFragment' flag).
+        // For example, if user is signed-in, and we don't perform this call in onCreate, we'll briefly
+        // display a "Sign In" preference, which will then get replaced by the correct account information
+        // once this call is ran in onResume shortly after.
         updateAccountUIState(
             context!!,
             requireComponents.backgroundServices.accountManager.accountProfile()
@@ -116,12 +124,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         showToolbar(getString(R.string.settings_title))
 
-        update()
+        // Account UI state is updated as part of `onCreate`. To not do it twice in a row, we only
+        // update it here if we're not going through the `onCreate->onStart->onResume` lifecycle chain.
+        update(shouldUpdateAccountUIState = !creatingFragment)
 
         view!!.findViewById<RecyclerView>(R.id.recycler_view)?.hideInitialScrollBar(lifecycleScope)
+
+        // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
+        creatingFragment = false
     }
 
-    private fun update() {
+    private fun update(shouldUpdateAccountUIState: Boolean) {
         val trackingProtectionPreference =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
         trackingProtectionPreference?.summary = context?.let {
@@ -156,10 +169,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setupPreferences()
 
-        updateAccountUIState(
-            context!!,
-            requireComponents.backgroundServices.accountManager.accountProfile()
-        )
+        if (shouldUpdateAccountUIState) {
+            updateAccountUIState(
+                context!!,
+                requireComponents.backgroundServices.accountManager.accountProfile()
+            )
+        }
     }
 
     private fun updatePreferenceVisibilityForFeatureFlags() {
@@ -300,6 +315,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true
         }
+
+        val preferenceFxAOverride =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_fxa_server))
+        val preferenceSyncOverride =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_sync_tokenserver))
+
+        val syncFxAOverrideUpdater = object : StringSharedPreferenceUpdater() {
+            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                return super.onPreferenceChange(preference, newValue).also {
+                    updateFxASyncOverrideMenu()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.toast_override_fxa_sync_server_done),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    Handler().postDelayed({
+                        exitProcess(0)
+                    }, FXA_SYNC_OVERRIDE_EXIT_DELAY)
+                }
+            }
+        }
+        preferenceFxAOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
+        preferenceSyncOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
     }
 
     private fun navigateFromSettings(directions: NavDirections) {
@@ -343,20 +381,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val accountManager = requireComponents.backgroundServices.accountManager
         val account = accountManager.authenticatedAccount()
 
+        updateFxASyncOverrideMenu()
+
         // Signed-in, no problems.
         if (account != null && !accountManager.accountNeedsReauth()) {
             preferenceSignIn?.isVisible = false
 
-            profile?.avatar?.url?.let {
-                lifecycleScope.launch(IO) {
-                    val roundedDrawable = it.decodeUrlToRoundedDrawable(context)
-                    withContext(Main) {
-                        preferenceFirefoxAccount?.icon =
-                            roundedDrawable ?: AppCompatResources.getDrawable(
-                                context,
-                                R.drawable.ic_account
-                            )
-                    }
+            profile?.avatar?.url?.let { avatarUrl ->
+                lifecycleScope.launch(Main) {
+                    val roundedDrawable = avatarUrl.toRoundedDrawable(context, requireComponents.core.client)
+                    preferenceFirefoxAccount?.icon =
+                        roundedDrawable ?: AppCompatResources.getDrawable(context, R.drawable.ic_account)
                 }
             }
             preferenceSignIn?.onPreferenceClickListener = null
@@ -388,7 +423,31 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun updateFxASyncOverrideMenu() {
+        val preferenceFxAOverride =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_fxa_server))
+        val preferenceSyncOverride =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_sync_tokenserver))
+        val settings = requireContext().settings()
+        val show = settings.overrideFxAServer.isNotEmpty() ||
+                settings.overrideSyncTokenServer.isNotEmpty() ||
+                settings.showSecretDebugMenuThisSession
+        // Only enable changes to these prefs when the user isn't connected to an account.
+        val enabled = requireComponents.backgroundServices.accountManager.authenticatedAccount() == null
+        preferenceFxAOverride?.apply {
+            isVisible = show
+            isEnabled = enabled
+            summary = settings.overrideFxAServer.ifEmpty { null }
+        }
+        preferenceSyncOverride?.apply {
+            isVisible = show
+            isEnabled = enabled
+            summary = settings.overrideSyncTokenServer.ifEmpty { null }
+        }
+    }
+
     companion object {
         private const val SCROLL_INDICATOR_DELAY = 10L
+        private const val FXA_SYNC_OVERRIDE_EXIT_DELAY = 2000L
     }
 }

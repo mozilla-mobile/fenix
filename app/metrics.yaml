@@ -82,7 +82,7 @@ events:
           A string containing the name of the item the user tapped. These items include:
           Settings, Library, Help, Desktop Site toggle on/off, Find in Page, New Tab,
           Private Tab, Share, Report Site Issue, Back/Forward button, Reload Button, Quit,
-          Reader Mode On, Reader Mode Off, Open In App, Add To Top Sites, Add-ons Manager
+          Reader Mode On, Reader Mode Off, Open In app, Add To Top Sites, Add-ons Manager
     bugs:
     - https://github.com/mozilla-mobile/fenix/issues/1024
     data_reviews:
@@ -295,6 +295,34 @@ metrics:
     notification_emails:
     - fenix-core@mozilla.com
     expires: "2020-09-01"
+  top_sites_count:
+    type: counter
+    lifetime: application
+    description: >
+      A counter that indicates how many top sites a user has
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/8125
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/9556
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  has_top_sites:
+    type: boolean
+    lifetime: application
+    description: >
+      A boolean that indicates if the user has top sites
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/8125
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/9556
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
   search_count:
     type: labeled_counter
     description: >
@@ -360,11 +388,61 @@ metrics:
       - metrics
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1298
+      - https://github.com/mozilla-mobile/fenix/issues/9136
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/5579
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
+  adjust_ad_group:
+    type: string
+    lifetime: application
+    description: >
+      A string containing the Adjust ad group ID from which the user installed Fenix. This will not
+      send on the first session the user runs. If the install is organic, this will be empty.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/1298
+      - https://github.com/mozilla-mobile/fenix/issues/9136
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/9253
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  adjust_creative:
+    type: string
+    lifetime: application
+    description: >
+      A string containing the Adjust creative ID from which the user installed Fenix. This will not
+      send on the first session the user runs. If the install is organic, this will be empty.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/1298
+      - https://github.com/mozilla-mobile/fenix/issues/9136
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/9253
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  adjust_network:
+    type: string
+    lifetime: application
+    description: >
+      A string containing the Adjust network ID from which the user installed Fenix. This will not
+      send on the first session the user runs. If the install is organic, this will be empty.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/1298
+      - https://github.com/mozilla-mobile/fenix/issues/9136
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/9253
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+
   toolbar_position:
     type: string
     lifetime: application

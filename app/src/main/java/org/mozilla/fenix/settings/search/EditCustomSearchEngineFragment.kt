@@ -91,7 +91,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         custom_search_engine_name_field.error = ""
         custom_search_engine_search_string_field.error = ""
 
-        val name = edit_engine_name.text?.toString() ?: ""
+        val name = edit_engine_name.text?.toString()?.trim() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
         var hasError = false
@@ -122,7 +122,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         }
 
         if (!searchString.contains("%s")) {
-            custom_search_engine_name_field
+            custom_search_engine_search_string_field
                 .error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
             hasError = true
         }

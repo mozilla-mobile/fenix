@@ -194,7 +194,7 @@ class DefaultToolbarMenu(
     }
 
     private val addons = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_addon_manager),
+        label = context.getString(R.string.browser_menu_add_ons),
         imageResource = R.drawable.mozac_ic_extensions,
         iconTintColorResource = primaryTextColor()
     ) {
@@ -212,7 +212,8 @@ class DefaultToolbarMenu(
             primaryTextColor(),
         highlight = BrowserMenuHighlight.HighPriority(
             endImageResource = R.drawable.ic_sync_disconnected,
-            backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground)
+            backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
+            canPropagate = false
         ),
         isHighlighted = { hasAccountProblem }
     ) {
@@ -220,7 +221,7 @@ class DefaultToolbarMenu(
     }
 
     private val library = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_your_library),
+        label = context.getString(R.string.browser_menu_library),
         imageResource = R.drawable.ic_library,
         iconTintColorResource = primaryTextColor()
     ) {
@@ -239,7 +240,7 @@ class DefaultToolbarMenu(
 
     private val addToTopSites = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_top_sites),
-        imageResource = R.drawable.ic_home,
+        imageResource = R.drawable.ic_top_sites,
         iconTintColorResource = primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
@@ -280,7 +281,7 @@ class DefaultToolbarMenu(
     }
 
     private val saveToCollection = BrowserMenuImageText(
-        label = context.getString(R.string.browser_menu_save_to_collection),
+        label = context.getString(R.string.browser_menu_save_to_collection_2),
         imageResource = R.drawable.ic_tab_collection,
         iconTintColorResource = primaryTextColor()
     ) {

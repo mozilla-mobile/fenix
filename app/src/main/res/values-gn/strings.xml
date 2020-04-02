@@ -66,7 +66,7 @@
     <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
     <string name="browser_menu_edit_bookmark">Techaukaha mbosako’i</string>
     <!-- Browser menu button that opens the addon manager -->
-    <string name="browser_menu_addon_manager">Moĩmbaha ñangarekohára</string>
+    <string name="browser_menu_add_ons">Moĩmbaha</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Ndaipóri moĩmbaha ápe</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -77,7 +77,7 @@
     <!-- Browser menu button that opens the settings menu -->
     <string name="browser_menu_settings">Ñemboheko</string>
     <!-- Browser menu button that opens a user's library -->
-    <string name="browser_menu_your_library">Ne mba’erysýi</string>
+    <string name="browser_menu_library">Arandukarenda</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Tenda mesa arigua</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
@@ -91,7 +91,7 @@
     <!-- Browser menu button that creates a new tab -->
     <string name="browser_menu_new_tab">Tendayke pyahu</string>
     <!-- Browser menu button that saves the current tab to a collection -->
-    <string name="browser_menu_save_to_collection">Eñongatu atyhápe</string>
+    <string name="browser_menu_save_to_collection_2">Eñongatu mbyatyhápe</string>
     <!-- Browser menu button that opens a dialog to report issues with the current site -->
     <string name="browser_menu_report_issue">Emomarandu tenda jejavy</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -156,6 +156,9 @@
     <!-- Text preview for larger sized widgets -->
     <string name="search_widget_text_long">Eheka ñandutípe</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Ñe’ẽ jeheka</string>
+
     <!-- Preferences -->
     <!-- Title for the settings page-->
     <string name="settings">Ñemboheko</string>
@@ -204,6 +207,12 @@
     <string name="preferences_add_private_browsing_shortcut">Embojuaju jeike pya’eha tendayke ñemiguáre</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Jeikekuaaha</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Mohendahavusu Firefox Account momba’etepyre</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Mohendahavusu Sync momba’etepyre</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Account/Sync mba’ete moambuepyre. Esẽnguévo pe tembipuru’ígui emoambue hag̃ua…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Mba’ete</string>
     <!-- Preference shown on banner to sign into account -->
@@ -463,6 +472,14 @@
     <string name="history_delete_all_dialog">¿Emopotĩse añetehápe tembiasakue?</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Mopotĩ</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">Monguatia</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">Moherakuã</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">Embojuruja tendayke pyahúpe</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">Embojuruja tendayke ñemíme</string>
     <!-- Text for the button to delete a single history item -->
     <string name="history_delete_item">Mboguete</string>
     <!-- History multi select title in app bar
@@ -612,18 +629,16 @@
     <string name="tracking_protection_on">Hendypyre</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Mboguepyre</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked">Ta’ãngamýi ha ñe’ẽatãha jokopyre</string>
-    <!-- DEPRECATED: Label that indicates video and audio autoplay is allowed -->
-    <string name="preference_option_autoplay_allowed">Ta’ãngamýi ha ñe’ẽatãha moneĩmbyre</string>
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Emoneĩ mba’epu ha ta’ãngamýi</string>
-    <!-- Label that indicates that video and audio autoplay is only allowed over WIFI -->
-    <string name="preference_option_autoplay_allowed_wifi_only">Emoneĩ mba’epu ha ta’ãngamýi Wi-Fi ndive</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Ejoko mba’epu ha ta’ãngamýi pumbyry mba’ekuaarãme año</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Mba’epu ha ta’ãngamýi oñembohetáta Wi-Fi ndive</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
-    <string name="preference_option_autoplay_block_audio">Ejoko mba’epu</string>
+    <string name="preference_option_autoplay_block_audio2">Ejoko mba’epu año</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
-    <string name="preference_option_autoplay_blocked2">Ejoko ta’ãngamýi ha mba’epu</string>
+    <string name="preference_option_autoplay_blocked3">Ejoko mba’epu ha ta’ãngamýi año</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Hendypyre</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
@@ -918,6 +933,9 @@
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Emoñe’ẽ ore marandu’i ñemigua</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">Mboty</string>
+
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Eñepyrũ eikundaha</string>
 
@@ -1059,6 +1077,9 @@
     <string name="etp_panel_off">Umi ñemo’ã ojepe’áma ko tendápe g̃uarã</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">Ñemo’ã tapykuehogua oñemboguéma ko’ã tendápe g̃uarã</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Eikundaha tapykuévo</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">Nde derécho</string>
     <!-- About page link text to open open source licenses screen -->
@@ -1081,6 +1102,11 @@
     <string name="about_licensing_information">Marandu ñemoneĩgua</string>
     <!-- About page link text to open a screen with libraries that are used -->
     <string name="about_other_open_source_libraries">Arandukarenda roipurúva</string>
+
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Poravprã mopotĩha: opyta %1$d eikutu (s) embojuruja hag̃ua</string>
+    <string name="about_debug_menu_toast_done">Mopotĩha poravorã jurujapyre</string>
 
     <!-- Content description of the tab counter toolbar button when one tab is open -->
     <string name="tab_counter_content_description_one_tab">1 tendayke</string>

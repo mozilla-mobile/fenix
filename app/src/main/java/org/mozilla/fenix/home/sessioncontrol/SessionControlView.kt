@@ -24,7 +24,6 @@ import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.Tab
 
 val noTabMessage = AdapterItem.NoContentMessageWithAction(
-    R.drawable.ic_tabs,
     R.string.no_open_tabs_header_2,
     R.string.no_open_tabs_description,
     R.drawable.ic_new,
@@ -32,7 +31,6 @@ val noTabMessage = AdapterItem.NoContentMessageWithAction(
 )
 
 val noCollectionMessage = AdapterItem.NoContentMessage(
-    R.drawable.ic_tab_collection,
     R.string.no_collections_header,
     R.string.collections_description
 )
@@ -46,6 +44,7 @@ private fun normalModeAdapterItems(
     val items = mutableListOf<AdapterItem>()
 
     if (topSites.isNotEmpty()) {
+        items.add(AdapterItem.TopSiteHeader)
         items.add(AdapterItem.TopSiteList(topSites))
     }
 
@@ -206,7 +205,7 @@ class SessionControlView(
                 }
                 loadedTopSites?.run {
                     homeScreenViewModel.shouldScrollToTopSites = false
-                    view.scrollToPosition(stateAdapterList.indexOf(this))
+                    view.scrollToPosition(0)
                 }
             }
         } else {
