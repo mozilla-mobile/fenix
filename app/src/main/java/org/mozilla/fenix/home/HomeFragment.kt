@@ -42,19 +42,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_home.homeAppBar
-import kotlinx.android.synthetic.main.fragment_home.privateBrowsingButton
-import kotlinx.android.synthetic.main.fragment_home.search_engine_icon
-import kotlinx.android.synthetic.main.fragment_home.toolbarLayout
-import kotlinx.android.synthetic.main.fragment_home.view.add_tab_button
-import kotlinx.android.synthetic.main.fragment_home.view.bottomBarShadow
-import kotlinx.android.synthetic.main.fragment_home.view.bottom_bar
-import kotlinx.android.synthetic.main.fragment_home.view.homeAppBar
-import kotlinx.android.synthetic.main.fragment_home.view.menuButton
-import kotlinx.android.synthetic.main.fragment_home.view.sessionControlRecyclerView
-import kotlinx.android.synthetic.main.fragment_home.view.toolbar
-import kotlinx.android.synthetic.main.fragment_home.view.toolbarLayout
-import kotlinx.android.synthetic.main.fragment_home.view.toolbar_wrapper
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -395,7 +384,10 @@ class HomeFragment : Fragment() {
                 override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
                     if (authType != AuthType.Existing) {
                         view?.let {
-                            FenixSnackbar.make(it, Snackbar.LENGTH_SHORT)
+                            FenixSnackbar.make(view = it,
+                                duration = Snackbar.LENGTH_SHORT,
+                                isDisplayedOnBrowserFragment = false
+                            )
                                 .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
                                 .setAnchorView(toolbarLayout)
                                 .show()
@@ -600,7 +592,7 @@ class HomeFragment : Fragment() {
         nav(R.id.homeFragment, directions)
     }
 
-    @SuppressWarnings("ComplexMethod")
+    @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun createHomeMenu(context: Context, menuButtonView: WeakReference<MenuButton>) = HomeMenu(
         this,
         context,
@@ -660,7 +652,11 @@ class HomeFragment : Fragment() {
                     deleteAndQuit(
                         activity,
                         lifecycleScope,
-                        view?.let { view -> FenixSnackbar.makeWithToolbarPadding(view) }
+                        view?.let { view -> FenixSnackbar.make(
+                            view = view,
+                            isDisplayedOnBrowserFragment = false
+                        )
+                        }
                     )
                 }
                 HomeMenu.Item.Sync -> {
@@ -885,7 +881,10 @@ class HomeFragment : Fragment() {
                 } else {
                     R.string.create_collection_tab_saved
                 }
-                FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+                FenixSnackbar.make(view = view,
+                    duration = Snackbar.LENGTH_LONG,
+                    isDisplayedOnBrowserFragment = false
+                )
                     .setText(view.context.getString(stringRes))
                     .setAnchorView(snackbarAnchorView)
                     .show()
@@ -896,7 +895,11 @@ class HomeFragment : Fragment() {
     private fun showRenamedSnackbar() {
         view?.let { view ->
             val string = view.context.getString(R.string.snackbar_collection_renamed)
-            FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+            FenixSnackbar.make(
+                view = view,
+                duration = Snackbar.LENGTH_LONG,
+                isDisplayedOnBrowserFragment = false
+            )
                 .setText(string)
                 .setAnchorView(snackbarAnchorView)
                 .show()
