@@ -73,10 +73,6 @@ class CollectionCreationView(
             view.context,
             R.layout.component_collection_creation_select_collection
         )
-        nameCollectionConstraints.clone(
-            view.context,
-            R.layout.component_collection_creation_name_collection
-        )
 
         view.bottom_bar_icon_button.apply {
             increaseTapArea(increaseButtonByDps)
@@ -243,6 +239,10 @@ class CollectionCreationView(
         }
 
         view.name_collection_edittext.showKeyboard()
+        nameCollectionConstraints.clone(
+            view.context,
+            R.layout.component_collection_creation_name_collection
+        )
         val constraint = nameCollectionConstraints
         constraint.applyTo(view.collection_constraint_layout)
         name_collection_edittext.setText(
@@ -272,6 +272,10 @@ class CollectionCreationView(
                 collectionCreationTabListAdapter.updateData(tabs, tabs.toSet(), true)
             }
         }
+        nameCollectionConstraints.clone(
+            view.context,
+            R.layout.component_collection_creation_name_collection
+        )
         val constraint = nameCollectionConstraints
         constraint.applyTo(view.collection_constraint_layout)
         name_collection_edittext.setText(state.selectedTabCollection?.title)
