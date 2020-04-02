@@ -11,7 +11,7 @@ kind-dependencies:
     - toolchain
 
 only-for-build-types:
-    - performance-test
+    - fennec-nightly
 
 only-for-abis:
     - armeabi-v7a
@@ -34,7 +34,7 @@ job-defaults:
                     subject: '[{product_name}] Raptor job "{task_name}" failed'
                     to-addresses: [perftest-alerts@mozilla.com]
             default: {}
-    run-on-tasks-for: []
+    run-on-tasks-for: [github-pull-request]
     treeherder:
         kind: test
         tier: 1
@@ -76,7 +76,7 @@ job-defaults:
             - './test-linux.sh'
             - '--cfg=mozharness/configs/raptor/android_hw_config.py'
             - '--app=fenix'
-            - '--binary=org.mozilla.fenix.performancetest'
+            - '--binary=org.mozilla.fennec_aurora'
             - '--activity=org.mozilla.fenix.IntentReceiverActivity'
             - '--download-symbols=ondemand'
     fetches:

@@ -13,7 +13,7 @@ kind-dependencies:
 primary-dependency: signing
 
 only-for-build-types:
-    - performance-test
+    - fennec-nightly
 
 only-for-abis:
     - armeabi-v7a
@@ -34,7 +34,7 @@ job-defaults:
                     subject: '[{product_name}] Raptor-Browsertime job "{task_name}" failed'
                     to-addresses: [perftest-alerts@mozilla.com]
             default: {}
-    run-on-tasks-for: []
+    run-on-tasks-for: [github-pull-request]
     treeherder:
         kind: test
         tier: 2
@@ -79,7 +79,7 @@ job-defaults:
             - '--app=fenix'
             - '--browsertime'
             - '--cold'
-            - '--binary=org.mozilla.fenix.performancetest'
+            - '--binary=org.mozilla.fennec_aurora'
             - '--activity=org.mozilla.fenix.IntentReceiverActivity'
             - '--download-symbols=ondemand'
             - '--browsertime-node=$MOZ_FETCHES_DIR/node/bin/node'
