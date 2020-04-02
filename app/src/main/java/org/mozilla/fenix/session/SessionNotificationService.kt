@@ -49,6 +49,24 @@ class SessionNotificationService : Service() {
             ACTION_ERASE -> {
                 metrics.track(Event.PrivateBrowsingNotificationTapped)
                 components.core.sessionManager.removeAndCloseAllPrivateSessions()
+
+                val homeScreenIntent = Intent(this, HomeActivity::class.java);
+                val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                if (VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
+                    // Set browsing mode to 'regular' and it's startmode to be in background (recents screen)
+                    homeScreenIntent.apply {
+                        setFlags(intentFlags)
+                        putExtra(HomeActivity.PRIVATE_BROWSING_MODE, false)
+                        putExtra(HomeActivity.START_IN_RECENTS_SCREEN, true)
+                    }
+                } else {
+                    // Bring back the PB Home to foreground
+                    homeScreenIntent.apply {
+                        setFlags(intentFlags)
+                        putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+                    }
+                }
+                startActivity(homeScreenIntent)
             }
 
             else -> throw IllegalStateException("Unknown intent: $intent")

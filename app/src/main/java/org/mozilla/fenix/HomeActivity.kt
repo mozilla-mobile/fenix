@@ -176,6 +176,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             StartupTimeline.homeActivityLifecycleObserver
         )
         StartupTimeline.onActivityCreateEndHome(this)
+
+
+        if(shouldStartInRecentsScreen(intent)) {
+            moveTaskToBack(true)
+        }
     }
 
     @CallSuper
@@ -192,6 +197,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 }
             }
         }
+
+
     }
 
     final override fun onPause() {
@@ -311,6 +318,21 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             }
         }
         return settings().lastKnownMode
+    }
+
+    /**
+     * Determines whether the activity should be pushed to be backstack (i.e., 'minimized' to the recents
+     * screen) upon starting.
+     * @param intent    The intent that started this activity. Is checked for having the 'START_IN_RECENTS_SCREEN'-extra.
+     * @return          True if the activity should be started and pushed to the recents screen, false .
+     */
+    private fun shouldStartInRecentsScreen(intent: Intent?): Boolean {
+        intent?.toSafeIntent()?.let {
+            if (it.hasExtra(START_IN_RECENTS_SCREEN)) {
+                return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
+            }
+        }
+        return false
     }
 
     private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
@@ -499,5 +521,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
         const val delay = 5000L
+        const val START_IN_RECENTS_SCREEN = "start_in_recents_screen"
     }
 }
