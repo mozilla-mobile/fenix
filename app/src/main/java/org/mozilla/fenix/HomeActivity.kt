@@ -177,7 +177,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         )
         StartupTimeline.onActivityCreateEndHome(this)
 
-
         if(shouldStartInRecentsScreen(intent)) {
             moveTaskToBack(true)
         }
@@ -197,8 +196,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 }
             }
         }
-
-
     }
 
     final override fun onPause() {

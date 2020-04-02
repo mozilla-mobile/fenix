@@ -8,14 +8,8 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.application
-import org.mozilla.fenix.ext.asActivity
 
 /**
  * This ActivityLifecycleCallbacks implementations tracks if there is at least one activity in the
@@ -48,14 +42,6 @@ class VisibilityLifecycleCallback(private val activityManager: ActivityManager?)
             }
         }
         return false
-    }
-
-    private fun finishAndRemoveTasks() {
-        activityManager?.let {
-            for (task in it.appTasks) {
-                task.finishAndRemoveTask()
-            }
-        }
     }
 
     override fun onActivityStarted(activity: Activity?) {
