@@ -141,7 +141,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         lifecycle.addObserver(webExtensionPopupFeature)
         StartupTimeline.onActivityCreateEndHome(this)
 
-
         if(shouldStartInRecentsScreen(intent)) {
             moveTaskToBack(true)
         }
@@ -161,8 +160,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 }
             }
         }
-
-
     }
 
     final override fun onPause() {
