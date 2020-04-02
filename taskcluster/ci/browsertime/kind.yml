@@ -80,7 +80,7 @@ job-defaults:
             - '--browsertime'
             - '--cold'
             - '--binary=org.mozilla.fenix.performancetest'
-            - '--activity=org.mozilla.fenix.browser.BrowserPerformanceTestActivity'
+            - '--activity=org.mozilla.fenix.IntentReceiverActivity'
             - '--download-symbols=ondemand'
             - '--browsertime-node=$MOZ_FETCHES_DIR/node/bin/node'
             - '--browsertime-geckodriver=$MOZ_FETCHES_DIR/geckodriver'
