@@ -20,7 +20,6 @@
         <item name="alertDialogTheme">@style/DialogStyleNormal</item>
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
-        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="fontFamily">@font/inter_regular</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
@@ -68,6 +67,7 @@
         <item name="homeBackground">@color/foundation_normal_theme</item>
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
+        <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
         <item name="shieldLottieFile">@raw/shield_json</item>
@@ -390,7 +390,6 @@
     </style>
 
     <style name="SearchShortcutsLabelStyle">
-        <item name="android:fontFamily">Inter UI</item>
         <item name="android:letterSpacing">0.15</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">?secondaryText</item>
@@ -451,7 +450,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:minLines">1</item>
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="AboutHeaderContentText" parent="TextAppearance.MaterialComponents.Subtitle1">
