@@ -224,3 +224,9 @@ jobs:
         test-name: cnn
         treeherder:
             symbol: 'Btime(tp6m-27-c)'
+
+    tp6m-28-cold:
+        test-name: google-search-restaurants
+        run-on-tasks-for: [github-pull-request]
+        treeherder:
+            symbol: 'Btime(tp6m-28-c)'
