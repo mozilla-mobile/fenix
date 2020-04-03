@@ -455,9 +455,15 @@ class SettingsPrivacyTest {
         // see: telemetry testcases
     }
 
-    @Ignore("This is a stub test, ignore for now")
+    
     @Test
-    fun openPrivacyNotice() {
+    fun openPrivacyNotice(s: String) {
+        homeScreen {
+         }.openThreeDotMenu {
+         }.openSettings {
+         }.openAboutFirefoxPreview {
+             openPrivacyNotice("www.mozilla.org")
+         }
         // Open 3dot (main) menu
         // Select settings
         // Click on "Privacy notice"
