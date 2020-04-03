@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!-- This Source Code Form is subject to the terms of the Mozilla Public
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/siteLayout"
@@ -11,14 +14,14 @@
     android:layout_marginTop="12dp">
 
     <TextView
-        android:id="@+id/siteHeaderText"
+        android:id="@+id/webAddressHeaderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/preferences_passwords_saved_logins_site"
         android:textColor="?primaryText"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/siteInfoText"
-        app:layout_constraintEnd_toStartOf="@id/copySiteItem"
+        app:layout_constraintEnd_toStartOf="@id/copyWebAddress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -28,21 +31,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@id/siteHeaderText"
-        app:layout_constraintStart_toStartOf="@id/siteHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/siteHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/webAddressHeaderText"
+        app:layout_constraintStart_toStartOf="@id/webAddressHeaderText"
+        app:layout_constraintTop_toBottomOf="@id/webAddressHeaderText"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Info" />
 
     <ImageButton
-        android:id="@+id/copySiteItem"
+        android:id="@+id/copyWebAddress"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_copy_site"
         app:layout_constraintBottom_toBottomOf="@id/siteInfoText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/siteHeaderText"
+        app:layout_constraintTop_toTopOf="@id/webAddressHeaderText"
         app:srcCompat="@drawable/ic_copy" />
 
     <TextView
@@ -54,7 +57,7 @@
         android:textColor="?primaryText"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/usernameInfoText"
-        app:layout_constraintEnd_toStartOf="@id/copyUsernameItem"
+        app:layout_constraintEnd_toStartOf="@id/copyUsername"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/siteInfoText"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -71,7 +74,7 @@
         tools:text="Info" />
 
     <ImageButton
-        android:id="@+id/copyUsernameItem"
+        android:id="@+id/copyUsername"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -90,7 +93,7 @@
         android:textColor="?primaryText"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/passwordInfoText"
-        app:layout_constraintEnd_toStartOf="@id/revealPasswordItem"
+        app:layout_constraintEnd_toStartOf="@id/revealPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usernameInfoText"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -109,7 +112,7 @@
         tools:text="Info" />
 
     <ImageButton
-        android:id="@+id/revealPasswordItem"
+        android:id="@+id/revealPassword"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
@@ -117,18 +120,18 @@
         android:contentDescription="@string/saved_login_reveal_password"
         android:tint="?android:colorAccent"
         app:layout_constraintBottom_toBottomOf="@id/passwordInfoText"
-        app:layout_constraintEnd_toStartOf="@id/copyPasswordItem"
+        app:layout_constraintEnd_toStartOf="@id/copyPassword"
         app:layout_constraintTop_toTopOf="@id/passwordHeaderText"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />
 
     <ImageButton
-        android:id="@+id/copyPasswordItem"
+        android:id="@+id/copyPassword"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_logins_copy_password"
-        app:layout_constraintBottom_toBottomOf="@id/revealPasswordItem"
+        app:layout_constraintBottom_toBottomOf="@id/revealPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/revealPasswordItem"
+        app:layout_constraintTop_toTopOf="@id/revealPassword"
         app:srcCompat="@drawable/ic_copy" />
 </androidx.constraintlayout.widget.ConstraintLayout>

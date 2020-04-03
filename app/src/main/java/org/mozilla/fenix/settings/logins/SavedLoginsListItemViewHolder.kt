@@ -24,7 +24,7 @@ class SavedLoginsListItemViewHolder(
 
     fun bind(item: SavedLoginsItem) {
         this.item = item
-        url.text = item.url
+        url.text = titleFromHostname(item.url)
         userName.text = item.userName
         updateFavIcon(item.url)
         view.setOnClickListener {
@@ -36,7 +36,10 @@ class SavedLoginsListItemViewHolder(
         favicon.context.components.core.icons.loadIntoView(favicon, url)
     }
 
-    companion object {
-        const val LAYOUT_ID = R.layout.logins_item
+    private fun titleFromHostname(hostname: String): String {
+        return hostname
+            .replace(Regex("^http://"), "")
+            .replace(Regex("^https://"), "")
+            .replace(Regex("^www\\d*\\."), "")
     }
 }

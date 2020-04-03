@@ -5,41 +5,31 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.view.*
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.android.synthetic.main.fragment_login_info.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.showToolbar
 
 /**
- * Displays saved login information for a single website.
+ * Displays the editable saved login information for a single website.
  */
-class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
+class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
-    private val args by navArgs<SavedLoginSiteInfoFragmentArgs>()
+    private val args by navArgs<EditLoginFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,50 +39,43 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     override fun onPause() {
         // If we pause this fragment, we want to pop users back to reauth
         if (findNavController().currentDestination?.id != R.id.savedLoginsFragment) {
-            activity?.let { it.checkAndUpdateScreenshotPermission(it.settings()) }
-            findNavController().popBackStack(R.id.loginsFragment, false)
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            findNavController().popBackStack(R.id.savedLoginSiteInfoFragment, false)
         }
         super.onPause()
     }
 
+    fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        siteInfoText.text = args.savedLoginItem.url
-        usernameInfoText.text = args.savedLoginItem.userName
-        passwordInfoText.text = args.savedLoginItem.password
+        hostnameText.text = args.savedLoginItem.url.toEditable()
+        usernameText.text = args.savedLoginItem.userName?.toEditable() ?: "".toEditable()
+        passwordText.text = args.savedLoginItem.password!!.toEditable()
 
-        val copyInfoArgs = listOf(
-            Pair(copyWebAddress, args.savedLoginItem.url),
-            Pair(copyUsername, args.savedLoginItem.userName),
-            Pair(copyPassword, args.savedLoginItem.password)
-        )
-
-        for (item in copyInfoArgs) {
-            item.first.setOnClickListener(CopyButtonListener(item.second, R.string.login_copied))
+        clearUsernameTextButton.setOnClickListener {
+            usernameText.text = "".toEditable()
         }
-
-        passwordInfoText.inputType =
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        clearPasswordTextButton.setOnClickListener {
+            passwordText.text = "".toEditable()
+        }
         revealPassword.setOnClickListener {
             togglePasswordReveal(it.context)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_options_menu, menu)
+        inflater.inflate(R.menu.login_save, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.edit_login_button -> {
-            nav(
-                R.id.editLoginFragment,
-                SavedLoginSiteInfoFragment.action_savedLoginsInfoFragment_to_editLoginFragment()
-            )
+        R.id.save_login_button -> {
+            attemptSaveAndExit()
             true
         }
-        R.id.delete_login_button -> {
-            displayDeleteLoginDialog()
+        R.id.exit -> {
+            discardChangesAndExit()
             true
         }
         else -> false
@@ -100,7 +83,7 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     private fun deleteLogin() {
         var deleteLoginJob: Deferred<Boolean>? = null
-        val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
+        val deleteJob = lifecycleScope.launch(IO) {
             deleteLoginJob = async {
                 requireContext().components.core.passwordsStorage.delete(args.savedLoginItem.id)
             }
@@ -151,48 +134,5 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         showToolbar(args.savedLoginItem.url)
-    }
-
-    private fun displayDeleteLoginDialog() {
-        activity?.let { activity ->
-            AlertDialog.Builder(activity).apply {
-                setMessage(R.string.login_deletion_confirmation)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
-                    dialog.cancel()
-                }
-                setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-                    deleteLogin()
-                    dialog.dismiss()
-                }
-                create()
-            }.show()
-        }
-    }
-
-    /**
-     * Click listener for a textview's copy button.
-     * @param value Value to be copied
-     * @param snackbarText Text to display in snackbar after copying.
-     */
-    private inner class CopyButtonListener(
-        private val value: String?,
-        @StringRes private val snackbarText: Int
-    ) : View.OnClickListener {
-        override fun onClick(view: View) {
-            val clipboard = view.context.components.clipboardHandler
-            clipboard.text = value
-            showCopiedSnackbar(view.context.getString(snackbarText))
-            view.context.components.analytics.metrics.track(Event.CopyLogin)
-        }
-
-        private fun showCopiedSnackbar(copiedItem: String) {
-            view?.let {
-                FenixSnackbar.make(
-                    view = it,
-                    duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedWithBrowserToolbar = false
-                ).setText(copiedItem).show()
-            }
-        }
     }
 }

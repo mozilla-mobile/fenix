@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import org.mozilla.fenix.R
 
 private sealed class AdapterItem {
     data class Item(val item: SavedLoginsItem) : AdapterItem()
@@ -22,7 +23,7 @@ class SavedLoginsAdapter(
         viewType: Int
     ): SavedLoginsListItemViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(SavedLoginsListItemViewHolder.LAYOUT_ID, parent, false)
+            .inflate(R.layout.logins_item, parent, false)
         return SavedLoginsListItemViewHolder(view, interactor)
     }
 
