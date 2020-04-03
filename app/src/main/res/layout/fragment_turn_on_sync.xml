@@ -54,36 +54,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_in_image" />
 
-        <com.google.android.material.button.MaterialButton
+        <org.mozilla.fenix.uicomponents.MozillaButton
             android:id="@+id/signInScanButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
             android:layout_marginTop="16dp"
-            android:letterSpacing="0"
-            android:text="@string/sign_in_ready_for_scan"
-            android:textAllCaps="false"
-            android:textColor="?contrastText"
-            android:textStyle="bold"
-            app:backgroundTint="?accent"
-            app:icon="@drawable/ic_qr"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconTint="?contrastText"
+            app:moz_button_text="@string/sign_in_ready_for_scan"
+            app:moz_button_image="@drawable/ic_qr"
+            app:moz_button_type="positive"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/signInInstructions"
-            app:fontFamily="@font/metropolis_semibold" />
+            app:layout_constraintTop_toBottomOf="@id/signInInstructions" />
 
-        <com.google.android.material.button.MaterialButton
+        <org.mozilla.fenix.uicomponents.MozillaButton
             android:id="@+id/signInEmailButton"
-            style="@style/ThemeIndependentMaterialGreyButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/sign_in_with_email"
+            android:layout_marginTop="16dp"
+            app:moz_button_type="neutral"
+            app:moz_button_text="@string/sign_in_with_email"
+            tools:text="@string/sign_in_with_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/signInScanButton" />

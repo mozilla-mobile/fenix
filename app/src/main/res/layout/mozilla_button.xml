@@ -6,7 +6,6 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -18,7 +17,6 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:textAlignment="center"
-        android:layout_marginBottom="20dp"
         android:letterSpacing="0"
         android:textAllCaps="false"
         android:textColor="?contrastText"

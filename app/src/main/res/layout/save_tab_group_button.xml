@@ -5,6 +5,7 @@
 <org.mozilla.fenix.uicomponents.MozillaButton
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/save_tab_group_button"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:moz_button_text="@string/save_to_collection"
