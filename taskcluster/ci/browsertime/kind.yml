@@ -34,7 +34,7 @@ job-defaults:
                     subject: '[{product_name}] Raptor-Browsertime job "{task_name}" failed'
                     to-addresses: [perftest-alerts@mozilla.com]
             default: {}
-    run-on-tasks-for: [github-pull-request]
+    run-on-tasks-for: []
     treeherder:
         kind: test
         tier: 2
@@ -97,6 +97,7 @@ job-defaults:
 jobs:
     tp6m-1-cold:
         test-name: amazon
+        run-on-tasks-for: [github-pull-request]
         treeherder:
             symbol: 'Btime(tp6m-1-c)'
 
