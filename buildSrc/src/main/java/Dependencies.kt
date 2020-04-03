@@ -220,6 +220,7 @@ object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
     const val comAndroid = "com\\.android\\..*"
+    const val comGoogleFirebase = "com\\.google\\.firebase"
 
     /**
      * A matcher for com.google.android.* with one exception: the espresso-contrib dependency includes the

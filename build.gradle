@@ -22,6 +22,7 @@ buildscript {
                 // Improve performance: only check google maven for mozilla deps.
                 includeGroupByRegex RepoMatching.androidx
                 includeGroupByRegex RepoMatching.comGoogleAndroid
+                includeGroupByRegex RepoMatching.comGoogleFirebase
                 includeGroupByRegex RepoMatching.comAndroid
             }
         }
@@ -31,6 +32,7 @@ buildscript {
                 excludeGroupByRegex RepoMatching.mozilla
                 excludeGroupByRegex RepoMatching.androidx
                 excludeGroupByRegex RepoMatching.comGoogleAndroid
+                excludeGroupByRegex RepoMatching.comGoogleFirebase
                 excludeGroupByRegex RepoMatching.comAndroid
             }
         }
@@ -76,6 +78,7 @@ allprojects {
                 // Improve performance: only check google maven for google deps.
                 includeGroupByRegex RepoMatching.androidx
                 includeGroupByRegex RepoMatching.comGoogleAndroid
+                includeGroupByRegex RepoMatching.comGoogleFirebase
                 includeGroupByRegex RepoMatching.comAndroid
             }
         }
@@ -85,6 +88,7 @@ allprojects {
                 excludeGroupByRegex RepoMatching.mozilla
                 excludeGroupByRegex RepoMatching.androidx
                 excludeGroupByRegex RepoMatching.comGoogleAndroid
+                excludeGroupByRegex RepoMatching.comGoogleFirebase
                 excludeGroupByRegex RepoMatching.comAndroid
             }
         }
