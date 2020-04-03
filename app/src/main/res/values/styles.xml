@@ -446,9 +446,4 @@
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
     </style>
-
-    <!-- UI Button -->
-    <style name="MozillaButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:text">"hello"</item>
-    </style>
 </resources>

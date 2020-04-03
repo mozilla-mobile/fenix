@@ -6,27 +6,29 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mozilla_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="6dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="12dp"
-        android:textSize="14sp"
-        android:visibility="gone"
+        android:minHeight="36dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="20dp"
+        android:letterSpacing="0"
+        android:textAllCaps="false"
+        android:textColor="?contrastText"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:rippleColor="?secondaryText"
         app:iconGravity="textStart"
-        app:iconTint="@color/button_text_color"
-        tools:icon="@drawable/ic_new"
-        tools:text="@string/home_screen_shortcut_open_new_tab_2"
-        tools:visibility="visible" />
-
+        app:iconPadding="8dp"
+        app:fontFamily="@font/metropolis_semibold"
+        app:iconTint="?attr/contrastText" />
 </FrameLayout>
 
 

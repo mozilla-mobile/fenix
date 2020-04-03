@@ -62,9 +62,9 @@
     <org.mozilla.fenix.uicomponents.MozillaButton
         android:layout_width="168dp"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:text="Hello world"
-        app:type="destructive"/>
+        app:moz_button_text="@string/close_tab"
+        app:moz_button_type="positive"
+        app:moz_button_image="@drawable/ic_close"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sessionControlRecyclerView"
