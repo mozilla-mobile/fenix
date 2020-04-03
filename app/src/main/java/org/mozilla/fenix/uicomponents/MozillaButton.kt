@@ -17,7 +17,6 @@ class MozillaButton(
     attrs: AttributeSet? = null
 ): FrameLayout(context, attrs) {
     var style : ButtonStyle = ButtonStyle.NEUTRAL
-
     var textString: String? = null
     var drawableRes: Int? = null
 
@@ -29,10 +28,11 @@ class MozillaButton(
         )
 
         context.withStyledAttributes(attrs, R.styleable.MozillaButton, 0, 0) {
-            val styleId = getInt(
-                R.styleable.MozillaButton_moz_button_type,
-                0
-            )
+            style = valueOf(
+                getInt(
+                    R.styleable.MozillaButton_moz_button_type,
+                    0
+                ))
 
             textString = getString(
                 R.styleable.MozillaButton_moz_button_text
@@ -42,8 +42,6 @@ class MozillaButton(
                 R.styleable.MozillaButton_moz_button_image,
                 0
             )
-
-            setStyle(styleId)
         }
 
         mozilla_button.increaseTapArea(12)
@@ -51,25 +49,12 @@ class MozillaButton(
         mozilla_button.setOnClickListener {
             Log.d("Sawyer", "buttonClick")
         }
-    }
-
-
-        //View.inflate(context, R.layout.mozilla_button, this)
-
-    // TODO: How to better map this enum?
-    private fun setStyle(id: Int) {
-        Log.d("Sawyer", "setting style: $id")
-        style = when (id) {
-            0 -> ButtonStyle.NEUTRAL
-            1 -> ButtonStyle.POSITIVE
-            2 -> ButtonStyle.DESTRUCTIVE
-            else -> ButtonStyle.NEUTRAL
-        }
 
         updateButtonStyles()
-
-        // Set certain layouts based on that
     }
+
+
+    //View.inflate(context, R.layout.mozilla_button, this)
 
     private fun updateButtonStyles() {
         when (style) {
@@ -98,10 +83,11 @@ class MozillaButton(
         mozilla_button.icon = (ContextCompat.getDrawable(context, drawableRes!!))
     }
 
+    private fun valueOf(value: Int): ButtonStyle = ButtonStyle.values().first { it.styleId == value }
 
-    enum class ButtonStyle {
-        NEUTRAL,
-        POSITIVE,
-        DESTRUCTIVE
+    enum class ButtonStyle(var styleId: Int) {
+        NEUTRAL(0),
+        POSITIVE(1),
+        DESTRUCTIVE(2)
     }
 }

@@ -54,17 +54,9 @@
                 app:srcCompat="?fenixLogo"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier=".1"/>
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <org.mozilla.fenix.uicomponents.MozillaButton
-        android:layout_width="168dp"
-        android:layout_height="wrap_content"
-        app:moz_button_text="@string/close_tab"
-        app:moz_button_type="positive"
-        app:moz_button_image="@drawable/ic_close"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sessionControlRecyclerView"
