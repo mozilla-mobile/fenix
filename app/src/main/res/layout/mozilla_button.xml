@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mozilla_button"
+        style="@style/ThemeIndependentMaterialGreyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="6dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="12dp"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:iconGravity="textStart"
+        app:iconTint="@color/button_text_color"
+        tools:icon="@drawable/ic_new"
+        tools:text="@string/home_screen_shortcut_open_new_tab_2"
+        tools:visibility="visible" />
+
+</FrameLayout>
+
+
+
+

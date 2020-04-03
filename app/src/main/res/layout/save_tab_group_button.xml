@@ -8,7 +8,7 @@
     style="@style/Widget.MaterialComponents.Button.TextButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="36dp"
+    android:minHeight="48dp"
     android:insetTop="0dp"
     android:insetBottom="0dp"
     android:layout_marginBottom="20dp"

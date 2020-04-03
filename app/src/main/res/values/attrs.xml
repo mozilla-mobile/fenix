@@ -71,4 +71,13 @@
         <attr name="onboardingKey" format="reference" />
     </declare-styleable>
 
+
+    <!-- UI Component Button -->
+    <declare-styleable name="MozillaButton">
+        <attr name="moz_button_type">
+            <enum name="neutral" value="0" />
+            <enum name="positive" value="1" />
+            <enum name="destructive" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>
