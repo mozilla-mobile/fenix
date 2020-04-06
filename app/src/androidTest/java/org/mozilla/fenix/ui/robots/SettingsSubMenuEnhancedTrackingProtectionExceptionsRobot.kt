@@ -6,11 +6,16 @@
 
 package org.mozilla.fenix.ui.robots
 
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.R
 
@@ -19,9 +24,18 @@ import org.mozilla.fenix.R
  */
 class SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot {
 
+    fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
+
     fun verifyDefault() = assertExceptionDefault()!!
 
+    fun verifyExceptionLearnMoreText() = assertExceptionLearnMoreText()!!
+
     fun verifyListedURL(url: String) = assertExceptionURL(url)!!
+
+    fun verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems() {
+        verifyDefault()
+        verifyExceptionLearnMoreText()
+    }
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
@@ -44,13 +58,21 @@ class SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot {
 }
 
 private fun goBackButton() =
-    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withContentDescription("Navigate up")))
+    onView(allOf(withContentDescription("Navigate up")))
+
+private fun assertNavigationToolBarHeader() {
+    onView(withText("Exceptions"))
+        .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+}
 
 private fun assertExceptionDefault() =
-    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withText("Exceptions let you disable tracking protection for selected sites.")))
+    onView(allOf(withText("Exceptions let you disable tracking protection for selected sites.")))
+
+private fun assertExceptionLearnMoreText() =
+    onView(allOf(withText("Learn more")))
 
 private fun assertExceptionURL(url: String) =
-    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withText(url)))
+    onView(allOf(withText(url)))
 
 private fun disableExceptionsButton() =
-    Espresso.onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.removeAllExceptions)))
+    onView(allOf(withId(R.id.removeAllExceptions)))
