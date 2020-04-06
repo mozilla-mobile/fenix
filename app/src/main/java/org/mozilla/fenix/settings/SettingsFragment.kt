@@ -9,15 +9,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.content.res.AppCompatResources
 import android.os.Handler
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
-import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -37,12 +36,12 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.toRoundedDrawable
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.toRoundedDrawable
 import org.mozilla.fenix.settings.account.AccountAuthErrorPreference
 import org.mozilla.fenix.settings.account.AccountPreference
 import kotlin.system.exitProcess
@@ -190,6 +189,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         recyclerView.isVerticalScrollBarEnabled = false
 
         val directions: NavDirections? = when (preference.key) {
+            resources.getString(R.string.pref_key_sign_in) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
+            }
             resources.getString(R.string.pref_key_search_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
             }
@@ -286,13 +288,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         directions?.let { navigateFromSettings(directions) }
         return super.onPreferenceTreeClick(preference)
-    }
-
-    private fun getClickListenerForSignIn(): OnPreferenceClickListener {
-        return OnPreferenceClickListener {
-            context!!.components.services.launchPairingSignIn(context!!, findNavController())
-            true
-        }
     }
 
     private fun setupPreferences() {
@@ -417,7 +412,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             // Signed-out.
         } else {
             preferenceSignIn?.isVisible = true
-            preferenceSignIn?.onPreferenceClickListener = getClickListenerForSignIn()
             preferenceFirefoxAccount?.isVisible = false
             preferenceFirefoxAccountAuthError?.isVisible = false
             accountPreferenceCategory?.isVisible = false
