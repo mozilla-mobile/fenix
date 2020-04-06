@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -80,19 +81,24 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_options_menu, menu)
+        if (FeatureFlags.loginsEdit) {
+            inflater.inflate(R.menu.login_options_menu, menu)
+        } else {
+            inflater.inflate(R.menu.login_delete, menu)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.delete_login_button -> {
+            displayDeleteLoginDialog()
+            true
+        }
         R.id.edit_login_button -> {
             nav(
                 R.id.editLoginFragment,
-                SavedLoginSiteInfoFragment.action_savedLoginsInfoFragment_to_editLoginFragment()
+                SavedLoginSiteInfoFragmentDirections
+                    .actionSavedLoginsInfoFragmentToEditLoginFragment(args.savedLoginItem)
             )
-            true
-        }
-        R.id.delete_login_button -> {
-            displayDeleteLoginDialog()
             true
         }
         else -> false
