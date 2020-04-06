@@ -53,7 +53,6 @@ class SettingsAdvancedTest {
             verifyAdvancedHeading()
             verifyAddons()
             verifyRemoteDebug()
-            verifyLeakCanaryButton()
         }
     }
 }

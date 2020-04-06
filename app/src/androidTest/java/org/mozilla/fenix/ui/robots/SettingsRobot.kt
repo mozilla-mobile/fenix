@@ -32,6 +32,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
+import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -55,13 +56,15 @@ class SettingsRobot {
     fun verifyLoginsButton() = assertLoginsButton()
     fun verifyEnhancedTrackingProtectionValue(state: String) =
         assertEnhancedTrackingProtectionValue(state)
-
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
     fun verifySitePermissionsButton() = assertSitePermissionsButton()
     fun verifyDeleteBrowsingDataButton() = assertDeleteBrowsingDataButton()
     fun verifyDeleteBrowsingDataOnQuitButton() = assertDeleteBrowsingDataOnQuitButton()
+    fun verifyDeleteBrowsingDataOnQuitValue(state: String) =
+        assertDeleteBrowsingDataValue(state)
     fun verifyDataCollectionButton() = assertDataCollectionButton()
-    fun verifyLeakCanaryButton() = assertLeakCanaryButton()
+    fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
+    fun verifyOpenLinksInAppsSwitchDefault() = assertOpenLinksInAppsValue()
     fun verifySettingsView() = assertSettingsView()
 
     // ADVANCED SECTION
@@ -167,6 +170,42 @@ class SettingsRobot {
             SettingsSubMenuPrivateBrowsingRobot().interact()
             return SettingsSubMenuPrivateBrowsingRobot.Transition()
         }
+
+        fun openSettingsSubMenuSitePermissions(interact: SettingsSubMenuSitePermissionsRobot.() -> Unit): SettingsSubMenuSitePermissionsRobot.Transition {
+            scrollToElementByText("Site permissions")
+            fun sitePermissionButton() = mDevice.findObject(textContains("Site permissions"))
+            sitePermissionButton().click()
+
+            SettingsSubMenuSitePermissionsRobot().interact()
+            return SettingsSubMenuSitePermissionsRobot.Transition()
+        }
+
+        fun openSettingsSubMenuDeleteBrowsingData(interact: SettingsSubMenuDeleteBrowsingDataRobot.() -> Unit): SettingsSubMenuDeleteBrowsingDataRobot.Transition {
+            scrollToElementByText("Delete browsing data")
+            fun deleteBrowsingDataButton() = mDevice.findObject(textContains("Delete browsing data"))
+            deleteBrowsingDataButton().click()
+
+            SettingsSubMenuDeleteBrowsingDataRobot().interact()
+            return SettingsSubMenuDeleteBrowsingDataRobot.Transition()
+        }
+
+        fun openSettingsSubMenuDeleteBrowsingDataOnQuit(interact: SettingsSubMenuDeleteBrowsingDataOnQuitRobot.() -> Unit): SettingsSubMenuDeleteBrowsingDataOnQuitRobot.Transition {
+            scrollToElementByText("Delete browsing data on quit")
+            fun deleteBrowsingDataOnQuitButton() = mDevice.findObject(textContains("Delete browsing data on quit"))
+            deleteBrowsingDataOnQuitButton().click()
+
+            SettingsSubMenuDeleteBrowsingDataOnQuitRobot().interact()
+            return SettingsSubMenuDeleteBrowsingDataOnQuitRobot.Transition()
+        }
+
+        fun openSettingsSubMenuDataCollection(interact: SettingsSubMenuDataCollectionRobot.() -> Unit): SettingsSubMenuDataCollectionRobot.Transition {
+            scrollToElementByText("Data collection")
+            fun dataCollectionButton() = mDevice.findObject(textContains("Data collection"))
+            dataCollectionButton().click()
+
+            SettingsSubMenuDataCollectionRobot().interact()
+            return SettingsSubMenuDataCollectionRobot.Transition()
+        }
     }
 }
 
@@ -252,13 +291,26 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
+private fun assertDeleteBrowsingDataValue(state: String) {
+    mDevice.wait(Until.findObject(By.text("Delete browsing data on quit")), waitingTime)
+    onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
 private fun assertDataCollectionButton() = onView(withText("Data collection"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertLeakCanaryButton() {
-    scrollToElementByText("LeakCanary")
-    onView(withText("LeakCanary"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun openLinksInAppsButton() = onView(withText("Open links in apps"))
+
+private fun assertOpenLinksInAppsButton() = openLinksInAppsButton()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun assertOpenLinksInAppsValue() = openLinksInAppsButton()
+    .assertIsEnabled(isEnabled = true)
+
+// DEVELOPER TOOLS SECTION
+private fun assertDeveloperToolsHeading() {
+    scrollToElementByText("Developer tools")
+    onView(withText("Developer tools"))
 }
 
 // ADVANCED SECTION
@@ -299,7 +351,7 @@ private fun assertAboutFirefoxPreview(): ViewInteraction {
         .check(matches(isCompletelyDisplayed()))
 }
 
-fun swipeToBottom() = onView(ViewMatchers.withId(R.id.recycler_view)).perform(ViewActions.swipeUp())
+fun swipeToBottom() = onView(withId(R.id.recycler_view)).perform(ViewActions.swipeUp())
 
 fun clickRateButtonGooglePlay() {
     assertRateOnGooglePlay().click()

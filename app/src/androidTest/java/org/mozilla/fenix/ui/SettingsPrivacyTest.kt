@@ -54,63 +54,102 @@ class SettingsPrivacyTest {
     @Test
     // Walks through settings privacy menu and sub-menus to ensure all items are present
     fun settingsPrivacyItemsTest() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Verify header: "Privacy"
-
-        // Verify item: "Tracking Protection" and default value: "On"
-        // Verify item: "Tracking Protection" and default value: "On"
-
-        // Verify item: "Logins"
-
-        // Verify item: "Site Permissions"
-        // Click on: "Site permissions"
-        // Verify sub-menu items...
-        // Verify item: Exceptions
-        // Verify item: header: "Permissions"
-        // Verify item: "Camera" and default value: "ask to allow"
-        // Verify item: "Location" and default value: "ask to allow"
-        // Verify item: "Microphone" and default value: "ask to allow"
-        // Verify item: "Notification" and default value: "ask to allow"
-
-        // Verify item: "Delete browsing data"
-        // Click on: "Delete browsing data"
-        // Verify sub-menu items...
-        // Verify item: "Open tabs"
-        // Verify item" <tab count> tabs
-        // Verify item: "Browsing history and site data"
-        // Verify item" <address count> addresses
-        // Verify item:  "Collections
-        // Verify item" <collection count> collections
-        // Verify item button: "Delete browsing data"
-
-        // Verify item: "Data collection"
-        // Click on: "Data collection"
-        // Verify sub-menu items...
-        // Verify header: "Usage and technical data"
-        // Verify description: "Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make Firefox Preview better"
-        // Verify item:  toggle default value: 'on'
-
-        // Verify item: "Privacy notice"
-        // Verify item: "Leak Canary" and default toggle value: "Off"
-
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-
             // PRIVACY
             verifyPrivacyHeading()
+
+            // PRIVATE BROWSING
+            verifyPrivateBrowsingButton()
+        }.openPrivateBrowsingSubMenu {
+            verifyNavigationToolBarHeader()
+        }.goBack {
+
+            // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
             verifyEnhancedTrackingProtectionValue("On")
-            // Logins
-            verifyLoginsButton()
-            // drill down to submenu
-            verifyPrivateBrowsingButton()
+        }.openEnhancedTrackingProtectionSubMenu {
+            verifyNavigationToolBarHeader()
+            verifyEnhancedTrackingProtectionProtectionSubMenuItems()
+
+            // ENHANCED TRACKING PROTECTION EXCEPTION
+        }.openExceptions {
+            verifyNavigationToolBarHeader()
+            verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems()
+        }.goBack {
+        }.goBack {
+
+            // SITE PERMISSIONS
             verifySitePermissionsButton()
-            // drill down on search
+        }.openSettingsSubMenuSitePermissions {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsSubMenuItems()
+
+            // SITE PERMISSIONS AUTOPLAY
+        }.openAutoPlay {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsAutoPlaySubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS CAMERA
+        }.openCamera {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsCameraSubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS LOCATION
+        }.openLocation {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsLocationSubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS MICROPHONE
+        }.openMicrophone {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsMicrophoneSubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS NOTIFICATION
+        }.openNotification {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsNotificationSubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS EXCEPTIONS
+        }.openExceptions {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsExceptionSubMenuItems()
+        }.goBack {
+        }.goBack {
+
+            // DELETE BROWSING DATA
             verifyDeleteBrowsingDataButton()
+        }.openSettingsSubMenuDeleteBrowsingData {
+            verifyNavigationToolBarHeader()
+            verifyDeleteBrowsingDataSubMenuItems()
+        }.goBack {
+
+            // DELETE BROWSING DATA ON QUIT
             verifyDeleteBrowsingDataOnQuitButton()
+            verifyDeleteBrowsingDataOnQuitValue("Off")
+        }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
+            verifyNavigationToolBarHeader()
+            verifyDeleteBrowsingDataOnQuitSubMenuItems()
+        }.goBack {
+
+            // DATA COLLECTION
             verifyDataCollectionButton()
+        }.openSettingsSubMenuDataCollection {
+            verifyNavigationToolBarHeader()
+            verifyDataCollectionSubMenuItems()
+        }.goBack {
+
+            // OPEN LINKS IN APPS
+            verifyOpenLinksInAppsButton()
+            verifyOpenLinksInAppsSwitchDefault()
+        }.goBack {
+            verifyHomeComponent()
         }
     }
 
