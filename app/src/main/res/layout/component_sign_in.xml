@@ -2,21 +2,17 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<com.google.android.material.button.MaterialButton
+<org.mozilla.fenix.uicomponents.MozillaButton
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bookmark_folders_sign_in"
-    style="@style/ThemeIndependentMaterialGreyButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/sign_in_button_margin"
-    android:layout_marginStart="@dimen/sign_in_button_margin"
-    android:layout_marginTop="@dimen/sign_in_button_margin_top"
-    android:paddingBottom="@dimen/sign_in_button_padding"
-    android:paddingTop="@dimen/sign_in_button_padding"
-    android:text="@string/bookmark_sign_in_button"
+    android:layout_marginHorizontal="@dimen/sign_in_button_margin"
+    android:layout_marginTop="@dimen/sign_in_button_margin"
     android:visibility="gone"
+    app:moz_button_text="@string/bookmark_sign_in_button"
+    app:moz_button_type="neutral"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:rippleColor="?secondaryText"/>
+    app:layout_constraintStart_toStartOf="parent"/>

@@ -30,6 +30,7 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
+import org.mozilla.fenix.uicomponents.MozillaButton
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
@@ -133,7 +134,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     }
 
     private fun initSettingsButton(rootView: View) {
-        val button = rootView.findViewById<Button>(R.id.settings_button)
+        val button = rootView.findViewById<MozillaButton>(R.id.settings_button)
         button.setOnClickListener {
             openSettings()
         }

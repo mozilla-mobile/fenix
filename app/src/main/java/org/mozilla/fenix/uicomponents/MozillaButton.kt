@@ -5,6 +5,7 @@
 package org.mozilla.fenix.uicomponents
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -19,9 +20,9 @@ class MozillaButton(
     context: Context,
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
-    var style: ButtonStyle = ButtonStyle.NEUTRAL
-    var textString = ""
-    var drawableRes = -1
+    private var style: ButtonStyle = ButtonStyle.NEUTRAL
+    private var textString = ""
+    private var drawableRes = -1
 
     init {
         View.inflate(context, R.layout.mozilla_button, this)
@@ -32,14 +33,20 @@ class MozillaButton(
             drawableRes = getResourceId(R.styleable.MozillaButton_moz_button_image, -1)
         }
 
-        mozilla_button.increaseTapArea(12)
+        mozilla_button.increaseTapArea(TAP_AREA_INCREASE)
 
         updateButtonStyles()
     }
 
     private fun updateButtonStyles() {
+        if (drawableRes != -1) {
+            mozilla_button.icon = (ContextCompat.getDrawable(context, drawableRes))
+        }
+
         when (style) {
             ButtonStyle.NEUTRAL -> {
+                mozilla_button.icon?.setColorFilter(
+                    ContextCompat.getColor(context, R.color.button_text_color), PorterDuff.Mode.SRC_IN)
                 mozilla_button.setTextColor(ContextCompat.getColor(context, R.color.button_text_color))
                 mozilla_button.backgroundTintList = ContextCompat.getColorStateList(
                     context,
@@ -47,6 +54,11 @@ class MozillaButton(
                 )
             }
             ButtonStyle.POSITIVE -> {
+                mozilla_button.icon?.setColorFilter(
+                    ContextCompat.getColor(context,
+                        ThemeManager.resolveAttribute(R.attr.contrastText, context)
+                ), PorterDuff.Mode.SRC_IN)
+
                 mozilla_button.setTextColor(ContextCompat.getColor(
                     context,
                     ThemeManager.resolveAttribute(R.attr.contrastText, context))
@@ -57,6 +69,8 @@ class MozillaButton(
                 )
             }
             ButtonStyle.DESTRUCTIVE -> {
+                mozilla_button.icon?.setColorFilter(
+                    ContextCompat.getColor(context, R.color.destructive_button_text_color), PorterDuff.Mode.SRC_IN)
                 mozilla_button.setTextColor(ContextCompat.getColor(context, R.color.destructive_button_text_color))
                 mozilla_button.backgroundTintList = ContextCompat.getColorStateList(
                     context,
@@ -66,10 +80,6 @@ class MozillaButton(
         }
 
         mozilla_button.text = textString
-
-        if (drawableRes != -1) {
-            mozilla_button.icon = (ContextCompat.getDrawable(context, drawableRes))
-        }
     }
 
     private fun valueOf(value: Int): ButtonStyle = ButtonStyle.values().first { it.styleId == value }
@@ -78,5 +88,9 @@ class MozillaButton(
         NEUTRAL(0),
         POSITIVE(1),
         DESTRUCTIVE(2)
+    }
+
+    companion object {
+        private const val TAP_AREA_INCREASE = 12
     }
 }

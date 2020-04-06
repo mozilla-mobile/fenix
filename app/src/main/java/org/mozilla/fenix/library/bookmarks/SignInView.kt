@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import com.google.android.material.button.MaterialButton
 import kotlinx.android.extensions.LayoutContainer
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.uicomponents.MozillaButton
 
 class SignInView(
     private val container: ViewGroup,
@@ -23,7 +23,7 @@ class SignInView(
     override val containerView: View?
         get() = container
 
-    val view: MaterialButton = LayoutInflater.from(container.context)
+    val view: MozillaButton = LayoutInflater.from(container.context)
         .inflate(R.layout.component_sign_in, container, true)
         .findViewById(R.id.bookmark_folders_sign_in)
 

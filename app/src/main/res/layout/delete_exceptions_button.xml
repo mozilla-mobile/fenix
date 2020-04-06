@@ -2,14 +2,12 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mozilla.fenix.uicomponents.MozillaButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/removeAllExceptions"
-    style="@style/ThemeIndependentMaterialGreyButton"
-    android:layout_width="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="start"
-    android:layout_margin="12dp"
-    android:text="@string/preferences_tracking_protection_exceptions_turn_on_for_all" />
-
+    android:layout_margin="@dimen/mozilla_button_margins"
+    app:moz_button_text="@string/preferences_tracking_protection_exceptions_turn_on_for_all"
+    app:moz_button_type="neutral"/>

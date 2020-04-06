@@ -3,18 +3,18 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/permissions_blocked_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="32dp"
-        android:paddingStart="@dimen/radio_button_preference_horizontal"
-        android:paddingEnd="@dimen/radio_button_preference_horizontal"
-        android:visibility="gone"
-        tools:visibility="visible">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/permissions_blocked_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="16dp"
+    android:paddingStart="@dimen/radio_button_preference_horizontal"
+    android:paddingEnd="@dimen/radio_button_preference_horizontal"
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,15 +52,13 @@
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         tools:text="@string/phone_feature_blocked_step_feature"/>
 
-    <com.google.android.material.button.MaterialButton
+    <org.mozilla.fenix.uicomponents.MozillaButton
         android:id="@+id/settings_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:text="@string/phone_feature_go_to_settings" />
+        android:layout_margin="@dimen/mozilla_button_margins"
+        app:moz_button_text="@string/phone_feature_go_to_settings"
+        app:moz_button_type="neutral" />
 
 </LinearLayout>
 

@@ -33,20 +33,15 @@
         android:textStyle="normal"
         tools:text="@tools:sample/lorem" />
 
-    <com.google.android.material.button.MaterialButton
+    <org.mozilla.fenix.uicomponents.MozillaButton
         android:id="@+id/add_new_tab_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="6dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="12dp"
-        android:textSize="14sp"
+        android:layout_margin="@dimen/mozilla_button_margins"
         android:visibility="gone"
-        app:iconGravity="textStart"
-        app:iconTint="@color/button_text_color"
-        tools:icon="@drawable/ic_new"
+        app:moz_button_text="@string/home_screen_shortcut_open_new_tab_2"
+        app:moz_button_type="neutral"
+        app:moz_button_image="@drawable/ic_new"
         tools:text="@string/home_screen_shortcut_open_new_tab_2"
         tools:visibility="visible" />
 </LinearLayout>

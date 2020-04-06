@@ -62,6 +62,9 @@
     <dimen name="sign_in_button_margin_top">32dp</dimen>
     <dimen name="sign_in_button_margin">16dp</dimen>
 
+    <!-- Mozilla Button Margins -->
+    <dimen name="mozilla_button_margins">16dp</dimen>
+
     <!-- ETP Onboarding Popup -->
     <dimen name="etp_onboarding_popup_width">256dp</dimen>
 

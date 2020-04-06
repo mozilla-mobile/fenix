@@ -17,7 +17,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_manage_site_permissions_feature_phone.view.ask_to_allow_radio
@@ -36,6 +35,7 @@ import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
 import org.mozilla.fenix.settings.initBlockedByAndroidView
 import org.mozilla.fenix.settings.setStartCheckedIndicator
+import org.mozilla.fenix.uicomponents.MozillaButton
 import org.mozilla.fenix.utils.Settings
 
 const val AUTOPLAY_BLOCK_ALL = 0
@@ -223,7 +223,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     }
 
     private fun initSettingsButton(rootView: View) {
-        val button = rootView.findViewById<Button>(R.id.settings_button)
+        val button = rootView.findViewById<MozillaButton>(R.id.settings_button)
         button.setOnClickListener {
             openSettings()
         }

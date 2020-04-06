@@ -31,16 +31,12 @@ class NoContentMessageWithActionViewHolder(
         listener: (() -> Unit)? = null
     ) {
         super.bind(header, description)
-        with(view.context) {
 
-            if (buttonIcon != 0 || buttonText != 0) {
-                view.add_new_tab_button.apply {
-                    isVisible = true
-                    setIcon(getDrawable(buttonIcon))
-                    text = getString(buttonText)
-                    setOnClickListener {
-                        listener?.invoke()
-                    }
+        if (buttonIcon != 0 || buttonText != 0) {
+            view.add_new_tab_button.apply {
+                isVisible = true
+                setOnClickListener {
+                    listener?.invoke()
                 }
             }
         }
