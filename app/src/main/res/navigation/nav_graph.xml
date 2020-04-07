@@ -87,19 +87,10 @@
         android:id="@+id/searchFragment"
         android:name="org.mozilla.fenix.search.SearchFragment"
         tools:layout="@layout/fragment_search">
-        <action
-            android:id="@+id/action_searchFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@id/searchFragment"
-            app:popUpToInclusive="true" />
         <argument
             android:name="session_id"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_searchFragment_to_searchEngineFragment"
-            app:destination="@id/searchEngineFragment"
-            app:popUpTo="@+id/searchFragment" />
         <argument
             android:name="pastedText"
             android:defaultValue="@null"
@@ -882,5 +873,9 @@
             android:name="webExtensionTitle"
             app:argType="string"
             app:nullable="true"/>
-    </fragment><action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/><action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/><action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/><action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
+    </fragment>
+    <action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/>
+    <action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/>
+    <action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/>
+    <action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
 </navigation>
