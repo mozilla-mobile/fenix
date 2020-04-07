@@ -55,10 +55,7 @@ class CrashReporterController(
 
         components.useCases.tabsUseCases.removeTab(session)
         components.useCases.sessionUseCases.crashRecovery.invoke()
-        navController.nav(
-            R.id.crashReporterFragment,
-            CrashReporterFragmentDirections.actionCrashReporterFragmentToHomeFragment()
-        )
+        navController.navigate(CrashReporterFragmentDirections.actionGlobalHome())
 
         return job
     }

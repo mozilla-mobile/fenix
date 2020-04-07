@@ -6,6 +6,11 @@
     app:startDestination="@id/homeFragment">
 
     <action
+        android:id="@+id/action_global_home"
+        app:destination="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
         android:id="@+id/action_global_browser"
         app:destination="@id/browserFragment"
         app:popUpTo="@id/nav_graph"
@@ -50,10 +55,6 @@
     <action
         android:id="@+id/action_global_deleteBrowsingDataFragment"
         app:destination="@id/deleteBrowsingDataFragment" />
-
-    <action
-        android:id="@+id/action_global_homeFragment"
-        app:destination="@id/homeFragment" />
 
     <action
         android:id="@+id/action_global_webExtensionActionPopupFragment"
@@ -181,9 +182,6 @@
         app:exitAnim="@anim/fade_out"
         tools:layout="@layout/fragment_browser">
         <action
-            android:id="@+id/action_browserFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-        <action
             android:id="@+id/action_browserFragment_to_searchFragment"
             app:enterAnim="@anim/fade_in_up"
             app:popExitAnim="@anim/fade_out_down"
@@ -272,11 +270,7 @@
         <action
             android:id="@+id/action_historyFragment_to_browserFragment"
             app:destination="@id/browserFragment"
-            app:popUpToInclusive="true"
-            />
-        <action
-            android:id="@+id/action_historyFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_historyFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
@@ -299,9 +293,6 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkEditFragment"
             app:destination="@id/bookmarkEditFragment" />
-        <action
-            android:id="@+id/action_bookmarkFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_bookmarkFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
@@ -604,10 +595,6 @@
     <fragment
         android:id="@+id/crashReporterFragment"
         android:name="org.mozilla.fenix.crashes.CrashReporterFragment">
-        <action
-            android:id="@+id/action_crashReporterFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/nav_graph" />
         <argument
             android:name="crashIntent"
             app:argType="android.content.Intent" />
