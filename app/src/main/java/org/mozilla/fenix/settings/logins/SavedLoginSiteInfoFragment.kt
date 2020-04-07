@@ -18,14 +18,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login_info.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -42,8 +37,13 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     private val args by navArgs<SavedLoginSiteInfoFragmentArgs>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+        showToolbar(args.savedLoginItem.title ?: args.savedLoginItem.url)
         setHasOptionsMenu(true)
     }
 
@@ -81,11 +81,7 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (FeatureFlags.loginsEdit) {
-            inflater.inflate(R.menu.login_options_menu, menu)
-        } else {
-            inflater.inflate(R.menu.login_delete, menu)
-        }
+        inflater.inflate(R.menu.login_options_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -94,14 +90,34 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
             true
         }
         R.id.edit_login_button -> {
-            nav(
-                R.id.editLoginFragment,
-                SavedLoginSiteInfoFragmentDirections
-                    .actionSavedLoginsInfoFragmentToEditLoginFragment(args.savedLoginItem)
-            )
+            editLogin()
             true
         }
         else -> false
+    }
+
+    private fun editLogin() {
+        nav(
+            R.id.editLoginFragment,
+            SavedLoginSiteInfoFragmentDirections
+                .actionSavedLoginsInfoFragmentToEditLoginFragment(args.savedLoginItem)
+        )
+    }
+
+    private fun displayDeleteLoginDialog() {
+        activity?.let { activity ->
+            AlertDialog.Builder(activity).apply {
+                setMessage(R.string.login_deletion_confirmation)
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
+                setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
+                    deleteLogin()
+                    dialog.dismiss()
+                }
+                create()
+            }.show()
+        }
     }
 
     private fun deleteLogin() {
@@ -148,31 +164,6 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
         }
         // For the new type to take effect you need to reset the text
         passwordInfoText.text = args.savedLoginItem.password
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
-        showToolbar(args.savedLoginItem.url)
-    }
-
-    private fun displayDeleteLoginDialog() {
-        activity?.let { activity ->
-            AlertDialog.Builder(activity).apply {
-                setMessage(R.string.login_deletion_confirmation)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
-                    dialog.cancel()
-                }
-                setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-                    deleteLogin()
-                    dialog.dismiss()
-                }
-                create()
-            }.show()
-        }
     }
 
     /**

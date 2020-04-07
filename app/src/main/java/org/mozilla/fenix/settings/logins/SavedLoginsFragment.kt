@@ -167,7 +167,7 @@ class SavedLoginsFragment : Fragment() {
             logins?.let {
                 withContext(Main) {
                     savedLoginsStore.dispatch(SavedLoginsFragmentAction.UpdateLogins(logins.map { item ->
-                        SavedLoginsItem(item.origin, item.username, item.password, item.guid!!, item.timeLastUsed)
+                        SavedLoginsItem(item.origin, null, item.username, item.password, item.guid!!, item.timeLastUsed)
                     }))
                 }
             }

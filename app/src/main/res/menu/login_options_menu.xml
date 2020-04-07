@@ -6,9 +6,12 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/login_options_menu"
+    android:id="@+id/loginOptionsEditDelete"
+    android:contentDescription="@string/login_menu_more_options"
     android:popupMenuStyle="@style/PopupKebabMenu"
-    android:theme="@style/PopupKebabMenu">
+    android:theme="@style/PopupKebabMenu"
+    android:title="@string/login_menu_more_options"
+    app:showAsAction="never" >
 
     <item
         android:id="@+id/edit_login_button"
@@ -19,16 +22,16 @@
         android:paddingStart="20dp"
         android:title="@string/login_menu_edit_button"
         app:iconTint="?primaryText"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/delete_login_button"
         android:contentDescription="@string/login_menu_delete_button"
         android:icon="@drawable/ic_delete"
-        android:title="@string/login_menu_delete_button"
         android:minWidth="82dp"
         android:padding="20dp"
         android:paddingStart="20dp"
+        android:title="@string/login_menu_delete_button"
         app:iconTint="?primaryText"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 </menu>

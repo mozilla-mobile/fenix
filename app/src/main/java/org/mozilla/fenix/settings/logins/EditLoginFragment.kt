@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.fragment_login_info.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,6 +24,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import org.webrtc.Logging
+import org.webrtc.Logging.log
 
 /**
  * Displays the editable saved login information for a single website.
@@ -36,8 +39,18 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         setHasOptionsMenu(true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+        showToolbar(args.savedLoginItem.title ?: args.savedLoginItem.url)
+    }
+
     override fun onPause() {
-        // If we pause this fragment, we want to pop users back to reauth
+        // If we pause this fragment, do we want users to:
+        // reauth? keep editing without reauth? go back to login detail?
         if (findNavController().currentDestination?.id != R.id.savedLoginsFragment) {
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
             findNavController().popBackStack(R.id.savedLoginSiteInfoFragment, false)
@@ -50,19 +63,27 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val closeIcon = activity?.resources?.getDrawable(R.drawable.ic_close, null)
+        view.toolbar.setCompoundDrawables(closeIcon, null, null, null)
+
+        // ensure hostname isn't editable
         hostnameText.text = args.savedLoginItem.url.toEditable()
+        hostnameText.isClickable = false
+        hostnameText.isFocusable = false
+
         usernameText.text = args.savedLoginItem.userName?.toEditable() ?: "".toEditable()
         passwordText.text = args.savedLoginItem.password!!.toEditable()
 
-        clearUsernameTextButton.setOnClickListener {
-            usernameText.text = "".toEditable()
-        }
-        clearPasswordTextButton.setOnClickListener {
-            passwordText.text = "".toEditable()
-        }
-        revealPassword.setOnClickListener {
-            togglePasswordReveal(it.context)
-        }
+//        clearUsernameTextButton.setOnClickListener {
+//            usernameText.text = "".toEditable()
+//        }
+//        clearPasswordTextButton.setOnClickListener {
+//            passwordText.text = "".toEditable()
+//        }
+//        revealPassword.setOnClickListener {
+//            togglePasswordReveal(it.context)
+//        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -74,11 +95,19 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             attemptSaveAndExit()
             true
         }
-        R.id.exit -> {
+        R.id.toolbar -> {
             discardChangesAndExit()
             true
         }
         else -> false
+    }
+
+    private fun discardChangesAndExit() {
+        log(Logging.Severity.LS_INFO, "ELISE: DISCARD CHANGES", "")
+    }
+
+    private fun attemptSaveAndExit() {
+        log(Logging.Severity.LS_INFO, "ELISE: SAVE", "")
     }
 
     private fun deleteLogin() {
@@ -125,14 +154,5 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
         // For the new type to take effect you need to reset the text
         passwordInfoText.text = args.savedLoginItem.password
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
-        showToolbar(args.savedLoginItem.url)
     }
 }

@@ -17,10 +17,12 @@ import mozilla.components.lib.state.Store
  * @property password Password that's saved for this site
  * @property id The unique identifier for this login entry
  * @property timeLastUsed Time of last use in milliseconds from the unix epoch.
+ * @property title The site of the saved login stripped of http://, https://, and www.
  */
 @Parcelize
 data class SavedLoginsItem(
     val url: String,
+    val title: String?,
     val userName: String?,
     val password: String?,
     val id: String,
