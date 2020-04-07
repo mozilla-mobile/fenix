@@ -11,6 +11,10 @@
         app:popUpToInclusive="true" />
 
     <action
+        android:id="@+id/action_global_shareFragment"
+        app:destination="@id/shareFragment" />
+
+    <action
         android:id="@+id/action_global_browser"
         app:destination="@id/browserFragment"
         app:popUpTo="@id/nav_graph"
@@ -65,12 +69,6 @@
         android:name="org.mozilla.fenix.home.HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_turnOnSyncFragment"
-            app:destination="@+id/turnOnSyncFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_accountProblemFragment"
-            app:destination="@id/accountProblemFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_searchFragment"
             app:destination="@id/searchFragment"
             app:enterAnim="@anim/fade_in_up"
@@ -81,26 +79,8 @@
             app:exitAnim="@anim/zoom_in_fade"
             app:popEnterAnim="@anim/zoom_out_fade" />
         <action
-            android:id="@+id/action_homeFragment_to_libraryFragment"
-            app:destination="@id/libraryFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_bookmarksFragment"
-            app:destination="@id/bookmarkFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_historyFragment"
-            app:destination="@id/historyFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_createCollectionFragment"
             app:destination="@id/collectionCreationFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_privateBrowsingFragment"
-            app:destination="@id/privateBrowsingFragment" />
     </fragment>
 
     <fragment
@@ -756,9 +736,6 @@
     <dialog
         android:id="@+id/signOutFragment"
         android:name="org.mozilla.fenix.settings.account.SignOutFragment" />
-    <action
-        android:id="@+id/action_global_shareFragment"
-        app:destination="@id/shareFragment" />
     <dialog
         android:id="@+id/trackingProtectionPanelDialogFragment"
         android:name="org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragment">
@@ -905,5 +882,5 @@
             android:name="webExtensionTitle"
             app:argType="string"
             app:nullable="true"/>
-    </fragment>
+    </fragment><action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/><action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/><action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/><action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
 </navigation>
