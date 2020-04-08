@@ -332,9 +332,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowserDirection.FromAbout ->
             AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
-            TrackingProtectionFragmentDirections.actionTrackingProtectionFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromDefaultBrowserSettingsFragment ->
             DefaultBrowserSettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->

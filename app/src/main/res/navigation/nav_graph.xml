@@ -545,9 +545,6 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/trackingProtectionBlockingFragment" />
-        <action
-            android:id="@+id/action_trackingProtectionFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
     </fragment>
     <fragment
         android:id="@+id/deleteBrowsingDataFragment"
@@ -676,9 +673,6 @@
             android:name="gravity"
             android:defaultValue="80"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_trackingProtectionPanelDialogFragment_to_trackingProtectionFragment"
-            app:destination="@id/trackingProtectionFragment" />
     </dialog>
     <fragment
         android:id="@+id/trackingProtectionBlockingFragment"
@@ -813,4 +807,5 @@
     <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
     <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
     <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
+    <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment"/>
 </navigation>
