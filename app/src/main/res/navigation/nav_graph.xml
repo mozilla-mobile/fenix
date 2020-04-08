@@ -360,10 +360,6 @@
         android:name="org.mozilla.fenix.settings.SettingsFragment"
         android:label="@string/settings_title">
         <action
-            android:id="@+id/action_settingsFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@+id/settingsFragment" />
-        <action
             android:id="@+id/action_settingsFragment_to_dataChoicesFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
