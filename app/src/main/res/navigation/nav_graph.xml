@@ -512,11 +512,7 @@
 
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="org.mozilla.fenix.settings.about.AboutFragment">
-        <action
-            android:id="@+id/action_aboutFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
-    </fragment>
+        android:name="org.mozilla.fenix.settings.about.AboutFragment"/>
     <fragment
         android:id="@+id/crashReporterFragment"
         android:name="org.mozilla.fenix.crashes.CrashReporterFragment">
