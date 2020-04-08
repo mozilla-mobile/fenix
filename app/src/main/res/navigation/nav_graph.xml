@@ -65,11 +65,6 @@
         android:name="org.mozilla.fenix.home.HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_searchFragment"
-            app:destination="@id/searchFragment"
-            app:enterAnim="@anim/fade_in_up"
-            app:popExitAnim="@anim/fade_out_down" />
-        <action
             android:id="@+id/action_homeFragment_to_browserFragment"
             app:destination="@id/browserFragment"
             app:exitAnim="@anim/zoom_in_fade"
@@ -852,5 +847,6 @@
     <action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/>
     <action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/>
     <action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
-    <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" /><action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment"/>
+    <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" />
+    <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
 </navigation>

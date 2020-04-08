@@ -582,7 +582,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToSearch() {
-        val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
+        val directions = HomeFragmentDirections.actionGlobalSearch(
             sessionId = null
         )
 
