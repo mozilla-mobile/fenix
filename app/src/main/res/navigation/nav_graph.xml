@@ -700,11 +700,7 @@
         android:name="org.mozilla.fenix.share.AddNewDeviceFragment" />
     <fragment
         android:id="@+id/defaultBrowserSettingsFragment"
-        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment">
-        <action
-            android:id="@+id/action_defaultBrowserSettingsFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
-    </fragment>
+        android:name="org.mozilla.fenix.settings.DefaultBrowserSettingsFragment"/>
     <fragment
         android:id="@+id/savedLoginsFragment"
         android:name="org.mozilla.fenix.settings.logins.SavedLoginsFragment"
