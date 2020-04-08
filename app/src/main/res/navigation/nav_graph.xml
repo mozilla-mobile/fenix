@@ -41,10 +41,6 @@
         app:destination="@id/turnOnSyncFragment" />
 
     <action
-        android:id="@+id/action_global_settingsFragment"
-        app:destination="@id/settingsFragment" />
-
-    <action
         android:id="@+id/action_global_settings_addonsManagementFragment"
         app:destination="@id/addonsManagementFragment" />
 
@@ -602,12 +598,7 @@
     <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataFragment"
-        android:label="@string/preferences_delete_browsing_data" >
-        <action
-            android:id="@+id/action_deleteBrowsingDataFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment"
-            app:popUpTo="@id/homeFragment" />
-    </fragment>
+        android:label="@string/preferences_delete_browsing_data" />
     <fragment
         android:id="@+id/exceptionsFragment"
         android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
@@ -874,6 +865,8 @@
             app:argType="string"
             app:nullable="true"/>
     </fragment>
+
+    <action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment" />
     <action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/>
     <action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/>
     <action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/>
