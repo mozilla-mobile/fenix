@@ -288,20 +288,6 @@
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/savedLoginsFragment" />
         <action
-            android:id="@+id/action_loginsFragment_to_accountSettingsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:destination="@id/accountSettingsFragment" />
-        <action
-            android:id="@+id/action_loginsFragment_to_accountProblemFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:destination="@id/accountProblemFragment" />
-        <action
             android:id="@+id/action_loginsFragment_to_turnOnSyncFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -798,4 +784,5 @@
     <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
     <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
     <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment" />
+    <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment"/>
 </navigation>
