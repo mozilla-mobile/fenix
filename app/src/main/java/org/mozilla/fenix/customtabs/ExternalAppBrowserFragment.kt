@@ -170,7 +170,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
 
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
         val directions = ExternalAppBrowserFragmentDirections
-            .actionExternalAppBrowserFragmentToQuickSettingsSheetDialogFragment(
+            .actionGlobalQuickSettingsSheetDialogFragment(
                 sessionId = session.id,
                 url = session.url,
                 title = session.title,
@@ -191,7 +191,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
             val isEnabled = session.trackerBlockingEnabled && !contains
             val directions =
                 ExternalAppBrowserFragmentDirections
-                    .actionExternalAppBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                    .actionGlobalTrackingProtectionPanelDialogFragment(
                         sessionId = session.id,
                         url = session.url,
                         trackingProtectionEnabled = isEnabled,

@@ -188,12 +188,6 @@
             android:name="webAppManifest"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_externalAppBrowserFragment_to_quickSettingsSheetDialogFragment"
-            app:destination="@id/quickSettingsSheetDialogFragment" />
-        <action
-            android:id="@+id/action_externalAppBrowserFragment_to_trackingProtectionPanelDialogFragment"
-            app:destination="@id/trackingProtectionPanelDialogFragment" />
     </fragment>
 
     <fragment
@@ -784,5 +778,6 @@
     <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
     <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
     <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment" />
-    <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment"/>
+    <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment" />
+    <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" /><action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
 </navigation>
