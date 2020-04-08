@@ -163,9 +163,6 @@
             android:id="@+id/action_browserFragment_to_libraryFragment"
             app:destination="@id/libraryFragment" />
         <action
-            android:id="@+id/action_browserFragment_to_bookmarkEditFragment"
-            app:destination="@id/bookmarkEditFragment" />
-        <action
             android:id="@+id/action_browserFragment_to_createShortcutFragment"
             app:destination="@id/createShortcutFragment" />
         <action
@@ -180,9 +177,6 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
-        <action
-            android:id="@+id/action_browserFragment_to_addonsManagementFragment"
-            app:destination="@id/addonsManagementFragment" />
     </fragment>
 
     <fragment
@@ -241,9 +235,6 @@
             android:id="@+id/action_bookmarkFragment_to_bookmarkEditFragment"
             app:destination="@id/bookmarkEditFragment" />
         <action
-            android:id="@+id/action_bookmarkFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
-        <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
     </fragment>
@@ -280,9 +271,6 @@
             android:name="visitedAddBookmark"
             android:defaultValue="false"
             app:argType="boolean" />
-        <action
-            android:id="@+id/action_bookmarkSelectFolderFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
     </fragment>
 
     <fragment
@@ -845,4 +833,6 @@
     <action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
     <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" />
     <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
+    <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
+    <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment"/>
 </navigation>

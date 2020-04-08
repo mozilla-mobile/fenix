@@ -202,7 +202,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     ShareData(url = it.url, title = it.title)
                 }
                 navigate(
-                    BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
+                    BookmarkFragmentDirections.actionGlobalShareFragment(
                         data = shareTabs.toTypedArray()
                     )
                 )

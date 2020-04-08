@@ -221,8 +221,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.AddonsManager -> {
                 navController.nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections
-                        .actionBrowserFragmentToAddonsManagementFragment()
+                    BrowserFragmentDirections.actionGlobalAddonsManagementFragment()
                 )
             }
             ToolbarMenu.Item.SaveToCollection -> {
