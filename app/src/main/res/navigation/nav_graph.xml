@@ -553,13 +553,7 @@
     <fragment
         android:id="@+id/exceptionsFragment"
         android:name="org.mozilla.fenix.exceptions.ExceptionsFragment"
-        android:label="@string/preference_exceptions">
-        <action
-            android:id="@+id/action_exceptionsFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@id/settingsFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        android:label="@string/preference_exceptions"/>
     <dialog
         android:id="@+id/collectionCreationFragment"
         android:name="org.mozilla.fenix.collections.CollectionCreationFragment"
@@ -807,5 +801,6 @@
     <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
     <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
     <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
-    <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment"/>
+    <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
+    <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment"/>
 </navigation>
