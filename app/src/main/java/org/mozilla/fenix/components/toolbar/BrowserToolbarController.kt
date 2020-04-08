@@ -231,7 +231,7 @@ class DefaultBrowserToolbarController(
 
                 currentSession?.let { currentSession ->
                     val directions =
-                        BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
+                        BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
                             previousFragmentId = R.id.browserFragment,
                             tabIds = arrayOf(currentSession.id),
                             selectedTabIds = arrayOf(currentSession.id),

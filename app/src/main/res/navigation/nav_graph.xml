@@ -18,7 +18,7 @@
         android:id="@+id/action_global_browser"
         app:destination="@id/browserFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true" />
+        app:popUpToInclusive="false" />
 
     <action
         android:id="@+id/action_global_external_app_browser"
@@ -230,15 +230,7 @@
         android:id="@+id/historyFragment"
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
-        tools:layout="@layout/fragment_history">
-        <action
-            android:id="@+id/action_historyFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_historyFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/bookmarkFragment"

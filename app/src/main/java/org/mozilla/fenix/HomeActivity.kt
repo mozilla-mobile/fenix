@@ -324,7 +324,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowserDirection.FromBookmarks ->
             BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(customTabSessionId)
         BrowserDirection.FromHistory ->
-            HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(customTabSessionId)
+            HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromExceptions ->
             ExceptionsFragmentDirections.actionExceptionsFragmentToBrowserFragment(
                 customTabSessionId
