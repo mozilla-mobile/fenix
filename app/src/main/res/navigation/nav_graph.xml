@@ -169,9 +169,6 @@
             android:id="@+id/action_browserFragment_to_firstTimePwaFragment"
             app:destination="@id/firstTimePwaFragment" />
         <action
-            android:id="@+id/action_browserFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
-        <action
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
         <action
@@ -191,9 +188,6 @@
             android:name="webAppManifest"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_externalAppBrowserFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
         <action
             android:id="@+id/action_externalAppBrowserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
@@ -624,14 +618,6 @@
             android:defaultValue="false"
             app:argType="boolean" />
         <action
-            android:id="@+id/action_shareFragment_to_turnOnSyncFragment"
-            app:destination="@+id/turnOnSyncFragment"
-            app:popUpTo="@id/shareFragment"
-            app:popUpToInclusive="true"/>
-        <action
-            android:id="@+id/action_shareFragment_to_accountProblemFragment"
-            app:destination="@id/accountProblemFragment" />
-        <action
             android:id="@+id/action_shareFragment_to_addNewDeviceFragment"
             app:destination="@id/addNewDeviceFragment" />
         <argument
@@ -834,5 +820,5 @@
     <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" />
     <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
     <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
-    <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment"/>
+    <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
 </navigation>
