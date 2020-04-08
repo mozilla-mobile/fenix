@@ -692,11 +692,6 @@
         <action
             android:id="@+id/action_savedLoginsFragment_to_savedLoginSiteInfoFragment"
             app:destination="@id/savedLoginSiteInfoFragment" />
-        <action
-            android:id="@+id/action_savedLoginsFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@id/settingsFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/savedLoginSiteInfoFragment"
@@ -802,5 +797,5 @@
     <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
     <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
     <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
-    <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment"/>
+    <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment" />
 </navigation>

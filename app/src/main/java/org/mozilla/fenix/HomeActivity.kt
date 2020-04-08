@@ -334,9 +334,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowserDirection.FromDefaultBrowserSettingsFragment ->
             DefaultBrowserSettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->
-            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            SavedLoginsFragmentDirections.actionGlobalBrowser(customTabSessionId)
     }
 
     private fun load(
