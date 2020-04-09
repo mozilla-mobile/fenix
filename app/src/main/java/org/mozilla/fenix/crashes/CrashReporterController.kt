@@ -11,10 +11,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.lib.crash.Crash
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.utils.Settings
 
 class CrashReporterController(

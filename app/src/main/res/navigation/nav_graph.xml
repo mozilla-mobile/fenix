@@ -11,10 +11,6 @@
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_global_shareFragment"
-        app:destination="@id/shareFragment" />
-
-    <action
         android:id="@+id/action_global_browser"
         app:destination="@id/browserFragment"
         app:popUpTo="@id/nav_graph"
@@ -32,33 +28,28 @@
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
 
-    <action
-        android:id="@+id/action_global_crash_reporter"
-        app:destination="@id/crashReporterFragment" />
-
-    <action
-        android:id="@+id/action_global_turn_on_sync"
-        app:destination="@id/turnOnSyncFragment" />
-
-    <action
-        android:id="@+id/action_global_settings_addonsManagementFragment"
-        app:destination="@id/addonsManagementFragment" />
-
-    <action
-        android:id="@+id/action_global_searchEngineFragment"
-        app:destination="@id/searchEngineFragment" />
-
-    <action
-        android:id="@+id/action_global_accessibilityFragment"
-        app:destination="@id/accessibilityFragment" />
-
-    <action
-        android:id="@+id/action_global_deleteBrowsingDataFragment"
-        app:destination="@id/deleteBrowsingDataFragment" />
-
-    <action
-        android:id="@+id/action_global_webExtensionActionPopupFragment"
-        app:destination="@id/webExtensionActionPopupFragment" />
+    <action android:id="@+id/action_global_shareFragment" app:destination="@id/shareFragment" />
+    <action android:id="@+id/action_global_crash_reporter" app:destination="@id/crashReporterFragment" />
+    <action android:id="@+id/action_global_turn_on_sync" app:destination="@id/turnOnSyncFragment" />
+    <action android:id="@+id/action_global_settings_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
+    <action android:id="@+id/action_global_searchEngineFragment" app:destination="@id/searchEngineFragment" />
+    <action android:id="@+id/action_global_accessibilityFragment" app:destination="@id/accessibilityFragment" />
+    <action android:id="@+id/action_global_deleteBrowsingDataFragment" app:destination="@id/deleteBrowsingDataFragment" />
+    <action android:id="@+id/action_global_webExtensionActionPopupFragment" app:destination="@id/webExtensionActionPopupFragment" />
+    <action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment" />
+    <action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/>
+    <action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/>
+    <action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/>
+    <action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
+    <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" />
+    <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
+    <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
+    <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
+    <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
+    <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment" />
+    <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment" />
+    <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" />
+    <action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
 
     <fragment
         android:id="@+id/homeFragment"
@@ -766,18 +757,4 @@
             app:argType="string"
             app:nullable="true"/>
     </fragment>
-
-    <action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment" />
-    <action android:id="@+id/action_global_privateBrowsingFragment" app:destination="@id/privateBrowsingFragment"/>
-    <action android:id="@+id/action_global_bookmarkFragment" app:destination="@id/bookmarkFragment"/>
-    <action android:id="@+id/action_global_historyFragment" app:destination="@id/historyFragment"/>
-    <action android:id="@+id/action_global_accountProblemFragment" app:destination="@id/accountProblemFragment"/>
-    <action android:id="@+id/action_global_SitePermissionsManagePhoneFeature" app:destination="@id/SitePermissionsManagePhoneFeature" />
-    <action android:id="@+id/action_global_collectionCreationFragment" app:destination="@id/collectionCreationFragment" />
-    <action android:id="@+id/action_global_bookmarkEditFragment" app:destination="@id/bookmarkEditFragment" />
-    <action android:id="@+id/action_global_addonsManagementFragment" app:destination="@id/addonsManagementFragment" />
-    <action android:id="@+id/action_global_trackingProtectionFragment" app:destination="@id/trackingProtectionFragment" />
-    <action android:id="@+id/action_global_exceptionsFragment" app:destination="@id/exceptionsFragment" />
-    <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment" />
-    <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" /><action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
 </navigation>
