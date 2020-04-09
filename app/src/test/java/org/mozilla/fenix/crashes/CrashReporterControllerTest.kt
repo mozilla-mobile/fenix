@@ -66,10 +66,7 @@ class CrashReporterControllerTest {
         verify { components.useCases.tabsUseCases.removeTab(session) }
         verify { components.useCases.sessionUseCases.crashRecovery.invoke() }
         verify {
-            navContoller.navigate(
-                CrashReporterFragmentDirections.actionCrashReporterFragmentToHomeFragment(),
-                null
-            )
+            navContoller.navigate(CrashReporterFragmentDirections.actionGlobalHome())
         }
     }
 
