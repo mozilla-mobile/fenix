@@ -22,7 +22,7 @@ tasks:
                       else:
                           $if: 'tasks_for == "github-push"'
                           then: '${event.pusher.email}'
-                          else
+                          else:
                               $if: 'tasks_for == "github-pull-request"'
                               then: '${event.pull_request.user.login}@users.noreply.github.com'
                               else:
