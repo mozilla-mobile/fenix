@@ -11,8 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="66dp"
-    android:layout_marginTop="12dp"
-    tools:context="org.mozilla.fenix.settings.logins.EditLoginFragment">
+    android:layout_marginTop="12dp" >
 
     <TextView
         android:id="@+id/hostnameHeaderText"
@@ -32,9 +31,9 @@
         android:id="@+id/inputLayoutHostname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
         android:clickable="false"
         android:focusable="false"
+        app:hintEnabled="false"
         android:colorControlHighlight="@android:color/black"
         android:colorControlActivated="@android:color/black"
         android:textColorHint="@android:color/black"
@@ -108,6 +107,7 @@
         app:layout_constraintStart_toStartOf="@id/usernameHeaderText"
         app:layout_constraintTop_toBottomOf="@id/usernameHeaderText"
         app:layout_constraintVertical_chainStyle="packed"
+        app:hintEnabled="false"
         tools:ignore="RtlSymmetry">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -124,7 +124,6 @@
             android:lineSpacingExtra="8sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hostname_description"
             android:inputType="textNoSuggestions"
             android:ellipsize="end"
             android:maxLines="1"
@@ -176,6 +175,7 @@
         android:id="@+id/inputLayoutPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:hintEnabled="false"
         android:colorControlHighlight="@android:color/black"
         android:colorControlActivated="@android:color/black"
         android:textColorHint="@android:color/black"
@@ -201,7 +201,6 @@
             android:lineSpacingExtra="8sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hostname_description"
             android:inputType="textNoSuggestions"
             android:ellipsize="end"
             android:maxLines="1"

@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +38,7 @@ import org.mozilla.fenix.ext.showToolbar
 class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     private val args by navArgs<SavedLoginSiteInfoFragmentArgs>()
+    private val savedLoginHelper = SavedLoginsHelper(view)
 
     override fun onResume() {
         super.onResume()
@@ -49,7 +52,9 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     override fun onPause() {
         // If we pause this fragment, we want to pop users back to reauth
-        if (findNavController().currentDestination?.id != R.id.savedLoginsFragment) {
+        if (findNavController().currentDestination?.id != R.id.savedLoginsFragment &&
+            findNavController().currentDestination?.id != R.id.editLoginFragment
+        ) {
             activity?.let { it.checkAndUpdateScreenshotPermission(it.settings()) }
             findNavController().popBackStack(R.id.loginsFragment, false)
         }
@@ -69,14 +74,14 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
             Pair(copyPassword, args.savedLoginItem.password)
         )
 
-        for (item in copyInfoArgs) {
-            item.first.setOnClickListener(CopyButtonListener(item.second, R.string.login_copied))
+        for (copyButtons in copyInfoArgs) {
+            copyButtons.first.setOnClickListener(CopyButtonListener(copyButtons.second, R.string.login_copied))
         }
 
         passwordInfoText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPassword.setOnClickListener {
-            togglePasswordReveal(it.context)
+            savedLoginHelper.togglePasswordReveal(it.context, args.savedLoginItem)
         }
     }
 
@@ -97,11 +102,10 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     }
 
     private fun editLogin() {
-        nav(
-            R.id.editLoginFragment,
+        val directions =
             SavedLoginSiteInfoFragmentDirections
                 .actionSavedLoginsInfoFragmentToEditLoginFragment(args.savedLoginItem)
-        )
+        requireView().findNavController().navigate(directions)
     }
 
     private fun displayDeleteLoginDialog() {
@@ -138,33 +142,7 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
         }
     }
 
-    private fun togglePasswordReveal(context: Context) {
-        if (passwordInfoText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
-            context.components.analytics.metrics.track(Event.ViewLoginPassword)
-            passwordInfoText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPassword.setImageDrawable(
-                getDrawable(
-                    context,
-                    R.drawable.mozac_ic_password_hide
-                )
-            )
-            revealPassword.contentDescription =
-                context.getString(R.string.saved_login_hide_password)
-        } else {
-            passwordInfoText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPassword.setImageDrawable(
-                getDrawable(
-                    context,
-                    R.drawable.mozac_ic_password_reveal
-                )
-            )
-            revealPassword.contentDescription =
-                context.getString(R.string.saved_login_reveal_password)
-        }
-        // For the new type to take effect you need to reset the text
-        passwordInfoText.text = args.savedLoginItem.password
-    }
+
 
     /**
      * Click listener for a textview's copy button.

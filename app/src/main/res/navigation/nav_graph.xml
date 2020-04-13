@@ -309,19 +309,23 @@
         tools:layout="@layout/fragment_login_info">
         <argument
             android:name="savedLoginItem"
-            app:argType="org.mozilla.fenix.settings.logins.SavedLoginsItem" />
+            app:argType="org.mozilla.fenix.settings.logins.SavedLoginsItem"
+            app:nullable="false"/>
         <action
             android:id="@+id/action_savedLoginsInfoFragment_to_editLoginFragment"
-            app:destination="@id/editLoginFragment" />
+            app:destination="@id/editLoginFragment"
+            app:popUpTo="@id/editLoginFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/editLoginFragment"
         android:name="org.mozilla.fenix.settings.logins.EditLoginFragment"
-        tools:layout="@layout/fragment_edit_login">
+        android:label="@string/edit">
         <argument
             android:name="savedLoginItem"
-            app:argType="org.mozilla.fenix.settings.logins.SavedLoginsItem" />
+            app:argType="org.mozilla.fenix.settings.logins.SavedLoginsItem"
+            app:nullable="false"/>
         <action
             android:id="@+id/action_editLoginFragment_to_savedLoginsInfoFragment"
             app:destination="@id/savedLoginSiteInfoFragment" />

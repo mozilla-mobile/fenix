@@ -4,18 +4,29 @@
 
 package org.mozilla.fenix.settings.logins
 
+import android.content.Context
+import android.text.Editable
+import android.text.InputType
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
 import kotlinx.android.synthetic.main.component_saved_logins.view.progress_bar
+import kotlinx.android.synthetic.main.fragment_edit_login.view.*
+import kotlinx.android.synthetic.main.fragment_login_info.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.components.metrics.Event
 
 /**
  * Interface for the SavedLoginsViewInteractor. This interface is implemented by objects that want
@@ -82,4 +93,80 @@ class SavedLoginsView(
         }
         loginsAdapter.submitList(state.filteredItems)
     }
+}
+
+open class SavedLoginsHelper(val view: View?, val context: Context?) {
+    fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
+    open fun togglePasswordReveal(item: SavedLoginsItem): Boolean =
+        when (view?.id) {
+            R.id.editLoginFragment -> {
+                togglePasswordReveal(
+                    item.password,
+                    view.passwordText,
+                    null,
+                    view.revealPasswordButton
+                )
+                true
+            }
+            R.id.savedLoginSiteInfoFragment -> {
+                togglePasswordReveal(
+                    item.password,
+                    null,
+                    view.passwordInfoText,
+                    view.revealPassword
+                )
+                true
+            }
+            else -> {false}
+
+    }
+
+    private fun togglePasswordReveal(
+        itemPassword: String?,
+        passwordEditableTextView: TextInputEditText? = null,
+        passwordTextView: TextView? = null,
+        revealPasswordButton: ImageButton
+    ) {
+        if (passwordTextView == null ) {
+            if (passwordEditableTextView?.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+                context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
+                passwordEditableTextView.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                revealPasswordButton.setImageDrawable(
+                    context?.resources?.getDrawable(R.drawable.mozac_ic_password_hide, null)
+                )
+                revealPasswordButton.contentDescription =
+                    context?.getString(R.string.saved_login_hide_password)
+            } else {
+                passwordEditableTextView?.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                revealPasswordButton.setImageDrawable(
+                    context?.resources?.getDrawable(R.drawable.mozac_ic_password_reveal, null)
+                )
+                revealPasswordButton.contentDescription =
+                    context?.getString(R.string.saved_login_reveal_password)
+            }
+            passwordEditableTextView?.text = itemPassword?.toEditable()
+        } else {
+            if (passwordTextView.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+                context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
+                passwordTextView.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                revealPasswordButton.setImageDrawable(
+                    context?.resources?.getDrawable(R.drawable.mozac_ic_password_hide, null)
+                )
+                revealPasswordButton.contentDescription =
+                    context?.getString(R.string.saved_login_hide_password)
+            } else {
+                passwordTextView.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                revealPasswordButton.setImageDrawable(
+                    context?.resources?.getDrawable(R.drawable.mozac_ic_password_reveal, null)
+                )
+                revealPasswordButton.contentDescription =
+                    context?.getString(R.string.saved_login_reveal_password)
+            }
+            passwordTextView.text = itemPassword
+        }
+    }
+
 }

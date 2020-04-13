@@ -1352,5 +1352,12 @@
     <string name="username_description">The editable text field for the username of the login.</string>
     <!--  The editable text field for a login's password. -->
     <string name="password_description">The editable text field for the password of the login.</string>
+    <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Save changes to login.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Discard changes</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit_login">Edit</string>
+    <string name="edit">Edit</string>
+
 </resources>
