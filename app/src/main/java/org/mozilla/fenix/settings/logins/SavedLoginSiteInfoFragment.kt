@@ -4,17 +4,14 @@
 
 package org.mozilla.fenix.settings.logins
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -64,8 +61,8 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        siteInfoText.text = args.savedLoginItem.url
-        usernameInfoText.text = args.savedLoginItem.userName
+        webAddressText.text = args.savedLoginItem.url
+        usernameText.text = args.savedLoginItem.userName
         passwordInfoText.text = args.savedLoginItem.password
 
         val copyInfoArgs = listOf(

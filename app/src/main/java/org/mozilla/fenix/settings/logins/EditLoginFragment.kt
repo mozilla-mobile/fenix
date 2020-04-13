@@ -14,18 +14,21 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.android.synthetic.main.fragment_edit_login.view.*
-import kotlinx.android.synthetic.main.fragment_login_info.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import mozilla.components.concept.storage.Login
+import mozilla.components.service.sync.logins.InvalidRecordException
+import mozilla.components.service.sync.logins.LoginsStorageException
+import mozilla.components.service.sync.logins.NoSuchRecordException
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.nav
-
 
 /**
  * Displays the editable saved login information for a single website.
@@ -52,12 +55,23 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         usernameText.text = args.savedLoginItem.userName?.toEditable() ?: "".toEditable()
         passwordText.text = args.savedLoginItem.password!!.toEditable()
 
-        passwordInfoText.inputType =
+        passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        revealPassword.setOnClickListener {
+
+        setUpClickListeners()
+        setupKeyboardFocus(view)
+    }
+
+    private fun setUpClickListeners() {
+        clearUsernameTextButton.setOnClickListener {
+            usernameText.text?.clear()
+        }
+        clearPasswordTextButton.setOnClickListener {
+            passwordText.text?.clear()
+        }
+        revealPasswordButton.setOnClickListener {
             savedLoginHelper.togglePasswordReveal(args.savedLoginItem)
         }
-        setClearTextListeners()
     }
 
     private fun setupKeyboardFocus(view: View) {
@@ -79,41 +93,51 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    private fun setClearTextListeners() {
-        clearUsernameTextButton.setOnClickListener {
-            usernameText.text = "".toEditable()
-        }
-        clearPasswordTextButton.setOnClickListener {
-            passwordText.text = "".toEditable()
-        }
-        revealPassword.setOnClickListener {
-            savedLoginHelper.togglePasswordReveal(args.savedLoginItem)
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.login_save, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
-            attemptSaveAndExit()
+            try {
+                attemptSaveAndExit()
+            } catch (loginException: Exception) {
+                when (loginException) {
+                    is NoSuchRecordException,
+                    is InvalidRecordException,
+                    is LoginsStorageException -> {
+                        Log.e("Edit login", "Failed to save edited login.", loginException)
+                    }
+                    else -> Log.e("Edit login", "Failed to save edited login.", loginException)
+                }
+            }
             true
         }
         else -> false
     }
 
     private fun attemptSaveAndExit() {
-        Log.v("ELISE: SAVE", "ELISE: SAVE")
-        val itemToSave = SavedLoginsItem(
-            url = hostnameText.text.toString(),
-            title = hostnameText.text.toString(),
-            userName = usernameText.text.toString(),
-            password = passwordText.text.toString(),
-            id = args.savedLoginItem.id
+        val loginToSave = Login(
+            guid = args.savedLoginItem.id,
+            origin = hostnameText.text.toString(),
+            username = usernameText.text.toString(),
+            password = passwordText.text.toString()
         )
-        val directions = EditLoginFragmentDirections
-            .actionEditLoginFragmentToSavedLoginsInfoFragment(itemToSave)
-        findNavController().navigate(directions)
+
+        var saveLoginJob: Deferred<Unit>? = null
+        lifecycleScope.launch(IO) {
+            saveLoginJob = async {
+                requireContext().components.core.passwordsStorage.update(loginToSave)
+            }
+            saveLoginJob?.await()
+            withContext(Main) {
+                findNavController().popBackStack(R.id.savedLoginSiteInfoFragment, false)
+            }
+        }
+        saveLoginJob?.invokeOnCompletion {
+            if (it is CancellationException) {
+                saveLoginJob?.cancel()
+            }
+        }
     }
 }

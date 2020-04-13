@@ -14,26 +14,26 @@
     android:layout_marginTop="12dp">
 
     <TextView
-        android:id="@+id/webAddressHeaderText"
+        android:id="@+id/webAddressHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/preferences_passwords_saved_logins_site"
         android:textColor="?primaryText"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@id/siteInfoText"
+        app:layout_constraintBottom_toTopOf="@id/webAddressText"
         app:layout_constraintEnd_toStartOf="@id/copyWebAddress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/siteInfoText"
+        android:id="@+id/webAddressText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@id/webAddressHeaderText"
-        app:layout_constraintStart_toStartOf="@id/webAddressHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/webAddressHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/webAddressHeader"
+        app:layout_constraintStart_toStartOf="@id/webAddressHeader"
+        app:layout_constraintTop_toBottomOf="@id/webAddressHeader"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Info" />
 
@@ -43,33 +43,33 @@
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_copy_site"
-        app:layout_constraintBottom_toBottomOf="@id/siteInfoText"
+        app:layout_constraintBottom_toBottomOf="@id/webAddressText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/webAddressHeaderText"
+        app:layout_constraintTop_toTopOf="@id/webAddressHeader"
         app:srcCompat="@drawable/ic_copy" />
 
     <TextView
-        android:id="@+id/usernameHeaderText"
+        android:id="@+id/usernameHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="@string/preferences_passwords_saved_logins_username"
         android:textColor="?primaryText"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@id/usernameInfoText"
+        app:layout_constraintBottom_toTopOf="@id/usernameText"
         app:layout_constraintEnd_toStartOf="@id/copyUsername"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/siteInfoText"
+        app:layout_constraintTop_toBottomOf="@id/webAddressText"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/usernameInfoText"
+        android:id="@+id/usernameText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@id/usernameHeaderText"
-        app:layout_constraintStart_toStartOf="@id/usernameHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/usernameHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/usernameHeader"
+        app:layout_constraintStart_toStartOf="@id/usernameHeader"
+        app:layout_constraintTop_toBottomOf="@id/usernameHeader"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Info" />
 
@@ -79,13 +79,13 @@
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_copy_username"
-        app:layout_constraintBottom_toBottomOf="@id/usernameInfoText"
+        app:layout_constraintBottom_toBottomOf="@id/usernameText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/usernameHeaderText"
+        app:layout_constraintTop_toTopOf="@id/usernameHeader"
         app:srcCompat="@drawable/ic_copy" />
 
     <TextView
-        android:id="@+id/passwordHeaderText"
+        android:id="@+id/passwordHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -95,7 +95,7 @@
         app:layout_constraintBottom_toTopOf="@id/passwordInfoText"
         app:layout_constraintEnd_toStartOf="@id/revealPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameInfoText"
+        app:layout_constraintTop_toBottomOf="@id/usernameText"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
@@ -105,9 +105,9 @@
         android:inputType="textPassword|text"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/passwordHeaderText"
-        app:layout_constraintStart_toStartOf="@id/passwordHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/passwordHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/passwordHeader"
+        app:layout_constraintStart_toStartOf="@id/passwordHeader"
+        app:layout_constraintTop_toBottomOf="@id/passwordHeader"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Info" />
 
@@ -121,7 +121,7 @@
         android:tint="?android:colorAccent"
         app:layout_constraintBottom_toBottomOf="@id/passwordInfoText"
         app:layout_constraintEnd_toStartOf="@id/copyPassword"
-        app:layout_constraintTop_toTopOf="@id/passwordHeaderText"
+        app:layout_constraintTop_toTopOf="@id/passwordHeader"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />
 
     <ImageButton

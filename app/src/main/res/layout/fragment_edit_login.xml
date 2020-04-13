@@ -82,7 +82,7 @@
 <!--        tools:text="Info" />-->
 
     <TextView
-        android:id="@+id/usernameHeaderText"
+        android:id="@+id/usernameHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -103,9 +103,9 @@
         android:colorControlActivated="@android:color/black"
         android:textColorHint="@android:color/black"
         android:contentDescription="@string/username_description"
-        app:layout_constraintEnd_toEndOf="@id/usernameHeaderText"
-        app:layout_constraintStart_toStartOf="@id/usernameHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/usernameHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/usernameHeader"
+        app:layout_constraintStart_toStartOf="@id/usernameHeader"
+        app:layout_constraintTop_toBottomOf="@id/usernameHeader"
         app:layout_constraintVertical_chainStyle="packed"
         app:hintEnabled="false"
         tools:ignore="RtlSymmetry">
@@ -154,11 +154,11 @@
         android:contentDescription="@string/saved_login_copy_username"
         app:layout_constraintBottom_toBottomOf="@id/inputLayoutUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/usernameHeaderText"
+        app:layout_constraintTop_toTopOf="@id/usernameHeader"
         app:srcCompat="@drawable/ic_copy" />
 
     <TextView
-        android:id="@+id/passwordHeaderText"
+        android:id="@+id/passwordHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -181,9 +181,9 @@
         android:textColorHint="@android:color/black"
         android:contentDescription="@string/password_description"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/passwordHeaderText"
-        app:layout_constraintStart_toStartOf="@id/passwordHeaderText"
-        app:layout_constraintTop_toBottomOf="@id/passwordHeaderText"
+        app:layout_constraintEnd_toEndOf="@id/passwordHeader"
+        app:layout_constraintStart_toStartOf="@id/passwordHeader"
+        app:layout_constraintTop_toBottomOf="@id/passwordHeader"
         app:layout_constraintVertical_chainStyle="packed"
         tools:ignore="RtlSymmetry">
 
@@ -236,7 +236,7 @@
         android:tint="?android:colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearPasswordTextButton"
-        app:layout_constraintTop_toTopOf="@id/passwordHeaderText"
+        app:layout_constraintTop_toTopOf="@id/passwordHeader"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />
 
     <ImageButton
