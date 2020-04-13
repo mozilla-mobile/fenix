@@ -58,7 +58,7 @@ class CrashReporterControllerTest {
     }
 
     @Test
-    fun `handle close and remove tab`() {
+    fun `"handle close and remove tab`() {
         val controller = CrashReporterController(crash, session, navContoller, components, settings)
         controller.handleCloseAndRemove(sendCrash = false)?.joinBlocking()
 
@@ -66,7 +66,7 @@ class CrashReporterControllerTest {
         verify { components.useCases.tabsUseCases.removeTab(session) }
         verify { components.useCases.sessionUseCases.crashRecovery.invoke() }
         verify {
-            navContoller.navigate(CrashReporterFragmentDirections.actionGlobalHome())
+            navContoller.navigate(CrashReporterFragmentDirections.actionGlobalHome(), null)
         }
     }
 

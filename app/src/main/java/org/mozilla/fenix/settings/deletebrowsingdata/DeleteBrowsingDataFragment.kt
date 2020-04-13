@@ -147,7 +147,13 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         if (popAfter) viewLifecycleOwner.lifecycleScope.launch(
             Dispatchers.Main
         ) {
-            findNavController().popBackStack()
+
+            findNavController().apply {
+                // If the user deletes all open tabs we need to make sure we remove
+                // the BrowserFragment from the backstack.
+                popBackStack(R.id.homeFragment, false)
+                navigate(DeleteBrowsingDataFragmentDirections.actionGlobalSettingsFragment())
+            }
         }
     }
 

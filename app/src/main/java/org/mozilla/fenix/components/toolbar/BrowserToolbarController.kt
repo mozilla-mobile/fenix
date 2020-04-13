@@ -315,7 +315,10 @@ class DefaultBrowserToolbarController(
             // before we transition the fragment. This makes the animation feel smoother
             delay(ANIMATION_DELAY)
             if (!navController.popBackStack(R.id.homeFragment, false)) {
-                navController.navigate(BrowserFragmentDirections.actionGlobalHome())
+                navController.nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionGlobalHome()
+                )
             }
         }
     }

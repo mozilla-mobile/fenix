@@ -11,8 +11,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.lib.crash.Crash
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.utils.Settings
 
 class CrashReporterController(
@@ -53,7 +55,11 @@ class CrashReporterController(
 
         components.useCases.tabsUseCases.removeTab(session)
         components.useCases.sessionUseCases.crashRecovery.invoke()
-        navController.navigate(CrashReporterFragmentDirections.actionGlobalHome())
+
+        navController.nav(
+            R.id.crashReporterFragment,
+            CrashReporterFragmentDirections.actionGlobalHome()
+        )
 
         return job
     }

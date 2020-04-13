@@ -44,6 +44,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.minus
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -217,7 +218,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     private fun navigate(directions: NavDirections) {
         invokePendingDeletion()
-        findNavController().navigate(directions)
+        findNavController().nav(
+            R.id.bookmarkFragment,
+            directions
+        )
     }
 
     override fun onBackPressed(): Boolean {
