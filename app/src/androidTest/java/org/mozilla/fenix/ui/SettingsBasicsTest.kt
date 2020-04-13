@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui
 
 import android.content.res.Configuration
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -12,10 +13,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Ignore
 import org.mozilla.fenix.FenixApplication
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
@@ -32,6 +34,7 @@ class SettingsBasicsTest {
 
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private var idlingResource: RecyclerViewIdlingResource? = null
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -47,6 +50,9 @@ class SettingsBasicsTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        if (idlingResource != null) {
+            IdlingRegistry.getInstance().unregister(idlingResource!!)
+        }
     }
 
     private fun getUiTheme(): Boolean {
@@ -104,12 +110,18 @@ class SettingsBasicsTest {
         }
     }
 
-    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
     @Test
     fun toggleSearchSuggestions() {
+
         // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
         homeScreen {
         }.openNavigationToolbar {
+
+            // Use an idling resource to wait for results
+            idlingResource =
+                RecyclerViewIdlingResource(activityIntentTestRule.activity.findViewById(R.id.awesomeBar))
+            IdlingRegistry.getInstance().register(idlingResource!!)
+
             verifySearchSuggestionsAreMoreThan(1, "mozilla")
         }.goBack {
         }.openThreeDotMenu {
