@@ -13,7 +13,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
-import okio.source
+//import okio.source
 import org.mozilla.fenix.helpers.ext.toUri
 import java.io.IOException
 import java.io.InputStream
@@ -65,9 +65,11 @@ class AndroidAssetDispatcher : Dispatcher() {
     override fun dispatch(request: RecordedRequest?): MockResponse {
         val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
         try {
+
             val pathWithoutQueryParams = Uri.parse(request?.path?.drop(1)).path
             assetManager.open(pathWithoutQueryParams!!).use { inputStream ->
-                return fileToResponse(pathWithoutQueryParams, inputStream)
+                //return fileToResponse(pathWithoutQueryParams, inputStream)
+                return MockResponse().setResponseCode(HTTP_NOT_FOUND)
             }
         } catch (e: IOException) { // e.g. file not found.
             // We're on a background thread so we need to forward the exception to the main thread.
@@ -76,21 +78,21 @@ class AndroidAssetDispatcher : Dispatcher() {
         }
     }
 }
-
+/*
 @Throws(IOException::class)
 private fun fileToResponse(path: String, file: InputStream): MockResponse {
     return MockResponse()
         .setResponseCode(HTTP_OK)
-        .setBody(fileToBytes(file))
+        //.setBody(fileToBytes(file))
         .addHeader("content-type: " + contentType(path))
-}
-
+}*/
+/*
 @Throws(IOException::class)
 private fun fileToBytes(file: InputStream): Buffer? {
     val result = Buffer()
     result.writeAll(file.source())
     return result
-}
+}*/
 
 private fun contentType(path: String): String? {
     return when {

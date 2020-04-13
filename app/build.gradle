@@ -48,6 +48,7 @@ android {
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
     }
 
+
     buildTypes {
         debug {
             shrinkResources false
@@ -69,6 +70,12 @@ android {
                 // installed on the device.
                 "sharedUserId": "org.mozilla.fenix.performancetest.sharedID"
             ]
+        }
+        forNightlyTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
+            manifestPlaceholders.isRaptorEnabled = "true"
+            applicationIdSuffix ".fenix.nightly"
+            testBuildType "fenixNightly"
+            debuggable true
         }
         fenixNightly releaseTemplate >> {
             applicationIdSuffix ".fenix.nightly"
@@ -593,6 +600,17 @@ dependencies {
     testImplementation Deps.mockito_core
     androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
+
+    // Dependencies for the new androidTestFenixNightly
+    /*androidTestFenixNightlyImplementation Deps.androidx_junit
+    androidTestFenixNightlyImplementation Deps.androidx_work_testing
+    androidTestFenixNightlyImplementation Deps.mockito_android
+    androidTestFenixNightlyImplementation Deps.mockwebserver
+    androidTestFenixNightlyImplementation Deps.espresso_core, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }*/
+
+
 
     // For the initial release of Glean 19, we require consumer applications to
     // depend on a separate library for unit tests. This will be removed in future releases.
