@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+
+
+
+
+
+
+
+    <View
+        android:id="@+id/bottomBarShadow"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/bottom_bar_shadow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tab_tray_controls" />
+
+    <LinearLayout
+        android:id="@+id/tab_tray_controls"
+        android:layout_height="48dp"
+        android:layout_width="0dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="?bottomBarBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <ImageButton
+            android:id="@+id/private_browsing_button"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/content_description_private_browsing_button"
+            android:src="@drawable/private_browsing_button"
+            android:layout_weight=".3333" />
+        <ImageButton
+            android:id="@+id/tab_tray_go_home"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="FIX ME: Home"
+            android:src="@drawable/ic_add_to_homescreen"
+            android:layout_weight=".3333" />
+        <ImageButton
+            android:id="@+id/tab_tray_open_new_tab"
+            android:layout_width="@dimen/glyph_button_height"
+            android:layout_height="@dimen/glyph_button_height"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="FIX ME: NEW TAB"
+            android:src="@drawable/ic_new"
+            android:layout_weight=".3333" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
