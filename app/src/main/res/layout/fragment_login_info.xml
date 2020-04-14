@@ -11,6 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="66dp"
+    android:layout_marginEnd="20dp"
     android:layout_marginTop="12dp">
 
     <TextView
@@ -20,6 +21,8 @@
         android:text="@string/preferences_passwords_saved_logins_site"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/webAddressText"
         app:layout_constraintEnd_toStartOf="@id/copyWebAddress"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +59,8 @@
         android:text="@string/preferences_passwords_saved_logins_username"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/usernameText"
         app:layout_constraintEnd_toStartOf="@id/copyUsername"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,8 +97,10 @@
         android:text="@string/preferences_passwords_saved_logins_password"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/passwordInfoText"
-        app:layout_constraintEnd_toStartOf="@id/revealPassword"
+        app:layout_constraintEnd_toStartOf="@id/revealPasswordButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usernameText"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -112,10 +119,9 @@
         tools:text="Info" />
 
     <ImageButton
-        android:id="@+id/revealPassword"
+        android:id="@+id/revealPasswordButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_reveal_password"
         android:tint="?android:colorAccent"
@@ -130,8 +136,8 @@
         android:layout_height="48dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_logins_copy_password"
-        app:layout_constraintBottom_toBottomOf="@id/revealPassword"
+        app:layout_constraintBottom_toBottomOf="@id/revealPasswordButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/revealPassword"
+        app:layout_constraintTop_toTopOf="@id/revealPasswordButton"
         app:srcCompat="@drawable/ic_copy" />
 </androidx.constraintlayout.widget.ConstraintLayout>

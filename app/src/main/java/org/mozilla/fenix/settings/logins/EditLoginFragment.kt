@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -14,12 +15,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
-import kotlinx.android.synthetic.main.fragment_edit_login.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -28,6 +29,7 @@ import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 
 /**
@@ -37,7 +39,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
     fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
-    private val savedLoginHelper = SavedLoginsHelper(view, context)
+    private var saveEnabled: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,43 +56,45 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         usernameText.text = args.savedLoginItem.userName?.toEditable() ?: "".toEditable()
         passwordText.text = args.savedLoginItem.password!!.toEditable()
-
+        // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         setUpClickListeners()
-        setupKeyboardFocus(view)
     }
 
     private fun setUpClickListeners() {
         clearUsernameTextButton.setOnClickListener {
             usernameText.text?.clear()
+            usernameText.hasFocus()
+            inputLayoutUsername.hasFocus()
+            usernameText.isCursorVisible = true
         }
         clearPasswordTextButton.setOnClickListener {
             passwordText.text?.clear()
+            passwordText.hasFocus()
+            inputLayoutPassword.hasFocus()
+            passwordText.isCursorVisible = true
+            saveEnabled = false
         }
         revealPasswordButton.setOnClickListener {
-            savedLoginHelper.togglePasswordReveal(args.savedLoginItem)
+            togglePasswordReveal()
         }
-    }
 
-    private fun setupKeyboardFocus(view: View) {
-        view.editLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+        inputLayoutPassword?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                closeKeyboard()
+                saveEnabled = !passwordText.text.isNullOrEmpty()
             }
         }
-
-        view.editLoginLayout.setOnTouchListener { _, _ ->
-            closeKeyboard()
-            view.clearFocus()
-            true
-        }
     }
 
-    fun closeKeyboard() {
-        val inputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+    // disable save button when fields are invalid
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val saveButton = menu.getItem(0)
+        saveButton.isEnabled = saveEnabled
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            saveButton.iconTintList = AppCompatResources.getColorStateList(context!!, R.color.toggle_save_enabled)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,7 +104,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             try {
-                attemptSaveAndExit()
+                if (saveEnabled) attemptSaveAndExit()
             } catch (loginException: Exception) {
                 when (loginException) {
                     is NoSuchRecordException,
@@ -116,17 +120,22 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         else -> false
     }
 
+    // TODO: Move interactions with the component's password storage into a separate datastore
+    // This includes Delete, Update/Edit, Create
     private fun attemptSaveAndExit() {
-        val loginToSave = Login(
-            guid = args.savedLoginItem.id,
-            origin = hostnameText.text.toString(),
-            username = usernameText.text.toString(),
-            password = passwordText.text.toString()
-        )
-
         var saveLoginJob: Deferred<Unit>? = null
         lifecycleScope.launch(IO) {
             saveLoginJob = async {
+                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.id)
+                // Update requires a Login type, which needs at least one of httpRealm or formActionOrigin
+                val loginToSave = Login(
+                    guid = oldLogin?.guid,
+                    origin = oldLogin?.origin!!,
+                    username = usernameText.text.toString(), // new value
+                    password = passwordText.text.toString(), // new value
+                    httpRealm = oldLogin.httpRealm,
+                    formActionOrigin = oldLogin.formActionOrigin
+                )
                 requireContext().components.core.passwordsStorage.update(loginToSave)
             }
             saveLoginJob?.await()
@@ -139,5 +148,35 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 saveLoginJob?.cancel()
             }
         }
+    }
+
+    fun closeKeyboard() {
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
+    private fun togglePasswordReveal() {
+        val currText = passwordText.text
+        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
+            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            revealPasswordButton.setImageDrawable(
+                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
+            )
+            revealPasswordButton.contentDescription =
+                resources.getString(R.string.saved_login_hide_password)
+        } else {
+            passwordText.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            revealPasswordButton.setImageDrawable(
+                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
+            )
+            revealPasswordButton.contentDescription =
+                context?.getString(R.string.saved_login_reveal_password)
+        }
+        // For the new type to take effect you need to reset the text to it's current edited version
+        passwordText?.text = currText
     }
 }

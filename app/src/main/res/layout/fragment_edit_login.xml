@@ -11,15 +11,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="66dp"
+    android:layout_marginEnd="20dp"
     android:layout_marginTop="12dp" >
 
     <TextView
         android:id="@+id/hostnameHeaderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingStart="3dp"
         android:text="@string/preferences_passwords_saved_logins_site"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/inputLayoutHostname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,11 +37,11 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
-        app:hintEnabled="false"
-        android:colorControlHighlight="@android:color/black"
-        android:colorControlActivated="@android:color/black"
-        android:textColorHint="@android:color/black"
+        android:colorControlHighlight="?primaryText"
+        android:colorControlActivated="?primaryText"
+        android:textColor="?primaryText"
         android:contentDescription="@string/hostname_description"
+        app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="@id/hostnameHeaderText"
         app:layout_constraintStart_toStartOf="@id/hostnameHeaderText"
         app:layout_constraintTop_toBottomOf="@id/hostnameHeaderText"
@@ -49,11 +53,7 @@
             android:textSize="16sp"
             android:fontFamily="sans-serif"
             android:textStyle="normal"
-            android:paddingBottom="13dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black"
-            android:colorControlHighlight="@android:color/black"
-            android:colorControlActivated="@android:color/black"
+            android:textColor="?disabled"
             android:letterSpacing="0.01"
             android:lineSpacingExtra="8sp"
             android:layout_width="match_parent"
@@ -70,38 +70,31 @@
             tools:ignore="Autofill"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-<!--    <TextView-->
-<!--        android:id="@+id/hostname"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textSize="16sp"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/hostnameHeaderText"-->
-<!--        app:layout_constraintStart_toStartOf="@id/hostnameHeaderText"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/hostnameHeaderText"-->
-<!--        app:layout_constraintVertical_chainStyle="packed"-->
-<!--        tools:text="Info" />-->
-
     <TextView
         android:id="@+id/usernameHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="13dp"
+        android:paddingStart="3dp"
         android:text="@string/preferences_passwords_saved_logins_username"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/inputLayoutUsername"
         app:layout_constraintEnd_toStartOf="@id/clearUsernameTextButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputLayoutHostname"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:ignore="RtlSymmetry" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayoutUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:colorControlHighlight="@android:color/black"
-        android:colorControlActivated="@android:color/black"
-        android:textColorHint="@android:color/black"
+        android:colorControlHighlight="?primaryText"
+        android:colorControlActivated="?primaryText"
+        android:textColor="?primaryText"
         android:contentDescription="@string/username_description"
         app:layout_constraintEnd_toEndOf="@id/usernameHeader"
         app:layout_constraintStart_toStartOf="@id/usernameHeader"
@@ -116,10 +109,9 @@
             android:fontFamily="sans-serif"
             android:textStyle="normal"
             android:paddingBottom="13dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black"
-            android:colorControlHighlight="@android:color/black"
-            android:colorControlActivated="@android:color/black"
+            android:colorControlHighlight="?primaryText"
+            android:colorControlActivated="?primaryText"
+            android:textColor="?primaryText"
             android:letterSpacing="0.01"
             android:lineSpacingExtra="8sp"
             android:layout_width="match_parent"
@@ -130,41 +122,33 @@
             android:singleLine="true"
             android:clickable="true"
             android:focusable="true"
-            android:textCursorDrawable="@android:color/transparent"
-            app:backgroundTint="@android:color/transparent"
+            android:textCursorDrawable="?primaryText"
+            app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>
     </com.google.android.material.textfield.TextInputLayout>
-
-<!--    <TextView-->
-<!--        android:id="@+id/username"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textSize="16sp"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/usernameHeaderText"-->
-<!--        app:layout_constraintStart_toStartOf="@id/usernameHeaderText"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/usernameHeaderText"-->
-<!--        app:layout_constraintVertical_chainStyle="packed"-->
-<!--        tools:text="Info" />-->
 
     <ImageButton
         android:id="@+id/clearUsernameTextButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:tint="?android:colorAccent"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_copy_username"
-        app:layout_constraintBottom_toBottomOf="@id/inputLayoutUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/usernameHeader"
-        app:srcCompat="@drawable/ic_copy" />
+        app:layout_constraintBottom_toBottomOf="@id/inputLayoutUsername"
+        app:srcCompat="@drawable/ic_clear" />
 
     <TextView
         android:id="@+id/passwordHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:paddingStart="3dp"
         android:text="@string/preferences_passwords_saved_logins_password"
         android:textColor="?primaryText"
         android:textSize="12sp"
+        android:letterSpacing="0.05"
+        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/inputLayoutPassword"
         app:layout_constraintEnd_toStartOf="@id/revealPasswordButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -175,11 +159,12 @@
         android:id="@+id/inputLayoutPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:hintEnabled="false"
-        android:colorControlHighlight="@android:color/black"
-        android:colorControlActivated="@android:color/black"
-        android:textColorHint="@android:color/black"
+        android:paddingBottom="11dp"
+        android:colorControlHighlight="?primaryText"
+        android:colorControlActivated="?primaryText"
+        android:textColor="?primaryText"
         android:contentDescription="@string/password_description"
+        app:hintEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/passwordHeader"
         app:layout_constraintStart_toStartOf="@id/passwordHeader"
@@ -192,11 +177,10 @@
             android:textSize="16sp"
             android:fontFamily="sans-serif"
             android:textStyle="normal"
-            android:paddingBottom="13dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black"
-            android:colorControlHighlight="@android:color/black"
-            android:colorControlActivated="@android:color/black"
+            android:paddingBottom="18dp"
+            android:colorControlHighlight="?primaryText"
+            android:colorControlActivated="?primaryText"
+            android:textColor="?primaryText"
             android:letterSpacing="0.01"
             android:lineSpacingExtra="8sp"
             android:layout_width="match_parent"
@@ -207,46 +191,30 @@
             android:singleLine="true"
             android:clickable="true"
             android:focusable="true"
-            android:textCursorDrawable="@android:color/transparent"
-            app:backgroundTint="@android:color/transparent"
+            android:textCursorDrawable="?primaryText"
+            app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>
     </com.google.android.material.textfield.TextInputLayout>
-
-<!--    <TextView-->
-<!--        android:id="@+id/password"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:inputType="textPassword|text"-->
-<!--        android:textSize="16sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/passwordHeaderText"-->
-<!--        app:layout_constraintStart_toStartOf="@id/passwordHeaderText"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/passwordHeaderText"-->
-<!--        app:layout_constraintVertical_chainStyle="packed"-->
-<!--        tools:text="Info" />-->
 
     <ImageButton
         android:id="@+id/revealPasswordButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_reveal_password"
         android:tint="?android:colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearPasswordTextButton"
-        app:layout_constraintTop_toTopOf="@id/passwordHeader"
+        app:layout_constraintTop_toTopOf="@id/inputLayoutPassword"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />
 
     <ImageButton
         android:id="@+id/clearPasswordTextButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:tint="?android:colorAccent"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_logins_copy_password"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/revealPasswordButton"
-        app:srcCompat="@drawable/ic_copy" />
+        app:srcCompat="@drawable/ic_clear" />
 </androidx.constraintlayout.widget.ConstraintLayout>

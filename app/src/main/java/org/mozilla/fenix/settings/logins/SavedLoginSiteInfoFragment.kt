@@ -4,12 +4,14 @@
 
 package org.mozilla.fenix.settings.logins
 
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -35,7 +37,6 @@ import org.mozilla.fenix.ext.showToolbar
 class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     private val args by navArgs<SavedLoginSiteInfoFragmentArgs>()
-    private val savedLoginHelper = SavedLoginsHelper(view)
 
     override fun onResume() {
         super.onResume()
@@ -77,8 +78,8 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
         passwordInfoText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        revealPassword.setOnClickListener {
-            savedLoginHelper.togglePasswordReveal(it.context, args.savedLoginItem)
+        revealPasswordButton.setOnClickListener {
+            togglePasswordReveal()
         }
     }
 
@@ -121,6 +122,8 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
         }
     }
 
+    // TODO: Move interactions with the component's password storage into a separate datastore
+    // This includes Delete, Update/Edit, Create
     private fun deleteLogin() {
         var deleteLoginJob: Deferred<Boolean>? = null
         val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
@@ -139,7 +142,28 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
         }
     }
 
-
+    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
+    private fun togglePasswordReveal() {
+        if (passwordInfoText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
+            passwordInfoText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            revealPasswordButton.setImageDrawable(
+                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
+            )
+            revealPasswordButton.contentDescription =
+                resources.getString(R.string.saved_login_hide_password)
+        } else {
+            passwordInfoText.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            revealPasswordButton.setImageDrawable(
+                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
+            )
+            revealPasswordButton.contentDescription =
+                context?.getString(R.string.saved_login_reveal_password)
+        }
+        // For the new type to take effect you need to reset the text
+        passwordInfoText.text = args.savedLoginItem.password
+    }
 
     /**
      * Click listener for a textview's copy button.
