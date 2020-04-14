@@ -6,70 +6,72 @@ package org.mozilla.fenix.tabtray
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import org.mozilla.fenix.HomeActivity
+import mozilla.components.feature.tabs.tabstray.TabsFeature
+import kotlinx.android.synthetic.main.fragment_tab_tray.tabsTray
+import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
+import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.requireComponents
+import androidx.navigation.Navigation.findNavController
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class TabTrayFragment : Fragment() {
+class TabTrayFragment : Fragment(), UserInteractionHandler {
+    private var tabsFeature: TabsFeature? = null
 
-    var tabTrayMenu: Menu? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_tab_tray, container, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        updateTitle()
+        tabsFeature = TabsFeature(
+            tabsTray,
+            requireComponents.core.store,
+            requireComponents.useCases.tabsUseCases,
+            { !it.content.private },
+            ::closeTabsTray)
 
-        // More
+        view.tab_tray_open_new_tab.setOnClickListener {
+            val directions = TabTrayFragmentDirections.actionGlobalSearch(null)
+            val navController = findNavController(it)
+            navController.navigate(directions)
+        }
+
+        view.tab_tray_go_home.setOnClickListener {
+            val directions = TabTrayFragmentDirections.actionGlobalHome()
+            val navController = findNavController(it)
+            navController.navigate(directions)
+        }
+
+        view.private_browsing_button.setOnClickListener {
+
+        }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_tab_tray, container, false)
+    override fun onStart() {
+        super.onStart()
 
-        updateTitle()
-
-        return view
+        tabsFeature?.start()
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateTitle()
+    override fun onStop() {
+        super.onStop()
+
+        tabsFeature?.stop()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.tab_tray_menu, menu)
+    override fun onBackPressed(): Boolean {
+        closeTabsTray()
+        return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        this.tabTrayMenu = menu
-        updateMenuItems()
-    }
-
-    private fun updateTitle() {
-        // TODO:  Why isn't this displaying?
-        activity?.title = requireContext().getString(R.string.tab_header_label)
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
-
-    private fun updateMenuItems() {
-        val inPrivateMode = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-
-        // Hide all icons when in selection mode with nothing selected
-
-        // TODO:  Use store
-        val showAnyOverflowIcons = true // tabTrayStore.state.tabs.isNotEmpty()
-        this.tabTrayMenu?.findItem(R.id.tab_tray_select_to_save_menu_item)?.isVisible =
-            showAnyOverflowIcons && !inPrivateMode
-        this.tabTrayMenu?.findItem(R.id.tab_tray_share_menu_item)?.isVisible = showAnyOverflowIcons
-        this.tabTrayMenu?.findItem(R.id.tab_tray_close_menu_item)?.isVisible = showAnyOverflowIcons
+    private fun closeTabsTray() {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            //replace(R.id.container, BrowserFragment.create())
+            commit()
+        }
     }
 }

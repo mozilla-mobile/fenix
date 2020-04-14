@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tabTrayFragment">
+    app:startDestination="@id/homeFragment">
 
     <action
         android:id="@+id/action_global_home"
@@ -54,7 +54,10 @@
         android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
         <action
             android:id="@+id/action_tabTrayFragment_to_homeFragment"
-            app:destination="@+id/turnOnSyncFragment" />
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_tabTrayFragment_to_browserFragment"
+            app:destination="@id/browserFragment" />
     </fragment>
 
     <fragment
