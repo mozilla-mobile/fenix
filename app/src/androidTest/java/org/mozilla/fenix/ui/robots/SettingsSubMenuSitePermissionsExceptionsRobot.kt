@@ -35,7 +35,6 @@ class SettingsSubMenuSitePermissionsExceptionsRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
 
         fun goBack(interact: SettingsSubMenuSitePermissionsRobot.() -> Unit): SettingsSubMenuSitePermissionsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsSubMenuSitePermissionsRobot().interact()
