@@ -155,11 +155,7 @@ private fun assertEnhancedTrackingProtectionDefaults() {
 }
 
 private fun assertRadioButtonDefaults() {
-    onView(
-        allOf(
-            withId(org.mozilla.fenix.R.id.radio_button),
-            hasSibling(withText("Standard"))
-        )
+    onView(withText("Standard")
     ).assertIsChecked(false)
 
     onView(
@@ -169,11 +165,7 @@ private fun assertRadioButtonDefaults() {
         )
     ).assertIsChecked(true)
 
-    onView(
-        allOf(
-            withId(org.mozilla.fenix.R.id.radio_button),
-            hasSibling(withText("Custom"))
-        )
+    onView(withText("Custom")
     ).assertIsChecked(false)
 }
 

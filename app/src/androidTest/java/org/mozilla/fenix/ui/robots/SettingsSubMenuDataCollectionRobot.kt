@@ -67,7 +67,7 @@ private fun assertDataCollectionOptions() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     val usageAndTechnicalDataText =
-        "Shares performance, usage, hardware and customisation data about your browser with Mozilla to help us make Firefox Preview better"
+        "Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make Firefox Preview better"
 
     onView(withText(usageAndTechnicalDataText))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
