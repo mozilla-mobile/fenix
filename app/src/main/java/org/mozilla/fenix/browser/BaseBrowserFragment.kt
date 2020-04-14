@@ -6,6 +6,7 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.runWithSessionIdOrSelected
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -45,6 +47,7 @@ import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
+import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
@@ -123,6 +126,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
     private val sitePermissionWifiIntegration = ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
+    private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
 
@@ -131,6 +135,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     // We need this so we don't accidentally remove all external sessions on back press
     private var sessionRemoved = false
+    private var enteredPip = false
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -308,7 +313,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                             FenixSnackbar.make(
                                 view = view,
                                 duration = Snackbar.LENGTH_SHORT,
-                                isDisplayedOnBrowserFragment = true
+                                isDisplayedWithBrowserToolbar = true
                             )
                                 .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
                                 .show()
@@ -323,6 +328,15 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 owner = this,
                 view = view
             )
+
+            if (FeatureFlags.pictureInPicture) {
+                pipFeature = PictureInPictureFeature(
+                    requireComponents.core.sessionManager,
+                    requireActivity(),
+                    customTabSessionId,
+                    ::pipModeChanged
+                )
+            }
 
             appLinksFeature.set(
                 feature = AppLinksFeature(
@@ -423,39 +437,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 feature = FullScreenFeature(
                     sessionManager,
                     SessionUseCases(sessionManager),
-                    customTabSessionId
-                ) { inFullScreen ->
-                    if (inFullScreen) {
-                        FenixSnackbar.make(
-                            view = view,
-                            duration = Snackbar.LENGTH_SHORT,
-                            isDisplayedOnBrowserFragment = true
-                        )
-                            .setText(getString(R.string.full_screen_notification))
-                            .show()
-                        activity?.enterToImmersiveMode()
-                        browserToolbarView.view.visibility = View.GONE
-
-                        if (FeatureFlags.dynamicBottomToolbar) {
-                            engineView.setDynamicToolbarMaxHeight(0)
-                            browserToolbarView.expand()
-                            // Without this, fullscreen has a margin at the top.
-                            engineView.setVerticalClipping(0)
-                        }
-                    } else {
-                        activity?.exitImmersiveModeIfNeeded()
-                        (activity as? HomeActivity)?.let { activity ->
-                            activity.themeManager.applyStatusBarTheme(activity)
-                        }
-                        browserToolbarView.view.visibility = View.VISIBLE
-                        if (FeatureFlags.dynamicBottomToolbar) {
-                            engineView.setDynamicToolbarMaxHeight(toolbarHeight)
-                        }
-                    }
-                    if (!FeatureFlags.dynamicBottomToolbar) {
-                        updateLayoutMargins(inFullScreen)
-                    }
-                },
+                    customTabSessionId,
+                    ::viewportFitChange,
+                    ::fullScreenChanged
+                ),
                 owner = this,
                 view = view
             )
@@ -590,10 +575,14 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     @CallSuper
     final override fun onPause() {
         super.onPause()
+        // If we didn't enter PiP, exit full screen on pause
+        if (!enteredPip) {
+            fullScreenFeature.onBackPressed()
+        }
+        enteredPip = false
         if (findNavController().currentDestination?.id != R.id.searchFragment) {
             view?.hideKeyboard()
         }
-        fullScreenFeature.onBackPressed()
     }
 
     @CallSuper
@@ -777,7 +766,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             withContext(Main) {
                 nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(existing.guid)
+                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(existing.guid)
                 )
             }
         } else {
@@ -796,20 +785,84 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     FenixSnackbar.make(
                         view = view,
                         duration = FenixSnackbar.LENGTH_LONG,
-                        isDisplayedOnBrowserFragment = true
+                        isDisplayedWithBrowserToolbar = true
                     )
                         .setText(getString(R.string.bookmark_saved_snackbar))
                         .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
                             nav(
                                 R.id.browserFragment,
-                                BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(
-                                    guid
-                                )
+                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(guid)
                             )
                         }
                         .show()
                 }
             }
+        }
+    }
+
+    override fun onHomePressed(): Boolean {
+        if (pipFeature?.onHomePressed() == true) {
+            enteredPip = true
+            return true
+        }
+        return false
+    }
+
+    private fun pipModeChanged(enabled: Boolean) {
+        val fullScreenMode =
+            requireComponents.core.sessionManager.runWithSessionIdOrSelected(customTabSessionId) { session ->
+                session.fullScreenMode
+            }
+        // If we're exiting PIP mode and we're in fullscreen mode, then we should exit fullscreen mode as well.
+        if (!enabled && fullScreenMode) {
+            onBackPressed()
+            fullScreenChanged(false)
+        }
+    }
+
+    final override fun onPictureInPictureModeChanged(enabled: Boolean) {
+        pipFeature?.onPictureInPictureModeChanged(enabled)
+    }
+
+    private fun viewportFitChange(layoutInDisplayCutoutMode: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val layoutParams = activity?.window?.attributes
+            layoutParams?.layoutInDisplayCutoutMode = layoutInDisplayCutoutMode
+            activity?.window?.attributes = layoutParams
+        }
+    }
+
+    private fun fullScreenChanged(inFullScreen: Boolean) {
+        if (inFullScreen) {
+            FenixSnackbar.make(
+                    view = view!!,
+                    duration = Snackbar.LENGTH_SHORT,
+                    isDisplayedWithBrowserToolbar = false
+                )
+                .setText(getString(R.string.full_screen_notification))
+                .show()
+            activity?.enterToImmersiveMode()
+            browserToolbarView.view.visibility = View.GONE
+
+            if (FeatureFlags.dynamicBottomToolbar) {
+                engineView.setDynamicToolbarMaxHeight(0)
+                browserToolbarView.expand()
+                // Without this, fullscreen has a margin at the top.
+                engineView.setVerticalClipping(0)
+            }
+        } else {
+            activity?.exitImmersiveModeIfNeeded()
+            (activity as? HomeActivity)?.let { activity ->
+                activity.themeManager.applyStatusBarTheme(activity)
+            }
+            browserToolbarView.view.visibility = View.VISIBLE
+            if (FeatureFlags.dynamicBottomToolbar) {
+                val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+                engineView.setDynamicToolbarMaxHeight(toolbarHeight)
+            }
+        }
+        if (!FeatureFlags.dynamicBottomToolbar) {
+            updateLayoutMargins(inFullScreen)
         }
     }
 

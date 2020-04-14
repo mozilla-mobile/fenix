@@ -121,7 +121,7 @@
 
     <!-- Error message to show when the user tries to access a scheme not
         handled by the app (Ex: blob, tel etc) -->
-    <string name="unknown_scheme_error_message">Niet in staat te verbinden. Onherkenbaar URL-schema.</string>
+    <string name="unknown_scheme_error_message">Kan niet verbinden. Onherkenbaar URL-schema.</string>
 
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
@@ -211,6 +211,8 @@
     <string name="preferences_private_browsing_options">Privénavigatie</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Koppelingen openen in een privétabblad</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">Schermafdrukken tijdens privénavigatie toestaan</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Snelkoppeling naar privénavigatie toevoegen</string>
     <!-- Preference for accessibility -->

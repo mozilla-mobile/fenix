@@ -8,6 +8,7 @@ import android.content.Context
 import android.view.View
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.component_browser_top_toolbar.*
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -83,12 +84,12 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         activity,
                         components.core.store,
                         customTabSessionId
-                    ) { exception ->
-                        components.analytics.crashReporter.submitCaughtException(exception)
+                    ) { uri ->
+                        components.analytics.crashReporter.submitCaughtException(Exception("Unknown scheme error $uri"))
                         FenixSnackbar.make(
                             view = view.swipeRefresh,
                             duration = FenixSnackbar.LENGTH_LONG,
-                            isDisplayedOnBrowserFragment = true
+                            isDisplayedWithBrowserToolbar = true
                         ).apply {
                             setText(resources.getString(R.string.unknown_scheme_error_message))
                             setAppropriateBackground(true)
@@ -105,6 +106,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         customTabSessionId,
                         trustedScopes
                     ) { toolbarVisible ->
+                        if (!toolbarVisible) { engineView.setDynamicToolbarMaxHeight(0) }
                         if (!FeatureFlags.dynamicBottomToolbar) { updateLayoutMargins(inFullScreen = !toolbarVisible) }
                     },
                     owner = this,
@@ -170,7 +172,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
 
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
         val directions = ExternalAppBrowserFragmentDirections
-            .actionExternalAppBrowserFragmentToQuickSettingsSheetDialogFragment(
+            .actionGlobalQuickSettingsSheetDialogFragment(
                 sessionId = session.id,
                 url = session.url,
                 title = session.title,
@@ -191,7 +193,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
             val isEnabled = session.trackerBlockingEnabled && !contains
             val directions =
                 ExternalAppBrowserFragmentDirections
-                    .actionExternalAppBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                    .actionGlobalTrackingProtectionPanelDialogFragment(
                         sessionId = session.id,
                         url = session.url,
                         trackingProtectionEnabled = isEnabled,

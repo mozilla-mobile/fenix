@@ -31,6 +31,7 @@ import mozilla.components.feature.media.RecordingDevicesNotificationFeature
 import mozilla.components.feature.media.middleware.MediaMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
+import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.session.HistoryDelegate
 import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
@@ -39,12 +40,11 @@ import mozilla.components.lib.dataprotect.generateEncryptionKey
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.media.MediaService
-import org.mozilla.fenix.test.Mockable
+import org.mozilla.fenix.utils.Mockable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -99,7 +99,8 @@ class Core(private val context: Context) {
     val store by lazy {
         BrowserStore(
             middleware = listOf(
-                MediaMiddleware(context, MediaService::class.java)
+                MediaMiddleware(context, MediaService::class.java),
+                ReaderViewMiddleware()
             )
         )
     }
@@ -175,8 +176,7 @@ class Core(private val context: Context) {
         WebAppShortcutManager(
             context,
             client,
-            webAppManifestStorage,
-            supportWebApps = FeatureFlags.progressiveWebApps
+            webAppManifestStorage
         )
     }
 

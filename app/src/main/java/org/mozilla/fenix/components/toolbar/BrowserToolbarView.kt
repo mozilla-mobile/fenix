@@ -111,7 +111,7 @@ class BrowserToolbarView(
                 FenixSnackbar.make(
                     view = view,
                     duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedOnBrowserFragment = true
+                    isDisplayedWithBrowserToolbar = true
                 )
                     .setText(view.context.getString(R.string.browser_toolbar_url_copied_to_clipboard_snackbar))
                     .show()
@@ -207,6 +207,7 @@ class BrowserToolbarView(
                     onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) },
                     lifecycleOwner = lifecycleOwner,
                     sessionManager = sessionManager,
+                    store = components.core.store,
                     bookmarksStorage = bookmarkStorage
                 )
                 view.display.setMenuDismissAction {

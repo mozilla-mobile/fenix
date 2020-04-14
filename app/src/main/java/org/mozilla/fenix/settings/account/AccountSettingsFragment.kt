@@ -34,6 +34,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -157,6 +158,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             }
             setOnBindEditTextListener { editText ->
                 editText.filters = arrayOf(InputFilter.LengthFilter(DEVICE_NAME_MAX_LENGTH))
+                editText.minHeight = DEVICE_NAME_EDIT_TEXT_MIN_HEIGHT_DP.dpToPx(resources.displayMetrics)
             }
         }
 
@@ -313,7 +315,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 FenixSnackbar.make(
                     view = view!!,
                     duration = FenixSnackbar.LENGTH_LONG,
-                    isDisplayedOnBrowserFragment = false
+                    isDisplayedWithBrowserToolbar = false
                 )
                     .setText(getString(R.string.empty_device_name_error))
                     .show()
@@ -418,5 +420,6 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val DEVICE_NAME_MAX_LENGTH = 128
+        private const val DEVICE_NAME_EDIT_TEXT_MIN_HEIGHT_DP = 48
     }
 }

@@ -45,6 +45,9 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Nov zasebni zavihek</string>
 
+    <!-- Heading for the Top Sites block -->
+    <string name="home_screen_top_sites_heading">Glavne strani</string>
+
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
     <string name="browser_tabs_button">Odprti zavihki</string>
@@ -465,6 +468,9 @@
     <!-- Content Description for session item menu button -->
     <string name="content_description_session_menu">Možnosti seje</string>
 
+    <!-- Content Description for session item share button -->
+    <string name="content_description_session_share">Deli sejo</string>
+
     <!-- Bookmarks -->
     <!-- Content description for bookmarks library menu -->
     <string name="bookmark_menu_content_description">Meni zaznamkov</string>
@@ -529,6 +535,8 @@
     <string name="phone_feature_go_to_settings">Odpri nastavitve</string>
     <!-- Label that indicates that this option it the recommended one -->
     <string name="phone_feature_recommended">Priporočeno</string>
+    <!-- button that allows editing site permissions settings -->
+    <string name="quick_settings_sheet_manage_site_permissions">Upravljanje dovoljenj strani</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Počisti dovoljenja</string>
     <!-- Button label for clearing a site permission-->
@@ -543,6 +551,13 @@
     <string name="preference_phone_feature_location">Lokacija</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Izjeme</string>
+
+    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <string name="preference_option_autoplay_allowed2">Dovoli zvok in video</string>
+    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="preference_option_autoplay_block_audio2">Zavrni samo zvok</string>
+    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <string name="preference_option_autoplay_blocked3">Zavrni zvok in video</string>
 
     <!-- Collections -->
     <!-- Label to describe what collections are to a new user without any collections -->
@@ -567,6 +582,11 @@
     <string name="create_collection_select_all">Izberi vse</string>
     <!-- Button to deselect all tabs in the "select tabs" step of the collection creator -->
     <string name="create_collection_deselect_all">Počisti izbiro</string>
+    <!-- Text to prompt users to select the tabs to save in the "select tabs" step of the collection creator -->
+    <string name="create_collection_save_to_collection_empty">Izberite zavihke, ki jih želite shraniti</string>
+    <!-- Text to show users they have one tab selected in the "select tabs" step of the collection creator.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="create_collection_save_to_collection_tab_selected">%d izbran zavihek</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Zavihki shranjeni!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
@@ -703,6 +723,8 @@
     <string name="preferences_delete_browsing_data_site_permissions">Dovoljenja strani</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Izbriši podatke brskanja</string>
+    <!-- Title for the Delete browsing data on quit preference -->
+    <string name="preferences_delete_browsing_data_on_quit">Ob izhodu izbriši podatke brskanja</string>
     <!-- Category for history items to delete on quit in delete browsing data on quit -->
     <string name="preferences_delete_browsing_data_on_quit_browsing_history">Zgodovina brskanja</string>
 
@@ -730,6 +752,8 @@
     <string name="onboarding_feature_section_header">Spoznajte %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">Kaj je novega</string>
+    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
+    <string name="onboarding_whats_new_description_linktext">Tukaj poiščite odgovore</string>
     <!-- text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Kar najbolje izkoristite %s.</string>
@@ -741,6 +765,8 @@
     <string name="onboarding_firefox_account_sign_in">Prijavite se v Firefox</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Ostanite odjavljeni</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">Sync je vklopljen</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Zaščitite se</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -752,6 +778,8 @@
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Vaša zasebnost</string>
 
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Preberite naše obvestilo o zasebnosti</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
     <string name="onboarding_close">Zapri</string>
 
@@ -804,6 +832,8 @@
     <string name="preference_enhanced_tracking_protection_strict">Strogo</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
     <string name="preference_enhanced_tracking_protection_strict_default">Strogo (privzeto)</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_default_description">Močnejša zaščita pred sledenjem in hitrejše delovanje, nekatere strani morda ne bodo delovale pravilno.</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_recommended">Strogo (priporočljivo)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
@@ -829,6 +859,8 @@
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">V vseh zavihkih</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Le v zasebnih zavihkih</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Le v zavihkih po meri</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Kriptorudarje</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -889,8 +921,13 @@
     <string name="add_to_homescreen_cancel">Prekliči</string>
     <!-- Add button text for the Add to Homescreen dialog -->
     <string name="add_to_homescreen_add">Dodaj</string>
+    <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
+    <string name="add_to_homescreen_continue">Nadaljuj na spletno stran</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">Ime bližnjice</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">To stran lahko preprosto dodate na svoj domači zaslon telefona za lažji dostop in hitrejše brskanje v načinu, podobnem aplikaciji.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Prijave in gesla</string>
@@ -912,10 +949,14 @@
     <string name="preferences_passwords_saved_logins_search">Iskanje prijav</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
     <string name="preferences_passwords_saved_logins_alphabetically">Po abecedi</string>
+    <!-- The header for the site that a login is for -->
+    <string name="preferences_passwords_saved_logins_site">Stran</string>
     <!-- The header for the username for a login -->
     <string name="preferences_passwords_saved_logins_username">Uporabniško ime</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Geslo</string>
+    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin">Ponovno vnesite PIN</string>
     <!-- Message displayed in security prompt to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin_description">Odklenite za ogled  shranjenih prijav</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
@@ -950,6 +991,9 @@
     <string name="logins_warning_dialog_later">Pozneje</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_set_up_now">Nastavi zdaj</string>
+
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
+    <string name="logins_biometric_prompt_message_pin">Odklenite svojo napravo</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Dodaj iskalnik</string>

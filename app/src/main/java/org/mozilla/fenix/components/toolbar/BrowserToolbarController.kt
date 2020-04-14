@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
@@ -39,8 +40,8 @@ import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
-import org.mozilla.fenix.lib.Do
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.utils.Do
 
 /**
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
@@ -169,7 +170,7 @@ class DefaultBrowserToolbarController(
                         FenixSnackbar.make(
                             view = swipeRefresh,
                             duration = Snackbar.LENGTH_SHORT,
-                            isDisplayedOnBrowserFragment = true
+                            isDisplayedWithBrowserToolbar = true
                         )
                             .setText(
                                 swipeRefresh.context.getString(R.string.snackbar_added_to_top_sites)
@@ -178,7 +179,7 @@ class DefaultBrowserToolbarController(
                     }
                 }
             }
-            ToolbarMenu.Item.AddToHomeScreen -> {
+            ToolbarMenu.Item.AddToHomeScreen, ToolbarMenu.Item.InstallToHomeScreen -> {
                 activity.settings().installPwaOpened = true
                 MainScope().launch {
                     with(activity.components.useCases.webAppUseCases) {
@@ -220,8 +221,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.AddonsManager -> {
                 navController.nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections
-                        .actionBrowserFragmentToAddonsManagementFragment()
+                    BrowserFragmentDirections.actionGlobalAddonsManagementFragment()
                 )
             }
             ToolbarMenu.Item.SaveToCollection -> {
@@ -230,7 +230,7 @@ class DefaultBrowserToolbarController(
 
                 currentSession?.let { currentSession ->
                     val directions =
-                        BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
+                        BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
                             previousFragmentId = R.id.browserFragment,
                             tabIds = arrayOf(currentSession.id),
                             selectedTabIds = arrayOf(currentSession.id),
@@ -265,7 +265,7 @@ class DefaultBrowserToolbarController(
                     FenixSnackbar.make(
                         view = v,
                         duration = Snackbar.LENGTH_LONG,
-                        isDisplayedOnBrowserFragment = true
+                        isDisplayedWithBrowserToolbar = true
                     )
                         .setText(v.context.getString(R.string.deleting_browsing_data_in_progress))
                 }
@@ -275,9 +275,9 @@ class DefaultBrowserToolbarController(
             is ToolbarMenu.Item.ReaderMode -> {
                 activity.settings().readerModeOpened = true
 
-                val enabled = currentSession?.readerMode
-                    ?: activity.components.core.sessionManager.selectedSession?.readerMode
-                    ?: false
+                val enabled = currentSession?.let {
+                    activity.components.core.store.state.findTab(it.id)?.readerState?.active
+                } ?: false
 
                 if (enabled) {
                     readerModeController.hideReaderView()
@@ -315,11 +315,9 @@ class DefaultBrowserToolbarController(
             // before we transition the fragment. This makes the animation feel smoother
             delay(ANIMATION_DELAY)
             if (!navController.popBackStack(R.id.homeFragment, false)) {
-                val directions = BrowserFragmentDirections.actionBrowserFragmentToHomeFragment()
                 navController.nav(
                     R.id.browserFragment,
-                    directions,
-                    null
+                    BrowserFragmentDirections.actionGlobalHome()
                 )
             }
         }
@@ -348,6 +346,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.SaveToCollection -> Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION
             ToolbarMenu.Item.AddToTopSites -> Event.BrowserMenuItemTapped.Item.ADD_TO_TOP_SITES
             ToolbarMenu.Item.AddToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
+            ToolbarMenu.Item.InstallToHomeScreen -> Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN
             ToolbarMenu.Item.Quit -> Event.BrowserMenuItemTapped.Item.QUIT
             is ToolbarMenu.Item.ReaderMode ->
                 if (item.isChecked) {
