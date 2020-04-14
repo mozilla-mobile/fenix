@@ -52,6 +52,9 @@
     <fragment
         android:id="@+id/tabTrayFragment"
         android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
+        <action
+            android:id="@+id/action_tabTrayFragment_to_homeFragment"
+            app:destination="@+id/turnOnSyncFragment" />
     </fragment>
 
     <fragment
