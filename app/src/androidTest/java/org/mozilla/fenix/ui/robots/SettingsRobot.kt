@@ -167,6 +167,16 @@ class SettingsRobot {
             SettingsSubMenuPrivateBrowsingRobot().interact()
             return SettingsSubMenuPrivateBrowsingRobot.Transition()
         }
+
+        fun openDataCollectionSubMenu(interact: SettingsSubMenuDataCollectionRobot.() -> Unit):
+                SettingsSubMenuDataCollectionRobot.Transition {
+            scrollToElementByText("Data collection")
+            fun dataCollectionButton() = onView(withText("Data collection"))
+            dataCollectionButton().click()
+
+            SettingsSubMenuDataCollectionRobot().interact()
+            return SettingsSubMenuDataCollectionRobot.Transition()
+        }
     }
 }
 
