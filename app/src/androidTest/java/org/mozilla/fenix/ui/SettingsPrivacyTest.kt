@@ -430,29 +430,30 @@ class SettingsPrivacyTest {
         // Verify that notifications dialogue permissions dialogue is not opened
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun deleteBrowsingData() {
-        // Setup:
-        // Open 2 websites as 2 tabs
-        // Save as 1 collection
-        // Open 2 more websites in 2 other tabs
-        // Save as a 2nd collection
+        val page1: TestAssetHelper.TestAsset = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val page2: TestAssetHelper.TestAsset = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Delete browsing data"
-        // Verify correct number of tabs, addresses and collections are indicated
-        // Select all 3 checkboxes
-        // Click on "Delete browsing data button"
-        // Return to home screen and verify that all tabs, history and collection are gone
-        //
-        // Verify xxx
-        //
-        // New: If coming from  tab -> settings -> delete browsing data
-        // then expect to return to home screen
-        // If coming from tab -> home -> settings -> delete browsing data
-        // then expect return to settings (after which you can return to home manually)
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(page1.url) {
+            verifyPageContent(page1.content)
+        }.openHomeScreen {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(page2.url) {
+            verifyPageContent(page2.content)
+        }.openHomeScreen {
+            saveToCollection("col 1")
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openDeleteBrowsingDataSubMenu {
+            verifyTabsCount("2")
+            verifyAddressesCount("2")
+            clickDeleteBrowsingData()
+        }.openHomeScreen {
+            verifyNoTabsOpenedHeader()
+            verifyNoTabsOpenedText()
+        }
     }
 
     @Test
