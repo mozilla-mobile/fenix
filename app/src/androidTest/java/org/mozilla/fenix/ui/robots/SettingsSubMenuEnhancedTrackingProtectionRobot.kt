@@ -9,15 +9,19 @@ package org.mozilla.fenix.ui.robots
 import androidx.preference.R
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.isChecked
+import org.hamcrest.CoreMatchers.allOf
 
 /**
  * Implementation of Robot Pattern for the settings Enhanced Tracking Protection sub menu.
@@ -29,6 +33,19 @@ class SettingsSubMenuEnhancedTrackingProtectionRobot {
     fun verifyEnhancedTrackingProtectionOptions() = assertEnhancedTrackingProtectionOptions()
 
     fun verifyEnhancedTrackingProtectionDefaults() = assertEnhancedTrackingProtectionDefaults()
+
+    fun turnOffEnhancedTrackingProtection() {
+        onView(allOf(withText("Enhanced Tracking Protection"), withResourceName("title")))
+            .perform(click())
+
+        onView(withResourceName("switch_widget")).check(
+            matches(
+                isChecked(
+                    false
+                )
+            )
+        )
+    }
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
