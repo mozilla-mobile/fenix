@@ -40,6 +40,7 @@ import java.util.Calendar
 class SettingsSubMenuAboutRobot {
 
     fun verifyAboutFirefoxPreview() = assertFirefoxPreviewPage()
+    fun verifyPrivacyNotice() = assertPrivacyNotice()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
