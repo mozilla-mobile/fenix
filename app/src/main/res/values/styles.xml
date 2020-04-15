@@ -186,6 +186,7 @@
         <item name="iconPadding">8dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:background">@drawable/rounded_button_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:textStyle">bold</item>
@@ -195,6 +196,12 @@
         <item name="rippleColor">?secondaryText</item>
         <item name="android:letterSpacing">0</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
+    </style>
+
+    <!-- Ideally we should consolidate this with NeutralButton in the future -->
+    <style name="NeutralOnboardingButton" parent="NeutralButton">
+        <item name="backgroundTint">?neutralFaded</item>
+        <item name="android:textColor">?primaryText</item>
     </style>
 
     <style name="DestructiveButton" parent="NeutralButton">
