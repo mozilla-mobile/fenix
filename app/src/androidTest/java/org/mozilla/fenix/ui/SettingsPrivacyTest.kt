@@ -466,13 +466,13 @@ class SettingsPrivacyTest {
         // Verify redirect to: mozilla.org Privacy notice page"
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun checkLeakCanary() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on Leak Canary toggle
-        // Verify 'dump' message
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyLeakCanaryButton()
+        }
     }
 }
 
