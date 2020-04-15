@@ -9,7 +9,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <mozilla.components.concept.tabstray.TabsTray
         android:id="@+id/tabsTray"
         android:layout_width="match_parent"
@@ -17,11 +16,9 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomBarShadow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <!--
-        mozac:tabsTrayItemBackgroundColor="@android:color/transparent"
-        mozac:tabsTrayItemTextColor="#ffffff" />
-    -->
+        app:layout_constraintTop_toTopOf="parent"
+        mozac:tabsTrayItemTextColor="@color/primary_text_normal_theme"
+        mozac:selectableItemBackgroundBorderless="@color/primary_text_normal_theme" />
 
     <View
         android:id="@+id/bottomBarShadow"

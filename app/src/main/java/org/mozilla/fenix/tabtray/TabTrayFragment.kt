@@ -16,6 +16,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import androidx.navigation.Navigation.findNavController
+import org.mozilla.fenix.ext.showToolbar
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class TabTrayFragment : Fragment(), UserInteractionHandler {
@@ -26,6 +27,8 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        showToolbar("Open Tabs")
 
         tabsFeature = TabsFeature(
             tabsTray,
