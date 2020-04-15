@@ -150,6 +150,10 @@ class BrowserRobot {
         assertPrivateTabsNotification()
     }
 
+    fun verifyTrackingProtection() = assertTrackingProtection()
+
+    fun verifyTrackingProtectionOff() = assertTrackingProtectionOff()
+
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mDevice.waitNotNull(
@@ -362,3 +366,9 @@ private fun assertPrivateTabsNotification() {
     mDevice.findObject(UiSelector().text("Firefox Preview (Private)")).exists()
     mDevice.findObject(UiSelector().text("Close private tabs")).exists()
 }
+
+private fun assertTrackingProtection() = onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertTrackingProtectionOff() = onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
