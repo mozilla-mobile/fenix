@@ -320,14 +320,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     /**
      * Determines whether the activity should be pushed to be backstack (i.e., 'minimized' to the recents
      * screen) upon starting.
-     * @param intent    The intent that started this activity. Is checked for having the 'START_IN_RECENTS_SCREEN'-extra.
-     * @return          True if the activity should be started and pushed to the recents screen, false .
+     * @param intent - The intent that started this activity. Is checked for having the 'START_IN_RECENTS_SCREEN'-extra.
+     * @return true if the activity should be started and pushed to the recents screen, false .
      */
     private fun shouldStartInRecentsScreen(intent: Intent?): Boolean {
         intent?.toSafeIntent()?.let {
-            if (it.hasExtra(START_IN_RECENTS_SCREEN)) {
-                return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
-            }
+            return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
         }
         return false
     }
@@ -514,6 +512,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         const val OPEN_TO_BROWSER = "open_to_browser"
         const val OPEN_TO_BROWSER_AND_LOAD = "open_to_browser_and_load"
         const val OPEN_TO_SEARCH = "open_to_search"
+        const val OPEN_FROM_SHORTCUT = "open_from_shortcut"
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"

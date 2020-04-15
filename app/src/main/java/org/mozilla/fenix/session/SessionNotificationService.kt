@@ -38,7 +38,7 @@ import org.mozilla.fenix.ext.sessionsOfType
 class SessionNotificationService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val action = intent.action ?: return Service.START_NOT_STICKY
+        val action = intent.action ?: return START_NOT_STICKY
 
         when (action) {
             ACTION_START -> {
@@ -50,20 +50,16 @@ class SessionNotificationService : Service() {
                 metrics.track(Event.PrivateBrowsingNotificationTapped)
                 components.core.sessionManager.removeAndCloseAllPrivateSessions()
 
-                val homeScreenIntent = Intent(this, HomeActivity::class.java);
+                val homeScreenIntent = Intent(this, HomeActivity::class.java)
                 val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                homeScreenIntent.apply {
+                    setFlags(intentFlags)
+                    putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+                }
                 if (VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
-                    // Set browsing mode to 'regular' and it's startmode to be in background (recents screen)
+                    // Set start mode to be in background (recents screen)
                     homeScreenIntent.apply {
-                        setFlags(intentFlags)
-                        putExtra(HomeActivity.PRIVATE_BROWSING_MODE, false)
                         putExtra(HomeActivity.START_IN_RECENTS_SCREEN, true)
-                    }
-                } else {
-                    // Bring back the PB Home to foreground
-                    homeScreenIntent.apply {
-                        setFlags(intentFlags)
-                        putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
                     }
                 }
                 startActivity(homeScreenIntent)
@@ -72,7 +68,7 @@ class SessionNotificationService : Service() {
             else -> throw IllegalStateException("Unknown intent: $intent")
         }
 
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onTaskRemoved(rootIntent: Intent) {
