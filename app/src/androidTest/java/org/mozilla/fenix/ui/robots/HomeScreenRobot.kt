@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Bitmap
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -38,8 +38,10 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.components.Search
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.withBitmapDrawable
 import org.mozilla.fenix.helpers.matchers.hasItem
+import org.mozilla.fenix.collections.TabViewHolder
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -189,6 +191,40 @@ class HomeScreenRobot {
         ).perform(ViewActions.click())
     }
 
+    fun saveToCollection(collection: String, isFirstCollection: Boolean = true) {
+        onView(withText("Save to collection"))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            .perform(click())
+
+        //check boxes
+        onView(allOf(withId(R.id.tab_list))).perform(
+            RecyclerViewActions.actionOnItemAtPosition<TabViewHolder>(
+                0,
+                click()
+            )
+        )
+        onView(allOf(withId(R.id.tab_list))).perform(
+            RecyclerViewActions.actionOnItemAtPosition<TabViewHolder>(
+                1,
+                click()
+            )
+        )
+        //click save
+        onView(withId(R.id.save_button)).perform(click())
+
+        if (!isFirstCollection) {
+            TestHelper.waitUntilObjectIsFound("org.mozilla.fenix.debug:id/bottom_bar_text")
+
+            addNewCollection().perform(click())
+        }
+        TestHelper.waitUntilObjectIsFound("org.mozilla.fenix.debug:id/name_collection_edittext")
+        //collection name
+        onView(withId(R.id.name_collection_edittext)).perform(
+            replaceText(collection),
+            pressImeActionButton()
+        )
+    }
+
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -295,6 +331,8 @@ fun homeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition
 
 val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+private fun addNewCollection() = onView(withId(R.id.bottom_bar_text))
 
 private fun navigationToolbar() =
     onView(allOf(withText("Search or enter address")))
