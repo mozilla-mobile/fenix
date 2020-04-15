@@ -443,18 +443,16 @@ class SettingsPrivacyTest {
         // then expect return to settings (after which you can return to home manually)
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifyDataCollection() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Click on "Data collection"
-        // Verify header: "Usage and technical data"
-        // Verify text: "Shares performance, usage, hardware and customization data about your browser with Mozilla"
-        //               " to help us make Firefox preview better"
-        // Verify toggle is on by default
-        // TBD:
-        // see: telemetry testcases
+        homeScreen{
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openDataCollectionSubMenu {
+            verifyHeaderUsageAndTechnicalData()
+            verifyDescUsageAndTechnicalData()
+            verifyUsageDataToggleDefault()
+        }
     }
 
     @Test
