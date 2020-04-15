@@ -190,6 +190,16 @@ class SettingsRobot {
             SettingsSubMenuDeleteBrowsingDataRobot().interact()
             return SettingsSubMenuDeleteBrowsingDataRobot.Transition()
         }
+
+        fun openSitePermissionsSubMenu(interact: SettingsSubMenuSitePermissionsRobot.() -> Unit):
+                SettingsSubMenuSitePermissionsRobot.Transition {
+            scrollToElementByText("Site permissions")
+            fun sitePermissionItem() = onView(withText("Site permissions"))
+            sitePermissionItem().click()
+
+            SettingsSubMenuSitePermissionsRobot().interact()
+            return SettingsSubMenuSitePermissionsRobot.Transition()
+        }
     }
 }
 
