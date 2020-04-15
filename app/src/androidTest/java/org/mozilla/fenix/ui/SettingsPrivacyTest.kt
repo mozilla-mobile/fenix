@@ -453,6 +453,8 @@ class SettingsPrivacyTest {
         }.openHomeScreen {
             verifyNoTabsOpenedHeader()
             verifyNoTabsOpenedText()
+            verifyCollectionsHeader()
+            verifyCollectionTitle("col 1")
         }
     }
 

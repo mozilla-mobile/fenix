@@ -54,6 +54,7 @@ class HomeScreenRobot {
     fun verifyOpenTabsHeader() = assertOpenTabsHeader()
     fun verifyAddTabButton() = assertAddTabButton()
     fun verifyNoTabsOpenedText() = assertNoTabsOpenedText()
+    fun verifyCollectionTitle(collectionTitle: String) = assertCollectionTitle(collectionTitle)
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsHeader() = assertNoCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
@@ -375,6 +376,9 @@ private fun assertNoTabsOpenedText() {
     onView(allOf(withText("Your open tabs will be shown here.")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
+
+private fun assertCollectionTitle(collectionTitle: String) =
+    onView(withId(R.id.collection_title)).check(matches(withText(collectionTitle)))
 
 private fun assertCollectionsHeader() =
     onView(allOf(withText("Collections")))
