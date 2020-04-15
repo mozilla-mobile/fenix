@@ -304,16 +304,28 @@ class SettingsPrivacyTest {
         }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun toggleTrackingProtection() {
-        // Open static test website to verify TP is turned on (default): https://github.com/rpappalax/testapp
-        // (static content needs to be migrated to assets folder)
-        // Open 3dot (main) menu
-        // Select settings
-        // Toggle Tracking Protection to 'off'
-        // Back arrow to Home
-        // Open static test website to verify TP is now off: https://github.com/rpappalax/testapp
+        homeScreen {
+        }.openSearch {
+            typeSearch("https://github.com/rpappalax/testapp")
+        }.openBrowser {
+            verifyPageContent("testapp")
+            verifyTrackingProtection()
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            verifyEnhancedTrackingProtectionDefaults()
+            turnOffEnhancedTrackingProtection()
+        }.goBack {
+        }.goBack {
+        }.openSearch {
+            typeSearch("https://github.com/rpappalax/testapp")
+        }.openBrowser {
+            verifyPageContent("testapp")
+            verifyTrackingProtectionOff()
+        }
     }
 
     @Ignore("This is a stub test, ignore for now")

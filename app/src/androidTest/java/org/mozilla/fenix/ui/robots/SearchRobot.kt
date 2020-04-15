@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
@@ -60,7 +58,7 @@ class SearchRobot {
     }
 
     fun typeSearch(searchTerm: String) {
-        browserToolbarEditView().perform(typeText(searchTerm))
+        browserToolbarEditView().perform(typeText(searchTerm), pressImeActionButton())
     }
 
     fun clickSearchEngineButton(searchEngineName: String) {
@@ -101,7 +99,6 @@ class SearchRobot {
 
         fun openBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitForIdle()
-            browserToolbarEditView().perform(typeText("mozilla\n"))
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
