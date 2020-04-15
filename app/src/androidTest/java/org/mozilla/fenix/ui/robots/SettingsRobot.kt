@@ -12,6 +12,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
@@ -177,6 +178,17 @@ class SettingsRobot {
 
             SettingsSubMenuDataCollectionRobot().interact()
             return SettingsSubMenuDataCollectionRobot.Transition()
+        }
+
+        fun openDeleteBrowsingDataSubMenu(interact: SettingsSubMenuDeleteBrowsingDataRobot.() -> Unit): SettingsSubMenuDeleteBrowsingDataRobot.Transition {
+            scrollToElementByText("Delete browsing data")
+            onView(withText("Delete browsing data"))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+            onView(withText("Delete browsing data")).perform(click())
+
+            SettingsSubMenuDeleteBrowsingDataRobot().interact()
+            return SettingsSubMenuDeleteBrowsingDataRobot.Transition()
         }
     }
 }
