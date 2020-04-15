@@ -348,6 +348,9 @@ class DefaultSessionControlController(
         invokePendingDeleteJobs()
         when (url) {
             SupportUtils.ADD_SITE_MOCK_URL -> {
+                val directions =
+                    HomeFragmentDirections.actionHomeFragmentToAddTopSiteFragment()
+                navController.navigate(directions)
                 return
             }
             SupportUtils.POCKET_TRENDING_URL -> {
@@ -358,6 +361,7 @@ class DefaultSessionControlController(
         metrics.track(Event.TopSiteOpenInNewTab)
         if (isDefault) { metrics.track(Event.TopSiteOpenDefault) }
         if (url == SupportUtils.POCKET_TRENDING_URL) { metrics.track(Event.PocketTopSiteClicked) }
+
         activity.components.useCases.tabsUseCases.addTab.invoke(
             url = url,
             selectTab = true,

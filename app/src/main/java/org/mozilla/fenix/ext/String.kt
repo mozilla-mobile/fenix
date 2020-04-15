@@ -136,3 +136,7 @@ suspend fun bitmapForUrl(url: String, client: Client): Bitmap? = withContext(Dis
     }
     body.useStream { BitmapFactory.decodeStream(it) }
 }
+
+fun String.removeExtraSpaces(): String {
+    return this.trim().replace("\\s+".toRegex(), " ")
+}

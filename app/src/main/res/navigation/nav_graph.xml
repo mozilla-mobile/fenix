@@ -62,6 +62,9 @@
         <action
             android:id="@+id/action_homeFragment_to_createCollectionFragment"
             app:destination="@id/collectionCreationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addTopSiteFragment"
+            app:destination="@id/addTopSiteFragment" />
     </fragment>
 
     <fragment
@@ -786,4 +789,8 @@
             app:argType="string"
             app:nullable="true"/>
     </fragment>
+    <dialog
+        android:id="@+id/addTopSiteFragment"
+        android:name="org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.AddTopSiteFragment"
+        tools:layout="@layout/fragment_add_top_site" />
 </navigation>
