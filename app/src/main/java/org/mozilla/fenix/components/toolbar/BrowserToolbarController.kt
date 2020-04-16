@@ -313,18 +313,19 @@ class DefaultBrowserToolbarController(
     }
 
     private fun animateTabAndNavigateHome() {
-        scope.launch {
-            browserAnimator.beginAnimateOut()
-            // Delay for a short amount of time so the browser has time to start animating out
-            // before we transition the fragment. This makes the animation feel smoother
-            delay(ANIMATION_DELAY)
-            if (!navController.popBackStack(R.id.homeFragment, false)) {
-                navController.nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalHome()
-                )
-            }
-        }
+        navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToTabsTrayFragment())
+//        scope.launch {
+//            browserAnimator.beginAnimateOut()
+//            // Delay for a short amount of time so the browser has time to start animating out
+//            // before we transition the fragment. This makes the animation feel smoother
+//            delay(ANIMATION_DELAY)
+//            if (!navController.popBackStack(R.id.homeFragment, false)) {
+//                navController.nav(
+//                    R.id.browserFragment,
+//                    BrowserFragmentDirections.actionGlobalHome()
+//                )
+//            }
+//        }
     }
 
     private fun reportSiteIssue(reportUrl: String, private: Boolean) {

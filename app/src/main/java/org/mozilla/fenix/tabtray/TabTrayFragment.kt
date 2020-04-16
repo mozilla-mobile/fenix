@@ -5,6 +5,7 @@
 package org.mozilla.fenix.tabtray
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,14 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import androidx.navigation.Navigation.findNavController
+import mozilla.components.concept.tabstray.Tab
+import mozilla.components.concept.tabstray.TabsTray
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.showToolbar
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class TabTrayFragment : Fragment(), UserInteractionHandler {
+class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
     private var tabsFeature: TabsFeature? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -58,12 +63,14 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
         super.onStart()
 
         tabsFeature?.start()
+        tabsTray.register(this)
     }
 
     override fun onStop() {
         super.onStop()
 
         tabsFeature?.stop()
+        tabsTray.unregister(this)
     }
 
     override fun onBackPressed(): Boolean {
@@ -76,5 +83,14 @@ class TabTrayFragment : Fragment(), UserInteractionHandler {
             //replace(R.id.container, BrowserFragment.create())
             commit()
         }
+    }
+
+    override fun onTabClosed(tab: Tab) {
+        // noop
+    }
+
+    override fun onTabSelected(tab: Tab) {
+        Log.e("LOL", "OMG")
+        (activity as HomeActivity).openToBrowser(BrowserDirection.FromTabTray)
     }
 }

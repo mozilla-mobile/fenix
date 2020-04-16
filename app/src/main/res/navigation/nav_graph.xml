@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tabTrayFragment">
+    app:startDestination="@id/homeFragment">
 
     <action
         android:id="@+id/action_global_home"
@@ -48,16 +48,11 @@
     <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment" />
     <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" />
     <action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
+    <action android:id="@+id/action_global_tabTrayFragment" app:destination="@id/tabTrayFragment"/>
 
     <fragment
         android:id="@+id/tabTrayFragment"
         android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
-        <action
-            android:id="@+id/action_tabTrayFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_tabTrayFragment_to_browserFragment"
-            app:destination="@id/browserFragment" />
     </fragment>
 
     <fragment
@@ -174,6 +169,9 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_tabsTrayFragment"
+            app:destination="@+id/tabTrayFragment" />
     </fragment>
 
     <fragment
