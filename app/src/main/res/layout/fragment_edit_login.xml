@@ -10,7 +10,7 @@
     android:id="@+id/editLoginLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="66dp"
+    android:layout_marginStart="72dp"
     android:layout_marginEnd="20dp"
     android:layout_marginTop="12dp" >
 
@@ -28,7 +28,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:ignore="RtlSymmetry" />
 
 <!--    maybe use <org.mozilla.fenix.utils.ClearableEditText>-->
     <com.google.android.material.textfield.TextInputLayout
@@ -122,6 +123,7 @@
             android:singleLine="true"
             android:clickable="true"
             android:focusable="true"
+            android:cursorVisible="true"
             android:textCursorDrawable="?primaryText"
             app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>
@@ -153,7 +155,8 @@
         app:layout_constraintEnd_toStartOf="@id/revealPasswordButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputLayoutUsername"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:ignore="RtlSymmetry" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayoutPassword"
@@ -191,6 +194,7 @@
             android:singleLine="true"
             android:clickable="true"
             android:focusable="true"
+            android:cursorVisible="true"
             android:textCursorDrawable="?primaryText"
             app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>

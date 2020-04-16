@@ -266,7 +266,7 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToSavedLoginsFragment() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
-        val directions = LoginsFragmentDirections.actionLoginsFragmentToSavedLoginsFragment()
+        val directions = LoginsFragmentDirections.actionLoginsFragmentToLoginsListFragment()
         findNavController().navigate(directions)
     }
 
@@ -288,7 +288,7 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToSaveLoginSettingFragment() {
         val directions =
-            LoginsFragmentDirections.actionLoginsFragmentToSaveLoginSettingFragment()
+            LoginsFragmentDirections.actionLoginsFragmentToSavedLoginsSettingFragment()
         findNavController().navigate(directions)
     }
 

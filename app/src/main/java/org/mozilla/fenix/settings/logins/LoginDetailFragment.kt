@@ -4,21 +4,20 @@
 
 package org.mozilla.fenix.settings.logins
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
+import android.widget.ImageButton
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login_info.*
+import kotlinx.android.synthetic.main.fragment_login_detail.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -34,9 +33,9 @@ import org.mozilla.fenix.ext.showToolbar
 /**
  * Displays saved login information for a single website.
  */
-class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
+class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
 
-    private val args by navArgs<SavedLoginSiteInfoFragmentArgs>()
+    private val args by navArgs<LoginDetailFragmentArgs>()
 
     override fun onResume() {
         super.onResume()
@@ -44,13 +43,13 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-        showToolbar(args.savedLoginItem.title ?: args.savedLoginItem.url)
+        showToolbar(args.savedLoginItem.origin)
         setHasOptionsMenu(true)
     }
 
     override fun onPause() {
         // If we pause this fragment, we want to pop users back to reauth
-        if (findNavController().currentDestination?.id != R.id.savedLoginsFragment &&
+        if (findNavController().currentDestination?.id != R.id.loginsListFragment &&
             findNavController().currentDestination?.id != R.id.editLoginFragment
         ) {
             activity?.let { it.checkAndUpdateScreenshotPermission(it.settings()) }
@@ -62,13 +61,13 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        webAddressText.text = args.savedLoginItem.url
-        usernameText.text = args.savedLoginItem.userName
+        webAddressText.text = args.savedLoginItem.origin
+        usernameText.text = args.savedLoginItem.username
         passwordInfoText.text = args.savedLoginItem.password
 
         val copyInfoArgs = listOf(
-            Pair(copyWebAddress, args.savedLoginItem.url),
-            Pair(copyUsername, args.savedLoginItem.userName),
+            Pair(copyWebAddress, args.savedLoginItem.origin),
+            Pair(copyUsername, args.savedLoginItem.username),
             Pair(copyPassword, args.savedLoginItem.password)
         )
 
@@ -101,8 +100,8 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
 
     private fun editLogin() {
         val directions =
-            SavedLoginSiteInfoFragmentDirections
-                .actionSavedLoginsInfoFragmentToEditLoginFragment(args.savedLoginItem)
+            LoginDetailFragmentDirections
+                .actionLoginDetailFragmentToEditLoginFragment(args.savedLoginItem)
         requireView().findNavController().navigate(directions)
     }
 
@@ -128,11 +127,11 @@ class SavedLoginSiteInfoFragment : Fragment(R.layout.fragment_login_info) {
         var deleteLoginJob: Deferred<Boolean>? = null
         val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
             deleteLoginJob = async {
-                requireContext().components.core.passwordsStorage.delete(args.savedLoginItem.id)
+                requireContext().components.core.passwordsStorage.delete(args.savedLoginItem.guid!!)
             }
             deleteLoginJob?.await()
             withContext(Main) {
-                findNavController().popBackStack(R.id.savedLoginsFragment, false)
+                findNavController().popBackStack(R.id.loginsListFragment, false)
             }
         }
         deleteJob.invokeOnCompletion {

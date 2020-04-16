@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -15,11 +14,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -29,6 +28,8 @@ import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 
@@ -38,24 +39,34 @@ import org.mozilla.fenix.ext.components
 class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
+    private lateinit var savedLoginsStore: LoginsFragmentStore
     fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
-    private var saveEnabled: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        savedLoginsStore = StoreProvider.get(this) {
+            LoginsFragmentStore(
+                LoginsListState(
+                    isLoading = true,
+                    loginList = listOf(),
+                    filteredItems = listOf()
+                )
+            )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // ensure hostname isn't editable
-        hostnameText.text = args.savedLoginItem.url.toEditable()
+        hostnameText.text = args.savedLoginItem.origin.toEditable()
         hostnameText.isClickable = false
         hostnameText.isFocusable = false
 
-        usernameText.text = args.savedLoginItem.userName?.toEditable() ?: "".toEditable()
-        passwordText.text = args.savedLoginItem.password!!.toEditable()
+        usernameText.text = args.savedLoginItem.username.toEditable()
+        passwordText.text = args.savedLoginItem.password.toEditable()
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -66,34 +77,18 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private fun setUpClickListeners() {
         clearUsernameTextButton.setOnClickListener {
             usernameText.text?.clear()
+            usernameText.isCursorVisible = true
             usernameText.hasFocus()
             inputLayoutUsername.hasFocus()
-            usernameText.isCursorVisible = true
         }
         clearPasswordTextButton.setOnClickListener {
             passwordText.text?.clear()
+            passwordText.isCursorVisible = true
             passwordText.hasFocus()
             inputLayoutPassword.hasFocus()
-            passwordText.isCursorVisible = true
-            saveEnabled = false
         }
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
-        }
-
-        inputLayoutPassword?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                saveEnabled = !passwordText.text.isNullOrEmpty()
-            }
-        }
-    }
-
-    // disable save button when fields are invalid
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        val saveButton = menu.getItem(0)
-        saveButton.isEnabled = saveEnabled
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            saveButton.iconTintList = AppCompatResources.getColorStateList(context!!, R.color.toggle_save_enabled)
         }
     }
 
@@ -103,8 +98,19 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
+            closeKeyboard()
             try {
-                if (saveEnabled) attemptSaveAndExit()
+                if (!passwordText.text.isNullOrBlank()) {
+                    attemptSaveAndExit()
+                } else {
+                    view?.let {
+                        FenixSnackbar.make(
+                            view = it,
+                            duration = Snackbar.LENGTH_SHORT,
+                            isDisplayedWithBrowserToolbar = false
+                        ).setText("Password cannot be blank.").show()
+                    }
+                }
             } catch (loginException: Exception) {
                 when (loginException) {
                     is NoSuchRecordException,
@@ -126,7 +132,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         var saveLoginJob: Deferred<Unit>? = null
         lifecycleScope.launch(IO) {
             saveLoginJob = async {
-                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.id)
+                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid!!)
+
                 // Update requires a Login type, which needs at least one of httpRealm or formActionOrigin
                 val loginToSave = Login(
                     guid = oldLogin?.guid,
@@ -136,11 +143,16 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                     httpRealm = oldLogin.httpRealm,
                     formActionOrigin = oldLogin.formActionOrigin
                 )
-                requireContext().components.core.passwordsStorage.update(loginToSave)
+
+                save(loginToSave)
+                syncAndUpdateList(loginToSave)
             }
             saveLoginJob?.await()
             withContext(Main) {
-                findNavController().popBackStack(R.id.savedLoginSiteInfoFragment, false)
+                val directions =
+                    EditLoginFragmentDirections
+                        .actionEditLoginFragmentToLoginDetailFragment(args.savedLoginItem)
+                findNavController().navigate(directions)
             }
         }
         saveLoginJob?.invokeOnCompletion {
@@ -148,6 +160,16 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 saveLoginJob?.cancel()
             }
         }
+    }
+
+    private suspend fun save(loginToSave: Login) = requireContext().components.core.passwordsStorage.update(loginToSave)
+
+    // we need to update the current list to reflect this new change
+    // by syncing the current list of passwords
+    private suspend fun syncAndUpdateList(updatedLogin: Login) {
+        // dispatch to the store that this single item was changed - look at history and bookmarks
+        // if we're not connected to the internet, we still want to update the list
+        savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(updatedLogin)))
     }
 
     fun closeKeyboard() {

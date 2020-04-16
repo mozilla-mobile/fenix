@@ -7,34 +7,32 @@ package org.mozilla.fenix.settings.logins
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.logins_item.view.*
+import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 
-class SavedLoginsListItemViewHolder(
+class LoginsListViewHolder(
     private val view: View,
     private val interactor: SavedLoginsInteractor
 ) : RecyclerView.ViewHolder(view) {
 
     private val favicon = view.favicon_image
-    private val url = view.domainView
-    private val title = view.domainView
-    private val userName = view.userView
+    private val url = view.webAddressView
+    private val username = view.usernameView
 
-    private var loginItem: SavedLoginsItem? = null
+    private var loginItem: Login? = null
 
-    fun bind(item: SavedLoginsItem) {
-        this.loginItem = SavedLoginsItem(
-            url = item.url,
-            title = titleFromHostname(item.url),
+    fun bind(item: Login) {
+        this.loginItem = Login(
+            guid = item.guid,
+            origin = item.origin,
             password = item.password,
-            userName = item.userName,
-            id = item.id
+            username = item.username
         )
-        title.text = titleFromHostname(item.url)
-        url.text = item.url
-        userName.text = item.userName
+        url.text = item.origin
+        username.text = item.username
 
-        updateFavIcon(item.title ?: item.url)
+        updateFavIcon(item.origin)
 
         view.setOnClickListener {
             interactor.itemClicked(item)

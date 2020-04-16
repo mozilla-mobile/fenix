@@ -8,34 +8,31 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.R
 
-private sealed class AdapterItem {
-    data class Item(val item: SavedLoginsItem) : AdapterItem()
-}
-
-class SavedLoginsAdapter(
+class LoginsAdapter(
     private val interactor: SavedLoginsInteractor
-) : ListAdapter<SavedLoginsItem, SavedLoginsListItemViewHolder>(DiffCallback) {
+) : ListAdapter<Login, LoginsListViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): SavedLoginsListItemViewHolder {
+    ): LoginsListViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.logins_item, parent, false)
-        return SavedLoginsListItemViewHolder(view, interactor)
+        return LoginsListViewHolder(view, interactor)
     }
 
-    override fun onBindViewHolder(holder: SavedLoginsListItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LoginsListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<SavedLoginsItem>() {
-        override fun areItemsTheSame(oldItem: SavedLoginsItem, newItem: SavedLoginsItem) =
-            oldItem.url == newItem.url
+    private object DiffCallback : DiffUtil.ItemCallback<Login>() {
+        override fun areItemsTheSame(oldItem: Login, newItem: Login) =
+            oldItem.origin == newItem.origin
 
-        override fun areContentsTheSame(oldItem: SavedLoginsItem, newItem: SavedLoginsItem) =
+        override fun areContentsTheSame(oldItem: Login, newItem: Login) =
             oldItem == newItem
     }
 }
