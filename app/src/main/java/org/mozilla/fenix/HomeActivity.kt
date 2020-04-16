@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -118,6 +119,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         checkAndUpdateScreenshotPermission(settings())
+
+        // Android 8 has a bug which doesn't change the layoutDirection on activity recreation.
+        // https://stackoverflow.com/questions/46296202/rtl-layout-bug-in-android-oreo#comment98890942_46298101
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            window.decorView.layoutDirection = resources.configuration.layoutDirection
+        }
+
         setContentView(R.layout.activity_home)
 
         // Must be after we set the content view
