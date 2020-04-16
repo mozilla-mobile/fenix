@@ -27,6 +27,7 @@ import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -58,7 +59,8 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
             tabsTray,
             requireComponents.core.store,
             requireComponents.useCases.tabsUseCases,
-            { !it.content.private },
+            // TODO: This is gross and cannot be good...but appears to work
+            { it.content.private == (activity as HomeActivity?)?.browsingModeManager?.mode?.isPrivate },
             ::closeTabsTray)
 
         view.tab_tray_open_new_tab.setOnClickListener {
@@ -74,7 +76,12 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         }
 
         view.private_browsing_button.setOnClickListener {
-
+            val newMode = !(activity as HomeActivity).browsingModeManager.mode.isPrivate
+            val invertedMode = BrowsingMode.fromBoolean(newMode)
+            (activity as HomeActivity).browsingModeManager.mode = invertedMode
+            tabsFeature?.filterTabs { tabSessionState ->
+                tabSessionState.content.private == newMode
+            }
         }
     }
 
@@ -84,7 +91,6 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         this.tabTrayMenu = menu
-        // updateMenuItems()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
