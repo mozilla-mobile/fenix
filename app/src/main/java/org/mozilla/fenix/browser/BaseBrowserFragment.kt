@@ -89,6 +89,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
+import org.mozilla.fenix.perf.FullscreenTransitionMeasurement
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
@@ -833,6 +834,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun fullScreenChanged(inFullScreen: Boolean) {
+        FullscreenTransitionMeasurement.onFullscreenChanged(inFullScreen, view)
+
         if (inFullScreen) {
             FenixSnackbar.make(
                     view = view!!,

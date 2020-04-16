@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
@@ -60,6 +61,7 @@ import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
+import org.mozilla.fenix.perf.FullscreenTransitionMeasurement
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.search.SearchFragmentDirections
@@ -211,12 +213,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     }
 
     final override fun onBackPressed() {
+        FullscreenTransitionMeasurement.onBackPressed() // DO NOT MOVE ANYTHING ABOVE HERE.
+
         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.forEach {
             if (it is UserInteractionHandler && it.onBackPressed()) {
                 return
             }
         }
         super.onBackPressed()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        FullscreenTransitionMeasurement.onHomeActivityDispatchTouchEvent(ev) // DO NOT MOVE ANYTHING ABOVE HERE.
+        return super.dispatchTouchEvent(ev)
     }
 
     final override fun onUserLeaveHint() {

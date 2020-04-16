@@ -1984,3 +1984,29 @@ addons:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
+
+performance:
+  enter_fullscreen:
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      todo
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/6174
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/8318
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  exit_fullscreen:
+    type: timing_distribution
+    time_unit: millisecond
+    description: >
+      todo
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/6174
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/8318
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
