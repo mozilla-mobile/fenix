@@ -328,7 +328,6 @@ class SettingsPrivacyTest {
         }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun verifySitePermissions() {
         // Open 3dot (main) menu
@@ -428,6 +427,32 @@ class SettingsPrivacyTest {
         // Open browser to static test website: https://github.com/rpappalax/testapp
         // Click on "Test site permissions: notifications dialogue"
         // Verify that notifications dialogue permissions dialogue is not opened
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSitePermissionsSubMenu {
+            verifySitePermissionsItems()
+        }.openExceptionsSubMenu {
+            verifyEmptyMessage()
+        }.goBack { }.goBack { }.goBack { }
+        mDevice.waitForIdle()
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSitePermissionsSubMenu {
+        }.openCameraSubMenu {
+            verifyBlockedisSelected()
+        }.goBack {
+        }.openLocationSubMenu {
+            verifyBlockedisSelected()
+        }.goBack {
+        }.openMicrophoneSubMenu {
+            verifyBlockedisSelected()
+        }.goBack {
+        }.openNotificationSubMenu {
+            verifyBlockedisSelected()
+        }.goBack { }
     }
 
     @Test
@@ -460,7 +485,7 @@ class SettingsPrivacyTest {
 
     @Test
     fun verifyDataCollection() {
-        homeScreen{
+        homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openDataCollectionSubMenu {

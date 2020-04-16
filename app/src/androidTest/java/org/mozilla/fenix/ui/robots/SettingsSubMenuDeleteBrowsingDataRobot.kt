@@ -8,7 +8,11 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -30,7 +34,7 @@ class SettingsSubMenuDeleteBrowsingDataRobot {
     fun verifyAddressesCount(addressCount: String) = assertAddressesCount(addressCount)
 
     fun clickDeleteBrowsingData() {
-        //check tabs and addresses
+        // check tabs and addresses
         openTabsCheckBox().perform(checkBox(true))
         addressesCheckBox().perform(checkBox(true))
 

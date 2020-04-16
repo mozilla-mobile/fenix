@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Bitmap
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -197,7 +199,7 @@ class HomeScreenRobot {
             .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             .perform(click())
 
-        //check boxes
+        // check boxes
         onView(allOf(withId(R.id.tab_list))).perform(
             RecyclerViewActions.actionOnItemAtPosition<TabViewHolder>(
                 0,
@@ -210,7 +212,7 @@ class HomeScreenRobot {
                 click()
             )
         )
-        //click save
+        // click save
         onView(withId(R.id.save_button)).perform(click())
 
         if (!isFirstCollection) {
@@ -219,7 +221,7 @@ class HomeScreenRobot {
             addNewCollection().perform(click())
         }
         TestHelper.waitUntilObjectIsFound("org.mozilla.fenix.debug:id/name_collection_edittext")
-        //collection name
+        // collection name
         onView(withId(R.id.name_collection_edittext)).perform(
             replaceText(collection),
             pressImeActionButton()
