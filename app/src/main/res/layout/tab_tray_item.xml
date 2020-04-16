@@ -8,15 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="72dp">
 
-    <ImageView
-        android:id="@+id/mozac_browser_tabstray_icon"
-        android:layout_width="100dp"
-        android:layout_height="56dp"
-        android:visibility="gone"
-        android:importantForAccessibility="no"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.cardview.widget.CardView
         android:id="@+id/mozac_browser_tabstray_card"
         android:layout_width="100dp"
@@ -26,6 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cardBackgroundColor="@color/photonWhite">
+
+        <ImageView
+            android:id="@+id/mozac_browser_tabstray_icon"
+            android:layout_width="50dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginStart="25dp"
+            android:importantForAccessibility="no" />
 
         <mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
             android:id="@+id/mozac_browser_tabstray_thumbnail"
