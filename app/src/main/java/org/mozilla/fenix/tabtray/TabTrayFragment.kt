@@ -54,6 +54,25 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         super.onViewCreated(view, savedInstanceState)
 
         showToolbar(getString(R.string.tab_tray_title))
+        updateNoTabsMessageVisibility()
+
+        sessionManager.register(observer = object : SessionManager.Observer {
+            override fun onSessionAdded(session: Session) {
+                updateNoTabsMessageVisibility()
+            }
+
+            override fun onSessionRemoved(session: Session) {
+                updateNoTabsMessageVisibility()
+            }
+
+            override fun onSessionsRestored() {
+                updateNoTabsMessageVisibility()
+            }
+
+            override fun onAllSessionsRemoved() {
+                updateNoTabsMessageVisibility()
+            }
+        }, owner = viewLifecycleOwner)
 
         tabsFeature = TabsFeature(
             tabsTray,
@@ -83,6 +102,12 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
                 tabSessionState.content.private == newMode
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        updateNoTabsMessageVisibility()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -190,5 +215,17 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
             data = data.toTypedArray()
         )
         nav(R.id.tabTrayFragment, directions)
+    }
+
+    private fun updateNoTabsMessageVisibility() {
+        val hasNoTabs = getListOfSessions().toList().isEmpty()
+        view?.tab_tray_empty_view?.visibility = if(hasNoTabs) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+        if (hasNoTabs) {
+            view?.announceForAccessibility(view?.context?.getString(R.string.no_open_tabs_description))
+        }
     }
 }
