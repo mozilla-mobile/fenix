@@ -53,6 +53,11 @@
     <fragment
         android:id="@+id/tabTrayFragment"
         android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
+        <action
+            android:id="@+id/action_tabTrayFragment_to_createCollectionFragment"
+            app:destination="@+id/collectionCreationFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
     </fragment>
 
     <fragment
