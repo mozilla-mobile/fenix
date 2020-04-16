@@ -1325,4 +1325,20 @@
     <string name="login_deletion_confirmation">Are you sure you want to delete this login?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Delete</string>
+
+    <!-- Tab Tray -->
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Open Tabs</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Save to collection</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Share all tabs</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Close all tabs</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">New tab</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Go home</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Toggle tab mode</string>
 </resources>
