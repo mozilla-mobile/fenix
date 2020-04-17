@@ -577,6 +577,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         super.onPause()
         // If we didn't enter PiP, exit full screen on pause
         if (!enteredPip) {
+            fullScreenChanged(false)
             fullScreenFeature.onBackPressed()
         }
         enteredPip = false
