@@ -31,8 +31,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        mozac:tabsTrayItemTextColor="@color/primary_text_normal_theme"
-        mozac:selectableItemBackgroundBorderless="@color/primary_text_normal_theme" />
+        mozac:tabsTrayItemTextColor="?tabTrayItemText"
+        mozac:tabsTraySelectedItemTextColor="?tabTrayItemSelectedText"
+        mozac:tabsTrayItemBackgroundColor="?tabTrayItemBackground"
+        mozac:tabsTraySelectedItemBackgroundColor="?tabTrayItemSelectedBackground" />
 
     <View
         android:id="@+id/bottomBarShadow"
