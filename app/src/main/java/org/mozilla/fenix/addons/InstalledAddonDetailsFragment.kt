@@ -97,11 +97,11 @@ class InstalledAddonDetailsFragment : Fragment() {
                     addon,
                     onSuccess = {
                         runIfFragmentIsAttached {
+                            this.addon = it
                             switch.isClickable = true
                             switch.setText(R.string.mozac_feature_addons_enabled)
-                            view.settings.isVisible = true
+                            view.settings.isVisible = shouldSettingsBeVisible()
                             view.remove_add_on.isEnabled = true
-                            this.addon = it
                             showSnackBar(
                                 view,
                                 getString(
@@ -164,8 +164,7 @@ class InstalledAddonDetailsFragment : Fragment() {
 
     private fun bindSettings(view: View) {
         view.settings.apply {
-            val optionsPageUrl = addon.installedState?.optionsPageUrl
-            isVisible = !optionsPageUrl.isNullOrEmpty()
+            isVisible = shouldSettingsBeVisible()
             setOnClickListener {
                 val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
                 val directions = if (addon.installedState?.openOptionsPageInTab == true) {
@@ -263,4 +262,6 @@ class InstalledAddonDetailsFragment : Fragment() {
         setText(text)
         isChecked = checked
     }
+
+    private fun shouldSettingsBeVisible() = !addon.installedState?.optionsPageUrl.isNullOrEmpty()
 }
