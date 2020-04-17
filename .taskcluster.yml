@@ -7,8 +7,8 @@ policy:
 tasks:
     - $let:
           taskgraph:
-              branch: taskgraph-try
-              revision: c69e7cf7a42db73405d62131db725279be591b78
+              branch: taskgraph
+              revision: f949fb56d96b9509b071ba55853f2d60e8dbbf57
           trustDomain: mobile
       in:
           $let:
@@ -176,19 +176,6 @@ tasks:
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
                                               - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
-                                  # XXX Temporary hack. Do not merge on the master branch
-                                  - $if: 'level == "1"'
-                                    then:
-                                        - $if: 'tasks_for == "github-push"'
-                                          then:
-                                              - index.garbage.project.mobile.${project}.v2.branch.${short_head_branch}.latest.taskgraph.decision
-                                              - index.garbage.project.mobile.${project}.v2.branch.${short_head_branch}.revision.${head_sha}.taskgraph.decision
-                                        - $if: 'tasks_for == "cron"'
-                                          then:
-                                              # cron context provides ${head_branch} as a short one
-                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
-                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
-                                              - index.garbage.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
                           scopes:
                               $if: 'tasks_for == "github-push"'
                               then:
