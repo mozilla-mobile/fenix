@@ -54,23 +54,23 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         super.onViewCreated(view, savedInstanceState)
 
         showToolbar(getString(R.string.tab_tray_title))
-        updateNoTabsMessageVisibility()
+        onTabsChanged()
 
         sessionManager.register(observer = object : SessionManager.Observer {
             override fun onSessionAdded(session: Session) {
-                updateNoTabsMessageVisibility()
+                onTabsChanged()
             }
 
             override fun onSessionRemoved(session: Session) {
-                updateNoTabsMessageVisibility()
+                onTabsChanged()
             }
 
             override fun onSessionsRestored() {
-                updateNoTabsMessageVisibility()
+                onTabsChanged()
             }
 
             override fun onAllSessionsRemoved() {
-                updateNoTabsMessageVisibility()
+                onTabsChanged()
             }
         }, owner = viewLifecycleOwner)
 
@@ -102,12 +102,16 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
                 tabSessionState.content.private == newMode
             }
         }
+
+        view.saveToCollectionButton.setOnClickListener {
+            saveToCollection()
+        }
     }
 
     override fun onResume() {
         super.onResume()
 
-        updateNoTabsMessageVisibility()
+        onTabsChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -121,31 +125,7 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.tab_tray_select_to_save_menu_item -> {
-                val tabs = getListOfSessions()
-                val tabIds = tabs.map { it.id }.toList().toTypedArray()
-                val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
-
-                val step = when {
-                    // If there is an existing tab collection, show the SelectCollection fragment to save
-                    // the selected tab to a collection of your choice.
-                    tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
-                    // Show the NameCollection fragment to create a new collection for the selected tab.
-                    else -> SaveCollectionStep.NameCollection
-                }
-
-                val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
-                    tabIds = tabIds,
-                    previousFragmentId = R.id.tabTrayFragment,
-                    saveCollectionStep = step,
-                    selectedTabIds = tabIds,
-                    selectedTabCollectionId = -1
-                )
-
-                view?.let {
-                    val navController = findNavController(it)
-                    navController.navigate(directions)
-                }
-
+                saveToCollection()
                 true
             }
             R.id.tab_tray_share_menu_item -> {
@@ -160,6 +140,33 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun saveToCollection() {
+        val tabs = getListOfSessions()
+        val tabIds = tabs.map { it.id }.toList().toTypedArray()
+        val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
+
+        val step = when {
+            // If there is an existing tab collection, show the SelectCollection fragment to save
+            // the selected tab to a collection of your choice.
+            tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+            // Show the NameCollection fragment to create a new collection for the selected tab.
+            else -> SaveCollectionStep.NameCollection
+        }
+
+        val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
+            tabIds = tabIds,
+            previousFragmentId = R.id.tabTrayFragment,
+            saveCollectionStep = step,
+            selectedTabIds = tabIds,
+            selectedTabCollectionId = -1
+        )
+
+        view?.let {
+            val navController = findNavController(it)
+            navController.navigate(directions)
         }
     }
 
@@ -217,8 +224,9 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         nav(R.id.tabTrayFragment, directions)
     }
 
-    private fun updateNoTabsMessageVisibility() {
+    private fun onTabsChanged() {
         val hasNoTabs = getListOfSessions().toList().isEmpty()
+
         view?.tab_tray_empty_view?.visibility = if(hasNoTabs) {
             View.VISIBLE
         } else {
@@ -226,6 +234,12 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         }
         if (hasNoTabs) {
             view?.announceForAccessibility(view?.context?.getString(R.string.no_open_tabs_description))
+        }
+
+        view?.saveToCollection?.visibility = if(hasNoTabs) {
+            View.GONE
+        } else {
+            View.VISIBLE
         }
     }
 }
