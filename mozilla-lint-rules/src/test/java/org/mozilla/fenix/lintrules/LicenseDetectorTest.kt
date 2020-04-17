@@ -117,7 +117,7 @@ class LicenseDetectorTest {
             |}""".trimMargin()
 
         val expectedReport = """
-            |src/example/SomeExample.kt:1: Warning: The license comment does not have the appropriate format [InvalidLicenseFormat]
+            |src/example/SomeExample.kt:1: Warning: The license comment doesn't have the appropriate format [InvalidLicenseFormat]
             |/* This Source Code Form is subject to the terms of the Mozilla Public
             |^
             |0 errors, 1 warnings""".trimMargin()

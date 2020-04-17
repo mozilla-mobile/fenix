@@ -48,7 +48,7 @@ class LicenseCommentChecker(private val context: JavaContext) : UElementHandler(
     private fun reportInvalidLicenseFormat(comment: UComment) = context.report(
         LicenseDetector.ISSUE_INVALID_LICENSE_FORMAT,
         context.getLocation(comment),
-        "The license comment does not have the appropriate format",
+        "The license comment doesn't have the appropriate format",
         replaceCommentWithValidLicenseFix(comment)
     )
 

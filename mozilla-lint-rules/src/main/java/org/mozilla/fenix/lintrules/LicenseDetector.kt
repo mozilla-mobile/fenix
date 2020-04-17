@@ -20,8 +20,9 @@ class LicenseDetector : Detector(), SourceCodeScanner {
 
         val ISSUE_MISSING_LICENSE = Issue.create(
             id = "MissingLicense",
-            briefDescription = "File does not start with the license comment",
-            explanation = "Every file must start with the license comment",
+            briefDescription = "File doesn't start with the license comment",
+            explanation = "Every file must start with the license comment:\n" +
+                    LicenseCommentChecker.ValidLicenseForKotlinFiles,
             category = Category.CORRECTNESS,
             severity = Severity.WARNING,
             implementation = Implementation
@@ -30,8 +31,7 @@ class LicenseDetector : Detector(), SourceCodeScanner {
         val ISSUE_INVALID_LICENSE_FORMAT = Issue.create(
             id = "InvalidLicenseFormat",
             briefDescription = "License isn't formatted correctly",
-            explanation = "The license must be a multiline comment at the start of the file " +
-                    "followed by a newline character",
+            explanation = "The license must be:\n${LicenseCommentChecker.ValidLicenseForKotlinFiles}",
             category = Category.CORRECTNESS,
             severity = Severity.WARNING,
             implementation = Implementation
