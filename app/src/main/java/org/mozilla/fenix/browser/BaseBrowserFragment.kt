@@ -469,6 +469,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             sessionManager.register(observer = object : SessionManager.Observer {
                 override fun onSessionSelected(session: Session) {
+                    fullScreenChanged(false)
                     browserToolbarView.expand()
                 }
             }, owner = viewLifecycleOwner)
