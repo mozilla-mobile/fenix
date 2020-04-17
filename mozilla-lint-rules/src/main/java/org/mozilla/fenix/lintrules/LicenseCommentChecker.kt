@@ -27,7 +27,7 @@ class LicenseCommentChecker(private val context: JavaContext) : UElementHandler(
         } else {
             val firstComment = node.allCommentsInFile.first()
             if (firstComment.text != ValidLicenseForKotlinFiles) {
-                reportMissingLicense(node)
+                reportInvalidLicenseFormat(firstComment)
             } else {
                 val nextSibling =
                     firstComment.sourcePsi.siblings(withItself = false).firstOrNull()
@@ -45,6 +45,13 @@ class LicenseCommentChecker(private val context: JavaContext) : UElementHandler(
         addLicenseQuickFix()
     )
 
+    private fun reportInvalidLicenseFormat(comment: UComment) = context.report(
+        LicenseDetector.ISSUE_INVALID_LICENSE_FORMAT,
+        context.getLocation(comment),
+        "The license comment does not have the appropriate format",
+        replaceCommentWithValidLicenseFix(comment)
+    )
+
     private fun reportMissingLeadingNewLineCharacter(licenseComment: UComment) = context.report(
         LicenseDetector.ISSUE_INVALID_LICENSE_FORMAT,
         context.getRangeLocation(licenseComment, licenseComment.text.lastIndex, 1),
@@ -58,6 +65,13 @@ class LicenseCommentChecker(private val context: JavaContext) : UElementHandler(
         .beginning()
         .with(ValidLicenseForKotlinFiles + "\n\n")
         .autoFix()
+        .build()
+
+    private fun replaceCommentWithValidLicenseFix(comment: UComment) = LintFix.create()
+        .name("Replace with correctly formatted license")
+        .replace()
+        .range(context.getLocation(comment))
+        .with(ValidLicenseForKotlinFiles)
         .build()
 
     private fun addLeadingNewLineQuickFix(licenseComment: UComment) = LintFix.create()
