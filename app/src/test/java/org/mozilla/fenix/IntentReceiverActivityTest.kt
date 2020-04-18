@@ -35,6 +35,7 @@ class IntentReceiverActivityTest {
         val intent = Intent()
         intent.flags = FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
 
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(true)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(false)
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
@@ -54,6 +55,7 @@ class IntentReceiverActivityTest {
         val intent = Intent()
         intent.action = NewTabShortcutIntentProcessor.ACTION_OPEN_PRIVATE_TAB
 
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(false)
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
@@ -74,7 +76,8 @@ class IntentReceiverActivityTest {
         val intent = Intent()
         intent.action = NewTabShortcutIntentProcessor.ACTION_OPEN_TAB
 
-        `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(true)
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
+        `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(false)
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
         activity.processIntent(intent)
@@ -83,7 +86,7 @@ class IntentReceiverActivityTest {
         val actualIntent = shadow.peekNextStartedActivity()
 
         assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertEquals(false, actualIntent.hasExtra(HomeActivity.PRIVATE_BROWSING_MODE))
+        assertEquals(false, actualIntent.getBooleanExtra(HomeActivity.PRIVATE_BROWSING_MODE, false))
         assertEquals(false, actualIntent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, true))
     }
 
@@ -92,6 +95,7 @@ class IntentReceiverActivityTest {
         testContext.settings().openLinksInAPrivateTab = false
 
         val intent = Intent()
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(true)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(false)
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
@@ -101,7 +105,7 @@ class IntentReceiverActivityTest {
         val actualIntent = shadow.peekNextStartedActivity()
 
         assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertEquals(false, actualIntent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, true))
+        assertEquals(true, actualIntent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, true))
     }
 
     @Test
@@ -109,6 +113,7 @@ class IntentReceiverActivityTest {
         testContext.settings().openLinksInAPrivateTab = true
 
         val intent = Intent()
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.privateIntentProcessor.process(intent)).thenReturn(true)
         `when`(testContext.components.intentProcessors.privateCustomTabIntentProcessor.process(intent)).thenReturn(false)
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
@@ -125,6 +130,7 @@ class IntentReceiverActivityTest {
         testContext.settings().openLinksInAPrivateTab = false
 
         val intent = Intent()
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.intentProcessor.process(intent)).thenReturn(true)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(false)
 
@@ -142,6 +148,7 @@ class IntentReceiverActivityTest {
         testContext.settings().openLinksInAPrivateTab = false
 
         val intent = Intent()
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.customTabIntentProcessor.process(intent)).thenReturn(true)
 
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
@@ -161,6 +168,7 @@ class IntentReceiverActivityTest {
         testContext.settings().openLinksInAPrivateTab = true
 
         val intent = Intent()
+        `when`(testContext.components.intentProcessors.migrationIntentProcessor.process(intent)).thenReturn(false)
         `when`(testContext.components.intentProcessors.privateCustomTabIntentProcessor.process(intent)).thenReturn(true)
 
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()

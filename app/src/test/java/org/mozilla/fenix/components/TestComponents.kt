@@ -34,6 +34,7 @@ class TestComponents(private val context: Context) : Components(context) {
         `when`(processors.intentProcessor).thenReturn(mock())
         `when`(processors.customTabIntentProcessor).thenReturn(mock())
         `when`(processors.privateCustomTabIntentProcessor).thenReturn(mock())
+        `when`(processors.migrationIntentProcessor).thenReturn(mock())
         processors
     }
     override val analytics by lazy { Analytics(context) }
