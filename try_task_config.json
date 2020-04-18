@@ -1,6 +1,6 @@
 {
 	"version": 2,
 	"parameters": {
-		"target_tasks_method": "nightly"
+		"target_tasks_method": "release"
 	}
 }
