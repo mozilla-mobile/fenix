@@ -2,13 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
-
-/**
- * Implementation of Robot Pattern for the settings Delete Browsing Data sub menu.
- */
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -31,6 +25,9 @@ import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.TestAssetHelper
 
+/**
+ * Implementation of Robot Pattern for the settings Delete Browsing Data sub menu.
+ */
 class SettingsSubMenuDeleteBrowsingDataRobot {
 
     fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
@@ -76,7 +73,6 @@ class SettingsSubMenuDeleteBrowsingDataRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
 
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsRobot().interact()
@@ -90,7 +86,7 @@ private fun goBackButton() =
 
 private fun assertNavigationToolBarHeader() {
     onView(allOf(withId(R.id.navigationToolbar),
-        withChild(withText("Delete browsing data"))))
+        withChild(withText(R.string.preferences_delete_browsing_data))))
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 }
 
@@ -124,31 +120,31 @@ private fun assertCancelButtonInDialogBox() =
 
 private fun assertAllTheCheckBoxesText() {
 
-    onView(withText("Open Tabs"))
+    onView(withText(R.string.preferences_delete_browsing_data_tabs_title))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     onView(withText("0 tabs"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Browsing history and site data"))
+    onView(withText(R.string.preferences_delete_browsing_data_browsing_data_title))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     onView(withText("0 addresses"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Cookies"))
+    onView(withText(R.string.preferences_delete_browsing_data_cookies))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("You’ll be logged out of most sites"))
+    onView(withText(R.string.preferences_delete_browsing_data_cookies_subtitle))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Cached images and files"))
+    onView(withText(R.string.preferences_delete_browsing_data_cached_files))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Frees up storage space"))
+    onView(withText(R.string.preferences_delete_browsing_data_cached_files_subtitle))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Site permissions"))
+    onView(withText(R.string.preferences_delete_browsing_data_site_permissions))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

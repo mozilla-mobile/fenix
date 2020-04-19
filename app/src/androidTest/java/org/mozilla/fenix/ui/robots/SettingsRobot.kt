@@ -71,6 +71,7 @@ class SettingsRobot {
     fun verifyAdvancedHeading() = assertAdvancedHeading()
     fun verifyAddons() = assertAddons()
     fun verifyRemoteDebug() = assertRemoteDebug()
+    fun verifyLeakCanaryButton() = assertLeakCanaryButton()
 
     // ABOUT SECTION
     fun verifyAboutHeading() = assertAboutHeading()
@@ -329,6 +330,12 @@ private fun assertAddons() {
 private fun assertRemoteDebug() {
     scrollToElementByText("Remote debugging via USB")
     onView(withText("Remote debugging via USB"))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertLeakCanaryButton() {
+    scrollToElementByText("LeakCanary")
+    onView(withText("LeakCanary"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

@@ -2,13 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
-
-/**
- * Implementation of Robot Pattern for the settings Site Permissions Location sub menu.
- */
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -24,9 +18,20 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
 
-class SettingsSubMenuSitePermissionsMicrophoneRobot {
+/**
+ * Implementation of Robot Pattern for the settings Site Permissions sub menu.
+ */
+class SettingsSubMenuSitePermissionsCommonRobot {
 
-    fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
+    fun verifyNavigationToolBarHeader(header: String) = assertNavigationToolBarHeader(header)
+
+    fun verifyBlockAudioAndVideoOnMobileDataOnlyAudioAndVideoWillPlayOnWiFi() = assertBlockAudioAndVideoOnMobileDataOnlyAudioAndVideoWillPlayOnWiFi()
+
+    fun verifyBlockAudioOnly() = assertBlockAudioOnly()
+
+    fun verifyVideoAndAudioBlockedRecommended() = assertVideoAndAudioBlockedRecommended()
+
+    fun verifyCheckAutoPlayRadioButtonDefault() = assertCheckAutoPayRadioButtonDefault()
 
     fun verifyassertAskToAllowRecommended() = assertAskToAllowRecommended()
 
@@ -42,9 +47,40 @@ class SettingsSubMenuSitePermissionsMicrophoneRobot {
 
     fun verifyTapPermissions() = assertTapPermissions()
 
-    fun verifyToggleMicrophoneToON() = assertToggleMicrophoneToON()
+    fun verifyToggleNameToON(name: String) = assertToggleNameToON(name)
 
     fun verifyGoToSettingsButton() = assertGoToSettingsButton()
+
+    fun verifySitePermissionsAutoPlaySubMenuItems() {
+        verifyBlockAudioAndVideoOnMobileDataOnlyAudioAndVideoWillPlayOnWiFi()
+        verifyBlockAudioOnly()
+        verifyVideoAndAudioBlockedRecommended()
+        verifyCheckAutoPlayRadioButtonDefault()
+    }
+
+    fun verifySitePermissionsCameraSubMenuItems() {
+        verifyassertAskToAllowRecommended()
+        verifyassertBlocked()
+        verifyCheckRadioButtonDefault()
+        verifyBlockedByAndroid()
+        verifyToAllowIt()
+        verifyGotoAndroidSettings()
+        verifyTapPermissions()
+        verifyToggleNameToON("3. Toggle Camera to ON")
+        verifyGoToSettingsButton()
+    }
+
+    fun verifySitePermissionsLocationSubMenuItems() {
+        verifyassertAskToAllowRecommended()
+        verifyassertBlocked()
+        verifyCheckRadioButtonDefault()
+        verifyBlockedByAndroid()
+        verifyToAllowIt()
+        verifyGotoAndroidSettings()
+        verifyTapPermissions()
+        verifyToggleNameToON("3. Toggle Location to ON")
+        verifyGoToSettingsButton()
+    }
 
     fun verifySitePermissionsMicrophoneSubMenuItems() {
         verifyassertAskToAllowRecommended()
@@ -54,8 +90,14 @@ class SettingsSubMenuSitePermissionsMicrophoneRobot {
         verifyToAllowIt()
         verifyGotoAndroidSettings()
         verifyTapPermissions()
-        verifyToggleMicrophoneToON()
+        verifyToggleNameToON("3. Toggle Microphone to ON")
         verifyGoToSettingsButton()
+    }
+
+    fun verifySitePermissionsNotificationSubMenuItems() {
+        verifyassertAskToAllowRecommended()
+        verifyassertBlocked()
+        verifyCheckRadioButtonDefault()
     }
 
     class Transition {
@@ -70,8 +112,29 @@ class SettingsSubMenuSitePermissionsMicrophoneRobot {
     }
 }
 
-private fun assertNavigationToolBarHeader() =
-    onView(allOf(withContentDescription("Microphone")))
+private fun assertNavigationToolBarHeader(header: String) = onView(allOf(withContentDescription(header)))
+
+private fun assertBlockAudioAndVideoOnMobileDataOnlyAudioAndVideoWillPlayOnWiFi() =
+    onView(withId(R.id.block_radio))
+        .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+
+private fun assertBlockAudioOnly() = onView(withId(R.id.third_radio))
+    .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+
+private fun assertVideoAndAudioBlockedRecommended() = onView(withId(R.id.fourth_radio))
+    .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+
+private fun assertCheckAutoPayRadioButtonDefault() {
+
+    onView(withId(R.id.block_radio))
+        .assertIsChecked(isChecked = false)
+
+    onView(withId(R.id.third_radio))
+        .assertIsChecked(isChecked = false)
+
+    onView(withId(R.id.fourth_radio))
+        .assertIsChecked(isChecked = true)
+}
 
 private fun assertAskToAllowRecommended() = onView(withId(R.id.ask_to_allow_radio))
     .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
@@ -84,19 +147,19 @@ private fun assertCheckRadioButtonDefault() {
     onView(withId(R.id.block_radio)).assertIsChecked(isChecked = false)
 }
 
-private fun assertBlockedByAndroid() = onView(withText("Blocked by Android"))
+private fun assertBlockedByAndroid() = onView(withText(R.string.phone_feature_blocked_by_android))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertToAllowIt() = onView(withText("To allow it:"))
+private fun assertToAllowIt() = onView(withText(R.string.phone_feature_blocked_intro))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertGotoAndroidSettings() = onView(withText("1. Go to Android Settings"))
+private fun assertGotoAndroidSettings() = onView(withText(R.string.phone_feature_blocked_step_settings))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertTapPermissions() = onView(withText("2. Tap Permissions"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertToggleMicrophoneToON() = onView(withText("3. Toggle Microphone to ON"))
+private fun assertToggleNameToON(name: String) = onView(withText(name))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertGoToSettingsButton() = onView(withId(R.id.settings_button))

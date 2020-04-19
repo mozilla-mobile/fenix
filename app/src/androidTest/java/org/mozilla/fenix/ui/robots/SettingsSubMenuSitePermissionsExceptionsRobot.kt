@@ -19,6 +19,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 
 class SettingsSubMenuSitePermissionsExceptionsRobot {
@@ -47,9 +48,9 @@ private fun goBackButton() =
     onView(allOf(withContentDescription("Navigate up")))
 
 private fun assertNavigationToolBarHeader() {
-    onView(withText("Exceptions"))
+    onView(withText(R.string.preference_exceptions))
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 }
 
 private fun assertExceptionDefault() =
-    onView(allOf(withText("No site exceptions")))
+    onView(allOf(withText(R.string.no_site_exceptions)))

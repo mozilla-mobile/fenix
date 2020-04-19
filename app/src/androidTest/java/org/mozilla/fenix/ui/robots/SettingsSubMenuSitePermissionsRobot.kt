@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
 
 import androidx.preference.R
@@ -34,7 +32,6 @@ class SettingsSubMenuSitePermissionsRobot {
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsRobot().interact()
@@ -42,8 +39,8 @@ class SettingsSubMenuSitePermissionsRobot {
         }
 
         fun openAutoPlay(
-            interact: SettingsSubMenuSitePermissionsAutoPlayRobot.() -> Unit
-        ): SettingsSubMenuSitePermissionsAutoPlayRobot.Transition {
+            interact: SettingsSubMenuSitePermissionsCommonRobot.() -> Unit
+        ): SettingsSubMenuSitePermissionsCommonRobot.Transition {
 
             onView(withId(R.id.recycler_view)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
@@ -53,13 +50,13 @@ class SettingsSubMenuSitePermissionsRobot {
 
             openAutoPlay().click()
 
-            SettingsSubMenuSitePermissionsAutoPlayRobot().interact()
-            return SettingsSubMenuSitePermissionsAutoPlayRobot.Transition()
+            SettingsSubMenuSitePermissionsCommonRobot().interact()
+            return SettingsSubMenuSitePermissionsCommonRobot.Transition()
         }
 
         fun openCamera(
-            interact: SettingsSubMenuSitePermissionsCameraRobot.() -> Unit
-        ): SettingsSubMenuSitePermissionsCameraRobot.Transition {
+            interact: SettingsSubMenuSitePermissionsCommonRobot.() -> Unit
+        ): SettingsSubMenuSitePermissionsCommonRobot.Transition {
 
             onView(withId(R.id.recycler_view)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
@@ -69,13 +66,13 @@ class SettingsSubMenuSitePermissionsRobot {
 
             openCamera().click()
 
-            SettingsSubMenuSitePermissionsCameraRobot().interact()
-            return SettingsSubMenuSitePermissionsCameraRobot.Transition()
+            SettingsSubMenuSitePermissionsCommonRobot().interact()
+            return SettingsSubMenuSitePermissionsCommonRobot.Transition()
         }
 
         fun openLocation(
-            interact: SettingsSubMenuSitePermissionsLocationRobot.() -> Unit
-        ): SettingsSubMenuSitePermissionsLocationRobot.Transition {
+            interact: SettingsSubMenuSitePermissionsCommonRobot.() -> Unit
+        ): SettingsSubMenuSitePermissionsCommonRobot.Transition {
 
             onView(withId(R.id.recycler_view)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
@@ -85,13 +82,13 @@ class SettingsSubMenuSitePermissionsRobot {
 
             openLocation().click()
 
-            SettingsSubMenuSitePermissionsLocationRobot().interact()
-            return SettingsSubMenuSitePermissionsLocationRobot.Transition()
+            SettingsSubMenuSitePermissionsCommonRobot().interact()
+            return SettingsSubMenuSitePermissionsCommonRobot.Transition()
         }
 
         fun openMicrophone(
-            interact: SettingsSubMenuSitePermissionsMicrophoneRobot.() -> Unit
-        ): SettingsSubMenuSitePermissionsMicrophoneRobot.Transition {
+            interact: SettingsSubMenuSitePermissionsCommonRobot.() -> Unit
+        ): SettingsSubMenuSitePermissionsCommonRobot.Transition {
 
             onView(withId(R.id.recycler_view)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
@@ -101,13 +98,13 @@ class SettingsSubMenuSitePermissionsRobot {
 
             openMicrophone().click()
 
-            SettingsSubMenuSitePermissionsMicrophoneRobot().interact()
-            return SettingsSubMenuSitePermissionsMicrophoneRobot.Transition()
+            SettingsSubMenuSitePermissionsCommonRobot().interact()
+            return SettingsSubMenuSitePermissionsCommonRobot.Transition()
         }
 
         fun openNotification(
-            interact: SettingsSubMenuSitePermissionsNotificationRobot.() -> Unit
-        ): SettingsSubMenuSitePermissionsNotificationRobot.Transition {
+            interact: SettingsSubMenuSitePermissionsCommonRobot.() -> Unit
+        ): SettingsSubMenuSitePermissionsCommonRobot.Transition {
 
             onView(withId(R.id.recycler_view)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
@@ -117,8 +114,8 @@ class SettingsSubMenuSitePermissionsRobot {
 
             openNotification().click()
 
-            SettingsSubMenuSitePermissionsNotificationRobot().interact()
-            return SettingsSubMenuSitePermissionsNotificationRobot.Transition()
+            SettingsSubMenuSitePermissionsCommonRobot().interact()
+            return SettingsSubMenuSitePermissionsCommonRobot.Transition()
         }
 
         fun openExceptions(
