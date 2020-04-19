@@ -16,10 +16,24 @@ transforms = TransformSequence()
 
 
 @transforms.add
+def resolve_keys(config, tasks):
+    for task in tasks:
+        resolve_keyed_by(
+            task,
+            'scopes',
+            item_name=task["name"],
+            **{
+                'level': config.params["level"],
+            }
+        )
+        yield task
+
+
+@transforms.add
 def make_task_description(config, jobs):
     for job in jobs:
         product = "Fenix"
-        version = config.params['release_version'] or "{ver}"
+        version = config.params['version'] or "{ver}"
         job['worker']['release-name'] = '{product}-{version}-build{build_number}'.format(
             product=product,
             version=version,

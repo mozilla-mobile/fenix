@@ -33,6 +33,7 @@ import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.contextmenu.ext.DefaultSelectionActionDelegate
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
@@ -48,6 +49,7 @@ import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
+import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -116,6 +118,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         components.publicSuffixList.prefetch()
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
+        checkAndUpdateScreenshotPermission(settings())
         setContentView(R.layout.activity_home)
 
         // Must be after we set the content view
@@ -144,7 +147,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObserver(webExtensionPopupFeature)
+        lifecycle.addObservers(
+            webExtensionPopupFeature,
+            StartupTimeline.homeActivityLifecycleObserver
+        )
         StartupTimeline.onActivityCreateEndHome(this)
     }
 
@@ -215,6 +221,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             }
         }
         super.onBackPressed()
+    }
+
+    final override fun onUserLeaveHint() {
+        supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.forEach {
+            if (it is UserInteractionHandler && it.onHomePressed()) {
+                return
+            }
+        }
+
+        super.onUserLeaveHint()
     }
 
     protected open fun getBreadcrumbMessage(destination: NavDestination): String {
@@ -316,31 +332,23 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         BrowserDirection.FromHome ->
             HomeFragmentDirections.actionHomeFragmentToBrowserFragment(customTabSessionId, true)
         BrowserDirection.FromSearch ->
-            SearchFragmentDirections.actionSearchFragmentToBrowserFragment(customTabSessionId)
+            SearchFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSettings ->
-            SettingsFragmentDirections.actionSettingsFragmentToBrowserFragment(customTabSessionId)
+            SettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromBookmarks ->
-            BookmarkFragmentDirections.actionBookmarkFragmentToBrowserFragment(customTabSessionId)
+            BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistory ->
-            HistoryFragmentDirections.actionHistoryFragmentToBrowserFragment(customTabSessionId)
+            HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromExceptions ->
-            ExceptionsFragmentDirections.actionExceptionsFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            ExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->
-            AboutFragmentDirections.actionAboutFragmentToBrowserFragment(customTabSessionId)
+            AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
-            TrackingProtectionFragmentDirections.actionTrackingProtectionFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromDefaultBrowserSettingsFragment ->
-            DefaultBrowserSettingsFragmentDirections.actionDefaultBrowserSettingsFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            DefaultBrowserSettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->
-            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToBrowserFragment(
-                customTabSessionId
-            )
+            SavedLoginsFragmentDirections.actionGlobalBrowser(customTabSessionId)
     }
 
     private fun load(

@@ -23,12 +23,12 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
-import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
@@ -62,7 +62,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     override fun initializeUI(view: View): Session? {
         val context = requireContext()
-        val sessionManager = context.components.core.sessionManager
         val components = context.components
 
         return super.initializeUI(view)?.also {
@@ -70,11 +69,14 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 feature = ReaderViewFeature(
                     context,
                     components.core.engine,
-                    sessionManager,
+                    components.core.store,
                     view.readerViewControlsBar
-                ) { available ->
+                ) { available, _ ->
                     if (available) {
                         components.analytics.metrics.track(Event.ReaderModeAvailable)
+                    }
+                    runIfFragmentIsAttached {
+                        browserToolbarView.toolbarIntegration.invalidateMenu()
                     }
                 },
                 owner = this,
@@ -100,10 +102,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 owner = this,
                 view = view
             )
-
-            consumeFrom(browserFragmentStore) {
-                browserToolbarView.update(it)
-            }
         }
     }
 
@@ -213,7 +211,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 FenixSnackbar.make(
                     view = view,
                     duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedOnBrowserFragment = true
+                    isDisplayedWithBrowserToolbar = true
                 )
                     .setText(view.context.getString(R.string.create_collection_tab_saved))
                     .show()

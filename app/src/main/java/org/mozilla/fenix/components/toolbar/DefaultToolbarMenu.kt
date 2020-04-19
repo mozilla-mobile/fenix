@@ -21,6 +21,8 @@ import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.Config
@@ -47,6 +49,7 @@ import org.mozilla.fenix.utils.Settings
 class DefaultToolbarMenu(
     private val context: Context,
     private val sessionManager: SessionManager,
+    private val store: BrowserStore,
     hasAccountProblem: Boolean = false,
     shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
@@ -64,7 +67,7 @@ class DefaultToolbarMenu(
         WebExtensionBrowserMenuBuilder(
             menuItems,
             endOfMenuAlwaysVisible = !shouldReverseItems,
-            store = context.components.core.store,
+            store = store,
             appendExtensionActionAtStart = !shouldReverseItems
         )
     }
@@ -134,8 +137,8 @@ class DefaultToolbarMenu(
 
     internal fun getLowPrioHighlightItems(): List<ToolbarMenu.Item> {
         val lowPrioHighlightItems: MutableList<ToolbarMenu.Item> = mutableListOf()
-        if (shouldShowAddToHomescreen() && addToHomescreen.isHighlighted()) {
-            lowPrioHighlightItems.add(ToolbarMenu.Item.AddToHomeScreen)
+        if (canInstall() && installToHomescreen.isHighlighted()) {
+            lowPrioHighlightItems.add(ToolbarMenu.Item.InstallToHomeScreen)
         }
         if (shouldShowReaderMode() && readerMode.isHighlighted()) {
             lowPrioHighlightItems.add(ToolbarMenu.Item.ReaderMode(false))
@@ -147,17 +150,26 @@ class DefaultToolbarMenu(
     }
 
     // Predicates that need to be repeatedly called as the session changes
-    private fun shouldShowAddToHomescreen(): Boolean =
-        session != null && context.components.useCases.webAppUseCases.isPinningSupported()
+    private fun canAddToHomescreen(): Boolean =
+        session != null && context.components.useCases.webAppUseCases.isPinningSupported() &&
+                !context.components.useCases.webAppUseCases.isInstallable()
 
-    private fun shouldShowReaderMode(): Boolean = session?.readerable ?: false
+    private fun canInstall(): Boolean =
+        session != null && context.components.useCases.webAppUseCases.isPinningSupported() &&
+                context.components.useCases.webAppUseCases.isInstallable()
+
+    private fun shouldShowReaderMode(): Boolean = session?.let {
+        store.state.findTab(it.id)?.readerState?.readerable
+    } ?: false
 
     private fun shouldShowOpenInApp(): Boolean = session?.let { session ->
         val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
         appLink(session.url).hasExternalApp()
     } ?: false
 
-    private fun shouldShowReaderAppearance(): Boolean = session?.readerMode ?: false
+    private fun shouldShowReaderAppearance(): Boolean = session?.let {
+        store.state.findTab(it.id)?.readerState?.active
+    } ?: false
     // End of predicates //
 
     private val menuItems by lazy {
@@ -180,7 +192,8 @@ class DefaultToolbarMenu(
             if (shouldShowWebcompatReporter) reportIssue else null,
             findInPage,
             addToTopSites,
-            addToHomescreen.apply { visible = ::shouldShowAddToHomescreen },
+            addToHomescreen.apply { visible = ::canAddToHomescreen },
+            installToHomescreen.apply { visible = ::canInstall },
             if (shouldShowSaveToCollection) saveToCollection else null,
             desktopMode,
             openInApp.apply { visible = ::shouldShowOpenInApp },
@@ -190,7 +203,11 @@ class DefaultToolbarMenu(
             menuToolbar
         )
 
-        if (shouldReverseItems) { menuItems.reversed() } else { menuItems }
+        if (shouldReverseItems) {
+            menuItems.reversed()
+        } else {
+            menuItems
+        }
     }
 
     private val addons = BrowserMenuImageText(
@@ -246,8 +263,16 @@ class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.AddToTopSites)
     }
 
-    private val addToHomescreen = BrowserMenuHighlightableItem(
+    private val addToHomescreen = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_homescreen),
+        imageResource = R.drawable.ic_add_to_homescreen,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
+    }
+
+    private val installToHomescreen = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_install_on_homescreen),
         startImageResource = R.drawable.ic_add_to_homescreen,
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
@@ -255,13 +280,10 @@ class DefaultToolbarMenu(
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
         isHighlighted = {
-            val webAppUseCases = context.components.useCases.webAppUseCases
-            webAppUseCases.isPinningSupported() &&
-                    webAppUseCases.isInstallable() &&
-                    !context.settings().installPwaOpened
+            !context.settings().installPwaOpened
         }
     ) {
-        onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
+        onItemTapped.invoke(ToolbarMenu.Item.InstallToHomeScreen)
     }
 
     private val findInPage = BrowserMenuImageText(
@@ -300,7 +322,9 @@ class DefaultToolbarMenu(
         label = context.getString(R.string.browser_menu_read),
         startImageResource = R.drawable.ic_readermode,
         initialState = {
-            session?.readerMode ?: false
+            session?.let {
+                store.state.findTab(it.id)?.readerState?.active
+            } ?: false
         },
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_read),
@@ -335,16 +359,39 @@ class DefaultToolbarMenu(
     @ColorRes
     private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
 
+    private var currentSessionObserver: Pair<Session, Session.Observer>? = null
+
     private fun registerForIsBookmarkedUpdates() {
-        val observer = object : Session.Observer {
+        session?.let {
+            registerForUrlChanges(it)
+        }
+
+        val sessionManagerObserver = object : SessionManager.Observer {
+            override fun onSessionSelected(session: Session) {
+                // Unregister any old session observer before registering a new session observer
+                currentSessionObserver?.let {
+                    it.first.unregister(it.second)
+                }
+                currentUrlIsBookmarked = false
+                updateCurrentUrlIsBookmarked(session.url)
+                registerForUrlChanges(session)
+            }
+        }
+
+        sessionManager.register(sessionManagerObserver, lifecycleOwner)
+    }
+
+    private fun registerForUrlChanges(session: Session) {
+        val sessionObserver = object : Session.Observer {
             override fun onUrlChanged(session: Session, url: String) {
                 currentUrlIsBookmarked = false
                 updateCurrentUrlIsBookmarked(url)
             }
         }
 
-        session?.url?.let { updateCurrentUrlIsBookmarked(it) }
-        session?.register(observer, lifecycleOwner)
+        currentSessionObserver = Pair(session, sessionObserver)
+        updateCurrentUrlIsBookmarked(session.url)
+        session.register(sessionObserver, lifecycleOwner)
     }
 
     private fun updateCurrentUrlIsBookmarked(newUrl: String) {

@@ -2,11 +2,10 @@
 <resources>
 
 
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_2">Firefox Preview 隐私模式</string>
-
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_3">Firefox Preview（隐私模式）</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">私密 %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (隐私模式)</string>
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">更多选项</string>
@@ -128,7 +127,7 @@
     <!-- Content description for search icon -->
     <string name="a11y_search_icon_content_description">搜索</string>
     <!-- Text for default locale item -->
-    <string name="default_locale_text">跟随设备语言</string>
+    <string name="default_locale_text">依照设备语言显示</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="locale_search_hint">搜索语言</string>
 
@@ -155,7 +154,7 @@
     <!-- Search suggestion onboarding hint title text -->
     <string name="search_suggestions_onboarding_title">要允许在隐私窗口中显示搜索建议吗？</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
-    <string name="search_suggestions_onboarding_text">%s 会将您在地址栏中输入的所有内容共享至默认搜索引擎。</string>
+    <string name="search_suggestions_onboarding_text">%s 会将您在地址栏中输入的所有内容向默认搜索引擎分享。</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">详细了解</string>
 
@@ -213,6 +212,8 @@
     <string name="preferences_private_browsing_options">隐私浏览</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">新建隐私标签页打开链接</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">允许在隐私浏览中截屏</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">添加隐私浏览快捷方式</string>
     <!-- Preference for accessibility -->
@@ -303,7 +304,7 @@
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
-    <string name="default_device_name">%2$s %3$s 上的 %1$s</string>
+    <string name="default_device_name_2">%2$s %3$s 上的 %1$s</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -429,7 +430,7 @@
     <!-- Settings Page Title -->
     <string name="settings_title">设置</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
-    <string name="content_description_history_menu">历史项目菜单</string>
+    <string name="content_description_history_menu">历史记录菜单</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">关闭</string>
 
@@ -1000,6 +1001,8 @@
     <string name="sign_in_with_email">改用电子邮件</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox 将停止与您的账号的同步，但不会删除此设备上的任何浏览数据。</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">%s 将停止与您的账户的同步，但不会删除您在这台设备上的任何上网数据。</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">断开连接</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -1298,9 +1301,9 @@
     <string name="search_delete_search_engine_success_message">已删除 %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">欢迎使用焕然一新的 ％s</string>
+    <string name="migration_title">欢迎使用焕然一新的 %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">完全重新设计的浏览器闪亮登场，性能与功能皆有改善，遨游网络更能得心应手。\n\n请稍候，我们正在更新 %s 的</string>
+    <string name="migration_description">这是我们完全重新打造的浏览器，操作跟手，功能俱全，助您在线上做好更多事。\n\n稍等片刻，我们正在更新 %s 的</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">正在更新 %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->

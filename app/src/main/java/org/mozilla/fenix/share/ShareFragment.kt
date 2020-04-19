@@ -53,6 +53,11 @@ class ShareFragment : AppCompatDialogFragment() {
         setStyle(STYLE_NO_TITLE, R.style.ShareDialogStyle)
     }
 
+    override fun onPause() {
+        super.onPause()
+        dismiss()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,7 +74,7 @@ class ShareFragment : AppCompatDialogFragment() {
                 shareData = shareData,
                 snackbar = FenixSnackbar.make(
                     view = requireActivity().getRootView()!!,
-                    isDisplayedOnBrowserFragment = true
+                    isDisplayedWithBrowserToolbar = true
                 ),
                 navController = findNavController(),
                 sendTabUseCases = SendTabUseCases(accountManager),

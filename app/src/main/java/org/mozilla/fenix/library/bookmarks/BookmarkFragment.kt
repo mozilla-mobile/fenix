@@ -31,9 +31,6 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.concept.sync.AccountObserver
-import mozilla.components.concept.sync.AuthType
-import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.HomeActivity
@@ -46,6 +43,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 
@@ -64,11 +62,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     lateinit var initialJob: Job
     private var pendingBookmarkDeletionJob: (suspend () -> Unit)? = null
     private var pendingBookmarksToDelete: MutableSet<BookmarkNode> = mutableSetOf()
-    private val refreshOnSignInListener = object : AccountObserver {
-        override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-            lifecycleScope.launch { refreshBookmarks() }
-        }
-    }
 
     private val metrics
         get() = context?.components?.analytics?.metrics
@@ -91,7 +84,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 snackbar = FenixSnackbar.make(
                     view = view,
                     duration = FenixSnackbar.LENGTH_LONG,
-                    isDisplayedOnBrowserFragment = false
+                    isDisplayedWithBrowserToolbar = false
                 ),
                 deleteBookmarkNodes = ::deleteMulti,
                 invokePendingDeletion = ::invokePendingDeletion
@@ -100,9 +93,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         )
 
         bookmarkView = BookmarkView(view.bookmarkLayout, bookmarkInteractor)
-
-        val signInView = SignInView(view.bookmarkLayout, findNavController())
-        sharedViewModel.signedIn.observe(viewLifecycleOwner, signInView)
 
         lifecycle.addObserver(
             BookmarkDeselectNavigationListener(
@@ -132,12 +122,17 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         super.onResume()
 
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().show()
-        context?.components?.backgroundServices?.accountManager?.let { accountManager ->
-            sharedViewModel.observeAccountManager(accountManager, owner = this)
-            accountManager.register(refreshOnSignInListener, owner = this)
-        }
-
         val currentGuid = BookmarkFragmentArgs.fromBundle(arguments!!).currentRoot.ifEmpty { BookmarkRoot.Mobile.id }
+
+        // Only display the sign-in prompt if we're inside of the virtual "Desktop Bookmarks" node.
+        // Don't want to pester user too much with it, and if there are lots of bookmarks present,
+        // it'll just get visually lost. Inside of the "Desktop Bookmarks" node, it'll nicely stand-out,
+        // since there are always only three other items in there. It's also the right place contextually.
+        if (currentGuid == BookmarkRoot.Root.id &&
+            requireComponents.backgroundServices.accountManager.authenticatedAccount() == null
+        ) {
+            view?.let { SignInView(it.bookmarkLayout, findNavController()) }
+        }
 
         initialJob = loadInitialBookmarkFolder(currentGuid)
     }
@@ -186,14 +181,14 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             R.id.open_bookmarks_in_new_tabs_multi_select -> {
                 openItemsInNewTab { node -> node.url }
 
-                navigate(BookmarkFragmentDirections.actionBookmarkFragmentToHomeFragment())
+                navigate(BookmarkFragmentDirections.actionGlobalHome())
                 metrics?.track(Event.OpenedBookmarksInNewTabs)
                 true
             }
             R.id.open_bookmarks_in_private_tabs_multi_select -> {
                 openItemsInNewTab(private = true) { node -> node.url }
 
-                navigate(BookmarkFragmentDirections.actionBookmarkFragmentToHomeFragment())
+                navigate(BookmarkFragmentDirections.actionGlobalHome())
                 metrics?.track(Event.OpenedBookmarksInPrivateTabs)
                 true
             }
@@ -202,7 +197,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     ShareData(url = it.url, title = it.title)
                 }
                 navigate(
-                    BookmarkFragmentDirections.actionBookmarkFragmentToShareFragment(
+                    BookmarkFragmentDirections.actionGlobalShareFragment(
                         data = shareTabs.toTypedArray()
                     )
                 )
@@ -218,7 +213,10 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     private fun navigate(directions: NavDirections) {
         invokePendingDeletion()
-        nav(R.id.bookmarkFragment, directions)
+        findNavController().nav(
+            R.id.bookmarkFragment,
+            directions
+        )
     }
 
     override fun onBackPressed(): Boolean {

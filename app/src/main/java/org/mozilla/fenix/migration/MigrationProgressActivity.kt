@@ -5,10 +5,12 @@
 package org.mozilla.fenix.migration
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DimenRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_migration.*
 import kotlinx.android.synthetic.main.migration_list_item.view.*
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.migration.AbstractMigrationProgressActivity
 import mozilla.components.support.migration.AbstractMigrationService
 import mozilla.components.support.migration.Migration
@@ -45,6 +48,8 @@ class MigrationProgressActivity : AbstractMigrationProgressActivity() {
     }
 
     fun init() {
+        window.navigationBarColor = getColorFromAttr(R.attr.foundation)
+
         val appName = migration_description.context.getString(R.string.app_name)
 
         migration_description.apply {
@@ -52,6 +57,8 @@ class MigrationProgressActivity : AbstractMigrationProgressActivity() {
         }
 
         migration_status_list.apply {
+            val margin = resources.getDimensionPixelSize(R.dimen.migration_margin)
+            addItemDecoration(MigrationStatusItemDecoration(margin))
             layoutManager = LinearLayoutManager(this@MigrationProgressActivity)
             adapter = statusAdapter
         }
@@ -156,5 +163,25 @@ internal class MigrationStatusAdapter :
         override fun areContentsTheSame(oldItem: MigrationItem, newItem: MigrationItem) =
             oldItem.migration.javaClass.simpleName == newItem.migration.javaClass.simpleName &&
                 oldItem.status == newItem.status
+    }
+}
+
+internal class MigrationStatusItemDecoration(
+    @DimenRes private val spacing: Int
+) : RecyclerView.ItemDecoration() {
+
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
+        val position = parent.getChildViewHolder(view).adapterPosition
+        val itemCount = state.itemCount
+
+        outRect.left = spacing
+        outRect.right = spacing
+        outRect.top = spacing
+        outRect.bottom = if (position == itemCount - 1) spacing else 0
     }
 }

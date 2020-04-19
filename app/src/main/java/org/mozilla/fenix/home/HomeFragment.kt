@@ -56,10 +56,12 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.state.MediaState.State.PLAYING
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
+import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.state.ext.flowScoped
@@ -157,17 +159,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
-
-        val sessionObserver = BrowserSessionsObserver(
-            sessionManager,
-            requireComponents.core.store,
-            singleSessionObserver
-        ) {
-            emitSessionChanges()
-        }
-
-        lifecycle.addObserver(sessionObserver)
-
         if (!onboarding.userHasBeenOnboarded()) {
             requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
         }
@@ -180,6 +171,16 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
+
+        val sessionObserver = BrowserSessionsObserver(
+            sessionManager,
+            requireComponents.core.store,
+            singleSessionObserver
+        ) {
+            emitSessionChanges()
+        }
+
+        viewLifecycleOwner.lifecycle.addObserver(sessionObserver)
 
         currentMode = CurrentMode(
             view.context,
@@ -377,18 +378,22 @@ class HomeFragment : Fragment() {
         )
 
         requireComponents.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
-            // By the time this code runs, we may not be attached to a context.
-            if ((this@HomeFragment).context == null) {
+            // By the time this code runs, we may not be attached to a context or have a view lifecycle owner.
+            if ((this@HomeFragment).view?.context == null) {
                 return@runIfReadyOrQueue
             }
-            requireComponents.backgroundServices.accountManager.register(currentMode, owner = this@HomeFragment)
+
+            requireComponents.backgroundServices.accountManager.register(
+                currentMode,
+                owner = this@HomeFragment.viewLifecycleOwner
+            )
             requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
                 override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
                     if (authType != AuthType.Existing) {
                         view?.let {
                             FenixSnackbar.make(view = it,
                                 duration = Snackbar.LENGTH_SHORT,
-                                isDisplayedOnBrowserFragment = false
+                                isDisplayedWithBrowserToolbar = false
                             )
                                 .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
                                 .setAnchorView(toolbarLayout)
@@ -396,7 +401,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-            }, owner = this@HomeFragment)
+            }, owner = this@HomeFragment.viewLifecycleOwner)
         }
 
         if (context.settings().showPrivateModeContextualFeatureRecommender &&
@@ -411,6 +416,11 @@ class HomeFragment : Fragment() {
 
     private fun closeTab(sessionId: String) {
         val deletionJob = pendingSessionDeletion?.deletionJob
+        context?.let {
+            if (sessionManager.findSessionById(sessionId)?.toTab(it)?.mediaState == PLAYING) {
+                it.components.core.store.state.media.pauseIfPlaying()
+            }
+        }
 
         if (deletionJob == null) {
             removeTabWithUndo(sessionId, browsingModeManager.mode.isPrivate)
@@ -426,6 +436,14 @@ class HomeFragment : Fragment() {
 
     private fun closeAllTabs(isPrivateMode: Boolean) {
         val deletionJob = pendingSessionDeletion?.deletionJob
+
+        context?.let {
+            sessionManager.sessionsOfType(private = isPrivateMode).forEach { session ->
+                if (session.toTab(it).mediaState == PLAYING) {
+                    it.components.core.store.state.media.pauseIfPlaying()
+                }
+            }
+        }
 
         if (deletionJob == null) {
             removeAllTabsWithUndo(
@@ -582,7 +600,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToSearch() {
-        val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
+        val directions = HomeFragmentDirections.actionGlobalSearch(
             sessionId = null
         )
 
@@ -590,7 +608,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun openSettingsScreen() {
-        val directions = HomeFragmentDirections.actionHomeFragmentToPrivateBrowsingFragment()
+        val directions = HomeFragmentDirections.actionGlobalPrivateBrowsingFragment()
         nav(R.id.homeFragment, directions)
     }
 
@@ -603,7 +621,7 @@ class HomeFragment : Fragment() {
 
     @SuppressWarnings("ComplexMethod", "LongMethod")
     private fun createHomeMenu(context: Context, menuButtonView: WeakReference<MenuButton>) = HomeMenu(
-        this,
+        this.viewLifecycleOwner,
         context,
         onItemTapped = {
             when (it) {
@@ -612,7 +630,7 @@ class HomeFragment : Fragment() {
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
+                        HomeFragmentDirections.actionGlobalSettingsFragment()
                     )
                 }
                 HomeMenu.Item.Bookmarks -> {
@@ -620,7 +638,7 @@ class HomeFragment : Fragment() {
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToBookmarksFragment(BookmarkRoot.Mobile.id)
+                        HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
                     )
                 }
                 HomeMenu.Item.History -> {
@@ -628,7 +646,7 @@ class HomeFragment : Fragment() {
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToHistoryFragment()
+                        HomeFragmentDirections.actionGlobalHistoryFragment()
                     )
                 }
                 HomeMenu.Item.Help -> {
@@ -663,7 +681,7 @@ class HomeFragment : Fragment() {
                         lifecycleScope,
                         view?.let { view -> FenixSnackbar.make(
                             view = view,
-                            isDisplayedOnBrowserFragment = false
+                            isDisplayedWithBrowserToolbar = false
                         )
                         }
                     )
@@ -673,7 +691,7 @@ class HomeFragment : Fragment() {
                     hideOnboardingIfNeeded()
                     nav(
                         R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToAccountProblemFragment()
+                        HomeFragmentDirections.actionGlobalAccountProblemFragment()
                     )
                 }
             }
@@ -894,7 +912,7 @@ class HomeFragment : Fragment() {
                 }
                 FenixSnackbar.make(view = view,
                     duration = Snackbar.LENGTH_LONG,
-                    isDisplayedOnBrowserFragment = false
+                    isDisplayedWithBrowserToolbar = false
                 )
                     .setText(view.context.getString(stringRes))
                     .setAnchorView(snackbarAnchorView)
@@ -909,7 +927,7 @@ class HomeFragment : Fragment() {
             FenixSnackbar.make(
                 view = view,
                 duration = Snackbar.LENGTH_LONG,
-                isDisplayedOnBrowserFragment = false
+                isDisplayedWithBrowserToolbar = false
             )
                 .setText(string)
                 .setAnchorView(snackbarAnchorView)

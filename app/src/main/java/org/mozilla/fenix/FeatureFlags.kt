@@ -8,12 +8,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
-
-    /**
-     * Allows Progressive Web Apps to be installed to the device home screen.
-     */
-    val progressiveWebApps = Config.channel.isNightlyOrDebug
+    const val pullToRefreshEnabled = false
 
     /**
      * Disables FxA Application Services Web Channels feature
@@ -24,11 +19,6 @@ object FeatureFlags {
      * Disables FxA Application Services Sync feature
      */
     const val asFeatureSyncDisabled = false
-
-    /**
-     * Disables FxA Application Services Pairing feature
-     */
-    const val asFeatureFxAPairingDisabled = false
 
     /**
      * Enables dynamic bottom toolbar
@@ -48,4 +38,9 @@ object FeatureFlags {
      * https://github.com/mozilla-mobile/fenix/issues/9059
      */
     val webPushIntegration = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables picture-in-picture feature
+     */
+    val pictureInPicture = Config.channel.isNightlyOrDebug
 }
