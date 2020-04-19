@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
@@ -41,7 +39,6 @@ class SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
 
         fun goBack(interact: SettingsSubMenuEnhancedTrackingProtectionRobot.() -> Unit): SettingsSubMenuEnhancedTrackingProtectionRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsSubMenuEnhancedTrackingProtectionRobot().interact()
@@ -61,15 +58,15 @@ private fun goBackButton() =
     onView(allOf(withContentDescription("Navigate up")))
 
 private fun assertNavigationToolBarHeader() {
-    onView(withText("Exceptions"))
+    onView(withText(R.string.preferences_tracking_protection_exceptions))
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 }
 
 private fun assertExceptionDefault() =
-    onView(allOf(withText("Exceptions let you disable tracking protection for selected sites.")))
+    onView(allOf(withText(R.string.exceptions_empty_message_description)))
 
 private fun assertExceptionLearnMoreText() =
-    onView(allOf(withText("Learn more")))
+    onView(allOf(withText(R.string.exceptions_empty_message_learn_more_link)))
 
 private fun assertExceptionURL(url: String) =
     onView(allOf(withText(url)))

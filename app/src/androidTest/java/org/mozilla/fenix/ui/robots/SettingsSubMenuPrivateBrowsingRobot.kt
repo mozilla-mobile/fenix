@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
 
 import android.os.Build
@@ -66,7 +64,6 @@ class SettingsSubMenuPrivateBrowsingRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().perform(ViewActions.click())
 
             SettingsRobot().interact()
@@ -86,7 +83,7 @@ private fun assertNavigationToolBarHeader() {
     onView(
         CoreMatchers.allOf(
             withId(R.id.navigationToolbar),
-            withChild(withText("Private browsing"))
+            withChild(withText(R.string.preferences_private_browsing_options))
         )
     )
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))

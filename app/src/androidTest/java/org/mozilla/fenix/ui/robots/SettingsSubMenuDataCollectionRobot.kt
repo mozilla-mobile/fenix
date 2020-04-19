@@ -2,13 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
-
-/**
- * Implementation of Robot Pattern for the settings Data Collection sub menu.
- */
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -25,6 +19,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.assertIsEnabled
 import org.mozilla.fenix.helpers.click
 
+/**
+ * Implementation of Robot Pattern for the settings Data Collection sub menu.
+ */
 class SettingsSubMenuDataCollectionRobot {
 
     fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
@@ -44,7 +41,6 @@ class SettingsSubMenuDataCollectionRobot {
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsRobot().interact()
@@ -58,12 +54,12 @@ private fun goBackButton() =
 
 private fun assertNavigationToolBarHeader() = onView(
     allOf(withParent(withId(R.id.navigationToolbar)),
-        withText("Data collection")))
+        withText(R.string.preferences_data_collection)))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertDataCollectionOptions() {
 
-    onView(withText("Usage and technical data"))
+    onView(withText(R.string.preference_usage_data))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     val usageAndTechnicalDataText =
@@ -72,7 +68,7 @@ private fun assertDataCollectionOptions() {
     onView(withText(usageAndTechnicalDataText))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Marketing data"))
+    onView(withText(R.string.preferences_marketing_data))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     val marketingDataText =
@@ -82,12 +78,12 @@ private fun assertDataCollectionOptions() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun usageAndTechnicalDataButton() = onView(withText("Usage and technical data"))
+private fun usageAndTechnicalDataButton() = onView(withText(R.string.preference_usage_data))
 
 private fun assertUsageAndTechnicalDataSwitchDefault() = usageAndTechnicalDataButton()
     .assertIsEnabled(isEnabled = true)
 
-private fun marketingDataButton() = onView(withText("Marketing data"))
+private fun marketingDataButton() = onView(withText(R.string.preferences_marketing_data))
 
 private fun assertMarketingDataValueSwitchDefault() = marketingDataButton()
     .assertIsEnabled(isEnabled = true)

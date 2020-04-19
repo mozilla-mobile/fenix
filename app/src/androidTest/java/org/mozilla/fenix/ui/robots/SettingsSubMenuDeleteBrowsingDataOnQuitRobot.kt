@@ -2,13 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:Suppress("TooManyFunctions")
-
 package org.mozilla.fenix.ui.robots
-
-/**
- * Implementation of Robot Pattern for the settings Delete Browsing Data On Quit sub menu.
- */
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -27,6 +21,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.isChecked
 
+/**
+ * Implementation of Robot Pattern for the settings Delete Browsing Data On Quit sub menu.
+ */
 class SettingsSubMenuDeleteBrowsingDataOnQuitRobot {
 
     fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
@@ -55,7 +52,6 @@ class SettingsSubMenuDeleteBrowsingDataOnQuitRobot {
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
-            mDevice.waitForIdle()
             goBackButton().click()
 
             SettingsRobot().interact()
@@ -67,42 +63,42 @@ class SettingsSubMenuDeleteBrowsingDataOnQuitRobot {
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
 
 private fun assertNavigationToolBarHeader() = onView(allOf(withId(R.id.navigationToolbar),
-    withChild(withText("Delete browsing data on quit"))))
+    withChild(withText(R.string.preferences_delete_browsing_data_on_quit))))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun deleteBrowsingOnQuitButton() = onView(allOf(withParentIndex(0),
-    withChild(withText("Delete browsing data on quit"))))
+    withChild(withText(R.string.preferences_delete_browsing_data_on_quit))))
 
 private fun assertDeleteBrowsingOnQuitButton() = deleteBrowsingOnQuitButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertDeleteBrowsingOnQuitButtonSummary() = onView(
-    withText("Automatically deletes browsing data when you select \"Quit\" from the main menu"))
+    withText(R.string.preference_summary_delete_browsing_data_on_quit_2))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertDeleteBrowsingOnQuitButtonSwitchDefault() = onView(withResourceName("switch_widget"))
     .check(matches(isChecked(false)))
 
 private fun assertAllTheCheckBoxesText() {
-    onView(withText("Open Tabs"))
+    onView(withText(R.string.preferences_delete_browsing_data_tabs_title))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Browsing history"))
+    onView(withText(R.string.preferences_delete_browsing_data_on_quit_browsing_history))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Cookies"))
+    onView(withText(R.string.preferences_delete_browsing_data_cookies))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("You’ll be logged out of most sites"))
+    onView(withText(R.string.preferences_delete_browsing_data_cookies_subtitle))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Cached images and files"))
+    onView(withText(R.string.preferences_delete_browsing_data_cached_files))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Frees up storage space"))
+    onView(withText(R.string.preferences_delete_browsing_data_cached_files_subtitle))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-    onView(withText("Site permissions"))
+    onView(withText(R.string.preferences_delete_browsing_data_site_permissions))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

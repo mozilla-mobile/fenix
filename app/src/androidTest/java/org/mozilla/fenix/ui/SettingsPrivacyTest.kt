@@ -88,31 +88,31 @@ class SettingsPrivacyTest {
 
             // SITE PERMISSIONS AUTOPLAY
         }.openAutoPlay {
-            verifyNavigationToolBarHeader()
+            verifyNavigationToolBarHeader("Autoplay")
             verifySitePermissionsAutoPlaySubMenuItems()
         }.goBack {
 
             // SITE PERMISSIONS CAMERA
         }.openCamera {
-            verifyNavigationToolBarHeader()
+            verifyNavigationToolBarHeader("Camera")
             verifySitePermissionsCameraSubMenuItems()
         }.goBack {
 
             // SITE PERMISSIONS LOCATION
         }.openLocation {
-            verifyNavigationToolBarHeader()
+            verifyNavigationToolBarHeader("Location")
             verifySitePermissionsLocationSubMenuItems()
         }.goBack {
 
             // SITE PERMISSIONS MICROPHONE
         }.openMicrophone {
-            verifyNavigationToolBarHeader()
+            verifyNavigationToolBarHeader("Microphone")
             verifySitePermissionsMicrophoneSubMenuItems()
         }.goBack {
 
             // SITE PERMISSIONS NOTIFICATION
         }.openNotification {
-            verifyNavigationToolBarHeader()
+            verifyNavigationToolBarHeader("Notification")
             verifySitePermissionsNotificationSubMenuItems()
         }.goBack {
 
