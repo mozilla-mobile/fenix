@@ -31,6 +31,7 @@ import mozilla.components.feature.addons.ui.translatedName
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.showToolbar
@@ -203,13 +204,16 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             onSuccess = {
                 this@AddonsManagementFragment.view?.let { view ->
                     val rootView = activity?.getRootView() ?: view
-                    showSnackBar(
-                        rootView,
-                        getString(
-                            R.string.mozac_feature_addons_successfully_installed,
-                            it.translatedName
-                        )
+                    FenixSnackbar.make(
+                        view = rootView,
+                        duration = FenixSnackbar.LENGTH_SHORT,
+                        isDisplayedWithBrowserToolbar = false
                     )
+                    .setText(
+                        view.context.getString(R.string.mozac_feature_addons_successfully_installed,
+                        addon.translatedName)
+                    )
+                    .show()
                     bindRecyclerView(view)
                     addonProgressOverlay?.visibility = View.GONE
                     isInstallationInProgress = false
@@ -218,10 +222,16 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             onError = { _, _ ->
                 this@AddonsManagementFragment.view?.let { view ->
                     val rootView = activity?.getRootView() ?: view
-                    showSnackBar(
-                        rootView,
-                        getString(R.string.mozac_feature_addons_failed_to_install, addon.translatedName)
+                    FenixSnackbar.make(
+                        view = rootView,
+                        duration = FenixSnackbar.LENGTH_SHORT,
+                        isDisplayedWithBrowserToolbar = false
                     )
+                    .setText(
+                        view.context.getString(R.string.mozac_feature_addons_failed_to_install,
+                        addon.translatedName)
+                    )
+                    .show()
                     addonProgressOverlay?.visibility = View.GONE
                     isInstallationInProgress = false
                 }
