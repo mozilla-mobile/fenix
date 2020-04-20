@@ -78,7 +78,6 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
             tabsTray,
             requireComponents.core.store,
             requireComponents.useCases.tabsUseCases,
-            // TODO: This is gross and cannot be good...but appears to work
             { it.content.private == (activity as HomeActivity?)?.browsingModeManager?.mode?.isPrivate },
             ::closeTabsTray)
 
@@ -195,7 +194,6 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
 
     private fun closeTabsTray() {
         activity?.supportFragmentManager?.beginTransaction()?.apply {
-            //replace(R.id.container, BrowserFragment.create())
             commit()
         }
     }
@@ -227,7 +225,7 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
     private fun onTabsChanged() {
         val hasNoTabs = getListOfSessions().toList().isEmpty()
 
-        view?.tab_tray_empty_view?.visibility = if(hasNoTabs) {
+        view?.tab_tray_empty_view?.visibility = if (hasNoTabs) {
             View.VISIBLE
         } else {
             View.GONE
@@ -236,7 +234,7 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
             view?.announceForAccessibility(view?.context?.getString(R.string.no_open_tabs_description))
         }
 
-        view?.saveToCollection?.visibility = if(hasNoTabs) {
+        view?.saveToCollection?.visibility = if (hasNoTabs) {
             View.GONE
         } else {
             View.VISIBLE
