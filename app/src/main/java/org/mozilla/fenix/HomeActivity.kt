@@ -219,11 +219,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         TabsTray::class.java.name -> {
             val layout = LinearLayoutManager(context)
             val adapter = TabsAdapter(layoutId = R.layout.tab_tray_item)
-            /*
-            BrowserTabsTray(context, attrs, tabsAdapter = adapter, layout = layout).also { tray ->
-
-            }
-             */
             BrowserTabsTray(context, attrs, tabsAdapter = adapter, layout = layout)
         }
         else -> super.onCreateView(parent, name, context, attrs)
