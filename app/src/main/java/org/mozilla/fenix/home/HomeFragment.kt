@@ -341,8 +341,7 @@ class HomeFragment : Fragment() {
         view.add_tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            val directions = HomeFragmentDirections.actionGlobalTabTrayFragment()
-            nav(R.id.homeFragment, directions)
+            navigateToSearch()
         }
 
         PrivateBrowsingButtonView(
