@@ -8,7 +8,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
-import android.widget.ImageButton
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -21,13 +20,14 @@ import kotlinx.android.synthetic.main.fragment_login_detail.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import mozilla.components.concept.storage.Login
+import mozilla.components.service.sync.logins.LoginsStorageException
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.showToolbar
 
 /**
@@ -36,6 +36,7 @@ import org.mozilla.fenix.ext.showToolbar
 class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
 
     private val args by navArgs<LoginDetailFragmentArgs>()
+    private lateinit var login: SavedLogin
 
     override fun onResume() {
         super.onResume()
@@ -43,8 +44,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-        showToolbar(args.savedLoginItem.origin)
-        setHasOptionsMenu(true)
     }
 
     override fun onPause() {
@@ -61,14 +60,19 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        webAddressText.text = args.savedLoginItem.origin
-        usernameText.text = args.savedLoginItem.username
-        passwordInfoText.text = args.savedLoginItem.password
+        fetchLoginDetails()
+
+        showToolbar(login.origin)
+        setHasOptionsMenu(true)
+
+        webAddressText.text = login.origin
+        usernameText.text = login.username
+        passwordInfoText.text = login.password
 
         val copyInfoArgs = listOf(
-            Pair(copyWebAddress, args.savedLoginItem.origin),
-            Pair(copyUsername, args.savedLoginItem.username),
-            Pair(copyPassword, args.savedLoginItem.password)
+            Pair(copyWebAddress, login.origin),
+            Pair(copyUsername, login.username),
+            Pair(copyPassword, login.password)
         )
 
         for (copyButtons in copyInfoArgs) {
@@ -79,6 +83,24 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
+        }
+    }
+
+    private fun fetchLoginDetails() {
+        var fetchedLogin: Deferred<Login?>? = null
+        val fetchLoginJob = lifecycleScope.launch(IO) {
+            fetchedLogin = async {
+                requireContext().components.core.passwordsStorage.get(args.savedLoginId)
+            }
+            login = fetchedLogin?.await()?.mapToSavedLogin()
+                ?: throw LoginsStorageException(
+                    "Login with id ${args.savedLoginId} not able to be fetched."
+                )
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                fetchedLogin?.cancel()
+            }
         }
     }
 
@@ -101,7 +123,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     private fun editLogin() {
         val directions =
             LoginDetailFragmentDirections
-                .actionLoginDetailFragmentToEditLoginFragment(args.savedLoginItem)
+                .actionLoginDetailFragmentToEditLoginFragment(login)
         requireView().findNavController().navigate(directions)
     }
 
@@ -127,7 +149,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         var deleteLoginJob: Deferred<Boolean>? = null
         val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
             deleteLoginJob = async {
-                requireContext().components.core.passwordsStorage.delete(args.savedLoginItem.guid!!)
+                requireContext().components.core.passwordsStorage.delete(args.savedLoginId)
             }
             deleteLoginJob?.await()
             withContext(Main) {
@@ -161,7 +183,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 context?.getString(R.string.saved_login_reveal_password)
         }
         // For the new type to take effect you need to reset the text
-        passwordInfoText.text = args.savedLoginItem.password
+        passwordInfoText.text = login.password
     }
 
     /**

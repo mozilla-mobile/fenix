@@ -68,9 +68,10 @@ class SavedLoginsView(
 
         with(view.saved_passwords_empty_message) {
             val appName = context.getString(R.string.app_name)
-            text = context.getString(
-                R.string.preferences_passwords_saved_logins_description_empty_text,
-                appName
+            text = String.format(
+                context.getString(
+                    R.string.preferences_passwords_saved_logins_description_empty_text
+                ), appName
             )
         }
     }
@@ -91,10 +92,10 @@ class SavedLoginsView(
  * Interactor for the saved logins screen
  */
 class SavedLoginsInteractor(
-    private val itemClicked: (Login) -> Unit,
+    private val itemClicked: (SavedLogin) -> Unit,
     private val learnMore: () -> Unit
 ) {
-    fun itemClicked(item: Login) {
+    fun itemClicked(item: SavedLogin) {
         itemClicked.invoke(item)
     }
     fun onLearnMore() {

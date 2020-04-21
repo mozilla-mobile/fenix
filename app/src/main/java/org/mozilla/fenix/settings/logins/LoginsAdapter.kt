@@ -13,7 +13,7 @@ import org.mozilla.fenix.R
 
 class LoginsAdapter(
     private val interactor: SavedLoginsInteractor
-) : ListAdapter<Login, LoginsListViewHolder>(DiffCallback) {
+) : ListAdapter<SavedLogin, LoginsListViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -28,11 +28,11 @@ class LoginsAdapter(
         holder.bind(getItem(position))
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<Login>() {
-        override fun areItemsTheSame(oldItem: Login, newItem: Login) =
+    private object DiffCallback : DiffUtil.ItemCallback<SavedLogin>() {
+        override fun areItemsTheSame(oldItem: SavedLogin, newItem: SavedLogin) =
             oldItem.origin == newItem.origin
 
-        override fun areContentsTheSame(oldItem: Login, newItem: Login) =
+        override fun areContentsTheSame(oldItem: SavedLogin, newItem: SavedLogin) =
             oldItem == newItem
     }
 }

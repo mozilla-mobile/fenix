@@ -20,10 +20,10 @@ class LoginsListViewHolder(
     private val url = view.webAddressView
     private val username = view.usernameView
 
-    private var loginItem: Login? = null
+    private var loginItem: SavedLogin? = null
 
-    fun bind(item: Login) {
-        this.loginItem = Login(
+    fun bind(item: SavedLogin) {
+        this.loginItem = SavedLogin(
             guid = item.guid,
             origin = item.origin,
             password = item.password,

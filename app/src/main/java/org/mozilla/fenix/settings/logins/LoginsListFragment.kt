@@ -142,10 +142,10 @@ class LoginsListFragment : Fragment() {
         super.onPause()
     }
 
-    private fun itemClicked(item: Login) {
+    private fun itemClicked(item: SavedLogin) {
         context?.components?.analytics?.metrics?.track(Event.OpenOneLogin)
         val directions =
-            LoginsListFragmentDirections.actionLoginsListFragmentToLoginDetailFragment(item)
+            LoginsListFragmentDirections.actionLoginsListFragmentToLoginDetailFragment(item.guid)
         findNavController().navigate(directions)
     }
 
@@ -168,8 +168,8 @@ class LoginsListFragment : Fragment() {
             logins?.let {
                 withContext(Main) {
                     savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(logins.map { item ->
-                        Login(
-                            guid = item.guid,
+                        SavedLogin(
+                            guid = item.guid!!,
                             origin = item.origin,
                             username = item.username,
                             password = item.password,

@@ -308,8 +308,8 @@
         android:name="org.mozilla.fenix.settings.logins.LoginDetailFragment"
         tools:layout="@layout/fragment_login_detail">
         <argument
-            android:name="savedLoginItem"
-            app:argType="mozilla.components.concept.storage.Login"
+            android:name="savedLoginId"
+            app:argType="string"
             app:nullable="false"/>
         <action
             android:id="@+id/action_loginDetailFragment_to_editLoginFragment"
@@ -324,7 +324,7 @@
         android:label="@string/edit">
         <argument
             android:name="savedLoginItem"
-            app:argType="mozilla.components.concept.storage.Login"
+            app:argType="org.mozilla.fenix.settings.logins.SavedLogin"
             app:nullable="false"/>
         <action
             android:id="@+id/action_editLoginFragment_to_loginDetailFragment"

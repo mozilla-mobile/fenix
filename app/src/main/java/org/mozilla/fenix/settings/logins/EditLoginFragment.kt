@@ -66,7 +66,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         hostnameText.isFocusable = false
 
         usernameText.text = args.savedLoginItem.username.toEditable()
-        passwordText.text = args.savedLoginItem.password.toEditable()
+        passwordText.text = args.savedLoginItem.password!!.toEditable()
+
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -132,7 +133,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         var saveLoginJob: Deferred<Unit>? = null
         lifecycleScope.launch(IO) {
             saveLoginJob = async {
-                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid!!)
+                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
 
                 // Update requires a Login type, which needs at least one of httpRealm or formActionOrigin
                 val loginToSave = Login(
@@ -151,7 +152,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             withContext(Main) {
                 val directions =
                     EditLoginFragmentDirections
-                        .actionEditLoginFragmentToLoginDetailFragment(args.savedLoginItem)
+                        .actionEditLoginFragmentToLoginDetailFragment(args.savedLoginItem.guid)
                 findNavController().navigate(directions)
             }
         }
@@ -164,12 +165,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private suspend fun save(loginToSave: Login) = requireContext().components.core.passwordsStorage.update(loginToSave)
 
-    // we need to update the current list to reflect this new change
-    // by syncing the current list of passwords
-    private suspend fun syncAndUpdateList(updatedLogin: Login) {
-        // dispatch to the store that this single item was changed - look at history and bookmarks
-        // if we're not connected to the internet, we still want to update the list
-        savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(updatedLogin)))
+    private fun syncAndUpdateList(updatedLogin: Login) {
+        val login = SavedLogin(
+            guid = updatedLogin.guid!!,
+            origin = updatedLogin.origin,
+            username = updatedLogin.username,
+            password = updatedLogin.password
+        )
+        savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
     }
 
     fun closeKeyboard() {
