@@ -80,6 +80,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/allow"
         app:layout_constraintEnd_toStartOf="@id/allow"
-        app:layout_constraintTop_toTopOf="@id/allow" />
+        app:layout_constraintTop_toTopOf="@id/allow"
+        app:fontFamily="@font/inter_regular" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

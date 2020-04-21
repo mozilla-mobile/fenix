@@ -23,6 +23,7 @@
     app:browserToolbarMenuColor="?primaryText"
     app:browserToolbarProgressBarGravity="bottom"
     app:browserToolbarSecureColor="?primaryText"
+    app:fontFamily="@font/inter_regular"
     app:browserToolbarTrackingProtectionAndSecurityIndicatorSeparatorColor="?toolbarDivider" />
 </com.google.android.material.appbar.AppBarLayout>
 

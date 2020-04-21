@@ -43,7 +43,8 @@
         app:layout_constraintStart_toStartOf="@id/trackingProtectionCategoryTitle"
         app:layout_constraintTop_toBottomOf="@+id/trackingProtectionCategoryTitle"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@tools:sample/lorem" />
+        tools:text="@tools:sample/lorem"
+        app:fontFamily="@font/inter_regular" />
 
     <Switch
         android:id="@+id/switch_widget"
@@ -55,5 +56,6 @@
         app:drawableStartCompat="@drawable/ic_tracking_protection"
         app:layout_constraintBottom_toBottomOf="@id/trackingProtectionCategoryItemDescription"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:fontFamily="@font/inter_regular" />
 </androidx.constraintlayout.widget.ConstraintLayout>

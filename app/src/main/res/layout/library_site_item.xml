@@ -53,7 +53,8 @@
             app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/url"
-            app:layout_constraintVertical_chainStyle="packed"/>
+            app:layout_constraintVertical_chainStyle="packed"
+            app:fontFamily="@font/inter_regular" />
 
     <TextView
             android:id="@+id/url"
@@ -66,6 +67,7 @@
             android:textColor="?secondaryText"
             android:textSize="12sp"
             tools:text="https://example.com/"
+            app:fontFamily="@font/inter_regular"
             app:layout_constraintEnd_toStartOf="@id/overflow_menu"
             app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toBottomOf="@+id/title"

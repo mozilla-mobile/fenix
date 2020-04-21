@@ -2,14 +2,15 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/private_session_description_wrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0.5dp"
-        android:importantForAccessibility="no"
-        android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/private_session_description_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="0.5dp"
+    android:importantForAccessibility="no"
+    android:orientation="vertical">
     <TextView
             android:id="@+id/private_session_description"
             android:layout_width="match_parent"
@@ -21,7 +22,8 @@
             android:scrollHorizontally="false"
             tools:text="@string/private_browsing_placeholder_description"
             android:textColor="?primaryText"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:fontFamily="@font/inter_regular" />
     <TextView
             android:id="@+id/private_session_common_myths"
             android:layout_width="match_parent"
@@ -33,5 +35,6 @@
             android:scrollHorizontally="false"
             android:text="@string/private_browsing_common_myths"
             android:textColor="?primaryText"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:fontFamily="@font/inter_regular"  />
 </LinearLayout>

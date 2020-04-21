@@ -30,6 +30,7 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="@dimen/radio_button_padding_horizontal"
         android:text="@string/search_engine_add_custom_search_engine_title"
+        app:fontFamily="@font/inter_regular"
         app:layout_constraintStart_toEndOf="@id/add_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -33,7 +33,8 @@
         tools:text="Download Firefox - Free Web Browser"
         app:layout_constraintStart_toEndOf="@id/share_tab_favicon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fontFamily="@font/inter_regular" />
 
     <TextView
         android:id="@+id/share_tab_url"
@@ -46,6 +47,7 @@
         tools:text="https://www.mozilla.org/en-US/firefox/new/"
         app:layout_constraintStart_toStartOf="@id/share_tab_title"
         app:layout_constraintTop_toBottomOf="@id/share_tab_title"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fontFamily="@font/inter_regular" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

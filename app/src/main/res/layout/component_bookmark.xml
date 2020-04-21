@@ -30,7 +30,8 @@
             android:text="@string/bookmarks_empty_message"
             android:textColor="?secondaryText"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:fontFamily="@font/inter_regular" />
 
     <ProgressBar
         android:id="@+id/bookmarks_progress_bar"

@@ -375,6 +375,7 @@
 
     <style name="QuickSettingsText.Icon">
         <item name="android:drawablePadding">8dp</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="QuickSettingsText.PermissionItemEnd">

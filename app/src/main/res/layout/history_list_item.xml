@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:textColor="?primaryText"
+            app:fontFamily="@font/inter_regular"
             android:paddingStart="20dp"
             android:paddingEnd="0dp"
             android:layout_marginBottom="8dp"

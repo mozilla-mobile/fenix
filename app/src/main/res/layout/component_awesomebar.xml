@@ -14,6 +14,7 @@
     android:requiresFadingEdge="vertical"
     app:layout_constraintTop_toTopOf="@id/awesomeBar_barrier"
     app:layout_constraintEnd_toEndOf="parent"
+    app:fontFamily="@font/inter_regular"
     app:layout_constraintStart_toStartOf="parent"
     mozac:awesomeBarDescriptionTextColor="?secondaryText"
     mozac:awesomeBarTitleTextColor="?primaryText" />

@@ -13,4 +13,5 @@
     android:focusable="true"
     app:findInPageNoMatchesTextColor="?attr/destructive"
     app:findInPageButtonsTint="?primaryText"
-    app:findInPageResultCountTextColor="?primaryText" />
+    app:findInPageResultCountTextColor="?primaryText"
+    app:fontFamily="@font/inter_regular" />

@@ -72,7 +72,8 @@
         android:textSize="16sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:targetApi="o" />
+        tools:targetApi="o"
+        app:fontFamily="@font/inter_regular" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tab_list"
@@ -142,7 +143,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/save_button"
             app:layout_constraintStart_toEndOf="@id/bottom_bar_icon_button"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:fontFamily="@font/inter_regular" />
 
         <Button
             android:id="@+id/save_button"

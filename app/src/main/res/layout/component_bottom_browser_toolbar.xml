@@ -18,4 +18,5 @@
     app:browserToolbarMenuColor="?primaryText"
     app:browserToolbarProgressBarGravity="top"
     app:browserToolbarSecureColor="?primaryText"
+    app:fontFamily="@font/inter_regular"
     app:browserToolbarTrackingProtectionAndSecurityIndicatorSeparatorColor="?toolbarDivider" />

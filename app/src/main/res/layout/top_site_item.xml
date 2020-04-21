@@ -37,6 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/favicon_image" />
+        app:layout_constraintTop_toBottomOf="@id/favicon_image"
+        app:fontFamily="@font/inter_regular" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

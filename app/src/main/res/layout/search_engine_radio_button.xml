@@ -40,7 +40,8 @@
         android:textAlignment="viewStart"
         app:layout_constraintStart_toEndOf="@id/engine_icon"
         app:layout_constraintTop_toTopOf="@id/engine_icon"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fontFamily="@font/inter_regular" />
     <ImageButton
         android:id="@+id/overflow_menu"
         android:layout_width="@dimen/glyph_button_width"
