@@ -20,7 +20,6 @@
         <item name="alertDialogTheme">@style/DialogStyleNormal</item>
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
-        <item name="fontFamily">@font/inter_regular</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
         <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
@@ -67,7 +66,6 @@
         <item name="homeBackground">@color/foundation_normal_theme</item>
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
-        <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
         <item name="shieldLottieFile">@raw/shield_json</item>
@@ -225,6 +223,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/toggle_text_color</item>
+        <item name="fontFamily">@font/inter_regular</item>
         <item name="drawableTint">@color/toggle_text_color</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
@@ -262,6 +261,7 @@
 
     <style name="DialogStyleBase" parent="NormalTheme">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="fontFamily">@font/inter_regular</item>
         <item name="android:colorControlNormal">?accentHighContrast</item>
         <item name="android:colorControlActivated">?accentHighContrast</item>
         <item name="android:colorControlHighlight">?accentBright</item>
@@ -306,10 +306,12 @@
     <style name="Body14TextStyle" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="Body16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?primaryText</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="SubtitleTextStyle" parent="TextAppearance.MaterialComponents.Body1">
@@ -331,6 +333,7 @@
 
     <style name="ListItemTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">?primaryText</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="progressBarStyleHorizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
@@ -344,6 +347,7 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_alignParentStart">true</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="QuickSettingsSmallText">
@@ -352,6 +356,7 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:gravity">top</item>
         <item name="android:layout_alignParentStart">true</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="QuickSettingsLargeText">
@@ -361,6 +366,7 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_alignParentStart">true</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="QuickSettingsLargeText.Icon">
@@ -395,6 +401,7 @@
         <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">@dimen/search_fragment_shortcuts_label_text_size</item>
         <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="SearchClipboardStyle">
@@ -405,6 +412,7 @@
     <style name="SearchClipboardTitleStyle" parent="SearchClipboardStyle">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">@dimen/search_fragment_clipboard_title_text_size</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="MetropolisButton">
@@ -456,10 +464,12 @@
     <style name="AboutHeaderContentText" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">?primaryText</item>
         <item name="android:lineSpacingExtra">@dimen/about_header_text_line_spacing_extra</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="EngineTextField" parent="TextAppearance.AppCompat">
         <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="Theme.Transparent" parent="android:Theme">
