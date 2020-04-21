@@ -37,7 +37,7 @@ class SettingsSubMenuSitePermissionsCommonRobot {
 
     fun verifyassertBlocked() = assertBlocked()
 
-    fun verifyCheckRadioButtonDefault() = assertCheckRadioButtonDefault()
+    fun verifyCheckCommonRadioButtonDefault() = assertCheckCommonRadioButtonDefault()
 
     fun verifyBlockedByAndroid() = assertBlockedByAndroid()
 
@@ -58,46 +58,21 @@ class SettingsSubMenuSitePermissionsCommonRobot {
         verifyCheckAutoPlayRadioButtonDefault()
     }
 
-    fun verifySitePermissionsCameraSubMenuItems() {
+    fun verifySitePermissionsCommonSubMenuItems() {
         verifyassertAskToAllowRecommended()
         verifyassertBlocked()
-        verifyCheckRadioButtonDefault()
+        verifyCheckCommonRadioButtonDefault()
         verifyBlockedByAndroid()
         verifyToAllowIt()
         verifyGotoAndroidSettings()
         verifyTapPermissions()
-        verifyToggleNameToON("3. Toggle Camera to ON")
-        verifyGoToSettingsButton()
-    }
-
-    fun verifySitePermissionsLocationSubMenuItems() {
-        verifyassertAskToAllowRecommended()
-        verifyassertBlocked()
-        verifyCheckRadioButtonDefault()
-        verifyBlockedByAndroid()
-        verifyToAllowIt()
-        verifyGotoAndroidSettings()
-        verifyTapPermissions()
-        verifyToggleNameToON("3. Toggle Location to ON")
-        verifyGoToSettingsButton()
-    }
-
-    fun verifySitePermissionsMicrophoneSubMenuItems() {
-        verifyassertAskToAllowRecommended()
-        verifyassertBlocked()
-        verifyCheckRadioButtonDefault()
-        verifyBlockedByAndroid()
-        verifyToAllowIt()
-        verifyGotoAndroidSettings()
-        verifyTapPermissions()
-        verifyToggleNameToON("3. Toggle Microphone to ON")
         verifyGoToSettingsButton()
     }
 
     fun verifySitePermissionsNotificationSubMenuItems() {
         verifyassertAskToAllowRecommended()
         verifyassertBlocked()
-        verifyCheckRadioButtonDefault()
+        verifyCheckCommonRadioButtonDefault()
     }
 
     class Transition {
@@ -142,7 +117,7 @@ private fun assertAskToAllowRecommended() = onView(withId(R.id.ask_to_allow_radi
 private fun assertBlocked() = onView(withId(R.id.block_radio))
     .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 
-private fun assertCheckRadioButtonDefault() {
+private fun assertCheckCommonRadioButtonDefault() {
     onView(withId(R.id.ask_to_allow_radio)).assertIsChecked(isChecked = true)
     onView(withId(R.id.block_radio)).assertIsChecked(isChecked = false)
 }
