@@ -95,19 +95,22 @@ class SettingsPrivacyTest {
             // SITE PERMISSIONS CAMERA
         }.openCamera {
             verifyNavigationToolBarHeader("Camera")
-            verifySitePermissionsCameraSubMenuItems()
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Camera to ON")
         }.goBack {
 
             // SITE PERMISSIONS LOCATION
         }.openLocation {
             verifyNavigationToolBarHeader("Location")
-            verifySitePermissionsLocationSubMenuItems()
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Location to ON")
         }.goBack {
 
             // SITE PERMISSIONS MICROPHONE
         }.openMicrophone {
             verifyNavigationToolBarHeader("Microphone")
-            verifySitePermissionsMicrophoneSubMenuItems()
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Microphone to ON")
         }.goBack {
 
             // SITE PERMISSIONS NOTIFICATION
