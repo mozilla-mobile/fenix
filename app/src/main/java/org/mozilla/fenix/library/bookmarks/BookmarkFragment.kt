@@ -52,7 +52,9 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     private lateinit var bookmarkStore: BookmarkFragmentStore
     private lateinit var bookmarkView: BookmarkView
-    private lateinit var bookmarkInteractor: BookmarkFragmentInteractor
+    private var _bookmarkInteractor: BookmarkFragmentInteractor? = null
+    protected val bookmarkInteractor: BookmarkFragmentInteractor
+        get() = _bookmarkInteractor!!
 
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels {
         ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
@@ -75,17 +77,13 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             BookmarkFragmentStore(BookmarkFragmentState(null))
         }
 
-        bookmarkInteractor = BookmarkFragmentInteractor(
+        _bookmarkInteractor = BookmarkFragmentInteractor(
             bookmarkStore = bookmarkStore,
             viewModel = sharedViewModel,
             bookmarksController = DefaultBookmarkController(
                 context = context!!,
                 navController = findNavController(),
-                snackbar = FenixSnackbar.make(
-                    view = view,
-                    duration = FenixSnackbar.LENGTH_LONG,
-                    isDisplayedWithBrowserToolbar = false
-                ),
+                showSnackbar = ::showSnackBarWithText,
                 deleteBookmarkNodes = ::deleteMulti,
                 invokePendingDeletion = ::invokePendingDeletion
             ),
@@ -94,7 +92,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
         bookmarkView = BookmarkView(view.bookmarkLayout, bookmarkInteractor)
 
-        lifecycle.addObserver(
+        viewLifecycleOwner.lifecycle.addObserver(
             BookmarkDeselectNavigationListener(
                 findNavController(),
                 sharedViewModel,
@@ -103,6 +101,16 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         )
 
         return view
+    }
+
+    private fun showSnackBarWithText(text: String) {
+        view?.let {
+            FenixSnackbar.make(
+                view = it,
+                duration = FenixSnackbar.LENGTH_LONG,
+                isDisplayedWithBrowserToolbar = false
+            ).setText(text).show()
+        }
     }
 
     @ExperimentalCoroutinesApi
@@ -291,6 +299,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 refreshBookmarks()
             }, operation = deleteOperation
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _bookmarkInteractor = null
     }
 
     private fun invokePendingDeletion() {
