@@ -38,6 +38,7 @@ RUN apt-get update -qq \
                           curl \
                           python \
                           python-pip \
+                          python3-yaml \
                           python3 \
                           locales \
                           unzip \
