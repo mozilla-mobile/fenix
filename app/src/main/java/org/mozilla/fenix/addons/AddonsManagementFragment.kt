@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_add_ons_management.*
 import kotlinx.android.synthetic.main.fragment_add_ons_management.view.*
+import kotlinx.android.synthetic.main.overlay_add_on_progress.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -33,6 +35,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -196,6 +199,11 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
 
     private val onPositiveButtonClicked: ((Addon) -> Unit) = { addon ->
         addonProgressOverlay?.visibility = View.VISIBLE
+
+        if (requireContext().settings().accessibilityServicesEnabled) {
+            announceForAccessibility(addonProgressOverlay.add_ons_overlay_text.text)
+        }
+
         isInstallationInProgress = true
 
         requireContext().components.addonManager.installAddon(
@@ -227,6 +235,16 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                 }
             }
         )
+    }
+
+    private fun announceForAccessibility(announcementText: CharSequence) {
+        val event = AccessibilityEvent.obtain(
+            AccessibilityEvent.TYPE_ANNOUNCEMENT
+        )
+        addonProgressOverlay.onInitializeAccessibilityEvent(event)
+        event.text.add(announcementText)
+        event.contentDescription = null
+        addonProgressOverlay.parent.requestSendAccessibilityEvent(addonProgressOverlay, event)
     }
 
     companion object {
