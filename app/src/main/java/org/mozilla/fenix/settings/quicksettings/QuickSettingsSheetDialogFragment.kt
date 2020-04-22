@@ -72,7 +72,7 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         quickSettingsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = quickSettingsStore,
-            coroutineScope = lifecycleScope,
+            coroutineScope = viewLifecycleOwner.lifecycleScope,
             navController = findNavController(),
             session = context.components.core.sessionManager.findSessionById(args.sessionId),
             sitePermissions = args.sitePermissions,
