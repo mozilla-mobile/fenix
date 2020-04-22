@@ -7,105 +7,147 @@ package org.mozilla.fenix.settings.logins
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
-import android.view.*
+import android.view.MenuItem
+import android.view.MenuInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
+import android.view.LayoutInflater
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login_detail.*
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
-import mozilla.components.service.sync.logins.LoginsStorageException
+import mozilla.components.lib.state.ext.consumeFrom
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 /**
  * Displays saved login information for a single website.
  */
+@Suppress("TooManyFunctions", "ForbiddenComment")
+@ExperimentalCoroutinesApi
 class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
 
     private val args by navArgs<LoginDetailFragmentArgs>()
-    private lateinit var login: SavedLogin
+    private var login: SavedLogin? = null
+    private lateinit var savedLoginsStore: LoginsFragmentStore
+    private lateinit var loginDetailView: LoginDetailView
 
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
-    }
-
-    override fun onPause() {
-        // If we pause this fragment, we want to pop users back to reauth
-        if (findNavController().currentDestination?.id != R.id.loginsListFragment &&
-            findNavController().currentDestination?.id != R.id.editLoginFragment
-        ) {
-            activity?.let { it.checkAndUpdateScreenshotPermission(it.settings()) }
-            findNavController().popBackStack(R.id.loginsFragment, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_login_detail, container, false)
+        savedLoginsStore = StoreProvider.get(this) {
+            LoginsFragmentStore(
+                LoginsListState(
+                    isLoading = true,
+                    loginList = listOf(),
+                    filteredItems = listOf()
+                )
+            )
         }
-        super.onPause()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
         fetchLoginDetails()
 
-        showToolbar(login.origin)
-        setHasOptionsMenu(true)
+        return view
+    }
 
-        webAddressText.text = login.origin
-        usernameText.text = login.username
-        passwordInfoText.text = login.password
-
-        val copyInfoArgs = listOf(
-            Pair(copyWebAddress, login.origin),
-            Pair(copyUsername, login.username),
-            Pair(copyPassword, login.password)
-        )
-
-        for (copyButtons in copyInfoArgs) {
-            copyButtons.first.setOnClickListener(CopyButtonListener(copyButtons.second, R.string.login_copied))
+    @ObsoleteCoroutinesApi
+    @ExperimentalCoroutinesApi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        consumeFrom(savedLoginsStore) {
+            loginDetailView.update(it)
+            login = savedLoginsStore.state.currentItem
+            setUpCopyButtons()
+            showToolbar(savedLoginsStore.state.currentItem?.origin ?: "")
+            setUpPasswordReveal()
         }
+    }
 
-        passwordInfoText.inputType =
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    private fun setUpPasswordReveal() {
+        passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
     }
 
+    private fun setUpCopyButtons() {
+        webAddressText.text = login?.origin
+        copyWebAddress.setOnClickListener(
+            CopyButtonListener(login?.origin, R.string.logins_site_copied)
+        )
+
+        usernameText.text = login?.username
+        copyUsername.setOnClickListener(
+            CopyButtonListener(login?.username, R.string.logins_username_copied)
+        )
+
+        passwordText.text = login?.password
+        copyPassword.setOnClickListener(
+            CopyButtonListener(login?.password, R.string.logins_password_copied)
+        )
+    }
+
+    // TODO: Move interactions with the component's password storage into a separate datastore
     private fun fetchLoginDetails() {
-        var fetchedLogin: Deferred<Login?>? = null
-        val fetchLoginJob = lifecycleScope.launch(IO) {
-            fetchedLogin = async {
-                requireContext().components.core.passwordsStorage.get(args.savedLoginId)
+        var deferredLogin: Deferred<List<Login>>? = null
+        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
+            deferredLogin = async {
+                requireContext().components.core.passwordsStorage.list()
             }
-            login = fetchedLogin?.await()?.mapToSavedLogin()
-                ?: throw LoginsStorageException(
-                    "Login with id ${args.savedLoginId} not able to be fetched."
-                )
+            val fetchedLoginList = deferredLogin?.await()
+
+            fetchedLoginList?.let {
+                withContext(Main) {
+                    val login = fetchedLoginList.filter {
+                        it.guid == args.savedLoginId
+                    }.first()
+                    savedLoginsStore.dispatch(
+                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
+                    )
+                }
+            }
         }
         fetchLoginJob.invokeOnCompletion {
             if (it is CancellationException) {
-                fetchedLogin?.cancel()
+                deferredLogin?.cancel()
             }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_options_menu, menu)
+        if (FeatureFlags.loginsEdit) {
+            inflater.inflate(R.menu.login_options_menu, menu)
+        } else {
+            inflater.inflate(R.menu.login_delete, menu)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -123,8 +165,8 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     private fun editLogin() {
         val directions =
             LoginDetailFragmentDirections
-                .actionLoginDetailFragmentToEditLoginFragment(login)
-        requireView().findNavController().navigate(directions)
+                .actionLoginDetailFragmentToEditLoginFragment(login!!)
+        findNavController().navigate(directions)
     }
 
     private fun displayDeleteLoginDialog() {
@@ -153,7 +195,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             }
             deleteLoginJob?.await()
             withContext(Main) {
-                findNavController().popBackStack(R.id.loginsListFragment, false)
+                findNavController().popBackStack(R.id.savedLoginsFragment, false)
             }
         }
         deleteJob.invokeOnCompletion {
@@ -165,16 +207,16 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
 
     // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
     private fun togglePasswordReveal() {
-        if (passwordInfoText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
             context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
-            passwordInfoText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             revealPasswordButton.setImageDrawable(
                 resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
             )
             revealPasswordButton.contentDescription =
                 resources.getString(R.string.saved_login_hide_password)
         } else {
-            passwordInfoText.inputType =
+            passwordText.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             revealPasswordButton.setImageDrawable(
                 resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
@@ -183,7 +225,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 context?.getString(R.string.saved_login_reveal_password)
         }
         // For the new type to take effect you need to reset the text
-        passwordInfoText.text = login.password
+        passwordText.text = login?.password
     }
 
     /**

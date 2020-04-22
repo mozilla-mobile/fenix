@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.settings.logins
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -13,20 +12,31 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_edit_login.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutPassword
+import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutUsername
+import kotlinx.android.synthetic.main.fragment_edit_login.hostnameText
+import kotlinx.android.synthetic.main.fragment_edit_login.usernameText
+import kotlinx.android.synthetic.main.fragment_edit_login.passwordText
+import kotlinx.android.synthetic.main.fragment_edit_login.clearUsernameTextButton
+import kotlinx.android.synthetic.main.fragment_edit_login.clearPasswordTextButton
+import kotlinx.android.synthetic.main.fragment_edit_login.revealPasswordButton
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -36,6 +46,7 @@ import org.mozilla.fenix.ext.components
 /**
  * Displays the editable saved login information for a single website.
  */
+@Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
 class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
@@ -69,8 +80,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         passwordText.text = args.savedLoginItem.password!!.toEditable()
 
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
-        passwordText.inputType =
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         setUpClickListeners()
     }
@@ -99,7 +109,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
-            closeKeyboard()
+            view?.hideKeyboard()
             try {
                 if (!passwordText.text.isNullOrBlank()) {
                     attemptSaveAndExit()
@@ -109,14 +119,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                             view = it,
                             duration = Snackbar.LENGTH_SHORT,
                             isDisplayedWithBrowserToolbar = false
-                        ).setText("Password cannot be blank.").show()
+                        ).setText(getString(R.string.saved_login_password_required)).show()
                     }
                 }
-            } catch (loginException: Exception) {
+            } catch (loginException: LoginsStorageException) {
                 when (loginException) {
                     is NoSuchRecordException,
-                    is InvalidRecordException,
-                    is LoginsStorageException -> {
+                    is InvalidRecordException -> {
                         Log.e("Edit login", "Failed to save edited login.", loginException)
                     }
                     else -> Log.e("Edit login", "Failed to save edited login.", loginException)
@@ -131,7 +140,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     // This includes Delete, Update/Edit, Create
     private fun attemptSaveAndExit() {
         var saveLoginJob: Deferred<Unit>? = null
-        lifecycleScope.launch(IO) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
             saveLoginJob = async {
                 val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
 
@@ -163,7 +172,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
     }
 
-    private suspend fun save(loginToSave: Login) = requireContext().components.core.passwordsStorage.update(loginToSave)
+    private suspend fun save(loginToSave: Login) =
+        requireContext().components.core.passwordsStorage.update(loginToSave)
 
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = SavedLogin(
@@ -175,16 +185,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
     }
 
-    fun closeKeyboard() {
-        val inputMethodManager =
-            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
-    }
-
     // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
     private fun togglePasswordReveal() {
         val currText = passwordText.text
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
+        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
+            or InputType.TYPE_CLASS_TEXT
+        ) {
             context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
             passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             revealPasswordButton.setImageDrawable(

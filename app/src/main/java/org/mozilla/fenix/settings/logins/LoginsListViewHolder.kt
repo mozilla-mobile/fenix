@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings.logins
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.logins_item.view.*
-import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 
@@ -19,7 +18,6 @@ class LoginsListViewHolder(
     private val favicon = view.favicon_image
     private val url = view.webAddressView
     private val username = view.usernameView
-
     private var loginItem: SavedLogin? = null
 
     fun bind(item: SavedLogin) {

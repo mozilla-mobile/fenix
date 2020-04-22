@@ -1207,13 +1207,11 @@
     <string name="logins_doorhanger_save_confirmation">Save</string>
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
     <string name="logins_doorhanger_save_dont_save">Don’t save</string>
-    <!-- Shown in snackbar to tell user that an item has been copied -->
-    <string name="login_copied">Copied to clipboard</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Password copied to clipboard</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Username copied to clipboard</string>
-    <!-- Shown in snackbar to tell user that the site has been copied -->
+    <!-- Shown in snackbar to tell user that the web address has been copied -->
     <string name="logins_site_copied">Site copied to clipboard</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Copy password</string>
@@ -1345,19 +1343,18 @@
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Delete</string>
     <!--  The saved login options menu description. -->
-    <string name="login_menu_more_options">More options</string>
+    <string name="login_options_menu">Login options</string>
     <!--  The editable text field for a login's web address. -->
-    <string name="hostname_description">The editable text field for the web address of the login.</string>
+    <string name="saved_login_hostname_description">The editable text field for the web address of the login.</string>
     <!--  The editable text field for a login's username. -->
-    <string name="username_description">The editable text field for the username of the login.</string>
+    <string name="saved_login_username_description">The editable text field for the username of the login.</string>
     <!--  The editable text field for a login's password. -->
-    <string name="password_description">The editable text field for the password of the login.</string>
+    <string name="saved_login_password_description">The editable text field for the password of the login.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Save changes to login.</string>
     <!--  The button description to discard changes to an edited login. -->
     <string name="discard_changes">Discard changes</string>
     <!--  The page title for editing a saved login. -->
-    <string name="edit_login">Edit</string>
     <string name="edit">Edit</string>
-
+    <string name="saved_login_password_required">Password required</string>
 </resources>

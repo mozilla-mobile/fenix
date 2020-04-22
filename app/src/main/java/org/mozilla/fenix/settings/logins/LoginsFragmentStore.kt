@@ -49,6 +49,7 @@ class LoginsFragmentStore(initialState: LoginsListState) :
 sealed class LoginsAction : Action {
     data class FilterLogins(val newText: String?) : LoginsAction()
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
+    data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
 }
 
 /**
@@ -59,7 +60,8 @@ sealed class LoginsAction : Action {
 data class LoginsListState(
     val isLoading: Boolean = false,
     val loginList: List<SavedLogin>,
-    val filteredItems: List<SavedLogin>
+    val filteredItems: List<SavedLogin>,
+    val currentItem: SavedLogin? = null
 ) : State
 
 /**
@@ -85,6 +87,11 @@ private fun savedLoginsStateReducer(
                     isLoading = false,
                     filteredItems = state.loginList.filter { it.origin.contains(action.newText) })
             }
+        }
+        is LoginsAction.UpdateCurrentLogin -> {
+            state.copy(
+                currentItem = action.item
+            )
         }
     }
 }

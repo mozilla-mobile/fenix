@@ -41,7 +41,7 @@ import org.mozilla.fenix.ext.showToolbar
 import java.util.concurrent.Executors
 
 @Suppress("TooManyFunctions", "LargeClass")
-class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
+class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
     @TargetApi(M)
     private lateinit var biometricPromptCallback: BiometricPrompt.AuthenticationCallback
@@ -266,29 +266,29 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToSavedLoginsFragment() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
-        val directions = LoginsFragmentDirections.actionLoginsFragmentToLoginsListFragment()
+        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
         findNavController().navigate(directions)
     }
 
     private fun navigateToAccountSettingsFragment() {
         val directions =
-            LoginsFragmentDirections.actionGlobalAccountSettingsFragment()
+            SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
         findNavController().navigate(directions)
     }
 
     private fun navigateToAccountProblemFragment() {
-        val directions = LoginsFragmentDirections.actionGlobalAccountProblemFragment()
+        val directions = SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
         findNavController().navigate(directions)
     }
 
     private fun navigateToTurnOnSyncFragment() {
-        val directions = LoginsFragmentDirections.actionLoginsFragmentToTurnOnSyncFragment()
+        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
         findNavController().navigate(directions)
     }
 
     private fun navigateToSaveLoginSettingFragment() {
         val directions =
-            LoginsFragmentDirections.actionLoginsFragmentToSavedLoginsSettingFragment()
+            SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToSavedLoginsSettingFragment()
         findNavController().navigate(directions)
     }
 

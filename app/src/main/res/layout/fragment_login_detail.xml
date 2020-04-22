@@ -99,14 +99,14 @@
         android:textSize="12sp"
         android:letterSpacing="0.05"
         app:fontFamily="@font/metropolis_semibold"
-        app:layout_constraintBottom_toTopOf="@id/passwordInfoText"
+        app:layout_constraintBottom_toTopOf="@id/passwordText"
         app:layout_constraintEnd_toStartOf="@id/revealPasswordButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usernameText"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/passwordInfoText"
+        android:id="@+id/passwordText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword|text"
@@ -125,7 +125,7 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/saved_login_reveal_password"
         android:tint="?android:colorAccent"
-        app:layout_constraintBottom_toBottomOf="@id/passwordInfoText"
+        app:layout_constraintBottom_toBottomOf="@id/passwordText"
         app:layout_constraintEnd_toStartOf="@id/copyPassword"
         app:layout_constraintTop_toTopOf="@id/passwordHeader"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />

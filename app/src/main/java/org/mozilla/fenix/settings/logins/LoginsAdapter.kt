@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.R
 
 class LoginsAdapter(

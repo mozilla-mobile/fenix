@@ -263,25 +263,25 @@
     </fragment>
 
     <fragment
-        android:id="@+id/loginsFragment"
-        android:name="org.mozilla.fenix.settings.LoginsFragment"
+        android:id="@+id/savedLoginsAuthFragment"
+        android:name="org.mozilla.fenix.settings.SavedLoginsAuthFragment"
         android:label="@string/preferences_passwords_logins_and_passwords">
         <action
-            android:id="@+id/action_loginsFragment_to_loginsListFragment"
+            android:id="@+id/action_savedLoginsAuthFragment_to_loginsListFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:destination="@id/loginsListFragment" />
+            app:destination="@id/savedLoginsFragment" />
         <action
-            android:id="@+id/action_loginsFragment_to_turnOnSyncFragment"
+            android:id="@+id/action_savedLoginsAuthFragment_to_turnOnSyncFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/turnOnSyncFragment" />
         <action
-            android:id="@+id/action_loginsFragment_to_savedLoginsSettingFragment"
+            android:id="@+id/action_savedLoginsAuthFragment_to_savedLoginsSettingFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -290,14 +290,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/loginsListFragment"
-        android:name="org.mozilla.fenix.settings.logins.LoginsListFragment"
+        android:id="@+id/savedLoginsFragment"
+        android:name="org.mozilla.fenix.settings.logins.SavedLoginsFragment"
         tools:layout="@layout/fragment_saved_logins">
         <action
-            android:id="@+id/action_loginsListFragment_to_loginDetailFragment"
+            android:id="@+id/action_savedLoginsFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment" />
         <action
-            android:id="@+id/action_loginListFragment_to_browserFragment"
+            android:id="@+id/action_savedLoginsFragment_to_browserFragment"
             app:destination="@id/browserFragment"
             app:popUpTo="@id/settingsFragment"
             app:popUpToInclusive="true" />
@@ -329,6 +329,7 @@
         <action
             android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
             app:destination="@id/loginDetailFragment"
+            app:popUpTo="@id/loginDetailFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
@@ -352,12 +353,12 @@
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/sitePermissionsFragment" />
         <action
-            android:id="@+id/action_settingsFragment_to_loginsFragment"
+            android:id="@+id/action_settingsFragment_to_savedLoginsAuthFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:destination="@id/loginsFragment" />
+            app:destination="@id/savedLoginsAuthFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_accessibilityFragment"
             app:enterAnim="@anim/slide_in_right"

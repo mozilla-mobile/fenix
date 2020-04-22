@@ -42,11 +42,10 @@ import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.settings.LoginsFragmentDirections
 import org.mozilla.fenix.settings.SupportUtils
 
 @SuppressWarnings("TooManyFunctions")
-class LoginsListFragment : Fragment() {
+class SavedLoginsFragment : Fragment() {
     private lateinit var savedLoginsStore: LoginsFragmentStore
     private lateinit var savedLoginsView: SavedLoginsView
     private lateinit var savedLoginsInteractor: SavedLoginsInteractor
@@ -137,7 +136,7 @@ class LoginsListFragment : Fragment() {
 
         if (findNavController().currentDestination?.id != R.id.loginDetailFragment) {
             activity?.let { it.checkAndUpdateScreenshotPermission(it.settings()) }
-            findNavController().popBackStack(R.id.loginsFragment, false)
+            findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
         }
         super.onPause()
     }
@@ -145,7 +144,7 @@ class LoginsListFragment : Fragment() {
     private fun itemClicked(item: SavedLogin) {
         context?.components?.analytics?.metrics?.track(Event.OpenOneLogin)
         val directions =
-            LoginsListFragmentDirections.actionLoginsListFragmentToLoginDetailFragment(item.guid)
+            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(item.guid)
         findNavController().navigate(directions)
     }
 
@@ -167,15 +166,9 @@ class LoginsListFragment : Fragment() {
             val logins = deferredLogins?.await()
             logins?.let {
                 withContext(Main) {
-                    savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(logins.map { item ->
-                        SavedLogin(
-                            guid = item.guid!!,
-                            origin = item.origin,
-                            username = item.username,
-                            password = item.password,
-                            timeLastUsed = item.timeLastUsed
-                        )
-                    }))
+                    savedLoginsStore.dispatch(
+                        LoginsAction.UpdateLoginsList(logins.map { it.mapToSavedLogin() })
+                    )
                 }
             }
         }
