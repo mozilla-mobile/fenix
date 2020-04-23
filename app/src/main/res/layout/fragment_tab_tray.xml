@@ -2,8 +2,7 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:mozac="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,10 +18,10 @@
         android:textColor="?secondaryText"
         android:textSize="16sp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <mozilla.components.concept.tabstray.TabsTray
         android:id="@+id/tabsTray"
@@ -32,10 +31,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        mozac:tabsTrayItemTextColor="?tabTrayItemText"
-        mozac:tabsTraySelectedItemTextColor="?tabTrayItemSelectedText"
         mozac:tabsTrayItemBackgroundColor="?tabTrayItemBackground"
-        mozac:tabsTraySelectedItemBackgroundColor="?tabTrayItemSelectedBackground" />
+        mozac:tabsTrayItemTextColor="?tabTrayItemText"
+        mozac:tabsTraySelectedItemBackgroundColor="?tabTrayItemSelectedBackground"
+        mozac:tabsTraySelectedItemTextColor="?tabTrayItemSelectedText" />
 
     <LinearLayout
         android:id="@+id/saveToCollection"
@@ -43,11 +42,12 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tabsTray"
-        app:layout_constraintBottom_toTopOf="@id/bottomBarShadow">
+        app:layout_constraintBottom_toTopOf="@id/bottomBarShadow"
+        app:layout_constraintTop_toBottomOf="@+id/tabsTray">
+
         <include
-            layout="@layout/save_to_collection_button"
-            android:id="@+id/saveToCollectionButton"/>
+            android:id="@+id/saveToCollectionButton"
+            layout="@layout/save_to_collection_button" />
     </LinearLayout>
 
     <View
@@ -55,44 +55,49 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/bottom_bar_shadow"
+        app:layout_constraintBottom_toTopOf="@id/tab_tray_controls"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tab_tray_controls" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
+    <View
         android:id="@+id/tab_tray_controls"
-        android:layout_height="48dp"
         android:layout_width="0dp"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_height="48dp"
         android:background="?bottomBarBackground"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <ImageButton
-            android:id="@+id/private_browsing_button"
-            android:layout_width="@dimen/glyph_button_height"
-            android:layout_height="@dimen/glyph_button_height"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/content_description_private_browsing_button"
-            app:srcCompat="@drawable/private_browsing_button"
-            android:layout_weight=".3333" />
-        <ImageButton
-            android:id="@+id/tab_tray_go_home"
-            android:layout_width="@dimen/glyph_button_height"
-            android:layout_height="@dimen/glyph_button_height"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/tab_tray_menu_home"
-            app:srcCompat="@drawable/ic_home"
-            android:layout_weight=".3333" />
-        <ImageButton
-            android:id="@+id/tab_tray_open_new_tab"
-            android:layout_width="@dimen/glyph_button_height"
-            android:layout_height="@dimen/glyph_button_height"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/tab_tray_menu_open_new_tab"
-            app:srcCompat="@drawable/ic_new"
-            android:layout_weight=".3333" />
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <ImageButton
+        android:id="@+id/private_browsing_button"
+        android:layout_width="@dimen/glyph_button_height"
+        android:layout_height="@dimen/glyph_button_height"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/content_description_private_browsing_button"
+        app:srcCompat="@drawable/private_browsing_button"
+        app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
+        app:layout_constraintEnd_toStartOf="@+id/tab_tray_go_home"
+        app:layout_constraintStart_toStartOf="@id/tab_tray_controls" />
+
+    <ImageButton
+        android:id="@+id/tab_tray_go_home"
+        android:layout_width="@dimen/glyph_button_height"
+        android:layout_height="@dimen/glyph_button_height"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/tab_tray_menu_home"
+        app:srcCompat="@drawable/ic_home"
+        app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
+        app:layout_constraintEnd_toStartOf="@+id/tab_tray_open_new_tab"
+        app:layout_constraintStart_toEndOf="@+id/private_browsing_button" />
+
+    <ImageButton
+        android:id="@+id/tab_tray_open_new_tab"
+        android:layout_width="@dimen/glyph_button_height"
+        android:layout_height="@dimen/glyph_button_height"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/tab_tray_menu_open_new_tab"
+        app:srcCompat="@drawable/ic_new"
+        app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
+        app:layout_constraintEnd_toEndOf="@+id/tab_tray_controls"
+        app:layout_constraintStart_toEndOf="@+id/tab_tray_go_home" />
 </androidx.constraintlayout.widget.ConstraintLayout>
