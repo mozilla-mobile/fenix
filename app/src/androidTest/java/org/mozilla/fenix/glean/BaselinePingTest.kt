@@ -89,7 +89,7 @@ class BaselinePingTest {
 
         // Validate the received data.
         val baselinePing = waitForPingContent("baseline")!!
-        assertEquals("baseline", baselinePing.getJSONObject("ping_info")["ping_type"])
+        assertEquals("background", baselinePing.getJSONObject("ping_info")["reason"])
 
         val metrics = baselinePing.getJSONObject("metrics")
 
