@@ -5,12 +5,11 @@
 package org.mozilla.fenix.tabtray
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
 import mozilla.components.concept.engine.prompt.ShareData
 import androidx.fragment.app.Fragment
 import mozilla.components.feature.tabs.tabstray.TabsFeature
@@ -19,7 +18,6 @@ import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -35,7 +33,7 @@ import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.showToolbar
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
+class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer, UserInteractionHandler {
     private var tabsFeature: TabsFeature? = null
     var tabTrayMenu: Menu? = null
 
@@ -46,9 +44,6 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_tab_tray, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,14 +78,12 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
 
         view.tab_tray_open_new_tab.setOnClickListener {
             val directions = TabTrayFragmentDirections.actionGlobalSearch(null)
-            val navController = findNavController(it)
-            navController.navigate(directions)
+            findNavController().navigate(directions)
         }
 
         view.tab_tray_go_home.setOnClickListener {
             val directions = TabTrayFragmentDirections.actionGlobalHome()
-            val navController = findNavController(it)
-            navController.navigate(directions)
+            findNavController().navigate(directions)
         }
 
         view.private_browsing_button.setOnClickListener {
@@ -102,7 +95,7 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
             }
         }
 
-        view.saveToCollectionButton.setOnClickListener {
+        view.save_to_collection_button.setOnClickListener {
             saveToCollection()
         }
     }
@@ -164,8 +157,7 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
         )
 
         view?.let {
-            val navController = findNavController(it)
-            navController.navigate(directions)
+            findNavController().navigate(directions)
         }
     }
 
@@ -225,19 +217,11 @@ class TabTrayFragment : Fragment(), TabsTray.Observer, UserInteractionHandler {
     private fun onTabsChanged() {
         val hasNoTabs = getListOfSessions().toList().isEmpty()
 
-        view?.tab_tray_empty_view?.visibility = if (hasNoTabs) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        view?.tab_tray_empty_view?.isVisible = !hasNoTabs
+        view?.save_to_collection_button?.isVisible = !hasNoTabs
+
         if (hasNoTabs) {
             view?.announceForAccessibility(view?.context?.getString(R.string.no_open_tabs_description))
-        }
-
-        view?.saveToCollection?.visibility = if (hasNoTabs) {
-            View.GONE
-        } else {
-            View.VISIBLE
         }
     }
 }
