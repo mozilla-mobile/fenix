@@ -75,23 +75,23 @@
             android:layout_height="@dimen/glyph_button_height"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/content_description_private_browsing_button"
-            android:src="@drawable/private_browsing_button"
+            app:srcCompat="@drawable/private_browsing_button"
             android:layout_weight=".3333" />
         <ImageButton
             android:id="@+id/tab_tray_go_home"
             android:layout_width="@dimen/glyph_button_height"
             android:layout_height="@dimen/glyph_button_height"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="FIX ME: Home"
-            android:src="@drawable/ic_home"
+            android:contentDescription="@string/tab_tray_menu_home"
+            app:srcCompat="@drawable/ic_home"
             android:layout_weight=".3333" />
         <ImageButton
             android:id="@+id/tab_tray_open_new_tab"
             android:layout_width="@dimen/glyph_button_height"
             android:layout_height="@dimen/glyph_button_height"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="FIX ME: NEW TAB"
-            android:src="@drawable/ic_new"
+            android:contentDescription="@string/tab_tray_menu_open_new_tab"
+            app:srcCompat="@drawable/ic_new"
             android:layout_weight=".3333" />
     </LinearLayout>
 
