@@ -55,7 +55,7 @@ class BaselinePingTest {
             }
         }
     }
-
+    @Suppress("TooGenericExceptionCaught")
     private fun waitForPingContent(
         pingName: String,
         maxAttempts: Int = 3
@@ -64,7 +64,11 @@ class BaselinePingTest {
         do {
             attempts += 1
             val request = server.takeRequest(20L, TimeUnit.SECONDS)
-            val docType = request.path.split("/")[3]
+            val docType = try {
+                request.path.split("/")[3]
+            } catch (e: Exception) {
+                null
+            }
             if (pingName == docType) {
                 return JSONObject(request.body.readUtf8())
             }
