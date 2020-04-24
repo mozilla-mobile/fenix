@@ -42,7 +42,8 @@ class IntentReceiverActivity : Activity() {
 
     suspend fun processIntent(intent: Intent) {
         // Call process for side effects, short on the first that returns true
-        val processor = getIntentProcessors().firstOrNull { it.process(intent) }
+        val processor =
+            getIntentProcessors().firstOrNull { it.process(intent) || it.process(intent) }
         val intentProcessorType = components.intentProcessors.getType(processor)
 
         launch(intent, intentProcessorType)
