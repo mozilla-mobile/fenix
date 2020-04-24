@@ -11,7 +11,7 @@ import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.migration.MigrationProgressActivity
 
 enum class IntentProcessorType {
-    EXTERNAL_APP, NEW_TAB, MIGRATION, OTHER;
+    EXTERNAL_APP, NEW_TAB, MIGRATION, BROWSER_TOOLBAR, OTHER;
 
     /**
      * The destination activity based on this intent
@@ -19,7 +19,7 @@ enum class IntentProcessorType {
     val activityClassName: String
         get() = when (this) {
             EXTERNAL_APP -> ExternalAppBrowserActivity::class.java.name
-            NEW_TAB, OTHER -> HomeActivity::class.java.name
+            NEW_TAB, BROWSER_TOOLBAR, OTHER -> HomeActivity::class.java.name
             MIGRATION -> MigrationProgressActivity::class.java.name
         }
 
@@ -30,6 +30,7 @@ enum class IntentProcessorType {
         EXTERNAL_APP -> true
         NEW_TAB -> intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
         MIGRATION, OTHER -> false
+        BROWSER_TOOLBAR -> true
     }
 }
 
@@ -43,5 +44,6 @@ fun IntentProcessors.getType(processor: IntentProcessor?) = when {
             privateCustomTabIntentProcessor == processor -> IntentProcessorType.EXTERNAL_APP
     intentProcessor == processor ||
             privateIntentProcessor == processor -> IntentProcessorType.NEW_TAB
+    browserToolbarIntentProcessor == processor -> IntentProcessorType.BROWSER_TOOLBAR
     else -> IntentProcessorType.OTHER
 }

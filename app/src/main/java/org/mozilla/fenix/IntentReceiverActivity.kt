@@ -69,7 +69,8 @@ class IntentReceiverActivity : Activity() {
             intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, false)
             listOf(
                 components.intentProcessors.customTabIntentProcessor,
-                components.intentProcessors.intentProcessor
+                components.intentProcessors.intentProcessor,
+                components.intentProcessors.browserToolbarIntentProcessor
             )
         }
 

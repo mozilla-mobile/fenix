@@ -23,6 +23,7 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
+import org.mozilla.fenix.HomeActivity.Companion.BROWSER_TOOLBAR_MODE
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
@@ -254,6 +255,9 @@ class DefaultBrowserToolbarController(
                 // Strip the CustomTabConfig to turn this Session into a regular tab and then select it
                 customTabSession!!.customTabConfig = null
                 activity.components.core.sessionManager.select(customTabSession)
+
+                // BrowserToolbarIntentProcessor need this to check if the intent is from BrowserToolbar
+                openInFenixIntent.putExtra(BROWSER_TOOLBAR_MODE, true)
 
                 // Switch to the actual browser which should now display our new selected session
                 activity.startActivity(openInFenixIntent)
