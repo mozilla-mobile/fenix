@@ -10,6 +10,7 @@ import android.appwidget.AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -52,7 +53,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
             // It's not enough to just hide the microphone on the "small" sized widget due to its design.
             // The "small" widget needs a complete redesign, meaning it needs a new layout file.
             val showMic = (voiceSearchIntent != null)
-            val layout = getLayout(layoutSize, showMic)
+            val layout = getLayout(context, layoutSize, showMic)
             val text = getText(layoutSize, context)
 
             val views = createRemoteViews(context, layout, textSearchIntent, voiceSearchIntent, text)
@@ -72,7 +73,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
         val currentWidth = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(OPTION_APPWIDGET_MIN_WIDTH)
         val layoutSize = getLayoutSize(currentWidth)
         val showMic = (voiceSearchIntent != null)
-        val layout = getLayout(layoutSize, showMic)
+        val layout = getLayout(context, layoutSize, showMic)
         val text = getText(layoutSize, context)
 
         val views = createRemoteViews(context, layout, textSearchIntent, voiceSearchIntent, text)
@@ -87,15 +88,35 @@ class SearchWidgetProvider : AppWidgetProvider() {
         else -> SearchWidgetProviderSize.EXTRA_SMALL_V1
     }
 
-    private fun getLayout(size: SearchWidgetProviderSize, showMic: Boolean) = when (size) {
-        SearchWidgetProviderSize.LARGE -> R.layout.search_widget_large
-        SearchWidgetProviderSize.MEDIUM -> R.layout.search_widget_medium
-        SearchWidgetProviderSize.SMALL -> {
-            if (showMic) R.layout.search_widget_small
-            else R.layout.search_widget_small_no_mic
+    private fun getLayout(context: Context, size: SearchWidgetProviderSize, showMic: Boolean): Int {
+
+        // detecting system dark theme: https://stackoverflow.com/a/56036734/4820556
+        val systemUiModeConfig = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        return if (systemUiModeConfig == Configuration.UI_MODE_NIGHT_YES) {
+            // system has a dark theme, return dark theme layouts.
+            when (size) {
+                SearchWidgetProviderSize.LARGE -> R.layout.search_widget_large_dark
+                SearchWidgetProviderSize.MEDIUM -> R.layout.search_widget_medium_dark
+                SearchWidgetProviderSize.SMALL -> {
+                    if (showMic) R.layout.search_widget_small_dark
+                    else R.layout.search_widget_small_no_mic_dark
+                }
+                SearchWidgetProviderSize.EXTRA_SMALL_V2 -> R.layout.search_widget_extra_small_v2_dark
+                SearchWidgetProviderSize.EXTRA_SMALL_V1 -> R.layout.search_widget_extra_small_v1_dark
+            }
+        } else {
+            when (size) {
+                SearchWidgetProviderSize.LARGE -> R.layout.search_widget_large
+                SearchWidgetProviderSize.MEDIUM -> R.layout.search_widget_medium
+                SearchWidgetProviderSize.SMALL -> {
+                    if (showMic) R.layout.search_widget_small
+                    else R.layout.search_widget_small_no_mic
+                }
+                SearchWidgetProviderSize.EXTRA_SMALL_V2 -> R.layout.search_widget_extra_small_v2
+                SearchWidgetProviderSize.EXTRA_SMALL_V1 -> R.layout.search_widget_extra_small_v1
+            }
         }
-        SearchWidgetProviderSize.EXTRA_SMALL_V2 -> R.layout.search_widget_extra_small_v2
-        SearchWidgetProviderSize.EXTRA_SMALL_V1 -> R.layout.search_widget_extra_small_v1
     }
 
     private fun getText(layout: SearchWidgetProviderSize, context: Context) = when (layout) {
@@ -138,17 +159,17 @@ class SearchWidgetProvider : AppWidgetProvider() {
         return RemoteViews(context.packageName, layout).apply {
             setIcon(context)
             when (layout) {
-                R.layout.search_widget_extra_small_v1,
-                R.layout.search_widget_extra_small_v2,
-                R.layout.search_widget_small_no_mic -> {
+                R.layout.search_widget_extra_small_v1, R.layout.search_widget_extra_small_v1_dark,
+                R.layout.search_widget_extra_small_v2, R.layout.search_widget_extra_small_v2_dark,
+                R.layout.search_widget_small_no_mic, R.layout.search_widget_small_no_mic_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                 }
-                R.layout.search_widget_small -> {
+                R.layout.search_widget_small, R.layout.search_widget_small_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_voice, voiceSearchIntent)
                 }
-                R.layout.search_widget_medium,
-                R.layout.search_widget_large -> {
+                R.layout.search_widget_medium, R.layout.search_widget_medium_dark,
+                R.layout.search_widget_large, R.layout.search_widget_large_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_voice, voiceSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab_icon, textSearchIntent)
