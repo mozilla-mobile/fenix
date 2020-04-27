@@ -24,6 +24,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -635,4 +636,12 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
+
+    val useNewTabTray by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray),
+        default = false
+    )
+
+    val tabTrayEnabled: Boolean
+        get() = FeatureFlags.tabTray && useNewTabTray
 }
