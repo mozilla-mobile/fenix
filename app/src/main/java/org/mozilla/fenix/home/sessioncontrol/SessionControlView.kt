@@ -165,10 +165,8 @@ private fun collectionTabItems(collection: TabCollection) = collection.tabs.mapI
 
 @ExperimentalCoroutinesApi
 class SessionControlView(
-    private val homeFragmentStore: HomeFragmentStore,
     override val containerView: View?,
     interactor: SessionControlInteractor,
-    private val viewLifecycleOwner: LifecycleOwner,
     private var homeScreenViewModel: HomeScreenViewModel
 ) : LayoutContainer {
 
@@ -187,10 +185,6 @@ class SessionControlView(
                     )
                 )
             itemTouchHelper.attachToRecyclerView(this)
-
-            view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
-                update(it)
-            }
         }
     }
 
