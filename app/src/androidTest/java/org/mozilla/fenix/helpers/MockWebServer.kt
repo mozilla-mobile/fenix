@@ -67,7 +67,7 @@ class AndroidAssetDispatcher : Dispatcher() {
         try {
 
             val pathWithoutQueryParams = Uri.parse(request?.path?.drop(1)).path
-            assetManager.open(pathWithoutQueryParams!!).use { inputStream ->
+            assetManager.open(pathWithoutQueryParams!!).use { _ ->
                 //return fileToResponse(pathWithoutQueryParams, inputStream)
                 return MockResponse().setResponseCode(HTTP_NOT_FOUND)
             }
