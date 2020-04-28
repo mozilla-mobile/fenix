@@ -241,13 +241,10 @@ class HomeFragment : Fragment() {
         )
         activity.themeManager.applyStatusBarTheme(activity)
 
-        view.add_tab_button.isVisible = !Settings.instance!!.useNewTabTray
-        view.tab_button.isVisible = Settings.instance!!.useNewTabTray
-
         view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
             sessionControlView?.update(it)
 
-            if (Settings.instance?.useNewTabTray == true) {
+            if (requireContext().settings().tabTrayEnabled) {
                view.tab_button.setCountWithAnimation(it.tabs.size)
             }
         }
@@ -556,6 +553,9 @@ class HomeFragment : Fragment() {
             scrollToSelectedTab()
             sharedViewModel.shouldScrollToSelectedTab = false
         }
+
+        view?.add_tab_button?.isVisible = !requireContext().settings().tabTrayEnabled
+        view?.tab_button?.isVisible = requireContext().settings().tabTrayEnabled
     }
 
     override fun onPause() {
