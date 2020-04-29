@@ -6,8 +6,8 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
-import com.airbnb.lottie.LottieCompositionFactory
-import com.airbnb.lottie.LottieDrawable
+// import com.airbnb.lottie.LottieCompositionFactory
+// import com.airbnb.lottie.LottieDrawable
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -92,45 +92,45 @@ class DefaultToolbarIntegration(
         toolbar.display.menuBuilder = toolbarMenu.menuBuilder
         toolbar.private = isPrivate
 
-        val task = LottieCompositionFactory
-            .fromRawRes(
-                context,
-                ThemeManager.resolveAttribute(R.attr.shieldLottieFile, context)
-            )
-        task.addListener { result ->
-            val lottieDrawable = LottieDrawable()
-            lottieDrawable.composition = result
-
-            toolbar.display.indicators =
-                if (context.settings().shouldUseTrackingProtection) {
-                    listOf(
-                        DisplayToolbar.Indicators.TRACKING_PROTECTION,
-                        DisplayToolbar.Indicators.SECURITY,
-                        DisplayToolbar.Indicators.EMPTY
-                    )
-                } else {
-                    listOf(
-                        DisplayToolbar.Indicators.SECURITY,
-                        DisplayToolbar.Indicators.EMPTY
-                    )
-                }
-
-            toolbar.display.displayIndicatorSeparator =
-                context.settings().shouldUseTrackingProtection
-
-            toolbar.display.icons = toolbar.display.icons.copy(
-                emptyIcon = null,
-                trackingProtectionTrackersBlocked = lottieDrawable,
-                trackingProtectionNothingBlocked = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.ic_tracking_protection_enabled
-                )!!,
-                trackingProtectionException = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.ic_tracking_protection_disabled
-                )!!
-            )
-        }
+//        val task = LottieCompositionFactory
+//            .fromRawRes(
+//                context,
+//                ThemeManager.resolveAttribute(R.attr.shieldLottieFile, context)
+//            )
+//        task.addListener { result ->
+//            val lottieDrawable = LottieDrawable()
+//            lottieDrawable.composition = result
+//
+//            toolbar.display.indicators =
+//                if (context.settings().shouldUseTrackingProtection) {
+//                    listOf(
+//                        DisplayToolbar.Indicators.TRACKING_PROTECTION,
+//                        DisplayToolbar.Indicators.SECURITY,
+//                        DisplayToolbar.Indicators.EMPTY
+//                    )
+//                } else {
+//                    listOf(
+//                        DisplayToolbar.Indicators.SECURITY,
+//                        DisplayToolbar.Indicators.EMPTY
+//                    )
+//                }
+//
+//            toolbar.display.displayIndicatorSeparator =
+//                context.settings().shouldUseTrackingProtection
+//
+//            toolbar.display.icons = toolbar.display.icons.copy(
+//                emptyIcon = null,
+//                trackingProtectionTrackersBlocked = lottieDrawable,
+//                trackingProtectionNothingBlocked = AppCompatResources.getDrawable(
+//                    context,
+//                    R.drawable.ic_tracking_protection_enabled
+//                )!!,
+//                trackingProtectionException = AppCompatResources.getDrawable(
+//                    context,
+//                    R.drawable.ic_tracking_protection_disabled
+//                )!!
+//            )
+//        }
 
         val tabsAction = TabCounterToolbarButton(sessionManager, isPrivate) {
             toolbar.hideKeyboard()

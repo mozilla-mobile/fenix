@@ -40,12 +40,12 @@ object Versions {
     const val mockito = "2.24.5"
     const val mockk = "1.9.kotlin12"
 
-    const val mockwebserver = "3.11.0"
+    const val mockwebserver = "4.5.0"
     const val uiautomator = "2.2.0"
 
     const val google_ads_id_version = "16.0.0"
 
-    const val airbnb_lottie = "3.3.0"
+//    const val airbnb_lottie = "3.3.0"
 }
 
 @Suppress("unused")
@@ -204,7 +204,7 @@ object Deps {
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
 
-    const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
+//    const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 
     const val detektApi = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val detektTest = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
