@@ -55,12 +55,7 @@ def main():
     print("| matrix | result | logs |\n")
     print("| --- | --- | --- |\n")
     for matrix, matrix_result in matrix_ids.items():
-        if (
-            matrix_result["outcome"] != "success"
-        ):
-            print(
-                "| {matrixId} | {outcome} | [logs]({webLink}) |\n".format(**matrix_result)
-            )
+        print("| {matrixId} | {outcome} | [logs]({webLink}) |\n".format(**matrix_result))
 
 
 if __name__ == "__main__":
