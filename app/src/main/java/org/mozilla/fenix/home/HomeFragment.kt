@@ -244,7 +244,7 @@ class HomeFragment : Fragment() {
         view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
             sessionControlView?.update(it)
 
-            if (requireContext().settings().tabTrayEnabled) {
+            if (context?.settings()?.tabTrayEnabled == true) {
                view.tab_button.setCountWithAnimation(it.tabs.size)
             }
         }
