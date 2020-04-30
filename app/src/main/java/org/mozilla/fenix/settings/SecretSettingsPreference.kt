@@ -5,15 +5,10 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.PrivateShortcutCreateManager
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.checkAndUpdateScreenshotPermission
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 

@@ -637,11 +637,14 @@ class Settings private constructor(
         default = 0
     )
 
-    val useNewTabTray by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray),
-        default = false
-    )
-
-    val tabTrayEnabled: Boolean
-        get() = FeatureFlags.tabTray && useNewTabTray
+    var useNewTabTray: Boolean
+        get() = preferences.let {
+            val prefKey = appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray)
+            val useNewTabTray = it.getBoolean(prefKey, false)
+            FeatureFlags.tabTray && useNewTabTray }
+        set(value) {
+            preferences.edit()
+                .putBoolean(appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray), value)
+                .apply()
+        }
 }

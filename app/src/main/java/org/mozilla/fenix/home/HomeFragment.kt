@@ -244,8 +244,8 @@ class HomeFragment : Fragment() {
         view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
             sessionControlView?.update(it)
 
-            if (context?.settings()?.tabTrayEnabled == true) {
-               view.tab_button.setCountWithAnimation(it.tabs.size)
+            if (context?.settings()?.useNewTabTray == true) {
+                view.tab_button.setCountWithAnimation(it.tabs.size)
             }
         }
 
@@ -554,8 +554,10 @@ class HomeFragment : Fragment() {
             sharedViewModel.shouldScrollToSelectedTab = false
         }
 
-        view?.add_tab_button?.isVisible = !requireContext().settings().tabTrayEnabled
-        view?.tab_button?.isVisible = requireContext().settings().tabTrayEnabled
+        requireContext().settings().useNewTabTray.also {
+            view?.add_tab_button?.isVisible = !it
+            view?.tab_button?.isVisible = it
+        }
     }
 
     override fun onPause() {

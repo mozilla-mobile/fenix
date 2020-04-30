@@ -7,7 +7,6 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.content.Context
 import android.os.Build
 import android.view.View
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,10 +14,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.HomeFragmentState
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
@@ -38,6 +35,9 @@ val noCollectionMessage = AdapterItem.NoContentMessage(
     R.string.collections_description
 )
 
+// This method got a little complex with the addition of the tab tray feature flag
+// When we remove the tabs from the home screen this will get much simpler again.
+@SuppressWarnings("LongParameterList", "ComplexMethod")
 private fun normalModeAdapterItems(
     context: Context,
     tabs: List<Tab>,
@@ -55,7 +55,7 @@ private fun normalModeAdapterItems(
         items.add(AdapterItem.TopSiteList(topSites))
     }
 
-    val useNewTabTray = context.settings().tabTrayEnabled
+    val useNewTabTray = context.settings().useNewTabTray
 
     if (!useNewTabTray) {
         items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
@@ -115,7 +115,7 @@ private fun showCollections(
 private fun privateModeAdapterItems(context: Context, tabs: List<Tab>): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
 
-    val useNewTabTray = context.settings().tabTrayEnabled
+    val useNewTabTray = context.settings().useNewTabTray
 
     if (useNewTabTray) {
         items.add(AdapterItem.PrivateBrowsingDescription)
