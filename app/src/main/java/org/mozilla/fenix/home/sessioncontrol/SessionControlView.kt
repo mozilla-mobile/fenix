@@ -56,6 +56,7 @@ private fun normalModeAdapterItems(
     }
 
     val useNewTabTray = context.settings().tabTrayEnabled
+
     if (!useNewTabTray) {
         items.add(AdapterItem.TabHeader(false, tabs.isNotEmpty()))
     }
@@ -75,6 +76,10 @@ private fun normalModeAdapterItems(
         tabs.isEmpty() && collections.isNotEmpty() -> {
             if (!useNewTabTray) { items.add(noTabMessage) }
             showCollections(collections, expandedCollections, tabs, items)
+        }
+
+        tabs.isEmpty() && collections.isEmpty() && !useNewTabTray -> {
+            items.add(noTabMessage)
         }
     }
 
