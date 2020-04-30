@@ -8,9 +8,6 @@ from pathlib import Path
 import json
 import yaml
 
-import random
-
-
 def parse_args(cmdln_args):
     parser = argparse.ArgumentParser(description="Parse UI test logs an results")
     parser.add_argument(
@@ -60,8 +57,6 @@ def main():
     for matrix, matrix_result in matrix_ids.items():
         if (
             matrix_result["outcome"] != "success"
-            # To show example out for green run (FIXME: remove)
-            or random.random() < 0.1
         ):
             print(
                 "| {matrixId} | {outcome} | [logs]({webLink}) |\n".format(**matrix_result)
