@@ -113,6 +113,7 @@ function failure_check() {
     echo
 
     mkdir -p /builds/worker/artifacts/github
+    chmod +x $PATH_TEST/parse-ui-test.py
     $PATH_TEST/parse-ui-test.py \
         --exit-code "${exitcode}" \
         --log flank.log \
