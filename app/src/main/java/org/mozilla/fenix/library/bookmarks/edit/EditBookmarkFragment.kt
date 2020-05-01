@@ -6,10 +6,14 @@ package org.mozilla.fenix.library.bookmarks.edit
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -43,6 +47,8 @@ import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
+
+import mozilla.components.browser.menu.item.MenuButtonClick
 
 /**
  * Menu to edit the name, URL, and location of a bookmark item.
@@ -106,6 +112,27 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 }
             }
         }
+    }
+
+    private class DrawOnce(private val view: View) : ViewTreeObserver.OnDrawListener {
+        private val uiHandler = Handler(Looper.getMainLooper())
+
+        override fun onDraw() {
+            // I verified that this frame is the one that draws the EditBookmark by adding thread.sleep
+            // into uiHandler.post.
+            uiHandler.post {
+                view.viewTreeObserver.removeOnDrawListener(this)
+            }
+
+            val now = SystemClock.elapsedRealtime()
+            android.util.Log.e("lol", "displayed ${now - MenuButtonClick.initialMillis}")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        requireView().viewTreeObserver.addOnDrawListener(DrawOnce(requireView()))
     }
 
     private fun initToolbar() {
