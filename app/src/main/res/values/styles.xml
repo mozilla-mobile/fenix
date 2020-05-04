@@ -527,23 +527,4 @@
     <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textColorHint">@color/search_view_hint_color</item>
     </style>
-
-    <style name="PopupKebabMenu" parent="@style/Widget.AppCompat.PopupWindow">
-        <item name="android:popupBackground">@null</item>
-        <item name="android:background">@drawable/rounded_all_corners</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:dropDownWidth">wrap_content</item>
-        <item name="android:minWidth">20dp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:letterSpacing">0.02</item>
-        <item name="android:lineSpacingExtra">6sp</item>
-        <item name="android:paddingStart">1dp</item>
-        <item name="android:stateListAnimator">@null</item>
-        <item name="android:dropDownHorizontalOffset">4dp</item>
-        <item name="android:dropDownVerticalOffset">-30dp</item>
-        <item name="android:popupElevation">20dp</item>
-        <item name="android:elevation">0dp</item>
-    </style>
 </resources>

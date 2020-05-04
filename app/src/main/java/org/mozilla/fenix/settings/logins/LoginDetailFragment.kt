@@ -80,9 +80,16 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             loginDetailView.update(it)
             login = savedLoginsStore.state.currentItem
             setUpCopyButtons()
-            showToolbar(savedLoginsStore.state.currentItem?.origin ?: "")
+            showToolbar(titleFromHostname(savedLoginsStore.state.currentItem?.origin ?: ""))
             setUpPasswordReveal()
         }
+    }
+
+    private fun titleFromHostname(hostname: String): String {
+        return hostname
+            .replace(Regex("^http://"), "")
+            .replace(Regex("^https://"), "")
+            .replace(Regex("^www\\d*\\."), "")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
