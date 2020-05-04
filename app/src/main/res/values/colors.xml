@@ -66,6 +66,8 @@
     <color name="tab_tray_item_selected_background_light_theme">@color/violet_70_12a</color>
     <color name="tab_tray_toolbar_background_light_theme">@color/light_grey_10</color>
     <color name="tab_tray_item_divider_light_theme">@color/light_grey_30</color>
+    <color name="tab_tray_item_media_stroke">#ffffff</color>
+    <color name="tab_tray_item_media_background">#000000</color>
 
     <!-- Dark theme color palette -->
     <color name="primary_text_dark_theme">#FBFBFE</color>

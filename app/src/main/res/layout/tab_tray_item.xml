@@ -8,6 +8,20 @@
     android:layout_width="match_parent"
     android:layout_height="88dp">
 
+    <ImageButton
+        android:id="@+id/play_pause_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/mozac_feature_media_notification_action_pause"
+        android:elevation="10dp"
+        android:visibility="gone"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="80dp"
+        app:layout_constraintStart_toStartOf="@id/mozac_browser_tabstray_card"
+        app:srcCompat="@drawable/play_with_background" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/mozac_browser_tabstray_card"
         android:layout_width="92dp"
