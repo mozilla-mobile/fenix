@@ -12,6 +12,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import mozilla.components.concept.engine.prompt.ShareData
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import kotlinx.android.synthetic.main.fragment_tab_tray.tabsTray
 import kotlinx.android.synthetic.main.fragment_tab_tray.view.*
@@ -32,6 +33,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.utils.allowUndo
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer, UserInteractionHandler {
@@ -130,14 +132,40 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
                 true
             }
             R.id.tab_tray_close_menu_item -> {
-                val tabs = getListOfSessions()
-                tabs.forEach {
-                    sessionManager.remove(it)
-                }
+                closeAllTabs()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun closeAllTabs() {
+        val tabs = getListOfSessions()
+        val snapshot = tabs
+            .map(sessionManager::createSessionSnapshot)
+            .map { it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState()) }
+            .let { SessionManager.Snapshot(it, -1) }
+
+        tabs.forEach {
+            sessionManager.remove(it)
+        }
+
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val snackbarMessage = if (isPrivate) {
+            getString(R.string.snackbar_private_tabs_closed)
+        } else {
+            getString(R.string.snackbar_tabs_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo),
+            {
+                sessionManager.restore(snapshot)
+            },
+            operation = { }
+        )
     }
 
     private fun saveToCollection() {
@@ -169,15 +197,15 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
     override fun onStart() {
         super.onStart()
 
-        tabsFeature?.start()
         tabsTray.register(this)
+        tabsFeature?.start()
     }
 
     override fun onStop() {
         super.onStop()
 
-        tabsFeature?.stop()
         tabsTray.unregister(this)
+        tabsFeature?.stop()
     }
 
     override fun onBackPressed(): Boolean {
@@ -196,7 +224,28 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
     }
 
     override fun onTabClosed(tab: Tab) {
-        // noop
+        val snapshot = sessionManager
+            .findSessionById(tab.id)?.let {
+            sessionManager.createSessionSnapshot(it)
+        } ?: return
+
+        val state = snapshot.engineSession?.saveState()
+
+        val snackbarMessage = if (snapshot.session.private) {
+            getString(R.string.snackbar_private_tab_closed)
+        } else {
+            getString(R.string.snackbar_tab_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo),
+            {
+                sessionManager.add(snapshot.session, false, engineSessionState = state)
+            },
+            operation = { }
+        )
     }
 
     override fun onTabSelected(tab: Tab) {
