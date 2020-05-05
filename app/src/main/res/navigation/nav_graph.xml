@@ -7,8 +7,9 @@
 
     <action
         android:id="@+id/action_global_home"
+        app:destination="@+id/homeFragment"
         app:popUpTo="@id/homeFragment"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_browser"
@@ -48,6 +49,17 @@
     <action android:id="@+id/action_global_accountSettingsFragment" app:destination="@id/accountSettingsFragment" />
     <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" />
     <action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
+    <action android:id="@+id/action_global_tabTrayFragment" app:destination="@id/tabTrayFragment"/>
+
+    <fragment
+        android:id="@+id/tabTrayFragment"
+        android:name="org.mozilla.fenix.tabtray.TabTrayFragment">
+        <action
+            android:id="@+id/action_tabTrayFragment_to_createCollectionFragment"
+            app:destination="@+id/collectionCreationFragment"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in" />
+    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
@@ -163,6 +175,9 @@
         <action
             android:id="@+id/action_browserFragment_to_trackingProtectionPanelDialogFragment"
             app:destination="@id/trackingProtectionPanelDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_tabsTrayFragment"
+            app:destination="@+id/tabTrayFragment" />
     </fragment>
 
     <fragment
@@ -227,6 +242,10 @@
         <action
             android:id="@+id/action_bookmarkEditFragment_to_bookmarkSelectFolderFragment"
             app:destination="@id/bookmarkSelectFolderFragment" />
+        <argument
+            android:name="requiresSnackbarPaddingForToolbar"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -347,6 +366,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_secretSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:destination="@id/secretSettingsPreference" />
         <action
             android:id="@+id/action_settingsFragment_to_customizationFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -482,6 +508,10 @@
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.mozilla.fenix.settings.about.AboutFragment"/>
+    <fragment
+        android:id="@+id/secretSettingsPreference"
+        android:name="org.mozilla.fenix.settings.SecretSettingsPreference"
+        android:label="@string/preferences_debug_settings" />
     <fragment
         android:id="@+id/crashReporterFragment"
         android:name="org.mozilla.fenix.crashes.CrashReporterFragment">

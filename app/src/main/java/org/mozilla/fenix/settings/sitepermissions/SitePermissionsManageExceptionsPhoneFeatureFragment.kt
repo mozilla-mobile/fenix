@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.ALLOWED
@@ -163,8 +164,11 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
             PhoneFeature.AUTOPLAY_AUDIBLE -> sitePermissions.copy(autoplayAudible = status)
             PhoneFeature.AUTOPLAY_INAUDIBLE -> sitePermissions.copy(autoplayInaudible = status)
         }
-        lifecycleScope.launch(IO) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
             requireComponents.core.permissionStorage.updateSitePermissions(updatedSitePermissions)
+            launch(Main) {
+                requireComponents.tryReloadTabBy(updatedSitePermissions.origin)
+            }
         }
     }
 }

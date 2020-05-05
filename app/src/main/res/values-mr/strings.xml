@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_2">खाजगी Firefox पूर्वावलोकन</string>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_3">Firefox पूर्वावलोकन (खाजगी)</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">खाजगी %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (खाजगी)</string>
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">अधिक पर्याय</string>
@@ -18,13 +18,12 @@
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">आपले उघडे टॅब येथे दाखविले जातील.</string>
 
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s Mozilla द्वारा निर्मित केले गेले आहे.</string>
+
     <!-- Private Browsing -->
     <!-- Title for private session option -->
     <string name="private_browsing_title">आपण खाजगी सत्रात आहात</string>
-    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description">आपण अप किंवा सर्व खाजगी टॅब बंद केल्यावर आपला शोध किंवा ब्राऊझिंग इतिहास %1$s मिटवते. यामुळे आपण वापरणाऱ्या साईट किंवा इंटरनेट सेवा देणार्यांपासून आपण होत नाही,
-         पण  आपण ऑनलाईन काय करता हे आपले डिव्हाईस वापरणाऱ्या इतरांपासून खाजगी ठेवण्यास सोपे होते.</string>
     <string name="private_browsing_common_myths">खाजगी ब्राउझिंग बद्दल सामान्य समजुती</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">सत्र हटवा</string>
@@ -110,6 +109,10 @@
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">स्वरूप</string>
 
+    <!-- Error message to show when the user tries to access a scheme not
+        handled by the app (Ex: blob, tel etc) -->
+    <string name="unknown_scheme_error_message">कनेक्ट करण्यात अक्षम. अपरिचित URL योजना.</string>
+
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">निवडलेली भाषा</string>
@@ -151,6 +154,9 @@
     <string name="search_widget_text_short">शोधा</string>
     <!-- Text preview for larger sized widgets -->
     <string name="search_widget_text_long">वेबवर शोधा</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">व्हॉईस शोध</string>
 
     <!-- Preferences -->
     <!-- Title for the settings page-->
@@ -196,10 +202,18 @@
     <string name="preferences_private_browsing_options">गोपनीय ब्राउझिंग</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">दुवा खाजगी टॅबमध्ये उघडा</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">खाजगी ब्राउझिंग मध्ये स्क्रीनशॉटची अनुमती द्या</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">खाजगी ब्राउझिंग शॉर्टकट जोडा</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">सुलभता</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">सानुकूल Firefox खाते सर्व्हर</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">सानुकूल समक्रमण सर्व्हर</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Firefox खाते/समक्रमण सर्व्हर सुधारित. बदल लागू करण्यासाठी अॅपलिकेशन बंद करत आहे…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">खाते</string>
     <!-- Preference shown on banner to sign into account -->
@@ -276,10 +290,11 @@
     <string name="sync_last_synced_summary">शेवटचे सिंक: %s</string>
     <!-- Label summary showing never synced -->
     <string name="sync_never_synced_summary">शेवटचे सिंक: कधीच नाही</string>
+
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
-    <string name="default_device_name">%s %s %s वर</string>
+    <string name="default_device_name_2">%2$s %3$s वर %1$s</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -456,6 +471,14 @@
     <string name="history_delete_all_dialog">आपला ब्राऊझिंग इतिहास नक्की पुसायचा का?</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">पुसून टाका</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">प्रत बनवा</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">सामायिक करा</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">नवीन टॅब मध्ये उघडा</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">खाजगी टॅब मध्ये उघडा</string>
     <!-- Text for the button to delete a single history item -->
     <string name="history_delete_item">नष्ट करा</string>
     <!-- History multi select title in app bar
@@ -555,8 +578,6 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s हटविले</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">निवडलेल्या वाचनखुणा हटवत आहे</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">पूर्ववत् करा</string>
 
@@ -829,6 +850,16 @@
     <string name="preferences_delete_browsing_data_snackbar">ब्राउझिंग डेटा हटवला</string>
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">ब्राउझिंगची माहिती नष्ट करत आहे…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">Firefox Preview आता Firefox Nightly आहे</string>
+
+    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button">Mozilla Firefox वेब ब्राऊझर मिळवा</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly हलले आहे</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message

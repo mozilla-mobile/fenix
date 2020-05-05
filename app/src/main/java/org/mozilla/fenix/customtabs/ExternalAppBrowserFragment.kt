@@ -31,7 +31,6 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
@@ -73,7 +72,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         activity = activity,
                         engineLayout = view.swipeRefresh,
                         onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
-                        isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate,
+                        isPrivate = it.private,
                         shouldReverseItems = !activity.settings().shouldUseBottomToolbar
                     ),
                     owner = this,
@@ -135,7 +134,13 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                             requireComponents.core.sessionManager,
                             requireComponents.useCases.sessionUseCases.reload,
                             customTabSessionId,
-                            manifest
+                            manifest,
+                            WebAppSiteControlsBuilder(
+                                requireComponents.core.sessionManager,
+                                requireComponents.useCases.sessionUseCases.reload,
+                                customTabSessionId,
+                                manifest
+                            )
                         )
                     )
                 } else {

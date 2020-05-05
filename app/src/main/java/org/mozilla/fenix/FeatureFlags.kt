@@ -26,11 +26,6 @@ object FeatureFlags {
     val dynamicBottomToolbar = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables deleting individual tracking protection exceptions.
-     */
-    val deleteIndividualTrackingProtectionExceptions = Config.channel.isNightlyOrDebug
-
-    /**
      * Integration of push support provided by `feature-push` component into the Gecko engine.
      *
      * Behind nightly flag until all fatal bugs are resolved.
@@ -40,7 +35,12 @@ object FeatureFlags {
     const val webPushIntegration = true
 
     /**
-     * Enables picture-in-picture feature
+     * Enables tip feature
      */
-    val pictureInPicture = Config.channel.isNightlyOrDebug
+    val tips = Config.channel.isDebug
+
+    /**
+     * Enables new tab tray pref
+     */
+    val tabTray = Config.channel.isNightlyOrDebug
 }

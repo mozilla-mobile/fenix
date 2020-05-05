@@ -26,6 +26,7 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -64,6 +65,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -77,6 +79,8 @@ import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.tips.FenixTipManager
+import org.mozilla.fenix.components.tips.providers.MigrationTipProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
@@ -96,6 +100,7 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.FragmentPreDrawManager
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
 import java.lang.ref.WeakReference
@@ -199,7 +204,8 @@ class HomeFragment : Fragment() {
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
                     tabs = emptyList(),
-                    topSites = requireComponents.core.topSiteStorage.cachedTopSites
+                    topSites = requireComponents.core.topSiteStorage.cachedTopSites,
+                    tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip()
                 )
             )
         }
@@ -211,7 +217,7 @@ class HomeFragment : Fragment() {
                 fragmentStore = homeFragmentStore,
                 navController = findNavController(),
                 browsingModeManager = browsingModeManager,
-                lifecycleScope = viewLifecycleOwner.lifecycleScope,
+                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
                 closeTab = ::closeTab,
                 closeAllTabs = ::closeAllTabs,
                 getListOfTabs = ::getListOfTabs,
@@ -229,13 +235,19 @@ class HomeFragment : Fragment() {
         updateLayout(view)
         setOffset(view)
         sessionControlView = SessionControlView(
-            homeFragmentStore,
             view.sessionControlRecyclerView,
             sessionControlInteractor,
-            viewLifecycleOwner,
             homeViewModel
         )
         activity.themeManager.applyStatusBarTheme(activity)
+
+        view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            sessionControlView?.update(it)
+
+            if (context?.settings()?.useNewTabTray == true) {
+                view.tab_button.setCountWithAnimation(it.tabs.size)
+            }
+        }
 
         return view
     }
@@ -341,6 +353,12 @@ class HomeFragment : Fragment() {
             navigateToSearch()
         }
 
+        view.tab_button.setOnClickListener {
+            invokePendingDeleteJobs()
+            hideOnboardingIfNeeded()
+            findNavController().navigate(HomeFragmentDirections.actionGlobalTabTrayFragment())
+        }
+
         PrivateBrowsingButtonView(
             privateBrowsingButton,
             browsingModeManager
@@ -379,7 +397,8 @@ class HomeFragment : Fragment() {
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
                 tabs = getListOfSessions().toTabs(),
-                topSites = components.core.topSiteStorage.cachedTopSites
+                topSites = components.core.topSiteStorage.cachedTopSites,
+                tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip()
             )
         )
 
@@ -534,6 +553,11 @@ class HomeFragment : Fragment() {
             scrollToSelectedTab()
             sharedViewModel.shouldScrollToSelectedTab = false
         }
+
+        requireContext().settings().useNewTabTray.also {
+            view?.add_tab_button?.isVisible = !it
+            view?.tab_button?.isVisible = it
+        }
     }
 
     override fun onPause() {
@@ -684,7 +708,7 @@ class HomeFragment : Fragment() {
                 HomeMenu.Item.Quit -> activity?.let { activity ->
                     deleteAndQuit(
                         activity,
-                        lifecycleScope,
+                        viewLifecycleOwner.lifecycleScope,
                         view?.let { view -> FenixSnackbar.make(
                             view = view,
                             isDisplayedWithBrowserToolbar = false
@@ -823,7 +847,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun scrollToTheTop() {
-        lifecycleScope.launch(Main) {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             delay(ANIM_SCROLL_DELAY)
             sessionControlView!!.view.smoothScrollToPosition(0)
         }

@@ -22,12 +22,15 @@
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">您開啟的分頁將顯示於此處。</string>
 
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s 是由 Mozilla 所打造。</string>
+
     <!-- Private Browsing -->
     <!-- Title for private session option -->
     <string name="private_browsing_title">您在隱私瀏覽模式當中</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description">%1$s 會在關閉程式或所有隱私分頁時，清除您的搜尋與上網紀錄。雖然這樣做不會讓您對網站或電信業者匿名，但還是可以更簡單就讓使用此裝置的人，無法得知您在線上做了什麼事。</string>
+    <string name="private_browsing_placeholder_description_2">%1$s 會在您關閉隱私分頁或結束應用程式時清除您的搜尋與上網紀錄。雖然這樣做不會讓您對網站或電信業者匿名，但還是可以更簡單就讓與您使用相同裝置的人無法得知您在線上做了什麼事。</string>
     <string name="private_browsing_common_myths">隱私瀏覽功能的常見迷思</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">清除瀏覽階段</string>
@@ -475,11 +478,18 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">移除</string>
 
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s（隱私瀏覽模式）</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">刪除瀏覽紀錄</string>
     <!-- Text for the dialog to confirm clearing all history -->
     <string name="history_delete_all_dialog">您確定要清除上網紀錄？</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">已刪除瀏覽紀錄</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">已刪除 %1$s</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">清除</string>
     <!-- History overflow menu copy button -->
@@ -536,6 +546,10 @@
     <string name="bookmark_edit">編輯書籤</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">選擇資料夾</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">您確定要刪除這個資料夾嗎？</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">已刪除 %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">新增資料夾</string>
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
@@ -590,7 +604,7 @@
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">已刪除書籤 %1$s</string>
     <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">正在刪除選擇的書籤</string>
+    <string name="bookmark_deletion_multiple_snackbar_message_2">已刪除書籤</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">還原</string>
 
@@ -883,6 +897,28 @@
 
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">正在刪除上網資料…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">Firefox Nightly 已被 Firefox Preview 取代</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">Firefox Nightly 每天都會更新一次，當中包含實驗中的新功能，然而這些新功能可能會較不穩定。若須有較穩定的使用體驗，請下載我們的 Beta 測試版。</string>
+    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button">下載 Mozilla Firefox Browser</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly 版本更新</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">此應用程式不會再收到安全性更新。請改用新版的 Nightly 並停用此應用程式。\n\n請註冊 Firefox 帳號，即可快速移轉書籤、登入資訊、瀏覽紀錄到新版本當中。</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">改用新版 Nightly</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly 版本更新</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">此應用程式不會再收到安全性更新。請下載新版的 Nightly 並停用此應用程式。\n\n請註冊 Firefox 帳號，即可快速移轉書籤、登入資訊、瀏覽紀錄到新版本當中。</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">下載新版 Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message

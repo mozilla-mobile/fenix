@@ -16,12 +16,9 @@
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">הלשוניות הפתוחות שלך יופיעו כאן.</string>
 
-    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description">
-         ‏%1$s מנקה את היסטוריית החיפוש והגלישה שלך כשהיישומון נסגר או בעת סגירת כל הלשוניות הפרטיות. פעולה זו אמנם לא הופכת אותך לאלמוני כלפי אתרים או ספק האינטרנט שלך,
-        אבל כן מקלה עליך בשמירה על הפעולות המקוונות שלך מפני כל מי שמשתמש במכשיר זה.
-    </string>
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">‏%1$s נוצר על־ידי Mozilla.</string>
+
     <string name="private_browsing_common_myths">
        מיתוסים נפוצים על גלישה פרטית
     </string>
@@ -426,11 +423,18 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">הסרה</string>
 
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">‏%1$s (מצב פרטי)</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">מחיקת היסטוריה</string>
     <!-- Text for the dialog to confirm clearing all history -->
     <string name="history_delete_all_dialog">האם ברצונך לנקות את ההיסטוריה שלך?</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">ההיסטוריה נמחקה</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">נמחק %1$s</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">ניקוי</string>
     <!-- History overflow menu copy button -->
@@ -479,6 +483,10 @@
     <string name="bookmark_edit">עריכת סימנייה</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">בחירת תיקייה</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">האם ברצונך למחוק תיקייה זו?</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">נמחק %1$s</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">הוספת תיקייה</string>
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
@@ -531,7 +539,7 @@
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">נמחק %1$s</string>
     <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">בתהליך מחיקת הסימניות שנבחרו</string>
+    <string name="bookmark_deletion_multiple_snackbar_message_2">הסימניות נמחקו</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ביטול</string>
 
@@ -768,6 +776,18 @@
 
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">בתהליך מחיקת נתוני גלישה…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">‏Firefox Preview הוא עכשיו Firefox Nightly</string>
+    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button">קבלת הדפדפן Mozilla Firefox</string>
+
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">מעבר ל־NIghtly החדש</string>
+
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">קבלת ה־Nightly החדש</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message

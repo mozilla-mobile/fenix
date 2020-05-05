@@ -24,6 +24,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
@@ -46,7 +47,7 @@ class Settings private constructor(
     companion object {
         const val showLoginsSecureWarningSyncMaxCount = 1
         const val showLoginsSecureWarningMaxCount = 1
-        const val trackingProtectionOnboardingMaximumCount = 2
+        const val trackingProtectionOnboardingMaximumCount = 1
         const val FENIX_PREFERENCES = "fenix_preferences"
 
         private const val BLOCKED_INT = 0
@@ -136,6 +137,12 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_allow_screenshots_in_private_mode),
         default = true
     )
+
+    // If any of the prefs have been modified, quit displaying the fenix moved tip
+    fun shouldDisplayFenixMovingTip(): Boolean =
+        preferences.getBoolean(appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip), true) &&
+            preferences.getBoolean(appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip), true) &&
+            preferences.getBoolean(appContext.getString(R.string.pref_key_migrating_from_fenix_tip), true)
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
@@ -249,6 +256,11 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection),
         default = true
     )
+
+    fun isDefaultBrowser(): Boolean {
+        val browsers = BrowsersCache.all(appContext)
+        return browsers.isDefaultBrowser
+    }
 
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
@@ -624,4 +636,15 @@ class Settings private constructor(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
+
+    var useNewTabTray: Boolean
+        get() = preferences.let {
+            val prefKey = appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray)
+            val useNewTabTray = it.getBoolean(prefKey, false)
+            FeatureFlags.tabTray && useNewTabTray }
+        set(value) {
+            preferences.edit()
+                .putBoolean(appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray), value)
+                .apply()
+        }
 }

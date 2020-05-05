@@ -35,6 +35,7 @@ import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Tab
+import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.settings.SupportUtils
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -163,6 +164,8 @@ interface SessionControlController {
      * @see [TabSessionInteractor.onOpenNewTabClicked]
      */
     fun handleonOpenNewTabClicked()
+
+    fun handleCloseTip(tip: Tip)
 }
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -172,7 +175,7 @@ class DefaultSessionControlController(
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
     private val browsingModeManager: BrowsingModeManager,
-    private val lifecycleScope: CoroutineScope,
+    private val viewLifecycleScope: CoroutineScope,
     private val closeTab: (sessionId: String) -> Unit,
     private val closeAllTabs: (isPrivateMode: Boolean) -> Unit,
     private val getListOfTabs: () -> List<Tab>,
@@ -252,7 +255,7 @@ class DefaultSessionControlController(
     override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {
         metrics.track(Event.CollectionTabRemoved)
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleScope.launch(Dispatchers.IO) {
             tabCollectionStorage.removeTabFromCollection(collection, tab)
         }
     }
@@ -301,7 +304,7 @@ class DefaultSessionControlController(
             metrics.track(Event.PocketTopSiteRemoved)
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleScope.launch(Dispatchers.IO) {
             topSiteStorage.removeTopSite(topSite)
         }
     }
@@ -384,6 +387,10 @@ class DefaultSessionControlController(
 
     override fun handleonOpenNewTabClicked() {
         openSearchScreen()
+    }
+
+    override fun handleCloseTip(tip: Tip) {
+        fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip))
     }
 
     private fun showCollectionCreationFragment(

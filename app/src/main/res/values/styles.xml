@@ -7,6 +7,7 @@
     <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -20,7 +21,7 @@
         <item name="alertDialogTheme">@style/DialogStyleNormal</item>
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
-        
+
         <item name="mozacInputLayoutErrorTextColor"
             tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
         <item name="mozacInputLayoutErrorIconColor"
@@ -65,6 +66,11 @@
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
+
+        <item name="tabTrayItemText">@color/tab_tray_item_text_normal_theme</item>
+        <item name="tabTrayItemUrl">@color/tab_tray_item_url_normal_theme</item>
+        <item name="tabTrayItemBackground">@color/foundation_normal_theme</item>
+        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -112,6 +118,7 @@
     <style name="PrivateThemeBase" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -169,6 +176,12 @@
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
         <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
+
+        <!-- Tab Tray -->
+        <item name="tabTrayItemText">@color/tab_tray_item_text_private_theme</item>
+        <item name="tabTrayItemUrl">@color/tab_tray_item_url_private_theme</item>
+        <item name="tabTrayItemBackground">@color/foundation_private_theme</item>
+        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -482,5 +495,9 @@
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
+    </style>
+
+    <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColorHint">@color/search_view_hint_color</item>
     </style>
 </resources>

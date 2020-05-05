@@ -89,7 +89,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
-import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
@@ -186,7 +185,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
         return getSessionById()?.also { session ->
             val browserToolbarController = DefaultBrowserToolbarController(
-                store = browserFragmentStore,
                 activity = requireActivity(),
                 navController = findNavController(),
                 readerModeController = DefaultReaderModeController(
@@ -194,24 +192,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     (activity as HomeActivity).browsingModeManager.mode.isPrivate,
                     view.readerViewControlsBar
                 ),
-                browsingModeManager = (activity as HomeActivity).browsingModeManager,
                 sessionManager = requireComponents.core.sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 engineView = engineView,
                 swipeRefresh = swipeRefresh,
                 browserAnimator = browserAnimator,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                getSupportUrl = {
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.HELP
-                    )
-                },
                 openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
                     action = Intent.ACTION_VIEW
                 },
-                bookmarkTapped = { lifecycleScope.launch { bookmarkTapped(it) } },
-                scope = lifecycleScope,
+                bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
+                scope = viewLifecycleOwner.lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
                 topSiteStorage = requireComponents.core.topSiteStorage,
                 sharedViewModel = sharedViewModel
@@ -226,7 +217,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                lifecycleOwner = this.viewLifecycleOwner
+                lifecycleOwner = viewLifecycleOwner
             )
 
             toolbarIntegration.set(
@@ -327,14 +318,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
-            if (FeatureFlags.pictureInPicture) {
-                pipFeature = PictureInPictureFeature(
-                    requireComponents.core.sessionManager,
-                    requireActivity(),
-                    customTabSessionId,
-                    ::pipModeChanged
-                )
-            }
+            pipFeature = PictureInPictureFeature(
+                requireComponents.core.sessionManager,
+                requireActivity(),
+                customTabSessionId,
+                ::pipModeChanged
+            )
 
             appLinksFeature.set(
                 feature = AppLinksFeature(
@@ -399,6 +388,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             sitePermissionsFeature.set(
                 feature = SitePermissionsFeature(
                     context = context,
+                    storage = context.components.core.permissionStorage.permissionsStorage,
                     sessionManager = sessionManager,
                     fragmentManager = parentFragmentManager,
                     promptsStyling = SitePermissionsFeature.PromptsStyling(
@@ -407,10 +397,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         positiveButtonBackgroundColor = accentHighContrastColor,
                         positiveButtonTextColor = R.color.photonWhite
                     ),
-                    sessionId = customTabSessionId
-                ) { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_APP_PERMISSIONS)
-                },
+                    sessionId = customTabSessionId,
+                    onNeedToRequestPermissions = { permissions ->
+                        requestPermissions(permissions, REQUEST_CODE_APP_PERMISSIONS)
+                    },
+                    onShouldShowRequestPermissionRationale = { shouldShowRequestPermissionRationale(it) }),
                 owner = this,
                 view = view
             )
@@ -577,9 +568,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     final override fun onPause() {
         super.onPause()
         // If we didn't enter PiP, exit full screen on pause
-        if (!enteredPip) {
+        if (!enteredPip && fullScreenFeature.onBackPressed()) {
             fullScreenChanged(false)
-            fullScreenFeature.onBackPressed()
         }
         enteredPip = false
         if (findNavController().currentDestination?.id != R.id.searchFragment) {
@@ -725,7 +715,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      */
     private fun showQuickSettingsDialog() {
         val session = getSessionById() ?: return
-        lifecycleScope.launch(Main) {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             val sitePermissions: SitePermissions? = withContext(IO) {
                 session.url.toUri().host?.let { host ->
                     val storage = requireContext().components.core.permissionStorage
@@ -768,7 +758,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             withContext(Main) {
                 nav(
                     R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(existing.guid)
+                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(existing.guid, true)
                 )
             }
         } else {
@@ -793,7 +783,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
                             nav(
                                 R.id.browserFragment,
-                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(guid)
+                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(guid, true)
                             )
                         }
                         .show()
@@ -836,6 +826,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private fun fullScreenChanged(inFullScreen: Boolean) {
         if (inFullScreen) {
+            // Close find in page bar if opened
+            findInPageIntegration.onBackPressed()
             FenixSnackbar.make(
                     view = view!!,
                     duration = Snackbar.LENGTH_SHORT,

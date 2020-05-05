@@ -35,6 +35,7 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import java.util.concurrent.Executors
@@ -69,7 +70,7 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 Log.d(LOG_TAG, "onAuthenticationSucceeded")
-                lifecycleScope.launch(Main) {
+                viewLifecycleOwner.lifecycleScope.launch(Main) {
                     // Workaround for likely biometric library bug
                     // https://github.com/mozilla-mobile/fenix/issues/8438
                     delay(SHORT_DELAY_MS)
@@ -241,7 +242,7 @@ class LoginsFragment : PreferenceFragmentCompat(), AccountObserver {
                     startActivity(intent)
                 }
                 create()
-            }.show()
+            }.show().secure(activity)
             it.settings().incrementShowLoginsSecureWarningCount()
         }
     }

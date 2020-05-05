@@ -125,7 +125,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // update it here if we're not going through the `onCreate->onStart->onResume` lifecycle chain.
         update(shouldUpdateAccountUIState = !creatingFragment)
 
-        view!!.findViewById<RecyclerView>(R.id.recycler_view)?.hideInitialScrollBar(lifecycleScope)
+        view!!.findViewById<RecyclerView>(R.id.recycler_view)
+            ?.hideInitialScrollBar(viewLifecycleOwner.lifecycleScope)
 
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
@@ -276,6 +277,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
                 null
             }
+            resources.getString(R.string.pref_key_debug_settings) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
+            }
             else -> null
         }
         directions?.let { navigateFromSettings(directions) }
@@ -326,6 +330,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         preferenceFxAOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
         preferenceSyncOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
+        findPreference<Preference>(
+            getPreferenceKey(R.string.pref_key_debug_settings)
+        )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
     }
 
     private fun navigateFromSettings(directions: NavDirections) {
@@ -377,9 +384,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             profile?.avatar?.url?.let { avatarUrl ->
                 lifecycleScope.launch(Main) {
-                    val roundedDrawable = avatarUrl.toRoundedDrawable(context, requireComponents.core.client)
+                    val roundedDrawable =
+                        avatarUrl.toRoundedDrawable(context, requireComponents.core.client)
                     preferenceFirefoxAccount?.icon =
-                        roundedDrawable ?: AppCompatResources.getDrawable(context, R.drawable.ic_account)
+                        roundedDrawable ?: AppCompatResources.getDrawable(
+                            context,
+                            R.drawable.ic_account
+                        )
                 }
             }
             preferenceSignIn?.onPreferenceClickListener = null
@@ -420,7 +431,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 settings.overrideSyncTokenServer.isNotEmpty() ||
                 settings.showSecretDebugMenuThisSession
         // Only enable changes to these prefs when the user isn't connected to an account.
-        val enabled = requireComponents.backgroundServices.accountManager.authenticatedAccount() == null
+        val enabled =
+            requireComponents.backgroundServices.accountManager.authenticatedAccount() == null
         preferenceFxAOverride?.apply {
             isVisible = show
             isEnabled = enabled

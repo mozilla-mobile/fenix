@@ -32,6 +32,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Library
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
@@ -74,6 +75,8 @@ sealed class Event {
     object SyncAuthSignIn : Event()
     object SyncAuthSignOut : Event()
     object SyncAuthScanPairing : Event()
+    object SyncAuthUseEmail : Event()
+    object SyncAuthUseEmailProblem : Event()
     object SyncAuthPaired : Event()
     object SyncAuthRecovered : Event()
     object SyncAuthOtherExternal : Event()
@@ -191,6 +194,21 @@ sealed class Event {
             // If the event is not in the allow list, we don't want to track it
             require(booleanPreferenceTelemetryAllowList.contains(preferenceKey))
         }
+    }
+
+    data class TipDisplayed(val identifier: String) : Event() {
+        override val extras: Map<Tip.displayedKeys, String>?
+            get() = hashMapOf(Tip.displayedKeys.identifier to identifier)
+    }
+
+    data class TipPressed(val identifier: String) : Event() {
+        override val extras: Map<Tip.pressedKeys, String>?
+            get() = hashMapOf(Tip.pressedKeys.identifier to identifier)
+    }
+
+    data class TipClosed(val identifier: String) : Event() {
+        override val extras: Map<Tip.closedKeys, String>?
+            get() = hashMapOf(Tip.closedKeys.identifier to identifier)
     }
 
     data class ToolbarPositionChanged(val position: Position) : Event() {
@@ -345,6 +363,21 @@ sealed class Event {
 
         override val extras: Map<AppTheme.darkThemeSelectedKeys, String>?
             get() = mapOf(AppTheme.darkThemeSelectedKeys.source to source.name)
+    }
+
+    data class SearchWithAds(val providerName: String) : Event() {
+        val label: String
+            get() = providerName
+    }
+
+    data class SearchAdClicked(val providerName: String) : Event() {
+        val label: String
+            get() = providerName
+    }
+
+    data class SearchInContent(val keyName: String) : Event() {
+        val label: String
+            get() = keyName
     }
 
     class ContextMenuItemTapped private constructor(val item: String) : Event() {
