@@ -18,21 +18,7 @@ import kotlinx.android.synthetic.main.component_saved_logins.view.progress_bar
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.components.metrics.Event
-
-/**
- * Interface for the SavedLoginsViewInteractor. This interface is implemented by objects that want
- * to respond to user interaction on the SavedLoginsView
- */
-interface SavedLoginsViewInteractor {
-    /**
-     * Called whenever one item is clicked
-     */
-    fun itemClicked(item: SavedLoginsItem)
-
-    fun onLearnMore()
-
-    fun sort(sortingStrategy: SortingStrategy)
-}
+import org.mozilla.fenix.utils.Settings
 
 /**
  * View that contains and configures the Saved Logins List
@@ -91,6 +77,7 @@ class SavedLoginsView(
  * Interactor for the saved logins screen
  */
 class SavedLoginsInteractor(
+    private val savedLoginsController: SavedLoginsController,
     private val itemClicked: (SavedLogin) -> Unit,
     private val learnMore: () -> Unit
 ) {
@@ -99,5 +86,18 @@ class SavedLoginsInteractor(
     }
     fun onLearnMore() {
         learnMore.invoke()
+    }
+    fun sort(sortingStrategy: SortingStrategy) {
+        savedLoginsController.handleSort(sortingStrategy)
+    }
+}
+
+/**
+ * Controller for the saved logins screen
+ */
+class SavedLoginsController(val store: LoginsFragmentStore, val settings: Settings) {
+    fun handleSort(sortingStrategy: SortingStrategy) {
+        store.dispatch(LoginsAction.SortLogins(sortingStrategy))
+        settings.savedLoginsSortingStrategy = sortingStrategy
     }
 }

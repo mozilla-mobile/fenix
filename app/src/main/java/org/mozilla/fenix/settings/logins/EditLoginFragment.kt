@@ -42,6 +42,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 
 /**
  * Displays the editable saved login information for a single website.
@@ -62,7 +63,10 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 LoginsListState(
                     isLoading = true,
                     loginList = listOf(),
-                    filteredItems = listOf()
+                    filteredItems = listOf(),
+                    searchedForText = null,
+                    sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
                 )
             )
         }
@@ -176,12 +180,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         requireContext().components.core.passwordsStorage.update(loginToSave)
 
     private fun syncAndUpdateList(updatedLogin: Login) {
-        val login = SavedLogin(
-            guid = updatedLogin.guid!!,
-            origin = updatedLogin.origin,
-            username = updatedLogin.username,
-            password = updatedLogin.password
-        )
+        val login = updatedLogin.mapToSavedLogin()
         savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
     }
 

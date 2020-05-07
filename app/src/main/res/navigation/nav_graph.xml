@@ -264,7 +264,7 @@
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"
-        android:name="org.mozilla.fenix.settings.SavedLoginsAuthFragment"
+        android:name="org.mozilla.fenix.settings.logins.SavedLoginsAuthFragment"
         android:label="@string/preferences_passwords_logins_and_passwords">
         <action
             android:id="@+id/action_savedLoginsAuthFragment_to_loginsListFragment"

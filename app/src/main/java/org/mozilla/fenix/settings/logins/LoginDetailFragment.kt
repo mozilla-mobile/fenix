@@ -38,7 +38,9 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.urlToTrimmedHost
 
 /**
  * Displays saved login information for a single website.
@@ -63,7 +65,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 LoginsListState(
                     isLoading = true,
                     loginList = listOf(),
-                    filteredItems = listOf()
+                    filteredItems = listOf(),
+                    searchedForText = null,
+                    sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
                 )
             )
         }
@@ -80,16 +85,12 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             loginDetailView.update(it)
             login = savedLoginsStore.state.currentItem
             setUpCopyButtons()
-            showToolbar(titleFromHostname(savedLoginsStore.state.currentItem?.origin ?: ""))
+            showToolbar(
+                savedLoginsStore.state.currentItem?.origin?.urlToTrimmedHost(requireContext())
+                    ?: ""
+            )
             setUpPasswordReveal()
         }
-    }
-
-    private fun titleFromHostname(hostname: String): String {
-        return hostname
-            .replace(Regex("^http://"), "")
-            .replace(Regex("^https://"), "")
-            .replace(Regex("^www\\d*\\."), "")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

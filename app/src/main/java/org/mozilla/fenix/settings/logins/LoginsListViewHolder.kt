@@ -25,7 +25,8 @@ class LoginsListViewHolder(
             guid = item.guid,
             origin = item.origin,
             password = item.password,
-            username = item.username
+            username = item.username,
+            timeLastUsed = item.timeLastUsed
         )
         url.text = item.origin
         username.text = item.username
@@ -39,12 +40,5 @@ class LoginsListViewHolder(
 
     private fun updateFavIcon(url: String) {
         favicon.context.components.core.icons.loadIntoView(favicon, url)
-    }
-
-    private fun titleFromHostname(hostname: String): String {
-        return hostname
-            .replace(Regex("^http://"), "")
-            .replace(Regex("^https://"), "")
-            .replace(Regex("^www\\d*\\."), "")
     }
 }

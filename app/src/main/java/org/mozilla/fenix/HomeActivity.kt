@@ -69,7 +69,7 @@ import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.search.SearchFragmentDirections
 import org.mozilla.fenix.settings.DefaultBrowserSettingsFragmentDirections
-import org.mozilla.fenix.settings.SavedLoginsAuthFragmentDirections
+import org.mozilla.fenix.settings.logins.SavedLoginsAuthFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
