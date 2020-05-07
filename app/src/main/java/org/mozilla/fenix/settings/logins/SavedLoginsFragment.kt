@@ -87,7 +87,8 @@ class SavedLoginsFragment : Fragment() {
                 )
             )
         }
-        val savedLoginsController: SavedLoginsController = SavedLoginsController(savedLoginsStore, requireContext().settings())
+        val savedLoginsController: SavedLoginsController =
+            SavedLoginsController(savedLoginsStore, requireContext().settings())
         savedLoginsInteractor =
             SavedLoginsInteractor(savedLoginsController, ::itemClicked, ::openLearnMore)
         savedLoginsView = SavedLoginsView(view.savedLoginsLayout, savedLoginsInteractor)

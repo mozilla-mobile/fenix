@@ -16,8 +16,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
 import kotlinx.android.synthetic.main.component_saved_logins.view.progress_bar
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.utils.Settings
 
 /**

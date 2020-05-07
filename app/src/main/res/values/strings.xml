@@ -1211,7 +1211,7 @@
     <string name="logins_password_copied">Password copied to clipboard</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
     <string name="logins_username_copied">Username copied to clipboard</string>
-    <!-- Shown in snackbar to tell user that the web address has been copied -->
+    <!-- Shown in snackbar to tell user that the site has been copied -->
     <string name="logins_site_copied">Site copied to clipboard</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Copy password</string>
