@@ -141,10 +141,14 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
 
     private fun closeAllTabs() {
         val tabs = getListOfSessions()
+
+        val selectedIndex = sessionManager
+            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
+
         val snapshot = tabs
             .map(sessionManager::createSessionSnapshot)
             .map { it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState()) }
-            .let { SessionManager.Snapshot(it, -1) }
+            .let { SessionManager.Snapshot(it, selectedIndex) }
 
         tabs.forEach {
             sessionManager.remove(it)
@@ -164,7 +168,8 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
             {
                 sessionManager.restore(snapshot)
             },
-            operation = { }
+            operation = { },
+            anchorView = view?.tab_tray_controls
         )
     }
 
@@ -230,6 +235,7 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
         } ?: return
 
         val state = snapshot.engineSession?.saveState()
+        val isSelected = tab.id == requireComponents.core.store.state.selectedTabId ?: false
 
         val snackbarMessage = if (snapshot.session.private) {
             getString(R.string.snackbar_private_tab_closed)
@@ -242,9 +248,10 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo),
             {
-                sessionManager.add(snapshot.session, false, engineSessionState = state)
+                sessionManager.add(snapshot.session, isSelected, engineSessionState = state)
             },
-            operation = { }
+            operation = { },
+            anchorView = view?.tab_tray_controls
         )
     }
 
