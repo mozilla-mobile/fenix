@@ -12,16 +12,19 @@ RUN apt-get update -qq && \
       pyssim \
       python \
       python-pil \
-      python3 \
-      python3-pip
+      python3.5
+
+# Install python3.5 for compatibility with mozilla-central docker
+RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN python3.5 get-pip.py
 
 WORKDIR /builds/worker
 
 USER worker:worker
 
 COPY requirements.txt /builds/worker/requirements.txt
-RUN pip3 install setuptools==46.0.0
-RUN pip3 install --require-hashes -r /builds/worker/requirements.txt && \
+RUN python3.5 -m pip install setuptools==46.0.0
+RUN python3.5 -m pip install --require-hashes -r /builds/worker/requirements.txt && \
     rm /builds/worker/requirements.txt
 
 COPY similarity.py /builds/worker/bin/similarity.py
