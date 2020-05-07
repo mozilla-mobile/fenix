@@ -12,7 +12,8 @@ RUN apt-get update -qq && \
       pyssim \
       python \
       python-pil \
-      python3.5
+      python3.5 \
+      wget
 
 # Install python3.5 for compatibility with mozilla-central docker
 RUN wget https://bootstrap.pypa.io/get-pip.py
