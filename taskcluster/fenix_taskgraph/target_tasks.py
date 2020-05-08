@@ -33,7 +33,8 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
         # We don't want to ship nightly while Google Play is still behind manual review.
         # See bug 1628413 for more context.
-        return task.attributes.get("nightly", False) and task.kind != "push-apk"
+        return task.attributes.get("nightly", False) and \
+            task.kind not in ("browsertime", "raptor", "visual-metrics", "push-apk")
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
@@ -43,7 +44,8 @@ def target_tasks_nightly_on_google_play(full_task_graph, parameters, graph_confi
     """Select the set of tasks required for a nightly build that goes on Google Play."""
 
     def filter(task, parameters):
-        return task.attributes.get("nightly", False)
+        return task.attributes.get("nightly", False) and \
+            task.kind not in ("browsertime", "raptor", "visual-metrics")
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
@@ -62,7 +64,7 @@ def target_tasks_fennec_nightly(full_task_graph, parameters, graph_config):
 @_target_task('raptor')
 def target_tasks_raptor(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
-        return task.kind == 'raptor'
+        return task.kind == "raptor"
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
@@ -70,7 +72,7 @@ def target_tasks_raptor(full_task_graph, parameters, graph_config):
 @_target_task('browsertime')
 def target_tasks_raptor(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
-        return task.kind in ('browsertime', 'visual-metrics')
+        return task.kind in ("browsertime", "visual-metrics")
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
