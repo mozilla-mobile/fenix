@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.quicksettings_website_info.view.*
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.R
 
 /**
@@ -43,7 +44,7 @@ class WebsiteInfoView(
     }
 
     private fun bindUrl(url: String) {
-        view.url.text = url
+        view.url.text = url.tryGetHostFromUrl()
     }
 
     private fun bindTitle(title: String) {
