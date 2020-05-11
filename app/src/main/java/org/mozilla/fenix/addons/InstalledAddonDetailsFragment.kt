@@ -12,17 +12,20 @@ import android.widget.Switch
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_installed_add_on_details.view.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.android.synthetic.main.fragment_installed_add_on_details.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translatedName
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.utils.Settings
 
@@ -31,6 +34,8 @@ import org.mozilla.fenix.utils.Settings
  */
 @Suppress("LargeClass", "TooManyFunctions")
 class InstalledAddonDetailsFragment : Fragment() {
+
+    private lateinit var addonManager: AddonManager
     private lateinit var addon: Addon
 
     override fun onCreateView(
@@ -39,72 +44,66 @@ class InstalledAddonDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         if (!::addon.isInitialized) {
-            addon = AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
+            addon = AddonDetailsFragmentArgs.fromBundle(requireArguments()).addon
         }
 
-        return inflater.inflate(R.layout.fragment_installed_add_on_details, container, false).also {
-            bindUI(it)
-        }
+        return inflater.inflate(R.layout.fragment_installed_add_on_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        bindAddon(view)
+        addonManager = view.context.components.addonManager
+
+        bindUI()
+        bindAddon()
     }
 
-    private fun bindAddon(view: View) {
-        lifecycleScope.launch(Dispatchers.IO) {
+    private fun bindAddon() {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             try {
-                val addons = requireContext().components.addonManager.getAddons()
-                lifecycleScope.launch(Dispatchers.Main) {
-                    runIfFragmentIsAttached {
-                        addons.find { addon.id == it.id }.let {
-                            if (it == null) {
-                                throw AddonManagerException(Exception("Addon ${addon.id} not found"))
-                            } else {
-                                addon = it
-                                bindUI(view)
-                            }
-                            view.add_on_progress_bar.isVisible = false
-                            view.addon_container.isVisible = true
-                        }
+                withContext(IO) {
+                    val addons = addonManager.getAddons()
+                    addons.find { it.id == addon.id }
+                }.let {
+                    if (it != null) {
+                        addon = it
+                        bindUI()
+                    } else {
+                        throw AddonManagerException(Exception("Addon ${addon.id} not found"))
                     }
+
+                    add_on_progress_bar.isVisible = false
+                    addon_container.isVisible = true
                 }
             } catch (e: AddonManagerException) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    runIfFragmentIsAttached {
-                        showSnackBar(
-                            view,
-                            getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
-                        )
-                        findNavController().popBackStack()
-                    }
-                }
+                showSnackBar(
+                    requireView(),
+                    getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
+                )
+                findNavController().popBackStack()
             }
         }
     }
 
-    private fun bindUI(view: View) {
-        val title = addon.translatedName
-        showToolbar(title)
+    private fun bindUI() {
+        showToolbar(title = addon.translatedName)
 
-        bindEnableSwitch(view)
-        bindSettings(view)
-        bindDetails(view)
-        bindPermissions(view)
-        bindAllowInPrivateBrowsingSwitch(view)
-        bindRemoveButton(view)
+        bindEnableSwitch()
+        bindSettings()
+        bindDetails()
+        bindPermissions()
+        bindAllowInPrivateBrowsingSwitch()
+        bindRemoveButton()
     }
 
     @SuppressWarnings("LongMethod")
-    private fun bindEnableSwitch(view: View) {
-        val switch = view.enable_switch
-        val privateBrowsingSwitch = view.allow_in_private_browsing_switch
+    private fun bindEnableSwitch() {
+        val switch = enable_switch
+        val privateBrowsingSwitch = allow_in_private_browsing_switch
         switch.setState(addon.isEnabled())
         switch.setOnCheckedChangeListener { v, isChecked ->
             val addonManager = v.context.components.addonManager
             switch.isClickable = false
-            view.remove_add_on.isEnabled = false
+            remove_add_on.isEnabled = false
             if (isChecked) {
                 addonManager.enableAddon(
                     addon,
@@ -115,10 +114,10 @@ class InstalledAddonDetailsFragment : Fragment() {
                             privateBrowsingSwitch.isVisible = it.isEnabled()
                             privateBrowsingSwitch.isChecked = it.isAllowedInPrivateBrowsing()
                             switch.setText(R.string.mozac_feature_addons_enabled)
-                            view.settings.isVisible = shouldSettingsBeVisible()
-                            view.remove_add_on.isEnabled = true
+                            settings.isVisible = shouldSettingsBeVisible()
+                            remove_add_on.isEnabled = true
                             showSnackBar(
-                                view,
+                                requireView(),
                                 getString(
                                     R.string.mozac_feature_addons_successfully_enabled,
                                     addon.translatedName
@@ -129,10 +128,10 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onError = {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
-                            view.remove_add_on.isEnabled = true
+                            remove_add_on.isEnabled = true
                             switch.setState(addon.isEnabled())
                             showSnackBar(
-                                view,
+                                requireView(),
                                 getString(
                                     R.string.mozac_feature_addons_failed_to_enable,
                                     addon.translatedName
@@ -142,7 +141,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     }
                 )
             } else {
-                view.settings.isVisible = false
+                settings.isVisible = false
                 addonManager.disableAddon(
                     addon,
                     onSuccess = {
@@ -151,9 +150,9 @@ class InstalledAddonDetailsFragment : Fragment() {
                             switch.isClickable = true
                             privateBrowsingSwitch.isVisible = it.isEnabled()
                             switch.setText(R.string.mozac_feature_addons_disabled)
-                            view.remove_add_on.isEnabled = true
+                            remove_add_on.isEnabled = true
                             showSnackBar(
-                                view,
+                                requireView(),
                                 getString(
                                     R.string.mozac_feature_addons_successfully_disabled,
                                     addon.translatedName
@@ -165,10 +164,10 @@ class InstalledAddonDetailsFragment : Fragment() {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
                             privateBrowsingSwitch.isClickable = true
-                            view.remove_add_on.isEnabled = true
+                            remove_add_on.isEnabled = true
                             switch.setState(addon.isEnabled())
                             showSnackBar(
-                                view,
+                                requireView(),
                                 getString(
                                     R.string.mozac_feature_addons_failed_to_disable,
                                     addon.translatedName
@@ -181,63 +180,60 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindSettings(view: View) {
-        view.settings.apply {
-            isVisible = shouldSettingsBeVisible()
-            setOnClickListener {
-                val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
-                val directions = if (addon.installedState?.openOptionsPageInTab == true) {
-                    val components = it.context.components
-                    val shouldCreatePrivateSession =
-                        components.core.sessionManager.selectedSession?.private
-                            ?: Settings.instance?.openLinksInAPrivateTab
-                            ?: false
+    private fun bindSettings() {
+        settings.isVisible = shouldSettingsBeVisible()
+        settings.setOnClickListener {
+            val settingUrl = addon.installedState?.optionsPageUrl ?: return@setOnClickListener
+            val directions = if (addon.installedState?.openOptionsPageInTab == true) {
+                val components = it.context.components
 
-                    if (shouldCreatePrivateSession) {
-                        components.useCases.tabsUseCases.addPrivateTab(settingUrl)
-                    } else {
-                        components.useCases.tabsUseCases.addTab(settingUrl)
-                    }
+                val shouldCreatePrivateSession =
+                    components.core.sessionManager.selectedSession?.private
+                        ?: it.context.settings().openLinksInAPrivateTab
 
-                    InstalledAddonDetailsFragmentDirections
-                        .actionGlobalBrowser(null, false)
+                if (shouldCreatePrivateSession) {
+                    components.useCases.tabsUseCases.addPrivateTab(settingUrl)
                 } else {
-                    InstalledAddonDetailsFragmentDirections
-                        .actionInstalledAddonFragmentToAddonInternalSettingsFragment(addon)
+                    components.useCases.tabsUseCases.addTab(settingUrl)
                 }
-                Navigation.findNavController(this).navigate(directions)
+
+                InstalledAddonDetailsFragmentDirections
+                    .actionGlobalBrowser(null, false)
+            } else {
+                InstalledAddonDetailsFragmentDirections
+                    .actionInstalledAddonFragmentToAddonInternalSettingsFragment(addon)
             }
+            findNavController().navigate(directions)
         }
     }
 
-    private fun bindDetails(view: View) {
-        view.details.setOnClickListener {
+    private fun bindDetails() {
+        details.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigate(directions)
+            findNavController().navigate(directions)
         }
     }
 
-    private fun bindPermissions(view: View) {
-        view.permissions.setOnClickListener {
+    private fun bindPermissions() {
+        permissions.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
                     addon
                 )
-            Navigation.findNavController(view).navigate(directions)
+            findNavController().navigate(directions)
         }
     }
 
-    private fun bindAllowInPrivateBrowsingSwitch(view: View) {
-        val switch = view.allow_in_private_browsing_switch
+    private fun bindAllowInPrivateBrowsingSwitch() {
+        val switch = allow_in_private_browsing_switch
         switch.isChecked = addon.isAllowedInPrivateBrowsing()
         switch.isVisible = addon.isEnabled()
-        switch.setOnCheckedChangeListener { v, isChecked ->
-            val addonManager = v.context.components.addonManager
+        switch.setOnCheckedChangeListener { _, isChecked ->
             switch.isClickable = false
-            view.remove_add_on.isEnabled = false
+            remove_add_on.isEnabled = false
             addonManager.setAddonAllowedInPrivateBrowsing(
                 addon,
                 isChecked,
@@ -245,42 +241,42 @@ class InstalledAddonDetailsFragment : Fragment() {
                     runIfFragmentIsAttached {
                         this.addon = it
                         switch.isClickable = true
-                        view.remove_add_on.isEnabled = true
+                        remove_add_on.isEnabled = true
                     }
                 },
                 onError = {
                     runIfFragmentIsAttached {
                         switch.isChecked = addon.isAllowedInPrivateBrowsing()
                         switch.isClickable = true
-                        view.remove_add_on.isEnabled = true
+                        remove_add_on.isEnabled = true
                     }
                 }
             )
         }
     }
-    private fun bindRemoveButton(view: View) {
-        view.remove_add_on.setOnClickListener {
-            setAllInteractiveViewsClickable(view, false)
+    private fun bindRemoveButton() {
+        remove_add_on.setOnClickListener {
+            setAllInteractiveViewsClickable(false)
             requireContext().components.addonManager.uninstallAddon(
                 addon,
                 onSuccess = {
                     runIfFragmentIsAttached {
-                        setAllInteractiveViewsClickable(view, true)
+                        setAllInteractiveViewsClickable(true)
                         showSnackBar(
-                            view,
+                            requireView(),
                             getString(
                                 R.string.mozac_feature_addons_successfully_uninstalled,
                                 addon.translatedName
                             )
                         )
-                        view.findNavController().popBackStack()
+                        findNavController().popBackStack()
                     }
                 },
                 onError = { _, _ ->
                     runIfFragmentIsAttached {
-                        setAllInteractiveViewsClickable(view, true)
+                        setAllInteractiveViewsClickable(true)
                         showSnackBar(
-                            view,
+                            requireView(),
                             getString(
                                 R.string.mozac_feature_addons_failed_to_uninstall,
                                 addon.translatedName
@@ -292,12 +288,12 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
-    private fun setAllInteractiveViewsClickable(view: View, clickable: Boolean) {
-        view.enable_switch.isClickable = clickable
-        view.settings.isClickable = clickable
-        view.details.isClickable = clickable
-        view.permissions.isClickable = clickable
-        view.remove_add_on.isClickable = clickable
+    private fun setAllInteractiveViewsClickable(clickable: Boolean) {
+        enable_switch.isClickable = clickable
+        settings.isClickable = clickable
+        details.isClickable = clickable
+        permissions.isClickable = clickable
+        remove_add_on.isClickable = clickable
     }
 
     private fun Switch.setState(checked: Boolean) {

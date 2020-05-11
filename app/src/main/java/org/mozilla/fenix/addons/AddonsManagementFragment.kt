@@ -14,14 +14,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_add_ons_management.*
 import kotlinx.android.synthetic.main.fragment_add_ons_management.view.*
 import kotlinx.android.synthetic.main.overlay_add_on_progress.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
@@ -38,15 +39,38 @@ import org.mozilla.fenix.theme.ThemeManager
 /**
  * Fragment use for managing add-ons.
  */
-@Suppress("TooManyFunctions")
-class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
-    AddonsManagerAdapterDelegate {
+class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) {
     /**
      * Whether or not an add-on installation is in progress.
      */
     private var isInstallationInProgress = false
-    private var scope: CoroutineScope? = null
     private var adapter: AddonsManagerAdapter? = null
+
+    private val addonsManagerDelegate = object : AddonsManagerAdapterDelegate {
+        override fun onAddonItemClicked(addon: Addon) {
+            val directions = if (addon.isInstalled()) {
+                AddonsManagementFragmentDirections
+                    .actionAddonsManagementFragmentToInstalledAddonDetails(addon)
+            } else {
+                AddonsManagementFragmentDirections
+                    .actionAddonsManagementFragmentToAddonDetailsFragment(addon)
+            }
+
+            findNavController().navigate(directions)
+        }
+
+        override fun onInstallAddonButtonClicked(addon: Addon) {
+            showPermissionDialog(addon)
+        }
+
+        override fun onNotYetSupportedSectionClicked(unsupportedAddons: List<Addon>) {
+            val directions =
+                AddonsManagementFragmentDirections.actionAddonsManagementFragmentToNotYetSupportedAddonFragment(
+                    unsupportedAddons.toTypedArray()
+                )
+            findNavController().navigate(directions)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,61 +89,40 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         }
     }
 
-    override fun onAddonItemClicked(addon: Addon) {
-        if (addon.isInstalled()) {
-            showInstalledAddonDetailsFragment(addon)
-        } else {
-            showDetailsFragment(addon)
-        }
-    }
-
-    override fun onInstallAddonButtonClicked(addon: Addon) {
-        showPermissionDialog(addon)
-    }
-
-    override fun onNotYetSupportedSectionClicked(unsupportedAddons: List<Addon>) {
-        showNotYetSupportedAddonFragment(ArrayList(unsupportedAddons))
-    }
-
     private fun bindRecyclerView(view: View) {
+        val context = view.context
         val recyclerView = view.add_ons_list
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(context)
         val shouldRefresh = adapter != null
-        lifecycleScope.launch(IO) {
-            try {
-                val addons = requireContext().components.addonManager.getAddons()
-                lifecycleScope.launch(Dispatchers.Main) {
-                    runIfFragmentIsAttached {
-                        if (!shouldRefresh) {
-                            adapter = AddonsManagerAdapter(
-                                requireContext().components.addonCollectionProvider,
-                                this@AddonsManagementFragment,
-                                addons,
-                                style = createAddonStyle(requireContext())
-                            )
-                        }
-                        isInstallationInProgress = false
-                        view.add_ons_progress_bar.isVisible = false
-                        view.add_ons_empty_message.isVisible = false
 
-                        recyclerView.adapter = adapter
-                        if (shouldRefresh) {
-                            adapter?.updateAddons(addons)
-                        }
-                    }
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
+            try {
+                val addons = withContext(IO) { context.components.addonManager.getAddons() }
+
+                if (!shouldRefresh) {
+                    adapter = AddonsManagerAdapter(
+                        context.components.addonCollectionProvider,
+                        addonsManagerDelegate,
+                        addons,
+                        style = createAddonStyle(context)
+                    )
+                }
+                isInstallationInProgress = false
+                view.add_ons_progress_bar.isVisible = false
+                view.add_ons_empty_message.isVisible = false
+
+                recyclerView.adapter = adapter
+                if (shouldRefresh) {
+                    adapter?.updateAddons(addons)
                 }
             } catch (e: AddonManagerException) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    runIfFragmentIsAttached {
-                        showSnackBar(
-                            view,
-                            getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
-                        )
-                        isInstallationInProgress = false
-                        view.add_ons_progress_bar.isVisible = false
-                        view.add_ons_empty_message.isVisible = true
-                    }
-                }
+                showSnackBar(
+                    view,
+                    getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
+                )
+                isInstallationInProgress = false
+                view.add_ons_progress_bar.isVisible = false
+                view.add_ons_empty_message.isVisible = true
             }
         }
     }
@@ -133,30 +136,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             addonBackgroundIconColor = ThemeManager.resolveAttribute(R.attr.inset, requireContext()),
             addonAllowPrivateBrowsingLabelDrawableRes = R.drawable.ic_add_on_private_browsing_label
         )
-    }
-
-    private fun showInstalledAddonDetailsFragment(addon: Addon) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToInstalledAddonDetails(
-                addon
-            )
-        Navigation.findNavController(requireView()).navigate(directions)
-    }
-
-    private fun showDetailsFragment(addon: Addon) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToAddonDetailsFragment(
-                addon
-            )
-        Navigation.findNavController(requireView()).navigate(directions)
-    }
-
-    private fun showNotYetSupportedAddonFragment(unsupportedAddons: ArrayList<Addon>) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToNotYetSupportedAddonFragment(
-                unsupportedAddons.toTypedArray()
-            )
-        Navigation.findNavController(requireView()).navigate(directions)
     }
 
     private fun findPreviousDialogFragment(): PermissionsDialogFragment? {
@@ -190,6 +169,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         }
     }
 
+    /**
+     * Click handler for addons permission dialog.
+     */
     private val onPositiveButtonClicked: ((Addon) -> Unit) = { addon ->
         addonProgressOverlay?.visibility = View.VISIBLE
 
@@ -202,8 +184,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         requireContext().components.addonManager.installAddon(
             addon,
             onSuccess = {
-                this@AddonsManagementFragment.view?.let { view ->
-                    val rootView = activity?.getRootView() ?: view
+                getRootView()?.let { rootView ->
                     showSnackBar(
                         rootView,
                         getString(
@@ -217,8 +198,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                 }
             },
             onError = { _, _ ->
-                this@AddonsManagementFragment.view?.let { view ->
-                    val rootView = activity?.getRootView() ?: view
+                getRootView()?.let { rootView ->
                     showSnackBar(
                         rootView,
                         getString(
@@ -234,14 +214,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
     }
 
     private fun announceForAccessibility(announcementText: CharSequence) {
-        val event = AccessibilityEvent.obtain(
-            AccessibilityEvent.TYPE_ANNOUNCEMENT
-        )
+        val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT)
         addonProgressOverlay.onInitializeAccessibilityEvent(event)
         event.text.add(announcementText)
         event.contentDescription = null
         addonProgressOverlay.parent.requestSendAccessibilityEvent(addonProgressOverlay, event)
     }
+
+    private fun getRootView() = activity?.getRootView() ?: view
 
     companion object {
         private const val PERMISSIONS_DIALOG_FRAGMENT_TAG = "ADDONS_PERMISSIONS_DIALOG_FRAGMENT"

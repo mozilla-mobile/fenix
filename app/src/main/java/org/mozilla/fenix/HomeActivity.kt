@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -168,7 +169,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         super.onResume()
 
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
-            lifecycleScope.launch {
+            lifecycleScope.launch(IO) {
                 // Make sure accountManager is initialized.
                 components.backgroundServices.accountManager.initAsync().await()
                 // If we're authenticated, kick-off a sync and a device state refresh.
