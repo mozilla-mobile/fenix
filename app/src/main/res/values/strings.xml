@@ -1356,5 +1356,6 @@
     <string name="discard_changes">Discard changes</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Edit</string>
+    <!--  The error message in edit login view when password field is blank. -->
     <string name="saved_login_password_required">Password required</string>
 </resources>
