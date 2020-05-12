@@ -105,6 +105,9 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
+        passwordText.setOnClickListener {
+            togglePasswordReveal()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
