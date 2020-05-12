@@ -113,7 +113,25 @@ function failure_check() {
         --log flank.log \
         --results "${RESULTS_DIR}" \
         --output-md "${ARTIFACT_DIR}/github/customCheckRunText.md" \
-	--device-type "${device_type}"
+        --device-type "${device_type}"
+
+    mkdir -p "${ARTIFACT_DIR}/ui-test-${device_type}"
+
+    if [ -f flank.log ]; then
+        cp flank.log "${ARTIFACT_DIR}/ui-test-${device_type}"
+    fi
+
+    if [ -f "${RESULTS_DIR}/HtmlErrorReport.html" ]; then
+        cp "${RESULTS_DIR}/HtmlErrorReport.html" "${ARTIFACT_DIR}/ui-test-${device_type}"
+    fi
+
+    if [ -f "${RESULTS_DIR}/CostReport.txt" ]; then
+        cp "${RESULTS_DIR}/CostReport.txt" "${ARTIFACT_DIR}/ui-test-${device_type}"
+    fi
+
+    if [ -f "${RESULTS_DIR}/MatrixResultsReport.txt" ]; then
+        cp "${RESULTS_DIR}/MatrixResultsReport.txt" "${ARTIFACT_DIR}/ui-test-${device_type}"
+    fi
 }
 
 echo

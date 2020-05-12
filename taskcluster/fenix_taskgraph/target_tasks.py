@@ -73,3 +73,11 @@ def target_tasks_bump_android_components(full_task_graph, parameters, graph_conf
         return task.attributes.get("bump-type", "") == "android-components"
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+
+
+@_target_task('ui-test-compare')
+def target_tasks_ui_test_compare(full_task_graph, parameters, graph_config):
+    def filter(task, parameters):
+        return task.kind == 'ui-test-compare'
+
+    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]

@@ -32,3 +32,9 @@ jobs:
           treeherder-symbol: bump-ac
           target-tasks-method: bump_android_components
       when: [{hour: 14, minute: 0}]
+    - name: ui-test-compare
+      job:
+        type: decision-task
+        treeherder-symbol: ui-test-compare-D
+        target-tasks-method: ui-test-compare
+      when: []
