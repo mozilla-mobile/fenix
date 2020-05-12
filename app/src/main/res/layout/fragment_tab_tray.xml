@@ -61,55 +61,59 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <View
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tab_tray_controls"
             android:layout_width="0dp"
             android:layout_height="@dimen/browser_toolbar_height"
             android:background="?tabTrayToolbarBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <ImageButton
-            android:id="@+id/private_browsing_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/content_description_private_browsing_button"
-            app:srcCompat="@drawable/private_browsing_button"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintTop_toTopOf="@id/tab_tray_controls"
-            app:layout_constraintDimensionRatio="1.0"
-            app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
-            app:layout_constraintEnd_toStartOf="@+id/tab_tray_go_home"
-            app:layout_constraintStart_toStartOf="@id/tab_tray_controls" />
+            <ImageButton
+                android:id="@+id/private_browsing_button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_private_browsing_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1.0"
+                app:layout_constraintEnd_toStartOf="@+id/tab_tray_go_home"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="@id/tab_tray_controls"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/private_browsing_button" />
 
-        <ImageButton
-            android:id="@+id/tab_tray_go_home"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/tab_tray_menu_home"
-            app:srcCompat="@drawable/ic_home"
-            app:layout_constraintDimensionRatio="1.0"
-            app:layout_constraintTop_toTopOf="@id/tab_tray_controls"
-            app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
-            app:layout_constraintEnd_toStartOf="@+id/tab_tray_open_new_tab"
-            app:layout_constraintStart_toEndOf="@+id/private_browsing_button" />
+            <ImageButton
+                android:id="@+id/tab_tray_go_home"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/tab_tray_menu_home"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1.0"
+                app:layout_constraintEnd_toStartOf="@+id/tab_tray_open_new_tab"
+                app:layout_constraintStart_toEndOf="@+id/private_browsing_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_home" />
 
-        <ImageButton
-            android:id="@+id/tab_tray_open_new_tab"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="32dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/tab_tray_menu_open_new_tab"
-            app:srcCompat="@drawable/ic_new"
-            app:layout_constraintDimensionRatio="1.0"
-            app:layout_constraintTop_toTopOf="@id/tab_tray_controls"
-            app:layout_constraintBottom_toBottomOf="@+id/tab_tray_controls"
-            app:layout_constraintEnd_toEndOf="@+id/tab_tray_controls"
-            app:layout_constraintStart_toEndOf="@+id/tab_tray_go_home" />
+            <ImageButton
+                android:id="@+id/tab_tray_open_new_tab"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/tab_tray_menu_open_new_tab"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1.0"
+                app:layout_constraintEnd_toEndOf="@+id/tab_tray_controls"
+                app:layout_constraintStart_toEndOf="@+id/tab_tray_go_home"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_new" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
