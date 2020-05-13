@@ -47,6 +47,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.hideToolbar
@@ -55,6 +56,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_REQUEST_CODE
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -130,6 +132,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
         awesomeBarView = AwesomeBarView(view.scrollable_area, searchInteractor,
             view.findViewById(R.id.awesomeBar))
+        setShortcutsChangedListener()
+
         view.scrollView.setOnScrollChangeListener {
                 _: NestedScrollView, _: Int, _: Int, _: Int, _: Int ->
             view.hideKeyboard()
@@ -164,6 +168,17 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
     private fun speechIsAvailable(): Boolean {
         return (speechIntent.resolveActivity(requireContext().packageManager) != null)
+    }
+
+    private fun setShortcutsChangedListener() {
+        requireContext().getSharedPreferences(
+            CustomSearchEngineStore.PREF_FILE_SEARCH_ENGINES,
+            Context.MODE_PRIVATE
+        ).registerOnSharedPreferenceChangeListener(viewLifecycleOwner) { _, key ->
+            if (key == CustomSearchEngineStore.PREF_KEY_CUSTOM_SEARCH_ENGINES) {
+                awesomeBarView.update(searchStore.state)
+            }
+        }
     }
 
     private fun launchVoiceSearch() {
