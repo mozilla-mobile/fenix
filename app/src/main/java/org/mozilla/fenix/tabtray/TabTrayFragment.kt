@@ -25,10 +25,13 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
+import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
@@ -39,6 +42,16 @@ import org.mozilla.fenix.utils.allowUndo
 class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer, UserInteractionHandler {
     private var tabsFeature: TabsFeature? = null
     var tabTrayMenu: Menu? = null
+
+    private val collectionStorageObserver = object : TabCollectionStorage.Observer {
+        override fun onCollectionCreated(title: String, sessions: List<Session>) {
+            showCollectionSnackbar()
+        }
+
+        override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
+            showCollectionSnackbar()
+        }
+    }
 
     private val sessionManager: SessionManager
         get() = requireComponents.core.sessionManager
@@ -192,6 +205,9 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
 
         if (navController.currentDestination?.id == R.id.collectionCreationFragment) return
 
+        // Only register the observer right before moving to collection creation
+        registerCollectionStorageObserver()
+
         val directions = TabTrayFragmentDirections.actionTabTrayFragmentToCreateCollectionFragment(
             tabIds = tabIds,
             previousFragmentId = R.id.tabTrayFragment,
@@ -199,6 +215,29 @@ class TabTrayFragment : Fragment(R.layout.fragment_tab_tray), TabsTray.Observer,
             selectedTabIds = tabIds
         )
         navController.nav(R.id.tabTrayFragment, directions)
+    }
+
+    private fun registerCollectionStorageObserver() {
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+    }
+
+    private fun showCollectionSnackbar() {
+        if (view != null) {
+            val snackbar = FenixSnackbar
+                .make(
+                    duration = FenixSnackbar.LENGTH_LONG,
+                    isDisplayedWithBrowserToolbar = true,
+                    view = (view as View)
+                )
+                .setText(requireContext().getString(R.string.create_collection_tabs_saved))
+                .setAnchorView(view?.tab_tray_controls)
+                .setAction(requireContext().getString(R.string.create_collection_view)) {
+                    val directions = TabTrayFragmentDirections.actionGlobalHome()
+                    findNavController().navigate(directions)
+                }
+
+            snackbar.show()
+        }
     }
 
     override fun onStart() {
