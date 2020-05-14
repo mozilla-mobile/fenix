@@ -152,9 +152,9 @@ To push without running the pre-push hook (e.g. doc updates):
 git push <remote> --no-verify
 ```
 
-Note: If while pushing you encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" then downgrade your java version to java11
+Note: If while pushing you encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" and are currently on Java14 then downgrading your Java version to Java13 or lower can resolve the issue
 
-Steps to downgrade Java Version: 
+Steps to downgrade Java Version on Mac with Brew: 
 1. Install Homebrew (https://brew.sh/)
 2. run ```brew update```
 3. To uninstall your current java version, run ```sudo rm -fr /Library/Java/JavaVirtualMachines/<jdk-version>```
