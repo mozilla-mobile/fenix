@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -461,6 +462,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             sessionManager.register(observer = object : SessionManager.Observer {
                 override fun onSessionSelected(session: Session) {
+                    engineView?.asView()?.isVisible = didFirstContentfulHappen()
                     fullScreenChanged(false)
                     browserToolbarView.expand()
                 }
