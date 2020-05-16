@@ -389,6 +389,7 @@ class HomeScreenRobot {
         fun togglePrivateBrowsingMode() {
             onView(ViewMatchers.withResourceName("privateBrowsingButton"))
                 .perform(click())
+            onView(ViewMatchers.withResourceName("cfr_neg_button")).perform(click())
         }
 
         fun openTabsListThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
