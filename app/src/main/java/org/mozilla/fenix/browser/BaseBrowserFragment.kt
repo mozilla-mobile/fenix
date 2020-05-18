@@ -33,6 +33,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.runWithSessionIdOrSelected
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
@@ -484,8 +485,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view.swipeRefresh.setOnChildScrollUpCallback { _, _ -> true }
             }
 
-            // @Suppress("ConstantConditionIf")
-            /*
+            @Suppress("ConstantConditionIf")
             if (!FeatureFlags.asFeatureWebChannelsDisabled) {
                 webchannelIntegration.set(
                     feature = FxaWebChannelFeature(
@@ -501,8 +501,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     view = view
                 )
             }
-
-             */
 
             initializeEngineView(toolbarHeight)
         }
