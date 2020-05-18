@@ -36,6 +36,7 @@ import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.Tab
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -248,7 +249,13 @@ class DefaultSessionControlController(
             }
         )
 
-        scrollToTheTop()
+        if (activity.settings().useNewTabTray) {
+            val directions = HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
+            navController.nav(R.id.homeFragment, directions)
+        } else {
+            scrollToTheTop()
+        }
+
         metrics.track(Event.CollectionAllTabsRestored)
     }
 
