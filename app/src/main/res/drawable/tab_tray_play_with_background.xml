@@ -8,7 +8,9 @@
             <size
                 android:width="24dp"
                 android:height="24dp" />
+            <!-- Vertical pause lines -->
             <solid android:color="@color/tab_tray_item_media_stroke" />
+            <!-- Outer circle border -->
             <stroke android:color="@color/tab_tray_item_media_stroke"
                 android:width="2dp"/>
         </shape>
@@ -21,7 +23,7 @@
             android:viewportHeight="24">
             <!-- Background color of the circle -->
             <path
-                android:fillColor="@color/tab_tray_item_media_background"
+                android:fillColor="?tabTrayItemMediaBackground"
                 android:pathData="M12,22a10,10 0,1 1,10 -10,10 10,0 0,1 -10,10zM10,16.363l6,-3.5a1,1 0,0 0,0 -1.732l-6,-3.5A1,1 0,0 0,8.5 8.5v7a1,1 0,0 0,1.5 0.863z"/>
         </vector>
     </item>
