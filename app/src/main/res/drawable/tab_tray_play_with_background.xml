@@ -8,8 +8,8 @@
             <size
                 android:width="24dp"
                 android:height="24dp" />
-            <solid android:color="?above" />
-            <stroke android:color="?above"
+            <solid android:color="@color/tab_tray_item_media_stroke" />
+            <stroke android:color="@color/tab_tray_item_media_stroke"
                 android:width="2dp"/>
         </shape>
     </item>
@@ -19,9 +19,10 @@
             android:height="24dp"
             android:viewportWidth="24"
             android:viewportHeight="24">
+            <!-- Background color of the circle -->
             <path
-                android:fillColor="?accent"
-                android:pathData="M12,2a10,10 0,1 0,10 10A10,10 0,0 0,12 2zM10.5,16.125a0.375,0.375 0,0 1,-0.375 0.375h-2.25A0.375,0.375 0,0 1,7.5 16.125v-8.25A0.375,0.375 0,0 1,7.875 7.5h2.25A0.375,0.375 0,0 1,10.5 7.875zM16.5,16.125a0.375,0.375 0,0 1,-0.375 0.375h-2.25a0.375,0.375 0,0 1,-0.375 -0.375v-8.25A0.375,0.375 0,0 1,13.875 7.5h2.25A0.375,0.375 0,0 1,16.5 7.875z"/>
+                android:fillColor="@color/tab_tray_item_media_background"
+                android:pathData="M12,22a10,10 0,1 1,10 -10,10 10,0 0,1 -10,10zM10,16.363l6,-3.5a1,1 0,0 0,0 -1.732l-6,-3.5A1,1 0,0 0,8.5 8.5v7a1,1 0,0 0,1.5 0.863z"/>
         </vector>
     </item>
 </layer-list>

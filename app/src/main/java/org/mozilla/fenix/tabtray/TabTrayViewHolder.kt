@@ -71,7 +71,7 @@ class TabTrayViewHolder(itemView: View) : TabViewHolder(itemView) {
                     setImageDrawable(
                         androidx.appcompat.content.res.AppCompatResources.getDrawable(
                             context,
-                            R.drawable.play_with_background
+                            R.drawable.tab_tray_play_with_background
                         )
                     )
                 }
@@ -83,7 +83,7 @@ class TabTrayViewHolder(itemView: View) : TabViewHolder(itemView) {
                     setImageDrawable(
                         androidx.appcompat.content.res.AppCompatResources.getDrawable(
                             context,
-                            R.drawable.pause_with_background
+                            R.drawable.tab_tray_pause_with_background
                         )
                     )
                 }
