@@ -37,24 +37,26 @@ import org.mozilla.fenix.ext.sessionsOfType
  */
 class SessionNotificationService : Service() {
 
+    private var isStartedFromPrivateShortcut: Boolean = false
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val action = intent.action ?: return START_NOT_STICKY
 
         when (action) {
             ACTION_START -> {
+                isStartedFromPrivateShortcut = intent.getBooleanExtra(STARTED_FROM_PRIVATE_SHORTCUT, false)
                 createNotificationChannelIfNeeded()
                 startForeground(NOTIFICATION_ID, buildNotification())
             }
 
             ACTION_ERASE -> {
                 metrics.track(Event.PrivateBrowsingNotificationTapped)
-                components.core.sessionManager.removeAndCloseAllPrivateSessions()
 
                 val homeScreenIntent = Intent(this, HomeActivity::class.java)
                 val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 homeScreenIntent.apply {
                     setFlags(intentFlags)
-                    putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+                    putExtra(HomeActivity.PRIVATE_BROWSING_MODE, isStartedFromPrivateShortcut)
                 }
                 if (VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
                     // Set start mode to be in background (recents screen)
@@ -63,6 +65,7 @@ class SessionNotificationService : Service() {
                     }
                 }
                 startActivity(homeScreenIntent)
+                components.core.sessionManager.removeAndCloseAllPrivateSessions()
             }
 
             else -> throw IllegalStateException("Unknown intent: $intent")
@@ -131,13 +134,18 @@ class SessionNotificationService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 83
         private const val NOTIFICATION_CHANNEL_ID = "browsing-session"
+        private const val STARTED_FROM_PRIVATE_SHORTCUT = "STARTED_FROM_PRIVATE_SHORTCUT"
 
         private const val ACTION_START = "start"
         private const val ACTION_ERASE = "erase"
 
-        internal fun start(context: Context) {
+        internal fun start(
+            context: Context,
+            startedFromPrivateShortcut: Boolean
+        ) {
             val intent = Intent(context, SessionNotificationService::class.java)
             intent.action = ACTION_START
+            intent.putExtra(STARTED_FROM_PRIVATE_SHORTCUT, startedFromPrivateShortcut)
 
             // From Focus #2901: The application is crashing due to the service not calling `startForeground`
             // before it times out. This is a speculative fix to decrease the time between these two
