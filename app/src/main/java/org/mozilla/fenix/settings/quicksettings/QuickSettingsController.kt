@@ -209,7 +209,7 @@ class DefaultQuickSettingsController(
      */
     private fun navigateToManagePhoneFeature(phoneFeature: PhoneFeature) {
         val directions = QuickSettingsSheetDialogFragmentDirections
-            .actionGlobalSitePermissionsManagePhoneFeature(phoneFeature.id)
+            .actionGlobalSitePermissionsManagePhoneFeature(phoneFeature)
         navController.navigate(directions)
     }
 }
