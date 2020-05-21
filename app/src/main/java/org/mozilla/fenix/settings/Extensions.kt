@@ -4,19 +4,15 @@
 
 package org.mozilla.fenix.settings
 
-import android.view.View
 import android.widget.RadioButton
-import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.text.HtmlCompat
 import androidx.preference.Preference
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
-import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.ThemeManager
 
 fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
-    return update(featurePhone, get(featurePhone))
+    return update(featurePhone, get(featurePhone).toggle())
 }
 
 fun SitePermissions.get(field: PhoneFeature) = when (field) {
