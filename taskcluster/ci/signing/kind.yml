@@ -20,7 +20,7 @@ job-template:
     description: Sign Fenix
     worker-type:
         by-build-type:
-            (fennec-.+|nightly|beta|production|android-test-nightly):
+            (fennec-.+|nightly|beta|production|android-test-nightly|android-test):
                 by-level:
                     '3': signing
                     default: dep-signing
@@ -37,6 +37,10 @@ job-template:
                         '3': fennec-nightly-signing
                         default: dep-signing
                 nightly:
+                    by-level:
+                        '3': nightly-signing
+                        default: dep-signing
+                android-test:
                     by-level:
                         '3': nightly-signing
                         default: dep-signing
@@ -62,7 +66,7 @@ job-template:
           default: autograph_apk
     index:
         by-build-type:
-            (fennec-.+|nightly|performance-test|beta|production|debug):
+            (fennec-.+|nightly|performance-test|beta|production|debug|android-test):
                 type: signing
             default: {}
     run-on-tasks-for: []
@@ -70,6 +74,7 @@ job-template:
         job-symbol:
             by-build-type:
                 android-test.+: Bats
+                android-test: Bos
                 default: Bs
         kind: build
         platform: android-all/opt

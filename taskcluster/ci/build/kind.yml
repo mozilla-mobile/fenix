@@ -104,6 +104,18 @@ jobs:
         treeherder:
             symbol: nightly(B)
 
+    android-test:
+        attributes:
+            nightly: false
+        run-on-tasks-for: [github-push]
+        include-nightly-version: true
+        include-shippable-secrets: true
+        run:
+            geckoview-engine: geckoNightly
+            gradle-build-type: fenixNightly
+        treeherder:
+            symbol: nightly(Bo)
+
     beta:
         attributes:
             release-type: beta
