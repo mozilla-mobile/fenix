@@ -624,18 +624,19 @@ class Settings private constructor(
         )
     }
 
-    fun setSitePermissionSettingListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
-        val sitePermissionKeys = listOf(
-            PhoneFeature.NOTIFICATION,
-            PhoneFeature.MICROPHONE,
-            PhoneFeature.LOCATION,
-            PhoneFeature.CAMERA,
-            PhoneFeature.AUTOPLAY_AUDIBLE,
-            PhoneFeature.AUTOPLAY_INAUDIBLE
-        ).map { it.getPreferenceKey(appContext) }
+    /**
+     * Adds a listener that gets called whenever a [PhoneFeature] setting is changed.
+     */
+    fun setSitePermissionSettingChangeListener(
+        lifecycleOwner: LifecycleOwner,
+        listener: (PhoneFeature) -> Unit
+    ) {
+        val sitePermissionKeyToFeature = PhoneFeature.values()
+            .map { phoneFeature -> phoneFeature.getPreferenceKey(appContext) to phoneFeature }
+            .toMap()
 
         preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
-            if (key in sitePermissionKeys) listener.invoke()
+            sitePermissionKeyToFeature[key]?.let(listener)
         }
     }
 

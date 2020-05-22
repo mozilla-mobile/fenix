@@ -57,7 +57,6 @@ import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
-import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -72,6 +71,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
+import org.mozilla.fenix.components.SitePermissionsIntegration
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
@@ -127,11 +127,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
     private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
-    private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
+    private val sitePermissionsIntegration = ViewBoundFeatureWrapper<SitePermissionsIntegration>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
-    private val sitePermissionWifiIntegration = ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
     private var fullScreenMediaFeature = ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
     private var pipFeature: PictureInPictureFeature? = null
 
@@ -414,11 +413,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             val accentHighContrastColor =
                 ThemeManager.resolveAttribute(R.attr.accentHighContrast, context)
 
-            sitePermissionsFeature.set(
-                feature = SitePermissionsFeature(
+            sitePermissionsIntegration.set(
+                feature = SitePermissionsIntegration(
                     context = context,
-                    storage = context.components.core.permissionStorage.permissionsStorage,
-                    sessionManager = sessionManager,
+                    lifecycleOwner = viewLifecycleOwner,
                     fragmentManager = parentFragmentManager,
                     promptsStyling = SitePermissionsFeature.PromptsStyling(
                         gravity = getAppropriateLayoutGravity(),
@@ -430,26 +428,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     onNeedToRequestPermissions = { permissions ->
                         requestPermissions(permissions, REQUEST_CODE_APP_PERMISSIONS)
                     },
-                    onShouldShowRequestPermissionRationale = { shouldShowRequestPermissionRationale(it) }),
-                owner = this,
-                view = view
-            )
-
-            sitePermissionWifiIntegration.set(
-                feature = SitePermissionsWifiIntegration(
-                    settings = context.settings(),
-                    wifiConnectionMonitor = context.components.wifiConnectionMonitor
+                    onShouldShowRequestPermissionRationale = { shouldShowRequestPermissionRationale(it) }
                 ),
                 owner = this,
                 view = view
             )
-
-            context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
-                // If the user connects to WIFI while on the BrowserFragment, this will update the
-                // SitePermissionsRules (specifically autoplay) accordingly
-                this.context?.let { assignSitePermissionsRules(it) }
-            }
-            assignSitePermissionsRules(context)
 
             fullScreenFeature.set(
                 feature = FullScreenFeature(
@@ -645,7 +628,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     override fun onStart() {
         super.onStart()
         requireComponents.core.sessionManager.register(this, this, autoPause = true)
-        sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
     }
 
     @CallSuper
@@ -719,7 +701,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         val feature: PermissionsFeature? = when (requestCode) {
             REQUEST_CODE_DOWNLOAD_PERMISSIONS -> downloadsFeature.get()
             REQUEST_CODE_PROMPT_PERMISSIONS -> promptsFeature.get()
-            REQUEST_CODE_APP_PERMISSIONS -> sitePermissionsFeature.get()
+            REQUEST_CODE_APP_PERMISSIONS -> sitePermissionsIntegration.get()
             else -> null
         }
         feature?.onPermissionsResult(permissions, grantResults)
@@ -788,19 +770,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 0,
                 bottomMargin
             )
-        }
-    }
-
-    /**
-     * Updates the site permissions rules based on user settings.
-     */
-    private fun assignSitePermissionsRules(context: Context) {
-        val settings = context.settings()
-
-        val rules: SitePermissionsRules = settings.getSitePermissionsCustomSettingsRules()
-
-        sitePermissionsFeature.withFeature {
-            it.sitePermissionsRules = rules
         }
     }
 

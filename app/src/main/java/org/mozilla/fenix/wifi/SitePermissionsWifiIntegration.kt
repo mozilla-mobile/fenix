@@ -4,6 +4,13 @@
 
 package org.mozilla.fenix.wifi
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.observe
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import org.mozilla.fenix.settings.PhoneFeature
@@ -12,50 +19,47 @@ import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.utils.Settings
 
 /**
- * Handles implementation details of only setting up a WIFI connectivity listener if the current
+ * Handles implementation details of only setting up a WiFi connectivity listener if the current
  * user settings require it.
  */
 class SitePermissionsWifiIntegration(
     private val settings: Settings,
-    private val wifiConnectionMonitor: WifiConnectionMonitor
-) : LifecycleAwareFeature {
+    connectivityManager: ConnectivityManager
+) : DefaultLifecycleObserver {
 
     /**
-     * Adds listener for autplay setting [AUTOPLAY_ALLOW_ON_WIFI]. Sets all autoplay to allowed when
-     * WIFI is connected, blocked otherwise.
+     * Listener to check when WiFi is available.
      */
-    private val wifiConnectedListener: ((Boolean) -> Unit) by lazy {
-        { connected: Boolean ->
-            val setting =
-                if (connected) SitePermissionsRules.Action.ALLOWED else SitePermissionsRules.Action.BLOCKED
-            settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_AUDIBLE, setting)
-            settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_INAUDIBLE, setting)
-        }
-    }
+    private val wifiAvailable = NetworkOnlineLiveData(
+        connectivityManager,
+        request = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+    )
 
     /**
-     * If autoplay is only enabled on WIFI, sets a WIFI listener to set them accordingly. Otherwise
-     * noop.
+     * Builds listener for autoplay setting [AUTOPLAY_ALLOW_ON_WIFI].
+     * Sets all autoplay to allowed when WiFi is connected, blocked otherwise.
      */
-    fun maybeAddWifiConnectedListener() {
-        if (settings.getAutoplayUserSetting(default = AUTOPLAY_BLOCK_ALL) == AUTOPLAY_ALLOW_ON_WIFI) {
-            addWifiConnectedListener()
+    private val action = Transformations.map(wifiAvailable) { connected ->
+        if (connected) SitePermissionsRules.Action.ALLOWED else SitePermissionsRules.Action.BLOCKED
+    }
+
+    private fun updateSettings(action: SitePermissionsRules.Action) {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_AUDIBLE, action)
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.AUTOPLAY_INAUDIBLE, action)
+    }
+
+    private fun autoplayOnWifi() =
+        settings.getAutoplayUserSetting(default = AUTOPLAY_BLOCK_ALL) == AUTOPLAY_ALLOW_ON_WIFI
+
+    /**
+     * If autoplay is only enabled on WiFi, sets a WiFi listener to set them accordingly.
+     * Otherwise no-op.
+     */
+    override fun onStart(owner: LifecycleOwner) {
+        if (autoplayOnWifi()) {
+            action.observe(owner, ::updateSettings)
         }
     }
-
-    fun addWifiConnectedListener() {
-        wifiConnectionMonitor.addOnWifiConnectedChangedListener(wifiConnectedListener)
-    }
-
-    fun removeWifiConnectedListener() {
-        wifiConnectionMonitor.removeOnWifiConnectedChangedListener(wifiConnectedListener)
-    }
-
-    // Until https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed, AUTOPLAY_ALLOW_ALL
-    // only works while WIFI is active, so we are not using AUTOPLAY_ALLOW_ON_WIFI (or this class).
-    // Once that is fixed, [start] and [maybeAddWifiConnectedListener] will need to be called on
-    // activity startup.
-    override fun start() { wifiConnectionMonitor.start() }
-
-    override fun stop() { wifiConnectionMonitor.stop() }
 }

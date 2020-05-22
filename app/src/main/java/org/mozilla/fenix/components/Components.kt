@@ -106,5 +106,4 @@ class Components(private val context: Context) {
     val migrationStore by lazy { MigrationStore() }
     val performance by lazy { PerformanceComponent() }
     val push by lazy { Push(context, analytics.crashReporter) }
-    val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context as Application) }
 }
