@@ -207,7 +207,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     action = Intent.ACTION_VIEW
                     putExtra(HomeActivity.OPEN_TO_BROWSER, true)
                 },
-                bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
                 scope = viewLifecycleOwner.lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
                 topSiteStorage = requireComponents.core.topSiteStorage,
@@ -802,49 +801,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             sessionManager.findSessionById(localCustomTabId)
         } else {
             sessionManager.selectedSession
-        }
-    }
-
-    private suspend fun bookmarkTapped(session: Session) = withContext(IO) {
-        val bookmarksStorage = requireComponents.core.bookmarksStorage
-        val existing =
-            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
-        if (existing != null) {
-            // Bookmark exists, go to edit fragment
-            withContext(Main) {
-                nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(existing.guid, true)
-                )
-            }
-        } else {
-            // Save bookmark, then go to edit fragment
-            val guid = bookmarksStorage.addItem(
-                BookmarkRoot.Mobile.id,
-                url = session.url,
-                title = session.title,
-                position = null
-            )
-
-            withContext(Main) {
-                requireComponents.analytics.metrics.track(Event.AddBookmark)
-
-                view?.let { view ->
-                    FenixSnackbar.make(
-                        view = view,
-                        duration = FenixSnackbar.LENGTH_LONG,
-                        isDisplayedWithBrowserToolbar = true
-                    )
-                        .setText(getString(R.string.bookmark_saved_snackbar))
-                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
-                            nav(
-                                R.id.browserFragment,
-                                BrowserFragmentDirections.actionGlobalBookmarkEditFragment(guid, true)
-                            )
-                        }
-                        .show()
-                }
-            }
         }
     }
 

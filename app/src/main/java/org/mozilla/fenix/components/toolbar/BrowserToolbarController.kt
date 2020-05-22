@@ -6,16 +6,16 @@ package org.mozilla.fenix.components.toolbar
 
 import android.app.Activity
 import android.content.Intent
-import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -70,7 +70,6 @@ class DefaultBrowserToolbarController(
     private val swipeRefresh: SwipeRefreshLayout,
     private val customTabSession: Session?,
     private val openInFenixIntent: Intent,
-    private val bookmarkTapped: (Session) -> Unit,
     private val scope: CoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage,
     private val topSiteStorage: TopSiteStorage,
@@ -80,12 +79,6 @@ class DefaultBrowserToolbarController(
 
     private val currentSession
         get() = customTabSession ?: activity.components.core.sessionManager.selectedSession
-
-    // We hold onto a reference of the inner scope so that we can override this with the
-    // TestCoroutineScope to ensure sequential execution. If we didn't have this, our tests
-    // would fail intermittently due to the async nature of coroutine scheduling.
-    @VisibleForTesting
-    internal var ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun handleToolbarPaste(text: String) {
         browserAnimator.captureEngineViewAndDrawStatically {
@@ -163,11 +156,11 @@ class DefaultBrowserToolbarController(
                 currentSession
             )
             ToolbarMenu.Item.AddToTopSites -> {
-                ioScope.launch {
+                scope.launch(IO) {
                     currentSession?.let {
                         topSiteStorage.addTopSite(it.title, it.url)
                     }
-                    MainScope().launch {
+                    withContext(Main) {
                         FenixSnackbar.make(
                             view = swipeRefresh,
                             duration = Snackbar.LENGTH_SHORT,
@@ -182,7 +175,7 @@ class DefaultBrowserToolbarController(
             }
             ToolbarMenu.Item.AddToHomeScreen, ToolbarMenu.Item.InstallToHomeScreen -> {
                 activity.settings().installPwaOpened = true
-                MainScope().launch {
+                scope.launch(Main) {
                     with(activity.components.useCases.webAppUseCases) {
                         if (isInstallable()) {
                             addToHomescreen()
@@ -390,6 +383,53 @@ class DefaultBrowserToolbarController(
         }
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))
+    }
+    
+    private fun bookmarkTapped(session: Session) = scope.launch(IO) {
+        val bookmarksStorage = activity.components.core.bookmarksStorage
+        val existing =
+            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
+        if (existing != null) {
+            // Bookmark exists, go to edit fragment
+            withContext(Main) {
+                navController.nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                        existing.guid,
+                        requiresSnackbarPaddingForToolbar = true
+                    )
+                )
+            }
+        } else {
+            // Save bookmark, then go to edit fragment
+            val guid = bookmarksStorage.addItem(
+                BookmarkRoot.Mobile.id,
+                url = session.url,
+                title = session.title,
+                position = null
+            )
+
+            withContext(Main) {
+                activity.components.analytics.metrics.track(Event.AddBookmark)
+
+                FenixSnackbar.make(
+                    view = swipeRefresh,
+                    duration = FenixSnackbar.LENGTH_LONG,
+                    isDisplayedWithBrowserToolbar = true
+                )
+                    .setText(activity.getString(R.string.bookmark_saved_snackbar))
+                    .setAction(activity.getString(R.string.edit_bookmark_snackbar_action)) {
+                        navController.nav(
+                            R.id.browserFragment,
+                            BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                                guid,
+                                requiresSnackbarPaddingForToolbar = true
+                            )
+                        )
+                    }
+                    .show()
+            }
+        }
     }
 
     companion object {
