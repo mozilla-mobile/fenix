@@ -14,18 +14,28 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
+import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.tabstray.Tab
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.utils.allowUndo
+import org.mozilla.fenix.ext.logDebug
+import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.home.HomeFragmentDirections
 
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     interface Interactor {
         fun onTabSelected(tab: Tab)
         fun onNewTabTapped(private: Boolean)
     }
+
+    private val sessionManager: SessionManager
+            get() = requireComponents.core.sessionManager
 
     private lateinit var tabTrayView: TabTrayView
     var interactor: Interactor? = null
@@ -106,6 +116,33 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
 
     override fun onTabTrayDismissed() {
         dismissAllowingStateLoss()
+    }
+
+    override fun onShareTabsClicked(tabPosition: Int) {
+        share(getSessions(tabPosition == 1).toList())
+    }
+
+    override fun onSaveToCollectionClicked(tabPosition: Int) {
+
+    }
+
+    override fun onCloseAllTabsClicked(tabPosition: Int) {
+
+    }
+
+    private fun getSessions(private: Boolean): List<Session> {
+        return sessionManager.sessionsOfType(private = private).toList()
+    }
+
+    private fun share(tabs: List<Session>) {
+        val data = tabs.map {
+            ShareData(url = it.url, title = it.title)
+        }
+        logDebug("davidwalsh", data.toString())
+        val directions = HomeFragmentDirections.actionGlobalShareFragment(
+            data = data.toTypedArray()
+        )
+        nav(R.id.tabTrayFragment, directions)
     }
 
     companion object {

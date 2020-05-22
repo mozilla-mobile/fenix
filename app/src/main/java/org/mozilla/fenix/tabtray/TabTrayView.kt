@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabtray
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.*
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import mozilla.components.browser.menu.BrowserMenuBuilder
+import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.tabstray.Tab
@@ -20,12 +23,16 @@ import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.logDebug
 
 interface TabTrayInteractor {
     fun onTabClosed(tab: Tab)
     fun onTabSelected(tab: Tab)
     fun onNewTabTapped(private: Boolean)
     fun onTabTrayDismissed()
+    fun onShareTabsClicked(tabPosition: Int)
+    fun onSaveToCollectionClicked(tabPosition: Int)
+    fun onCloseAllTabsClicked(tabPosition: Int)
 }
 /**
  * View that contains and configures the BrowserAwesomeBar
@@ -43,6 +50,7 @@ class TabTrayView(
 
     private val behavior = BottomSheetBehavior.from(view.tab_wrapper)
     private var tabsFeature: TabsFeature
+    private var tabTrayItemMenu: TabTrayItemMenu
 
     override val containerView: View?
         get() = container
@@ -89,6 +97,26 @@ class TabTrayView(
             TabsTouchHelper(tray.tabsAdapter).attachToRecyclerView(tray)
         }
 
+        tabTrayItemMenu = TabTrayItemMenu(view.context) {
+            when (it) {
+                is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
+                    view.tab_layout.selectedTabPosition
+                )
+                is TabTrayItemMenu.Item.SaveToCollection -> interactor.onSaveToCollectionClicked(
+                    view.tab_layout.selectedTabPosition
+                )
+                is TabTrayItemMenu.Item.CloseAllTabs -> interactor.onCloseAllTabsClicked(
+                    view.tab_layout.selectedTabPosition
+                )
+            }
+        }
+
+        view.tab_tray_overflow.setOnClickListener {
+            tabTrayItemMenu.menuBuilder
+                .build(view.context)
+                .show(anchor = it)
+        }
+
         fabView.new_tab_button.setOnClickListener {
             interactor.onNewTabTapped(view.tab_layout.selectedTabPosition == 1)
         }
@@ -122,5 +150,41 @@ class TabTrayView(
         private const val PRIVATE_TAB_ID = 1
         private const val SLIDE_OFFSET = 0
         private const val ELEVATION = 90f
+    }
+}
+
+class TabTrayItemMenu(
+    private val context: Context,
+    private val onItemTapped: (Item) -> Unit = {}
+) {
+
+    sealed class Item {
+        object ShareAllTabs : Item()
+        object SaveToCollection : Item()
+        object CloseAllTabs : Item()
+    }
+
+    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
+
+    private val menuItems by lazy {
+        listOf(
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_item_save)
+            ) {
+                onItemTapped.invoke(Item.SaveToCollection)
+            },
+
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_item_share)
+            ) {
+                onItemTapped.invoke(Item.ShareAllTabs)
+            }.apply {  },
+
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_item_close)
+            ) {
+                onItemTapped.invoke(Item.CloseAllTabs)
+            }
+        )
     }
 }
