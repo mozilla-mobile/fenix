@@ -30,9 +30,9 @@ interface TabTrayInteractor {
     fun onTabSelected(tab: Tab)
     fun onNewTabTapped(private: Boolean)
     fun onTabTrayDismissed()
-    fun onShareTabsClicked(tabPosition: Int)
-    fun onSaveToCollectionClicked(tabPosition: Int)
-    fun onCloseAllTabsClicked(tabPosition: Int)
+    fun onShareTabsClicked(private: Boolean)
+    fun onSaveToCollectionClicked(private: Boolean)
+    fun onCloseAllTabsClicked(private: Boolean)
 }
 /**
  * View that contains and configures the BrowserAwesomeBar
@@ -100,13 +100,13 @@ class TabTrayView(
         tabTrayItemMenu = TabTrayItemMenu(view.context) {
             when (it) {
                 is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
-                    view.tab_layout.selectedTabPosition
+                    view.tab_layout.selectedTabPosition == 1
                 )
                 is TabTrayItemMenu.Item.SaveToCollection -> interactor.onSaveToCollectionClicked(
-                    view.tab_layout.selectedTabPosition
+                    view.tab_layout.selectedTabPosition == 1
                 )
                 is TabTrayItemMenu.Item.CloseAllTabs -> interactor.onCloseAllTabsClicked(
-                    view.tab_layout.selectedTabPosition
+                    view.tab_layout.selectedTabPosition == 1
                 )
             }
         }

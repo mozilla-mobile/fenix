@@ -59,6 +59,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.MediaState.State.PLAYING
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -370,6 +371,19 @@ class HomeFragment : Fragment() {
                 override fun onNewTabTapped(private: Boolean) {
                     (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
                     tabTrayDialog.dismiss()
+                }
+
+                override fun onShareTabsClicked(private: Boolean) {
+                    tabTrayDialog.dismiss()
+                    share(getListOfSessions(private))
+                }
+
+                override fun onCloseAllTabsClicked(private: Boolean) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onSaveToCollectionClicked(private: Boolean) {
+                    TODO("Not yet implemented")
                 }
             }
         }
@@ -846,8 +860,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getListOfSessions(): List<Session> {
-        return sessionManager.sessionsOfType(private = browsingModeManager.mode.isPrivate)
+    private fun getListOfSessions(private: Boolean = browsingModeManager.mode.isPrivate): List<Session> {
+        return sessionManager.sessionsOfType(private = private)
             .filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }
             .toList()
     }
@@ -1020,6 +1034,16 @@ class HomeFragment : Fragment() {
             (sessionControlView!!.view.layoutManager as LinearLayoutManager)
                 .scrollToPositionWithOffset(position, SELECTED_TAB_OFFSET)
         }
+    }
+
+    private fun share(tabs: List<Session>) {
+        val data = tabs.map {
+            ShareData(url = it.url, title = it.title)
+        }
+        val directions = HomeFragmentDirections.actionGlobalShareFragment(
+            data = data.toTypedArray()
+        )
+        nav(R.id.homeFragment, directions)
     }
 
     companion object {

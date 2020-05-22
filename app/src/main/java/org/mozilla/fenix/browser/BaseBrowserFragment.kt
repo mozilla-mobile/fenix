@@ -225,6 +225,19 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                             tabTrayDialog.dismiss()
                             findNavController().navigate(BrowserFragmentDirections.actionGlobalHome())
                         }
+
+                        override fun onShareTabsClicked(private: Boolean) {
+                            tabTrayDialog.dismiss()
+                            share(getListOfSessions(private))
+                        }
+
+                        override fun onCloseAllTabsClicked(private: Boolean) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onSaveToCollectionClicked(private: Boolean) {
+                            TODO("Not yet implemented")
+                        }
                     }
                 }
             )
@@ -963,6 +976,21 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         if (!FeatureFlags.dynamicBottomToolbar) {
             updateLayoutMargins(inFullScreen)
         }
+    }
+
+    private fun share(tabs: List<Session>) {
+        val data = tabs.map {
+            ShareData(url = it.url, title = it.title)
+        }
+        val directions = BrowserFragmentDirections.actionGlobalShareFragment(
+            data = data.toTypedArray()
+        )
+        nav(R.id.browserFragment, directions)
+    }
+
+    private fun getListOfSessions(private: Boolean = (activity as HomeActivity).browsingModeManager.mode.isPrivate): List<Session> {
+        return requireComponents.core.sessionManager.sessionsOfType(private = private)
+            .toList()
     }
 
     /*
