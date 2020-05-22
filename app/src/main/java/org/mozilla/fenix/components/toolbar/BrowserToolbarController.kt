@@ -44,6 +44,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Do
+import org.mozilla.fenix.utils.Settings
 
 /**
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
@@ -74,6 +75,7 @@ class DefaultBrowserToolbarController(
     private val tabCollectionStorage: TabCollectionStorage,
     private val topSiteStorage: TopSiteStorage,
     private val sharedViewModel: SharedViewModel,
+    private val settings: Settings = activity.settings(),
     private val onTabCounterClicked: () -> Unit
 ) : BrowserToolbarController {
 
@@ -124,9 +126,9 @@ class DefaultBrowserToolbarController(
     override fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
         lowPrioHighlightItems.forEach {
             when (it) {
-                ToolbarMenu.Item.AddToHomeScreen -> activity.settings().installPwaOpened = true
-                is ToolbarMenu.Item.ReaderMode -> activity.settings().readerModeOpened = true
-                ToolbarMenu.Item.OpenInApp -> activity.settings().openInAppOpened = true
+                ToolbarMenu.Item.AddToHomeScreen -> settings.installPwaOpened = true
+                is ToolbarMenu.Item.ReaderMode -> settings.readerModeOpened = true
+                ToolbarMenu.Item.OpenInApp -> settings.openInAppOpened = true
                 else -> { }
             }
         }
@@ -174,7 +176,7 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.AddToHomeScreen, ToolbarMenu.Item.InstallToHomeScreen -> {
-                activity.settings().installPwaOpened = true
+                settings.installPwaOpened = true
                 scope.launch(Main) {
                     with(activity.components.useCases.webAppUseCases) {
                         if (isInstallable()) {
@@ -268,7 +270,7 @@ class DefaultBrowserToolbarController(
                 deleteAndQuit(activity, scope, snackbar)
             }
             is ToolbarMenu.Item.ReaderMode -> {
-                activity.settings().readerModeOpened = true
+                settings.readerModeOpened = true
 
                 val enabled = currentSession?.let {
                     activity.components.core.store.state.findTab(it.id)?.readerState?.active
@@ -284,7 +286,7 @@ class DefaultBrowserToolbarController(
                 readerModeController.showControls()
             }
             ToolbarMenu.Item.OpenInApp -> {
-                activity.settings().openInAppOpened = true
+                settings.openInAppOpened = true
 
                 val appLinksUseCases =
                     activity.components.useCases.appLinksUseCases
@@ -316,7 +318,7 @@ class DefaultBrowserToolbarController(
     }
 
     private fun animateTabAndNavigateHome() {
-        if (activity.settings().useNewTabTray) {
+        if (settings.useNewTabTray) {
             onTabCounterClicked.invoke()
             return
         }

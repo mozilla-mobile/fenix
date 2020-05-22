@@ -85,12 +85,17 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.theme.ThemeManager
+<<<<<<< HEAD
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
+=======
+import org.mozilla.fenix.utils.allowUndo
+>>>>>>> cad92e3c... Update tests
 import java.lang.ref.WeakReference
 
 /**
@@ -110,9 +115,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private var _browserToolbarView: BrowserToolbarView? = null
     protected val browserToolbarView: BrowserToolbarView
         get() = _browserToolbarView!!
-
-    private val sessionManager: SessionManager
-        get() = requireComponents.core.sessionManager
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 

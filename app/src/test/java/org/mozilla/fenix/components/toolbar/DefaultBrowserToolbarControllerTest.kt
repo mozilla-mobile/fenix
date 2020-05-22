@@ -14,6 +14,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
@@ -38,7 +39,6 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,6 +62,7 @@ import org.mozilla.fenix.ext.toTab
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.utils.Settings
 
 @ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
@@ -83,6 +84,7 @@ class DefaultBrowserToolbarControllerTest {
     private val scope: LifecycleCoroutineScope = mockk(relaxed = true)
     private val browserAnimator: BrowserAnimator = mockk(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
+    private val settings = mockk<Settings>(relaxed = true)
     private val tabCollectionStorage = mockk<TabCollectionStorage>(relaxed = true)
     private val topSiteStorage = mockk<TopSiteStorage>(relaxed = true)
     private val readerModeController = mockk<ReaderModeController>(relaxed = true)
@@ -111,10 +113,10 @@ class DefaultBrowserToolbarControllerTest {
             swipeRefresh = swipeRefreshLayout,
             tabCollectionStorage = tabCollectionStorage,
             topSiteStorage = topSiteStorage,
-            bookmarkTapped = mockk(),
             readerModeController = readerModeController,
             sessionManager = mockk(),
             sharedViewModel = mockk(),
+            settings = settings,
             onTabCounterClicked = { }
         )
 
@@ -205,18 +207,18 @@ class DefaultBrowserToolbarControllerTest {
             swipeRefresh = swipeRefreshLayout,
             tabCollectionStorage = tabCollectionStorage,
             topSiteStorage = topSiteStorage,
-            bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
             sharedViewModel = mockk(),
+            settings = settings,
             onTabCounterClicked = { }
         )
 
         controller.handleBrowserMenuDismissed(itemList)
 
-        assertEquals(true, activity.settings().installPwaOpened)
-        assertEquals(true, activity.settings().readerModeOpened)
-        assertEquals(true, activity.settings().openInAppOpened)
+        verify { settings.installPwaOpened = true }
+        verify { settings.readerModeOpened = true }
+        verify { settings.openInAppOpened = true }
     }
 
     @Test
@@ -354,7 +356,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleToolbarAddToTopSitesPressed() = runBlockingTest {
+    fun handleToolbarAddToTopSitesPressed() = runBlocking {
         val item = ToolbarMenu.Item.AddToTopSites
 
         controller = DefaultBrowserToolbarController(
@@ -369,13 +371,14 @@ class DefaultBrowserToolbarControllerTest {
             swipeRefresh = swipeRefreshLayout,
             tabCollectionStorage = tabCollectionStorage,
             topSiteStorage = topSiteStorage,
-            bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
             sharedViewModel = mockk(),
             onTabCounterClicked = { }
         )
-        controller.ioScope = this
+
+        mockkObject(FenixSnackbar.Companion)
+        every { FenixSnackbar.make(any(), any(), isDisplayedWithBrowserToolbar = any()) } returns mockk(relaxed = true)
 
         controller.handleToolbarItemInteraction(item)
 
@@ -392,7 +395,25 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleToolbarAddToHomeScreenPress() {
+    fun handleToolbarAddToHomeScreenPress() = runBlocking {
+        controller = DefaultBrowserToolbarController(
+            activity = activity,
+            navController = navController,
+            findInPageLauncher = findInPageLauncher,
+            engineView = engineView,
+            browserAnimator = browserAnimator,
+            customTabSession = null,
+            openInFenixIntent = openInFenixIntent,
+            scope = this,
+            swipeRefresh = swipeRefreshLayout,
+            tabCollectionStorage = tabCollectionStorage,
+            topSiteStorage = topSiteStorage,
+            readerModeController = readerModeController,
+            sessionManager = mockk(),
+            sharedViewModel = mockk(),
+            onTabCounterClicked = {}
+        )
+
         val item = ToolbarMenu.Item.AddToHomeScreen
 
         controller.handleToolbarItemInteraction(item)
@@ -522,9 +543,9 @@ class DefaultBrowserToolbarControllerTest {
         verify {
             val directions =
                 BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
-                    saveCollectionStep = SaveCollectionStep.SelectCollection,
                     tabIds = arrayOf(currentSession.id),
-                    selectedTabIds = arrayOf(currentSession.id)
+                    selectedTabIds = arrayOf(currentSession.id),
+                    saveCollectionStep = SaveCollectionStep.SelectCollection
                 )
             navController.nav(R.id.browserFragment, directions)
         }
@@ -572,7 +593,6 @@ class DefaultBrowserToolbarControllerTest {
             swipeRefresh = swipeRefreshLayout,
             tabCollectionStorage = tabCollectionStorage,
             topSiteStorage = topSiteStorage,
-            bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
             sharedViewModel = mockk(),
@@ -612,7 +632,6 @@ class DefaultBrowserToolbarControllerTest {
             swipeRefresh = swipeRefreshLayout,
             tabCollectionStorage = tabCollectionStorage,
             topSiteStorage = topSiteStorage,
-            bookmarkTapped = mockk(),
             readerModeController = mockk(),
             sessionManager = mockk(),
             sharedViewModel = mockk(),
