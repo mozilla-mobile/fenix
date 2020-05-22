@@ -113,10 +113,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         if (AppCompatDelegate.getDefaultNightMode() == mode) return
         AppCompatDelegate.setDefaultNightMode(mode)
         activity?.recreate()
-        with(requireComponents.core) {
-            engine.settings.preferredColorScheme = getPreferredColorScheme()
-        }
-        requireComponents.useCases.sessionUseCases.reload.invoke()
+        requireComponents.customizeColorSchemeUseCase.customizeEngine()
     }
 
     private fun setupToolbarCategory() {

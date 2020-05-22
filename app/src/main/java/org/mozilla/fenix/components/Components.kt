@@ -100,6 +100,14 @@ class Components(private val context: Context) {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
     }
 
+    val customizeColorSchemeUseCase by lazy {
+        ColorSchemeUseCases.CustomizeColorSchemeUseCase(
+            core.engine.settings,
+            useCases.sessionUseCases.reload,
+            core.retrieveColorScheme
+        )
+    }
+
     val analytics by lazy { Analytics(context) }
     val publicSuffixList by lazy { PublicSuffixList(context) }
     val clipboardHandler by lazy { ClipboardHandler(context) }

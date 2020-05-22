@@ -477,9 +477,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             @Suppress("ConstantConditionIf")
             if (FeatureFlags.pullToRefreshEnabled) {
-                val primaryTextColor =
-                    ThemeManager.resolveAttribute(R.attr.primaryText, context)
-                view.swipeRefresh.setColorSchemeColors(primaryTextColor)
+                view.swipeRefresh.setColorSchemeColors(context.getColorFromAttr(R.attr.primaryText))
                 swipeRefreshFeature.set(
                     feature = SwipeRefreshFeature(
                         sessionManager,
@@ -633,13 +631,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     @CallSuper
     override fun onResume() {
         super.onResume()
-        val components = requireComponents
-
-        val preferredColorScheme = components.core.getPreferredColorScheme()
-        if (components.core.engine.settings.preferredColorScheme != preferredColorScheme) {
-            components.core.engine.settings.preferredColorScheme = preferredColorScheme
-            components.useCases.sessionUseCases.reload()
-        }
+        requireComponents.customizeColorSchemeUseCase.customizeEngine()
         hideToolbar()
     }
 

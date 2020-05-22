@@ -69,7 +69,7 @@ class Core(private val context: Context) {
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
-            preferredColorScheme = getPreferredColorScheme(),
+            preferredColorScheme = retrieveColorScheme.getPreferredColorScheme(),
             automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
             fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = false,
@@ -254,20 +254,10 @@ class Core(private val context: Context) {
 
     val trackingProtectionPolicyFactory = TrackingProtectionPolicyFactory(context.settings())
 
-    /**
-     * Sets Preferred Color scheme based on Dark/Light Theme Settings or Current Configuration
-     */
-    fun getPreferredColorScheme(): PreferredColorScheme {
-        val inDark =
-            (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_YES
-        return when {
-            context.settings().shouldUseDarkTheme -> PreferredColorScheme.Dark
-            context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
-            inDark -> PreferredColorScheme.Dark
-            else -> PreferredColorScheme.Light
-        }
-    }
+    val retrieveColorScheme = ColorSchemeUseCases.RetrieveColorSchemeUseCase(
+        context.resources,
+        context.settings()
+    )
 
     companion object {
         private const val KEY_STRENGTH = 256

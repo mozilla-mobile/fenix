@@ -102,8 +102,7 @@ class OnboardingThemePickerViewHolder(view: View) : RecyclerView.ViewHolder(view
         if (AppCompatDelegate.getDefaultNightMode() == mode) return
         AppCompatDelegate.setDefaultNightMode(mode)
         with(itemView.context.components) {
-            core.engine.settings.preferredColorScheme = core.getPreferredColorScheme()
-            useCases.sessionUseCases.reload.invoke()
+            customizeColorSchemeUseCase.customizeEngine()
         }
     }
 
