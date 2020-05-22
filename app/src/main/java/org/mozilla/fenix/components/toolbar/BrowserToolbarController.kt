@@ -58,7 +58,7 @@ interface BrowserToolbarController {
     fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
 }
 
-@Suppress("LargeClass")
+@Suppress("LargeClass", "TooManyFunctions")
 class DefaultBrowserToolbarController(
     private val activity: Activity,
     private val navController: NavController,
@@ -384,7 +384,7 @@ class DefaultBrowserToolbarController(
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))
     }
-    
+
     private fun bookmarkTapped(session: Session) = scope.launch(IO) {
         val bookmarksStorage = activity.components.core.bookmarksStorage
         val existing =

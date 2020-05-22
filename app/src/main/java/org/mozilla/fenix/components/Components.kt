@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
@@ -20,7 +19,6 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
-import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
 private const val DAY_IN_MINUTES = 24 * 60L

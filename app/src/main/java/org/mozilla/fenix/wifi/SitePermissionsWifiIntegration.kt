@@ -12,7 +12,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.observe
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
-import mozilla.components.support.base.feature.LifecycleAwareFeature
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_ALLOW_ON_WIFI
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL

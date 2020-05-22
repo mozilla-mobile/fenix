@@ -7,6 +7,7 @@ package org.mozilla.fenix.browser
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -28,22 +29,16 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.session.runWithSessionIdOrSelected
-import mozilla.components.browser.state.action.ContentAction
-import mozilla.components.browser.state.state.content.DownloadState
-import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.state.selector.findCustomTab
+import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
-import mozilla.components.feature.downloads.AbstractFetchDownloadService
-import mozilla.components.feature.downloads.DownloadsFeature
-import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.media.fullscreen.MediaFullscreenOrientationFeature
 import mozilla.components.feature.prompts.PromptFeature
@@ -61,6 +56,7 @@ import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.exitImmersiveModeIfNeeded
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.FeatureFlags
@@ -84,11 +80,11 @@ import org.mozilla.fenix.components.toolbar.SwipeRefreshScrollingViewBehavior
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
+import org.mozilla.fenix.downloads.DownloadsIntegration
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
-import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
@@ -122,7 +118,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
-    private val downloadsFeature = ViewBoundFeatureWrapper<DownloadsFeature>()
+    private val downloadsIntegration = ViewBoundFeatureWrapper<DownloadsIntegration>()
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
@@ -134,7 +130,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private var fullScreenMediaFeature = ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
     private var pipFeature: PictureInPictureFeature? = null
 
-    var customTabSessionId: String? = null
+    protected var customTabSessionId: String? = null
+        private set
 
     private var browserInitialized: Boolean = false
     private var initUIJob: Job? = null
@@ -277,72 +274,23 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
-            val downloadFeature = DownloadsFeature(
-                context.applicationContext,
-                store = store,
-                useCases = context.components.useCases.downloadUseCases,
-                fragmentManager = childFragmentManager,
-                tabId = customTabSessionId,
-                downloadManager = FetchDownloadManager(
-                    context.applicationContext,
-                    store,
-                    DownloadService::class
+            downloadsIntegration.set(
+                DownloadsIntegration(
+                    rootView = view,
+                    dynamicDownloadDialogView = view.viewDynamicDownloadDialog,
+                    store = store,
+                    tabId = session.id,
+                    useCases = context.components.useCases.downloadUseCases,
+                    fragmentManager = childFragmentManager,
+                    viewModel = sharedViewModel,
+                    onNeedToRequestPermissions = { permissions ->
+                        requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
+                    },
+                    expandToolbar = { browserToolbarView.expand() }
                 ),
-                promptsStyling = DownloadsFeature.PromptsStyling(
-                    gravity = Gravity.BOTTOM,
-                    shouldWidthMatchParent = true,
-                    positiveButtonBackgroundColor = ThemeManager.resolveAttribute(
-                        R.attr.accent,
-                        context
-                    ),
-                    positiveButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.contrastText,
-                        context
-                    ),
-                    positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
-                ),
-                onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
-                }
-            )
-
-            downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
-                // If the download is just paused, don't show any in-app notification
-                if (downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.COMPLETED ||
-                    downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED
-                ) {
-
-                    saveDownloadDialogState(session, downloadState, downloadJobStatus)
-
-                    DynamicDownloadDialog(
-                        container = view.browserLayout,
-                        downloadState = downloadState,
-                        didFail = downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED,
-                        tryAgain = downloadFeature::tryAgain,
-                        onCannotOpenFile = {
-                            FenixSnackbar.make(
-                                view = view,
-                                duration = Snackbar.LENGTH_SHORT,
-                                isDisplayedWithBrowserToolbar = true
-                            )
-                                .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                                .show()
-                        },
-                        view = view.viewDynamicDownloadDialog,
-                        toolbarHeight = toolbarHeight,
-                        onDismiss = { sharedViewModel.downloadDialogState.remove(session.id) }
-                    ).show()
-                    browserToolbarView.expand()
-                }
-            }
-
-            downloadsFeature.set(
-                downloadFeature,
                 owner = this,
                 view = view
             )
-
-            resumeDownloadDialogState(session, store, view, context, toolbarHeight)
 
             pipFeature = PictureInPictureFeature(
                 requireComponents.core.sessionManager,
@@ -513,74 +461,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         }
     }
 
-    /**
-     * Preserves current state of the [DynamicDownloadDialog] to persist through tab changes and
-     * other fragments navigation.
-     * */
-    private fun saveDownloadDialogState(
-        session: Session,
-        downloadState: DownloadState,
-        downloadJobStatus: AbstractFetchDownloadService.DownloadJobStatus
-    ) {
-        sharedViewModel.downloadDialogState[session.id] = Pair(
-            downloadState,
-            downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED
-        )
-    }
-
-    /**
-     * Re-initializes [DynamicDownloadDialog] if the user hasn't dismissed the dialog
-     * before navigating away from it's original tab.
-     * onTryAgain it will use [ContentAction.UpdateDownloadAction] to re-enqueue the former failed
-     * download, because [DownloadsFeature] clears any queued downloads onStop.
-     * */
-    private fun resumeDownloadDialogState(
-        session: Session,
-        store: BrowserStore,
-        view: View,
-        context: Context,
-        toolbarHeight: Int
-    ) {
-        val savedDownloadState =
-            sharedViewModel.downloadDialogState[session.id] ?: return
-
-        val onTryAgain: (Long) -> Unit = {
-            savedDownloadState.first?.let { dlState ->
-                store.dispatch(
-                    ContentAction.UpdateDownloadAction(
-                        session.id, dlState.copy(skipConfirmation = true)
-                    )
-                )
-            }
-        }
-
-        val onCannotOpenFile = {
-            FenixSnackbar.make(
-                view = view,
-                duration = Snackbar.LENGTH_SHORT,
-                isDisplayedWithBrowserToolbar = true
-            )
-                .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
-                .show()
-        }
-
-        val onDismiss: () -> Unit =
-            { sharedViewModel.downloadDialogState.remove(session.id) }
-
-        DynamicDownloadDialog(
-            container = view.browserLayout,
-            downloadState = savedDownloadState.first,
-            didFail = savedDownloadState.second,
-            tryAgain = onTryAgain,
-            onCannotOpenFile = onCannotOpenFile,
-            view = view.viewDynamicDownloadDialog,
-            toolbarHeight = toolbarHeight,
-            onDismiss = onDismiss
-        ).show()
-
-        browserToolbarView.expand()
-    }
-
     private fun initializeEngineView(toolbarHeight: Int) {
         if (FeatureFlags.dynamicBottomToolbar) {
             engineView.setDynamicToolbarMaxHeight(toolbarHeight)
@@ -675,7 +555,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     final override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.getString(KEY_CUSTOM_TAB_SESSION_ID)?.let {
-            if (requireComponents.core.sessionManager.findSessionById(it)?.customTabConfig != null) {
+            if (requireComponents.core.store.state.findCustomTab(it) != null) {
                 customTabSessionId = it
             }
         }
@@ -690,7 +570,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         grantResults: IntArray
     ) {
         val feature: PermissionsFeature? = when (requestCode) {
-            REQUEST_CODE_DOWNLOAD_PERMISSIONS -> downloadsFeature.get()
+            REQUEST_CODE_DOWNLOAD_PERMISSIONS -> downloadsIntegration.get()
             REQUEST_CODE_PROMPT_PERMISSIONS -> promptsFeature.get()
             REQUEST_CODE_APP_PERMISSIONS -> sitePermissionsIntegration.get()
             else -> null
@@ -813,10 +693,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun pipModeChanged(enabled: Boolean) {
-        val fullScreenMode =
-            requireComponents.core.sessionManager.runWithSessionIdOrSelected(customTabSessionId) { session ->
-                session.fullScreenMode
-            }
+        val fullScreenMode = requireComponents.core.store.state
+            .findCustomTabOrSelectedTab(customTabSessionId)?.content?.fullScreen == true
+
         // If we're exiting PIP mode and we're in fullscreen mode, then we should exit fullscreen mode as well.
         if (!enabled && fullScreenMode) {
             onBackPressed()
@@ -829,7 +708,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun viewportFitChange(layoutInDisplayCutoutMode: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (SDK_INT >= Build.VERSION_CODES.P) {
             val layoutParams = activity?.window?.attributes
             layoutParams?.layoutInDisplayCutoutMode = layoutInDisplayCutoutMode
             activity?.window?.attributes = layoutParams

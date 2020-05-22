@@ -4,7 +4,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
-import org.mozilla.fenix.ext.isOnline
 
 /**
  * [LiveData] that emits network available/not available events.
