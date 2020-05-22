@@ -9,9 +9,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
+import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.EngineView.InputResult.INPUT_RESULT_UNHANDLED
-import org.mozilla.fenix.ext.settings
 
 /**
  * ScrollingViewBehavior that will setScrollFlags on BrowserToolbar based on EngineView touch handling
@@ -31,7 +31,7 @@ class SwipeRefreshScrollingViewBehavior(
         type: Int
     ): Boolean {
 
-        if (!browserToolbarView.view.context.settings().shouldUseBottomToolbar) {
+        if (browserToolbarView.gravity == DisplayToolbar.Gravity.TOP) {
             val shouldDisable = engineView.getInputResult() == INPUT_RESULT_UNHANDLED
             browserToolbarView.setScrollFlags(shouldDisable)
         }

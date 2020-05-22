@@ -61,6 +61,7 @@
 
     <!-- Browser Toolbar -->
     <dimen name="browser_toolbar_height">56dp</dimen>
+    <dimen name="browser_toolbar_elevation">16dp</dimen>
 
     <!-- SignIn Component -->
     <dimen name="sign_in_button_padding">10dp</dimen>

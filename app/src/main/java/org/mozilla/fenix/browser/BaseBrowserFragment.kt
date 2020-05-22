@@ -87,13 +87,13 @@ import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 
@@ -114,9 +114,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private var _browserToolbarView: BrowserToolbarView? = null
     protected val browserToolbarView: BrowserToolbarView
         get() = _browserToolbarView!!
-
-    private val sessionManager: SessionManager
-        get() = requireComponents.core.sessionManager
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
 
@@ -174,8 +171,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     @CallSuper
     protected open fun initializeUI(view: View): Session? {
         val context = requireContext()
-        val sessionManager = context.components.core.sessionManager
-        val store = context.components.core.store
+        val components = context.components
+        val settings = context.settings()
+        val sessionManager = components.core.sessionManager
+        val store = components.core.store
 
         val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
@@ -198,7 +197,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     view.readerViewControlsBar,
                     isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
                 ),
-                sessionManager = requireComponents.core.sessionManager,
+                sessionManager = sessionManager,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 engineView = engineView,
                 swipeRefresh = swipeRefresh,
@@ -224,7 +223,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             _browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
-                shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
+                shouldUseBottomToolbar = settings.shouldUseBottomToolbar,
+                shouldUseFixedTopToolbar = settings.shouldUseFixedTopToolbar,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 lifecycleOwner = viewLifecycleOwner
@@ -253,7 +253,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             }
 
             browserToolbarView.view.display.setOnTrackingProtectionClickedListener {
-                context.metrics.track(Event.TrackingProtectionIconPressed)
+                components.analytics.metrics.track(Event.TrackingProtectionIconPressed)
                 showTrackingProtectionPanel()
             }
 
@@ -263,7 +263,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     store = store,
                     candidates = getContextMenuCandidates(context, view),
                     engineView = view.engineView,
-                    useCases = context.components.useCases.contextMenuUseCases,
+                    useCases = components.useCases.contextMenuUseCases,
                     tabId = customTabSessionId
                 ),
                 owner = this,
@@ -271,10 +271,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             )
 
             fullScreenMediaFeature.set(
-                feature = MediaFullscreenOrientationFeature(
-                    requireActivity(),
-                    context.components.core.store
-                ),
+                feature = MediaFullscreenOrientationFeature(requireActivity(), store),
                 owner = this,
                 view = view
             )
@@ -282,7 +279,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             val downloadFeature = DownloadsFeature(
                 context.applicationContext,
                 store = store,
-                useCases = context.components.useCases.downloadUseCases,
+                useCases = components.useCases.downloadUseCases,
                 fragmentManager = childFragmentManager,
                 tabId = customTabSessionId,
                 downloadManager = FetchDownloadManager(
@@ -301,7 +298,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         R.attr.contrastText,
                         context
                     ),
-                    positiveButtonRadius = (resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat()
+                    positiveButtonRadius = resources.getDimension(R.dimen.tab_corner_radius)
                 ),
                 onNeedToRequestPermissions = { permissions ->
                     requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
@@ -360,7 +357,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
-                    launchInApp = { context.settings().openLinksInExternalApp }
+                    launchInApp = { settings.openLinksInExternalApp }
                 ),
                 owner = this,
                 view = view
@@ -373,10 +370,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     customTabId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
                     loginValidationDelegate = DefaultLoginValidationDelegate(
-                        context.components.core.lazyPasswordsStorage
+                        components.core.lazyPasswordsStorage
                     ),
                     isSaveLoginEnabled = {
-                        context.settings().shouldPromptToSaveLogins
+                        settings.shouldPromptToSaveLogins
                     },
                     shareDelegate = object : ShareDelegate {
                         override fun showShareSheet(
@@ -417,7 +414,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             sitePermissionsFeature.set(
                 feature = SitePermissionsFeature(
                     context = context,
-                    storage = context.components.core.permissionStorage.permissionsStorage,
+                    storage = components.core.permissionStorage.permissionsStorage,
                     sessionManager = sessionManager,
                     fragmentManager = parentFragmentManager,
                     promptsStyling = SitePermissionsFeature.PromptsStyling(
@@ -437,19 +434,19 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             sitePermissionWifiIntegration.set(
                 feature = SitePermissionsWifiIntegration(
-                    settings = context.settings(),
-                    wifiConnectionMonitor = context.components.wifiConnectionMonitor
+                    settings = settings,
+                    wifiConnectionMonitor = components.wifiConnectionMonitor
                 ),
                 owner = this,
                 view = view
             )
 
-            context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
+            settings.setSitePermissionSettingListener(viewLifecycleOwner) {
                 // If the user connects to WIFI while on the BrowserFragment, this will update the
                 // SitePermissionsRules (specifically autoplay) accordingly
-                this.context?.let { assignSitePermissionsRules(it) }
+                this.context?.settings()?.let { assignSitePermissionsRules(it) }
             }
-            assignSitePermissionsRules(context)
+            assignSitePermissionsRules(settings)
 
             fullScreenFeature.set(
                 feature = FullScreenFeature(
@@ -500,7 +497,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 swipeRefreshFeature.set(
                     feature = SwipeRefreshFeature(
                         sessionManager,
-                        context.components.useCases.sessionUseCases.reload,
+                        components.useCases.sessionUseCases.reload,
                         view.swipeRefresh,
                         customTabSessionId
                     ),
@@ -794,9 +791,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     /**
      * Updates the site permissions rules based on user settings.
      */
-    private fun assignSitePermissionsRules(context: Context) {
-        val settings = context.settings()
-
+    private fun assignSitePermissionsRules(settings: Settings) {
         val rules: SitePermissionsRules = settings.getSitePermissionsCustomSettingsRules()
 
         sitePermissionsFeature.withFeature {
