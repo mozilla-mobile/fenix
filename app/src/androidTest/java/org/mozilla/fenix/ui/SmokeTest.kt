@@ -55,11 +55,12 @@ class SmokeTest {
                 // Verify 'x' button actions
                 verifyXButtonActions()
                 pressBack()
+                TestAssetHelper.waitingTime
 
                 // Verify various items after returning back to the initial WebPage
                 verifyPageContent(defaultWebPage.content)
                 verifyNavURLBar()
-                clickTabCounter()
+                }.openHomeScreen {
 
                 // Verify items on HomeScreen
                 verifyHomeScreen()

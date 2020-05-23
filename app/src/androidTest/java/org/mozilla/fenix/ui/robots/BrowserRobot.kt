@@ -9,8 +9,8 @@ package org.mozilla.fenix.ui.robots
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -35,7 +35,6 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LongClickDuration
-import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.click
@@ -59,7 +58,7 @@ class BrowserRobot {
             Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
             waitingTime
         )
-        TestAssetHelper.waitingTime
+        waitingTime
         onView(withId(R.id.mozac_browser_toolbar_url_view))
             .check(matches(withText(containsString(url.replace("http://", "")))))
     }
@@ -158,7 +157,8 @@ class BrowserRobot {
 
     fun verifyNavURLBarItems() {
         verifyEnhancedTrackingOptions()
-        Espresso.pressBack()
+        pressBack()
+        waitingTime
         verifySecureConnectionLockIcon()
         verifyTabCounter("1")
         verifyNavURLBar()
@@ -193,8 +193,6 @@ class BrowserRobot {
     fun clickNavURLBar() = navURLBar().click()
 
     fun clickXButton() = xButton().click()
-
-    fun clickTabCounter() = onView(withId(R.id.counter_text)).click()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
