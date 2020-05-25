@@ -7,7 +7,6 @@ package org.mozilla.fenix.ui
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import kotlinx.android.synthetic.main.mozac_ui_tabcounter_layout.view.*
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -42,8 +41,9 @@ class SmokeTest {
     @Test
     fun verifyTheNavToolBarButtonsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val defaultWebPageTitle = "Test_Page_1"
 
-        //  - Visit a URL, wait until it's loaded
+        // Visit a URL, wait until it's loaded
         homeScreen {
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
@@ -58,13 +58,18 @@ class SmokeTest {
                 TestAssetHelper.waitingTime
 
                 // Verify various items after returning back to the initial WebPage
-                verifyPageContent(defaultWebPage.content)
                 verifyNavURLBar()
+                verifyUrl((defaultWebPage.url).toString())
                 }.openHomeScreen {
 
                 // Verify items on HomeScreen
                 verifyHomeScreen()
                 verifyExistingTabList()
+
+                // Go to the same page again and check for main menu
+            }.openTab(defaultWebPageTitle) {
+                clickMenuButton()
+                verifyMainMenu()
             }
         }
     }

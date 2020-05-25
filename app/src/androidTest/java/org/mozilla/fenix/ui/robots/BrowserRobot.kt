@@ -18,10 +18,10 @@ import androidx.test.espresso.intent.matcher.BundleMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.text
@@ -35,6 +35,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LongClickDuration
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.click
@@ -58,7 +59,7 @@ class BrowserRobot {
             Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
             waitingTime
         )
-        waitingTime
+        TestAssetHelper.waitingTime
         onView(withId(R.id.mozac_browser_toolbar_url_view))
             .check(matches(withText(containsString(url.replace("http://", "")))))
     }
@@ -175,6 +176,8 @@ class BrowserRobot {
         verifyNavURLBarEditModeEmpty()
     }
 
+    fun verifyMainMenu() = assertMainMenu()
+
     fun verifyNoLinkImageContextMenuItems(containsTitle: String) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mDevice.waitNotNull(Until.findObject(By.textContains(containsTitle)))
@@ -193,6 +196,8 @@ class BrowserRobot {
     fun clickNavURLBar() = navURLBar().click()
 
     fun clickXButton() = xButton().click()
+
+    fun clickMenuButton() = menuButton().click()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -417,9 +422,9 @@ fun dismissTrackingOnboarding() {
     dismissOnboardingButton().click()
 }
 
-fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
+private fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
 
-fun assertNavURLBar() = navURLBar()
+private fun assertNavURLBar() = navURLBar()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun navURLBarEditMode() = onView(withId(R.id.mozac_browser_toolbar_edit_url_view))
@@ -456,8 +461,15 @@ private fun xButton() = onView(withId(R.id.mozac_browser_toolbar_clear_view))
 private fun assertXButton() = xButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
+private fun menuButton() = onView(withId(R.id.icon))
+
 private fun assertMenuButton() {
-    onView(withId(R.id.icon))
+    menuButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertMainMenu() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
