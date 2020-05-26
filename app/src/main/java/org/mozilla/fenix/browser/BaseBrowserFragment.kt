@@ -95,7 +95,6 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.ThemeManager

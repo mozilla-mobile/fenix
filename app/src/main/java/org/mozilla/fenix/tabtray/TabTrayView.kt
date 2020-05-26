@@ -8,14 +8,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.*
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
+import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.tabstray.Tab
@@ -81,7 +86,6 @@ class TabTrayView(
 
         view.tab_layout.getTabAt(selectedTabIndex)?.also {
             view.tab_layout.selectTab(it, true)
-
         }
 
         view.tab_layout.addOnTabSelectedListener(this)
@@ -137,6 +141,17 @@ class TabTrayView(
         }
 
         tabsFeature.filterTabs(filter)
+
+        updateState(view.context.components.core.store.state)
+    }
+
+    fun updateState(state: BrowserState) {
+        val shouldHide = if (view?.tab_layout?.selectedTabPosition == 1) {
+            state.privateTabs.isEmpty()
+        } else {
+            state.normalTabs.isEmpty()
+        }
+        view?.tab_tray_overflow?.isVisible = !shouldHide
     }
 
     override fun onTabClosed(tab: Tab) {

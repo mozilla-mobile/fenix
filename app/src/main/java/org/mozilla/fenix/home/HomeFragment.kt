@@ -87,7 +87,6 @@ import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.providers.MigrationTipProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
-import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
