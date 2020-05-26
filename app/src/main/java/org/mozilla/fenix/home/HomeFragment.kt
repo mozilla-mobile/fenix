@@ -45,6 +45,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.tab_header.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -76,6 +77,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.StoreProvider
@@ -85,6 +87,7 @@ import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.providers.MigrationTipProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.logDebug
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -374,16 +377,69 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun onShareTabsClicked(private: Boolean) {
-                    tabTrayDialog.dismiss()
                     share(getListOfSessions(private))
                 }
 
                 override fun onCloseAllTabsClicked(private: Boolean) {
-                    TODO("Not yet implemented")
+                    val tabs = getListOfSessions()
+
+                    val selectedIndex = sessionManager
+                        .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
+
+                    val snapshot = tabs
+                        .map(sessionManager::createSessionSnapshot)
+                        .map { it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState()) }
+                        .let { SessionManager.Snapshot(it, selectedIndex) }
+
+                    tabs.forEach {
+                        sessionManager.remove(it)
+                    }
+
+                    val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+                    val snackbarMessage = if (isPrivate) {
+                        getString(R.string.snackbar_private_tabs_closed)
+                    } else {
+                        getString(R.string.snackbar_tabs_closed)
+                    }
+
+                    viewLifecycleOwner.lifecycleScope.allowUndo(
+                        requireView(),
+                        snackbarMessage,
+                        getString(R.string.snackbar_deleted_undo),
+                        {
+                            sessionManager.restore(snapshot)
+                        },
+                        operation = { },
+                        anchorView = view.tabs_header
+                    )
                 }
 
                 override fun onSaveToCollectionClicked(private: Boolean) {
-                    TODO("Not yet implemented")
+                    val tabs = getListOfSessions()
+                    val tabIds = tabs.map { it.id }.toList().toTypedArray()
+                    val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
+                    val navController = findNavController()
+
+                    val step = when {
+                        // Show the SelectTabs fragment if there are multiple opened tabs to select which tabs
+                        // you want to save to a collection.
+                        tabs.size > 1 -> SaveCollectionStep.SelectTabs
+                        // If there is an existing tab collection, show the SelectCollection fragment to save
+                        // the selected tab to a collection of your choice.
+                        tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+                        // Show the NameCollection fragment to create a new collection for the selected tab.
+                        else -> SaveCollectionStep.NameCollection
+                    }
+
+                    if (navController.currentDestination?.id == R.id.collectionCreationFragment) return
+
+                    val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment(
+                        tabIds = tabIds,
+                        previousFragmentId = R.id.tabTrayFragment,
+                        saveCollectionStep = step,
+                        selectedTabIds = tabIds
+                    )
+                    navController.nav(R.id.homeFragment, directions)
                 }
             }
         }

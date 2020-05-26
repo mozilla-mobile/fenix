@@ -116,11 +116,11 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onSaveToCollectionClicked(private: Boolean) {
-
+        interactor?.onSaveToCollectionClicked(private)
     }
 
     override fun onCloseAllTabsClicked(private: Boolean) {
-
+        interactor?.onCloseAllTabsClicked(private)
     }
 
     companion object {
