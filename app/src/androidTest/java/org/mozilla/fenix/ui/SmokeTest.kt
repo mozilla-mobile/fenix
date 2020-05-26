@@ -60,7 +60,6 @@ class SmokeTest {
                 browserScreen {
 
                     // Verify various items after returning back to the initial WebPage
-                    verifyNavURLBar()
                     verifyPageContent(defaultWebPage.content)
                 }.openHomeScreen {
 
