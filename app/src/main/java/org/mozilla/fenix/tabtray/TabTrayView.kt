@@ -23,7 +23,6 @@ import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.logDebug
 
 interface TabTrayInteractor {
     fun onTabClosed(tab: Tab)
@@ -82,6 +81,7 @@ class TabTrayView(
 
         view.tab_layout.getTabAt(selectedTabIndex)?.also {
             view.tab_layout.selectTab(it, true)
+
         }
 
         view.tab_layout.addOnTabSelectedListener(this)
@@ -97,7 +97,7 @@ class TabTrayView(
             TabsTouchHelper(tray.tabsAdapter).attachToRecyclerView(tray)
         }
 
-        tabTrayItemMenu = TabTrayItemMenu(view.context) {
+        tabTrayItemMenu = TabTrayItemMenu(view.context, { view.tab_layout.selectedTabPosition == 0 }) {
             when (it) {
                 is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
                     view.tab_layout.selectedTabPosition == 1
@@ -155,6 +155,7 @@ class TabTrayView(
 
 class TabTrayItemMenu(
     private val context: Context,
+    private val shouldShowSaveToCollection: () -> Boolean,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
 
@@ -169,19 +170,22 @@ class TabTrayItemMenu(
     private val menuItems by lazy {
         listOf(
             SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_save)
+                context.getString(R.string.tab_tray_menu_item_save),
+                textColorResource = R.color.primary_text_normal_theme
             ) {
                 onItemTapped.invoke(Item.SaveToCollection)
+            }.apply { visible = shouldShowSaveToCollection },
+
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_item_share),
+                textColorResource = R.color.primary_text_normal_theme
+            ) {
+                onItemTapped.invoke(Item.ShareAllTabs)
             },
 
             SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_share)
-            ) {
-                onItemTapped.invoke(Item.ShareAllTabs)
-            }.apply {  },
-
-            SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_menu_item_close)
+                context.getString(R.string.tab_tray_menu_item_close),
+                textColorResource = R.color.primary_text_normal_theme
             ) {
                 onItemTapped.invoke(Item.CloseAllTabs)
             }

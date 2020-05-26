@@ -381,7 +381,7 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun onCloseAllTabsClicked(private: Boolean) {
-                    val tabs = getListOfSessions()
+                    val tabs = getListOfSessions(private)
 
                     val selectedIndex = sessionManager
                         .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
@@ -415,7 +415,7 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun onSaveToCollectionClicked(private: Boolean) {
-                    val tabs = getListOfSessions()
+                    val tabs = getListOfSessions(private)
                     val tabIds = tabs.map { it.id }.toList().toTypedArray()
                     val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
                     val navController = findNavController()
