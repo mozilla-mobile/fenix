@@ -369,10 +369,6 @@ class HomeFragment : Fragment() {
                     (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
                     tabTrayDialog.dismiss()
                 }
-
-                override fun onTabClosed(tab: mozilla.components.concept.tabstray.Tab) {
-                    /* noop */
-                }
             }
         }
 
