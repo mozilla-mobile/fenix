@@ -83,6 +83,7 @@ import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.RunWhenReadyQueue
+import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 
 /**
  * The main activity of the application. The application is primarily a single Activity (this one)
@@ -118,7 +119,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             SpeechProcessingIntentProcessor(this, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
             DeepLinkIntentProcessor(this),
-            OpenBrowserIntentProcessor(this, ::getIntentSessionId)
+            OpenBrowserIntentProcessor(this, ::getIntentSessionId),
+            OpenSpecificTabIntentProcessor(this)
         )
     }
 
