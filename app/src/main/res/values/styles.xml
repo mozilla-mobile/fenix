@@ -73,12 +73,11 @@
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_normal_theme</item>
         <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_normal_theme</item>
 
-        <item name="tabTrayItemText">@color/tab_tray_item_text_normal_theme</item>
-        <item name="tabTrayItemUrl">@color/tab_tray_item_url_normal_theme</item>
         <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
         <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
         <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_normal_theme</item>
         <item name="tabTrayItemDivider">@color/tab_tray_item_divider_normal_theme</item>
+        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -197,12 +196,11 @@
         <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_private_theme</item>
 
         <!-- Tab Tray -->
-        <item name="tabTrayItemText">@color/tab_tray_item_text_private_theme</item>
-        <item name="tabTrayItemUrl">@color/tab_tray_item_url_private_theme</item>
-        <item name="tabTrayItemBackground">@color/tab_tray_item_background_private_theme</item>
+        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
         <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_private_theme</item>
         <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_private_theme</item>
         <item name="tabTrayItemDivider">@color/tab_tray_item_divider_private_theme</item>
+        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -526,5 +524,32 @@
 
     <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textColorHint">@color/search_view_hint_color</item>
+    </style>
+
+    <style name="TabTrayDialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetModal</item>
+<!--        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>-->
+<!--        <item name="android:colorBackground">?foundation</item>-->
+
+<!--        <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>-->
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <!-- Stuff to make the bottom sheet with round top borders -->
+    <style name="BottomSheetShapeAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="colorSurface">@color/photonPurple50</item>
+        <item name="android:backgroundTint">@color/photonPurple50</item>
+        <item name="android:colorBackground">@color/photonPurple50</item>
+    </style>
+
+    <style name="BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/BottomSheetShapeAppearance</item>
+        <item name="behavior_halfExpandedRatio">0.6</item>
+        <item name="behavior_fitToContents">true</item>
     </style>
 </resources>

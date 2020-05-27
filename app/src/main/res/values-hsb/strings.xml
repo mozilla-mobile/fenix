@@ -251,6 +251,8 @@
     <string name="preferences_show_search_shortcuts">Pytanske skrótšenki pokazać</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Pytanske namjety pokazać</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Hłosowe pytanje pokazać</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">W priwatnych posedźenjach pokazać</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -370,8 +372,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Wopytajće <b>firefox.com/pair</b> w Firefox na swokim ličaku, zo byšće swój QR-kod dóstał.]]></string>
-
+    <string name="pair_instructions_2"><![CDATA[Skenujće QR-kod, kotryž so na <b>firefox.com/pair</b> pokazuje]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Kameru wočinić</string>
     <!-- Button to cancel pairing -->
@@ -432,6 +433,8 @@
     <string name="tabs_header_private_tabs_title">Priwatne rajtarki</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Rajtark přidać</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Rajtark ze zběrki wotstronić</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Rajtark začinić</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -806,15 +809,14 @@
     <string name="preference_accessibility_font_size_title">Pismowa wulkosć</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Awtomatiske přiměrjenje wulkosće pisma</string>
-
+    <string name="preference_accessibility_auto_size_2">Awtomatiske přiměrjenje wulkosće pisma</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Wulkosć pisma budźe wašim nastajenjam Android wotpowědować. Znjemóžńće tu rjadowanje wulkosće pisma.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Přehladowanske daty zhašeć</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Wočinjene rajtarki</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Wočinjene rajtarki</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">Rajtarki: %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -1381,4 +1383,8 @@
     <string name="edit">Wobdźěłać</string>
     <!--  The error message in edit login view when password field is blank. -->
     <string name="saved_login_password_required">Hesło trěbne</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Hłosowe pytanje</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Nětko rěčeć</string>
 </resources>

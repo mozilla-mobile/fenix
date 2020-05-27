@@ -32,6 +32,9 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.runWithSessionIdOrSelected
+import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.state.content.DownloadState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -42,6 +45,7 @@ import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
+import mozilla.components.feature.media.fullscreen.MediaFullscreenOrientationFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -65,6 +69,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
@@ -78,7 +83,7 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.SwipeRefreshScrollingViewBehavior
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
-import org.mozilla.fenix.downloads.DownloadNotificationBottomSheetDialog
+import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
@@ -89,6 +94,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
+import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
@@ -125,6 +131,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
     private val sitePermissionWifiIntegration = ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
+    private var fullScreenMediaFeature = ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
     private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
@@ -203,7 +210,22 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 scope = viewLifecycleOwner.lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
                 topSiteStorage = requireComponents.core.topSiteStorage,
-                sharedViewModel = sharedViewModel
+                sharedViewModel = sharedViewModel,
+                onTabCounterClicked = {
+                    val tabTrayDialog = TabTrayDialogFragment()
+                    tabTrayDialog.show(parentFragmentManager, null)
+                    tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
+                        override fun onTabSelected(tab: mozilla.components.concept.tabstray.Tab) {
+                            tabTrayDialog.dismiss()
+                        }
+
+                        override fun onNewTabTapped(private: Boolean) {
+                            (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
+                            tabTrayDialog.dismiss()
+                            findNavController().navigate(BrowserFragmentDirections.actionGlobalHome())
+                        }
+                    }
+                }
             )
 
             _browserInteractor = BrowserInteractor(
@@ -258,6 +280,15 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
+            fullScreenMediaFeature.set(
+                feature = MediaFullscreenOrientationFeature(
+                    requireActivity(),
+                    context.components.core.store
+                ),
+                owner = this,
+                view = view
+            )
+
             val downloadFeature = DownloadsFeature(
                 context.applicationContext,
                 store = store,
@@ -286,15 +317,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 }
             )
 
-            downloadFeature.onDownloadStopped = { download, _, downloadJobStatus ->
+            downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
                 // If the download is just paused, don't show any in-app notification
                 if (downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.COMPLETED ||
                     downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED
                 ) {
-                    val dialog = DownloadNotificationBottomSheetDialog(
-                        context = context,
+
+                    saveDownloadDialogState(session, downloadState, downloadJobStatus)
+
+                    DynamicDownloadDialog(
+                        container = view.browserLayout,
+                        downloadState = downloadState,
                         didFail = downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED,
-                        download = download,
                         tryAgain = downloadFeature::tryAgain,
                         onCannotOpenFile = {
                             FenixSnackbar.make(
@@ -304,9 +338,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                             )
                                 .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
                                 .show()
-                        }
-                    )
-                    dialog.show()
+                        },
+                        view = view.viewDynamicDownloadDialog,
+                        toolbarHeight = toolbarHeight,
+                        onDismiss = { sharedViewModel.downloadDialogState.remove(session.id) }
+                    ).show()
+                    browserToolbarView.expand()
                 }
             }
 
@@ -315,6 +352,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 owner = this,
                 view = view
             )
+
+            resumeDownloadDialogState(session, store, view, context, toolbarHeight)
 
             pipFeature = PictureInPictureFeature(
                 requireComponents.core.sessionManager,
@@ -501,6 +540,74 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             initializeEngineView(toolbarHeight)
         }
+    }
+
+    /**
+     * Preserves current state of the [DynamicDownloadDialog] to persist through tab changes and
+     * other fragments navigation.
+     * */
+    private fun saveDownloadDialogState(
+        session: Session,
+        downloadState: DownloadState,
+        downloadJobStatus: AbstractFetchDownloadService.DownloadJobStatus
+    ) {
+        sharedViewModel.downloadDialogState[session.id] = Pair(
+            downloadState,
+            downloadJobStatus == AbstractFetchDownloadService.DownloadJobStatus.FAILED
+        )
+    }
+
+    /**
+     * Re-initializes [DynamicDownloadDialog] if the user hasn't dismissed the dialog
+     * before navigating away from it's original tab.
+     * onTryAgain it will use [ContentAction.UpdateDownloadAction] to re-enqueue the former failed
+     * download, because [DownloadsFeature] clears any queued downloads onStop.
+     * */
+    private fun resumeDownloadDialogState(
+        session: Session,
+        store: BrowserStore,
+        view: View,
+        context: Context,
+        toolbarHeight: Int
+    ) {
+        val savedDownloadState =
+            sharedViewModel.downloadDialogState[session.id] ?: return
+
+        val onTryAgain: (Long) -> Unit = {
+            savedDownloadState.first?.let { dlState ->
+                store.dispatch(
+                    ContentAction.UpdateDownloadAction(
+                        session.id, dlState.copy(skipConfirmation = true)
+                    )
+                )
+            }
+        }
+
+        val onCannotOpenFile = {
+            FenixSnackbar.make(
+                view = view,
+                duration = Snackbar.LENGTH_SHORT,
+                isDisplayedWithBrowserToolbar = true
+            )
+                .setText(context.getString(R.string.mozac_feature_downloads_could_not_open_file))
+                .show()
+        }
+
+        val onDismiss: () -> Unit =
+            { sharedViewModel.downloadDialogState.remove(session.id) }
+
+        DynamicDownloadDialog(
+            container = view.browserLayout,
+            downloadState = savedDownloadState.first,
+            didFail = savedDownloadState.second,
+            tryAgain = onTryAgain,
+            onCannotOpenFile = onCannotOpenFile,
+            view = view.viewDynamicDownloadDialog,
+            toolbarHeight = toolbarHeight,
+            onDismiss = onDismiss
+        ).show()
+
+        browserToolbarView.expand()
     }
 
     private fun initializeEngineView(toolbarHeight: Int) {

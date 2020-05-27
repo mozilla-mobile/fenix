@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.test.uiautomator.UiSelector
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -43,6 +44,12 @@ class MediaNotificationTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        // verify if the notification tray is expanded and should be closed before the next test
+        val notificationShade =
+            mDevice.findObject(UiSelector().resourceId("com.android.systemui:id/notification_stack_scroller"))
+
+        if (notificationShade.exists())
+            mDevice.pressBack()
     }
 
     @Test
@@ -51,8 +58,10 @@ class MediaNotificationTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(videoTestPage.url) {
+            verifyPageContent(videoTestPage.content)
             clickMediaPlayerPlayButton()
             waitForPlaybackToStart()
+            verifyPageContent("Media file is playing")
         }.openNotificationShade {
             verifySystemNotificationExists(videoTestPage.title)
             clickMediaSystemNotificationControlButton("Pause")
@@ -119,6 +128,7 @@ class MediaNotificationTest {
             verifyPageContent(audioTestPage.content)
             clickMediaPlayerPlayButton()
             waitForPlaybackToStart()
+            verifyPageContent("Media file is playing")
         }.openHomeScreen {
             verifyTabMediaControlButtonState("Pause")
             clickTabMediaControlButton()
@@ -139,6 +149,7 @@ class MediaNotificationTest {
             verifyPageContent(audioTestPage.content)
             clickMediaPlayerPlayButton()
             waitForPlaybackToStart()
+            verifyPageContent("Media file is playing")
         }.openNotificationShade {
             verifySystemNotificationExists("A site is playing media")
             clickMediaSystemNotificationControlButton("Pause")
@@ -159,7 +170,8 @@ class MediaNotificationTest {
             verifySystemNotificationGone("A site is playing media")
         }
 
-        // close notification shade before the next test
+        // close notification shade before and go back to regular mode before the next test
         mDevice.pressBack()
+        homeScreen { }.togglePrivateBrowsingMode()
     }
 }

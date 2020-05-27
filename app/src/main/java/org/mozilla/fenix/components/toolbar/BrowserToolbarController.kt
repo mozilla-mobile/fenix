@@ -74,7 +74,8 @@ class DefaultBrowserToolbarController(
     private val scope: CoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage,
     private val topSiteStorage: TopSiteStorage,
-    private val sharedViewModel: SharedViewModel
+    private val sharedViewModel: SharedViewModel,
+    private val onTabCounterClicked: () -> Unit
 ) : BrowserToolbarController {
 
     private val currentSession
@@ -296,7 +297,7 @@ class DefaultBrowserToolbarController(
                 val appLinksUseCases =
                     activity.components.useCases.appLinksUseCases
                 val getRedirect = appLinksUseCases.appLinkRedirect
-                sessionManager.selectedSession?.let {
+                currentSession?.let {
                     val redirect = getRedirect.invoke(it.url)
                     redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     appLinksUseCases.openAppLink.invoke(redirect.appIntent)
@@ -324,8 +325,7 @@ class DefaultBrowserToolbarController(
 
     private fun animateTabAndNavigateHome() {
         if (activity.settings().useNewTabTray) {
-            val directions = BrowserFragmentDirections.actionBrowserFragmentToTabsTrayFragment()
-            navController.navigate(directions)
+            onTabCounterClicked.invoke()
             return
         }
 

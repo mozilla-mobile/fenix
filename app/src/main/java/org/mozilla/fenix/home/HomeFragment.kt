@@ -72,6 +72,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
@@ -97,10 +98,12 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.SupportUtils.MozillaPage.PRIVATE_NOTICE
+import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.FragmentPreDrawManager
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
 import java.lang.ref.WeakReference
@@ -229,7 +232,7 @@ class HomeFragment : Fragment() {
                 openSettingsScreen = ::openSettingsScreen,
                 openSearchScreen = ::navigateToSearch,
                 openWhatsNewLink = { openCustomTab(SupportUtils.getWhatsNewUrl(activity)) },
-                openPrivacyNotice = { openCustomTab(SupportUtils.getPrivacyNoticeUrl()) }
+                openPrivacyNotice = { openCustomTab(SupportUtils.getMozillaPageUrl(PRIVATE_NOTICE)) }
             )
         )
         updateLayout(view)
@@ -356,7 +359,19 @@ class HomeFragment : Fragment() {
         view.tab_button.setOnClickListener {
             invokePendingDeleteJobs()
             hideOnboardingIfNeeded()
-            findNavController().navigate(HomeFragmentDirections.actionGlobalTabTrayFragment())
+            val tabTrayDialog = TabTrayDialogFragment()
+            tabTrayDialog.show(parentFragmentManager, null)
+            tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
+                override fun onTabSelected(tab: mozilla.components.concept.tabstray.Tab) {
+                    tabTrayDialog.dismiss()
+                    (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
+                }
+
+                override fun onNewTabTapped(private: Boolean) {
+                    (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
+                    tabTrayDialog.dismiss()
+                }
+            }
         }
 
         PrivateBrowsingButtonView(
@@ -683,10 +698,7 @@ class HomeFragment : Fragment() {
                     invokePendingDeleteJobs()
                     hideOnboardingIfNeeded()
                     (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                            context,
-                            SupportUtils.SumoTopic.HELP
-                        ),
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
                         newTab = true,
                         from = BrowserDirection.FromHome
                     )
@@ -829,7 +841,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun emitSessionChanges() {
-        homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(getListOfTabs()))
+        runIfFragmentIsAttached {
+            homeFragmentStore.dispatch(HomeFragmentAction.TabsChange(getListOfTabs()))
+        }
     }
 
     private fun getListOfSessions(): List<Session> {

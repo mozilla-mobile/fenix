@@ -257,6 +257,8 @@
     <string name="preferences_show_search_shortcuts">Mostra le scorciatoie di ricerca</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Visualizza suggerimenti</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Mostra ricerca vocale</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Mostra in sessioni anonime</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -381,7 +383,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Per ottenere il codice QR apri <b>firefox.com/pair</b> in Firefox sul computer.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Scansiona il codice QR visualizzato su <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Apri fotocamera</string>
     <!-- Button to cancel pairing -->
@@ -443,6 +445,8 @@
     <string name="tabs_header_private_tabs_title">Schede anonime</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Aggiungi scheda</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Rimuovi scheda dalla raccolta</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Chiudi scheda</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -672,7 +676,7 @@
 
     <!-- Collections -->
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Raggruppa i contenuti che ritieni importanti. Per iniziare, salva le schede aperte in una nuova collezione.</string>
+    <string name="collections_description">Raggruppa i contenuti che ritieni importanti. Per iniziare, salva le schede aperte in una nuova raccolta.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Raccolte</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
@@ -840,15 +844,14 @@
     <string name="preference_accessibility_font_size_title">Dimensione caratteri</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Ridimensiona automaticamente i caratteri</string>
-
+    <string name="preference_accessibility_auto_size_2">Ridimensiona automaticamente i caratteri</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">La dimensione dei caratteri corrisponderà alle impostazioni di Android. Disattivare per gestire la dimensione dei caratteri separatamente.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Elimina i dati di navigazione</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Schede aperte</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Schede aperte</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d schede</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -1413,4 +1416,8 @@
     <string name="edit">Modifica</string>
     <!--  The error message in edit login view when password field is blank. -->
     <string name="saved_login_password_required">Password obbligatoria</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Ricerca vocale</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Parla ora</string>
 </resources>

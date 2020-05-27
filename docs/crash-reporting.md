@@ -12,6 +12,16 @@ Documentation for the specific libraries is included in the [Android Components 
 
 The Glean crash ping format is documented [here](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/crash/docs/metrics.md).
 
+To opt in or out of Glean telemetry reporting, visit the Data collection menu under Settings.
+
+## Breadcrumbs
+
+[Breadcrumbs](https://github.com/mozilla-mobile/android-components/blob/master/components/support/base/src/main/java/mozilla/components/support/base/crash/Breadcrumb.kt) are trail of events that are sent with each crash report to both Socorro and Sentry.  
+
+### Events
+
+In [HomeActivity](https://github.com/mozilla-mobile/fenix/blob/master/app/src/main/java/org/mozilla/fenix/HomeActivity.kt) when `onDestinationChanged` occurs, the destination fragment's name and and whether it is a custom tab is added to the breadcrumbs. 
+
 ## Socorro
 
 [Socorro](https://wiki.mozilla.org/Socorro) is a Mozilla open source project for [crash statistics](https://crash-stats.mozilla.org/). Firefox Preview uses Socorro to track native GeckoView crashes. Crash reports contain a signature, classifications, and a number of improved fields (e.g. OS, product, version) - you can read more about what is sent in these fields in the [Socorro report documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Crash_reporting/Understanding_crash_reports).
@@ -20,9 +30,13 @@ These crashes contain hardware information and some app metadata, but no persona
 
 A sample Firefox Preview crash report can be found [here](https://crash-stats.mozilla.org/report/index/bbbcc019-f30c-4fbb-8cbd-543940190923).
 
+A crash report is only sent when the user confirms and submits it through the crash reporter notification or dialog. Crash reports are never automatically sent.
+
 ## Sentry
 
 [Sentry](https://sentry.io) is an open source crash reporting and aggregation platform. Both the client SDK, [github.com/getsentry/sentry-java](https://github.com/getsentry/sentry-java), and the server, [github.com/getsentry/sentry](https://github.com/getsentry/sentry), are open source.
+
+A crash report is only sent when the user confirms and submits it through the crash reporter notification or dialog. Crash reports are never automatically sent.
 
 ### High-Level Summary
 

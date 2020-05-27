@@ -22,6 +22,7 @@ import android.view.ViewStub
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,6 +40,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -73,16 +75,16 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             requireContext().settings().shouldShowSearchSuggestions
         }
 
+    @Suppress("LongMethod")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val args = arguments?.let { navArgs<SearchFragmentArgs>().value }
-        val session = args?.sessionId
+        val activity = activity as HomeActivity
+        val args by navArgs<SearchFragmentArgs>()
+        val session = args.sessionId
             ?.let(requireComponents.core.sessionManager::findSessionById)
-        val pastedText = args?.pastedText
-        val searchAccessPoint = args?.searchAccessPoint
 
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         val url = session?.url.orEmpty()
@@ -90,7 +92,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             requireComponents.search.provider.getDefaultEngine(requireContext())
         )
 
-        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val isPrivate = activity.browsingModeManager.mode.isPrivate
 
         requireComponents.analytics.metrics.track(Event.InteractWithSearchURLArea)
 
@@ -107,14 +109,14 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                     showHistorySuggestions = requireContext().settings().shouldShowHistorySuggestions,
                     showBookmarkSuggestions = requireContext().settings().shouldShowBookmarkSuggestions,
                     session = session,
-                    pastedText = pastedText,
-                    searchAccessPoint = searchAccessPoint
+                    pastedText = args.pastedText,
+                    searchAccessPoint = args.searchAccessPoint
                 )
             )
         }
 
         val searchController = DefaultSearchController(
-            context = activity as HomeActivity,
+            activity = activity,
             store = searchStore,
             navController = findNavController(),
             viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
@@ -126,6 +128,11 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         )
 
         awesomeBarView = AwesomeBarView(view.scrollable_area, searchInteractor)
+
+        view.scrollView.setOnScrollChangeListener {
+                _: NestedScrollView, _: Int, _: Int, _: Int, _: Int ->
+            view.hideKeyboard()
+        }
 
         toolbarView = ToolbarView(
             view.toolbar_component_wrapper,
@@ -154,6 +161,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     }
 
     private fun launchVoiceSearch() {
+        requireComponents.analytics.metrics.track(Event.VoiceSearchTapped)
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_PROMPT, requireContext().getString(R.string.voice_search_explainer))
@@ -334,7 +342,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                 view?.search_scan_button?.isChecked = false
                 toolbarView.view.requestFocus()
             }
-            else -> awesomeBarView.isKeyboardDismissedProgrammatically
+            else -> true
         }
     }
 
