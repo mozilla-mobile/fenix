@@ -37,6 +37,17 @@ fun Login.mapToSavedLogin(): SavedLogin =
         timeLastUsed = this.timeLastUsed
     )
 
+fun SavedLogin.mapToLogin(): Login =
+    Login(
+        guid = this.guid,
+        origin = this.origin,
+        username = this.username,
+        password = this.password,
+        timeLastUsed = this.timeLastUsed,
+        usernameField = "",
+        passwordField = ""
+    )
+
 /**
  * The [Store] for holding the [LoginsListState] and applying [LoginsAction]s.
  */
@@ -54,12 +65,11 @@ sealed class LoginsAction : Action {
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
-    data class LoginSelected(val item: SavedLogin) : LoginsAction()
+    data class ListOfDupes(val dupeList: List<SavedLogin>) : LoginsAction()
 }
 
 /**
  * The state for the Saved Logins Screen
- * @property loginList Source of truth for local list of logins
  * @property loginList Filterable list of logins to display
  * @property currentItem The last item that was opened into the detail view
  * @property searchedForText String used by the user to filter logins
@@ -74,7 +84,8 @@ data class LoginsListState(
     val currentItem: SavedLogin? = null,
     val searchedForText: String?,
     val sortingStrategy: SortingStrategy,
-    val highlightedItem: SavedLoginsSortingStrategyMenu.Item
+    val highlightedItem: SavedLoginsSortingStrategyMenu.Item,
+    val duplicateLogins: List<SavedLogin>
 ) : State
 
 /**
@@ -111,11 +122,9 @@ private fun savedLoginsStateReducer(
                 state
             )
         }
-        is LoginsAction.LoginSelected -> {
+        is LoginsAction.ListOfDupes -> {
             state.copy(
-                    isLoading = true,
-                    loginList = emptyList(),
-                    filteredItems = emptyList()
+                duplicateLogins = action.dupeList
             )
         }
     }

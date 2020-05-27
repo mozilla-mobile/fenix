@@ -59,6 +59,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     private lateinit var loginDetailView: LoginDetailView
     private lateinit var menu: Menu
     private var deleteDialog: AlertDialog? = null
+    private lateinit var datastore: LoginsDataStore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,11 +75,14 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     filteredItems = listOf(),
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
-                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
+                    duplicateLogins =
                 )
             )
         }
         loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
+        datastore = LoginsDataStore(this)
+
         fetchLoginDetails()
 
         return view
@@ -220,7 +224,8 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-                    deleteLogin()
+//                    deleteLogin()
+                    datastore.delete(args.savedLoginId)
                     dialog.dismiss()
                 }
                 create()

@@ -37,10 +37,12 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.SupportUtils
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
@@ -81,21 +83,23 @@ class SavedLoginsFragment : Fragment() {
                     filteredItems = listOf(),
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
-                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
+                    duplicateLogins = // assume on load there are no dupes
                 )
             )
         }
-        val savedLoginsController: SavedLoginsController =
-            SavedLoginsController(
-                    store = savedLoginsStore,
-                    navController = findNavController(),
-                    browserNavigator = ::openToBrowserAndLoad,
-                    settings = requireContext().settings(),
-                    metrics = requireContext().components.analytics.metrics
+        val savedLoginsController =
+            DefaultSavedLoginsController(
+                context = requireContext(),
+                loginsFragmentStore = savedLoginsStore,
+                settings = requireContext().settings()
             )
-        savedLoginsInteractor = SavedLoginsInteractor(savedLoginsController)
+
+        savedLoginsInteractor =
+            SavedLoginsInteractor(savedLoginsController, ::itemClicked, ::openLearnMore)
         savedLoginsView = SavedLoginsView(view.savedLoginsLayout, savedLoginsInteractor)
         loadAndMapLogins()
+
         return view
     }
 
@@ -141,8 +145,20 @@ class SavedLoginsFragment : Fragment() {
         super.onPause()
     }
 
-    private fun openToBrowserAndLoad(searchTermOrURL: String, newTab: Boolean, from: BrowserDirection) {
-        (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
+    private fun itemClicked(item: SavedLogin) {
+        context?.components?.analytics?.metrics?.track(Event.OpenOneLogin)
+        val directions =
+            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(item.guid)
+        findNavController().navigate(directions)
+    }
+
+    private fun openLearnMore() {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
+                (SupportUtils.SumoTopic.SYNC_SETUP),
+            newTab = true,
+            from = BrowserDirection.FromSavedLoginsFragment
+        )
     }
 
     private fun loadAndMapLogins() {
@@ -213,15 +229,11 @@ class SavedLoginsFragment : Fragment() {
         sortingStrategyMenu = SavedLoginsSortingStrategyMenu(requireContext(), itemToHighlight) {
             when (it) {
                 SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
-                    savedLoginsInteractor.onSortingStrategyChanged(
-                        SortingStrategy.Alphabetically(requireContext().applicationContext)
-                    )
+                    savedLoginsInteractor.sort(SortingStrategy.Alphabetically(requireContext().applicationContext))
                 }
 
                 SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> {
-                    savedLoginsInteractor.onSortingStrategyChanged(
-                        SortingStrategy.LastUsed(requireContext().applicationContext)
-                    )
+                    savedLoginsInteractor.sort(SortingStrategy.LastUsed(requireContext().applicationContext))
                 }
             }
         }

@@ -5,7 +5,7 @@
 package org.mozilla.fenix.settings.logins
 
 import io.mockk.mockk
-import io.mockk.verifyAll
+import io.mockk.verify
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,36 +14,33 @@ import kotlin.random.Random
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SavedLoginsInteractorTest {
-    private val controller: SavedLoginsController = mockk(relaxed = true)
-    private val interactor = SavedLoginsInteractor(controller)
+    private val controller: DefaultSavedLoginsController = mockk(relaxed = true)
+    private val savedLoginClicked: (SavedLogin) -> Unit = mockk(relaxed = true)
+    private val learnMore: () -> Unit = mockk(relaxed = true)
+    private val interactor = SavedLoginsInteractor(
+        controller,
+        savedLoginClicked,
+        learnMore
+    )
 
     @Test
-    fun `GIVEN a SavedLogin being clicked, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
+    fun itemClicked() {
         val item = SavedLogin("mozilla.org", "username", "password", "id", Random.nextLong())
-        interactor.onItemClicked(item)
+        interactor.itemClicked(item)
 
-        verifyAll {
-            controller.handleItemClicked(item)
+        verify {
+            savedLoginClicked.invoke(item)
         }
     }
 
     @Test
-    fun `GIVEN a change in sorting strategy, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
+    fun `GIVEN a sorting strategy, WHEN sort method is called on the interactor, THEN controller should call handleSort with the same parameter`() {
         val sortingStrategy: SortingStrategy = SortingStrategy.Alphabetically(testContext)
 
-        interactor.onSortingStrategyChanged(sortingStrategy)
+        interactor.sort(sortingStrategy)
 
-        verifyAll {
+        verify {
             controller.handleSort(sortingStrategy)
-        }
-    }
-
-    @Test
-    fun `GIVEN the learn more option is clicked, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
-        interactor.onLearnMoreClicked()
-
-        verifyAll {
-            controller.handleLearnMoreClicked()
         }
     }
 }
