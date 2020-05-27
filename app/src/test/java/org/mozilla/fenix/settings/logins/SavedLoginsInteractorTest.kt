@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SavedLoginsInteractorTest {
-    private val controller: SavedLoginsController = mockk(relaxed = true)
+    private val controller: DefaultSavedLoginsController = mockk(relaxed = true)
     private val savedLoginClicked: (SavedLogin) -> Unit = mockk(relaxed = true)
     private val learnMore: () -> Unit = mockk(relaxed = true)
     private val interactor = SavedLoginsInteractor(

@@ -43,6 +43,7 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
+import kotlin.coroutines.coroutineContext
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
@@ -83,16 +84,23 @@ class SavedLoginsFragment : Fragment() {
                     filteredItems = listOf(),
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
-                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
+                    dupesExist = false // assume on load there are no dupes
                 )
             )
         }
-        val savedLoginsController: SavedLoginsController =
-            SavedLoginsController(savedLoginsStore, requireContext().settings())
+        val savedLoginsController =
+            DefaultSavedLoginsController(
+                context = requireContext(),
+                loginsFragmentStore = savedLoginsStore,
+                settings = requireContext().settings()
+            )
+
         savedLoginsInteractor =
             SavedLoginsInteractor(savedLoginsController, ::itemClicked, ::openLearnMore)
         savedLoginsView = SavedLoginsView(view.savedLoginsLayout, savedLoginsInteractor)
         loadAndMapLogins()
+
         return view
     }
 

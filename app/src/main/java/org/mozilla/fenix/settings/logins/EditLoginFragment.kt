@@ -62,7 +62,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                     filteredItems = listOf(),
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
-                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem
+                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
+                    dupesExist = false
                 )
             )
         }
@@ -191,6 +192,20 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             )
         }
     }
+
+    lateinit var hostnameChanged: String
+    lateinit var usernameChanged: String
+    lateinit var passwordChanged: String
+
+    var passwordFocus: Boolean? = null
+    var usernameFocus: Boolean? = null
+    var hostnameFocus: Boolean? = null
+
+    private fun setUpTextListeners() {
+
+    }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.login_save, menu)

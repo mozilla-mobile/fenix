@@ -5,11 +5,13 @@
 package org.mozilla.fenix.settings.logins
 
 import android.os.Parcelable
+import androidx.core.content.ContentProviderCompat.requireContext
 import kotlinx.android.parcel.Parcelize
 import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.ext.components
 
 /**
  * Class representing a parcelable saved logins item
@@ -37,6 +39,17 @@ fun Login.mapToSavedLogin(): SavedLogin =
         timeLastUsed = this.timeLastUsed
     )
 
+fun SavedLogin.mapToLogin(): Login =
+    Login(
+        guid = this.guid,
+        origin = this.origin,
+        username = this.username,
+        password = this.password,
+        timeLastUsed = this.timeLastUsed,
+        usernameField = "",
+        passwordField = ""
+    )
+
 /**
  * The [Store] for holding the [LoginsListState] and applying [LoginsAction]s.
  */
@@ -54,11 +67,11 @@ sealed class LoginsAction : Action {
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
+    data class ListOfDupes(val dupesExist: Boolean) : LoginsAction()
 }
 
 /**
  * The state for the Saved Logins Screen
- * @property loginList Source of truth for local list of logins
  * @property loginList Filterable list of logins to display
  * @property currentItem The last item that was opened into the detail view
  * @property searchedForText String used by the user to filter logins
@@ -73,7 +86,8 @@ data class LoginsListState(
     val currentItem: SavedLogin? = null,
     val searchedForText: String?,
     val sortingStrategy: SortingStrategy,
-    val highlightedItem: SavedLoginsSortingStrategyMenu.Item
+    val highlightedItem: SavedLoginsSortingStrategyMenu.Item,
+    val dupesExist: Boolean
 ) : State
 
 /**
@@ -108,6 +122,11 @@ private fun savedLoginsStateReducer(
                 state.searchedForText,
                 action.sortingStrategy,
                 state
+            )
+        }
+        is LoginsAction.ListOfDupes -> {
+            state.copy(
+                dupesExist = action.dupesExist
             )
         }
     }

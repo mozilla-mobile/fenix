@@ -14,9 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
-import kotlinx.android.synthetic.main.component_saved_logins.view.progress_bar
 import org.mozilla.fenix.R
-import org.mozilla.fenix.utils.Settings
 
 /**
  * View that contains and configures the Saved Logins List
@@ -75,7 +73,7 @@ class SavedLoginsView(
  * Interactor for the saved logins screen
  */
 class SavedLoginsInteractor(
-    private val savedLoginsController: SavedLoginsController,
+    private val savedLoginsController: DefaultSavedLoginsController,
     private val itemClicked: (SavedLogin) -> Unit,
     private val learnMore: () -> Unit
 ) {
@@ -88,14 +86,7 @@ class SavedLoginsInteractor(
     fun sort(sortingStrategy: SortingStrategy) {
         savedLoginsController.handleSort(sortingStrategy)
     }
-}
-
-/**
- * Controller for the saved logins screen
- */
-class SavedLoginsController(val store: LoginsFragmentStore, val settings: Settings) {
-    fun handleSort(sortingStrategy: SortingStrategy) {
-        store.dispatch(LoginsAction.SortLogins(sortingStrategy))
-        settings.savedLoginsSortingStrategy = sortingStrategy
+    suspend fun findDupes(editedItem: SavedLogin) {
+        savedLoginsController.findPotentialDuplicates(editedItem)
     }
 }
