@@ -15,7 +15,6 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -56,12 +55,11 @@ class SmokeTest {
                 // Verify 'x' button actions
                 verifyXButtonActions()
                 pressBack()
-                TestAssetHelper.waitingTimeLong
-                browserScreen {
+                TestAssetHelper.waitingTime
 
-                    // Verify various items after returning back to the initial WebPage
-                    // verifyNavURLBar()
-                    // verifyPageContent(defaultWebPage.content)
+                // Verify various items after returning back to the initial WebPage
+                // verifyNavURLBar()
+                // verifyPageContent(defaultWebPage.content)
                 }.openHomeScreen {
 
                     // Verify items on HomeScreen
@@ -72,7 +70,6 @@ class SmokeTest {
                 }.openTab(defaultWebPageTitle) {
                     clickMenuButton()
                     verifyMainMenu()
-                }
             }
         }
     }
