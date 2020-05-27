@@ -53,9 +53,8 @@ class SmokeTest {
                 verifyNavURLBarItems()
 
                 // Verify 'x' button actions
-                verifyXButtonActions()
-                pressBack()
-                TestAssetHelper.waitingTime
+                // verifyXButtonActions()
+                // TestAssetHelper.waitingTime
 
                 // Verify various items after returning back to the initial WebPage
                 // verifyNavURLBar()
