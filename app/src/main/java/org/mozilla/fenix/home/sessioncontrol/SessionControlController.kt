@@ -188,7 +188,8 @@ class DefaultSessionControlController(
     private val openSettingsScreen: () -> Unit,
     private val openSearchScreen: () -> Unit,
     private val openWhatsNewLink: () -> Unit,
-    private val openPrivacyNotice: () -> Unit
+    private val openPrivacyNotice: () -> Unit,
+    private val showTabTray: () -> Unit
 ) : SessionControlController {
     private val metrics: MetricController
         get() = activity.components.analytics.metrics
@@ -250,8 +251,7 @@ class DefaultSessionControlController(
         )
 
         if (activity.settings().useNewTabTray) {
-            val directions = HomeFragmentDirections.actionHomeFragmentToTabTrayFragment()
-            navController.nav(R.id.homeFragment, directions)
+            showTabTray()
         } else {
             scrollToTheTop()
         }

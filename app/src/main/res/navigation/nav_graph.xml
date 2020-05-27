@@ -62,9 +62,6 @@
         <action
             android:id="@+id/action_homeFragment_to_createCollectionFragment"
             app:destination="@id/collectionCreationFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_tabTrayFragment"
-            app:destination="@id/tabTrayFragment" />
     </fragment>
 
     <fragment
