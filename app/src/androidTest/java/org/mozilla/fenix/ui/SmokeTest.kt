@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
