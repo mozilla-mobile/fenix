@@ -58,7 +58,7 @@ class SmokeTest {
 
                 // Verify various items after returning back to the initial WebPage
                 // verifyNavURLBar()
-                // verifyPageContent(defaultWebPage.content)
+                verifyPageContent(defaultWebPage.content)
                 }.openHomeScreen {
 
                     // Verify items on HomeScreen
