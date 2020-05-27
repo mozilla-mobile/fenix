@@ -56,7 +56,7 @@ class SmokeTest {
                 // Verify 'x' button actions
                 verifyXButtonActions()
                 pressBack()
-                TestAssetHelper.waitingTime
+                TestAssetHelper.waitingTimeLong
                 browserScreen {
 
                     // Verify various items after returning back to the initial WebPage
