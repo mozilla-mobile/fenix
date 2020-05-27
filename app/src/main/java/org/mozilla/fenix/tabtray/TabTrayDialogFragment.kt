@@ -27,7 +27,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
         fun onTabSelected(tab: Tab)
         fun onNewTabTapped(private: Boolean)
         fun onShareTabsClicked(private: Boolean)
-        fun onSaveToCollectionClicked(private: Boolean)
+        fun onSaveToCollectionClicked()
         fun onCloseAllTabsClicked(private: Boolean)
     }
 
@@ -120,8 +120,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
         interactor?.onShareTabsClicked(private)
     }
 
-    override fun onSaveToCollectionClicked(private: Boolean) {
-        interactor?.onSaveToCollectionClicked(private)
+    override fun onSaveToCollectionClicked() {
+        interactor?.onSaveToCollectionClicked()
     }
 
     override fun onCloseAllTabsClicked(private: Boolean) {

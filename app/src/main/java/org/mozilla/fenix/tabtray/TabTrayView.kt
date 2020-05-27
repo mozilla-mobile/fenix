@@ -15,7 +15,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.*
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
-import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.state.selector.normalTabs
@@ -35,7 +34,7 @@ interface TabTrayInteractor {
     fun onNewTabTapped(private: Boolean)
     fun onTabTrayDismissed()
     fun onShareTabsClicked(private: Boolean)
-    fun onSaveToCollectionClicked(private: Boolean)
+    fun onSaveToCollectionClicked()
     fun onCloseAllTabsClicked(private: Boolean)
 }
 /**
@@ -51,6 +50,8 @@ class TabTrayView(
 
     val view = LayoutInflater.from(container.context)
         .inflate(R.layout.component_tabstray, container, true)
+
+    val isPrivateModeSelected: Boolean get() = view.tab_layout.selectedTabPosition == PRIVATE_TAB_ID
 
     private val behavior = BottomSheetBehavior.from(view.tab_wrapper)
     private var tabsFeature: TabsFeature
@@ -104,13 +105,11 @@ class TabTrayView(
         tabTrayItemMenu = TabTrayItemMenu(view.context, { view.tab_layout.selectedTabPosition == 0 }) {
             when (it) {
                 is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
-                    view.tab_layout.selectedTabPosition == 1
+                    isPrivateModeSelected
                 )
-                is TabTrayItemMenu.Item.SaveToCollection -> interactor.onSaveToCollectionClicked(
-                    view.tab_layout.selectedTabPosition == 1
-                )
+                is TabTrayItemMenu.Item.SaveToCollection -> interactor.onSaveToCollectionClicked()
                 is TabTrayItemMenu.Item.CloseAllTabs -> interactor.onCloseAllTabsClicked(
-                    view.tab_layout.selectedTabPosition == 1
+                    isPrivateModeSelected
                 )
             }
         }
@@ -122,7 +121,7 @@ class TabTrayView(
         }
 
         fabView.new_tab_button.setOnClickListener {
-            interactor.onNewTabTapped(view.tab_layout.selectedTabPosition == 1)
+            interactor.onNewTabTapped(isPrivateModeSelected)
         }
 
         tabsTray.register(this)
@@ -146,7 +145,7 @@ class TabTrayView(
     }
 
     fun updateState(state: BrowserState) {
-        val shouldHide = if (view?.tab_layout?.selectedTabPosition == 1) {
+        val shouldHide = if (isPrivateModeSelected) {
             state.privateTabs.isEmpty()
         } else {
             state.normalTabs.isEmpty()

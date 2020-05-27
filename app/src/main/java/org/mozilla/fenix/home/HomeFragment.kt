@@ -413,8 +413,8 @@ class HomeFragment : Fragment() {
                     )
                 }
 
-                override fun onSaveToCollectionClicked(private: Boolean) {
-                    val tabs = getListOfSessions(private)
+                override fun onSaveToCollectionClicked() {
+                    val tabs = getListOfSessions(false)
                     val tabIds = tabs.map { it.id }.toList().toTypedArray()
                     val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
                     val navController = findNavController()

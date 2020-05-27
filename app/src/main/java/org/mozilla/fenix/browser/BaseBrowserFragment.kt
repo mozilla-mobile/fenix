@@ -244,7 +244,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
                             val snapshot = tabs
                                 .map(sessionManager::createSessionSnapshot)
-                                .map { it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState()) }
+                                .map {
+                                    it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState())
+                                }
                                 .let { SessionManager.Snapshot(it, selectedIndex) }
 
                             tabs.forEach {
@@ -270,8 +272,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                             )
                         }
 
-                        override fun onSaveToCollectionClicked(private: Boolean) {
-                            val tabs = getListOfSessions(private)
+                        override fun onSaveToCollectionClicked() {
+                            val tabs = getListOfSessions(false)
                             val tabIds = tabs.map { it.id }.toList().toTypedArray()
                             val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
                             val navController = findNavController()
@@ -282,7 +284,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                                 tabs.size > 1 -> SaveCollectionStep.SelectTabs
                                 // If there is an existing tab collection, show the SelectCollection fragment to save
                                 // the selected tab to a collection of your choice.
-                                tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+                                tabCollectionStorage.cachedTabCollections.isNotEmpty() ->
+                                    SaveCollectionStep.SelectCollection
                                 // Show the NameCollection fragment to create a new collection for the selected tab.
                                 else -> SaveCollectionStep.NameCollection
                             }
@@ -1047,7 +1050,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         nav(R.id.browserFragment, directions)
     }
 
-    private fun getListOfSessions(private: Boolean = (activity as HomeActivity).browsingModeManager.mode.isPrivate): List<Session> {
+    private fun getListOfSessions(
+        private: Boolean = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+    ): List<Session> {
         return requireComponents.core.sessionManager.sessionsOfType(private = private)
             .toList()
     }
