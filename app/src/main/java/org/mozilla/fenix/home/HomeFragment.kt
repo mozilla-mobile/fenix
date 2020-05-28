@@ -45,7 +45,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.tab_header.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -1065,14 +1064,14 @@ class HomeFragment : Fragment() {
                 }
 
                 viewLifecycleOwner.lifecycleScope.allowUndo(
-                    requireView(),
+                    tabTrayDialog.requireView(),
                     snackbarMessage,
                     getString(R.string.snackbar_deleted_undo),
                     {
                         sessionManager.restore(snapshot)
                     },
                     operation = { },
-                    anchorView = view?.tabs_header
+                    elevation = SNACKBAR_ELEVATION
                 )
             }
 
@@ -1120,6 +1119,8 @@ class HomeFragment : Fragment() {
 
         // Layout
         private const val HEADER_MARGIN = 60
+
+        private const val SNACKBAR_ELEVATION = 80f
     }
 }
 
