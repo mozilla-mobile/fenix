@@ -5,13 +5,11 @@
 package org.mozilla.fenix.settings.logins
 
 import android.os.Parcelable
-import androidx.core.content.ContentProviderCompat.requireContext
 import kotlinx.android.parcel.Parcelize
 import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
-import org.mozilla.fenix.ext.components
 
 /**
  * Class representing a parcelable saved logins item
@@ -67,7 +65,7 @@ sealed class LoginsAction : Action {
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
-    data class ListOfDupes(val dupesExist: Boolean) : LoginsAction()
+    data class ListOfDupes(val dupeList: List<SavedLogin>) : LoginsAction()
 }
 
 /**
@@ -87,7 +85,7 @@ data class LoginsListState(
     val searchedForText: String?,
     val sortingStrategy: SortingStrategy,
     val highlightedItem: SavedLoginsSortingStrategyMenu.Item,
-    val dupesExist: Boolean
+    val duplicateLogins: List<SavedLogin>
 ) : State
 
 /**
@@ -126,7 +124,7 @@ private fun savedLoginsStateReducer(
         }
         is LoginsAction.ListOfDupes -> {
             state.copy(
-                dupesExist = action.dupesExist
+                duplicateLogins = action.dupeList
             )
         }
     }

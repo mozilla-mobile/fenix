@@ -43,7 +43,6 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
-import kotlin.coroutines.coroutineContext
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
@@ -85,7 +84,7 @@ class SavedLoginsFragment : Fragment() {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    dupesExist = false // assume on load there are no dupes
+                    duplicateLogins = // assume on load there are no dupes
                 )
             )
         }

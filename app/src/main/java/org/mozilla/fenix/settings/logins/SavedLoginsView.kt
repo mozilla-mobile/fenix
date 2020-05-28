@@ -86,7 +86,4 @@ class SavedLoginsInteractor(
     fun sort(sortingStrategy: SortingStrategy) {
         savedLoginsController.handleSort(sortingStrategy)
     }
-    suspend fun findDupes(editedItem: SavedLogin) {
-        savedLoginsController.findPotentialDuplicates(editedItem)
-    }
 }

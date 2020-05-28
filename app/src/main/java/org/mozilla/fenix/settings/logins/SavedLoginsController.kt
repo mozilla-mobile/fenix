@@ -12,7 +12,7 @@ import org.mozilla.fenix.utils.Settings
 import kotlin.coroutines.CoroutineContext
 
 interface SavedLoginsController {
-    suspend fun findPotentialDuplicates(editedItem: SavedLogin)
+    // NOOP
 }
 
 /**
@@ -20,7 +20,6 @@ interface SavedLoginsController {
  */
 class DefaultSavedLoginsController(
     val context: Context,
-    val coroutineContext: CoroutineContext = Dispatchers.Main,
     val loginsFragmentStore: LoginsFragmentStore,
     val settings: Settings
 ): SavedLoginsController {
@@ -28,24 +27,30 @@ class DefaultSavedLoginsController(
         loginsFragmentStore.dispatch(LoginsAction.SortLogins(sortingStrategy))
         settings.savedLoginsSortingStrategy = sortingStrategy
     }
+}
 
-    // TODO: What is the correct scope to use outside of the fragments?
-    override suspend fun findPotentialDuplicates(editedItem: SavedLogin) {
-        val duplicatesList = withContext(coroutineContext) {
-            context.components.core.passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
+/**
+ * Controller for editing a saved login
+ */
+class EditSavedLoginsController(
+    val context: Context,
+    val coroutineContext: CoroutineContext = Dispatchers.Main,
+    val loginsFragmentStore: LoginsFragmentStore
+): SavedLoginsController {
+    suspend fun findPotentialDuplicates(editedItem: SavedLogin) {
+        withContext(coroutineContext) {
+            val duplicatesList = context.components.core.passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
+
+            withContext(Dispatchers.Main) {
+                val mapped = duplicatesList.map { it.mapToSavedLogin() }
+                loginsFragmentStore.dispatch(
+                    LoginsAction.ListOfDupes(mapped)
+                )
+            }
         }
-
-        withContext(Dispatchers.Main) {
-            val dupesExist = duplicatesList.filter {
-                it.username != editedItem.username
-            }.any()
-            loginsFragmentStore.dispatch(
-                LoginsAction.ListOfDupes(dupesExist)
-            )
-        }
-
+    }
 //        var deferredLogin: Deferred<List<Login>>? = null
-//        val fetchLoginJob = GlobalScope.launch(Dispatchers.IO) {
+//        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
 //            deferredLogin = async {
 //                context.components.core
 //                    .passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
@@ -67,5 +72,4 @@ class DefaultSavedLoginsController(
 //                deferredLogin?.cancel()
 //            }
 //        }
-    }
 }

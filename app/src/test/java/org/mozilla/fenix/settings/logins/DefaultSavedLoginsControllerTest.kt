@@ -37,4 +37,20 @@ class DefaultSavedLoginsControllerTest {
             settings.savedLoginsSortingStrategy = sortingStrategy
         }
     }
+
+    @Test
+    fun `GIVEN a list of logins, WHEN findPotentialDuplicates is called on the controller, THEN a list of possible dupes is given`() {
+        controller.handleSort(sortingStrategy)
+
+        verify {
+            store.dispatch(
+                LoginsAction.SortLogins(
+                    SortingStrategy.Alphabetically(
+                        testContext
+                    )
+                )
+            )
+            settings.savedLoginsSortingStrategy = sortingStrategy
+        }
+    }
 }
