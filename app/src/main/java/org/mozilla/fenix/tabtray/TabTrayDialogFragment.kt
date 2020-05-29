@@ -106,7 +106,9 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     override fun onTabSelected(tab: Tab) {
         dismissAllowingStateLoss()
         if (findNavController().currentDestination?.id == R.id.browserFragment) return
-        findNavController().navigate(R.id.browserFragment)
+        if (!findNavController().popBackStack(R.id.browserFragment, false)) {
+            findNavController().navigate(R.id.browserFragment)
+        }
     }
 
     override fun onNewTabTapped(private: Boolean) {

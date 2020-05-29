@@ -103,7 +103,6 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.MozillaPage.PRIVATE_NOTICE
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
-import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.FragmentPreDrawManager
 import org.mozilla.fenix.utils.allowUndo
@@ -1023,8 +1022,8 @@ class HomeFragment : Fragment() {
     private fun openTabTray() {
         invokePendingDeleteJobs()
         hideOnboardingIfNeeded()
-        val tabTrayDialog = TabTrayDialogFragment()
-        tabTrayDialog.show(parentFragmentManager, null)
+
+        findNavController().navigate(HomeFragmentDirections.actionGlobalTabTrayDialogFragment())
     }
 
     companion object {
