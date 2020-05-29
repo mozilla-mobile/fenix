@@ -593,10 +593,6 @@
             android:defaultValue="-1L"
             app:argType="long" />
         <argument
-            android:name="previousFragmentId"
-            app:argType="reference"
-            app:nullable="false" />
-        <argument
             android:name="saveCollectionStep"
             app:argType="org.mozilla.fenix.collections.SaveCollectionStep"
             app:nullable="false" />

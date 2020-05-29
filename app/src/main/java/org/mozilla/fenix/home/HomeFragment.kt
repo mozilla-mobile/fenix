@@ -1107,7 +1107,6 @@ class HomeFragment : Fragment() {
 
                 val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment(
                     tabIds = tabIds,
-                    previousFragmentId = R.id.tabTrayFragment,
                     saveCollectionStep = step,
                     selectedTabIds = tabIds
                 )

@@ -294,7 +294,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
                             val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
                                 tabIds = tabIds,
-                                previousFragmentId = R.id.tabTrayFragment,
                                 saveCollectionStep = step,
                                 selectedTabIds = tabIds
                             )
