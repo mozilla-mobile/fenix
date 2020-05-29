@@ -31,12 +31,7 @@ import org.mozilla.fenix.utils.allowUndo
 
 @SuppressWarnings("TooManyFunctions")
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
-    interface Interactor {
-        fun onCloseAllTabsClicked(private: Boolean)
-    }
-
     private lateinit var tabTrayView: TabTrayView
-    var interactor: Interactor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

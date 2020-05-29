@@ -95,7 +95,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 
@@ -218,43 +217,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 onTabCounterClicked = {
                     val tabTrayDialog = TabTrayDialogFragment()
                     tabTrayDialog.show(parentFragmentManager, null)
-                    tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
-                        override fun onCloseAllTabsClicked(private: Boolean) {
-                            val tabs = getListOfSessions(private)
-
-                            val selectedIndex = sessionManager
-                                .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
-
-                            val snapshot = tabs
-                                .map(sessionManager::createSessionSnapshot)
-                                .map {
-                                    it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState())
-                                }
-                                .let { SessionManager.Snapshot(it, selectedIndex) }
-
-                            tabs.forEach {
-                                sessionManager.remove(it)
-                            }
-
-                            val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-                            val snackbarMessage = if (isPrivate) {
-                                getString(R.string.snackbar_private_tabs_closed)
-                            } else {
-                                getString(R.string.snackbar_tabs_closed)
-                            }
-
-                            viewLifecycleOwner.lifecycleScope.allowUndo(
-                                tabTrayDialog.requireView(),
-                                snackbarMessage,
-                                getString(R.string.snackbar_deleted_undo),
-                                {
-                                    sessionManager.restore(snapshot)
-                                },
-                                operation = { },
-                                elevation = SNACKBAR_ELEVATION
-                            )
-                        }
-                    }
                 }
             )
 
