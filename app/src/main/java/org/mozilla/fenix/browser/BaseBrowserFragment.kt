@@ -230,10 +230,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                             findNavController().navigate(BrowserFragmentDirections.actionGlobalHome())
                         }
 
-                        override fun onShareTabsClicked(private: Boolean) {
-                            share(getListOfSessions(private))
-                        }
-
                         override fun onCloseAllTabsClicked(private: Boolean) {
                             val tabs = getListOfSessions(private)
 
@@ -1008,16 +1004,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         if (!FeatureFlags.dynamicBottomToolbar) {
             updateLayoutMargins(inFullScreen)
         }
-    }
-
-    private fun share(tabs: List<Session>) {
-        val data = tabs.map {
-            ShareData(url = it.url, title = it.title)
-        }
-        val directions = BrowserFragmentDirections.actionGlobalShareFragment(
-            data = data.toTypedArray()
-        )
-        nav(R.id.browserFragment, directions)
     }
 
     private fun getListOfSessions(

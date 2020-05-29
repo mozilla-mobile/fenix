@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
 import mozilla.components.browser.session.Session
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
@@ -31,7 +32,6 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     interface Interactor {
         fun onTabSelected(tab: Tab)
         fun onNewTabTapped(private: Boolean)
-        fun onShareTabsClicked(private: Boolean)
         fun onCloseAllTabsClicked(private: Boolean)
     }
 
@@ -148,7 +148,14 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onShareTabsClicked(private: Boolean) {
-        interactor?.onShareTabsClicked(private)
+        val tabs = getListOfSessions(private)
+        val data = tabs.map {
+            ShareData(url = it.url, title = it.title)
+        }
+        val directions = TabTrayDialogFragmentDirections.actionGlobalShareFragment(
+            data = data.toTypedArray()
+        )
+        findNavController().navigate(directions)
     }
 
     override fun onCloseAllTabsClicked(private: Boolean) {

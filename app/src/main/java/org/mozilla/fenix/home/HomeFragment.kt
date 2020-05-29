@@ -60,7 +60,6 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.MediaState.State.PLAYING
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -1021,16 +1020,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun share(tabs: List<Session>) {
-        val data = tabs.map {
-            ShareData(url = it.url, title = it.title)
-        }
-        val directions = HomeFragmentDirections.actionGlobalShareFragment(
-            data = data.toTypedArray()
-        )
-        nav(R.id.homeFragment, directions)
-    }
-
     private fun openTabTray() {
         invokePendingDeleteJobs()
         hideOnboardingIfNeeded()
@@ -1045,10 +1034,6 @@ class HomeFragment : Fragment() {
             override fun onNewTabTapped(private: Boolean) {
                 (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
                 tabTrayDialog.dismiss()
-            }
-
-            override fun onShareTabsClicked(private: Boolean) {
-                share(getListOfSessions(private))
             }
 
             override fun onCloseAllTabsClicked(private: Boolean) {
