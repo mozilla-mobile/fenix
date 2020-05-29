@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.lib.state.ext.consumeFrom
@@ -30,7 +31,6 @@ import org.mozilla.fenix.utils.allowUndo
 @SuppressWarnings("TooManyFunctions")
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     interface Interactor {
-        fun onTabSelected(tab: Tab)
         fun onNewTabTapped(private: Boolean)
         fun onCloseAllTabsClicked(private: Boolean)
     }
@@ -109,7 +109,9 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onTabSelected(tab: Tab) {
-        interactor?.onTabSelected(tab)
+        dismissAllowingStateLoss()
+        if (findNavController().currentDestination?.id == R.id.browserFragment) return
+        findNavController().navigate(R.id.browserFragment)
     }
 
     override fun onNewTabTapped(private: Boolean) {
@@ -159,7 +161,40 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onCloseAllTabsClicked(private: Boolean) {
-        interactor?.onCloseAllTabsClicked(private)
+        val sessionManager = requireContext().components.core.sessionManager
+        val tabs = getListOfSessions(private)
+
+        val selectedIndex = sessionManager
+            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
+
+        val snapshot = tabs
+            .map(sessionManager::createSessionSnapshot)
+            .map { it.copy(engineSession = null, engineSessionState = it.engineSession?.saveState()) }
+            .let { SessionManager.Snapshot(it, selectedIndex) }
+
+        tabs.forEach {
+            sessionManager.remove(it)
+        }
+
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val snackbarMessage = if (isPrivate) {
+            getString(R.string.snackbar_private_tabs_closed)
+        } else {
+            getString(R.string.snackbar_tabs_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            getString(R.string.snackbar_deleted_undo),
+            {
+                sessionManager.restore(snapshot)
+            },
+            operation = { },
+            elevation = ELEVATION
+        )
+
+        findNavController().popBackStack(R.id.homeFragment, false)
     }
 
     private fun getListOfSessions(private: Boolean): List<Session> {

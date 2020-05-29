@@ -220,10 +220,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     val tabTrayDialog = TabTrayDialogFragment()
                     tabTrayDialog.show(parentFragmentManager, null)
                     tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
-                        override fun onTabSelected(tab: mozilla.components.concept.tabstray.Tab) {
-                            tabTrayDialog.dismiss()
-                        }
-
                         override fun onNewTabTapped(private: Boolean) {
                             (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
                             tabTrayDialog.dismiss()
