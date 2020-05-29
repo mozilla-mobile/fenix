@@ -5,15 +5,13 @@
 package org.mozilla.fenix.settings.logins
 
 import android.os.Bundle
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.BooleanSharedPreferenceUpdater
 import org.mozilla.fenix.settings.RadioButtonPreference
-import org.mozilla.fenix.settings.SharedPreferenceUpdater
 
 class SavedLoginsSettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -31,19 +29,17 @@ class SavedLoginsSettingFragment : PreferenceFragmentCompat() {
     private fun bindSave(): RadioButtonPreference {
         val keySave = getString(R.string.pref_key_save_logins)
         val preferenceSave = findPreference<RadioButtonPreference>(keySave)
-        preferenceSave?.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                if (newValue == true) {
-                    context?.metrics?.track(
-                        Event.SaveLoginsSettingChanged(
-                            Event.SaveLoginsSettingChanged.Setting.ASK_TO_SAVE
-                        )
+        val components = requireComponents
+        preferenceSave?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater {
+            if (it) {
+                components.analytics.metrics.track(
+                    Event.SaveLoginsSettingChanged(
+                        Event.SaveLoginsSettingChanged.Setting.ASK_TO_SAVE
                     )
-                }
-                // We want to reload the current session here so we can try to fill the current page
-                context?.components?.useCases?.sessionUseCases?.reload?.invoke()
-                return super.onPreferenceChange(preference, newValue)
+                )
             }
+            // We want to reload the current session here so we can try to fill the current page
+            components.useCases.sessionUseCases.reload.invoke()
         }
         return requireNotNull(preferenceSave)
     }
@@ -51,19 +47,17 @@ class SavedLoginsSettingFragment : PreferenceFragmentCompat() {
     private fun bindNeverSave(): RadioButtonPreference {
         val keyNeverSave = getString(R.string.pref_key_never_save_logins)
         val preferenceNeverSave = findPreference<RadioButtonPreference>(keyNeverSave)
-        preferenceNeverSave?.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                if (newValue == true) {
-                    context?.metrics?.track(
-                        Event.SaveLoginsSettingChanged(
-                            Event.SaveLoginsSettingChanged.Setting.NEVER_SAVE
-                        )
+        val components = requireComponents
+        preferenceNeverSave?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater {
+            if (it) {
+                components.analytics.metrics.track(
+                    Event.SaveLoginsSettingChanged(
+                        Event.SaveLoginsSettingChanged.Setting.NEVER_SAVE
                     )
-                }
-                // We want to reload the current session here so we don't save any currently inserted login
-                context?.components?.useCases?.sessionUseCases?.reload?.invoke()
-                return super.onPreferenceChange(preference, newValue)
+                )
             }
+            // We want to reload the current session here so we don't save any currently inserted login
+            components.useCases.sessionUseCases.reload.invoke()
         }
         return requireNotNull(preferenceNeverSave)
     }

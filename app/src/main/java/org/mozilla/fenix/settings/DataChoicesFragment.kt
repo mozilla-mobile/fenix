@@ -56,7 +56,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
             val appName = context.getString(R.string.app_name)
             summary = context.getString(R.string.preferences_usage_data_description, appName)
 
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+            onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
         }
 
         findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_marketing_telemetry))?.apply {
@@ -65,13 +65,13 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
             val appName = context.getString(R.string.app_name)
             summary = context.getString(R.string.preferences_marketing_data_description, appName)
 
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+            onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
         }
 
         findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_experimentation))?.apply {
             isChecked = context.settings().isExperimentationEnabled
             isVisible = Config.channel.isReleaseOrBeta
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+            onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
         }
     }
 }

@@ -10,9 +10,12 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.text.HtmlCompat
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.theme.ThemeManager
 
 fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
@@ -72,4 +75,29 @@ inline fun <reified T> Preference.setOnPreferenceChangeListener(
     setOnPreferenceChangeListener { preference: Preference, newValue: Any ->
         (newValue as? T)?.let { onPreferenceChangeListener(preference, it) } ?: false
     }
+}
+
+/**
+ * Add a listener to track when shared preferences are changed fro the given preference fragment.
+ */
+fun PreferenceFragmentCompat.addMetricsPreferenceListener() {
+    val resources = requireContext().resources
+    val metrics = requireComponents.analytics.metrics
+
+    preferenceManager.sharedPreferences
+        .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
+            try {
+                metrics.track(
+                    Event.PreferenceToggled(
+                        key,
+                        sharedPreferences.getBoolean(key, false),
+                        resources
+                    )
+                )
+            } catch (e: IllegalArgumentException) {
+                // The event is not tracked
+            } catch (e: ClassCastException) {
+                // The setting is not a boolean, not tracked
+            }
+        }
 }

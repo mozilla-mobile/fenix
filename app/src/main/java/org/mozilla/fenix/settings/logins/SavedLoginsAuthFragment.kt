@@ -38,7 +38,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.settings.SharedPreferenceUpdater
+import org.mozilla.fenix.settings.BooleanSharedPreferenceUpdater
 import java.util.concurrent.Executors
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -116,7 +116,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
             isChecked =
                 context.settings().shouldAutofillLogins && context.settings().shouldPromptToSaveLogins
             onPreferenceChangeListener =
-                SharedPreferenceUpdater()
+                BooleanSharedPreferenceUpdater()
         }
 
         val savedLoginsKey = getPreferenceKey(R.string.pref_key_saved_logins)

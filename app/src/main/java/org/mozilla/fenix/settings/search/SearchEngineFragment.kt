@@ -15,7 +15,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.settings.SharedPreferenceUpdater
+import org.mozilla.fenix.settings.BooleanSharedPreferenceUpdater
 
 class SearchEngineFragment : PreferenceFragmentCompat() {
 
@@ -68,13 +68,13 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
             }
 
         searchEngineListPreference?.reload(requireContext())
-        searchSuggestionsPreference?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showSearchShortcuts?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showHistorySuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showBookmarkSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showClipboardSuggestions?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        searchSuggestionsInPrivatePreference?.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showVoiceSearchPreference?.onPreferenceChangeListener = SharedPreferenceUpdater()
+        searchSuggestionsPreference?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        showSearchShortcuts?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        showHistorySuggestions?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        showBookmarkSuggestions?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        showClipboardSuggestions?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        searchSuggestionsInPrivatePreference?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
+        showVoiceSearchPreference?.onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
 
         searchSuggestionsPreference?.setOnPreferenceClickListener {
             if (!searchSuggestionsPreference.isChecked) {

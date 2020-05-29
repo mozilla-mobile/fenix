@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.components.metrics
 
-import android.content.Context
+import android.content.res.Resources
 import mozilla.components.browser.awesomebar.facts.BrowserAwesomeBarFacts
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.menu.facts.BrowserMenuFacts
@@ -178,23 +178,23 @@ sealed class Event {
     data class PreferenceToggled(
         val preferenceKey: String,
         val enabled: Boolean,
-        val context: Context
+        val resources: Resources
     ) : Event() {
         private val booleanPreferenceTelemetryAllowList = listOf(
-            context.getString(R.string.pref_key_show_search_suggestions),
-            context.getString(R.string.pref_key_remote_debugging),
-            context.getString(R.string.pref_key_telemetry),
-            context.getString(R.string.pref_key_tracking_protection),
-            context.getString(R.string.pref_key_search_bookmarks),
-            context.getString(R.string.pref_key_search_browsing_history),
-            context.getString(R.string.pref_key_show_clipboard_suggestions),
-            context.getString(R.string.pref_key_show_search_shortcuts),
-            context.getString(R.string.pref_key_open_links_in_a_private_tab),
-            context.getString(R.string.pref_key_sync_logins),
-            context.getString(R.string.pref_key_sync_bookmarks),
-            context.getString(R.string.pref_key_sync_history),
-            context.getString(R.string.pref_key_show_voice_search),
-            context.getString(R.string.pref_key_show_search_suggestions_in_private)
+            resources.getString(R.string.pref_key_show_search_suggestions),
+            resources.getString(R.string.pref_key_remote_debugging),
+            resources.getString(R.string.pref_key_telemetry),
+            resources.getString(R.string.pref_key_tracking_protection),
+            resources.getString(R.string.pref_key_search_bookmarks),
+            resources.getString(R.string.pref_key_search_browsing_history),
+            resources.getString(R.string.pref_key_show_clipboard_suggestions),
+            resources.getString(R.string.pref_key_show_search_shortcuts),
+            resources.getString(R.string.pref_key_open_links_in_a_private_tab),
+            resources.getString(R.string.pref_key_sync_logins),
+            resources.getString(R.string.pref_key_sync_bookmarks),
+            resources.getString(R.string.pref_key_sync_history),
+            resources.getString(R.string.pref_key_show_voice_search),
+            resources.getString(R.string.pref_key_show_search_suggestions_in_private)
         )
 
         override val extras: Map<Events.preferenceToggledKeys, String>?

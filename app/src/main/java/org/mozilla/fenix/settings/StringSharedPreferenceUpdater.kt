@@ -12,13 +12,16 @@ import org.mozilla.fenix.ext.settings
  * Updates the corresponding [android.content.SharedPreferences] when the String [Preference] is changed.
  * The preference key is used as the shared preference key.
  */
-open class StringSharedPreferenceUpdater : Preference.OnPreferenceChangeListener {
+class StringSharedPreferenceUpdater(
+    private val callback: (() -> Unit)? = null
+) : Preference.OnPreferenceChangeListener {
 
     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
         val newStringValue = newValue as? String ?: return false
         preference.context.settings().preferences.edit {
             putString(preference.key, newStringValue)
         }
+        callback?.invoke()
         return true
     }
 }

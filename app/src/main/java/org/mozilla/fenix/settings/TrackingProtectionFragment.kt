@@ -171,20 +171,14 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         }
 
         customCookies = requireNotNull(
-            findPreference(
-                getString(R.string.pref_key_tracking_protection_custom_cookies)
-            )
+            findPreference(getString(R.string.pref_key_tracking_protection_custom_cookies))
         )
 
         customCookiesSelect = requireNotNull(
-            findPreference(
-                getString(R.string.pref_key_tracking_protection_custom_cookies_select)
-            )
+            findPreference(getString(R.string.pref_key_tracking_protection_custom_cookies_select))
         )
         customTracking = requireNotNull(
-            findPreference(
-                getString(R.string.pref_key_tracking_protection_custom_tracking_content)
-            )
+            findPreference(getString(R.string.pref_key_tracking_protection_custom_tracking_content))
         )
         customTrackingSelect = requireNotNull(
             findPreference(
@@ -192,66 +186,34 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
             )
         )
         customCryptominers = requireNotNull(
-            findPreference(
-                getString(R.string.pref_key_tracking_protection_custom_cryptominers)
-            )
+            findPreference(getString(R.string.pref_key_tracking_protection_custom_cryptominers))
         )
         customFingerprinters = requireNotNull(
-            findPreference(
-                getString(R.string.pref_key_tracking_protection_custom_fingerprinters)
-            )
+            findPreference(getString(R.string.pref_key_tracking_protection_custom_fingerprinters))
         )
 
-        customCookies.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                customCookiesSelect.isVisible = !customCookies.isChecked
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
+        customCookies.onPreferenceChangeListener = BooleanSharedPreferenceUpdater {
+            customCookiesSelect.isVisible = !customCookies.isChecked
+            updateTrackingProtectionPolicy()
         }
 
-        customTracking.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                customTrackingSelect.isVisible = !customTracking.isChecked
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
+        customTracking.onPreferenceChangeListener = BooleanSharedPreferenceUpdater {
+            customTrackingSelect.isVisible = !customTracking.isChecked
+            updateTrackingProtectionPolicy()
         }
 
-        customCookiesSelect.onPreferenceChangeListener = object : StringSharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
+        val updateStringPreferenceAndPolicy = StringSharedPreferenceUpdater {
+            updateTrackingProtectionPolicy()
+        }
+        val updateBooleanPreferenceAndPolicy = BooleanSharedPreferenceUpdater {
+            updateTrackingProtectionPolicy()
         }
 
-        customTrackingSelect.onPreferenceChangeListener = object : StringSharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        customCookiesSelect.onPreferenceChangeListener = updateStringPreferenceAndPolicy
+        customTrackingSelect.onPreferenceChangeListener = updateStringPreferenceAndPolicy
 
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
-        }
-
-        customCryptominers.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
-        }
-
-        customFingerprinters.onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                return super.onPreferenceChange(preference, newValue).also {
-                    updateTrackingProtectionPolicy()
-                }
-            }
-        }
+        customCryptominers.onPreferenceChangeListener = updateBooleanPreferenceAndPolicy
+        customFingerprinters.onPreferenceChangeListener = updateBooleanPreferenceAndPolicy
 
         updateCustomOptionsVisibility()
     }

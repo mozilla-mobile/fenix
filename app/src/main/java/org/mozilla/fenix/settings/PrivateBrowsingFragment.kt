@@ -41,17 +41,14 @@ class PrivateBrowsingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_open_links_in_a_private_tab))?.apply {
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+            onPreferenceChangeListener = BooleanSharedPreferenceUpdater()
             isChecked = context.settings().openLinksInAPrivateTab
         }
 
         findPreference<SwitchPreference>(getPreferenceKey
             (R.string.pref_key_allow_screenshots_in_private_mode))?.apply {
-            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                    return super.onPreferenceChange(preference, newValue).also {
-                        requireActivity().checkAndUpdateScreenshotPermission(requireActivity().settings()) }
-                }
+            onPreferenceChangeListener = BooleanSharedPreferenceUpdater {
+                requireActivity().checkAndUpdateScreenshotPermission(requireActivity().settings())
             }
         }
     }
