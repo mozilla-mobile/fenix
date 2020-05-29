@@ -22,6 +22,7 @@ import mozilla.components.concept.tabstray.Tab
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
@@ -31,7 +32,6 @@ import org.mozilla.fenix.utils.allowUndo
 @SuppressWarnings("TooManyFunctions")
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     interface Interactor {
-        fun onNewTabTapped(private: Boolean)
         fun onCloseAllTabsClicked(private: Boolean)
     }
 
@@ -115,7 +115,9 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onNewTabTapped(private: Boolean) {
-        interactor?.onNewTabTapped(private)
+        (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
+        findNavController().popBackStack(R.id.homeFragment, false)
+        dismissAllowingStateLoss()
     }
 
     override fun onTabTrayDismissed() {

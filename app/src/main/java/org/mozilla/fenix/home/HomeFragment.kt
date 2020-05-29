@@ -1026,11 +1026,6 @@ class HomeFragment : Fragment() {
         val tabTrayDialog = TabTrayDialogFragment()
         tabTrayDialog.show(parentFragmentManager, null)
         tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
-            override fun onNewTabTapped(private: Boolean) {
-                (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
-                tabTrayDialog.dismiss()
-            }
-
             override fun onCloseAllTabsClicked(private: Boolean) {
                 val tabs = getListOfSessions(private)
 

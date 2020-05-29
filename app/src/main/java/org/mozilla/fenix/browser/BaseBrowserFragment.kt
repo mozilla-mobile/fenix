@@ -69,7 +69,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
@@ -220,12 +219,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     val tabTrayDialog = TabTrayDialogFragment()
                     tabTrayDialog.show(parentFragmentManager, null)
                     tabTrayDialog.interactor = object : TabTrayDialogFragment.Interactor {
-                        override fun onNewTabTapped(private: Boolean) {
-                            (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
-                            tabTrayDialog.dismiss()
-                            findNavController().navigate(BrowserFragmentDirections.actionGlobalHome())
-                        }
-
                         override fun onCloseAllTabsClicked(private: Boolean) {
                             val tabs = getListOfSessions(private)
 
