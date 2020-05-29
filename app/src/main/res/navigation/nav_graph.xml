@@ -50,6 +50,11 @@
     <action android:id="@+id/action_global_trackingProtectionPanelDialogFragment" app:destination="@id/trackingProtectionPanelDialogFragment" />
     <action android:id="@+id/action_global_quickSettingsSheetDialogFragment" app:destination="@id/quickSettingsSheetDialogFragment"/>
 
+    <dialog
+        android:id="@+id/tabTrayDialogFragment"
+        android:name="org.mozilla.fenix.tabtray.TabTrayDialogFragment"
+        tools:layout="@layout/fragment_tab_tray_dialog"/>
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="org.mozilla.fenix.home.HomeFragment"
@@ -59,9 +64,6 @@
             app:destination="@id/browserFragment"
             app:exitAnim="@anim/zoom_in_fade"
             app:popEnterAnim="@anim/zoom_out_fade" />
-        <action
-            android:id="@+id/action_homeFragment_to_createCollectionFragment"
-            app:destination="@id/collectionCreationFragment" />
     </fragment>
 
     <fragment
@@ -164,9 +166,6 @@
         <action
             android:id="@+id/action_browserFragment_to_tabsTrayFragment"
             app:destination="@+id/tabTrayFragment" />
-        <action
-            android:id="@+id/action_browserFragment_to_createCollectionFragment"
-            app:destination="@id/collectionCreationFragment" />
     </fragment>
 
     <fragment

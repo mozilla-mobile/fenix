@@ -22,7 +22,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
-import kotlinx.android.synthetic.main.tab_header.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -72,7 +71,6 @@ import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
-import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
@@ -270,34 +268,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                                 operation = { },
                                 elevation = SNACKBAR_ELEVATION
                             )
-                        }
-
-                        override fun onSaveToCollectionClicked() {
-                            val tabs = getListOfSessions(false)
-                            val tabIds = tabs.map { it.id }.toList().toTypedArray()
-                            val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
-                            val navController = findNavController()
-
-                            val step = when {
-                                // Show the SelectTabs fragment if there are multiple opened tabs to select which tabs
-                                // you want to save to a collection.
-                                tabs.size > 1 -> SaveCollectionStep.SelectTabs
-                                // If there is an existing tab collection, show the SelectCollection fragment to save
-                                // the selected tab to a collection of your choice.
-                                tabCollectionStorage.cachedTabCollections.isNotEmpty() ->
-                                    SaveCollectionStep.SelectCollection
-                                // Show the NameCollection fragment to create a new collection for the selected tab.
-                                else -> SaveCollectionStep.NameCollection
-                            }
-
-                            if (navController.currentDestination?.id == R.id.collectionCreationFragment) return
-
-                            val directions = BrowserFragmentDirections.actionBrowserFragmentToCreateCollectionFragment(
-                                tabIds = tabIds,
-                                saveCollectionStep = step,
-                                selectedTabIds = tabIds
-                            )
-                            navController.nav(R.id.browserFragment, directions)
                         }
                     }
                 }

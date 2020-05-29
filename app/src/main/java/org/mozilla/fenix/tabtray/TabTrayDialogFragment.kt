@@ -11,23 +11,27 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
+import mozilla.components.browser.session.Session
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.utils.allowUndo
 
+@SuppressWarnings("TooManyFunctions")
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     interface Interactor {
         fun onTabSelected(tab: Tab)
         fun onNewTabTapped(private: Boolean)
         fun onShareTabsClicked(private: Boolean)
-        fun onSaveToCollectionClicked()
         fun onCloseAllTabsClicked(private: Boolean)
     }
 
@@ -116,16 +120,44 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
         dismissAllowingStateLoss()
     }
 
+    override fun onSaveToCollectionClicked() {
+        val tabs = getListOfSessions(false)
+        val tabIds = tabs.map { it.id }.toList().toTypedArray()
+        val tabCollectionStorage = (activity as HomeActivity).components.core.tabCollectionStorage
+        val navController = findNavController()
+
+        val step = when {
+            // Show the SelectTabs fragment if there are multiple opened tabs to select which tabs
+            // you want to save to a collection.
+            tabs.size > 1 -> SaveCollectionStep.SelectTabs
+            // If there is an existing tab collection, show the SelectCollection fragment to save
+            // the selected tab to a collection of your choice.
+            tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
+            // Show the NameCollection fragment to create a new collection for the selected tab.
+            else -> SaveCollectionStep.NameCollection
+        }
+
+        if (navController.currentDestination?.id == R.id.collectionCreationFragment) return
+
+        val directions = TabTrayDialogFragmentDirections.actionGlobalCollectionCreationFragment(
+            tabIds = tabIds,
+            saveCollectionStep = step,
+            selectedTabIds = tabIds
+        )
+        navController.navigate(directions)
+    }
+
     override fun onShareTabsClicked(private: Boolean) {
         interactor?.onShareTabsClicked(private)
     }
 
-    override fun onSaveToCollectionClicked() {
-        interactor?.onSaveToCollectionClicked()
-    }
-
     override fun onCloseAllTabsClicked(private: Boolean) {
         interactor?.onCloseAllTabsClicked(private)
+    }
+
+    private fun getListOfSessions(private: Boolean): List<Session> {
+        return requireContext().components.core.sessionManager.sessionsOfType(private = private)
+            .toList()
     }
 
     companion object {
