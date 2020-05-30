@@ -19,3 +19,8 @@ jobs:
         description: PR Summary Task
         run-on-tasks-for: [github-pull-request]
         worker-type: succeed
+        treeherder:
+            kind: build
+            platform: android-all/opt
+            symbol: pr-complete
+            tier: 1
