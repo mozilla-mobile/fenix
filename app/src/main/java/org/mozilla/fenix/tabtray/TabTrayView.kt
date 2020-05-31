@@ -98,9 +98,9 @@ class TabTrayView(
 
         view.tab_layout.addOnTabSelectedListener(this)
 
-        // TODO: Find a fix for this, this will require figuring out why the extended FAB won't
+        // We need to find a fix for this, this will require figuring out why the extended FAB won't
         // respect any new elevation values
-        view.tab_wrapper.elevation = 8f
+        view.tab_wrapper.elevation = TEMP_ELEVATION
 
         tabsFeature = TabsFeature(
             view.tabsTray,
@@ -226,6 +226,7 @@ class TabTrayView(
         private const val EXPAND_AT_SIZE = 3
         private const val SLIDE_OFFSET = 0
         private const val ELEVATION = 90f
+        private const val TEMP_ELEVATION = 8f
     }
 }
 
