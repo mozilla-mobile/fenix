@@ -17,6 +17,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.*
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
@@ -66,7 +67,8 @@ class TabTrayView(
         get() = container
 
     init {
-        fabView.new_tab_button.compatElevation = ELEVATION
+        fabView.new_tab_button.elevation = ELEVATION
+        toggleFabText(isPrivate)
 
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -95,6 +97,10 @@ class TabTrayView(
         }
 
         view.tab_layout.addOnTabSelectedListener(this)
+
+        // TODO: Find a fix for this, this will require figuring out why the extended FAB won't
+        // respect any new elevation values
+        view.tab_wrapper.elevation = 8f
 
         tabsFeature = TabsFeature(
             view.tabsTray,
@@ -173,6 +179,7 @@ class TabTrayView(
             else -> { state -> !state.content.private }
         }
 
+        toggleFabText(isPrivateModeSelected)
         tabsFeature.filterTabs(filter)
 
         updateState(view.context.components.core.store.state)
@@ -204,6 +211,14 @@ class TabTrayView(
     }
     override fun onTabReselected(tab: TabLayout.Tab?) { /*noop*/ }
     override fun onTabUnselected(tab: TabLayout.Tab?) { /*noop*/ }
+
+    fun toggleFabText(private: Boolean) {
+        if (private) {
+            fabView.new_tab_button.extend()
+        } else {
+            fabView.new_tab_button.shrink()
+        }
+    }
 
     companion object {
         private const val DEFAULT_TAB_ID = 0
