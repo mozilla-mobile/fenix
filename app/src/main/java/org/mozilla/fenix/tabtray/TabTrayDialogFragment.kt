@@ -182,8 +182,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
             sessionManager.remove(it)
         }
 
-        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-        val snackbarMessage = if (isPrivate) {
+        val snackbarMessage = if (tabTrayView.isPrivateModeSelected) {
             getString(R.string.snackbar_private_tabs_closed)
         } else {
             getString(R.string.snackbar_tabs_closed)
