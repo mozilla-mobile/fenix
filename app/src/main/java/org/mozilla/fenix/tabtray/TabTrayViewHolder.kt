@@ -39,11 +39,8 @@ class TabTrayViewHolder(
 ) : TabViewHolder(itemView) {
     private val iconView: ImageView? = itemView.findViewById(R.id.mozac_browser_tabstray_icon)
     private val titleView: TextView = itemView.findViewById(R.id.mozac_browser_tabstray_title)
-    private val closeView: AppCompatImageButton =
-        itemView.findViewById(R.id.mozac_browser_tabstray_close)
-    private val thumbnailView: TabThumbnailView =
-        itemView.findViewById(R.id.mozac_browser_tabstray_thumbnail)
-
+    private val closeView: AppCompatImageButton = itemView.findViewById(R.id.mozac_browser_tabstray_close)
+    private val thumbnailView: TabThumbnailView = itemView.findViewById(R.id.mozac_browser_tabstray_thumbnail)
     @VisibleForTesting
     internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
@@ -66,16 +63,8 @@ class TabTrayViewHolder(
 
         // Drawables and theme
         updateBackgroundColor(isSelected2)
-
-        if (tab.thumbnail != null) {
-            thumbnailView.setImageBitmap(tab.thumbnail)
-            thumbnailView.visibility = View.VISIBLE
-            iconView?.visibility = View.INVISIBLE
-        } else {
-            iconView?.setImageBitmap(tab.icon)
-            thumbnailView.visibility = View.INVISIBLE
-            iconView?.visibility = View.VISIBLE
-        }
+        thumbnailView.setImageBitmap(tab.thumbnail)
+        iconView?.setImageBitmap(tab.icon)
 
         // Media state
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
@@ -150,7 +139,6 @@ class TabTrayViewHolder(
         }
         titleView.text = title
     }
-
     private fun updateUrl(tab: Tab) {
         // Truncate to MAX_URI_LENGTH to prevent the UI from locking up for
         // extremely large URLs such as data URIs or bookmarklets. The same
