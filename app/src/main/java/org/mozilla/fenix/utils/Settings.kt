@@ -152,13 +152,13 @@ class Settings private constructor(
             preferences.getBoolean(appContext.getString(R.string.pref_key_migrating_from_fenix_tip), true)
 
     private val activeSearchCount by intPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_count),
+        appContext.getPreferenceKey(R.string.pref_key_search_count_2),
         default = 0
     )
 
     fun incrementActiveSearchCount() {
         preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_search_count),
+            appContext.getPreferenceKey(R.string.pref_key_search_count_2),
             activeSearchCount + 1
         ).apply()
     }
