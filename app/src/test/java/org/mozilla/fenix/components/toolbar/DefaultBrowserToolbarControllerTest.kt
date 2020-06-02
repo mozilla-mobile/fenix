@@ -47,6 +47,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.Analytics
@@ -635,5 +638,29 @@ class DefaultBrowserToolbarControllerTest {
         every { currentSession.id } returns "reader-active-tab"
         controller.handleToolbarItemInteraction(item)
         verify { readerModeController.hideReaderView() }
+    }
+
+    @Test
+    fun handleToolbarNewTabPress() {
+        val browsingModeManager: BrowsingModeManager = DefaultBrowsingModeManager(BrowsingMode.Private) {}
+        val item = TabCounterMenuItem.NewTab(false)
+
+        every { activity.browsingModeManager } returns browsingModeManager
+
+        controller.handleTabCounterItemInteraction(item)
+        assertEquals(BrowsingMode.Normal, activity.browsingModeManager.mode)
+        verify { navController.popBackStack(R.id.homeFragment, false) }
+    }
+
+    @Test
+    fun handleToolbarNewPrivateTabPress() {
+        val browsingModeManager: BrowsingModeManager = DefaultBrowsingModeManager(BrowsingMode.Normal) {}
+        val item = TabCounterMenuItem.NewTab(true)
+
+        every { activity.browsingModeManager } returns browsingModeManager
+
+        controller.handleTabCounterItemInteraction(item)
+        assertEquals(BrowsingMode.Private, activity.browsingModeManager.mode)
+        verify { navController.popBackStack(R.id.homeFragment, false) }
     }
 }
