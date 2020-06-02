@@ -8,6 +8,9 @@ import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.plus
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -24,6 +27,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.allowUndo
 
 abstract class ToolbarIntegration(
     context: Context,
@@ -132,7 +136,36 @@ class DefaultToolbarIntegration(
             )
         }
 
-        val onTabCounterMenuItemTapped = { item: TabCounterMenuItem ->
+        val onTabCounterMenuItemTapped = marker@{ item: TabCounterMenuItem ->
+            if (item is TabCounterMenuItem.CloseTab) {
+                val session = sessionManager.selectedSession ?: return@marker
+                val snapshot = sessionManager.createSessionSnapshot(session)
+                val state = snapshot.engineSession?.saveState()
+                val isSelected =
+                    session.id == context.components.core.store.state.selectedTabId ?: false
+
+                val snackbarMessage = if (snapshot.session.private) {
+                    toolbar.context.getString(R.string.snackbar_private_tab_closed)
+                } else {
+                    toolbar.context.getString(R.string.snackbar_tab_closed)
+                }
+
+                // toolbar.lifecycleScope.allowUndo(
+                (GlobalScope + Dispatchers.Main).allowUndo(
+                    toolbar,
+                    snackbarMessage,
+                    toolbar.context.getString(R.string.snackbar_deleted_undo),
+                    {
+                        sessionManager.add(
+                            snapshot.session,
+                            isSelected,
+                            engineSessionState = state
+                        )
+                    },
+                    operation = { },
+                    elevation = ELEVATION
+                )
+            }
             interactor.onTabCounterMenuItemTapped(item)
         }
         val tabsAction = TabCounterToolbarButton(sessionManager, isPrivate, onTabCounterMenuItemTapped) {
@@ -151,5 +184,9 @@ class DefaultToolbarIntegration(
                 addHistoryStorageProvider(historyStorage)
             }
         }
+    }
+
+    companion object {
+        private const val ELEVATION = 80f
     }
 }

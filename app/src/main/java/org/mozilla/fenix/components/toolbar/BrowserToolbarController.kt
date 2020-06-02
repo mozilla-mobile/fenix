@@ -135,7 +135,6 @@ class DefaultBrowserToolbarController(
         val tabUseCases = activity.components.useCases.tabsUseCases
         when (item) {
             is TabCounterMenuItem.CloseTab -> {
-                // TODO show undo snackbar
                 sessionManager.selectedSession?.let {
                     tabUseCases.removeTab.invoke(it)
                     if (sessionManager.sessions.isEmpty()) {
