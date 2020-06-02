@@ -17,8 +17,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.*
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
-import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.state.selector.normalTabs
@@ -67,7 +65,6 @@ class TabTrayView(
         get() = container
 
     init {
-        fabView.new_tab_button.elevation = ELEVATION
         toggleFabText(isPrivate)
 
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -98,10 +95,6 @@ class TabTrayView(
 
         view.tab_layout.addOnTabSelectedListener(this)
 
-        // We need to find a fix for this, this will require figuring out why the extended FAB won't
-        // respect any new elevation values
-        view.tab_wrapper.elevation = TEMP_ELEVATION
-
         tabsFeature = TabsFeature(
             view.tabsTray,
             view.context.components.core.store,
@@ -123,6 +116,8 @@ class TabTrayView(
         if (tabs.size > EXPAND_AT_SIZE) {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+
+        behavior.setExpandedOffset(view.context.resources.getDimension(R.dimen.tab_tray_top_offset).toInt())
 
         (view.tabsTray as? BrowserTabsTray)?.also { tray ->
             TabsTouchHelper(tray.tabsAdapter).attachToRecyclerView(tray)
@@ -215,8 +210,10 @@ class TabTrayView(
     fun toggleFabText(private: Boolean) {
         if (private) {
             fabView.new_tab_button.extend()
+            fabView.new_tab_button.contentDescription = view.context.resources.getString(R.string.add_private_tab)
         } else {
             fabView.new_tab_button.shrink()
+            fabView.new_tab_button.contentDescription = view.context.resources.getString(R.string.add_tab)
         }
     }
 
@@ -225,8 +222,6 @@ class TabTrayView(
         private const val PRIVATE_TAB_ID = 1
         private const val EXPAND_AT_SIZE = 3
         private const val SLIDE_OFFSET = 0
-        private const val ELEVATION = 90f
-        private const val TEMP_ELEVATION = 8f
     }
 }
 
