@@ -104,7 +104,7 @@ jobs:
         treeherder:
             symbol: nightly(B)
 
-    android-test:
+    nightly-simulation:
         attributes:
             nightly: false
         run-on-tasks-for: [github-push]
@@ -112,9 +112,9 @@ jobs:
         include-shippable-secrets: true
         run:
             geckoview-engine: geckoNightly
-            gradle-build-type: fenixNightly
+            gradle-build-type: fennecNightly
         treeherder:
-            symbol: nightly(Bo)
+            symbol: nightlySim(B)
 
     beta:
         attributes:
