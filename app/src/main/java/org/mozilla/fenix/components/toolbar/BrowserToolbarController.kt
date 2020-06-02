@@ -135,9 +135,9 @@ class DefaultBrowserToolbarController(
         val tabUseCases = activity.components.useCases.tabsUseCases
         when (item) {
             is TabCounterMenuItem.CloseTab -> {
-                sessionManager.selectedSession?.let {
+                activity.components.core.sessionManager.selectedSession?.let {
                     tabUseCases.removeTab.invoke(it)
-                    if (sessionManager.sessions.isEmpty()) {
+                    if (activity.components.core.sessionManager.sessions.isEmpty()) {
                         navController.popBackStack(R.id.homeFragment, false)
                     }
                 }

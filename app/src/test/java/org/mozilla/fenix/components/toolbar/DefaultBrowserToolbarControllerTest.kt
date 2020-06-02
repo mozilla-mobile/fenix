@@ -641,6 +641,19 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
+    fun handleToolbarCloseTabPress() {
+        val tabsUseCases: TabsUseCases = mockk(relaxed = true)
+        val removeTabUseCase: TabsUseCases.RemoveTabUseCase = mockk(relaxed = true)
+        val item = TabCounterMenuItem.CloseTab
+
+        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
+        every { tabsUseCases.removeTab } returns removeTabUseCase
+
+        controller.handleTabCounterItemInteraction(item)
+        verify { removeTabUseCase.invoke(currentSession) }
+    }
+
+    @Test
     fun handleToolbarNewTabPress() {
         val browsingModeManager: BrowsingModeManager = DefaultBrowsingModeManager(BrowsingMode.Private) {}
         val item = TabCounterMenuItem.NewTab(false)
