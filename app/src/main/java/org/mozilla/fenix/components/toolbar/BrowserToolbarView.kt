@@ -50,6 +50,7 @@ interface BrowserToolbarViewInteractor {
     fun onBrowserToolbarClicked()
     fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
     fun onTabCounterClicked()
+    fun onTabCounterMenuItemTapped(item: TabCounterMenuItem)
     fun onBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
     fun onScrolled(offset: Int)
 }

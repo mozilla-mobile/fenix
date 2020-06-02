@@ -24,12 +24,14 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragment
 import org.mozilla.fenix.browser.BrowserFragmentDirections
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
@@ -55,10 +57,11 @@ interface BrowserToolbarController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
     fun handleToolbarClick()
     fun handleTabCounterClick()
+    fun handleTabCounterItemInteraction(item: TabCounterMenuItem)
     fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
 }
 
-@Suppress("LargeClass")
+@SuppressWarnings("LargeClass", "TooManyFunctions")
 class DefaultBrowserToolbarController(
     private val activity: Activity,
     private val navController: NavController,
@@ -126,6 +129,25 @@ class DefaultBrowserToolbarController(
     override fun handleTabCounterClick() {
         sharedViewModel.shouldScrollToSelectedTab = true
         animateTabAndNavigateHome()
+    }
+
+    override fun handleTabCounterItemInteraction(item: TabCounterMenuItem) {
+        val tabUseCases = activity.components.useCases.tabsUseCases
+        when (item) {
+            is TabCounterMenuItem.CloseTab -> {
+                // TODO show undo snackbar
+                sessionManager.selectedSession?.let {
+                    tabUseCases.removeTab.invoke(it)
+                    if (sessionManager.sessions.isEmpty()) {
+                        navController.popBackStack(R.id.homeFragment, false)
+                    }
+                }
+            }
+            is TabCounterMenuItem.NewTab -> {
+                (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(item.isPrivate)
+                navController.popBackStack(R.id.homeFragment, false)
+            }
+        }
     }
 
     override fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
