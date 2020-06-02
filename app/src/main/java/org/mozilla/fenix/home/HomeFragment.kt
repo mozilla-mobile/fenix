@@ -39,6 +39,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
@@ -119,6 +120,8 @@ class HomeFragment : Fragment() {
     }
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+
+    private val args by navArgs<HomeFragmentArgs>()
 
     private val snackbarAnchorView: View?
         get() {
@@ -569,6 +572,37 @@ class HomeFragment : Fragment() {
         requireContext().settings().useNewTabTray.also {
             view?.add_tab_button?.isVisible = !it
             view?.tab_button?.isVisible = it
+        }
+
+        args.sessionToDelete?.also {
+            sessionManager.findSessionById(it)?.let { session ->
+                val snapshot = sessionManager.createSessionSnapshot(session)
+                val state = snapshot.engineSession?.saveState()
+                val isSelected =
+                    session.id == requireComponents.core.store.state.selectedTabId ?: false
+
+                val snackbarMessage = if (snapshot.session.private) {
+                    requireContext().getString(R.string.snackbar_private_tab_closed)
+                } else {
+                    requireContext().getString(R.string.snackbar_tab_closed)
+                }
+
+                viewLifecycleOwner.lifecycleScope.allowUndo(
+                    requireView(),
+                    snackbarMessage,
+                    requireContext().getString(R.string.snackbar_deleted_undo),
+                    {
+                        sessionManager.add(
+                            snapshot.session,
+                            isSelected,
+                            engineSessionState = state
+                        )
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null))
+                    },
+                    operation = { }
+                )
+                requireComponents.useCases.tabsUseCases.removeTab.invoke(session)
+            }
         }
     }
 

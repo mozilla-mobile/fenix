@@ -42,6 +42,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
@@ -78,7 +79,8 @@ class DefaultBrowserToolbarController(
     private val tabCollectionStorage: TabCollectionStorage,
     private val topSiteStorage: TopSiteStorage,
     private val sharedViewModel: SharedViewModel,
-    private val onTabCounterClicked: () -> Unit
+    private val onTabCounterClicked: () -> Unit,
+    private val onCloseTab: (Session) -> Unit
 ) : BrowserToolbarController {
 
     private val currentSession
@@ -136,9 +138,12 @@ class DefaultBrowserToolbarController(
         when (item) {
             is TabCounterMenuItem.CloseTab -> {
                 activity.components.core.sessionManager.selectedSession?.let {
-                    tabUseCases.removeTab.invoke(it)
-                    if (activity.components.core.sessionManager.sessions.isEmpty()) {
-                        navController.popBackStack(R.id.homeFragment, false)
+                    // When closing the last tab we must show the undo snackbar in the home fragment
+                    if (activity.components.core.sessionManager.sessionsOfType(it.private).count() == 1) {
+                        navController.navigate(BrowserFragmentDirections.actionGlobalHome(it.id))
+                    } else {
+                        onCloseTab.invoke(it)
+                        tabUseCases.removeTab.invoke(it)
                     }
                 }
             }
