@@ -63,7 +63,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
             view.tabLayout,
             this,
             (activity as HomeActivity).browsingModeManager.mode.isPrivate,
-            requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE,
+            viewLifecycleOwner
         )
 
         tabLayout.setOnClickListener {

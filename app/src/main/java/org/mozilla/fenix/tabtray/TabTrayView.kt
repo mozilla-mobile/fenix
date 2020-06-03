@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
@@ -46,7 +47,8 @@ class TabTrayView(
     private val container: ViewGroup,
     private val interactor: TabTrayInteractor,
     private val isPrivate: Boolean,
-    private val startingInLandscape: Boolean
+    private val startingInLandscape: Boolean,
+    lifecycleOwner: LifecycleOwner
 ) : LayoutContainer, TabsTray.Observer, TabLayout.OnTabSelectedListener {
     val fabView = LayoutInflater.from(container.context)
         .inflate(R.layout.component_tabstray_fab, container, true)
@@ -105,6 +107,8 @@ class TabTrayView(
             { }
         )
 
+        lifecycleOwner.lifecycle.addObserver(tabsFeature)
+
         val tabs = if (isPrivate) {
             view.context.components.core.store.state.privateTabs
         } else {
@@ -160,8 +164,7 @@ class TabTrayView(
             interactor.onNewTabTapped(isPrivateModeSelected)
         }
 
-        tabsTray.register(this)
-        tabsFeature.start()
+        tabsTray.register(this, lifecycleOwner)
     }
 
     fun expand() {
