@@ -114,6 +114,7 @@ object Deps {
     const val mozilla_feature_share = "org.mozilla.components:feature-share:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
+    const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
 
     const val mozilla_service_sync_logins =
         "org.mozilla.components:service-sync-logins:${Versions.mozilla_android_components}"
