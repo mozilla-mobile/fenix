@@ -756,17 +756,6 @@ class Settings private constructor(
         default = 0
     )
 
-    var useNewTabTray: Boolean
-        get() = preferences.let {
-            val prefKey = appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray)
-            val useNewTabTray = it.getBoolean(prefKey, false)
-            FeatureFlags.tabTray && useNewTabTray }
-        set(value) {
-            preferences.edit()
-                .putBoolean(appContext.getPreferenceKey(R.string.pref_key_enable_new_tab_tray), value)
-                .apply()
-        }
-
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
         default = SavedLoginsFragment.SORTING_STRATEGY_ALPHABETICALLY

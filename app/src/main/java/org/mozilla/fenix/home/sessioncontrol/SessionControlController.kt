@@ -250,12 +250,7 @@ class DefaultSessionControlController(
             }
         )
 
-        if (activity.settings().useNewTabTray) {
-            showTabTray()
-        } else {
-            scrollToTheTop()
-        }
-
+        showTabTray()
         metrics.track(Event.CollectionAllTabsRestored)
     }
 

@@ -27,9 +27,6 @@ class SecretSettingsPreference : PreferenceFragmentCompat() {
     }
 
     private fun updatePreferences() {
-        findPreference<SwitchPreference>(getPreferenceKey(R.string.pref_key_enable_new_tab_tray))?.apply {
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-            isChecked = context.settings().useNewTabTray
-        }
+
     }
 }

@@ -249,10 +249,7 @@ class HomeFragment : Fragment() {
 
         view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
             sessionControlView?.update(it)
-
-            if (context?.settings()?.useNewTabTray == true) {
-                view.tab_button.setCountWithAnimation(it.tabs.size)
-            }
+            view.tab_button.setCountWithAnimation(it.tabs.size)
         }
 
         return view
@@ -351,12 +348,6 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded()
             navigateToSearch()
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
-        }
-
-        view.add_tab_button.setOnClickListener {
-            invokePendingDeleteJobs()
-            hideOnboardingIfNeeded()
-            navigateToSearch()
         }
 
         view.tab_button.setOnClickListener {
@@ -561,17 +552,6 @@ class HomeFragment : Fragment() {
             activity?.window?.setBackgroundDrawableResource(R.drawable.private_home_background_gradient)
         }
         hideToolbar()
-        if (sharedViewModel.shouldScrollToSelectedTab) {
-            scrollToSelectedTab()
-            sharedViewModel.shouldScrollToSelectedTab = false
-        }
-
-        requireContext().settings().useNewTabTray.also {
-            view?.add_tab_button?.isVisible = !it
-            view?.tab_button?.isVisible = it
-            // Scrolls to the top of the screen
-            view?.homeAppBar?.setExpanded(true, false)
-        }
     }
 
     override fun onPause() {
@@ -1037,8 +1017,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun openTabTray() {
-        invokePendingDeleteJobs()
-        hideOnboardingIfNeeded()
         TabTrayDialogFragment.show(parentFragmentManager)
     }
 

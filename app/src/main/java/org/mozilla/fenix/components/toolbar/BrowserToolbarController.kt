@@ -122,8 +122,7 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleTabCounterClick() {
-        sharedViewModel.shouldScrollToSelectedTab = true
-        animateTabAndNavigateHome()
+        onTabCounterClicked.invoke()
     }
 
     override fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
@@ -132,7 +131,8 @@ class DefaultBrowserToolbarController(
                 ToolbarMenu.Item.AddToHomeScreen -> activity.settings().installPwaOpened = true
                 is ToolbarMenu.Item.ReaderMode -> activity.settings().readerModeOpened = true
                 ToolbarMenu.Item.OpenInApp -> activity.settings().openInAppOpened = true
-                else -> { }
+                else -> {
+                }
             }
         }
     }
@@ -158,7 +158,9 @@ class DefaultBrowserToolbarController(
             }
             ToolbarMenu.Item.SyncedTabs -> {
                 navController.nav(
-                    R.id.browserFragment, BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment())
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionBrowserFragmentToSyncedTabsFragment()
+                )
             }
             is ToolbarMenu.Item.RequestDesktop -> sessionUseCases.requestDesktopSite.invoke(
                 item.isChecked,
@@ -315,23 +317,11 @@ class DefaultBrowserToolbarController(
         }
     }
 
-    private fun animateTabAndNavigateHome() {
-        if (activity.settings().useNewTabTray) {
-            onTabCounterClicked.invoke()
-            return
-        }
-
-        scope.launch {
-            browserAnimator.beginAnimateOut()
-            // Delay for a short amount of time so the browser has time to start animating out
-            // before we transition the fragment. This makes the animation feel smoother
-            delay(ANIMATION_DELAY)
-            if (!navController.popBackStack(R.id.homeFragment, false)) {
-                navController.nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionGlobalHome()
-                )
-            }
+    private fun reportSiteIssue(reportUrl: String, private: Boolean) {
+        if (private) {
+            activity.components.useCases.tabsUseCases.addPrivateTab.invoke(reportUrl)
+        } else {
+            activity.components.useCases.tabsUseCases.addTab.invoke(reportUrl)
         }
     }
 

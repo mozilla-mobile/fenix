@@ -95,8 +95,7 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object CollectionHeader : AdapterItem(CollectionHeaderViewHolder.LAYOUT_ID)
     data class CollectionItem(
         val collection: TabCollection,
-        val expanded: Boolean,
-        val sessionHasOpenTabs: Boolean
+        val expanded: Boolean
     ) : AdapterItem(CollectionViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) = other is CollectionItem && collection.id == other.collection.id
     }
@@ -222,8 +221,8 @@ class SessionControlAdapter(
                 holder.bind(header, description)
             }
             is CollectionViewHolder -> {
-                val (collection, expanded, sessionHasOpenTabs) = item as AdapterItem.CollectionItem
-                holder.bindSession(collection, expanded, sessionHasOpenTabs)
+                val (collection, expanded) = item as AdapterItem.CollectionItem
+                holder.bindSession(collection, expanded)
             }
             is TabInCollectionViewHolder -> {
                 val (collection, tab, isLastTab) = item as AdapterItem.TabInCollectionItem
