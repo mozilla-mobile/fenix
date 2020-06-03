@@ -76,7 +76,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins =
+                    duplicateLogins = listOf() // assume on load there are no dupes
                 )
             )
         }
@@ -211,8 +211,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
 
     private fun editLogin() {
         val directions =
-            LoginDetailFragmentDirections
-                .actionLoginDetailFragmentToEditLoginFragment(login!!)
+            LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(login!!)
         findNavController().navigate(directions)
     }
 
@@ -224,7 +223,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-//                    deleteLogin()
+                    deleteLogin()
                     datastore.delete(args.savedLoginId)
                     dialog.dismiss()
                 }

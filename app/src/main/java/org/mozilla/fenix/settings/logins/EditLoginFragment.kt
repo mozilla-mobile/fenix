@@ -8,11 +8,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.text.method.TextKeyListener
+import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -36,9 +41,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
+import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
+import mozilla.components.support.base.log.logger.Logger.Companion.info
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
@@ -60,6 +67,7 @@ class EditLoginInteractor(private val editLoginController: EditSavedLoginsContro
 /**
  * Displays the editable saved login information for a single website.
  */
+@ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
 class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
@@ -69,15 +77,15 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private lateinit var loginsFragmentStore: LoginsFragmentStore
     private lateinit var editLoginsInteractor: EditLoginInteractor
 
-    private val oldLogin: SavedLogin = args.savedLoginItem
-    private lateinit var listOfPossibleDupes: List<SavedLogin>
+    private lateinit var oldLogin: SavedLogin
+    private var listOfPossibleDupes: List<SavedLogin> = listOf()
     private var usernameChanged: Boolean = false
     private var passwordChanged: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
+        oldLogin = args.savedLoginItem
         loginsFragmentStore = StoreProvider.get(this) {
             LoginsFragmentStore(
                 LoginsListState(
@@ -98,9 +106,24 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         editLoginsInteractor = EditLoginInteractor(controller)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        findPotentialDuplicates(args.savedLoginItem)
+        return view
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editLoginsInteractor.findDupes(args.savedLoginItem)
+
+        consumeFrom(loginsFragmentStore) {
+            listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
+        }
+
+        Log.d("sdfd", "$listOfPossibleDupes")
 
         // ensure hostname isn't editable
         hostnameText.text = args.savedLoginItem.origin.toEditable()
@@ -120,6 +143,30 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         setUpClickListeners()
         setUpTextListeners()
+    }
+
+    fun findPotentialDuplicates(editedItem: SavedLogin) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        val fetchLoginJob = MainScope().launch(IO) {
+            deferredLogin = async {
+                requireContext().components.core
+                    .passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
+            }
+            val fetchedDuplicatesList = deferredLogin?.await()
+            fetchedDuplicatesList?.let { list ->
+                withContext(Dispatchers.Main) {
+                    val savedLoginList = list.map { it.mapToSavedLogin() }
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.ListOfDupes(savedLoginList)
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
     }
 
     private fun setUpClickListeners() {
@@ -223,13 +270,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
             )
         }
-
-        val frag = view?.findViewById<View>(R.id.editLoginFragment)
-        frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                view?.hideKeyboard()
-            }
-        }
     }
 
 
@@ -241,34 +281,57 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             }
         }
 
-        usernameText.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            if (usernameText.text?.toString().equals(oldLogin.username)) {
-                usernameChanged = false
-                inputLayoutUsername.error = null
-            } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
-                usernameChanged = true
-                setDupeError()
-            }
-        }
+        usernameText.addTextChangedListener(
+            object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    // NOOP
+                }
 
-        passwordText.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            if (passwordText.text?.toString() == "") {
-                passwordChanged = true
-                setPasswordError()
-            } else if (passwordText.text?.toString().equals(oldLogin.password)) {
-                passwordChanged = false
-                inputLayoutPassword.error = null
-            } else {
-                passwordChanged = true
-                inputLayoutPassword.error = null
-            }
-        }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // NOOP
+                }
 
-        listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (usernameText.text?.toString().equals(oldLogin.username)) {
+                        usernameChanged = false
+                        inputLayoutUsername.error = null
+                    } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
+                        usernameChanged = true
+                        setDupeError()
+                    }
+                }
+            }
+        )
+
+        passwordText.addTextChangedListener(
+            object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    // NOOP
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // NOOP
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (passwordText.text?.toString() == "") {
+                        passwordChanged = true
+                        setPasswordError()
+                    } else if (passwordText.text?.toString().equals(oldLogin.password)) {
+                        passwordChanged = false
+                        inputLayoutPassword.error = null
+                    } else {
+                        passwordChanged = true
+                        inputLayoutPassword.error = null
+                    }
+                }
+            }
+        )
+
     }
 
     private fun isDupe(username: String): Boolean =
-        listOfPossibleDupes.filter { oldLogin.username == username }.any()
+        listOfPossibleDupes.filter { it.username == username }.any()
 
     private fun setDupeError() {
         if (isDupe(usernameText.text.toString())) {
@@ -277,6 +340,9 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 it.error = context?.getString(R.string.saved_login_duplicate)
                 view?.isSaveEnabled = false
             }
+        } else {
+            inputLayoutUsername.error = null
+            passwordChanged = true
         }
     }
 
