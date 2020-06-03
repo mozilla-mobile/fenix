@@ -7,6 +7,7 @@ package org.mozilla.fenix.settings.logins
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -55,10 +56,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private lateinit var savedLoginsStore: LoginsFragmentStore
     fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
+    private lateinit var oldLogin: SavedLogin
+    private var usernameChanged: Boolean = false
+    private var passwordChanged: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
+        oldLogin = args.savedLoginItem
         savedLoginsStore = StoreProvider.get(this) {
             LoginsFragmentStore(
                 LoginsListState(
@@ -88,6 +93,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         setUpClickListeners()
+        setUpTextListeners()
     }
 
     private fun setUpClickListeners() {
@@ -108,6 +114,71 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
         passwordText.setOnClickListener {
             togglePasswordReveal()
+        }
+    }
+
+    private fun setUpTextListeners() {
+        val frag = view?.findViewById<View>(R.id.editLoginFragment)
+        frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                view?.hideKeyboard()
+            }
+        }
+
+        usernameText.addTextChangedListener(
+            object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    // NOOP
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // NOOP
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (usernameText.text?.toString().equals(oldLogin.username)) {
+                        usernameChanged = false
+                        inputLayoutUsername.error = null
+                    } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
+                        usernameChanged = true
+//                        setDupeError() TODO in #10173
+                    }
+                }
+            }
+        )
+
+        passwordText.addTextChangedListener(
+            object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    // NOOP
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // NOOP
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (passwordText.text?.toString() == "") {
+                        passwordChanged = true
+                        setPasswordError()
+                    } else if (passwordText.text?.toString().equals(oldLogin.password)) {
+                        passwordChanged = false
+                        inputLayoutPassword.error = null
+                    } else {
+                        passwordChanged = true
+                        inputLayoutPassword.error = null
+                    }
+                }
+            }
+        )
+
+    }
+
+    private fun setPasswordError() {
+        inputLayoutPassword?.let {
+            it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+            it.error = context?.getString(R.string.saved_login_password_required)
+            view?.isSaveEnabled = false
         }
     }
 

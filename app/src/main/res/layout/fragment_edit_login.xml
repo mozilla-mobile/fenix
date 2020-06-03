@@ -12,7 +12,9 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="72dp"
     android:layout_marginEnd="20dp"
-    android:layout_marginTop="12dp" >
+    android:layout_marginTop="12dp"
+    android:clickable="true"
+    android:focusable="true" >
 
     <TextView
         android:id="@+id/hostnameHeaderText"
