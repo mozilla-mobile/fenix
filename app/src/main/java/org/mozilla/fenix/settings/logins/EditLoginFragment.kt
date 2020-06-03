@@ -13,38 +13,36 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutPassword
-import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutUsername
-import kotlinx.android.synthetic.main.fragment_edit_login.hostnameText
-import kotlinx.android.synthetic.main.fragment_edit_login.usernameText
-import kotlinx.android.synthetic.main.fragment_edit_login.passwordText
-import kotlinx.android.synthetic.main.fragment_edit_login.clearUsernameTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.clearPasswordTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.revealPasswordButton
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
+import com.google.android.material.textfield.TextInputLayout
+import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Displays the editable saved login information for a single website.
@@ -87,98 +85,143 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         hostnameText.isFocusable = false
 
         usernameText.text = args.savedLoginItem.username.toEditable()
-        passwordText.text = args.savedLoginItem.password!!.toEditable()
+        passwordText.text = args.savedLoginItem.password.toEditable()
 
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        passwordText.compoundDrawablePadding =
+            requireContext().resources
+                .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
 
-        setUpClickListeners()
-        setUpTextListeners()
+        setUpIcons()
+        setUpListeners()
     }
 
-    private fun setUpClickListeners() {
-        clearUsernameTextButton.setOnClickListener {
-            usernameText.text?.clear()
-            usernameText.isCursorVisible = true
-            usernameText.hasFocus()
-            inputLayoutUsername.hasFocus()
-        }
-        clearPasswordTextButton.setOnClickListener {
-            passwordText.text?.clear()
-            passwordText.isCursorVisible = true
-            passwordText.hasFocus()
-            inputLayoutPassword.hasFocus()
-        }
+    private fun setUpIcons() {
+//        val primaryTextColor = ContextCompat.getColorStateList(
+//            requireContext(),
+//            ThemeManager.resolveAttribute(
+//                R.attr.primaryText,
+//                requireContext()
+//            )
+//        )
+
+//        inputLayoutUsername.endIconDrawable = requireContext().getDrawable(R.drawable.ic_clear)
+        inputLayoutUsername.endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT
+//        inputLayoutUsername.endIconDrawable?.setTintList(primaryTextColor)
+
+//        inputLayoutPassword.endIconDrawable?.setTintList(primaryTextColor)
+
+        revealPasswordButton.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                ThemeManager.resolveAttribute(
+                    R.attr.primaryText,
+                    requireContext()
+                )
+            )
+        )
+//        val clearIcon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_clear)
+//
+//        clearIcon?.colorFilter =
+//            BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+//                requireContext().getColorFromAttr(
+//                    R.attr.primaryText
+//                ), BlendModeCompat.SRC_IN
+//            )
+//        inputLayoutPassword.endIconDrawable = clearIcon
+        inputLayoutPassword.endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT
+    }
+
+    private fun setUpListeners() {
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
-        passwordText.setOnClickListener {
-            togglePasswordReveal()
-        }
-    }
 
-    private fun setUpTextListeners() {
+        var firstClick = true
+        passwordText.setOnClickListener {
+            if(firstClick) {
+                togglePasswordReveal()
+                firstClick = false
+            }
+        }
+
         val frag = view?.findViewById<View>(R.id.editLoginFragment)
         frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 view?.hideKeyboard()
             }
         }
+        editLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                view?.hideKeyboard()
+            }
+        }
 
-        usernameText.addTextChangedListener(
-            object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    // NOOP
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    // NOOP
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (usernameText.text?.toString().equals(oldLogin.username)) {
+        usernameText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                // NOOP
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // NOOP
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                when {
+                    usernameText.text?.toString().equals(oldLogin.username) -> {
                         usernameChanged = false
                         inputLayoutUsername.error = null
-                    } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
+                        inputLayoutUsername.errorIconDrawable = null
+                        setUpIcons()
+                    }
+                    else -> {
                         usernameChanged = true
-//                        setDupeError() TODO in #10173
+                        // setDupeError() TODO in #10173
                     }
                 }
             }
-        )
+        })
 
-        passwordText.addTextChangedListener(
-            object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    // NOOP
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    // NOOP
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (passwordText.text?.toString() == "") {
+        passwordText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                when {
+                    passwordText.text?.toString() == "" -> {
                         passwordChanged = true
                         setPasswordError()
-                    } else if (passwordText.text?.toString().equals(oldLogin.password)) {
-                        passwordChanged = false
-                        inputLayoutPassword.error = null
-                    } else {
-                        passwordChanged = true
-                        inputLayoutPassword.error = null
+                    }
+                    inputLayoutPassword.error == null -> {
+                        setUpIcons()
                     }
                 }
             }
-        )
 
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // NOOP
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                when {
+                    passwordText.text?.toString().equals(oldLogin.password) -> {
+                        passwordChanged = false
+                        inputLayoutPassword.error = null
+                        inputLayoutPassword.errorIconDrawable = null
+                    }
+                    else -> {
+                        passwordChanged = true
+                        inputLayoutPassword.error = null
+                        inputLayoutPassword.errorIconDrawable = null
+                    }
+                }
+            }
+        })
     }
 
     private fun setPasswordError() {
-        inputLayoutPassword?.let {
-            it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
-            it.error = context?.getString(R.string.saved_login_password_required)
-            view?.isSaveEnabled = false
+        inputLayoutPassword?.let { layout ->
+            layout.error = context?.getString(R.string.saved_login_password_required)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+            layout.errorIconDrawable?.setTint(
+                ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
+            )
         }
     }
 
@@ -197,25 +240,26 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
-            try {
-                if (!passwordText.text.isNullOrBlank()) {
+            if (!passwordText.text.isNullOrBlank()) {
+                try {
                     attemptSaveAndExit()
-                } else {
-                    view?.let {
-                        FenixSnackbar.make(
-                            view = it,
-                            duration = Snackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = false
-                        ).setText(getString(R.string.saved_login_password_required)).show()
-                    }
                 }
-            } catch (loginException: LoginsStorageException) {
-                when (loginException) {
-                    is NoSuchRecordException,
-                    is InvalidRecordException -> {
-                        Log.e("Edit login", "Failed to save edited login.", loginException)
+                catch (loginException: LoginsStorageException) {
+                    when (loginException) {
+                        is NoSuchRecordException,
+                        is InvalidRecordException -> {
+                            Log.e(
+                                "Edit login",
+                                "Failed to save edited login.",
+                                loginException
+                            )
+                        }
+                        else -> Log.e(
+                            "Edit login",
+                            "Failed to save edited login.",
+                            loginException
+                        )
                     }
-                    else -> Log.e("Edit login", "Failed to save edited login.", loginException)
                 }
             }
             true
@@ -229,9 +273,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         var saveLoginJob: Deferred<Unit>? = null
         viewLifecycleOwner.lifecycleScope.launch(IO) {
             saveLoginJob = async {
-                val oldLogin = requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
+                val oldLogin =
+                    requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
 
-                // Update requires a Login type, which needs at least one of httpRealm or formActionOrigin
+                // Update requires a Login type, which needs at least one of
+                // httpRealm or formActionOrigin
                 val loginToSave = Login(
                     guid = oldLogin?.guid,
                     origin = oldLogin?.origin!!,
