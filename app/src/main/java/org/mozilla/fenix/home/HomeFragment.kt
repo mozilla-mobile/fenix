@@ -599,7 +599,8 @@ class HomeFragment : Fragment() {
                         )
                         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null))
                     },
-                    operation = { }
+                    operation = { },
+                    anchorView = snackbarAnchorView
                 )
                 requireComponents.useCases.tabsUseCases.removeTab.invoke(session)
             }
