@@ -139,7 +139,11 @@ class DefaultBrowserToolbarController(
             is TabCounterMenuItem.CloseTab -> {
                 activity.components.core.sessionManager.selectedSession?.let {
                     // When closing the last tab we must show the undo snackbar in the home fragment
-                    if (activity.components.core.sessionManager.sessionsOfType(it.private).count() == 1) {
+                    if (activity.components.core.sessionManager.sessionsOfType(it.private)
+                            .count() == 1
+                    ) {
+                        // The tab tray always returns to normal mode so do that here too
+                        (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.Normal
                         navController.navigate(BrowserFragmentDirections.actionGlobalHome(it.id))
                     } else {
                         onCloseTab.invoke(it)
@@ -148,7 +152,8 @@ class DefaultBrowserToolbarController(
                 }
             }
             is TabCounterMenuItem.NewTab -> {
-                (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(item.isPrivate)
+                (activity as HomeActivity).browsingModeManager.mode =
+                    BrowsingMode.fromBoolean(item.isPrivate)
                 navController.popBackStack(R.id.homeFragment, false)
             }
         }
