@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.os.Build
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,16 +18,7 @@ import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
-import org.mozilla.fenix.home.Tab
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.ext.settings
-
-val noTabMessage = AdapterItem.NoContentMessageWithAction(
-    R.string.no_open_tabs_header_2,
-    R.string.no_open_tabs_description,
-    R.drawable.ic_new,
-    R.string.home_screen_shortcut_open_new_tab_2
-)
 
 val noCollectionMessage = AdapterItem.NoContentMessage(
     R.string.no_collections_header,

@@ -6,10 +6,7 @@ package org.mozilla.fenix.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 /**
@@ -23,10 +20,5 @@ class SecretSettingsPreference : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
-        updatePreferences()
-    }
-
-    private fun updatePreferences() {
-
     }
 }

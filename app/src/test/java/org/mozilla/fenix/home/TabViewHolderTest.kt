@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TabViewHolder
 
 @RunWith(FenixRobolectricTestRunner::class)
 class TabViewHolderTest {
