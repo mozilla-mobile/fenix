@@ -1,13 +1,13 @@
 ---
-name: "\U0001F494 UI Test Issue"
-about: Create an issue to help log a UI test problem (e.g, intermittent)
-labels: "eng:ui-test"
+name: "\U0001F494 Intermittent UI Test Issue"
+about: Create an issue to help log a UI test failure
+labels: "eng:ui-test, intermittent-test"
+title: "Intermittent UI test failure - <Classname.testName>"
 assignees: ''
 
 ---
 
 ### Firebase Test Run:
-Provide a Firebase Test Run report link here showcasing the problem
+Provide a Firebase test run report link here showcasing the problem
 ### Stacktrace:
 ### Build: 
-### Intermittent (Y/N) (if Y, apply 'intermittent-test' label): 
