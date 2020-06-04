@@ -340,6 +340,11 @@ class BrowserRobot {
 
             tabsCounter().click()
 
+            mDevice.waitNotNull(
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
+                waitingTime
+            )
+
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
         }

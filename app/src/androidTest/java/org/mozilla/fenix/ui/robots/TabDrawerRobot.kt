@@ -14,6 +14,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -28,6 +29,7 @@ import org.mozilla.fenix.helpers.click
 class TabDrawerRobot {
     fun verifyExistingTabList() = assertExistingTabList()
     fun verifyNoTabsOpenedText() = assertNoTabsOpenedText()
+    fun verifyPrivateModeSelected() = assertPrivateModeSelected()
 
     fun closeTab() {
         closeTabButton().click()
@@ -87,3 +89,7 @@ private fun assertExistingTabList() =
 private fun assertNoTabsOpenedText() =
     onView(withText("Your open tabs will be shown here."))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertPrivateModeSelected() =
+    onView(withContentDescription("Private tabs"))
+        .check(matches(ViewMatchers.isSelected()))

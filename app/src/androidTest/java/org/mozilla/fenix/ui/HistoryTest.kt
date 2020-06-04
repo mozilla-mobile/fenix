@@ -142,9 +142,8 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.clickOpenInPrivateTab {
             verifyPageContent(firstWebPage.content)
-        }.openHomeScreen {
-            // todo: fixme
-//            verifyPrivateSessionHeader()
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
         }
     }
 
