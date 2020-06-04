@@ -124,9 +124,8 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.clickOpenInNormalTab {
             verifyPageContent(firstWebPage.content)
-        }.openHomeScreen {
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
+        }.openTabDrawer {
+            verifyNormalModeSelected()
         }
     }
 
@@ -237,10 +236,9 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
-            // todo: fixme
-//            verifyExistingTabList()
-//            verifyPrivateSessionHeader()
+        }.clickOpenPrivateTab { }.openTabDrawer {
+            verifyPrivateModeSelected()
+            verifyExistingTabList()
         }
     }
 

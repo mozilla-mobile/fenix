@@ -20,6 +20,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.click
 
@@ -30,6 +31,7 @@ class TabDrawerRobot {
     fun verifyExistingTabList() = assertExistingTabList()
     fun verifyNoTabsOpenedText() = assertNoTabsOpenedText()
     fun verifyPrivateModeSelected() = assertPrivateModeSelected()
+    fun verifyNormalModeSelected() = assertNormalModeSelected()
 
     fun closeTab() {
         closeTabButton().click()
@@ -83,12 +85,16 @@ private fun privateBrowsingButton() = onView(withId(R.id.private_tab_item))
 private fun newTabButton() = onView(withId(R.id.new_tab_button))
 
 private fun assertExistingTabList() =
-    onView(withId(R.id.tabsTray))
+    onView(allOf(withId(R.id.tab_item)))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertNoTabsOpenedText() =
     onView(withText("Your open tabs will be shown here."))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertNormalModeSelected() =
+    onView(withContentDescription("Open tabs"))
+        .check(matches(ViewMatchers.isSelected()))
 
 private fun assertPrivateModeSelected() =
     onView(withContentDescription("Private tabs"))

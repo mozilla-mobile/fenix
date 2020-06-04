@@ -350,6 +350,20 @@ class HomeScreenRobot {
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
+        fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
+            mDevice.waitForIdle()
+
+            tabsCounter().click()
+
+            mDevice.waitNotNull(
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
+                waitingTime
+            )
+
+            TabDrawerRobot().interact()
+            return TabDrawerRobot.Transition()
+        }
+
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             threeDotButton().perform(click())
 
@@ -719,6 +733,7 @@ private fun removeTabFromCollectionButton(title: String) =
     )
 
 private fun collectionFlowBackButton() = onView(withId(R.id.back_button))
+private fun tabsCounter() = onView(withId(R.id.tab_button))
 
 private fun tab(title: String) =
     onView(
