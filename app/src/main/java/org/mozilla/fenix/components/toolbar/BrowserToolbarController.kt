@@ -168,7 +168,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.AddToTopSites -> {
                 ioScope.launch {
                     currentSession?.let {
-                        topSiteStorage.addTopSite(it.title, it.url)
+                        topSiteStorage.addTopSite(it.title, it.url, isPinned = true)
                     }
                     MainScope().launch {
                         FenixSnackbar.make(

@@ -47,4 +47,5 @@
     <!-- Label for the secret settings preference -->
     <string name="preferences_debug_settings">Secret Settings</string>
     <string name="preferences_debug_settings_enable_tab_tray">Use New Tab Tray</string>
+    <string name="preferences_debug_settings_enable_top_frecent_sites">Show Top Frequently Visited Sites</string>
 </resources>

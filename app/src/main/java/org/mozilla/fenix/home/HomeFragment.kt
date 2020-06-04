@@ -637,7 +637,14 @@ class HomeFragment : Fragment() {
 
     private fun subscribeToTopSites(): Observer<List<TopSite>> {
         return Observer<List<TopSite>> { topSites ->
-            requireComponents.core.topSiteStorage.cachedTopSites = topSites
+            // Sort top sites so that the user pinned sites appear first.
+            requireComponents.core.topSiteStorage.cachedTopSites =
+                topSites.sortedBy { !it.isPinned }
+
+            if (context?.settings()?.showTopFrecentSites == true) {
+                requireComponents.core.topSiteStorage.refreshTopFrecentSites()
+            }
+
             context?.settings()?.preferences?.edit()
                 ?.putInt(getString(R.string.pref_key_top_sites_size), topSites.size)?.apply()
             homeFragmentStore.dispatch(HomeFragmentAction.TopSitesChange(topSites))

@@ -234,7 +234,7 @@ class Core(private val context: Context) {
      */
     val thumbnailStorage by lazy { ThumbnailStorage(context) }
 
-    val topSiteStorage by lazy { TopSiteStorage(context) }
+    val topSiteStorage by lazy { TopSiteStorage(context, historyStorage) }
 
     val permissionStorage by lazy { PermissionStorage(context) }
 

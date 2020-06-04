@@ -55,6 +55,11 @@ object FeatureFlags {
     val tabTray = Config.channel.isNightlyOrDebug
 
     /**
+     * Enables the top frecent site pref
+     */
+    val topFrecentSite = Config.channel.isNightlyOrDebug
+
+    /**
      * Allows search widget CFR to be displayed.
      * This is a placeholder for the experimentation framework determining cohorts.
      */
