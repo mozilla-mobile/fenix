@@ -13,15 +13,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
@@ -34,7 +30,6 @@ import mozilla.components.concept.storage.Login
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
-import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
@@ -42,7 +37,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Displays the editable saved login information for a single website.
@@ -93,65 +87,46 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             requireContext().resources
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
 
-        setUpIcons()
-        setUpListeners()
+        setUpClickListeners()
+        setUpTextListeners()
     }
 
-    private fun setUpIcons() {
-//        val primaryTextColor = ContextCompat.getColorStateList(
-//            requireContext(),
-//            ThemeManager.resolveAttribute(
-//                R.attr.primaryText,
-//                requireContext()
-//            )
-//        )
-
-//        inputLayoutUsername.endIconDrawable = requireContext().getDrawable(R.drawable.ic_clear)
-        inputLayoutUsername.endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT
-//        inputLayoutUsername.endIconDrawable?.setTintList(primaryTextColor)
-
-//        inputLayoutPassword.endIconDrawable?.setTintList(primaryTextColor)
-
-        revealPasswordButton.setColorFilter(
-            ContextCompat.getColor(
-                requireContext(),
-                ThemeManager.resolveAttribute(
-                    R.attr.primaryText,
-                    requireContext()
-                )
-            )
-        )
-//        val clearIcon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_clear)
-//
-//        clearIcon?.colorFilter =
-//            BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-//                requireContext().getColorFromAttr(
-//                    R.attr.primaryText
-//                ), BlendModeCompat.SRC_IN
-//            )
-//        inputLayoutPassword.endIconDrawable = clearIcon
-        inputLayoutPassword.endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT
-    }
-
-    private fun setUpListeners() {
+    private fun setUpClickListeners() {
+        clearUsernameTextButton.setOnClickListener {
+            usernameText.text?.clear()
+            usernameText.isCursorVisible = true
+            usernameText.hasFocus()
+            inputLayoutUsername.hasFocus()
+            it.isEnabled = false
+        }
+        clearPasswordTextButton.setOnClickListener {
+            passwordText.text?.clear()
+            passwordText.isCursorVisible = true
+            passwordText.hasFocus()
+            inputLayoutPassword.hasFocus()
+            it.isEnabled = false
+        }
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
 
         var firstClick = true
         passwordText.setOnClickListener {
-            if(firstClick) {
+            if (firstClick) {
                 togglePasswordReveal()
                 firstClick = false
             }
         }
+    }
 
+    private fun setUpTextListeners() {
         val frag = view?.findViewById<View>(R.id.editLoginFragment)
         frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 view?.hideKeyboard()
             }
         }
+
         editLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 view?.hideKeyboard()
@@ -162,19 +137,22 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             override fun afterTextChanged(s: Editable?) {
                 // NOOP
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // NOOP
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 when {
                     usernameText.text?.toString().equals(oldLogin.username) -> {
                         usernameChanged = false
                         inputLayoutUsername.error = null
                         inputLayoutUsername.errorIconDrawable = null
-                        setUpIcons()
+                        usernameChanged = true
                     }
                     else -> {
                         usernameChanged = true
+                        clearUsernameTextButton.isEnabled = true
                         // setDupeError() TODO in #10173
                     }
                 }
@@ -186,10 +164,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 when {
                     passwordText.text?.toString() == "" -> {
                         passwordChanged = true
+                        clearPasswordTextButton.isEnabled = false
                         setPasswordError()
-                    }
-                    inputLayoutPassword.error == null -> {
-                        setUpIcons()
                     }
                 }
             }
@@ -204,11 +180,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         passwordChanged = false
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
+                        clearPasswordTextButton.isEnabled = true
                     }
                     else -> {
                         passwordChanged = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
+                        clearPasswordTextButton.isEnabled = true
                     }
                 }
             }
@@ -216,10 +194,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     }
 
     private fun setPasswordError() {
-        inputLayoutPassword?.let { layout ->
-            layout.error = context?.getString(R.string.saved_login_password_required)
-            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
-            layout.errorIconDrawable?.setTint(
+        inputLayoutPassword?.let {
+            it.error = context?.getString(R.string.saved_login_password_required)
+            it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+
+            it.errorIconDrawable?.setTint(
                 ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
             )
         }
@@ -243,8 +222,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             if (!passwordText.text.isNullOrBlank()) {
                 try {
                     attemptSaveAndExit()
-                }
-                catch (loginException: LoginsStorageException) {
+                } catch (loginException: LoginsStorageException) {
                     when (loginException) {
                         is NoSuchRecordException,
                         is InvalidRecordException -> {

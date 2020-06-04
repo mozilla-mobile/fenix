@@ -87,6 +87,7 @@
         android:letterSpacing="0.05"
         app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintBottom_toTopOf="@id/inputLayoutUsername"
+        app:layout_constraintEnd_toStartOf="@id/clearUsernameTextButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputLayoutHostname"
         app:layout_constraintVertical_chainStyle="packed"
@@ -127,10 +128,21 @@
             android:focusable="true"
             android:cursorVisible="true"
             android:textCursorDrawable="@null"
-            android:drawableEnd="@drawable/ic_clear"
             app:backgroundTint="?primaryText"
             tools:ignore="Autofill"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageButton
+        android:id="@+id/clearUsernameTextButton"
+        android:layout_width="48dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:background="@null"
+        android:contentDescription="@string/saved_login_copy_username"
+        app:tint="@color/saved_login_clear_edit_text_tint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/inputLayoutUsername"
+        app:srcCompat="@drawable/ic_clear" />
 
     <TextView
         android:id="@+id/passwordHeader"
@@ -189,32 +201,29 @@
             android:textSize="16sp"
             android:textStyle="normal"
             app:backgroundTint="?primaryText"
-            android:drawableEnd="@drawable/ic_clear"
             tools:ignore="Autofill" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton
         android:id="@+id/revealPasswordButton"
         android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:paddingBottom="5dp"
-        android:layout_marginEnd="42dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="3dp"
         android:background="@null"
         android:contentDescription="@string/saved_login_reveal_password"
-        android:tint="@android:color/black"
-        android:layout_weight="1"
-        app:layout_constraintEnd_toEndOf="@id/inputLayoutPassword"
+        app:tint="?primaryText"
+        app:layout_constraintEnd_toStartOf="@id/clearPasswordTextButton"
         app:layout_constraintTop_toTopOf="@id/inputLayoutPassword"
         app:srcCompat="@drawable/mozac_ic_password_reveal" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/clearPasswordTextButton"-->
-<!--        android:layout_width="48dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:background="?android:attr/selectableItemBackgroundBorderless"-->
-<!--        android:contentDescription="@string/saved_logins_copy_password"-->
-<!--        app:tint="?android:colorAccent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@id/revealPasswordButton"-->
-<!--        app:srcCompat="@drawable/ic_clear" />-->
+    <ImageButton
+        android:id="@+id/clearPasswordTextButton"
+        android:layout_width="48dp"
+        android:layout_height="30dp"
+        android:background="@null"
+        android:contentDescription="@string/saved_logins_copy_password"
+        app:tint="@color/saved_login_clear_edit_text_tint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/revealPasswordButton"
+        app:srcCompat="@drawable/ic_clear" />
 </androidx.constraintlayout.widget.ConstraintLayout>
