@@ -185,7 +185,6 @@ class DefaultBrowserToolbarControllerTest {
     fun `handle BrowserMenu dismissed with all options available`() = runBlockingTest {
         val itemList: List<ToolbarMenu.Item> = listOf(
             ToolbarMenu.Item.AddToHomeScreen,
-            ToolbarMenu.Item.ReaderMode(true),
             ToolbarMenu.Item.OpenInApp
         )
 
@@ -213,7 +212,6 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleBrowserMenuDismissed(itemList)
 
         assertEquals(true, activity.settings().installPwaOpened)
-        assertEquals(true, activity.settings().readerModeOpened)
         assertEquals(true, activity.settings().openInAppOpened)
     }
 
@@ -542,18 +540,5 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { deleteAndQuit(activity, testScope, null) }
-    }
-
-    @Test
-    fun handleToolbarReaderModePress() {
-        val item = ToolbarMenu.Item.ReaderMode(false)
-
-        every { currentSession.id } returns "reader-inactive-tab"
-        controller.handleToolbarItemInteraction(item)
-        verify { readerModeController.showReaderView() }
-
-        every { currentSession.id } returns "reader-active-tab"
-        controller.handleToolbarItemInteraction(item)
-        verify { readerModeController.hideReaderView() }
     }
 }
