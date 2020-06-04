@@ -712,7 +712,7 @@ class HomeFragment : Fragment() {
                 label = context.getString(if (isPrivate) {
                     R.string.browser_menu_new_tab
                 } else {
-                    R.string.browser_menu_private_tab
+                    R.string.home_screen_shortcut_open_new_private_tab_2
                 }),
                 imageResource = if (isPrivate) {
                     R.drawable.ic_new

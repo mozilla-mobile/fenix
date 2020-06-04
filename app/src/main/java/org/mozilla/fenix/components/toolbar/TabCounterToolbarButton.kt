@@ -110,7 +110,7 @@ class TabCounterToolbarButton(
                 onItemTapped(TabCounterMenuItem.NewTab(false))
             },
             BrowserMenuImageText(
-                label = context.getString(R.string.browser_menu_private_tab),
+                label = context.getString(R.string.home_screen_shortcut_open_new_private_tab_2),
                 imageResource = R.drawable.ic_private_browsing,
                 iconTintColorResource = primaryTextColor,
                 textColorResource = primaryTextColor
