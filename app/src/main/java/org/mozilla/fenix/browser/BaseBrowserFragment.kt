@@ -131,6 +131,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private var browserInitialized: Boolean = false
     private var initUIJob: Job? = null
+
+    // We need this so we don't accidentally remove all external sessions on back press
+    private var sessionRemoved = false
     private var enteredPip = false
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -584,7 +587,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     @CallSuper
     override fun onBackPressed(): Boolean {
-        return findInPageIntegration.onBackPressed() ||
+        return sessionRemoved ||
+                findInPageIntegration.onBackPressed() ||
                 fullScreenFeature.onBackPressed() ||
                 sessionFeature.onBackPressed() ||
                 removeSessionIfNeeded()
@@ -643,7 +647,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             val sessionManager = requireComponents.core.sessionManager
             if (session.source == Session.Source.ACTION_VIEW) {
                 sessionManager.remove(session)
-                activity?.finish()
+                sessionRemoved = true
+                activity?.onBackPressed()
             } else {
                 val isLastSession =
                     sessionManager.sessionsOfType(private = session.private).count() == 1
