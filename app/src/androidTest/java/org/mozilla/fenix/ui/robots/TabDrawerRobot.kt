@@ -79,7 +79,7 @@ fun tabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
     return TabDrawerRobot.Transition()
 }
 
-private fun closeTabButton() = onView(withId(R.id.close_tab_button))
+private fun closeTabButton() = onView(withId(R.id.mozac_browser_tabstray_close))
 private fun normalBrowsingButton() = onView(withId(R.id.default_tab_item))
 private fun privateBrowsingButton() = onView(withId(R.id.private_tab_item))
 private fun newTabButton() = onView(withId(R.id.new_tab_button))

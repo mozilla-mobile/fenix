@@ -209,9 +209,9 @@ class HomeFragment : Fragment() {
 
         view.consumeFrom(requireComponents.core.store, viewLifecycleOwner) {
             val tabCount = if (currentMode.getCurrentMode() == Mode.Normal) {
-                requireComponents.core.store.state.normalTabs.size
+                it.normalTabs.size
             } else {
-                requireComponents.core.store.state.privateTabs.size
+                it.privateTabs.size
             }
 
             view.tab_button.setCountWithAnimation(tabCount)

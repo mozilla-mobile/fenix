@@ -47,6 +47,7 @@ class HistoryTest {
         // Clearing all history data after each test to avoid overlapping data
         val applicationContext: Context = activityTestRule.activity.applicationContext
         val historyStorage = PlacesHistoryStorage(applicationContext)
+
         runBlocking {
             historyStorage.deleteEverything()
         }
@@ -206,19 +207,18 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent("Page content: 1")
-        }.openHomeScreen {
+        }.openTabDrawer {
             closeTab()
-        }.openThreeDotMenu {
+        }.openHomeScreen { }.openThreeDotMenu {
         }.openHistory {
             longTapSelectItem(firstWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-//            verifyExistingTabList()
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
+        }.clickOpenNewTab { }.openTabDrawer {
+            verifyExistingTabList()
+            verifyNormalModeSelected()
         }
     }
 
