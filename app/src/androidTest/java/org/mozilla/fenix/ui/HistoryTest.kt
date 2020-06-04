@@ -253,7 +253,7 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent("Page content: 1")
-        }.openHomeScreen {}
+        }.openTabDrawer { }.openHomeScreen { }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {

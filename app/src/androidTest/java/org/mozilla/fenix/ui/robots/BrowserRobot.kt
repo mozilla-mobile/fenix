@@ -335,6 +335,15 @@ class BrowserRobot {
             return NavigationToolbarRobot.Transition()
         }
 
+        fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
+            mDevice.waitForIdle()
+
+            tabsCounter().click()
+
+            TabDrawerRobot().interact()
+            return TabDrawerRobot.Transition()
+        }
+
         fun openHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             mDevice.waitForIdle()
 
