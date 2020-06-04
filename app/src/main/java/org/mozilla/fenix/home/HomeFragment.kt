@@ -56,6 +56,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.browser.menu.BrowserMenu
+import mozilla.components.browser.menu.BrowserMenuBuilder
+import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
@@ -341,6 +344,10 @@ class HomeFragment : Fragment() {
         }
 
         createHomeMenu(requireContext(), WeakReference(view.menuButton))
+        view.tab_button.setOnLongClickListener {
+            createTabCounterMenu(requireContext()).show(view.tab_button)
+            true
+        }
 
         view.menuButton.setColorFilter(ContextCompat.getColor(
             requireContext(),
@@ -695,6 +702,31 @@ class HomeFragment : Fragment() {
             newTab = true,
             from = BrowserDirection.FromHome
         )
+    }
+
+    private fun createTabCounterMenu(context: Context): BrowserMenu {
+        val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private
+        val menuItems = listOf(
+            BrowserMenuImageText(
+                label = context.getString(if (isPrivate) {
+                    R.string.browser_menu_new_tab
+                } else {
+                    R.string.browser_menu_private_tab
+                }),
+                imageResource = if (isPrivate) {
+                    R.drawable.ic_new
+                } else {
+                    R.drawable.ic_private_browsing
+                },
+                iconTintColorResource = primaryTextColor,
+                textColorResource = primaryTextColor
+            ) {
+                (activity as HomeActivity).browsingModeManager.mode =
+                    BrowsingMode.fromBoolean(!isPrivate)
+            }
+        )
+        return BrowserMenuBuilder(menuItems).build(context)
     }
 
     @SuppressWarnings("ComplexMethod", "LongMethod")
