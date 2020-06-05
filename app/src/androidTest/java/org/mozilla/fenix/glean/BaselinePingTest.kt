@@ -33,7 +33,6 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MockWebServerHelper
 import java.util.concurrent.TimeUnit
 
-
 @RunWith(AndroidJUnit4::class)
 class BaselinePingTest {
     private val server = MockWebServerHelper.createAlwaysOkMockWebServer()
