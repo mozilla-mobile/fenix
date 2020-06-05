@@ -349,20 +349,6 @@ class BrowserRobot {
             return TabDrawerRobot.Transition()
         }
 
-        fun openHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            mDevice.waitForIdle()
-
-            tabsCounter().click()
-
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/collections_header_text")),
-                waitingTime
-            )
-
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
-        }
-
         fun openNotificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot.Transition {
             mDevice.openNotification()
 

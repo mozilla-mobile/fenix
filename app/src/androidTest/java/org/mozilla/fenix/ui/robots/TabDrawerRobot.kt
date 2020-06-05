@@ -7,7 +7,6 @@
 package org.mozilla.fenix.ui.robots
 
 import android.content.Context
-import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -25,11 +24,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until.findObject
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -77,6 +78,20 @@ class TabDrawerRobot {
         ).perform(click())
     }
 
+    fun verifyTabMediaControlButtonState(action: String) {
+        mDevice.waitNotNull(
+            findObject(
+                By
+                    .res("org.mozilla.fenix.debug:id/play_pause_button")
+                    .desc(action)
+            ),
+            waitingTime
+        )
+
+        tabMediaControlButton().check(matches(withContentDescription(action)))
+    }
+
+    fun clickTabMediaControlButton() = tabMediaControlButton().click()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -115,6 +130,14 @@ class TabDrawerRobot {
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
         }
+
+        fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(findObject(text(title)))
+            tab(title).click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -123,11 +146,12 @@ fun tabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
     return TabDrawerRobot.Transition()
 }
 
+private fun tabMediaControlButton() = onView(withId(R.id.play_pause_button))
+
 private fun closeTabButton() = onView(withId(R.id.mozac_browser_tabstray_close))
 private fun assertCloseTabsButton(title: String) =
     onView(allOf(withId(R.id.mozac_browser_tabstray_close), withContentDescription("Close tab $title")))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
 
 private fun normalBrowsingButton() = onView(withContentDescription("Open tabs"))
 private fun privateBrowsingButton() = onView(withContentDescription("Private tabs"))

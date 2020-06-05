@@ -45,7 +45,6 @@ class DefaultSessionControlControllerTest {
     private val openWhatsNewLink: () -> Unit = mockk(relaxed = true)
     private val openPrivacyNotice: () -> Unit = mockk(relaxed = true)
     private val registerCollectionStorageObserver: () -> Unit = mockk(relaxed = true)
-    private val scrollToTheTop: () -> Unit = mockk(relaxed = true)
     private val showTabTray: () -> Unit = mockk(relaxed = true)
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit =
         mockk(relaxed = true)
@@ -113,7 +112,6 @@ class DefaultSessionControlControllerTest {
     fun handleCollectionOpenTabsTapped() {
         val collection: TabCollection = mockk(relaxed = true)
         controller.handleCollectionOpenTabsTapped(collection)
-        verify { scrollToTheTop() }
         verify { metrics.track(Event.CollectionAllTabsRestored) }
     }
 

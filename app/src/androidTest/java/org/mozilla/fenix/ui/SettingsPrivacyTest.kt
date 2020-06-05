@@ -216,6 +216,7 @@ class SettingsPrivacyTest {
             verifySaveLoginPromptIsShown()
             // Don't save the login
             saveLoginFromPrompt("Don’t save")
+        }.openTabDrawer {
         }.openHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -313,7 +314,8 @@ class SettingsPrivacyTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(pageShortcutName) {
-        }.openHomeScreen {}
+        }.openTabDrawer {
+        }.openHomeScreen { }
 
         setOpenLinksInPrivateOff()
         restartApp(activityTestRule)

@@ -5,9 +5,7 @@
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -18,7 +16,6 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.sendSingleTapToScreen
-import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
@@ -120,10 +117,12 @@ class TabbedBrowsingTest {
             verifySaveCollection()
         }.closeAllTabs {
             verifyNoTabsOpened()
-        }.openHomeScreen {  }
+        }.openHomeScreen {
+        }
 
         // Repeat for Private Tabs
-        homeScreen { }.togglePrivateBrowsingMode()
+        homeScreen {
+        }.togglePrivateBrowsingMode()
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
@@ -166,7 +165,8 @@ class TabbedBrowsingTest {
 //                snackBarButtonClick("UNDO")
                 verifyExistingOpenTabs("Test_Page_${index + 1}")
                 verifyCloseTabsButton("Test_Page_${index + 1}")
-            }.openHomeScreen {  }
+            }.openHomeScreen {
+            }
         }
     }
 
@@ -197,7 +197,8 @@ class TabbedBrowsingTest {
 //                snackBarButtonClick("UNDO")
                 verifyExistingOpenTabs("Test_Page_${index + 1}")
                 verifyCloseTabsButton("Test_Page_${index + 1}")
-            }.openHomeScreen {  }
+            }.openHomeScreen {
+            }
         }
     }
 
