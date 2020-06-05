@@ -58,9 +58,8 @@ class TopSitesTest {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
         }.openHomeScreen {
-            // todo: fixme
-//            verifyExistingTabList()
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }
@@ -78,14 +77,14 @@ class TopSitesTest {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
         }.openHomeScreen {
-            // todo: fixme
-//            verifyExistingTabList()
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openTopSiteTabWithTitle(title = defaultWebPageTitle) {
             verifyPageContent(defaultWebPage.content)
             verifyUrl(defaultWebPage.url.toString().replace("http://", ""))
+        }.openTabDrawer {
         }.openHomeScreen {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
@@ -109,9 +108,8 @@ class TopSitesTest {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
         }.openHomeScreen {
-            // todo: fixme
-//            verifyExistingTabList()
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -133,9 +131,8 @@ class TopSitesTest {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
         }.openHomeScreen {
-            // todo: fixme
-//            verifyExistingTabList()
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {

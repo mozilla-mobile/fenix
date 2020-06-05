@@ -61,7 +61,10 @@ class CollectionTest {
         }.openHomeScreen {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {
-        }.openHomeScreen {
+        }.openTabDrawer {
+        }.openTabsListThreeDotMenu {
+            verifySaveCollection()
+        }.clickOpenTabsMenuSaveCollection {
             clickSaveCollectionButton()
             verifySelectTabsView()
             selectAllTabsForCollection()
