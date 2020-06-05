@@ -234,9 +234,8 @@ class BookmarksTest {
         }.openThreeDotMenu(defaultWebPage.url) {
         }.clickOpenInNewTab {
             verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen {
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
+        }.openTabDrawer {
+            verifyNormalModeSelected()
         }
     }
 
@@ -254,9 +253,8 @@ class BookmarksTest {
         }.openThreeDotMenu(defaultWebPage.url) {
         }.clickOpenInPrivateTab {
             verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen {
-            // todo: fixme
-//            verifyPrivateSessionHeader()
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
         }
     }
 
@@ -329,9 +327,9 @@ class BookmarksTest {
 
         browserScreen {
             createBookmark(defaultWebPage.url)
-        }.openHomeScreen {
+        }.openTabDrawer {
             closeTab()
-        }.openThreeDotMenu {
+        }.openHomeScreen { }.openThreeDotMenu {
         }.openBookmarks {
             bookmarksListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list))
@@ -342,10 +340,9 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-//            verifyExistingTabList()
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
+        }.clickOpenNewTab { }.openTabDrawer {
+            verifyNormalModeSelected()
+            verifyExistingTabList()
         }
     }
 
@@ -366,10 +363,9 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
-//            verifyExistingTabList()
-            // TODO: FixMe
-//            verifyPrivateSessionHeader()
+        }.clickOpenPrivateTab { }.openTabDrawer {
+            verifyPrivateModeSelected()
+            verifyExistingTabList()
         }
     }
 

@@ -355,7 +355,7 @@ class BrowserRobot {
             tabsCounter().click()
 
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/header_text")),
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/collections_header_text")),
                 waitingTime
             )
 

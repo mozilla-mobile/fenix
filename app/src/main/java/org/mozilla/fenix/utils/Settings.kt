@@ -719,6 +719,7 @@ class Settings private constructor(
 
     val showPrivateModeContextualFeatureRecommender: Boolean
         get() {
+            if (BuildConfig.DEBUG) {return false}
             val focusInstalled = MozillaProductDetector
                 .getInstalledMozillaProducts(appContext as Application)
                 .contains(MozillaProductDetector.MozillaProducts.FOCUS.productName)

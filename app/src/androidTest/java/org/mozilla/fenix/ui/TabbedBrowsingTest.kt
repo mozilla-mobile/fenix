@@ -65,30 +65,12 @@ class TabbedBrowsingTest {
 
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        homeScreen {
-//            verifyNoCollectionsTextIsNotShown()
-//            verifyNoCollectionsHeaderIsNotShown()
-            // TODO: Fixme
-            verifyTabButton()
-        }
-
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
-        }.openHomeScreen { }
-
-        homeScreen {
-            // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(
-                Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")),
-                TestAssetHelper.waitingTime
-            )
-            // todo: fixme
-//            verifyExistingTabList()
-            verifyNoCollectionsHeader()
-            verifyNoCollectionsText()
-
+        }.openTabDrawer {
+            verifyExistingTabList()
         }.openTabsListThreeDotMenu {
             verifyCloseAllTabsButton()
             verifyShareTabButton()
@@ -105,8 +87,6 @@ class TabbedBrowsingTest {
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
-//            todo: fixme
-//            verifyPrivateSessionHeader()
             verifyPrivateSessionMessage()
             verifyTabButton()
         }
@@ -115,29 +95,13 @@ class TabbedBrowsingTest {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
             verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
-        }.openHomeScreen {
-            // Timing issue on slow devices on Firebase
-            mDevice.waitNotNull(
-                Until.findObjects(By.res("org.mozilla.fenix.debug:id/item_tab")),
-                TestAssetHelper.waitingTime
-            )
-            // todo: fixme
-//            verifyExistingTabList()
-//            verifyShareTabsButton(true)
-//            verifyCloseTabsButton("Test_Page_1")
-        }.togglePrivateBrowsingMode()
-
-        // Verify private tabs remain in private browsing mode
-
-        homeScreen {
-//            verifyNoTabsOpenedHeader()
-//            verifyNoTabsOpenedText()
-            // TODO: FIXME
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
-            // todo: fixme
-//            verifyExistingTabList()
+        }.openTabDrawer {
+            verifyExistingTabList()
+            verifyCloseTabsButton("Test_Page_1")
+        }.toggleToNormalTabs {
+            verifyNoTabsOpened()
+        }.toggleToPrivateTabs {
+            verifyExistingTabList()
         }
     }
 
@@ -203,28 +167,26 @@ class TabbedBrowsingTest {
             navigationToolbar {
             }.openNewTabAndEnterToBrowser(element.url) {
                 verifyPageContent(element.content)
-            }.openHomeScreen { }
-
-            homeScreen {
-                // todo: fixme
-//                verifyExistingOpenTabs("Test_Page_${index + 1}")
-//                verifyCloseTabsButton("Test_Page_${index + 1}")
-//                closeTabViaXButton("Test_Page_${index + 1}")
+            }.openTabDrawer {
+                verifyExistingOpenTabs("Test_Page_${index + 1}")
+                verifyCloseTabsButton("Test_Page_${index + 1}")
+                closeTabViaXButton("Test_Page_${index + 1}")
                 verifySnackBarText("Tab closed")
                 snackBarButtonClick("UNDO")
-//                verifyExistingOpenTabs("Test_Page_${index + 1}")
-//                verifyCloseTabsButton("Test_Page_${index + 1}")
+
+                verifyExistingOpenTabs("Test_Page_${index + 1}")
+                verifyCloseTabsButton("Test_Page_${index + 1}")
                 swipeTabRight("Test_Page_${index + 1}")
                 verifySnackBarText("Tab closed")
                 snackBarButtonClick("UNDO")
-//                verifyExistingOpenTabs("Test_Page_${index + 1}")
-//                verifyCloseTabsButton("Test_Page_${index + 1}")
+                verifyExistingOpenTabs("Test_Page_${index + 1}")
+                verifyCloseTabsButton("Test_Page_${index + 1}")
                 swipeTabLeft("Test_Page_${index + 1}")
                 verifySnackBarText("Tab closed")
                 snackBarButtonClick("UNDO")
-//                verifyExistingOpenTabs("Test_Page_${index + 1}")
-//                verifyCloseTabsButton("Test_Page_${index + 1}")
-            }
+                verifyExistingOpenTabs("Test_Page_${index + 1}")
+                verifyCloseTabsButton("Test_Page_${index + 1}")
+            }.openHomeScreen {  }
         }
     }
 
