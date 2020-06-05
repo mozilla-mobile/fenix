@@ -191,6 +191,7 @@ class SettingsPrivacyTest {
             verifySaveLoginPromptIsShown()
             // Click save to save the login
             saveLoginFromPrompt("Save")
+        }.openTabDrawer {
         }.openHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -264,19 +265,17 @@ class SettingsPrivacyTest {
         openAppFromExternalLink(defaultWebPage.url.toString())
 
         browserScreen {
-        }.openHomeScreen {
-//            todo: fixme
-//            verifyPrivateSessionHeader()
-        }
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+        }.openHomeScreen { }
 
         setOpenLinksInPrivateOff()
 
         openAppFromExternalLink(defaultWebPage.url.toString())
 
         browserScreen {
-        }.openHomeScreen {
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
+        }.openTabDrawer {
+            verifyNormalModeSelected()
         }
     }
 
@@ -295,9 +294,8 @@ class SettingsPrivacyTest {
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(pageShortcutName) {
-        }.openHomeScreen {
-//            todo: fixme
-//            verifyPrivateSessionHeader()
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
         }
     }
 
@@ -323,15 +321,14 @@ class SettingsPrivacyTest {
 
         addToHomeScreen {
         }.searchAndOpenHomeScreenShortcut(pageShortcutName) {
+        }.openTabDrawer {
+            verifyNormalModeSelected()
         }.openHomeScreen {
-//            verifyOpenTabsHeader()
-            // TODO: FIXME
         }.openThreeDotMenu {
         }.openSettings {
         }.openPrivateBrowsingSubMenu {
             verifyOpenLinksInPrivateTabOff()
         }
-
     }
 
     @Test
@@ -345,9 +342,8 @@ class SettingsPrivacyTest {
         }.openPrivateBrowsingShortcut {
             verifySearchView()
         }.openBrowser {
-        }.openHomeScreen {
-//            todo: fixme
-//            verifyPrivateSessionHeader()
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
         }
     }
 
