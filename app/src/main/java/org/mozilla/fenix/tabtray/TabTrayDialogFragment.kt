@@ -146,7 +146,9 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     }
 
     override fun onTabSelected(tab: Tab) {
-        dismissAllowingStateLoss()
+        // dismiss the dialog on the next pass as it may cause a ConcurrentModificationException
+        // when TabsTrayInteractor.stop() unregisters with ObserverRegistry
+        view?.post { dismissAllowingStateLoss() }
         if (findNavController().currentDestination?.id == R.id.browserFragment) return
         if (!findNavController().popBackStack(R.id.browserFragment, false)) {
             findNavController().navigate(R.id.browserFragment)
