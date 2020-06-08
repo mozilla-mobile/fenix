@@ -209,7 +209,7 @@ class Settings private constructor(
 
     val isInSearchWidgetExperiment by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-        default = false
+        default = true
     )
 
     fun setSearchWidgetExperiment(value: Boolean) {

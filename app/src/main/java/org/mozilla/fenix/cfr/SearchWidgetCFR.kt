@@ -33,8 +33,13 @@ class SearchWidgetCFR(
 ) {
 
     fun displayIfNecessary() {
+        /*
         if (!context.settings().isInSearchWidgetExperiment ||
             !context.settings().shouldDisplaySearchWidgetCFR()) { return }
+         */
+
+        if (!context.settings().shouldDisplaySearchWidgetCFR()) { return }
+
         showSearchWidgetCFR()
     }
 
