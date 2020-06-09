@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
+import android.os.SystemClock
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.toolbar.Toolbar
 import org.mozilla.fenix.R
+import mozilla.components.browser.tabstray.Timings
 import org.mozilla.fenix.ext.sessionsOfType
 import java.lang.ref.WeakReference
 
@@ -31,6 +33,7 @@ class TabCounterToolbarButton(
         val view = TabCounter(parent.context).apply {
             reference = WeakReference(this)
             setOnClickListener {
+                Timings.tabsStart = SystemClock.elapsedRealtime()
                 showTabs.invoke()
             }
 

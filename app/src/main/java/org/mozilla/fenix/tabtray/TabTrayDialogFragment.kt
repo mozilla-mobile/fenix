@@ -6,10 +6,15 @@ package org.mozilla.fenix.tabtray
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +35,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import mozilla.components.browser.tabstray.Timings
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
@@ -66,6 +72,25 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_tab_tray_dialog, container, false)
+
+    private val uiHandler = Handler(Looper.getMainLooper())
+
+    override fun onResume() {
+        super.onResume()
+        view?.doOnPreDraw {
+            uiHandler.postAtFrontOfQueue {
+                // # Duration from tabs tray button click to tabs tray shown
+                // # Excludes animation timing, which can be found in default
+                // # BottomSheetBehavior config, somewhere.
+                // When sleeping and animations are disabled, the full tabs tray
+                // is shown here. With animations enabled, the animation will continue
+                // but the app will be unresponsive if we sleep here.
+//                Thread.sleep(5000)
+                Timings.tabsTrayEnd = SystemClock.elapsedRealtime()
+                Log.e("lol trayEnd", "average ${Timings.trayDuration}")
+            }
+        }
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
