@@ -6,10 +6,10 @@ package org.mozilla.fenix.settings.logins
 
 import android.content.Context
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,13 +40,14 @@ class DefaultSavedLoginsController(
  */
 class EditSavedLoginsController(
     val context: Context,
+    private val viewLifecycleScope: CoroutineScope,
     val loginsFragmentStore: LoginsFragmentStore
 ) : SavedLoginsController {
 
     fun findPotentialDuplicates(editedItem: SavedLogin) {
         var deferredLogin: Deferred<List<Login>>? = null
         // What scope should be used here?
-        val fetchLoginJob = MainScope().launch(IO) {
+        val fetchLoginJob = viewLifecycleScope.launch(IO) {
             deferredLogin = async {
                 context.components.core
                     .passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())

@@ -83,7 +83,6 @@ open class LoginsDataStore(
     private suspend fun save(loginToSave: Login) =
         fragment.requireContext().components.core.passwordsStorage.update(loginToSave)
 
-
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
         loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))

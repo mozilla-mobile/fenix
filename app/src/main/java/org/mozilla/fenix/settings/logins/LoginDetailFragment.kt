@@ -43,7 +43,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
-import org.mozilla.fenix.ext.urlToTrimmedHost
 
 /**
  * Displays saved login information for a single website.
