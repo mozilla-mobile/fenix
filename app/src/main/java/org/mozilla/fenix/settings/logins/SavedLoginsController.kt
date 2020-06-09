@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
-import androidx.lifecycle.LifecycleCoroutineScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +16,6 @@ import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.gecko.GeckoThread.launch
-import kotlin.coroutines.CoroutineContext
 
 interface SavedLoginsController {
     // NOOP
@@ -31,7 +28,7 @@ class DefaultSavedLoginsController(
     val context: Context,
     val loginsFragmentStore: LoginsFragmentStore,
     val settings: Settings
-): SavedLoginsController {
+) : SavedLoginsController {
     fun handleSort(sortingStrategy: SortingStrategy) {
         loginsFragmentStore.dispatch(LoginsAction.SortLogins(sortingStrategy))
         settings.savedLoginsSortingStrategy = sortingStrategy
@@ -44,7 +41,7 @@ class DefaultSavedLoginsController(
 class EditSavedLoginsController(
     val context: Context,
     val loginsFragmentStore: LoginsFragmentStore
-): SavedLoginsController {
+) : SavedLoginsController {
 
     fun findPotentialDuplicates(editedItem: SavedLogin) {
         var deferredLogin: Deferred<List<Login>>? = null
