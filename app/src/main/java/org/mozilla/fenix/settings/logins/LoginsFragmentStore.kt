@@ -85,7 +85,7 @@ data class LoginsListState(
     val searchedForText: String?,
     val sortingStrategy: SortingStrategy,
     val highlightedItem: SavedLoginsSortingStrategyMenu.Item,
-    val duplicateLogins: List<SavedLogin>
+    val duplicateLogins: List<SavedLogin>? = null
 ) : State
 
 /**

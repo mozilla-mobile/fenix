@@ -84,7 +84,7 @@ class SavedLoginsFragment : Fragment() {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = listOf() // assume on load there are no dupes
+                    duplicateLogins = null // assume on load there are no dupes
                 )
             )
         }
