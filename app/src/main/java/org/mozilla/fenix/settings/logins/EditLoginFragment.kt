@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
@@ -67,17 +66,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 
 /**
- * Interactor for the edit login screen.
- */
-class EditLoginInteractor(
-    private val editLoginController: EditSavedLoginsController
-) {
-    fun findDuplicates(item: SavedLogin) {
-        editLoginController.findPotentialDuplicates(item)
-    }
-}
-
-/**
  * Displays the editable saved login information for a single website.
  */
 @ExperimentalCoroutinesApi
@@ -88,7 +76,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
     private lateinit var loginsFragmentStore: LoginsFragmentStore
-    private lateinit var editLoginsInteractor: EditLoginInteractor
     private lateinit var datastore: LoginsDataStore
 
     private lateinit var oldLogin: SavedLogin
@@ -101,13 +88,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private var validPassword = true
     private var validUsername = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         oldLogin = args.savedLoginItem
 
@@ -120,23 +102,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = null
+                    duplicateLogins = listOf()
                 )
             )
         }
-        val controller = EditSavedLoginsController(
-            context = requireContext(),
-            viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
-            loginsFragmentStore = loginsFragmentStore
-        )
-        editLoginsInteractor = EditLoginInteractor(controller)
-        editLoginsInteractor.findDuplicates(args.savedLoginItem)
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         datastore = LoginsDataStore(this, loginsFragmentStore)
 
         // ensure hostname isn't editable
@@ -147,6 +117,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         usernameText.text = args.savedLoginItem.username.toEditable()
         passwordText.text = args.savedLoginItem.password.toEditable()
 
+        usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         passwordText.compoundDrawablePadding =
@@ -159,6 +130,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         usernameChanged = false
         passwordChanged = false
+
+        datastore.findPotentialDuplicates(args.savedLoginItem.guid)
 
         setUpClickListeners()
         setUpTextListeners()
@@ -329,8 +302,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     }
 
     private fun isDupe(username: String): Boolean =
-        loginsFragmentStore.state.duplicateLogins
-            ?.filter { it.username == username }?.any() ?: false
+        loginsFragmentStore.state.duplicateLogins.filter { it.username == username }.any()
 
     private fun setDupeError() {
         if (isDupe(usernameText.text.toString())) {
@@ -390,15 +362,15 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         passwordText.text.toString()
                     )
                     requireComponents.analytics.metrics.track(Event.EditLoginSave)
-                } catch (loginException: LoginsStorageException) {
-                    when (loginException) {
+                } catch (exception: Exception) {
+                    when (exception) {
                         is NoSuchRecordException,
                         is InvalidRecordException -> {
                             Log.e("Edit login",
-                                "Failed to save edited login.", loginException)
+                                "Failed to save edited login.", exception)
                         }
                         else -> Log.e("Edit login",
-                            "Failed to save edited login.", loginException)
+                            "Failed to save edited login with non-LoginStorageException error.", exception)
                     }
                 }
             }

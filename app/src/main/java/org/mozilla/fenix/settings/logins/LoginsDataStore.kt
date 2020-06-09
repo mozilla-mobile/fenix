@@ -16,7 +16,6 @@ import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-
 open class LoginsDataStore(
     val fragment: Fragment,
     val loginsFragmentStore: LoginsFragmentStore
@@ -24,6 +23,9 @@ open class LoginsDataStore(
 
     private val viewLifecycleOwner = fragment.viewLifecycleOwner
     private val navController = fragment.findNavController()
+
+    private suspend fun getLogin(loginId: String): Login? =
+        fragment.requireContext().components.core.passwordsStorage.get(loginId)
 
     fun delete(loginId: String) {
         var deleteLoginJob: Deferred<Boolean>? = null
@@ -80,11 +82,39 @@ open class LoginsDataStore(
         }
     }
 
-    private suspend fun save(loginToSave: Login) =
+    private suspend fun save(loginToSave: Login) {
         fragment.requireContext().components.core.passwordsStorage.update(loginToSave)
+    }
 
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
         loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
     }
+
+    fun findPotentialDuplicates(loginId: String) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        // What scope should be used here?
+        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            deferredLogin = async {
+                val login = getLogin(loginId)
+                fragment.requireContext().components.core
+                    .passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
+            }
+            val fetchedDuplicatesList = deferredLogin?.await()
+            fetchedDuplicatesList?.let { list ->
+                withContext(Dispatchers.Main) {
+                    val savedLoginList = list.map { it.mapToSavedLogin() }
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.ListOfDupes(savedLoginList)
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
+    }
 }
+

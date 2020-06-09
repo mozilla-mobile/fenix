@@ -74,7 +74,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = null // assume on load there are no dupes
+                    duplicateLogins = listOf() // assume on load there are no dupes
                 )
             )
         }
