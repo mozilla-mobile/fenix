@@ -1608,6 +1608,21 @@ collections:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
+  total_collections:
+    type: counter
+    send_in_pings:
+      - metrics
+    lifetime: application
+    description: |
+      reports the total number of collections user has on startup.
+      If no value is set, we assume total number of collections is 0.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/9029
+    data_reviews:
+      - N/A
+    notification_emails:
+      - perf-android-fe@mozilla.com
+    expires: "2020-10-01"
 
 search_widget:
   new_tab_button:

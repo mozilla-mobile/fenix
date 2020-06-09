@@ -50,6 +50,7 @@ import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
+import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -62,6 +63,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.resetPoliciesAfter
+import org.mozilla.fenix.ext.observeOnce
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
@@ -176,6 +178,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             StartupTimeline.homeActivityLifecycleObserver
         )
         StartupTimeline.onActivityCreateEndHome(this)
+        singleUseCollectionsTelemetryObserver()
     }
 
     @CallSuper
@@ -336,6 +339,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             isToolbarInflated = true
         }
         return supportActionBar!!
+    }
+
+    private fun singleUseCollectionsTelemetryObserver() {
+        components.core.tabCollectionStorage.getCollections().observeOnce {
+            Collections.totalCollections.add(it.size)
+        }
     }
 
     @Suppress("SpreadOperator")
