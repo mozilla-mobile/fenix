@@ -2444,10 +2444,10 @@ logins:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
-  edit_saved_login:
+  open_login_editor:
     type: event
     description: |
-      A user viewed the edit screen for an individual saved login
+      A user entered the edit screen for an individual saved login
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10173
     data_reviews:

@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
@@ -46,7 +45,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
-import org.mozilla.fenix.ext.urlToTrimmedHost
 
 /**
  * Displays saved login information for a single website.
@@ -78,13 +76,11 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = null // assume on load there are no dupes
+                    duplicateLogins = listOf() // assume on load there are no dupes
                 )
             )
         }
         loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
-
-        fetchLoginDetails()
 
         return view
     }
@@ -93,7 +89,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         datastore = LoginsDataStore(this, savedLoginsStore)
+        datastore.fetchLoginDetails(args.savedLoginId)
+
         consumeFrom(savedLoginsStore) {
             loginDetailView.update(it)
             login = savedLoginsStore.state.currentItem
@@ -133,6 +132,9 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
+        passwordText.setOnClickListener {
+            togglePasswordReveal()
+        }
     }
 
     private fun setUpCopyButtons() {
@@ -154,33 +156,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         copyPassword.setOnClickListener(
             CopyButtonListener(login?.password, R.string.logins_password_copied)
         )
-    }
-
-    // TODO: Move interactions with the component's password storage into a separate datastore
-    private fun fetchLoginDetails() {
-        var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
-            deferredLogin = async {
-                requireContext().components.core.passwordsStorage.list()
-            }
-            val fetchedLoginList = deferredLogin?.await()
-
-            fetchedLoginList?.let {
-                withContext(Main) {
-                    val login = fetchedLoginList.filter {
-                        it.guid == args.savedLoginId
-                    }.first()
-                    savedLoginsStore.dispatch(
-                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
-                    )
-                }
-            }
-        }
-        fetchLoginJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogin?.cancel()
-            }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -236,27 +211,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         }
     }
 
-    // TODO: Move interactions with the component's password storage into a separate datastore
-    // This includes Delete, Update/Edit, Create
-    private fun deleteLogin() {
-        var deleteLoginJob: Deferred<Boolean>? = null
-        val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
-            deleteLoginJob = async {
-                requireContext().components.core.passwordsStorage.delete(args.savedLoginId)
-            }
-            deleteLoginJob?.await()
-            withContext(Main) {
-                findNavController().popBackStack(R.id.savedLoginsFragment, false)
-            }
-        }
-        deleteJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deleteLoginJob?.cancel()
-            }
-        }
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
+    // TODO: create helper class for toggling passwords. Used in login detail and edit fragments.
     private fun togglePasswordReveal() {
         if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
             context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)

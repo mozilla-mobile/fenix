@@ -25,6 +25,9 @@ open class LoginsDataStore(
     private val viewLifecycleOwner = fragment.viewLifecycleOwner
     private val navController = fragment.findNavController()
 
+    private suspend fun getLogin(loginId: String): Login? =
+        fragment.requireContext().components.core.passwordsStorage.get(loginId)
+
     fun delete(loginId: String) {
         var deleteLoginJob: Deferred<Boolean>? = null
         val deleteJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
@@ -80,12 +83,64 @@ open class LoginsDataStore(
         }
     }
 
-    private suspend fun save(loginToSave: Login) =
+    private suspend fun save(loginToSave: Login) {
         fragment.requireContext().components.core.passwordsStorage.update(loginToSave)
-
+    }
 
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
         loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
+    }
+
+    fun findPotentialDuplicates(loginId: String) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        // What scope should be used here?
+        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            deferredLogin = async {
+                val login = getLogin(loginId)
+                fragment.requireContext().components.core
+                    .passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
+            }
+            val fetchedDuplicatesList = deferredLogin?.await()
+            fetchedDuplicatesList?.let { list ->
+                withContext(Dispatchers.Main) {
+                    val savedLoginList = list.map { it.mapToSavedLogin() }
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.ListOfDupes(savedLoginList)
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
+    }
+
+    fun fetchLoginDetails(loginId: String) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            deferredLogin = async {
+                fragment.requireContext().components.core.passwordsStorage.list()
+            }
+            val fetchedLoginList = deferredLogin?.await()
+
+            fetchedLoginList?.let {
+                withContext(Dispatchers.Main) {
+                    val login = fetchedLoginList.filter {
+                        it.guid == loginId
+                    }.first()
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
     }
 }

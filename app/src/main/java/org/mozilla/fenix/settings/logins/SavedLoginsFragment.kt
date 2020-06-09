@@ -84,13 +84,12 @@ class SavedLoginsFragment : Fragment() {
                     searchedForText = null,
                     sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
                     highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = null // assume on load there are no dupes
+                    duplicateLogins = listOf() // assume on load there are no dupes
                 )
             )
         }
         val savedLoginsController =
-            DefaultSavedLoginsController(
-                context = requireContext(),
+            SavedLoginsController(
                 loginsFragmentStore = savedLoginsStore,
                 settings = requireContext().settings()
             )

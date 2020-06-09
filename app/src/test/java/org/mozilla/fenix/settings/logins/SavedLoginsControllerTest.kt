@@ -8,37 +8,33 @@ import android.content.Context
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
-class EditSavedLoginControllerTest {
+class SavedLoginsControllerTest {
     private val store: LoginsFragmentStore = mockk(relaxed = true)
+    private val settings: Settings = mockk(relaxed = true)
+    private val sortingStrategy: SortingStrategy = SortingStrategy.Alphabetically(testContext)
     private val context: Context = spyk(testContext)
-    private val controller = EditSavedLoginsController(context = context, loginsFragmentStore = store)
+    private val controller = SavedLoginsController(loginsFragmentStore = store, settings = settings)
 
     @Test
-    fun `GIVEN a list of logins, WHEN findPotentialDuplicates is called on the controller, THEN a list of possible dupes is given`() {
-        val item = SavedLogin(
-            guid = "itemId",
-            origin = "https://cats.com",
-            username = "love4cats",
-            password = "666",
-            timeLastUsed = 0L
-        )
-        GlobalScope.launch(Dispatchers.IO) { controller.findPotentialDuplicates(item) }
+    fun `GIVEN a sorting strategy, WHEN handleSort is called on the controller, THEN the correct action should be dispatched and the strategy saved in sharedPref`() {
+        controller.handleSort(sortingStrategy)
 
         verify {
             store.dispatch(
-                LoginsAction.ListOfDupes(
-                    listOf(item)
+                LoginsAction.SortLogins(
+                    SortingStrategy.Alphabetically(
+                        testContext
+                    )
                 )
             )
+            settings.savedLoginsSortingStrategy = sortingStrategy
         }
     }
 }

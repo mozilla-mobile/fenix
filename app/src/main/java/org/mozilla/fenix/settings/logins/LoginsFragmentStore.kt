@@ -37,17 +37,6 @@ fun Login.mapToSavedLogin(): SavedLogin =
         timeLastUsed = this.timeLastUsed
     )
 
-fun SavedLogin.mapToLogin(): Login =
-    Login(
-        guid = this.guid,
-        origin = this.origin,
-        username = this.username,
-        password = this.password,
-        timeLastUsed = this.timeLastUsed,
-        usernameField = "",
-        passwordField = ""
-    )
-
 /**
  * The [Store] for holding the [LoginsListState] and applying [LoginsAction]s.
  */
@@ -85,7 +74,7 @@ data class LoginsListState(
     val searchedForText: String?,
     val sortingStrategy: SortingStrategy,
     val highlightedItem: SavedLoginsSortingStrategyMenu.Item,
-    val duplicateLogins: List<SavedLogin>? = null
+    val duplicateLogins: List<SavedLogin>
 ) : State
 
 /**
