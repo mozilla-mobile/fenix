@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.logins
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -15,11 +16,13 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
@@ -39,11 +42,8 @@ import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.async
@@ -60,7 +60,9 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Interactor for the edit login screen.
@@ -84,11 +86,15 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private val args by navArgs<EditLoginFragmentArgs>()
     private lateinit var loginsFragmentStore: LoginsFragmentStore
     private lateinit var editLoginsInteractor: EditLoginInteractor
+    private lateinit var datastore: LoginsDataStore
 
     private lateinit var oldLogin: SavedLogin
     private var listOfPossibleDupes: List<SavedLogin>? = null
     private var usernameChanged: Boolean = false
     private var passwordChanged: Boolean = false
+    private var saveEnabled: Boolean = false
+    private var validPassword = true
+    private var validUsername = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,8 +121,10 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         editLoginsInteractor.findDuplicates(args.savedLoginItem)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        datastore = LoginsDataStore(this, loginsFragmentStore)
 
         // ensure hostname isn't editable
         hostnameText.text = args.savedLoginItem.origin.toEditable()
@@ -134,11 +142,19 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         usernameChanged = false
         passwordChanged = false
 
+        val saveButton = activity?.findViewById<Button>(R.id.save_login_button)
+        saveButton?.compoundDrawableTintList = ContextCompat.getColorStateList(
+                requireContext(),
+                R.color.save_enabled_ic_color
+            )
+        saveEnabled = false // don't enable saving until something has been changed
+
         setUpClickListeners()
         setUpTextListeners()
         consumeFrom(loginsFragmentStore) {
             listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
         }
+
     }
 
     private fun setUpClickListeners() {
@@ -244,7 +260,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
     }
 
-
     private fun setUpTextListeners() {
         val frag = view?.findViewById<View>(R.id.editLoginFragment)
         frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -257,11 +272,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             override fun afterTextChanged(s: Editable?) {
                 if (usernameText.text?.toString().equals(oldLogin.username)) {
                     usernameChanged = false
+                    validUsername = true
                     inputLayoutUsername.error = null
                 } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
                     usernameChanged = true
                     setDupeError()
                 }
+                setSaveButtonState()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -275,7 +292,19 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         passwordText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                // NOOP
+                if (passwordText.text?.toString() == "") {
+                    passwordChanged = true
+                    setPasswordError()
+                } else if (passwordText.text?.toString().equals(oldLogin.password)) {
+                    passwordChanged = false
+                    inputLayoutPassword.error = null
+                    validPassword = true
+                } else {
+                    passwordChanged = true
+                    inputLayoutPassword.error = null
+                    validPassword = true
+                }
+                setSaveButtonState()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -283,16 +312,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (passwordText.text?.toString() == "") {
-                    passwordChanged = true
-                    setPasswordError()
-                } else if (passwordText.text?.toString().equals(oldLogin.password)) {
-                    passwordChanged = false
-                    inputLayoutPassword.error = null
-                } else {
-                    passwordChanged = true
-                    inputLayoutPassword.error = null
-                }
+                // NOOP
             }
         })
     }
@@ -306,11 +326,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             inputLayoutUsername?.let {
                 it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
                 it.error = context?.getString(R.string.saved_login_duplicate)
-                view?.isSaveEnabled = false
+                validUsername = false
             }
         } else {
             inputLayoutUsername.error = null
             passwordChanged = true
+            validUsername = true
         }
     }
 
@@ -318,7 +339,30 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         inputLayoutPassword?.let {
             it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
             it.error = context?.getString(R.string.saved_login_password_required)
-            view?.isSaveEnabled = false
+            validPassword = false
+        }
+    }
+
+    // possibly use BrowserMenuItemToolbar.TwoStateButton()?
+    private fun setSaveButtonState() {
+        val saveButton = activity?.findViewById<Button>(R.id.save_login_button)
+
+        if (validUsername && validPassword && (usernameChanged || passwordChanged)) {
+            saveButton?.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    ThemeManager.resolveAttribute(R.attr.enabled, requireContext())
+                )
+            )
+            saveEnabled = true
+        } else {
+            saveButton?.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    ThemeManager.resolveAttribute(R.attr.disabled, requireContext())
+                )
+            )
+            saveEnabled = false
         }
     }
 
@@ -337,9 +381,15 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
-            if ((usernameChanged || passwordChanged) && view?.isSaveEnabled!!) {
+            if (saveEnabled) {
                 try {
-                    attemptSaveAndExit()
+//                    attemptSaveAndExit()
+                    datastore.save(
+                        args.savedLoginItem.guid,
+                        usernameText.text.toString(),
+                        passwordText.text.toString()
+                    )
+                    requireComponents.analytics.metrics.track(Event.EditLoginSave)
                 } catch (loginException: LoginsStorageException) {
                     when (loginException) {
                         is NoSuchRecordException,
@@ -357,52 +407,43 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         else -> false
     }
 
-    // TODO: Move interactions with the component's password storage into a separate datastore
-    // This includes Delete, Update/Edit, Create
-    private fun attemptSaveAndExit() {
-        var saveLoginJob: Deferred<Unit>? = null
-        viewLifecycleOwner.lifecycleScope.launch(IO) {
-            saveLoginJob = async {
-                // must retrieve from storage to get the httpsRealm and formActionOrigin
-                val oldLogin =
-                    requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
-
-                // Update requires a Login type, which needs at least one of
-                // httpRealm or formActionOrigin
-                val loginToSave = Login(
-                    guid = oldLogin?.guid,
-                    origin = oldLogin?.origin!!,
-                    username = usernameText.text.toString(), // new value
-                    password = passwordText.text.toString(), // new value
-                    httpRealm = oldLogin.httpRealm,
-                    formActionOrigin = oldLogin.formActionOrigin
-                )
-
-                save(loginToSave)
-                syncAndUpdateList(loginToSave)
-            }
-            saveLoginJob?.await()
-            withContext(Main) {
-                val directions =
-                    EditLoginFragmentDirections
-                        .actionEditLoginFragmentToLoginDetailFragment(args.savedLoginItem.guid)
-                findNavController().navigate(directions)
-            }
-        }
-        saveLoginJob?.invokeOnCompletion {
-            if (it is CancellationException) {
-                saveLoginJob?.cancel()
-            }
-        }
-    }
-
-    private suspend fun save(loginToSave: Login) =
-        requireContext().components.core.passwordsStorage.update(loginToSave)
-
-    private fun syncAndUpdateList(updatedLogin: Login) {
-        val login = updatedLogin.mapToSavedLogin()
-        loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
-    }
+//    // This includes Delete, Update/Edit, Create
+//    private fun attemptSaveAndExit() {
+//        var saveLoginJob: Deferred<Unit>? = null
+//        viewLifecycleOwner.lifecycleScope.launch(IO) {
+//            saveLoginJob = async {
+//                // must retrieve from storage to get the httpsRealm and formActionOrigin
+//                val oldLogin =
+//                    requireContext().components.core.passwordsStorage.get(args.savedLoginItem.guid)
+//
+//                // Update requires a Login type, which needs at least one of
+//                // httpRealm or formActionOrigin
+//                val loginToSave = Login(
+//                    guid = oldLogin?.guid,
+//                    origin = oldLogin?.origin!!,
+//                    username = usernameText.text.toString(), // new value
+//                    password = passwordText.text.toString(), // new value
+//                    httpRealm = oldLogin.httpRealm,
+//                    formActionOrigin = oldLogin.formActionOrigin
+//                )
+//
+//                save(loginToSave)
+//                syncAndUpdateList(loginToSave)
+//            }
+//            saveLoginJob?.await()
+//            withContext(Main) {
+//                val directions =
+//                    EditLoginFragmentDirections
+//                        .actionEditLoginFragmentToLoginDetailFragment(args.savedLoginItem.guid)
+//                findNavController().navigate(directions)
+//            }
+//        }
+//        saveLoginJob?.invokeOnCompletion {
+//            if (it is CancellationException) {
+//                saveLoginJob?.cancel()
+//            }
+//        }
+//    }
 
     // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
     private fun togglePasswordReveal() {

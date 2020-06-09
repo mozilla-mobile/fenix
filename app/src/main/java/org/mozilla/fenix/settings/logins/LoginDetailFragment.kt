@@ -42,8 +42,10 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.redirectToReAuth
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.simplifiedUrl
 import org.mozilla.fenix.ext.urlToTrimmedHost
 
 /**
@@ -81,7 +83,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             )
         }
         loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
-        datastore = LoginsDataStore(this)
 
         fetchLoginDetails()
 
@@ -91,12 +92,14 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        datastore = LoginsDataStore(this, savedLoginsStore)
         consumeFrom(savedLoginsStore) {
             loginDetailView.update(it)
             login = savedLoginsStore.state.currentItem
             setUpCopyButtons()
             showToolbar(
-                savedLoginsStore.state.currentItem?.origin?.urlToTrimmedHost(requireContext())
+                savedLoginsStore.state.currentItem?.origin?.simplifiedUrl()
                     ?: ""
             )
             setUpPasswordReveal()
@@ -210,6 +213,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     }
 
     private fun editLogin() {
+        requireComponents.analytics.metrics.track(Event.EditLogin)
         val directions =
             LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(login!!)
         findNavController().navigate(directions)
@@ -223,7 +227,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
-                    deleteLogin()
+                    requireComponents.analytics.metrics.track(Event.DeleteLogin)
                     datastore.delete(args.savedLoginId)
                     dialog.dismiss()
                 }
