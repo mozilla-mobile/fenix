@@ -43,12 +43,12 @@ class DefaultSavedLoginsController(
  */
 class EditSavedLoginsController(
     val context: Context,
-    val coroutineContext: CoroutineContext = Dispatchers.Main,
     val loginsFragmentStore: LoginsFragmentStore
 ): SavedLoginsController {
 
     fun findPotentialDuplicates(editedItem: SavedLogin) {
         var deferredLogin: Deferred<List<Login>>? = null
+        // What scope should be used here?
         val fetchLoginJob = MainScope().launch(IO) {
             deferredLogin = async {
                 context.components.core
@@ -70,18 +70,4 @@ class EditSavedLoginsController(
             }
         }
     }
-
-
-//    withContext(coroutineContext) {
-//        val duplicatesList =
-//            context.components.core.passwordsStorage
-//                .getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
-//
-//        withContext(Dispatchers.Main) {
-//            val mapped = duplicatesList.map { it.mapToSavedLogin() }
-//            loginsFragmentStore.dispatch(
-//                LoginsAction.ListOfDupes(mapped)
-//            )
-//        }
-//    }
 }
