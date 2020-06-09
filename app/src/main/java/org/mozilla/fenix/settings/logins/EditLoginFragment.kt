@@ -63,6 +63,16 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 
 /**
+ * Interactor for the edit login screen.
+ */
+class EditLoginInteractor(private val editLoginController: EditSavedLoginsController) {
+    fun findDuplicates(item: SavedLogin) {
+        // What scope should be used here?
+        GlobalScope.launch(IO) { editLoginController.findPotentialDuplicates(item) }
+    }
+}
+
+/**
  * Displays the editable saved login information for a single website.
  */
 @ExperimentalCoroutinesApi
@@ -73,6 +83,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
     private lateinit var loginsFragmentStore: LoginsFragmentStore
+    private lateinit var editLoginsInteractor: EditLoginInteractor
 
     private lateinit var oldLogin: SavedLogin
     private var listOfPossibleDupes: List<SavedLogin>? = null
@@ -96,7 +107,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 )
             )
         }
-        findPotentialDuplicates(args.savedLoginItem)
+        val controller = EditSavedLoginsController(
+            context = requireContext(),
+            loginsFragmentStore = loginsFragmentStore
+        )
+        editLoginsInteractor = EditLoginInteractor(controller)
+        editLoginsInteractor.findDuplicates(args.savedLoginItem)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,30 +138,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         setUpTextListeners()
         consumeFrom(loginsFragmentStore) {
             listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
-        }
-    }
-
-    fun findPotentialDuplicates(editedItem: SavedLogin) {
-        var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = MainScope().launch(IO) {
-            deferredLogin = async {
-                requireContext().components.core
-                    .passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
-            }
-            val fetchedDuplicatesList = deferredLogin?.await()
-            fetchedDuplicatesList?.let { list ->
-                withContext(Dispatchers.Main) {
-                    val savedLoginList = list.map { it.mapToSavedLogin() }
-                    loginsFragmentStore.dispatch(
-                        LoginsAction.ListOfDupes(savedLoginList)
-                    )
-                }
-            }
-        }
-        fetchLoginJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogin?.cancel()
-            }
         }
     }
 

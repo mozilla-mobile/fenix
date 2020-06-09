@@ -21,7 +21,7 @@ import org.mozilla.gecko.GeckoThread.launch
 import kotlin.coroutines.CoroutineContext
 
 interface SavedLoginsController {
-    fun handleSort(sortingStrategy: SortingStrategy)
+    // NOOP
 }
 
 /**
@@ -32,8 +32,42 @@ class DefaultSavedLoginsController(
     val loginsFragmentStore: LoginsFragmentStore,
     val settings: Settings
 ): SavedLoginsController {
-    override fun handleSort(sortingStrategy: SortingStrategy) {
+    fun handleSort(sortingStrategy: SortingStrategy) {
         loginsFragmentStore.dispatch(LoginsAction.SortLogins(sortingStrategy))
         settings.savedLoginsSortingStrategy = sortingStrategy
+    }
+}
+
+/**
+ * Controller for editing a saved login
+ */
+class EditSavedLoginsController(
+    val context: Context,
+    val loginsFragmentStore: LoginsFragmentStore
+): SavedLoginsController {
+
+    fun findPotentialDuplicates(editedItem: SavedLogin) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        // What scope should be used here?
+        val fetchLoginJob = MainScope().launch(IO) {
+            deferredLogin = async {
+                context.components.core
+                    .passwordsStorage.getPotentialDupesIgnoringUsername(editedItem.mapToLogin())
+            }
+            val fetchedDuplicatesList = deferredLogin?.await()
+            fetchedDuplicatesList?.let { list ->
+                withContext(Dispatchers.Main) {
+                    val savedLoginList = list.map { it.mapToSavedLogin() }
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.ListOfDupes(savedLoginList)
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
     }
 }
