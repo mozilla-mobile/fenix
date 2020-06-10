@@ -116,5 +116,31 @@ open class LoginsDataStore(
             }
         }
     }
+
+    fun fetchLoginDetails(loginId: String) {
+        var deferredLogin: Deferred<List<Login>>? = null
+        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            deferredLogin = async {
+                fragment.requireContext().components.core.passwordsStorage.list()
+            }
+            val fetchedLoginList = deferredLogin?.await()
+
+            fetchedLoginList?.let {
+                withContext(Dispatchers.Main) {
+                    val login = fetchedLoginList.filter {
+                        it.guid == loginId
+                    }.first()
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
+                    )
+                }
+            }
+        }
+        fetchLoginJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogin?.cancel()
+            }
+        }
+    }
 }
 

@@ -125,7 +125,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
 
         saveEnabled = false // don't enable saving until something has been changed
-        val saveButton = activity?.findViewById<Button>(R.id.save_login_button)
+        val saveButton = activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
         saveButton?.isEnabled = saveEnabled
 
         usernameChanged = false
@@ -326,16 +326,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
     }
 
-    // possibly use BrowserMenuItemToolbar.TwoStateButton()?
     private fun setSaveButtonState() {
         val saveButton = activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
+        val changesMadeWithNoErrors =
+            validUsername && validPassword && (usernameChanged || passwordChanged)
 
-        if (validUsername && validPassword && (usernameChanged || passwordChanged)) {
-            saveButton?.isEnabled = true
-            saveEnabled = true
-        } else {
-            saveButton?.isEnabled = false
-            saveEnabled = false
+        changesMadeWithNoErrors.let {
+            saveButton?.isEnabled = it
+            saveEnabled = it
         }
     }
 

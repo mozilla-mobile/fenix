@@ -80,8 +80,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         }
         loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
 
-        fetchLoginDetails()
-
         return view
     }
 
@@ -89,7 +87,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         datastore = LoginsDataStore(this, savedLoginsStore)
+        datastore.fetchLoginDetails(args.savedLoginId)
+
         consumeFrom(savedLoginsStore) {
             loginDetailView.update(it)
             login = savedLoginsStore.state.currentItem
@@ -128,6 +129,9 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal()
         }
+        passwordText.setOnClickListener {
+            togglePasswordReveal()
+        }
     }
 
     private fun setUpCopyButtons() {
@@ -145,33 +149,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         copyPassword.setOnClickListener(
             CopyButtonListener(login?.password, R.string.logins_password_copied)
         )
-    }
-
-    // TODO: Move interactions with the component's password storage into a separate datastore
-    private fun fetchLoginDetails() {
-        var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
-            deferredLogin = async {
-                requireContext().components.core.passwordsStorage.list()
-            }
-            val fetchedLoginList = deferredLogin?.await()
-
-            fetchedLoginList?.let {
-                withContext(Main) {
-                    val login = fetchedLoginList.filter {
-                        it.guid == args.savedLoginId
-                    }.first()
-                    savedLoginsStore.dispatch(
-                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
-                    )
-                }
-            }
-        }
-        fetchLoginJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogin?.cancel()
-            }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -219,27 +196,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
         }
     }
 
-    // TODO: Move interactions with the component's password storage into a separate datastore
-    // This includes Delete, Update/Edit, Create
-    private fun deleteLogin() {
-        var deleteLoginJob: Deferred<Boolean>? = null
-        val deleteJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
-            deleteLoginJob = async {
-                requireContext().components.core.passwordsStorage.delete(args.savedLoginId)
-            }
-            deleteLoginJob?.await()
-            withContext(Main) {
-                findNavController().popBackStack(R.id.savedLoginsFragment, false)
-            }
-        }
-        deleteJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deleteLoginJob?.cancel()
-            }
-        }
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
+    // TODO: create helper class for toggling passwords. Used in login detail and edit fragments.
     private fun togglePasswordReveal() {
         if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
             context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
