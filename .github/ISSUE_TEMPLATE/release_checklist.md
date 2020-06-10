@@ -33,7 +33,7 @@ We will refer to the beta release going out as the *current* sprint release.
     - [ ] Upload the signed APK from the Taskcluster `signing-production` task to the [release page](https://github.com/mozilla-mobile/fenix/releases)
     - [ ] Create a release request in Bugzilla to release to 1%. You can clone [this issue](https://bugzilla.mozilla.org/show_bug.cgi?id=1571967) and `need-info` someone from release management.
 - [ ] Make a new Beta
-    - [ ] Create a branch off of master (DO NOT PUSH YET) for the *current* milestone of format `releases/v2.3` (where 2.3 is the *current* milestone). After that, anything landing in master will be part of the next milestone.
+    - [ ] Create a branch off of main (DO NOT PUSH YET) for the *current* milestone of format `releases/v2.3` (where 2.3 is the *current* milestone). After that, anything landing in main will be part of the next milestone.
     - [ ] On the new Beta branch, pin the AC version to the stable version ([example](https://github.com/mozilla-mobile/fenix/commit/e413da29f6a7a7d4a765817a9cd5687abbf27619)) with commit message "Issue #`<this releng issue>`: Pin to stable AC `<version>` for release v2.3" (replacing 2.3 with the version)
     - For each issue closed since the last release (run `kotlinc -script automation/releasetools/PrintMentionedIssuesAndPrs.kts` to get a list [see script for details] and paste it into the Releng issue):
       - [ ] Ensure it has the correct milestone.
@@ -51,7 +51,7 @@ We will refer to the beta release going out as the *current* sprint release.
 - [ ] If the *current* release is a major (x.0) release, review the SUMO article contents of the whats new / other sumo pages and make sure they are accurate with what is in this release. If not, escalate to Product Owner.
 
 ### During Beta Product Integrity (Beta Release until PI green signoff)
-- [ ] If bugs are considered release blocker then find someone to fix them on master and the milestone branch (cherry-pick / uplift)
+- [ ] If bugs are considered release blocker then find someone to fix them on main and the milestone branch (cherry-pick / uplift)
 - [ ] If needed tag a new RC version (e.g. v1.0-RC2) and follow the submission checklist again.
 
 ### During Production Release Rollout [Tuesday, Wednesday following Monday Release Day]

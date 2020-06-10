@@ -20,7 +20,7 @@ To opt in or out of Glean telemetry reporting, visit the Data collection menu un
 
 ### Events
 
-In [HomeActivity](https://github.com/mozilla-mobile/fenix/blob/master/app/src/main/java/org/mozilla/fenix/HomeActivity.kt) when `onDestinationChanged` occurs, the destination fragment's name and and whether it is a custom tab is added to the breadcrumbs. 
+In [HomeActivity](https://github.com/mozilla-mobile/fenix/blob/main/app/src/main/java/org/mozilla/fenix/HomeActivity.kt) when `onDestinationChanged` occurs, the destination fragment's name and and whether it is a custom tab is added to the breadcrumbs.
 
 ## Socorro
 

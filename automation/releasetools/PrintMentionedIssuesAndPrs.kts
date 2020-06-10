@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit
  * this will default to the tag on origin with the highest version name.
  *
  * To run this script:
- * - Update local master
+ * - Update local main
  * - From project root, run `kotlinc -script automation/releasetools/PrintMentionedIssuesAndPrs.kts`
  *
  * TODO
- * - Use origin/master, instead of local master
+ * - Use origin/main, instead of local main
  * - Interface with the GitHub API to filter out references to PRs
  * - Pull down issue names for each, to make constructing the changelog easier
  */
@@ -29,7 +29,7 @@ println("Starting PrintMentionedIssuesAndPrs.kts")
 val tag = try { args[0] } catch (e: IndexOutOfBoundsException) { getHighestVersionedTag() }
 debug { "Last tag: $tag" }
 
-val commonCommit = getMostRecentCommonAncestorWithMaster(tag)
+val commonCommit = getMostRecentCommonAncestorWithMain(tag)
 debug { "common commit: $commonCommit" }
 
 val log = gitLogSince(commonCommit)
@@ -49,10 +49,10 @@ fun getHighestVersionedTag(): String {
         .trim()
 }
 
-fun getMostRecentCommonAncestorWithMaster(tag: String): String {
+fun getMostRecentCommonAncestorWithMain(tag: String): String {
     runCommand("git fetch $origin --tags")
-    // TODO use origin master
-    return runCommand("git merge-base master $tag").trim()
+    // TODO use origin main
+    return runCommand("git merge-base main $tag").trim()
 }
 
 fun gitLogSince(sha: String): String {
