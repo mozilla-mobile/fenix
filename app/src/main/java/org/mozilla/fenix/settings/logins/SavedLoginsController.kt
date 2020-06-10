@@ -4,14 +4,12 @@
 
 package org.mozilla.fenix.settings.logins
 
-import android.content.Context
 import org.mozilla.fenix.utils.Settings
 
 /**
  * Controller for the saved logins screen
  */
-class DefaultSavedLoginsController(
-    val context: Context,
+class SavedLoginsController(
     val loginsFragmentStore: LoginsFragmentStore,
     val settings: Settings
 ) {

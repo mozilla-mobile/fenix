@@ -89,8 +89,7 @@ class SavedLoginsFragment : Fragment() {
             )
         }
         val savedLoginsController =
-            DefaultSavedLoginsController(
-                context = requireContext(),
+            SavedLoginsController(
                 loginsFragmentStore = savedLoginsStore,
                 settings = requireContext().settings()
             )

@@ -8,53 +8,19 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.text.method.TextKeyListener
-import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.view.menu.ActionMenuItemView
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutPassword
-import kotlinx.android.synthetic.main.fragment_edit_login.inputLayoutUsername
-import kotlinx.android.synthetic.main.fragment_edit_login.hostnameText
-import kotlinx.android.synthetic.main.fragment_edit_login.usernameText
-import kotlinx.android.synthetic.main.fragment_edit_login.passwordText
-import kotlinx.android.synthetic.main.fragment_edit_login.clearUsernameTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.clearPasswordTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.revealPasswordButton
-import kotlinx.coroutines.*
-import kotlinx.android.synthetic.main.fragment_edit_login.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.sync.logins.InvalidRecordException
-import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
@@ -66,7 +32,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 
 /**
- * Displays the editable saved login information for a single website.
+ * Displays the editable saved login information for a single website
  */
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
@@ -125,7 +91,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
 
         saveEnabled = false // don't enable saving until something has been changed
-        val saveButton = activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
+        val saveButton =
+            activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
         saveButton?.isEnabled = saveEnabled
 
         usernameChanged = false
@@ -176,7 +143,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 view?.hideKeyboard()
             }
         }
-
         editLoginLayout.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 view?.hideKeyboard()
@@ -185,13 +151,20 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         usernameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(u: Editable?) {
-                if (u.toString() == oldLogin.username) {
-                    inputLayoutUsername.error = null
-                    inputLayoutUsername.errorIconDrawable = null
-                } else {
-                    clearUsernameTextButton.isEnabled = true
-                    // setDupeError() TODO in #10173
+                when {
+                    u.toString() == oldLogin.username -> {
+                        usernameChanged = false
+                        validUsername = true
+                        inputLayoutUsername.error = null
+                        inputLayoutUsername.errorIconDrawable = null
+                    }
+                    else -> {
+                        usernameChanged = true
+                        clearUsernameTextButton.isEnabled = true
+                        setDupeError()
+                    }
                 }
+                setSaveButtonState()
             }
 
             override fun beforeTextChanged(u: CharSequence?, start: Int, count: Int, after: Int) {
@@ -207,20 +180,26 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             override fun afterTextChanged(p: Editable?) {
                 when {
                     p.toString().isEmpty() -> {
+                        passwordChanged = true
                         clearPasswordTextButton.isEnabled = false
                         setPasswordError()
                     }
                     p.toString() == oldLogin.password -> {
+                        passwordChanged = false
+                        validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
                         clearPasswordTextButton.isEnabled = true
                     }
                     else -> {
+                        passwordChanged = true
+                        validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
                         clearPasswordTextButton.isEnabled = true
                     }
                 }
+                setSaveButtonState()
             }
 
             override fun beforeTextChanged(p: CharSequence?, start: Int, count: Int, after: Int) {
@@ -233,96 +212,29 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         })
     }
 
-    private fun setPasswordError() {
-        inputLayoutPassword?.let { layout ->
-            layout.error = context?.getString(R.string.saved_login_password_required)
-            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
-
-            layout.errorIconDrawable?.setTint(
-                ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
-            )
-        }
-    }
-
-    private fun setUpTextListeners() {
-        val frag = view?.findViewById<View>(R.id.editLoginFragment)
-        frag?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                view?.hideKeyboard()
-            }
-        }
-
-        usernameText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (usernameText.text?.toString().equals(oldLogin.username)) {
-                    usernameChanged = false
-                    validUsername = true
-                    inputLayoutUsername.error = null
-                } else if (!(usernameText.text?.toString().equals(oldLogin.username))) {
-                    usernameChanged = true
-                    setDupeError()
-                }
-                setSaveButtonState()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // NOOP
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // NOOP
-            }
-        })
-
-        passwordText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (passwordText.text?.toString() == "") {
-                    passwordChanged = true
-                    setPasswordError()
-                } else if (passwordText.text?.toString().equals(oldLogin.password)) {
-                    passwordChanged = false
-                    inputLayoutPassword.error = null
-                    validPassword = true
-                } else {
-                    passwordChanged = true
-                    inputLayoutPassword.error = null
-                    validPassword = true
-                }
-                setSaveButtonState()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // NOOP
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // NOOP
-            }
-        })
-    }
-
     private fun isDupe(username: String): Boolean =
         loginsFragmentStore.state.duplicateLogins.filter { it.username == username }.any()
 
     private fun setDupeError() {
         if (isDupe(usernameText.text.toString())) {
             inputLayoutUsername?.let {
+                usernameChanged = true
+                validUsername = false
                 it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
                 it.error = context?.getString(R.string.saved_login_duplicate)
-                validUsername = false
             }
         } else {
-            inputLayoutUsername.error = null
-            passwordChanged = true
+            usernameChanged = true
             validUsername = true
+            inputLayoutUsername.error = null
         }
     }
 
     private fun setPasswordError() {
-        inputLayoutPassword?.let {
-            it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
-            it.error = context?.getString(R.string.saved_login_password_required)
+        inputLayoutPassword?.let { layout ->
             validPassword = false
+            layout.error = context?.getString(R.string.saved_login_password_required)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
         }
     }
 

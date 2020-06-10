@@ -16,6 +16,7 @@ import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+
 open class LoginsDataStore(
     val fragment: Fragment,
     val loginsFragmentStore: LoginsFragmentStore
@@ -143,4 +144,3 @@ open class LoginsDataStore(
         }
     }
 }
-
