@@ -49,8 +49,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
     private lateinit var oldLogin: SavedLogin
-    private var usernameChanged: Boolean = false
-    private var passwordChanged: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,71 +132,61 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         }
 
         usernameText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // NOOP
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // NOOP
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                when {
-                    usernameText.text?.toString().equals(oldLogin.username) -> {
-                        usernameChanged = false
-                        inputLayoutUsername.error = null
-                        inputLayoutUsername.errorIconDrawable = null
-                        usernameChanged = true
-                    }
-                    else -> {
-                        usernameChanged = true
-                        clearUsernameTextButton.isEnabled = true
-                        // setDupeError() TODO in #10173
-                    }
+            override fun afterTextChanged(u: Editable?) {
+                if (u.toString() == oldLogin.username) {
+                    inputLayoutUsername.error = null
+                    inputLayoutUsername.errorIconDrawable = null
+                } else {
+                    clearUsernameTextButton.isEnabled = true
+                    // setDupeError() TODO in #10173
                 }
+            }
+
+            override fun beforeTextChanged(u: CharSequence?, start: Int, count: Int, after: Int) {
+                // NOOP
+            }
+
+            override fun onTextChanged(u: CharSequence?, start: Int, before: Int, count: Int) {
+                // NOOP
             }
         })
 
         passwordText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
+            override fun afterTextChanged(p: Editable?) {
                 when {
-                    passwordText.text?.toString() == "" -> {
-                        passwordChanged = true
+                    p.toString().isEmpty() -> {
                         clearPasswordTextButton.isEnabled = false
                         setPasswordError()
                     }
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // NOOP
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                when {
-                    passwordText.text?.toString().equals(oldLogin.password) -> {
-                        passwordChanged = false
+                    p.toString() == oldLogin.password -> {
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
                         clearPasswordTextButton.isEnabled = true
                     }
                     else -> {
-                        passwordChanged = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
                         clearPasswordTextButton.isEnabled = true
                     }
                 }
+            }
+
+            override fun beforeTextChanged(p: CharSequence?, start: Int, count: Int, after: Int) {
+                // NOOP
+            }
+
+            override fun onTextChanged(p: CharSequence?, start: Int, before: Int, count: Int) {
+                // NOOP
             }
         })
     }
 
     private fun setPasswordError() {
-        inputLayoutPassword?.let {
-            it.error = context?.getString(R.string.saved_login_password_required)
-            it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+        inputLayoutPassword?.let { layout ->
+            layout.error = context?.getString(R.string.saved_login_password_required)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
 
-            it.errorIconDrawable?.setTint(
+            layout.errorIconDrawable?.setTint(
                 ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
             )
         }

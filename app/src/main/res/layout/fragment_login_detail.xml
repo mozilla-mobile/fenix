@@ -124,7 +124,6 @@
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:gravity="center_vertical"
-        android:inputType="textPassword|text"
         android:letterSpacing="0.01"
         android:lineSpacingExtra="8sp"
         android:layout_marginTop="2dp"
@@ -135,8 +134,7 @@
         app:layout_constraintStart_toStartOf="@id/passwordHeader"
         app:layout_constraintTop_toBottomOf="@id/passwordHeader"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Info"
-        tools:ignore="TextViewEdits" />
+        tools:text="Info" />
 
     <ImageButton
         android:id="@+id/revealPasswordButton"
