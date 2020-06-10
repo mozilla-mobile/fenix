@@ -15,6 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -46,6 +47,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -107,11 +109,11 @@ import kotlin.math.min
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
+    private val args by navArgs<HomeFragmentArgs>()
+
     private val homeViewModel: HomeScreenViewModel by viewModels {
         ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
     }
-
-    private val args by navArgs<HomeFragmentArgs>()
 
     private val snackbarAnchorView: View?
         get() {
@@ -357,6 +359,13 @@ class HomeFragment : Fragment() {
         view.toolbar_wrapper.doOnLayout {
             if (!browsingModeManager.mode.isPrivate) {
                 SearchWidgetCFR(view.context) { view.toolbar_wrapper }.displayIfNecessary()
+            }
+        }
+
+        if (view.context.settings().accessibilityServicesEnabled && args.focusOnAddressBar) {
+            GlobalScope.launch(Main) {
+                view.toolbar_wrapper?.requestFocus()
+                view.toolbar_wrapper?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
             }
         }
     }
