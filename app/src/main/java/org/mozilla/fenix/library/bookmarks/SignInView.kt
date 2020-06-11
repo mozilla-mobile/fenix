@@ -22,7 +22,7 @@ class SignInView(
         get() = container
 
     val view: MaterialButton = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_sign_in, container, true)
+        .inflate(R.layout.component_bookmark, container, true)
         .findViewById(R.id.bookmark_folders_sign_in)
 
     init {
