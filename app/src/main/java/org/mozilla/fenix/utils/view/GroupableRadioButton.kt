@@ -16,7 +16,7 @@ interface GroupableRadioButton {
  */
 fun addToRadioGroup(vararg radios: GroupableRadioButton) {
     for (i in 0..radios.lastIndex) {
-        for (j in i+1..radios.lastIndex) {
+        for (j in (i + 1)..radios.lastIndex) {
             radios[i].addToRadioGroup(radios[j])
             radios[j].addToRadioGroup(radios[i])
         }
