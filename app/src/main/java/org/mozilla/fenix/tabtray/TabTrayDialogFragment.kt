@@ -4,11 +4,16 @@
 
 package org.mozilla.fenix.tabtray
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentManager
@@ -23,9 +28,9 @@ import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.concept.engine.prompt.ShareData
-import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.HomeActivity
@@ -33,11 +38,17 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.utils.allowUndo
-import org.mozilla.fenix.components.TabCollectionStorage
+
+object Timings {
+    var dismissStart = -1L
+    var dismissEnd = -1L
+    val dismissDuration get() = dismissEnd - dismissStart
+}
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
@@ -83,6 +94,24 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), TabTrayInteractor {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.TabTrayDialogStyle)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return object : AppCompatDialog(context, theme) {
+            override fun onBackPressed() {
+//                Thread.sleep(5000)
+                Timings.dismissStart = SystemClock.elapsedRealtime()
+                Log.e("lol", "onBackPressed")
+                super.onBackPressed()
+            }
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        Timings.dismissEnd = SystemClock.elapsedRealtime()
+        Log.e("lol onDismiss", "average ${Timings.dismissDuration}")
+//        Thread.sleep(5000)
     }
 
     override fun onCreateView(
