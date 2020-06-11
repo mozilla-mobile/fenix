@@ -10,7 +10,7 @@
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -21,6 +21,8 @@
             android:id="@+id/details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginBottom="20dp"
             android:textColor="?primaryText"
             android:textColorLink="?aboutLink"
@@ -30,7 +32,8 @@
             android:id="@+id/author_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/details"
+            app:layout_constraintTop_toBottomOf="@id/details"
+            app:layout_constraintStart_toStartOf="parent"
             style="@style/AboutHeaderContentText"
             android:text="@string/mozac_feature_addons_authors" />
 
@@ -38,7 +41,8 @@
             android:id="@+id/author_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/details"
+            app:layout_constraintTop_toBottomOf="@id/details"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_alignParentEnd="true"
             style="@style/AboutHeaderContentText"
             tools:text="@tools:sample/full_names" />
@@ -47,7 +51,7 @@
             android:id="@+id/author_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/author_text"
+            app:layout_constraintTop_toBottomOf="@id/author_label"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="?android:attr/listDivider"
@@ -57,7 +61,8 @@
             android:id="@+id/version_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/author_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/author_divider"
             style="@style/AboutHeaderContentText"
             android:text="@string/mozac_feature_addons_version" />
 
@@ -65,8 +70,8 @@
             android:id="@+id/version_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/author_divider"
-            android:layout_alignParentEnd="true"
+            app:layout_constraintTop_toBottomOf="@+id/author_divider"
+            app:layout_constraintEnd_toEndOf="parent"
             style="@style/AboutHeaderContentText"
             tools:text="1.2.3" />
 
@@ -74,7 +79,7 @@
             android:id="@+id/version_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/version_text"
+            app:layout_constraintTop_toBottomOf="@+id/version_text"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="?android:attr/listDivider"
@@ -84,7 +89,8 @@
             android:id="@+id/last_updated_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/version_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/version_divider"
             style="@style/AboutHeaderContentText"
             android:text="@string/mozac_feature_addons_last_updated" />
 
@@ -92,8 +98,8 @@
             android:id="@+id/last_updated_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/version_divider"
-            android:layout_alignParentEnd="true"
+            app:layout_constraintTop_toBottomOf="@+id/version_divider"
+            app:layout_constraintEnd_toEndOf="parent"
             style="@style/AboutHeaderContentText"
             tools:text="Oct 16, 2019" />
 
@@ -101,7 +107,7 @@
             android:id="@+id/last_updated_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/last_updated_text"
+            app:layout_constraintTop_toBottomOf="@+id/last_updated_text"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="?android:attr/listDivider"
@@ -111,7 +117,8 @@
             android:id="@+id/home_page_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/last_updated_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/last_updated_divider"
             style="@style/AboutHeaderContentText"
             android:textColor="?aboutLink"
             android:text="@string/mozac_feature_addons_home_page" />
@@ -120,7 +127,7 @@
             android:id="@+id/home_page_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/home_page_label"
+            app:layout_constraintTop_toBottomOf="@+id/home_page_label"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="?android:attr/listDivider"
@@ -129,7 +136,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/home_page_divider">
+            app:layout_constraintTop_toBottomOf="@+id/home_page_divider">
 
             <TextView
                 android:id="@+id/rating_label"
@@ -171,5 +178,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
