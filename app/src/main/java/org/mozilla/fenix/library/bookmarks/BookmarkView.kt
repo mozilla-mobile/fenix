@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.component_bookmark.view.*
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.library.SelectionInteractor
 
@@ -94,7 +96,8 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
 
 class BookmarkView(
     container: ViewGroup,
-    val interactor: BookmarkViewInteractor
+    val interactor: BookmarkViewInteractor,
+    private val navController: NavController
 ) : LibraryPageView(container), UserInteractionHandler {
 
     val view: View = LayoutInflater.from(container.context)
@@ -110,6 +113,9 @@ class BookmarkView(
         view.bookmark_list.apply {
             bookmarkAdapter = BookmarkAdapter(view.bookmarks_empty_view, interactor)
             adapter = bookmarkAdapter
+        }
+        view.bookmark_folders_sign_in.setOnClickListener {
+            navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
         }
     }
 
@@ -127,7 +133,10 @@ class BookmarkView(
                 setUiForNormalMode(state.tree)
             is BookmarkFragmentState.Mode.Selecting ->
                 setUiForSelectingMode(
-                    context.getString(R.string.bookmarks_multi_select_title, mode.selectedItems.size)
+                    context.getString(
+                        R.string.bookmarks_multi_select_title,
+                        mode.selectedItems.size
+                    )
                 )
         }
         view.bookmarks_progress_bar.isVisible = state.isLoading
