@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -30,7 +30,6 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.runIfFragmentIsAttached
@@ -76,7 +75,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
                     image = ContextCompat.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
-                    imageSelected = ContextCompat.getDrawable(requireContext(), R.drawable.ic_readermode_selected)!!,
+                    imageSelected =
+                        AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode_selected)!!,
                     contentDescription = requireContext().getString(R.string.browser_menu_read),
                     contentDescriptionSelected = requireContext().getString(R.string.browser_menu_read_close),
                     visible = {
@@ -147,8 +147,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         ) {
             browserToolbarView.view
         }
-        session?.register(toolbarSessionObserver, this, autoPause = true)
-        updateEngineBottomMargin()
+        session?.register(toolbarSessionObserver, viewLifecycleOwner, autoPause = true)
 
         if (settings.shouldShowFirstTimePwaFragment) {
             session?.register(
@@ -172,26 +171,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             requireComponents.core.tabCollectionStorage.getCollections()
                 .observe(viewLifecycleOwner, observer)
         }
-    }
-
-    private fun updateEngineBottomMargin() {
-        if (!FeatureFlags.dynamicBottomToolbar) {
-            val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
-
-            browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {
-                requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
-            } else {
-                0
-            }
-        }
-
-        val toolbarSessionObserver = TrackingProtectionOverlay(
-            context = requireContext(),
-            settings = requireContext().settings()
-        ) {
-            browserToolbarView.view
-        }
-        getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
     }
 
     override fun onResume() {

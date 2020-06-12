@@ -8,8 +8,7 @@
     android:id="@+id/top_site_item"
     android:layout_width="64dp"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp">
+    android:padding="8dp">
 
     <FrameLayout
         android:id="@+id/favicon_wrapper"
@@ -37,7 +36,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:singleLine="true"
-        android:textColor="?primaryText"
+        android:textColor="@color/top_site_title_text"
         android:textSize="10sp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"

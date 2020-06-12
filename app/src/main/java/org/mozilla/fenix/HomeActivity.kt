@@ -32,10 +32,13 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.WebExtensionState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.BrowserTabsTray
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.tabstray.TabsTray
-import mozilla.components.feature.contextmenu.ext.DefaultSelectionActionDelegate
+import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
+import mozilla.components.feature.search.BrowserStoreSearchAdapter
+import mozilla.components.feature.search.SearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -63,6 +66,7 @@ import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
+import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
@@ -70,7 +74,6 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.settings.DefaultBrowserSettingsFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
@@ -119,7 +122,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             SpeechProcessingIntentProcessor(this, components.analytics.metrics),
             StartSearchIntentProcessor(components.analytics.metrics),
             DeepLinkIntentProcessor(this),
-            OpenBrowserIntentProcessor(this, ::getIntentSessionId)
+            OpenBrowserIntentProcessor(this, ::getIntentSessionId),
+            OpenSpecificTabIntentProcessor(this)
         )
     }
 
@@ -225,8 +229,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     ): View? = when (name) {
         EngineView::class.java.name -> components.core.engine.createView(context, attrs).apply {
             selectionActionDelegate = DefaultSelectionActionDelegate(
-                store = components.core.store,
-                context = context,
+                getSearchAdapter(components.core.store),
+                resources = context.resources,
                 appName = getString(R.string.app_name)
             ) {
                 share(it)
@@ -267,6 +271,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
 
         super.onUserLeaveHint()
     }
+
+    protected open fun getSearchAdapter(store: BrowserStore): SearchAdapter =
+        BrowserStoreSearchAdapter(store)
 
     protected open fun getBreadcrumbMessage(destination: NavDestination): String {
         val fragmentName = resources.getResourceEntryName(destination.id)
@@ -382,8 +389,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtection ->
             TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromDefaultBrowserSettingsFragment ->
-            DefaultBrowserSettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSavedLoginsFragment ->
             SavedLoginsAuthFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddNewDeviceFragment ->

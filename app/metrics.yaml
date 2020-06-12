@@ -728,6 +728,34 @@ preferences:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
+  open_links_in_app:
+    type: string_list
+    description: >
+      Whether or not the user has the open links in apps feature enabled.
+      default: false
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11118
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/11446
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  theme:
+    type: string_list
+    description: >
+      The theme the user has enabled. "light," "dark," "system," or "battery"
+      default: "system" for API 28+, else "light"
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/11118
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/11446
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
 
 search.default_engine:
   code:
@@ -1756,15 +1784,17 @@ tracking_protection:
   etp_setting_changed:
     type: event
     description: |
-      A user changed their tracking protection level setting to either strict or
-      standard.
+      A user changed their tracking protection level setting to either strict,
+      standard, or custom.
     extra_keys:
       etp_setting:
-        description: "The new setting for ETP: strict, standard"
+        description: "The new setting for ETP: strict, standard, custom"
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/5312
+      - https://github.com/mozilla-mobile/fenix/issues/11063
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/5414#issuecomment-532847188
+      - https://github.com/mozilla-mobile/fenix/pull/11383
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"

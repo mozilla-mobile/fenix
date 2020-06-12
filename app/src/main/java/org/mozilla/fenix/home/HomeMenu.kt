@@ -99,7 +99,7 @@ class HomeMenu(
 
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
-            R.drawable.ic_bookmark_outline,
+            R.drawable.ic_bookmark_filled,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Bookmarks)
@@ -131,7 +131,7 @@ class HomeMenu(
 
         val syncedTabsItem = BrowserMenuImageText(
             context.getString(R.string.library_synced_tabs),
-            R.drawable.ic_tab_collection,
+            R.drawable.ic_synced_tabs,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.SyncedTabs)
@@ -156,15 +156,16 @@ class HomeMenu(
         if (shouldUseBottomToolbar) {
             listOfNotNull(
                 accountAuthItem,
+                helpItem,
                 whatsNewItem,
                 BrowserMenuDivider(),
-                bookmarksItem,
+                addons,
+                BrowserMenuDivider(),
                 historyItem,
+                bookmarksItem,
                 if (FeatureFlags.syncedTabs) syncedTabsItem else null,
                 BrowserMenuDivider(),
-                addons,
                 settingsItem,
-                helpItem,
                 if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null
             ).also { items ->
                 items.getHighlight()?.let { onHighlightPresent(it) }
@@ -172,16 +173,17 @@ class HomeMenu(
         } else {
             listOfNotNull(
                 if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null,
-                helpItem,
                 settingsItem,
-                addons,
-                accountAuthItem,
                 BrowserMenuDivider(),
+                if (FeatureFlags.syncedTabs) syncedTabsItem else null,
                 bookmarksItem,
                 historyItem,
-                if (FeatureFlags.syncedTabs) syncedTabsItem else null,
                 BrowserMenuDivider(),
-                whatsNewItem
+                addons,
+                BrowserMenuDivider(),
+                whatsNewItem,
+                helpItem,
+                accountAuthItem
             ).also { items ->
                 items.getHighlight()?.let { onHighlightPresent(it) }
             }

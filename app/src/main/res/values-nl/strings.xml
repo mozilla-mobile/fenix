@@ -109,8 +109,6 @@
     <string name="browser_menu_new_tab">Nieuw tabblad</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">In collectie opslaan</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Websiteprobleem melden</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Delen</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -126,8 +124,10 @@
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Mogelijk gemaakt door %1$s</string>
 
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Lezerweergave</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Lezerweergave sluiten</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Openen in app</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -456,6 +456,24 @@
     <string name="tabs_header_private_tabs_title">Privétabbladen</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Tabblad toevoegen</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Privétabblad toevoegen</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Privé</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Open tabbladen</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">In collectie opslaan</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Alle tabbladen delen</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Alle tabbladen sluiten</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Nieuw tabblad</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Naar startpagina</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Tabbladmodus wisselen</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Tabblad uit collectie verwijderen</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
@@ -721,6 +739,9 @@
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Opslaan</string>
 
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Weergeven</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Collectie %d</string>
 
@@ -953,20 +974,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Aanmelden mislukt</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Bescherm uzelf</string>
+    <string name="onboarding_tracking_protection_header_2">Automatische privacy</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s helpt voorkomen dat websites u online volgen.</string>
+    <string name="onboarding_tracking_protection_description_2">Privacy- en beveiligingsinstellingen blokkeren trackers, malware en bedrijven die u volgen.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Standaard</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Standaard (standaard)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Blokkeert minder trackers, maar staat toe dat pagina’s normaal worden geladen</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Blokkeert minder trackers. Pagina’s worden normaal geladen.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Streng (aanbevolen)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Streng</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Blokkeert meer trackers voor betere bescherming en prestaties, maar kan ervoor zorgen dat sommige websites niet goed werken</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Blokkeert meer trackers, advertenties en pop-ups. Pagina’s worden sneller geladen, maar sommige functies werken mogelijk niet.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1055,31 +1076,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Meer info</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Standaard</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Standaard (aanbevolen)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Standaard (standaard)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Gebalanceerd voor bescherming en prestaties.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Pagina’s worden normaal geladen, maar er worden minder trackers geblokkeerd.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Blokkeert minder trackers. Pagina’s worden normaal geladen.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Wat wordt geblokkeerd door standaard bescherming tegen volgen</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Streng</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Streng (standaard)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Sterkere bescherming tegen volgen en snellere prestaties, maar sommige websites werken mogelijk niet goed.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Streng (aanbevolen)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Sterkere bescherming, maar kan ervoor zorgen dat sommige websites of inhoud niet werken.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Blokkeert meer trackers, advertenties en pop-ups. Pagina’s worden sneller geladen, maar sommige functies werken mogelijk niet.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Wat wordt geblokkeerd door strenge bescherming tegen volgen</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Aangepast</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Kies welke trackers en scripts u wilt blokkeren</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Kies welke trackers en scripts u wilt blokkeren.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Wat wordt geblokkeerd door aangepaste bescherming tegen volgen</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1129,7 +1140,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Voorkomt dat externe advertenties, video’s en andere inhoud die volgcode bevat worden geladen. Kan invloed hebben op de functionaliteit van sommige websites.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s blokkeert trackers op deze website als het schild paars is. Tik erop om te zien wat er is geblokkeerd.</string>
+    <string name="etp_onboarding_cfr_message">Telkens als het schild paars is, heeft %s trackers op een website geblokkeerd. Tik voor meer info.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Beschermingen voor deze website staan AAN</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->

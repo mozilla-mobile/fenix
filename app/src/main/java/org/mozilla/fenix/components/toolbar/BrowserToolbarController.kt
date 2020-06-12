@@ -21,11 +21,13 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.support.ktx.kotlin.isUrl
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
@@ -36,6 +38,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
@@ -51,11 +54,12 @@ interface BrowserToolbarController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
     fun handleToolbarClick()
     fun handleTabCounterClick()
+    fun handleTabCounterItemInteraction(item: TabCounterMenuItem)
     fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
     fun handleReaderModePressed(enabled: Boolean)
 }
 
-@Suppress("LargeClass", "TooManyFunctions")
+@SuppressWarnings("LargeClass", "TooManyFunctions")
 class DefaultBrowserToolbarController(
     private val activity: Activity,
     private val navController: NavController,
@@ -72,7 +76,8 @@ class DefaultBrowserToolbarController(
     private val tabCollectionStorage: TabCollectionStorage,
     private val topSiteStorage: TopSiteStorage,
     private val sharedViewModel: SharedViewModel,
-    private val onTabCounterClicked: () -> Unit
+    private val onTabCounterClicked: () -> Unit,
+    private val onCloseTab: (Session) -> Unit
 ) : BrowserToolbarController {
 
     private val currentSession
@@ -97,12 +102,12 @@ class DefaultBrowserToolbarController(
 
     override fun handleToolbarPasteAndGo(text: String) {
         if (text.isUrl()) {
-            activity.components.core.sessionManager.selectedSession?.searchTerms = ""
+            sessionManager.selectedSession?.searchTerms = ""
             activity.components.useCases.sessionUseCases.loadUrl.invoke(text)
             return
         }
 
-        activity.components.core.sessionManager.selectedSession?.searchTerms = text
+        sessionManager.selectedSession?.searchTerms = text
         activity.components.useCases.searchUseCases.defaultSearch.invoke(text)
     }
 
@@ -131,6 +136,29 @@ class DefaultBrowserToolbarController(
         } else {
             readerModeController.hideReaderView()
             activity.components.analytics.metrics.track(Event.ReaderModeClosed)
+        }
+    }
+
+    override fun handleTabCounterItemInteraction(item: TabCounterMenuItem) {
+        when (item) {
+            is TabCounterMenuItem.CloseTab -> {
+                sessionManager.selectedSession?.let {
+                    // When closing the last tab we must show the undo snackbar in the home fragment
+                    if (sessionManager.sessionsOfType(it.private).count() == 1) {
+                        // The tab tray always returns to normal mode so do that here too
+                        (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.Normal
+                        navController.navigate(BrowserFragmentDirections.actionGlobalHome(it.id))
+                    } else {
+                        onCloseTab.invoke(it)
+                        activity.components.useCases.tabsUseCases.removeTab.invoke(it)
+                    }
+                }
+            }
+            is TabCounterMenuItem.NewTab -> {
+                (activity as HomeActivity).browsingModeManager.mode =
+                    BrowsingMode.fromBoolean(item.isPrivate)
+                navController.popBackStack(R.id.homeFragment, false)
+            }
         }
     }
 
@@ -254,7 +282,7 @@ class DefaultBrowserToolbarController(
 
                 // Strip the CustomTabConfig to turn this Session into a regular tab and then select it
                 customTabSession!!.customTabConfig = null
-                activity.components.core.sessionManager.select(customTabSession)
+                sessionManager.select(customTabSession)
 
                 // Switch to the actual browser which should now display our new selected session
                 activity.startActivity(openInFenixIntent)
