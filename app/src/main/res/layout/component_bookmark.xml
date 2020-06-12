@@ -34,9 +34,10 @@
             android:textColor="?secondaryText"
             android:textSize="16sp"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -45,9 +46,10 @@
             android:layout_marginHorizontal="16dp"
             android:layout_gravity="center"
             android:text="@string/bookmark_sign_in_button"
-            app:layout_constraintTop_toBottomOf="@+id/bookmarks_empty_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
