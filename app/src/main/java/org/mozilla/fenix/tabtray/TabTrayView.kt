@@ -12,13 +12,13 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -42,11 +42,13 @@ interface TabTrayInteractor {
 /**
  * View that contains and configures the BrowserAwesomeBar
  */
+@Suppress("LongParameterList")
 class TabTrayView(
     private val container: ViewGroup,
     private val interactor: TabTrayInteractor,
     isPrivate: Boolean,
     startingInLandscape: Boolean,
+    lifecycleScope: LifecycleCoroutineScope,
     private val filterTabs: ((TabSessionState) -> Boolean) -> Unit
 ) : LayoutContainer, TabLayout.OnTabSelectedListener {
     val fabView = LayoutInflater.from(container.context)
@@ -120,9 +122,9 @@ class TabTrayView(
                         hasLoaded = true
                         tray.layoutManager?.scrollToPosition(selectedBrowserTabIndex)
                         if (view.context.settings().accessibilityServicesEnabled) {
-                            GlobalScope.launch {
+                            lifecycleScope.launch {
                                 delay(SELECTION_DELAY.toLong())
-                                GlobalScope.launch(Main) {
+                                lifecycleScope.launch(Main) {
                                     tray.layoutManager?.findViewByPosition(selectedBrowserTabIndex)
                                         ?.requestFocus()
                                     tray.layoutManager?.findViewByPosition(selectedBrowserTabIndex)
