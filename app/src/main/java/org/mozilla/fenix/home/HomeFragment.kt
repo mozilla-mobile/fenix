@@ -362,6 +362,8 @@ class HomeFragment : Fragment() {
         }
 
         if (view.context.settings().accessibilityServicesEnabled && args.focusOnAddressBar) {
+            // We cannot put this in the fragment_home.xml file as it breaks tests
+            view.toolbar_wrapper.isFocusableInTouchMode = true
             viewLifecycleOwner.lifecycleScope.launch {
                 view.toolbar_wrapper?.requestFocus()
                 view.toolbar_wrapper?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
