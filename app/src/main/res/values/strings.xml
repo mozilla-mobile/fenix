@@ -692,10 +692,13 @@
     <string name="collections_header">Collections</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Collection menu</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">No collections</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Your collections will be shown here.</string>
+    <!-- No Collections Message Header -->
+    <string name="no_collections_header2">Collect the things that matter to you</string>
+    <!-- No Collections Message Description -->
+    <string name="no_collections_description2">Group together similar searches, sites, and tabs for quick access later.</string>
+    <!-- No Collections Button Message -->
+    <string name="no_collections_button">Save tabs to collection</string>
+
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Select Tabs</string>
     <!-- Title for the "select collection" step of the collection creator -->
