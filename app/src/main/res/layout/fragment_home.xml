@@ -104,6 +104,7 @@
             android:clickable="true"
             android:contentDescription="@string/search_hint"
             android:focusable="true"
+            android:focusableInTouchMode="true"
             app:layout_constraintBottom_toBottomOf="@id/bottom_bar"
             app:layout_constraintEnd_toStartOf="@+id/accessory_button_barrier"
             app:layout_constraintStart_toStartOf="parent"

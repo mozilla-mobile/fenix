@@ -47,7 +47,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -363,7 +362,7 @@ class HomeFragment : Fragment() {
         }
 
         if (view.context.settings().accessibilityServicesEnabled && args.focusOnAddressBar) {
-            GlobalScope.launch(Main) {
+            viewLifecycleOwner.lifecycleScope.launch {
                 view.toolbar_wrapper?.requestFocus()
                 view.toolbar_wrapper?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
             }
