@@ -545,6 +545,10 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SearchWidgetCFRAddWidgetPressed -> EventWrapper<NoExtraKeys>(
             { SearchWidgetCfr.addWidgetPressed.record(it) }
         )
+        is Event.TabCounterMenuItemTapped -> EventWrapper(
+            { Events.tabCounterMenuAction.record(it) },
+            { Events.tabCounterMenuActionKeys.valueOf(it) }
+        )
 
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
