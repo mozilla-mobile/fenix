@@ -14,7 +14,9 @@ import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.components
 import java.security.InvalidParameterException
 
@@ -41,6 +43,12 @@ open class ExternalAppBrowserActivity : HomeActivity() {
             finish()
             return null
         }
+
+        if (navController.alreadyOnDestination(R.id.externalAppBrowserFragment)) {
+            return null
+        }
+
+        ensureSessionIsReleased()
 
         val manifest = intent
             .getWebAppManifest()
@@ -73,5 +81,13 @@ open class ExternalAppBrowserActivity : HomeActivity() {
                 true
             }
         }
+    }
+
+    private fun ensureSessionIsReleased() {
+        val sessionManager = components.core.sessionManager
+        val sessionId = intent.getSessionId() ?: return
+        val session = sessionManager.findSessionById(sessionId) ?: return
+
+        sessionManager.getOrCreateEngineSession(session).releaseFromView()
     }
 }

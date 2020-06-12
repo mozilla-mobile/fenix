@@ -19,6 +19,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
@@ -114,6 +115,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
+    protected val navController: NavController
+        get() = navHost.navController
+
     private val externalSourceIntentProcessors by lazy {
         listOf(
             SpeechProcessingIntentProcessor(this, components.analytics.metrics),
@@ -186,7 +190,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
     }
 
-    final override fun onPause() {
+    override fun onPause() {
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {

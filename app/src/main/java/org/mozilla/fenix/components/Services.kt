@@ -11,8 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.feature.accounts.FirefoxAccountsAuthFeature
 import mozilla.components.feature.app.links.AppLinksInterceptor
+import mozilla.components.feature.pwa.WebAppInterceptor
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Mockable
@@ -42,6 +44,12 @@ class Services(
                 PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                     context.getPreferenceKey(R.string.pref_key_open_links_in_external_app), false)
             }
+        )
+    }
+
+    val webAppInterceptor by lazy {
+        WebAppInterceptor(
+            context.application.components.core.webAppManifestStorage
         )
     }
 }

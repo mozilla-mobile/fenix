@@ -36,6 +36,12 @@ class AppRequestInterceptor(private val context: Context) : RequestInterceptor {
                 engineSession, uri, hasUserGesture, isSameDomain)
         }
 
+        if (result == null) {
+            result = context.components.services.webAppInterceptor.onLoadRequest(
+                engineSession, uri, hasUserGesture, isSameDomain
+            )
+        }
+
         return result
     }
 
