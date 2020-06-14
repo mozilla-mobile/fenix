@@ -5,6 +5,9 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
@@ -17,6 +20,24 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  * Implementation of Robot Pattern for the History three dot menu.
  */
 class ThreeDotMenuHistoryItemRobot {
+
+    fun verifyHistoryCopyButton() = assertHistoryCopyButton()
+
+    fun verifyHistoryShareButton() = assertHistoryShareButton()
+
+    fun verifyHistoryOpenInNewTabButton() = assertHistoryOpenInNewTabButton()
+
+    fun verifyHistoryOpenInPrivateTabButton() = assertHistoryOpenInPrivateTabButton()
+
+    fun verifyHistoryDeleteButton() = assertHistoryDeleteButton()
+
+    fun verifyHistoryMenuItems() {
+        verifyHistoryCopyButton()
+        verifyHistoryShareButton()
+        verifyHistoryOpenInNewTabButton()
+        verifyHistoryOpenInPrivateTabButton()
+        verifyHistoryDeleteButton()
+    }
 
     class Transition {
 
@@ -72,3 +93,28 @@ private fun openInNewPrivateTabButton() =
     onView(withText(R.string.history_menu_open_in_private_tab_button))
 
 private fun deleteButton() = onView(withText(R.string.history_delete_item))
+
+private fun assertHistoryCopyButton() {
+    copyButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHistoryShareButton() {
+    shareButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHistoryOpenInNewTabButton() {
+    openInNewNormalTabButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHistoryOpenInPrivateTabButton() {
+    openInNewPrivateTabButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHistoryDeleteButton() {
+    deleteButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}

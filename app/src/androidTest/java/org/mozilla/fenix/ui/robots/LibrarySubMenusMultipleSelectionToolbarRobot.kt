@@ -71,6 +71,12 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
     }
 
     class Transition {
+        fun closeShareDialogReturnToHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
+            closeShareButton().click()
+
+            HistoryRobot().interact()
+            return HistoryRobot.Transition()
+        }
         fun closeToolbarReturnToHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
             closeToolbarButton().click()
 
@@ -117,6 +123,8 @@ private fun closeToolbarButton() = onView(withContentDescription("Navigate up"))
 private fun shareHistoryButton() = onView(withId(R.id.share_history_multi_select))
 
 private fun shareBookmarksButton() = onView(withId(R.id.share_bookmark_multi_select))
+
+private fun closeShareButton() = onView(withId(R.id.closeButton))
 
 private fun openInNewTabButton() = onView(withText("Open in new tab"))
 

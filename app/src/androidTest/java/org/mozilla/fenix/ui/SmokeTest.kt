@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -14,6 +15,7 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -59,6 +61,41 @@ class SmokeTest {
             }.openHomeScreen {
                 verifyHomeScreen()
             }
+        }
+    }
+
+    @Test
+    fun verifyThreeDotMenuHistoryFunctionality() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        // val defaultWebPageTitle = "Test_Page_1"
+
+        homeScreen {
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            }.openTabDrawer {
+            }.openHomeScreen {
+            }
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+        }.openThreeDotMenu {
+            verifyHistoryMenuItems()
+        }.clickCopy {
+            verifyCopySnackBarText()
+        }.openThreeDotMenu {
+        }.clickShare {
+            verifyShareOverlay()
+            verifyShareTabTitle()
+            verifyShareTabFavicon()
+        }.closeShareDialogReturnToHistory {
+        }.openThreeDotMenu {
+        }.clickOpenInNormalTab {
+        }.openTabDrawer {
+        }.openHomeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
         }
     }
 }

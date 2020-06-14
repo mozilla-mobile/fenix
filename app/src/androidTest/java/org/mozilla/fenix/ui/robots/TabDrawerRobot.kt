@@ -17,11 +17,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.text
@@ -62,6 +58,16 @@ class TabDrawerRobot {
             allOf(
                 withId(R.id.mozac_browser_tabstray_close),
                 withContentDescription("Close tab $title")
+            )
+        )
+        closeButton.perform(click())
+    }
+
+    fun closeTabViaXButton(index:Int) {
+        val closeButton = onView(
+            allOf(
+                withParentIndex(index),
+                withId(R.id.mozac_browser_tabstray_close)
             )
         )
         closeButton.perform(click())
