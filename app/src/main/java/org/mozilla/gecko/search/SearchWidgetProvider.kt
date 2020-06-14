@@ -10,6 +10,7 @@ import android.appwidget.AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -49,11 +50,12 @@ class SearchWidgetProvider : AppWidgetProvider() {
         appWidgetIds.forEach { appWidgetId ->
             val currentWidth = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(OPTION_APPWIDGET_MIN_WIDTH)
             val layoutSize = getLayoutSize(currentWidth)
+            val isDarkTheme = isDarkTheme(context)
             // It's not enough to just hide the microphone on the "small" sized widget due to its design.
             // The "small" widget needs a complete redesign, meaning it needs a new layout file.
             val showMic = (voiceSearchIntent != null)
-            val layout = getLayout(layoutSize, showMic)
             val text = getText(layoutSize, context)
+            val layout = getLayout(layoutSize, showMic, isDarkTheme)
 
             val views = createRemoteViews(context, layout, textSearchIntent, voiceSearchIntent, text)
             appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -71,8 +73,9 @@ class SearchWidgetProvider : AppWidgetProvider() {
 
         val currentWidth = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(OPTION_APPWIDGET_MIN_WIDTH)
         val layoutSize = getLayoutSize(currentWidth)
+        val isDarkTheme = isDarkTheme(context)
         val showMic = (voiceSearchIntent != null)
-        val layout = getLayout(layoutSize, showMic)
+        val layout = getLayout(layoutSize, showMic, isDarkTheme)
         val text = getText(layoutSize, context)
 
         val views = createRemoteViews(context, layout, textSearchIntent, voiceSearchIntent, text)
@@ -90,6 +93,16 @@ class SearchWidgetProvider : AppWidgetProvider() {
                 PendingIntent.getActivity(context,
                     REQUEST_CODE_NEW_TAB, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
+    }
+
+    /**
+     * Checks if Android system theme is set to dark.
+     */
+    private fun isDarkTheme(context: Context): Boolean {
+        return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            else -> false
+        }
     }
 
     /**
@@ -119,17 +132,23 @@ class SearchWidgetProvider : AppWidgetProvider() {
         return RemoteViews(context.packageName, layout).apply {
             setIcon(context)
             when (layout) {
-                R.layout.search_widget_extra_small_v1,
-                R.layout.search_widget_extra_small_v2,
-                R.layout.search_widget_small_no_mic -> {
+                R.layout.search_widget_extra_small_v1_light,
+                R.layout.search_widget_extra_small_v1_dark,
+                R.layout.search_widget_extra_small_v2_light,
+                R.layout.search_widget_extra_small_v2_dark,
+                R.layout.search_widget_small_no_mic_light,
+                R.layout.search_widget_small_no_mic_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                 }
-                R.layout.search_widget_small -> {
+                R.layout.search_widget_small_light,
+                R.layout.search_widget_small_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_voice, voiceSearchIntent)
                 }
-                R.layout.search_widget_medium,
-                R.layout.search_widget_large -> {
+                R.layout.search_widget_medium_light,
+                R.layout.search_widget_medium_dark,
+                R.layout.search_widget_large_light,
+                R.layout.search_widget_large_dark -> {
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab, textSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_voice, voiceSearchIntent)
                     setOnClickPendingIntent(R.id.button_search_widget_new_tab_icon, textSearchIntent)
@@ -182,15 +201,29 @@ class SearchWidgetProvider : AppWidgetProvider() {
          * Get the layout resource to use for the search widget.
          */
         @VisibleForTesting
-        internal fun getLayout(size: SearchWidgetProviderSize, showMic: Boolean) = when (size) {
-            SearchWidgetProviderSize.LARGE -> R.layout.search_widget_large
-            SearchWidgetProviderSize.MEDIUM -> R.layout.search_widget_medium
-            SearchWidgetProviderSize.SMALL -> {
-                if (showMic) R.layout.search_widget_small
-                else R.layout.search_widget_small_no_mic
-            }
-            SearchWidgetProviderSize.EXTRA_SMALL_V2 -> R.layout.search_widget_extra_small_v2
-            SearchWidgetProviderSize.EXTRA_SMALL_V1 -> R.layout.search_widget_extra_small_v1
+        internal fun getLayout(size: SearchWidgetProviderSize, showMic: Boolean, isDarkTheme: Boolean) = when (size) {
+            SearchWidgetProviderSize.LARGE ->
+                if (isDarkTheme) R.layout.search_widget_large_dark
+                else R.layout.search_widget_large_light
+
+            SearchWidgetProviderSize.MEDIUM ->
+                if (isDarkTheme) R.layout.search_widget_medium_dark
+                else R.layout.search_widget_medium_light
+
+            SearchWidgetProviderSize.SMALL ->
+                if (isDarkTheme) {
+                    if (showMic) R.layout.search_widget_small_dark else R.layout.search_widget_small_no_mic_dark
+                } else {
+                    if (showMic) R.layout.search_widget_small_light else R.layout.search_widget_small_no_mic_light
+                }
+
+            SearchWidgetProviderSize.EXTRA_SMALL_V2 ->
+                if (isDarkTheme) R.layout.search_widget_extra_small_v2_dark
+                else R.layout.search_widget_extra_small_v2_light
+
+            SearchWidgetProviderSize.EXTRA_SMALL_V1 ->
+                if (isDarkTheme) R.layout.search_widget_extra_small_v1_dark
+                else R.layout.search_widget_extra_small_v1_light
         }
 
         /**

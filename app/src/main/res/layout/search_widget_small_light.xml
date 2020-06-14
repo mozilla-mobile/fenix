@@ -20,6 +20,6 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:padding="10dp"
-        app:srcCompat="@drawable/ic_microphone_widget"
+        app:srcCompat="@drawable/ic_microphone_widget_light"
         android:scaleType="centerInside" />
 </LinearLayout>

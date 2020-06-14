@@ -368,7 +368,10 @@
     <color name="button_text_color">#312A65</color>
 
     <!-- Search Widget -->
-    <color name="search_widget_text">#737373</color>
+    <color name="search_widget_text_light">#737373</color>
+    <color name="search_widget_text_dark">#FBFBFE</color>
+    <color name="search_widget_background_light">#FBFBFE</color>
+    <color name="search_widget_background_dark">#32313C</color>
 
     <!-- Private Browsing Mode Persistent Notification -->
     <color name="pbm_notification_color">#592ACB</color>

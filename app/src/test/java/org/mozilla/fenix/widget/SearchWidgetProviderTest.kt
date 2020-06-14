@@ -40,60 +40,60 @@ class SearchWidgetProviderTest {
     @Test
     fun testGetLargeLayout() {
         assertEquals(
-            R.layout.search_widget_large,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = false)
+            R.layout.search_widget_large_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = false, isDarkTheme = false)
         )
         assertEquals(
-            R.layout.search_widget_large,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = true)
+            R.layout.search_widget_large_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = true, isDarkTheme = false)
         )
     }
 
     @Test
     fun testGetMediumLayout() {
         assertEquals(
-            R.layout.search_widget_medium,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = false)
+            R.layout.search_widget_medium_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = false, isDarkTheme = false)
         )
         assertEquals(
-            R.layout.search_widget_medium,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = true)
+            R.layout.search_widget_medium_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = true, isDarkTheme = false)
         )
     }
 
     @Test
     fun testGetSmallLayout() {
         assertEquals(
-            R.layout.search_widget_small_no_mic,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = false)
+            R.layout.search_widget_small_no_mic_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = false, isDarkTheme = false)
         )
         assertEquals(
-            R.layout.search_widget_small,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = true)
+            R.layout.search_widget_small_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = true, isDarkTheme = false)
         )
     }
 
     @Test
     fun testGetExtraSmall2Layout() {
         assertEquals(
-            R.layout.search_widget_extra_small_v2,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = false)
+            R.layout.search_widget_extra_small_v2_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = false, isDarkTheme = false)
         )
         assertEquals(
-            R.layout.search_widget_extra_small_v2,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = true)
+            R.layout.search_widget_extra_small_v2_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = true, isDarkTheme = false)
         )
     }
 
     @Test
     fun testGetExtraSmall1Layout() {
         assertEquals(
-            R.layout.search_widget_extra_small_v1,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = false)
+            R.layout.search_widget_extra_small_v1_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = false, isDarkTheme = false)
         )
         assertEquals(
-            R.layout.search_widget_extra_small_v1,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = true)
+            R.layout.search_widget_extra_small_v1_light,
+            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = true, isDarkTheme = false)
         )
     }
 

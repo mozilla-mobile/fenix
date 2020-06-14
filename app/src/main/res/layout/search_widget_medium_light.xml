@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="192dp"
     android:layout_height="50dp"
     android:layout_gravity="center"
     android:background="@drawable/rounded_white_corners">
@@ -27,9 +26,9 @@
         android:gravity="start|center_vertical"
         android:letterSpacing="-0.025"
         android:textAlignment="viewStart"
-        android:textColor="@color/search_widget_text"
+        android:textColor="@color/search_widget_text_light"
         android:textSize="15sp"
-        tools:text="Search the web"/>
+        tools:text="Search"/>
 
     <ImageButton
         android:id="@+id/button_search_widget_voice"
@@ -39,5 +38,5 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="1dp"
-        android:background="@drawable/ic_microphone_widget_padded" />
+        android:background="@drawable/ic_microphone_widget_padded_light" />
 </RelativeLayout>
