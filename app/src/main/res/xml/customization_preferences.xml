@@ -43,5 +43,11 @@
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_bottom"
             android:title="@string/preference_bottom_toolbar" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_toolbar_dynamic"
+            android:title="@string/preference_dynamic_toolbar"
+            android:layout="@layout/checkbox_left_preference"
+            app:iconSpaceReserved="false" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

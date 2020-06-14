@@ -34,7 +34,7 @@ class CustomTabsIntegration(
         // Remove toolbar shadow
         toolbar.elevation = 0f
 
-        if (!FeatureFlags.dynamicBottomToolbar) {
+        if (!activity.settings().shouldUseDynamicToolbar) {
             // Reduce margin height of EngineView from the top for the toolbar
             engineLayout.run {
                 (layoutParams as ViewGroup.MarginLayoutParams).apply {

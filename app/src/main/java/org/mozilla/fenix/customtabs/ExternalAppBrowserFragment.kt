@@ -106,7 +106,9 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         trustedScopes
                     ) { toolbarVisible ->
                         if (!toolbarVisible) { engineView.setDynamicToolbarMaxHeight(0) }
-                        if (!FeatureFlags.dynamicBottomToolbar) { updateLayoutMargins(inFullScreen = !toolbarVisible) }
+                        if (!activity.settings().shouldUseDynamicToolbar) {
+                            updateLayoutMargins(inFullScreen = !toolbarVisible)
+                        }
                     },
                     owner = this,
                     view = toolbar

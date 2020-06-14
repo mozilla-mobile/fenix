@@ -348,6 +348,11 @@ class Settings private constructor(
         default = !touchExplorationIsEnabled && !switchServiceIsEnabled
     )
 
+    var shouldUseDynamicToolbar by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_toolbar_dynamic),
+        default = true
+    )
+
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
      * then it is *likely* a switch service is enabled. We are assuming this to be the case based on #7486

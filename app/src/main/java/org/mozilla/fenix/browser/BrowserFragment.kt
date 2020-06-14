@@ -135,7 +135,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     }
 
     private fun updateEngineBottomMargin() {
-        if (!FeatureFlags.dynamicBottomToolbar) {
+        if (!requireContext().settings().shouldUseDynamicToolbar) {
             val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
 
             browserEngine.bottomMargin = if (requireContext().settings().shouldUseBottomToolbar) {

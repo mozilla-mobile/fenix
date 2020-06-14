@@ -21,11 +21,6 @@ object FeatureFlags {
     const val asFeatureSyncDisabled = false
 
     /**
-     * Enables dynamic bottom toolbar
-     */
-    val dynamicBottomToolbar = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables deleting individual tracking protection exceptions.
      */
     val deleteIndividualTrackingProtectionExceptions = Config.channel.isNightlyOrDebug

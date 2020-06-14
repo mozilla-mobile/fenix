@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.CheckBoxPreference
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -136,8 +137,14 @@ class CustomizationFragment : PreferenceFragmentCompat() {
             ))
         }
 
+        val keyToolbarDynamic = getPreferenceKey(R.string.pref_key_toolbar_dynamic)
+        val dynamicPreference = requireNotNull(findPreference<CheckBoxPreference>(keyToolbarDynamic))
+        dynamicPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
+
+
         topPreference.setCheckedWithoutClickListener(!requireContext().settings().shouldUseBottomToolbar)
         bottomPreference.setCheckedWithoutClickListener(requireContext().settings().shouldUseBottomToolbar)
+        dynamicPreference.isChecked = requireContext().settings().shouldUseDynamicToolbar
 
         topPreference.addToRadioGroup(bottomPreference)
         bottomPreference.addToRadioGroup(topPreference)

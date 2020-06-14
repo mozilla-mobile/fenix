@@ -259,7 +259,7 @@ class BrowserToolbarView(
     }
 
     fun expand() {
-        if (settings.shouldUseBottomToolbar && FeatureFlags.dynamicBottomToolbar) {
+        if (settings.shouldUseBottomToolbar && settings.shouldUseDynamicToolbar) {
             (view.layoutParams as CoordinatorLayout.LayoutParams).apply {
                 (behavior as BrowserToolbarBottomBehavior).forceExpand(view)
             }
@@ -270,11 +270,13 @@ class BrowserToolbarView(
 
     /**
      * Dynamically sets scroll flags for the toolbar when the user does not have a screen reader enabled
-     * Note that the bottom toolbar has a feature flag for being dynamic, so it may not get flags set.
+     * and dynamic toolbar preference is set to true
+     * Note that the bottom toolbar may not get flags set.
      */
     fun setScrollFlags(shouldDisableScroll: Boolean = false) {
         if (view.context.settings().shouldUseBottomToolbar) {
-            if (FeatureFlags.dynamicBottomToolbar && view.layoutParams is CoordinatorLayout.LayoutParams) {
+            if (view.context.settings().shouldUseDynamicToolbar &&
+                view.layoutParams is CoordinatorLayout.LayoutParams) {
                 (view.layoutParams as CoordinatorLayout.LayoutParams).apply {
                     behavior = BrowserToolbarBottomBehavior(view.context, null)
                 }
@@ -285,7 +287,8 @@ class BrowserToolbarView(
 
         val params = view.layoutParams as AppBarLayout.LayoutParams
 
-        params.scrollFlags = when (view.context.settings().shouldUseFixedTopToolbar || shouldDisableScroll) {
+        params.scrollFlags = when (!view.context.settings().shouldUseDynamicToolbar ||
+                view.context.settings().shouldUseFixedTopToolbar || shouldDisableScroll) {
             true -> {
                 // Force expand the toolbar so the user is not stuck with a hidden toolbar
                 expand()

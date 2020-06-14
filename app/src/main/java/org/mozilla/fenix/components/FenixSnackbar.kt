@@ -119,6 +119,7 @@ class FenixSnackbar private constructor(
 
             val callback = FenixSnackbarCallback(content)
             val shouldUseBottomToolbar = view.context.settings().shouldUseBottomToolbar
+            val shouldUseDynamicToolbar = view.context.settings().shouldUseDynamicToolbar
             val toolbarHeight = view.context.resources
                 .getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
@@ -137,7 +138,7 @@ class FenixSnackbar private constructor(
                         // can't intelligently position the snackbar on the upper most view.
                         // Ideally we should not pass ContentFrameLayout in, but it's the only
                         // way to display snackbars through a fragment transition.
-                        (!FeatureFlags.dynamicBottomToolbar || view is ContentFrameLayout)
+                        (!shouldUseDynamicToolbar || view is ContentFrameLayout)
                     ) {
                         toolbarHeight
                     } else {

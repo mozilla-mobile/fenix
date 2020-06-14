@@ -505,7 +505,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun initializeEngineView(toolbarHeight: Int) {
-        if (FeatureFlags.dynamicBottomToolbar) {
+        if (requireContext().settings().shouldUseDynamicToolbar) {
             engineView.setDynamicToolbarMaxHeight(toolbarHeight)
 
             val behavior = if (requireContext().settings().shouldUseBottomToolbar) {
@@ -515,10 +515,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             }
 
             (swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams).behavior = behavior
-        } else {
-            if (!requireContext().settings().shouldUseBottomToolbar) {
-                engineView.setDynamicToolbarMaxHeight(toolbarHeight)
-            }
         }
     }
 
@@ -838,7 +834,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             activity?.enterToImmersiveMode()
             browserToolbarView.view.visibility = View.GONE
 
-            if (FeatureFlags.dynamicBottomToolbar) {
+            if (requireContext().settings().shouldUseDynamicToolbar) {
                 engineView.setDynamicToolbarMaxHeight(0)
                 browserToolbarView.expand()
                 // Without this, fullscreen has a margin at the top.
@@ -850,12 +846,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 activity.themeManager.applyStatusBarTheme(activity)
             }
             browserToolbarView.view.visibility = View.VISIBLE
-            if (FeatureFlags.dynamicBottomToolbar) {
+            if (requireContext().settings().shouldUseDynamicToolbar) {
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
                 engineView.setDynamicToolbarMaxHeight(toolbarHeight)
             }
         }
-        if (!FeatureFlags.dynamicBottomToolbar) {
+        if (!requireContext().settings().shouldUseDynamicToolbar) {
             updateLayoutMargins(inFullScreen)
         }
     }
