@@ -32,12 +32,14 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
+import mozilla.components.support.ktx.android.os.resetAfter
 import mozilla.components.support.locale.LocaleAwareApplication
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.FeatureFlags.webPushIntegration
+import org.mozilla.fenix.StrictModeManager.enableStrictMode
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.settings
@@ -49,8 +51,6 @@ import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
-import mozilla.components.support.ktx.android.os.resetAfter
-import org.mozilla.fenix.StrictModeManager.enableStrictMode
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -181,8 +181,9 @@ open class FenixApplication : LocaleAwareApplication() {
                         httpClient = components.core.client,
                         kintoEndpoint = KINTO_ENDPOINT_PROD
                     )
-                )
-                ExperimentsManager.initSearchWidgetExperiment(this)
+                ) {
+                    ExperimentsManager.initSearchWidgetExperiment(this)
+                }
             }
         } else {
             // We should make a better way to opt out for when we have more experiments
