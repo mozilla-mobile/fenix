@@ -173,6 +173,11 @@ sealed class Event {
     object SearchWidgetCFRNotNowPressed : Event()
     object SearchWidgetCFRAddWidgetPressed : Event()
 
+    object ContextualHintETPDisplayed : Event()
+    object ContextualHintETPDismissed : Event()
+    object ContextualHintETPOutsideTap : Event()
+    object ContextualHintETPInsideTap : Event()
+
     // Interaction events with extras
 
     data class PreferenceToggled(
