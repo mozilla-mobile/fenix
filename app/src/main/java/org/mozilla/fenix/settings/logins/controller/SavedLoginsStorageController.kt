@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.controller
 
 import android.content.Context
 import androidx.lifecycle.lifecycleScope
@@ -17,11 +17,15 @@ import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.logins.LoginsAction
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
+import org.mozilla.fenix.settings.logins.mapToSavedLogin
 
 /**
  * Controller for all saved logins interactions with the password storage component
  */
-open class SavedLoginsController(
+open class SavedLoginsStorageController(
     context: Context,
     private val navController: NavController,
     private val loginsFragmentStore: LoginsFragmentStore
@@ -74,8 +78,9 @@ open class SavedLoginsController(
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
                 val directions =
-                    EditLoginFragmentDirections
-                        .actionEditLoginFragmentToLoginDetailFragment(loginId)
+                    EditLoginFragmentDirections.actionEditLoginFragmentToLoginDetailFragment(
+                        loginId
+                    )
                 navController.navigate(directions)
             }
         }
@@ -92,7 +97,11 @@ open class SavedLoginsController(
 
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
-        loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
+        loginsFragmentStore.dispatch(
+            LoginsAction.UpdateLoginsList(
+                listOf(login)
+            )
+        )
     }
 
     fun findPotentialDuplicates(loginId: String) {
@@ -108,7 +117,9 @@ open class SavedLoginsController(
                 withContext(Dispatchers.Main) {
                     val savedLoginList = list.map { it.mapToSavedLogin() }
                     loginsFragmentStore.dispatch(
-                        LoginsAction.ListOfDupes(savedLoginList)
+                        LoginsAction.ListOfDupes(
+                            savedLoginList
+                        )
                     )
                 }
             }
@@ -134,7 +145,9 @@ open class SavedLoginsController(
                         it.guid == loginId
                     }.first()
                     loginsFragmentStore.dispatch(
-                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
+                        LoginsAction.UpdateCurrentLogin(
+                            login.mapToSavedLogin()
+                        )
                     )
                 }
             }

@@ -10,6 +10,8 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.logins.controller.LoginsListController
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import kotlin.random.Random
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -17,11 +19,12 @@ class SavedLoginsInteractorTest {
     private val listController: LoginsListController = mockk(relaxed = true)
     private val savedLoginClicked: (SavedLogin) -> Unit = mockk(relaxed = true)
     private val learnMore: () -> Unit = mockk(relaxed = true)
-    private val interactor = SavedLoginsInteractor(
-        listController,
-        savedLoginClicked,
-        learnMore
-    )
+    private val interactor =
+        SavedLoginsInteractor(
+            listController,
+            savedLoginClicked,
+            learnMore
+        )
 
     @Test
     fun itemClicked() {

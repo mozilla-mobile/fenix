@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.fragment
 
 import android.annotation.TargetApi
 import android.app.Activity.RESULT_OK
@@ -271,7 +271,8 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToSavedLoginsFragment() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
-        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
+        val directions =
+            SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
         findNavController().navigate(directions)
     }
 
@@ -282,12 +283,14 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     private fun navigateToAccountProblemFragment() {
-        val directions = SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
+        val directions =
+            SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
         findNavController().navigate(directions)
     }
 
     private fun navigateToTurnOnSyncFragment() {
-        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
+        val directions =
+            SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
         findNavController().navigate(directions)
     }
 

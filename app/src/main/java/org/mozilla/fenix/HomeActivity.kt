@@ -78,7 +78,7 @@ import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
-import org.mozilla.fenix.settings.logins.SavedLoginsAuthFragmentDirections
+import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections

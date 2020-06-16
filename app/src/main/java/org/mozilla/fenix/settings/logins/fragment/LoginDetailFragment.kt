@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -34,6 +34,11 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
+import org.mozilla.fenix.settings.logins.view.LoginDetailView
+import org.mozilla.fenix.settings.logins.LoginsDataStore
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.SavedLogin
 
 /**
  * Displays saved login information for a single website.
@@ -69,7 +74,9 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 )
             )
         }
-        loginDetailView = LoginDetailView(view?.findViewById(R.id.loginDetailLayout))
+        loginDetailView = LoginDetailView(
+            view?.findViewById(R.id.loginDetailLayout)
+        )
 
         return view
     }
@@ -79,7 +86,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        datastore = LoginsDataStore(this, savedLoginsStore)
+        datastore = LoginsDataStore(
+            this,
+            savedLoginsStore
+        )
         datastore.fetchLoginDetails(args.savedLoginId)
 
         consumeFrom(savedLoginsStore) {
@@ -166,7 +176,9 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     private fun editLogin() {
         requireComponents.analytics.metrics.track(Event.EditLogin)
         val directions =
-            LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(login!!)
+            LoginDetailFragmentDirections.actionLoginDetailFragmentToEditLoginFragment(
+                login!!
+            )
         findNavController().navigate(directions)
     }
 

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,6 +43,16 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.logins.LoginsAction
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.controller.LoginsListController
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
+import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
+import org.mozilla.fenix.settings.logins.view.SavedLoginsView
+import org.mozilla.fenix.settings.logins.SortingStrategy
+import org.mozilla.fenix.settings.logins.mapToSavedLogin
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
@@ -95,8 +105,15 @@ class SavedLoginsFragment : Fragment() {
             )
 
         savedLoginsInteractor =
-            SavedLoginsInteractor(savedLoginsController, ::itemClicked, ::openLearnMore)
-        savedLoginsView = SavedLoginsView(view.savedLoginsLayout, savedLoginsInteractor)
+            SavedLoginsInteractor(
+                savedLoginsController,
+                ::itemClicked,
+                ::openLearnMore
+            )
+        savedLoginsView = SavedLoginsView(
+            view.savedLoginsLayout,
+            savedLoginsInteractor
+        )
         loadAndMapLogins()
 
         return view
@@ -125,7 +142,11 @@ class SavedLoginsFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                savedLoginsStore.dispatch(LoginsAction.FilterLogins(newText))
+                savedLoginsStore.dispatch(
+                    LoginsAction.FilterLogins(
+                        newText
+                    )
+                )
                 return false
             }
         })
@@ -147,7 +168,9 @@ class SavedLoginsFragment : Fragment() {
     private fun itemClicked(item: SavedLogin) {
         context?.components?.analytics?.metrics?.track(Event.OpenOneLogin)
         val directions =
-            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(item.guid)
+            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(
+                item.guid
+            )
         findNavController().navigate(directions)
     }
 
@@ -170,7 +193,8 @@ class SavedLoginsFragment : Fragment() {
             logins?.let {
                 withContext(Main) {
                     savedLoginsStore.dispatch(
-                        LoginsAction.UpdateLoginsList(logins.map { it.mapToSavedLogin() })
+                        LoginsAction.UpdateLoginsList(
+                            logins.map { it.mapToSavedLogin() })
                     )
                 }
             }
@@ -190,8 +214,12 @@ class SavedLoginsFragment : Fragment() {
         sortLoginsMenuRoot = inflateSortLoginsMenuRoot()
         dropDownMenuAnchorView = sortLoginsMenuRoot.findViewById(R.id.drop_down_menu_anchor_view)
         when (requireContext().settings().savedLoginsSortingStrategy) {
-            is SortingStrategy.Alphabetically -> setupMenu(SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort)
-            is SortingStrategy.LastUsed -> setupMenu(SavedLoginsSortingStrategyMenu.Item.LastUsedSort)
+            is SortingStrategy.Alphabetically -> setupMenu(
+                SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort
+            )
+            is SortingStrategy.LastUsed -> setupMenu(
+                SavedLoginsSortingStrategyMenu.Item.LastUsedSort
+            )
         }
     }
 
@@ -225,17 +253,29 @@ class SavedLoginsFragment : Fragment() {
     }
 
     private fun setupMenu(itemToHighlight: SavedLoginsSortingStrategyMenu.Item) {
-        sortingStrategyMenu = SavedLoginsSortingStrategyMenu(requireContext(), itemToHighlight) {
-            when (it) {
-                SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
-                    savedLoginsInteractor.sort(SortingStrategy.Alphabetically(requireContext().applicationContext))
-                }
+        sortingStrategyMenu =
+            SavedLoginsSortingStrategyMenu(
+                requireContext(),
+                itemToHighlight
+            ) {
+                when (it) {
+                    SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
+                        savedLoginsInteractor.sort(
+                            SortingStrategy.Alphabetically(
+                                requireContext().applicationContext
+                            )
+                        )
+                    }
 
-                SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> {
-                    savedLoginsInteractor.sort(SortingStrategy.LastUsed(requireContext().applicationContext))
+                    SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> {
+                        savedLoginsInteractor.sort(
+                            SortingStrategy.LastUsed(
+                                requireContext().applicationContext
+                            )
+                        )
+                    }
                 }
             }
-        }
 
         attachMenu()
     }

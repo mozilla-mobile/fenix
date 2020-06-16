@@ -15,6 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.logins.view.LoginDetailView
 
 @RunWith(FenixRobolectricTestRunner::class)
 class LoginDetailViewTest {
