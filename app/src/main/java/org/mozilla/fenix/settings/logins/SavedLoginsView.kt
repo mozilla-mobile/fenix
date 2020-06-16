@@ -73,7 +73,7 @@ class SavedLoginsView(
  * Interactor for the saved logins screen
  */
 class SavedLoginsInteractor(
-    private val savedLoginsController: SavedLoginsController,
+    private val loginsListController: LoginsListController,
     private val itemClicked: (SavedLogin) -> Unit,
     private val learnMore: () -> Unit
 ) {
@@ -84,6 +84,6 @@ class SavedLoginsInteractor(
         learnMore.invoke()
     }
     fun sort(sortingStrategy: SortingStrategy) {
-        savedLoginsController.handleSort(sortingStrategy)
+        loginsListController.handleSort(sortingStrategy)
     }
 }

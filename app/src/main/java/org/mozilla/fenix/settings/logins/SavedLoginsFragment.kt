@@ -89,7 +89,7 @@ class SavedLoginsFragment : Fragment() {
             )
         }
         val savedLoginsController =
-            SavedLoginsController(
+            LoginsListController(
                 loginsFragmentStore = savedLoginsStore,
                 settings = requireContext().settings()
             )
