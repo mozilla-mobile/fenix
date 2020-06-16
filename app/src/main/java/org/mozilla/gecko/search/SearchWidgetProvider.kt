@@ -36,6 +36,10 @@ class SearchWidgetProvider : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         context.settings().addSearchWidgetInstalled(1)
+        val goHomeOnWidgetAdded = Intent(Intent.ACTION_MAIN)
+        goHomeOnWidgetAdded.addCategory(Intent.CATEGORY_HOME)
+        goHomeOnWidgetAdded.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(goHomeOnWidgetAdded)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
