@@ -15,12 +15,12 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
-class SavedLoginsControllerTest {
+class LoginsListControllerTest {
     private val store: LoginsFragmentStore = mockk(relaxed = true)
     private val settings: Settings = mockk(relaxed = true)
     private val sortingStrategy: SortingStrategy = SortingStrategy.Alphabetically(testContext)
     private val context: Context = spyk(testContext)
-    private val controller = SavedLoginsController(loginsFragmentStore = store, settings = settings)
+    private val controller = LoginsListController(loginsFragmentStore = store, settings = settings)
 
     @Test
     fun `GIVEN a sorting strategy, WHEN handleSort is called on the controller, THEN the correct action should be dispatched and the strategy saved in sharedPref`() {

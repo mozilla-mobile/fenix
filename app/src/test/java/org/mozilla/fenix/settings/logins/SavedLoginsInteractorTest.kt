@@ -14,11 +14,11 @@ import kotlin.random.Random
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SavedLoginsInteractorTest {
-    private val controller: SavedLoginsController = mockk(relaxed = true)
+    private val listController: LoginsListController = mockk(relaxed = true)
     private val savedLoginClicked: (SavedLogin) -> Unit = mockk(relaxed = true)
     private val learnMore: () -> Unit = mockk(relaxed = true)
     private val interactor = SavedLoginsInteractor(
-        controller,
+        listController,
         savedLoginClicked,
         learnMore
     )
@@ -40,7 +40,7 @@ class SavedLoginsInteractorTest {
         interactor.sort(sortingStrategy)
 
         verify {
-            controller.handleSort(sortingStrategy)
+            listController.handleSort(sortingStrategy)
         }
     }
 }
