@@ -2,34 +2,39 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.fragment
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_login.*
+import kotlinx.android.synthetic.main.fragment_edit_login.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.service.sync.logins.InvalidRecordException
-import mozilla.components.service.sync.logins.NoSuchRecordException
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.logins.LoginsAction
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
+import org.mozilla.fenix.settings.logins.view.EditLoginView
 
 /**
  * Displays the editable saved login information for a single website
@@ -42,15 +47,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private val args by navArgs<EditLoginFragmentArgs>()
     private lateinit var loginsFragmentStore: LoginsFragmentStore
-    private lateinit var datastore: LoginsDataStore
-
+    private lateinit var interactor: EditLoginInteractor
+    private lateinit var editLoginView: EditLoginView
     private lateinit var oldLogin: SavedLogin
-    private var listOfPossibleDupes: List<SavedLogin>? = null
 
+    private var listOfPossibleDupes: List<SavedLogin>? = null
     private var usernameChanged = false
     private var passwordChanged = false
     private var saveEnabled = false
-
     private var validPassword = true
     private var validUsername = true
 
@@ -58,6 +62,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         oldLogin = args.savedLoginItem
+        editLoginView = EditLoginView(view.editLoginLayout)
 
         loginsFragmentStore = StoreProvider.get(this) {
             LoginsFragmentStore(
@@ -73,23 +78,34 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             )
         }
 
-        datastore = LoginsDataStore(this, loginsFragmentStore)
+        interactor = EditLoginInteractor(
+            SavedLoginsStorageController(
+                context = requireContext(),
+                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
+                navController = findNavController(),
+                loginsFragmentStore = loginsFragmentStore
+            )
+        )
 
-        // ensure hostname isn't editable
+        loginsFragmentStore.dispatch(LoginsAction.UpdateCurrentLogin(args.savedLoginItem))
+        interactor.findPotentialDuplicates(args.savedLoginItem.guid)
+
+        // initialize editable values
         hostnameText.text = args.savedLoginItem.origin.toEditable()
-        hostnameText.isClickable = false
-        hostnameText.isFocusable = false
-
         usernameText.text = args.savedLoginItem.username.toEditable()
         passwordText.text = args.savedLoginItem.password.toEditable()
 
-        usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-        // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
-        passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        passwordText.compoundDrawablePadding =
-            requireContext().resources
-                .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
+        formatEditableValues()
+        initSaveState()
+        setUpClickListeners()
+        setUpTextListeners()
 
+        consumeFrom(loginsFragmentStore) {
+            listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
+        }
+    }
+
+    private fun initSaveState() {
         saveEnabled = false // don't enable saving until something has been changed
         val saveButton =
             activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
@@ -97,15 +113,17 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         usernameChanged = false
         passwordChanged = false
+    }
 
-        datastore.findPotentialDuplicates(args.savedLoginItem.guid)
-
-        setUpClickListeners()
-        setUpTextListeners()
-
-        consumeFrom(loginsFragmentStore) {
-            listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
-        }
+    private fun formatEditableValues() {
+        hostnameText.isClickable = false
+        hostnameText.isFocusable = false
+        usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
+        passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        passwordText.compoundDrawablePadding =
+            requireContext().resources
+                .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
     }
 
     private fun setUpClickListeners() {
@@ -124,13 +142,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             it.isEnabled = false
         }
         revealPasswordButton.setOnClickListener {
-            togglePasswordReveal()
+            editLoginView.togglePasswordReveal()
         }
 
         var firstClick = true
         passwordText.setOnClickListener {
             if (firstClick) {
-                togglePasswordReveal()
+                editLoginView.togglePasswordReveal()
                 firstClick = false
             }
         }
@@ -265,53 +283,15 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
             if (saveEnabled) {
-                try {
-                    datastore.save(
-                        args.savedLoginItem.guid,
-                        usernameText.text.toString(),
-                        passwordText.text.toString()
-                    )
-                    requireComponents.analytics.metrics.track(Event.EditLoginSave)
-                } catch (exception: Exception) {
-                    when (exception) {
-                        is NoSuchRecordException,
-                        is InvalidRecordException -> {
-                            Log.e("Edit login",
-                                "Failed to save edited login.", exception)
-                        }
-                        else -> Log.e("Edit login",
-                            "Failed to save edited login with non-LoginStorageException error.", exception)
-                    }
-                }
+                interactor.saveLogin(
+                    args.savedLoginItem.guid,
+                    usernameText.text.toString(),
+                    passwordText.text.toString()
+                )
+                requireComponents.analytics.metrics.track(Event.EditLoginSave)
             }
             true
         }
         else -> false
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
-    private fun togglePasswordReveal() {
-        val currText = passwordText.text
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
-            or InputType.TYPE_CLASS_TEXT
-        ) {
-            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
-            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
-            )
-            revealPasswordButton.contentDescription =
-                resources.getString(R.string.saved_login_hide_password)
-        } else {
-            passwordText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
-            )
-            revealPasswordButton.contentDescription =
-                context?.getString(R.string.saved_login_reveal_password)
-        }
-        // For the new type to take effect you need to reset the text to it's current edited version
-        passwordText?.text = currText
     }
 }

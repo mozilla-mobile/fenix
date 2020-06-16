@@ -16,6 +16,7 @@ import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
 
 open class LoginsDataStore(
     val fragment: Fragment,

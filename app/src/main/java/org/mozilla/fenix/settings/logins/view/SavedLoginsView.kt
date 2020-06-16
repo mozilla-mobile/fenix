@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.view
 
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_saved_logins.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import org.mozilla.fenix.ext.addUnderline
 import org.mozilla.fenix.utils.Settings
 
@@ -28,7 +30,8 @@ class SavedLoginsView(
         .inflate(R.layout.component_saved_logins, containerView, true)
         .findViewById(R.id.saved_logins_wrapper)
 
-    private val loginsAdapter = LoginsAdapter(interactor)
+    private val loginsAdapter =
+        LoginsAdapter(interactor)
 
     init {
         view.saved_logins_list.apply {
@@ -62,24 +65,5 @@ class SavedLoginsView(
             view.saved_passwords_empty_view.isVisible = state.loginList.isEmpty()
         }
         loginsAdapter.submitList(state.filteredItems)
-    }
-}
-
-/**
- * Interactor for the saved logins screen
- */
-class SavedLoginsInteractor(
-    private val loginsListController: LoginsListController,
-    private val itemClicked: (SavedLogin) -> Unit,
-    private val learnMore: () -> Unit
-) {
-    fun itemClicked(item: SavedLogin) {
-        itemClicked.invoke(item)
-    }
-    fun onLearnMore() {
-        learnMore.invoke()
-    }
-    fun sort(sortingStrategy: SortingStrategy) {
-        loginsListController.handleSort(sortingStrategy)
     }
 }

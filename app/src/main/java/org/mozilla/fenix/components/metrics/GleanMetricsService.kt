@@ -470,7 +470,7 @@ private val Event.wrapper: EventWrapper<*>?
             { Logins.deleteSavedLogin.record(it) }
         )
         is Event.EditLogin -> EventWrapper<NoExtraKeys>(
-            { Logins.editSavedLogin.record(it) }
+            { Logins.openLoginEditor.record(it) }
         )
         is Event.EditLoginSave -> EventWrapper<NoExtraKeys>(
             { Logins.saveEditedLogin.record(it) }

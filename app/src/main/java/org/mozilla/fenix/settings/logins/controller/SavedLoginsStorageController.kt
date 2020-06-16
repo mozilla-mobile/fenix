@@ -2,31 +2,39 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.settings.logins
+package org.mozilla.fenix.settings.logins.controller
 
 import android.content.Context
-import androidx.lifecycle.lifecycleScope
+import android.util.Log
 import androidx.navigation.NavController
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.Login
+import mozilla.components.service.sync.logins.InvalidRecordException
+import mozilla.components.service.sync.logins.LoginsStorageException
+import mozilla.components.service.sync.logins.NoSuchRecordException
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.logins.LoginsAction
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
+import org.mozilla.fenix.settings.logins.mapToSavedLogin
 
 /**
  * Controller for all saved logins interactions with the password storage component
  */
-open class SavedLoginsController(
+open class SavedLoginsStorageController(
     context: Context,
+    private val viewLifecycleScope: CoroutineScope,
     private val navController: NavController,
     private val loginsFragmentStore: LoginsFragmentStore
 ) {
-
     private val activity: HomeActivity = context as HomeActivity
 
     private suspend fun getLogin(loginId: String): Login? =
@@ -34,7 +42,7 @@ open class SavedLoginsController(
 
     fun delete(loginId: String) {
         var deleteLoginJob: Deferred<Boolean>? = null
-        val deleteJob = activity.lifecycleScope.launch(Dispatchers.IO) {
+        val deleteJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deleteLoginJob = async {
                 activity.components.core.passwordsStorage.delete(loginId)
             }
@@ -52,7 +60,7 @@ open class SavedLoginsController(
 
     fun save(loginId: String, usernameText: String, passwordText: String) {
         var saveLoginJob: Deferred<Unit>? = null
-        activity.lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleScope.launch(Dispatchers.IO) {
             saveLoginJob = async {
                 // must retrieve from storage to get the httpsRealm and formActionOrigin
                 val oldLogin = activity.components.core.passwordsStorage.get(loginId)
@@ -60,7 +68,7 @@ open class SavedLoginsController(
                 // Update requires a Login type, which needs at least one of
                 // httpRealm or formActionOrigin
                 val loginToSave = Login(
-                    guid = oldLogin?.guid,
+                    guid = loginId,
                     origin = oldLogin?.origin!!,
                     username = usernameText, // new value
                     password = passwordText, // new value
@@ -74,8 +82,9 @@ open class SavedLoginsController(
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
                 val directions =
-                    EditLoginFragmentDirections
-                        .actionEditLoginFragmentToLoginDetailFragment(loginId)
+                    EditLoginFragmentDirections.actionEditLoginFragmentToLoginDetailFragment(
+                        loginId
+                    )
                 navController.navigate(directions)
             }
         }
@@ -87,18 +96,34 @@ open class SavedLoginsController(
     }
 
     private suspend fun save(loginToSave: Login) {
-        activity.components.core.passwordsStorage.update(loginToSave)
+        try {
+            activity.components.core.passwordsStorage.update(loginToSave)
+        } catch (loginException: LoginsStorageException) {
+            when (loginException) {
+                is NoSuchRecordException,
+                is InvalidRecordException -> {
+                    Log.e("Edit login",
+                        "Failed to save edited login.", loginException)
+                }
+                else -> Log.e("Edit login",
+                    "Failed to save edited login.", loginException)
+            }
+        }
     }
 
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
-        loginsFragmentStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
+        loginsFragmentStore.dispatch(
+            LoginsAction.UpdateLoginsList(
+                listOf(login)
+            )
+        )
     }
 
     fun findPotentialDuplicates(loginId: String) {
         var deferredLogin: Deferred<List<Login>>? = null
         // What scope should be used here?
-        val fetchLoginJob = activity.lifecycleScope.launch(Dispatchers.IO) {
+        val fetchLoginJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deferredLogin = async {
                 val login = getLogin(loginId)
                 activity.components.core.passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
@@ -108,7 +133,9 @@ open class SavedLoginsController(
                 withContext(Dispatchers.Main) {
                     val savedLoginList = list.map { it.mapToSavedLogin() }
                     loginsFragmentStore.dispatch(
-                        LoginsAction.ListOfDupes(savedLoginList)
+                        LoginsAction.ListOfDupes(
+                            savedLoginList
+                        )
                     )
                 }
             }
@@ -122,7 +149,7 @@ open class SavedLoginsController(
 
     fun fetchLoginDetails(loginId: String) {
         var deferredLogin: Deferred<List<Login>>? = null
-        val fetchLoginJob = activity.lifecycleScope.launch(Dispatchers.IO) {
+        val fetchLoginJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deferredLogin = async {
                 activity.components.core.passwordsStorage.list()
             }
@@ -134,7 +161,9 @@ open class SavedLoginsController(
                         it.guid == loginId
                     }.first()
                     loginsFragmentStore.dispatch(
-                        LoginsAction.UpdateCurrentLogin(login.mapToSavedLogin())
+                        LoginsAction.UpdateCurrentLogin(
+                            login.mapToSavedLogin()
+                        )
                     )
                 }
             }
@@ -146,4 +175,3 @@ open class SavedLoginsController(
         }
     }
 }
-
