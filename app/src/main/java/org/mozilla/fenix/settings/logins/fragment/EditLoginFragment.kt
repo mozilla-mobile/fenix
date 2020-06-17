@@ -6,25 +6,19 @@ package org.mozilla.fenix.settings.logins.fragment
 
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_edit_login.view.clearPasswordTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.view.clearUsernameTextButton
-import kotlinx.android.synthetic.main.fragment_edit_login.view.editLoginLayout
-import kotlinx.android.synthetic.main.fragment_edit_login.view.hostnameText
-import kotlinx.android.synthetic.main.fragment_edit_login.view.inputLayoutPassword
-import kotlinx.android.synthetic.main.fragment_edit_login.view.inputLayoutUsername
-import kotlinx.android.synthetic.main.fragment_edit_login.view.passwordText
-import kotlinx.android.synthetic.main.fragment_edit_login.view.usernameText
+import kotlinx.android.synthetic.main.fragment_edit_login.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.sync.logins.InvalidRecordException
@@ -48,14 +42,12 @@ import org.mozilla.fenix.settings.logins.view.EditLoginView
  */
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "NestedBlockDepth", "ForbiddenComment")
-class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
+class EditLoginFragment : Fragment() {
 
     fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
     private val args by navArgs<EditLoginFragmentArgs>()
     private lateinit var loginsFragmentStore: LoginsFragmentStore
-//    private lateinit var datastore: LoginsDataStore
-    private lateinit var controller: SavedLoginsStorageController
     private lateinit var interactor: EditLoginInteractor
     private lateinit var editLoginView: EditLoginView
 
@@ -69,10 +61,18 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private var validPassword = true
     private var validUsername = true
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         oldLogin = args.savedLoginItem
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_edit_login, container, false)
 
         loginsFragmentStore = StoreProvider.get(this) {
             LoginsFragmentStore(
@@ -88,14 +88,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             )
         }
 
-//        datastore = LoginsDataStore(this, loginsFragmentStore)
-        controller = SavedLoginsStorageController(
+        interactor = EditLoginInteractor(
+            SavedLoginsStorageController(
                 context = requireContext(),
                 navController = findNavController(),
                 loginsFragmentStore = loginsFragmentStore
             )
-
-        interactor = EditLoginInteractor(controller)
+        )
         editLoginView = EditLoginView(view.editLoginLayout, interactor)
 
         view.hostnameText.text = args.savedLoginItem.origin.toEditable()
@@ -110,17 +109,27 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         usernameChanged = false
         passwordChanged = false
 
-//        datastore.findPotentialDuplicates(args.savedLoginItem.guid)
         interactor.findPotentialDuplicates(args.savedLoginItem.guid)
 
-//        setUpClickListeners()
         setUpTextListeners()
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         consumeFrom(loginsFragmentStore) {
             listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
         }
     }
 
+    override fun onPause() {
+        redirectToReAuth(
+            listOf(R.id.loginDetailFragment),
+            findNavController().currentDestination?.id
+        )
+        super.onPause()
+    }
 
     private fun setUpTextListeners() {
         val frag = view?.findViewById<View>(R.id.editLoginFragment)
@@ -240,24 +249,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         inflater.inflate(R.menu.login_save, menu)
     }
 
-    override fun onPause() {
-        redirectToReAuth(
-            listOf(R.id.loginDetailFragment),
-            findNavController().currentDestination?.id
-        )
-        super.onPause()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
             if (saveEnabled) {
                 try {
-//                    datastore.save(
-//                        args.savedLoginItem.guid,
-//                        usernameText.text.toString(),
-//                        passwordText.text.toString()
-//                    )
                     interactor.saveLogin(
                         args.savedLoginItem.guid,
                         view?.usernameText?.text.toString(),

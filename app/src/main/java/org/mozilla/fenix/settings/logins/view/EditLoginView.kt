@@ -4,38 +4,32 @@
 
 package org.mozilla.fenix.settings.logins.view
 
-import android.content.Context
-import android.text.Editable
 import android.text.InputType
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.android.synthetic.main.fragment_edit_login.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
 
 /**
  * View that contains and configures the Edit Login screen
  */
-open class EditLoginView(
-    override val containerView: ViewGroup,
+class EditLoginView(
+    val container: ViewGroup,
     val interactor: EditLoginInteractor
 ) : LayoutContainer {
 
-    protected val context: Context inline get() = containerView.context
-    protected val activity = context.asActivity()
+    private val context = container.context
 
-    val view: ConstraintLayout = LayoutInflater.from(containerView.context)
-        .inflate(R.layout.fragment_edit_login, containerView, true)
-        .findViewById(R.id.editLoginFragment)
+    override val containerView: View = LayoutInflater.from(context)
+        .inflate(R.layout.fragment_edit_login, container, true)
 
     init {
-        view.editLoginLayout.apply {
+        containerView.editLoginLayout.apply {
             // ensure hostname isn't editable
             this.hostnameText.isClickable = false
             this.hostnameText.isFocusable = false
@@ -52,7 +46,7 @@ open class EditLoginView(
             togglePasswordReveal()
         }
 
-        with(view.clearUsernameTextButton) {
+        with(containerView.clearUsernameTextButton) {
             setOnClickListener {
                 usernameText.text?.clear()
                 usernameText.isCursorVisible = true
@@ -62,7 +56,7 @@ open class EditLoginView(
             }
         }
 
-        with(view.clearPasswordTextButton) {
+        with(containerView.clearPasswordTextButton) {
             setOnClickListener {
                 passwordText.text?.clear()
                 passwordText.isCursorVisible = true
@@ -72,75 +66,36 @@ open class EditLoginView(
             }
         }
 
-        with(view.revealPasswordButton) {
+        with(containerView.revealPasswordButton) {
             setOnClickListener {
                 togglePasswordReveal()
-            }
-        }
-
-//        with(view.saved_passwords_empty_message) {
-//            val appName = context.getString(R.string.app_name)
-//            text = String.format(
-//                context.getString(
-//                    R.string.preferences_passwords_saved_logins_description_empty_text
-//                ), appName
-//            )
-//        }
-    }
-
-    private fun setUpClickListeners() {
-        clearUsernameTextButton.setOnClickListener {
-
-        }
-        clearPasswordTextButton.setOnClickListener {
-
-        }
-        revealPasswordButton.setOnClickListener {
-        }
-
-        var firstClick = true
-        passwordText.setOnClickListener {
-            if (firstClick) {
-                togglePasswordReveal()
-                firstClick = false
             }
         }
     }
 
     // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
     private fun togglePasswordReveal() {
-        val currText = passwordText.text
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
+        val currText = containerView.passwordText?.text
+        if (containerView.passwordText?.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
             or InputType.TYPE_CLASS_TEXT
         ) {
             context.components.analytics.metrics.track(Event.ViewLoginPassword)
-            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPasswordButton.setImageDrawable(
+            containerView.passwordText?.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            containerView.revealPasswordButton?.setImageDrawable(
                 context.resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
             )
-            revealPasswordButton.contentDescription =
+            containerView.revealPasswordButton?.contentDescription =
                 context.resources.getString(R.string.saved_login_hide_password)
         } else {
-            passwordText.inputType =
+            containerView.passwordText?.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPasswordButton.setImageDrawable(
+            containerView.revealPasswordButton?.setImageDrawable(
                 context.resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
             )
-            revealPasswordButton.contentDescription =
+            containerView.revealPasswordButton?.contentDescription =
                 context.getString(R.string.saved_login_reveal_password)
         }
         // For the new type to take effect you need to reset the text to it's current edited version
-        passwordText?.text = currText
-    }
-
-    fun update() {
-//        if (state.duplicateLogins) {
-//            view.progress_bar.isVisible = true
-//        } else {
-//            view.progress_bar.isVisible = false
-//            view.saved_logins_list.isVisible = state.loginList.isNotEmpty()
-//            view.saved_passwords_empty_view.isVisible = state.loginList.isEmpty()
-//        }
-//        loginsAdapter.submitList(state.filteredItems)
+        containerView.passwordText?.text = currText
     }
 }
