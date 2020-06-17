@@ -215,6 +215,12 @@ class HomeFragment : Fragment() {
             sessionControlInteractor,
             homeViewModel
         )
+
+        // This has to be called separately from the consumeFrom block since the coroutine doesn't
+        // allow our UI to be updated right away and delays our start up. The init block allows us to
+        // force our UI to render with the data available in our store at fragment creation time.
+        sessionControlView?.update(homeFragmentStore.state)
+
         activity.themeManager.applyStatusBarTheme(activity)
 
         view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
