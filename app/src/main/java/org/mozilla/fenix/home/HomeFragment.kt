@@ -216,16 +216,9 @@ class HomeFragment : Fragment() {
             homeViewModel
         )
 
-        // This has to be called separately from the consumeFrom block since the coroutine doesn't
-        // allow our UI to be updated right away and delays our start up. The init block allows us to
-        // force our UI to render with the data available in our store at fragment creation time.
-        sessionControlView?.update(homeFragmentStore.state)
+        updateSessionControlView(view)
 
         activity.themeManager.applyStatusBarTheme(activity)
-
-        view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
-            sessionControlView?.update(it)
-        }
 
         view.consumeFrom(requireComponents.core.store, viewLifecycleOwner) {
             val tabCount = if (currentMode.getCurrentMode() == Mode.Normal) {
@@ -238,6 +231,20 @@ class HomeFragment : Fragment() {
         }
 
         return view
+    }
+
+    /**
+     * The [SessionControlView] is forced to update with our current state when we call
+     * [HomeFragment.onCreateView] in order to be able to draw everything at once with the current
+     * data in our store. The [View.consumeFrom] coroutine dispatch
+     * doesn't get run right away which means that we won't draw on the first layout pass.
+     */
+    fun updateSessionControlView(view: View) {
+        sessionControlView?.update(homeFragmentStore.state)
+
+        view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+            sessionControlView?.update(it)
+        }
     }
 
     private fun updateLayout(view: View) {
