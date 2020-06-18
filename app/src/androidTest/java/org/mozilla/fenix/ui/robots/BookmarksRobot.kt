@@ -180,11 +180,11 @@ class BookmarksRobot {
     }
 
     class Transition {
-        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            goBackButton().click()
+        fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
+            closeButton().click()
 
             HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            return Transition()
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
@@ -223,6 +223,8 @@ fun bookmarksMenu(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transitio
     BookmarksRobot().interact()
     return BookmarksRobot.Transition()
 }
+
+private fun closeButton() = onView(withId(R.id.close_bookmarks))
 
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
 
