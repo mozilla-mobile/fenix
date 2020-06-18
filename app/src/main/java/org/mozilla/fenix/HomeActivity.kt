@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -125,6 +126,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this)
         )
+    }
+
+    /**
+     * A single view pool to be re-used when the tabs tray is subsequently opened.
+     *
+     * This lives on the activity level since the tabs tray is frequently used and we can save our
+     * recycled views until the activity is done.
+     *
+     * This is especially useful along with [LinearLayoutManager.setRecycleChildrenOnDetach] as true
+     * to make maximum use of recycled views.
+     */
+    private val tabsTrayViewPool by lazy {
+        RecyclerView.RecycledViewPool()
     }
 
     final override fun onCreate(savedInstanceState: Bundle?) {
@@ -239,15 +253,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             }
         }.asView()
         TabsTray::class.java.name -> {
+            val thumbnailLoader = ThumbnailLoader(components.core.thumbnailStorage)
+            val adapter = FenixTabsAdapter(context, thumbnailLoader)
             val layout = LinearLayoutManager(context).apply {
                 reverseLayout = true
                 stackFromEnd = true
+                recycleChildrenOnDetach = true // See [tabsTrayViewPool] docs.
             }
-
-            val thumbnailLoader = ThumbnailLoader(components.core.thumbnailStorage)
-            val adapter = FenixTabsAdapter(context, thumbnailLoader)
-
-            BrowserTabsTray(context, attrs, 0, adapter, layout)
+            BrowserTabsTray(context, attrs, 0, adapter, layout).apply {
+                setRecycledViewPool(tabsTrayViewPool)
+            }
         }
         else -> super.onCreateView(parent, name, context, attrs)
     }
