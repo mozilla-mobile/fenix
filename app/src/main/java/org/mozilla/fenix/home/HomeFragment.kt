@@ -84,10 +84,10 @@ import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toTab
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -617,11 +617,13 @@ class HomeFragment : Fragment() {
         val isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private
         val menuItems = listOf(
             BrowserMenuImageText(
-                label = context.getString(if (isPrivate) {
-                    R.string.browser_menu_new_tab
-                } else {
-                    R.string.home_screen_shortcut_open_new_private_tab_2
-                }),
+                label = context.getString(
+                    if (isPrivate) {
+                        R.string.browser_menu_new_tab
+                    } else {
+                        R.string.home_screen_shortcut_open_new_private_tab_2
+                    }
+                ),
                 imageResource = if (isPrivate) {
                     R.drawable.ic_new
                 } else {
@@ -630,6 +632,15 @@ class HomeFragment : Fragment() {
                 iconTintColorResource = primaryTextColor,
                 textColorResource = primaryTextColor
             ) {
+                requireComponents.analytics.metrics.track(
+                    Event.TabCounterMenuItemTapped(
+                        if (isPrivate) {
+                            Event.TabCounterMenuItemTapped.Item.NEW_TAB
+                        } else {
+                            Event.TabCounterMenuItemTapped.Item.NEW_PRIVATE_TAB
+                        }
+                    )
+                )
                 (activity as HomeActivity).browsingModeManager.mode =
                     BrowsingMode.fromBoolean(!isPrivate)
             }
