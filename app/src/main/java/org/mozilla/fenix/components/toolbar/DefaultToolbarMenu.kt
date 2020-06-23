@@ -137,17 +137,6 @@ class DefaultToolbarMenu(
         BrowserMenuItemToolbar(listOf(bookmark, share, forward, refresh))
     }
 
-    internal fun getLowPrioHighlightItems(): List<ToolbarMenu.Item> {
-        val lowPrioHighlightItems: MutableList<ToolbarMenu.Item> = mutableListOf()
-        if (canInstall() && installToHomescreen.isHighlighted()) {
-            lowPrioHighlightItems.add(ToolbarMenu.Item.InstallToHomeScreen)
-        }
-        if (shouldShowOpenInApp() && openInApp.isHighlighted()) {
-            lowPrioHighlightItems.add(ToolbarMenu.Item.OpenInApp)
-        }
-        return lowPrioHighlightItems
-    }
-
     // Predicates that need to be repeatedly called as the session changes
     private fun canAddToHomescreen(): Boolean =
         session != null && context.components.useCases.webAppUseCases.isPinningSupported() &&
@@ -262,7 +251,7 @@ class DefaultToolbarMenu(
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
         isHighlighted = {
-            !context.settings().installPwaOpened
+            !context.settings().highlightedMenuItemInteracted
         }
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.InstallToHomeScreen)
@@ -308,7 +297,7 @@ class DefaultToolbarMenu(
             label = context.getString(R.string.browser_menu_open_app_link),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
-        isHighlighted = { !context.settings().openInAppOpened }
+        isHighlighted = { !context.settings().highlightedMenuItemInteracted }
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }

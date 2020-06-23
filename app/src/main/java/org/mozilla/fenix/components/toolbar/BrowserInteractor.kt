@@ -32,8 +32,8 @@ open class BrowserInteractor(
         browserToolbarController.handleToolbarItemInteraction(item)
     }
 
-    override fun onBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
-        browserToolbarController.handleBrowserMenuDismissed(lowPrioHighlightItems)
+    override fun onBrowserMenuDismissed() {
+        browserToolbarController.handleBrowserMenuDismissed()
     }
 
     override fun onScrolled(offset: Int) {

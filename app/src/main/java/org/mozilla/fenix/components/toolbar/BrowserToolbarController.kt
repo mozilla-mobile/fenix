@@ -53,7 +53,7 @@ interface BrowserToolbarController {
     fun handleToolbarClick()
     fun handleTabCounterClick()
     fun handleTabCounterItemInteraction(item: TabCounterMenuItem)
-    fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
+    fun handleBrowserMenuDismissed()
     fun handleReaderModePressed(enabled: Boolean)
 }
 
@@ -76,6 +76,10 @@ class DefaultBrowserToolbarController(
     private val onTabCounterClicked: () -> Unit,
     private val onCloseTab: (Session) -> Unit
 ) : BrowserToolbarController {
+
+    init {
+        activity.settings().highlightedMenuItemInteracted = false
+    }
 
     private val currentSession
         get() = customTabSession ?: activity.components.core.sessionManager.selectedSession
@@ -158,14 +162,8 @@ class DefaultBrowserToolbarController(
         }
     }
 
-    override fun handleBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
-        val settings = activity.settings()
-        lowPrioHighlightItems.forEach {
-            when (it) {
-                ToolbarMenu.Item.AddToHomeScreen -> settings.installPwaOpened = true
-                ToolbarMenu.Item.OpenInApp -> settings.openInAppOpened = true
-            }
-        }
+    override fun handleBrowserMenuDismissed() {
+        activity.settings().highlightedMenuItemInteracted = true
     }
 
     override fun handleScroll(offset: Int) {
@@ -217,7 +215,6 @@ class DefaultBrowserToolbarController(
                 }
             }
             ToolbarMenu.Item.AddToHomeScreen, ToolbarMenu.Item.InstallToHomeScreen -> {
-                activity.settings().installPwaOpened = true
                 MainScope().launch {
                     with(activity.components.useCases.webAppUseCases) {
                         if (isInstallable()) {
@@ -306,8 +303,6 @@ class DefaultBrowserToolbarController(
                 activity.components.analytics.metrics.track(Event.ReaderModeAppearanceOpened)
             }
             ToolbarMenu.Item.OpenInApp -> {
-                activity.settings().openInAppOpened = true
-
                 val appLinksUseCases =
                     activity.components.useCases.appLinksUseCases
                 val getRedirect = appLinksUseCases.appLinkRedirect

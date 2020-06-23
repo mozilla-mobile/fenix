@@ -224,18 +224,8 @@ class Settings private constructor(
         default = ""
     )
 
-    var readerModeOpened by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_reader_mode_opened),
-        default = false
-    )
-
-    var openInAppOpened by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_open_in_app_opened),
-        default = false
-    )
-
-    var installPwaOpened by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_install_pwa_opened),
+    var highlightedMenuItemInteracted by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_highlight_menu_item_interacted),
         default = false
     )
 

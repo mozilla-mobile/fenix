@@ -50,7 +50,7 @@ interface BrowserToolbarViewInteractor {
     fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
     fun onTabCounterClicked()
     fun onTabCounterMenuItemTapped(item: TabCounterMenuItem)
-    fun onBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>)
+    fun onBrowserMenuDismissed()
     fun onScrolled(offset: Int)
     fun onReaderModePressed(enabled: Boolean)
 }
@@ -229,7 +229,7 @@ class BrowserToolbarView(
                     bookmarksStorage = bookmarkStorage
                 )
                 view.display.setMenuDismissAction {
-                    interactor.onBrowserMenuDismissed(menuToolbar.getLowPrioHighlightItems())
+                    interactor.onBrowserMenuDismissed()
                     view.invalidateActions()
                 }
             }

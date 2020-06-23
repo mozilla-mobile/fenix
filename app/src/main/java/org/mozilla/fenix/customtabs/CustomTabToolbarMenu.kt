@@ -145,7 +145,7 @@ class CustomTabToolbarMenu(
             label = context.getString(R.string.browser_menu_open_app_link),
             notificationTint = getColor(context, R.color.whats_new_notification_color)
         ),
-        isHighlighted = { !context.settings().openInAppOpened }
+        isHighlighted = { !context.settings().highlightedMenuItemInteracted }
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
     }
