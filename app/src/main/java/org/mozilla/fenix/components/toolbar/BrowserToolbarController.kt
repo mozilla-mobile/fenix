@@ -39,12 +39,14 @@ import org.mozilla.fenix.components.TopSiteStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Do
+import kotlin.coroutines.coroutineContext
 
 /**
  * An interface that handles the view manipulation of the BrowserToolbar, triggered by the Interactor
@@ -230,6 +232,7 @@ class DefaultBrowserToolbarController(
                     with(activity.components.useCases.webAppUseCases) {
                         if (isInstallable()) {
                             addToHomescreen()
+                            activity.metrics.track(Event.ProgressiveWebAppAddToHomescreenTap)
                         } else {
                             val directions =
                                 BrowserFragmentDirections.actionBrowserFragmentToCreateShortcutFragment()

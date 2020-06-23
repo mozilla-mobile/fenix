@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_create_shortcut.*
 import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
 
 /**

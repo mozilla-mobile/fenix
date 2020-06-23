@@ -17,6 +17,8 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Onboarding
+import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings

@@ -36,6 +36,7 @@ import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
@@ -676,6 +677,18 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AutoPlaySettingChanged -> EventWrapper(
             { Autoplay.settingChanged.record(it) },
             { Autoplay.settingChangedKeys.valueOf(it) }
+        )
+        is Event.ProgressiveWebAppHomescreenTap -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.homescreenTap.record(it) }
+        )
+        is Event.ProgressiveWebAppInstallMenuTap -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.installMenuTap.record(it) }
+        )
+        is Event.ProgressiveWebAppAddToHomescreenTap -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.addToHomescreenTap.record(it) }
+        )
+        is Event.ProgressiveWebAppBringToForeground -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.bringToForeground.record(it) }
         )
 
         // Don't record other events in Glean:
