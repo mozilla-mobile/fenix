@@ -67,7 +67,7 @@ class SmokeTest {
     }
 
     @Test
-    fun verifyPageMainMenuItemsListPotraitMode() {
+    fun verifyPageMainMenuItemsListInPortraitNormalMode() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -110,12 +110,6 @@ class SmokeTest {
             }.bookmarkPage {
                 verifySnackBarText("Bookmark saved!")
             }.openThreeDotMenu {
-                verifyEditBookmarkButton()
-            }.openEditBookmarks {
-                clickdeleteBookmarkButton()
-            }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
-                verifySnackBarText("Deleted localhost")
-            }.openThreeDotMenu {
             }.sharePage {
                 // verifyShareAppsLayout()
                 // verifyShareOverlay()
@@ -123,24 +117,93 @@ class SmokeTest {
             }.openThreeDotMenu {
             }.refreshPage {
                 // verifyPageContent(defaultWebPage.content)
-            }.openTabDrawer {
-                closeTabViaXButton(defaultWebPage.title)
-            }.openHomeScreen {
+            }
+        }
+    }
 
-                // PRIVATE BROWSER
+        @Test
+        fun verifyPageMainMenuItemsListInPortraitPrivateMode() {
+            val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
+            homeScreen {
+                togglePrivateBrowsingModeOnOff()
+                navigationToolbar {
+                    navigationToolbar {
+                    }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                    }.openThreeDotMenu {
+                        verifyThreeDotMainMenuItems()
+                    }.openHistory {
+                        verifyEmptyHistoryView()
+                    }.goBackToBrowser {
+                    }.openThreeDotMenu {
+                    }.openBookmarks {
+                        verifyBookmarksMenuView()
+                        verifyEmptyBookmarksList()
+                    }.goBackToBrowser {
+                    }.openThreeDotMenu {
+                    }.openSettings {
+                        verifySettingsView()
+                    }.goBackToBrowser {
+                    }.openThreeDotMenu {
+                    }.openFindInPage {
+                        verifyFindInPageSearchBarItems()
+                    }.closeFindInPage {
+                    }.openThreeDotMenu {
+                    }.addToFirefoxHome {
+                        verifySnackBarText("Added to top sites!")
+                    }.openTabDrawer {
+                    }.openHomeScreen {
+                        togglePrivateBrowsingModeOnOff()
+                        verifyExistingTopSitesTabs(defaultWebPage.title)
+                        togglePrivateBrowsingModeOnOff()
+                    }.openTabDrawer {
+                    }.openTab(defaultWebPage.title) {
+                    }.openThreeDotMenu {
+                    }.openAddToHomeScreen {
+                        verifyShortcutNameField(defaultWebPage.title)
+                        clickAddShortcutButton()
+                        clickAddAutomaticallyButton()
+                        verifyShortcutIcon()
+                    }.openHomeScreenShortcut(defaultWebPage.title) {
+                    }.openThreeDotMenu {
+                    }.bookmarkPage {
+                        verifySnackBarText("Bookmark saved!")
+                    }.openThreeDotMenu {
+                    }.sharePage {
+                        // verifyShareAppsLayout()
+                        // verifyShareOverlay()
+                    }.closeShareDialogReturnToPage {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        // verifyPageContent(defaultWebPage.content)
+                    }
+                }
+            }
+        }
+
+        @Ignore
+        @Test
+        fun verifyPageMainMenuItemsListInLandscapeNormalMode() {
+            val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+
+            homeScreen {
+                mDevice.waitForIdle(waitingTimeShort)
                 togglePrivateBrowsingModeOnOff()
                 navigationToolbar {
                 }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                    activityTestRule.getActivity()
+                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                 }.openThreeDotMenu {
                     verifyThreeDotMainMenuItems()
                 }.openHistory {
-                    verifyTestPageUrl(defaultWebPage.url)
+                    // verifyTestPageUrl(defaultWebPage.url)
                 }.goBackToBrowser {
                 }.openThreeDotMenu {
                 }.openBookmarks {
                     verifyBookmarksMenuView()
-                    // verifyEmptyBookmarksList()
+                    verifyEmptyBookmarksList()
                 }.goBackToBrowser {
                 }.openThreeDotMenu {
                 }.openSettings {
@@ -154,9 +217,6 @@ class SmokeTest {
                 }.addToFirefoxHome {
                     verifySnackBarText("Added to top sites!")
                 }.openTabDrawer {
-                }.openHomeScreen {
-                    // verifyExistingTopSitesTabs(defaultWebPage.title)
-                }.openTabDrawer {
                 }.openTab(defaultWebPage.title) {
                 }.openThreeDotMenu {
                 }.openAddToHomeScreen {
@@ -169,6 +229,7 @@ class SmokeTest {
                 }.bookmarkPage {
                     verifySnackBarText("Bookmark saved!")
                 }.openThreeDotMenu {
+                    verifyEditBookmarkButton()
                 }.openEditBookmarks {
                     clickdeleteBookmarkButton()
                 }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
@@ -183,74 +244,7 @@ class SmokeTest {
                     // verifyPageContent(defaultWebPage.content)
                 }.openTabDrawer {
                     closeTabViaXButton(defaultWebPage.title)
-                }.openHomeScreen {
                 }
             }
         }
     }
-
-    @Ignore
-    @Test
-    fun verifyPageMainMenuItemsListLandscapeMode() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        activityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-
-        homeScreen {
-            mDevice.waitForIdle(waitingTimeShort)
-            togglePrivateBrowsingModeOnOff()
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                activityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                verifyThreeDotMainMenuItems()
-            }.openHistory {
-                // verifyTestPageUrl(defaultWebPage.url)
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openBookmarks {
-                verifyBookmarksMenuView()
-                verifyEmptyBookmarksList()
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifySettingsView()
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-            }.openFindInPage {
-                verifyFindInPageSearchBarItems()
-            }.closeFindInPage {
-            }.openThreeDotMenu {
-            }.addToFirefoxHome {
-                verifySnackBarText("Added to top sites!")
-            }.openTabDrawer {
-            }.openTab(defaultWebPage.title) {
-            }.openThreeDotMenu {
-            }.openAddToHomeScreen {
-                verifyShortcutNameField(defaultWebPage.title)
-                clickAddShortcutButton()
-                clickAddAutomaticallyButton()
-                verifyShortcutIcon()
-            }.openHomeScreenShortcut(defaultWebPage.title) {
-            }.openThreeDotMenu {
-            }.bookmarkPage {
-                verifySnackBarText("Bookmark saved!")
-            }.openThreeDotMenu {
-                verifyEditBookmarkButton()
-            }.openEditBookmarks {
-                clickdeleteBookmarkButton()
-            }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
-                verifySnackBarText("Deleted localhost")
-            }.openThreeDotMenu {
-            }.sharePage {
-                // verifyShareAppsLayout()
-                // verifyShareOverlay()
-            }.closeShareDialogReturnToPage {
-            }.openThreeDotMenu {
-            }.refreshPage {
-                // verifyPageContent(defaultWebPage.content)
-            }.openTabDrawer {
-                closeTabViaXButton(defaultWebPage.title)
-            }
-        }
-    }
-}

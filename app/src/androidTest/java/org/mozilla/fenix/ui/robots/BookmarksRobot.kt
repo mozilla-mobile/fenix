@@ -191,7 +191,7 @@ class BookmarksRobot {
         }
 
         fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            goBackButton().click()
+            closeButton().click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
