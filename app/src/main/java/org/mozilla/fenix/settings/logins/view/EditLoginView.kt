@@ -4,77 +4,35 @@
 
 package org.mozilla.fenix.settings.logins.view
 
+import android.text.Editable
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.fragment_edit_login.*
 import kotlinx.android.synthetic.main.fragment_edit_login.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
 
 /**
  * View that contains and configures the Edit Login screen
  */
 class EditLoginView(
-    val container: ViewGroup,
+    override val containerView: ViewGroup,
     val interactor: EditLoginInteractor
 ) : LayoutContainer {
 
-    private val context = container.context
-
-    override val containerView: View = LayoutInflater.from(context)
-        .inflate(R.layout.fragment_edit_login, container, true)
-
-    init {
-        containerView.editLoginLayout.apply {
-            // ensure hostname isn't editable
-            this.hostnameText.isClickable = false
-            this.hostnameText.isFocusable = false
-
-            this.usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-
-            // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
-            this.passwordText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            this.passwordText.compoundDrawablePadding =
-                context.resources
-                    .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
-
-            togglePasswordReveal()
-        }
-
-        with(containerView.clearUsernameTextButton) {
-            setOnClickListener {
-                usernameText.text?.clear()
-                usernameText.isCursorVisible = true
-                usernameText.hasFocus()
-                inputLayoutUsername.hasFocus()
-                it.isEnabled = false
-            }
-        }
-
-        with(containerView.clearPasswordTextButton) {
-            setOnClickListener {
-                passwordText.text?.clear()
-                passwordText.isCursorVisible = true
-                passwordText.hasFocus()
-                inputLayoutPassword.hasFocus()
-                it.isEnabled = false
-            }
-        }
-
-        with(containerView.revealPasswordButton) {
-            setOnClickListener {
-                togglePasswordReveal()
-            }
-        }
-    }
+    private val context = containerView.context
+    private fun String.toEditable(): Editable =
+        Editable.Factory.getInstance().newEditable(this)
 
     // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
-    private fun togglePasswordReveal() {
+    fun togglePasswordReveal() {
         val currText = containerView.passwordText?.text
         if (containerView.passwordText?.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
             or InputType.TYPE_CLASS_TEXT
@@ -97,5 +55,13 @@ class EditLoginView(
         }
         // For the new type to take effect you need to reset the text to it's current edited version
         containerView.passwordText?.text = currText
+    }
+
+
+
+    fun update(login: LoginsListState) {
+        containerView.hostnameText.text = login.currentItem?.origin?.toEditable()
+        containerView.usernameText.text = login.currentItem?.username?.toEditable()
+        containerView.passwordText.text = login.currentItem?.password?.toEditable()
     }
 }
