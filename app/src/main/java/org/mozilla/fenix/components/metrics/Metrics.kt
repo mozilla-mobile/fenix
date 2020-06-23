@@ -296,6 +296,13 @@ sealed class Event {
             get() = hashMapOf(Events.appOpenedKeys.source to source.name)
     }
 
+    data class OpenedAppAllStart(val source: Source) : Event() {
+        enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
+
+        override val extras: Map<Events.appOpenedKeys, String>?
+            get() = hashMapOf(Events.appOpenedKeys.source to source.name)
+    }
+
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
         override val extras: Map<Collections.saveButtonKeys, String>?
             get() = mapOf(Collections.saveButtonKeys.fromScreen to fromScreen)

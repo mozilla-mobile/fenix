@@ -57,6 +57,7 @@ import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.components.metrics.AllSourceStartupTelemetry
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
@@ -133,6 +134,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     }
 
     private lateinit var navigationToolbar: Toolbar
+    private lateinit var allSourceStartupTelemetry: AllSourceStartupTelemetry
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         StrictModeManager.changeStrictModePolicies(supportFragmentManager)
@@ -193,6 +195,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
 
         captureSnapshotTelemetryMetrics()
+
+        allSourceStartupTelemetry =
+            AllSourceStartupTelemetry(
+                intent,
+                components.analytics.metrics
+            )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        allSourceStartupTelemetry.onStartHomeActivity()
     }
 
     @CallSuper
@@ -250,6 +263,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 ?.let { it as? TabTrayDialogFragment }
                 ?.also { it.dismissAllowingStateLoss() }
         }
+
+        allSourceStartupTelemetry.onNewIntentHomeActivity(intent)
     }
 
     /**
