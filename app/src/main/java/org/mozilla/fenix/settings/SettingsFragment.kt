@@ -98,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 try {
                     context?.let { context ->
                         context.components.analytics.metrics.track(
-                            Event.PreferenceToggled(
+                            Event.PreferenceSettingToggled(
                                 key,
                                 sharedPreferences.getBoolean(key, false),
                                 context

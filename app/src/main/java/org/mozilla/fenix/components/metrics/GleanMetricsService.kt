@@ -29,6 +29,7 @@ import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.PreferenceToggled
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
@@ -268,9 +269,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SendTab -> EventWrapper<NoExtraKeys>(
             { SyncAccount.sendTab.record(it) }
         )
-        is Event.PreferenceToggled -> EventWrapper(
-            { Events.preferenceToggled.record(it) },
-            { Events.preferenceToggledKeys.valueOf(it) }
+        is Event.PreferenceSettingToggled -> EventWrapper(
+            { PreferenceToggled.settingToggled.record(it) },
+            { PreferenceToggled.settingToggledKeys.valueOf(it) }
         )
         is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
             { History.opened.record(it) }
@@ -551,6 +552,36 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TabCounterMenuItemTapped -> EventWrapper(
             { Events.tabCounterMenuAction.record(it) },
             { Events.tabCounterMenuActionKeys.valueOf(it) }
+        )
+        is Event.OnboardingWhatsNew -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingWhatsNew.record(it) }
+        )
+        is Event.OnboardingPrivateBrowsing -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingPrivateBrowsing.record(it) }
+        )
+        is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingPrivacyNotice.record(it) }
+        )
+        is Event.OnboardingManualSignIn -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingManualSignin.record(it) }
+        )
+        is Event.OnboardingAutoSignIn -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingAutoSignin.record(it) }
+        )
+        is Event.OnboardingFinish -> EventWrapper<NoExtraKeys>(
+            { PreferenceToggled.onboardingFinish.record(it) }
+        )
+        is Event.OnboardingTrackingProtection -> EventWrapper(
+            { PreferenceToggled.onboardingTrackingProt.record(it) },
+            { PreferenceToggled.onboardingTrackingProtKeys.valueOf(it) }
+        )
+        is Event.OnboardingThemePicker -> EventWrapper(
+            { PreferenceToggled.onboardingThemePicker.record(it) },
+            { PreferenceToggled.onboardingThemePickerKeys.valueOf(it) }
+        )
+        is Event.OnboardingToolbarPosition -> EventWrapper(
+            { PreferenceToggled.onboardingToolbarPosition.record(it) },
+            { PreferenceToggled.onboardingToolbarPositionKeys.valueOf(it) }
         )
 
         // Don't record other events in Glean:

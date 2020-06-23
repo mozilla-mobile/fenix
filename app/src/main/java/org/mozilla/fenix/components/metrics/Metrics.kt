@@ -38,6 +38,7 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.PreferenceToggled
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
@@ -172,10 +173,36 @@ sealed class Event {
     object SearchWidgetCFRCanceled : Event()
     object SearchWidgetCFRNotNowPressed : Event()
     object SearchWidgetCFRAddWidgetPressed : Event()
+    object OnboardingAutoSignIn : Event()
+    object OnboardingManualSignIn : Event()
+    object OnboardingPrivacyNotice : Event()
+    object OnboardingPrivateBrowsing : Event()
+    object OnboardingWhatsNew : Event()
+    object OnboardingFinish : Event()
 
     // Interaction events with extras
+    data class OnboardingToolbarPosition(val position: Position) : Event() {
+        enum class Position { TOP, BOTTOM }
 
-    data class PreferenceToggled(
+        override val extras: Map<ToolbarSettings.changedPositionKeys, String>?
+            get() = hashMapOf(ToolbarSettings.changedPositionKeys.position to position.name)
+    }
+
+    data class OnboardingTrackingProtection(val setting: Setting) : Event() {
+        enum class Setting { STRICT, STANDARD }
+
+        override val extras: Map<TrackingProtection.etpSettingChangedKeys, String>?
+            get() = hashMapOf(TrackingProtection.etpSettingChangedKeys.etpSetting to setting.name)
+    }
+
+    data class OnboardingThemePicker(val theme: Theme) : Event() {
+        enum class Theme { LIGHT, DARK, FOLLOW_DEVICE }
+
+        override val extras: Map<AppTheme.darkThemeSelectedKeys, String>?
+            get() = mapOf(AppTheme.darkThemeSelectedKeys.source to theme.name)
+    }
+
+    data class PreferenceSettingToggled(
         val preferenceKey: String,
         val enabled: Boolean,
         val context: Context
@@ -197,10 +224,10 @@ sealed class Event {
             context.getString(R.string.pref_key_show_search_suggestions_in_private)
         )
 
-        override val extras: Map<Events.preferenceToggledKeys, String>?
+        override val extras: Map<PreferenceToggled.settingToggledKeys, String>?
             get() = mapOf(
-                Events.preferenceToggledKeys.preferenceKey to preferenceKey,
-                Events.preferenceToggledKeys.enabled to enabled.toString()
+                PreferenceToggled.settingToggledKeys.preferenceKey to preferenceKey,
+                PreferenceToggled.settingToggledKeys.enabled to enabled.toString()
             )
 
         init {
@@ -371,7 +398,7 @@ sealed class Event {
     }
 
     data class DarkThemeSelected(val source: Source) : Event() {
-        enum class Source { SETTINGS, ONBOARDING }
+        enum class Source { SETTINGS }
 
         override val extras: Map<AppTheme.darkThemeSelectedKeys, String>?
             get() = mapOf(AppTheme.darkThemeSelectedKeys.source to source.name)

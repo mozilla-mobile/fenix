@@ -122,44 +122,6 @@ events:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2020-09-01"
-  preference_toggled:
-    type: event
-    description: |
-      A user toggled a boolean preference in settings
-    extra_keys:
-      preference_key:
-        description: |
-          The preference key for the boolean (true/false) preference the user
-          toggled.
-
-          We currently track: show_search_suggestions, remote_debugging,
-          telemetry, tracking_protection, search_bookmarks,
-          search_browsing_history, show_clipboard_suggestions,
-          show_search_shortcuts, open_links_in_a_private_tab (bug in
-          implementation https://github.com/mozilla-mobile/fenix/issues/7384),
-          pref_key_sync_logins, pref_key_sync_bookmarks, pref_key_sync_history,
-          pref_key_show_voice_search,
-          and pref_key_show_search_suggestions_in_private.
-      enabled:
-        description: "Whether or not the preference is *now* enabled"
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/975
-      - https://github.com/mozilla-mobile/fenix/issues/5094
-      - https://github.com/mozilla-mobile/fenix/issues/5737
-      - https://github.com/mozilla-mobile/fenix/issues/5586
-      - https://github.com/mozilla-mobile/fenix/issues/6396
-      - https://github.com/mozilla-mobile/fenix/issues/6070
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/1896
-      - https://github.com/mozilla-mobile/fenix/pull/5704
-      - https://github.com/mozilla-mobile/fenix/pull/5886
-      - https://github.com/mozilla-mobile/fenix/pull/5975
-      - https://github.com/mozilla-mobile/fenix/pull/6352
-      - https://github.com/mozilla-mobile/fenix/pull/6601
-      - https://github.com/mozilla-mobile/fenix/pull/6746
-    notification_emails:
-      - fenix-core@mozilla.com
-    expires: "2020-09-01"
   whats_new_tapped:
     type: event
     description: |
@@ -203,6 +165,166 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/11533
     notification_emails:
       - fenix-core@mozilla.com
+    expires: "2020-09-01"
+
+preference_toggled:
+  setting_toggled:
+    type: event
+    description: |
+      A user toggled a boolean preference in settings
+    extra_keys:
+      preference_key:
+        description: |
+          The preference key for the boolean (true/false) preference the user
+          toggled.
+
+          We currently track: show_search_suggestions, remote_debugging,
+          telemetry, tracking_protection, search_bookmarks,
+          search_browsing_history, show_clipboard_suggestions,
+          show_search_shortcuts, open_links_in_a_private_tab (bug in
+          implementation https://github.com/mozilla-mobile/fenix/issues/7384),
+          pref_key_sync_logins, pref_key_sync_bookmarks, pref_key_sync_history,
+          pref_key_show_voice_search,
+          and pref_key_show_search_suggestions_in_private.
+      enabled:
+        description: "Whether or not the preference is *now* enabled"
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/975
+      - https://github.com/mozilla-mobile/fenix/issues/5094
+      - https://github.com/mozilla-mobile/fenix/issues/5737
+      - https://github.com/mozilla-mobile/fenix/issues/5586
+      - https://github.com/mozilla-mobile/fenix/issues/6396
+      - https://github.com/mozilla-mobile/fenix/issues/6070
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/1896
+      - https://github.com/mozilla-mobile/fenix/pull/5704
+      - https://github.com/mozilla-mobile/fenix/pull/5886
+      - https://github.com/mozilla-mobile/fenix/pull/5975
+      - https://github.com/mozilla-mobile/fenix/pull/6352
+      - https://github.com/mozilla-mobile/fenix/pull/6601
+      - https://github.com/mozilla-mobile/fenix/pull/6746
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2020-09-01"
+  onboarding_auto_signin:
+    type: event
+    description:
+      The onboarding automatic sign in card was tapped.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_manual_signin:
+    type: event
+    description:
+      The onboarding manual sign in card was tapped.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_privacy_notice:
+    type: event
+    description:
+      The onboarding privacy notice card was tapped.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_private_browsing:
+    type: event
+    description:
+      The onboarding private browsing card was tapped.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_toolbar_position:
+    type: event
+    description:
+      The toolbar position was chosen from the onboarding card.
+    extra_keys:
+      position:
+        description: |
+          A string that indicates the position of the toolbar TOP or BOTTOM
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_tracking_prot:
+    type: event
+    description:
+      The tracking protection card was used to choose a policy.
+    extra_keys:
+      position:
+        description: |
+          A string that indicates the TP policy STANDARD or STRICT
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_whats_new:
+    type: event
+    description:
+      The onboarding What\'s New card was tapped.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_theme_picker:
+    type: event
+    description:
+      The device theme was chosen using the theme picker onboarding card.
+    extra_keys:
+      theme:
+        description: |
+          A string that indicates the theme LIGHT, DARK, or FOLLOW DEVICE
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2020-09-01"
+  onboarding_finish:
+    type: event
+    description:
+      The onboarding experience is finished.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/10824
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
     expires: "2020-09-01"
 
 search_shortcuts:
