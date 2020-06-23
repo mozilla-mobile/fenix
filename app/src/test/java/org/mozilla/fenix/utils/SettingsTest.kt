@@ -305,42 +305,16 @@ class SettingsTest {
     }
 
     @Test
-    fun shouldSetReaderModeOpened() {
+    fun shouldSetHighlightedMenuItemInteracted() {
         // When
         // Then
-        assertFalse(settings.readerModeOpened)
+        assertFalse(settings.highlightedMenuItemInteracted)
 
         // When
-        settings.readerModeOpened = true
+        settings.highlightedMenuItemInteracted = true
 
         // Then
-        assertTrue(settings.readerModeOpened)
-    }
-
-    @Test
-    fun shouldSetOpenInAppOpened() {
-        // When
-        // Then
-        assertFalse(settings.openInAppOpened)
-
-        // When
-        settings.openInAppOpened = true
-
-        // Then
-        assertTrue(settings.openInAppOpened)
-    }
-
-    @Test
-    fun shouldSetInstallPwaOpened() {
-        // When
-        // Then
-        assertFalse(settings.installPwaOpened)
-
-        // When
-        settings.installPwaOpened = true
-
-        // Then
-        assertTrue(settings.installPwaOpened)
+        assertTrue(settings.highlightedMenuItemInteracted)
     }
 
     @Test

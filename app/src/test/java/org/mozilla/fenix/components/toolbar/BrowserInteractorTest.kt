@@ -65,10 +65,8 @@ class BrowserInteractorTest {
 
     @Test
     fun onBrowserMenuDismissed() {
-        val itemList: List<ToolbarMenu.Item> = listOf()
+        interactor.onBrowserMenuDismissed()
 
-        interactor.onBrowserMenuDismissed(itemList)
-
-        verify { browserToolbarController.handleBrowserMenuDismissed(itemList) }
+        verify { browserToolbarController.handleBrowserMenuDismissed() }
     }
 }

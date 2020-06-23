@@ -187,18 +187,12 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun `handle BrowserMenu dismissed with all options available`() = runBlockingTest {
-        val itemList: List<ToolbarMenu.Item> = listOf(
-            ToolbarMenu.Item.AddToHomeScreen,
-            ToolbarMenu.Item.OpenInApp
-        )
-
         val activity = HomeActivity()
 
         val controller = createController(scope = this, activity = activity)
-        controller.handleBrowserMenuDismissed(itemList)
+        controller.handleBrowserMenuDismissed()
 
-        assertEquals(true, activity.settings().installPwaOpened)
-        assertEquals(true, activity.settings().openInAppOpened)
+        assertEquals(true, activity.settings().highlightedMenuItemInteracted)
     }
 
     @Test
