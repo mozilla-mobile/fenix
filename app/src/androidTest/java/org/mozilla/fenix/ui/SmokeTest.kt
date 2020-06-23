@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.content.pm.ActivityInfo
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -15,6 +16,7 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -23,7 +25,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  * These tests will verify different functionalities of the app as a way to quickly detect regressions in main areas
  */
 
-@Ignore("Temp disable for triggering a native Gecko crash - https://github.com/mozilla-mobile/fenix/issues/11642")
 class SmokeTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
@@ -44,6 +45,7 @@ class SmokeTest {
         mockWebServer.shutdown()
     }
 
+    @Ignore("Temp disable for triggering a native Gecko crash - https://github.com/mozilla-mobile/fenix/issues/11642")
     @Test
     fun verifyBasicNavigationToolbarFunctionality() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -61,6 +63,194 @@ class SmokeTest {
                 verifyExistingTabList()
             }.openHomeScreen {
                 verifyHomeScreen()
+            }
+        }
+    }
+
+    @Test
+    fun verifyPageMainMenuItemsListPotraitMode() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            }.openThreeDotMenu {
+                verifyThreeDotMainMenuItems()
+            }.openHistory {
+                verifyTestPageUrl(defaultWebPage.url)
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openBookmarks {
+                verifyBookmarksMenuView()
+                verifyEmptyBookmarksList()
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openSettings {
+                verifySettingsView()
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openFindInPage {
+                verifyFindInPageSearchBarItems()
+            }.closeFindInPage {
+            }.openThreeDotMenu {
+            }.addToFirefoxHome {
+                verifySnackBarText("Added to top sites!")
+            }.openTabDrawer {
+            }.openHomeScreen {
+                verifyExistingTopSitesTabs(defaultWebPage.title)
+            }.openTabDrawer {
+            }.openTab(defaultWebPage.title) {
+            }.openThreeDotMenu {
+            }.openAddToHomeScreen {
+                verifyShortcutNameField(defaultWebPage.title)
+                clickAddShortcutButton()
+                clickAddAutomaticallyButton()
+                verifyShortcutIcon()
+            }.openHomeScreenShortcut(defaultWebPage.title) {
+            }.openThreeDotMenu {
+            }.bookmarkPage {
+                verifySnackBarText("Bookmark saved!")
+            }.openThreeDotMenu {
+                verifyEditBookmarkButton()
+            }.openEditBookmarks {
+                clickdeleteBookmarkButton()
+            }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
+                verifySnackBarText("Deleted localhost")
+            }.openThreeDotMenu {
+            }.sharePage {
+                // verifyShareAppsLayout()
+                // verifyShareOverlay()
+            }.closeShareDialogReturnToPage {
+            }.openThreeDotMenu {
+            }.refreshPage {
+                // verifyPageContent(defaultWebPage.content)
+            }.openTabDrawer {
+                closeTabViaXButton(defaultWebPage.title)
+            }.openHomeScreen {
+
+                // PRIVATE BROWSER
+
+                togglePrivateBrowsingModeOnOff()
+                navigationToolbar {
+                }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                }.openThreeDotMenu {
+                    verifyThreeDotMainMenuItems()
+                }.openHistory {
+                    verifyTestPageUrl(defaultWebPage.url)
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openBookmarks {
+                    verifyBookmarksMenuView()
+                    // verifyEmptyBookmarksList()
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openSettings {
+                    verifySettingsView()
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openFindInPage {
+                    verifyFindInPageSearchBarItems()
+                }.closeFindInPage {
+                }.openThreeDotMenu {
+                }.addToFirefoxHome {
+                    verifySnackBarText("Added to top sites!")
+                }.openTabDrawer {
+                }.openHomeScreen {
+                    // verifyExistingTopSitesTabs(defaultWebPage.title)
+                }.openTabDrawer {
+                }.openTab(defaultWebPage.title) {
+                }.openThreeDotMenu {
+                }.openAddToHomeScreen {
+                    verifyShortcutNameField(defaultWebPage.title)
+                    clickAddShortcutButton()
+                    clickAddAutomaticallyButton()
+                    verifyShortcutIcon()
+                }.openHomeScreenShortcut(defaultWebPage.title) {
+                }.openThreeDotMenu {
+                }.bookmarkPage {
+                    verifySnackBarText("Bookmark saved!")
+                }.openThreeDotMenu {
+                }.openEditBookmarks {
+                    clickdeleteBookmarkButton()
+                }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
+                    verifySnackBarText("Deleted localhost")
+                }.openThreeDotMenu {
+                }.sharePage {
+                    // verifyShareAppsLayout()
+                    // verifyShareOverlay()
+                }.closeShareDialogReturnToPage {
+                }.openThreeDotMenu {
+                }.refreshPage {
+                    // verifyPageContent(defaultWebPage.content)
+                }.openTabDrawer {
+                    closeTabViaXButton(defaultWebPage.title)
+                }.openHomeScreen {
+                }
+            }
+        }
+    }
+
+    @Ignore
+    @Test
+    fun verifyPageMainMenuItemsListLandscapeMode() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        activityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+
+        homeScreen {
+            mDevice.waitForIdle(waitingTimeShort)
+            togglePrivateBrowsingModeOnOff()
+            navigationToolbar {
+            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                activityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            }.openThreeDotMenu {
+                verifyThreeDotMainMenuItems()
+            }.openHistory {
+                // verifyTestPageUrl(defaultWebPage.url)
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openBookmarks {
+                verifyBookmarksMenuView()
+                verifyEmptyBookmarksList()
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openSettings {
+                verifySettingsView()
+            }.goBackToBrowser {
+            }.openThreeDotMenu {
+            }.openFindInPage {
+                verifyFindInPageSearchBarItems()
+            }.closeFindInPage {
+            }.openThreeDotMenu {
+            }.addToFirefoxHome {
+                verifySnackBarText("Added to top sites!")
+            }.openTabDrawer {
+            }.openTab(defaultWebPage.title) {
+            }.openThreeDotMenu {
+            }.openAddToHomeScreen {
+                verifyShortcutNameField(defaultWebPage.title)
+                clickAddShortcutButton()
+                clickAddAutomaticallyButton()
+                verifyShortcutIcon()
+            }.openHomeScreenShortcut(defaultWebPage.title) {
+            }.openThreeDotMenu {
+            }.bookmarkPage {
+                verifySnackBarText("Bookmark saved!")
+            }.openThreeDotMenu {
+                verifyEditBookmarkButton()
+            }.openEditBookmarks {
+                clickdeleteBookmarkButton()
+            }.confirmBookmarkFolderDeletionAndGoBackToBrowser {
+                verifySnackBarText("Deleted localhost")
+            }.openThreeDotMenu {
+            }.sharePage {
+                // verifyShareAppsLayout()
+                // verifyShareOverlay()
+            }.closeShareDialogReturnToPage {
+            }.openThreeDotMenu {
+            }.refreshPage {
+                // verifyPageContent(defaultWebPage.content)
+            }.openTabDrawer {
+                closeTabViaXButton(defaultWebPage.title)
             }
         }
     }

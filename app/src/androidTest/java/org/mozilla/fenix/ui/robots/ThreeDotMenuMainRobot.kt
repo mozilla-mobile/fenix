@@ -9,6 +9,7 @@ package org.mozilla.fenix.ui.robots
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
@@ -18,11 +19,11 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
@@ -44,8 +45,10 @@ import org.mozilla.fenix.share.ShareFragment
  */
 class ThreeDotMenuMainRobot {
     fun verifySettingsButton() = assertSettingsButton()
+    fun verifyAddOnsButton() = assertAddOnsButton()
     fun verifyHistoryButton() = assertHistoryButton()
     fun verifyBookmarksButton() = assertBookmarksButton()
+    fun verifySyncedTabsButton() = assertSyncedTabsButton()
     fun verifyHelpButton() = assertHelpButton()
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
@@ -106,6 +109,25 @@ class ThreeDotMenuMainRobot {
     fun verifyShareALinkTitle() = assertShareALinkTitle()
     fun verifyWhatsNewButton() = assertWhatsNewButton()
     fun verifyAddFirefoxHome() = assertAddToFirefoxHome()
+    fun verifyAddToMobileHome() = assertAddToMobileHome()
+    fun verifyDesktopSite() = assertDesktopSite()
+
+    fun verifyThreeDotMainMenuItems() {
+        verifyAddOnsButton()
+        verifyHistoryButton()
+        verifyBookmarksButton()
+        verifySyncedTabsButton()
+        verifySettingsButton()
+        verifyFindInPageButton()
+        verifyAddFirefoxHome()
+        verifyAddToMobileHome()
+        // verifySaveCollection()
+        verifyDesktopSite()
+        // verifyAddBookmarkButton()
+        verifyShareButton()
+        verifyForwardButton()
+        verifyRefreshButton()
+    }
 
     class Transition {
 
@@ -124,6 +146,14 @@ class ThreeDotMenuMainRobot {
         fun openBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
             bookmarksButton().click()
+
+            BookmarksRobot().interact()
+            return BookmarksRobot.Transition()
+        }
+
+        fun openEditBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
+            // mDevice.waitNotNull(Until.findObject(By.text("Edit Bookmarks")), waitingTime)
+            editBookmarkButton().click()
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
@@ -177,6 +207,23 @@ class ThreeDotMenuMainRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun bookmarkPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Bookmark")), waitingTime)
+            addBookmarkButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun sharePage(interact: LibrarySubMenusMultipleSelectionToolbarRobot.() -> Unit): LibrarySubMenusMultipleSelectionToolbarRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Share")), waitingTime)
+            shareButton().click()
+            pressBack()
+
+            LibrarySubMenusMultipleSelectionToolbarRobot().interact()
+            return LibrarySubMenusMultipleSelectionToolbarRobot.Transition()
         }
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
@@ -286,12 +333,20 @@ private fun assertSettingsButton() = settingsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     .check(matches(isCompletelyDisplayed()))
 
+private fun addOnsButton() = onView(allOf(withText("Add-ons")))
+private fun assertAddOnsButton() = addOnsButton()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
 private fun historyButton() = onView(allOf(withText(R.string.library_history)))
 private fun assertHistoryButton() = historyButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun bookmarksButton() = onView(allOf(withText(R.string.library_bookmarks)))
 private fun assertBookmarksButton() = bookmarksButton()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun syncedTabsButton() = onView(allOf(withText(R.string.library_synced_tabs)))
+private fun assertSyncedTabsButton() = syncedTabsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun helpButton() = onView(allOf(withText(R.string.browser_menu_help)))
@@ -396,6 +451,28 @@ private fun assertAddToFirefoxHome() {
         .perform(
             RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
                 hasDescendant(withText(R.string.browser_menu_add_to_top_sites))
+            )
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun addToMobileHomeButton() =
+    onView(allOf(withText(R.string.browser_menu_add_to_homescreen)))
+private fun assertAddToMobileHome() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
+        .perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText(R.string.browser_menu_add_to_homescreen))
+            )
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun desktopSiteButton() =
+    onView(allOf(withText(R.string.browser_menu_desktop_site)))
+private fun assertDesktopSite() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
+        .perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText(R.string.browser_menu_desktop_site))
             )
         ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
