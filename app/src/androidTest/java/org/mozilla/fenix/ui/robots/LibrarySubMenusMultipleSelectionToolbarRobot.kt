@@ -38,6 +38,8 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
 
     fun verifyShareOverlay() = assertShareOverlay()
 
+    fun verifyShareAppsLayout() = assertShareAppsLayout()
+
     fun verifyShareTabFavicon() = assertShareTabFavicon()
 
     fun verifyShareTabTitle() = assertShareTabTitle()
@@ -71,6 +73,12 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
     }
 
     class Transition {
+        fun closeShareDialogReturnToPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
         fun closeToolbarReturnToHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
             closeToolbarButton().click()
 
@@ -157,6 +165,9 @@ private fun assertShareBookmarksButton() =
 
 private fun assertShareOverlay() =
     onView(withId(R.id.shareWrapper)).check(matches(isDisplayed()))
+
+private fun assertShareAppsLayout() =
+    onView(withId(R.id.apps_layout)).check(matches(isDisplayed()))
 
 private fun assertShareTabTitle() =
     onView(withId(R.id.share_tab_title)).check(matches(isDisplayed()))
