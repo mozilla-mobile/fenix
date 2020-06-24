@@ -38,7 +38,6 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
-import org.mozilla.fenix.GleanMetrics.PreferenceToggled
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
@@ -202,7 +201,7 @@ sealed class Event {
             get() = mapOf(AppTheme.darkThemeSelectedKeys.source to theme.name)
     }
 
-    data class PreferenceSettingToggled(
+    data class PreferenceToggled(
         val preferenceKey: String,
         val enabled: Boolean,
         val context: Context
@@ -224,10 +223,10 @@ sealed class Event {
             context.getString(R.string.pref_key_show_search_suggestions_in_private)
         )
 
-        override val extras: Map<PreferenceToggled.settingToggledKeys, String>?
+        override val extras: Map<Events.preferenceToggledKeys, String>?
             get() = mapOf(
-                PreferenceToggled.settingToggledKeys.preferenceKey to preferenceKey,
-                PreferenceToggled.settingToggledKeys.enabled to enabled.toString()
+                Events.preferenceToggledKeys.preferenceKey to preferenceKey,
+                Events.preferenceToggledKeys.enabled to enabled.toString()
             )
 
         init {

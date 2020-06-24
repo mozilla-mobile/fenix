@@ -21,6 +21,7 @@ import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.DownloadNotification
 import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Events.preferenceToggled
 import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.GleanMetrics.Logins
@@ -29,7 +30,7 @@ import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.GleanMetrics.PreferenceToggled
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
@@ -269,9 +270,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SendTab -> EventWrapper<NoExtraKeys>(
             { SyncAccount.sendTab.record(it) }
         )
-        is Event.PreferenceSettingToggled -> EventWrapper(
-            { PreferenceToggled.settingToggled.record(it) },
-            { PreferenceToggled.settingToggledKeys.valueOf(it) }
+        is Event.PreferenceToggled -> EventWrapper(
+            { Events.preferenceToggled.record(it) },
+            { Events.preferenceToggledKeys.valueOf(it) }
         )
         is Event.HistoryOpened -> EventWrapper<NoExtraKeys>(
             { History.opened.record(it) }
@@ -554,34 +555,34 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.tabCounterMenuActionKeys.valueOf(it) }
         )
         is Event.OnboardingWhatsNew -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingWhatsNew.record(it) }
+            { Onboarding.whatsNew.record(it) }
         )
         is Event.OnboardingPrivateBrowsing -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingPrivateBrowsing.record(it) }
+            { Onboarding.prefToggledPrivateBrowsing.record(it) }
         )
         is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingPrivacyNotice.record(it) }
+            { Onboarding.privacyNotice.record(it) }
         )
         is Event.OnboardingManualSignIn -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingManualSignin.record(it) }
+            { Onboarding.fxaManualSignin.record(it) }
         )
         is Event.OnboardingAutoSignIn -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingAutoSignin.record(it) }
+            { Onboarding.fxaAutoSignin.record(it) }
         )
         is Event.OnboardingFinish -> EventWrapper<NoExtraKeys>(
-            { PreferenceToggled.onboardingFinish.record(it) }
+            { Onboarding.finish.record(it) }
         )
         is Event.OnboardingTrackingProtection -> EventWrapper(
-            { PreferenceToggled.onboardingTrackingProt.record(it) },
-            { PreferenceToggled.onboardingTrackingProtKeys.valueOf(it) }
+            { Onboarding.prefToggledTrackingProt.record(it) },
+            { Onboarding.prefToggledTrackingProtKeys.valueOf(it) }
         )
         is Event.OnboardingThemePicker -> EventWrapper(
-            { PreferenceToggled.onboardingThemePicker.record(it) },
-            { PreferenceToggled.onboardingThemePickerKeys.valueOf(it) }
+            { Onboarding.prefToggledThemePicker.record(it) },
+            { Onboarding.prefToggledThemePickerKeys.valueOf(it) }
         )
         is Event.OnboardingToolbarPosition -> EventWrapper(
-            { PreferenceToggled.onboardingToolbarPosition.record(it) },
-            { PreferenceToggled.onboardingToolbarPositionKeys.valueOf(it) }
+            { Onboarding.prefToggledToolbarPosition.record(it) },
+            { Onboarding.prefToggledToolbarPositionKeys.valueOf(it) }
         )
 
         // Don't record other events in Glean:
