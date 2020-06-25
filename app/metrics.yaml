@@ -261,7 +261,8 @@ onboarding:
     extra_keys:
       position:
         description: |
-          A string that indicates the position of the toolbar TOP or BOTTOM
+          A string that indicates the position of the toolbar TOP or BOTTOM.
+          Default: BOTTOM
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10824
     data_reviews:
@@ -277,7 +278,8 @@ onboarding:
     extra_keys:
       position:
         description: |
-          A string that indicates the TP policy STANDARD or STRICT
+          A string that indicates the Tracking Protection policy STANDARD
+          or STRICT. Default: Toggle ON, STANDARD
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10824
     data_reviews:
@@ -305,7 +307,8 @@ onboarding:
     extra_keys:
       theme:
         description: |
-          A string that indicates the theme LIGHT, DARK, or FOLLOW DEVICE
+          A string that indicates the theme LIGHT, DARK, or FOLLOW DEVICE.
+          Default: FOLLOW DEVICE
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10824
     data_reviews:
