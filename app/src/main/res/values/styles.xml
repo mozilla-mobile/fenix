@@ -75,7 +75,7 @@
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
         <item name="readerModeStartGradient">@color/readermode_start_gradient_normal_theme</item>
         <item name="readerModeEndGradient">@color/readermode_end_gradient_normal_theme</item>
-        <item name="syncedTabsSeparator">@color/synced_tabs_separator</item>
+        <item name="syncedTabsSeparator">@color/synced_tabs_separator_normal_theme</item>
 
         <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
         <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
@@ -200,6 +200,7 @@
         <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_private_theme</item>
         <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_private_theme</item>
         <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_private_theme</item>
+        <item name="syncedTabsSeparator">@color/synced_tabs_separator_private_theme</item>
 
         <!-- Tab Tray -->
         <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
@@ -568,5 +569,10 @@
     <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="elevation">90dp</item>
         <item name="android:stateListAnimator">@null</item>
+    </style>
+    <style name="SyncedTabsStyle">
+        <item name="android:layout_marginStart">72dp</item>
+        <item name="android:layout_marginEnd">48dp</item>
+        <item name="android:layout_width">0dp</item>
     </style>
 </resources>

@@ -12,10 +12,8 @@
 
     <TextView
         android:id="@+id/synced_tab_item_title"
-        android:layout_width="0dp"
+        style="@style/SyncedTabsStyle"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginEnd="48dp"
         android:layout_marginTop="6dp"
         android:singleLine="true"
         android:textAlignment="viewStart"
@@ -28,10 +26,8 @@
 
     <TextView
         android:id="@+id/synced_tab_item_url"
-        android:layout_width="0dp"
+        style="@style/SyncedTabsStyle"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginEnd="48dp"
         android:layout_marginTop="2dp"
         android:singleLine="true"
         android:textAlignment="viewStart"
