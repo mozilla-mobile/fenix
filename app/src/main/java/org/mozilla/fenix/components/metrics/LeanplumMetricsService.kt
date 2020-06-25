@@ -119,7 +119,8 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
                 "fxa_signed_in" to application.settings().fxaSignedIn,
                 "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
                 "search_widget_installed" to application.settings().searchWidgetInstalled,
-                "tracking_protection" to trackingProtection,
+                "tracking_protection_enabled" to application.settings().shouldUseTrackingProtection,
+                "tracking_protection_setting" to trackingProtection,
                 "fenix" to true
             ))
 
