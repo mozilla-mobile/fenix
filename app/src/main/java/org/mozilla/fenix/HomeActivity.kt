@@ -57,7 +57,6 @@ import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
-import org.mozilla.fenix.components.metrics.AllSourceStartupTelemetry
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
@@ -134,7 +133,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     }
 
     private lateinit var navigationToolbar: Toolbar
-    private lateinit var allSourceStartupTelemetry: AllSourceStartupTelemetry
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         StrictModeManager.changeStrictModePolicies(supportFragmentManager)
@@ -176,10 +174,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             lifecycle.addObserver(BreadcrumbsRecorder(components.analytics.crashReporter,
                 navHost.navController, ::getBreadcrumbMessage))
 
-            intent
-                ?.toSafeIntent()
+            val safeIntent = intent?.toSafeIntent()
+            safeIntent
                 ?.let(::getIntentSource)
                 ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
+            // record on cold startup
+            safeIntent
+                ?.let(::getIntentAllSource)
+                ?.also { components.analytics.metrics.track(Event.OpenedAppAllStart(it)) }
         }
         supportActionBar?.hide()
 
@@ -195,17 +197,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
 
         captureSnapshotTelemetryMetrics()
-
-        allSourceStartupTelemetry =
-            AllSourceStartupTelemetry(
-                intent,
-                components.analytics.metrics
-            )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        allSourceStartupTelemetry.onStartHomeActivity()
     }
 
     @CallSuper
@@ -264,7 +255,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 ?.also { it.dismissAllowingStateLoss() }
         }
 
-        allSourceStartupTelemetry.onNewIntentHomeActivity(intent)
+        // If there is a warm or hot startup, onNewIntent method is always called first.
+        // Note: This does not work in case of an user sending an intent with ACTION_VIEW
+        // for example, launch the application, and than use adb to send an intent with
+        // ACTION_VIEW to open a link. In this case, we will get multiple telemetry events.
+        intent
+            .toSafeIntent()
+            .let(::getIntentAllSource)
+            ?.also { components.analytics.metrics.track(Event.OpenedAppAllStart(it)) }
     }
 
     /**
@@ -332,6 +330,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             intent.isLauncherIntent -> Event.OpenedApp.Source.APP_ICON
             intent.action == Intent.ACTION_VIEW -> Event.OpenedApp.Source.LINK
             else -> null
+        }
+    }
+
+    protected open fun getIntentAllSource(intent: SafeIntent): Event.OpenedAppAllStart.Source? {
+        return when {
+            intent.isLauncherIntent -> Event.OpenedAppAllStart.Source.APP_ICON
+            intent.action == Intent.ACTION_VIEW -> Event.OpenedAppAllStart.Source.LINK
+            else -> Event.OpenedAppAllStart.Source.UNKNOWN
         }
     }
 
