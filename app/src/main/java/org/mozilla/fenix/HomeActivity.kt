@@ -181,7 +181,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             // record on cold startup
             safeIntent
                 ?.let(::getIntentAllSource)
-                ?.also { components.analytics.metrics.track(Event.OpenedAppAllStart(it)) }
+                ?.also { components.analytics.metrics.track(Event.AppRecievedIntent(it)) }
         }
         supportActionBar?.hide()
 
@@ -262,7 +262,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         intent
             .toSafeIntent()
             .let(::getIntentAllSource)
-            ?.also { components.analytics.metrics.track(Event.OpenedAppAllStart(it)) }
+            ?.also { components.analytics.metrics.track(Event.AppRecievedIntent(it)) }
     }
 
     /**
@@ -333,11 +333,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
     }
 
-    protected open fun getIntentAllSource(intent: SafeIntent): Event.OpenedAppAllStart.Source? {
+    protected open fun getIntentAllSource(intent: SafeIntent): Event.AppRecievedIntent.Source? {
         return when {
-            intent.isLauncherIntent -> Event.OpenedAppAllStart.Source.APP_ICON
-            intent.action == Intent.ACTION_VIEW -> Event.OpenedAppAllStart.Source.LINK
-            else -> Event.OpenedAppAllStart.Source.UNKNOWN
+            intent.isLauncherIntent -> Event.AppRecievedIntent.Source.APP_ICON
+            intent.action == Intent.ACTION_VIEW -> Event.AppRecievedIntent.Source.LINK
+            else -> Event.AppRecievedIntent.Source.UNKNOWN
         }
     }
 
