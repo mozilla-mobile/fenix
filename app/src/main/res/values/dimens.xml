@@ -108,6 +108,7 @@
     <!-- Locale Settings Fragment -->
     <dimen name="locale_list_margin">16dp</dimen>
     <dimen name="locale_item_text_margin_start">32dp</dimen>
+    <dimen name="locale_item_text_margin_end">16dp</dimen>
     <dimen name="locale_item_text_margin_gone_start">72dp</dimen>
     <dimen name="locale_item_title_size">16sp</dimen>
     <dimen name="locale_item_subtitle_size">12sp</dimen>
