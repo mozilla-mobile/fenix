@@ -12,27 +12,23 @@
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="@bool/underAPI28"
             android:key="@string/pref_key_light_theme"
-            android:layout="@layout/preference_widget_radiobutton"
             android:title="@string/preference_light_theme" />
 
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="false"
             android:key="@string/pref_key_dark_theme"
-            android:layout="@layout/preference_widget_radiobutton"
             android:title="@string/preference_dark_theme" />
 
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="false"
             android:key="@string/pref_key_auto_battery_theme"
             android:title="@string/preference_auto_battery_theme"
-            android:layout="@layout/preference_widget_radiobutton"
             app:isPreferenceVisible="@bool/underAPI28" />
 
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="@bool/API28"
             android:key="@string/pref_key_follow_device_theme"
             android:title="@string/preference_follow_device_theme"
-            android:layout="@layout/preference_widget_radiobutton"
             app:isPreferenceVisible="@bool/API28" />
     </androidx.preference.PreferenceCategory>
 
@@ -43,11 +39,9 @@
         android:layout="@layout/preference_cat_style">
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_top"
-            android:layout="@layout/preference_widget_radiobutton"
             android:title="@string/preference_top_toolbar" />
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_bottom"
-            android:layout="@layout/preference_widget_radiobutton"
             android:title="@string/preference_bottom_toolbar" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>
