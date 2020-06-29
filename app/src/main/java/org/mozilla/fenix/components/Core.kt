@@ -86,7 +86,8 @@ class Core(private val context: Context) {
         GeckoEngine(
             context,
             defaultSettings,
-            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage)
+            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage),
+            actionSorter = ::actionSorter
         ).also {
             WebCompatFeature.install(it)
 
@@ -104,6 +105,20 @@ class Core(private val context: Context) {
                 WebCompatReporterFeature.install(it)
             }
         }
+    }
+
+    private fun actionSorter(actions: Array<String>) : Array<String> {
+        val order = hashMapOf<String, Int>()
+
+        order["org.mozilla.geckoview.COPY"] = 0
+        order["CUSTOM_CONTEXT_MENU_SEARCH"] = 1
+        order["org.mozilla.geckoview.SELECT_ALL"] = 2
+        order["CUSTOM_CONTEXT_MENU_SHARE"] = 3
+
+        return actions.sortedBy { actionName ->
+            // Sort the actions in our preferred order, putting "other" actions unsorted at the end
+            order[actionName] ?: actions.size
+        }.toTypedArray()
     }
 
     /**
