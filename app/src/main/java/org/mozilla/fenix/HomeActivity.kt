@@ -206,7 +206,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // record on cold startup
             safeIntent
                 ?.let(::getIntentAllSource)
-                ?.also { components.analytics.metrics.track(Event.AppRecievedIntent(it)) }
+                ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
         }
         supportActionBar?.hide()
 
@@ -222,7 +222,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         captureSnapshotTelemetryMetrics()
 
+        setAppAllStartTelemetry(intent.toSafeIntent())
+
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
+    }
+
+    protected open fun setAppAllStartTelemetry(safeIntent: SafeIntent) {
+        components.appAllSourceStartTelemetry.receivedIntentInHomeActivity(safeIntent)
     }
 
     @CallSuper
@@ -286,14 +292,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 ?.also { it.dismissAllowingStateLoss() }
         }
 
-        // If there is a warm or hot startup, onNewIntent method is always called first.
         // Note: This does not work in case of an user sending an intent with ACTION_VIEW
         // for example, launch the application, and than use adb to send an intent with
         // ACTION_VIEW to open a link. In this case, we will get multiple telemetry events.
         intent
             .toSafeIntent()
             .let(::getIntentAllSource)
-            ?.also { components.analytics.metrics.track(Event.AppRecievedIntent(it)) }
+            ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
+
+        setAppAllStartTelemetry(intent.toSafeIntent())
     }
 
     /**
@@ -428,11 +435,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    protected open fun getIntentAllSource(intent: SafeIntent): Event.AppRecievedIntent.Source? {
+    protected open fun getIntentAllSource(intent: SafeIntent): Event.AppReceivedIntent.Source? {
         return when {
-            intent.isLauncherIntent -> Event.AppRecievedIntent.Source.APP_ICON
-            intent.action == Intent.ACTION_VIEW -> Event.AppRecievedIntent.Source.LINK
-            else -> Event.AppRecievedIntent.Source.UNKNOWN
+            intent.isLauncherIntent -> Event.AppReceivedIntent.Source.APP_ICON
+            intent.action == Intent.ACTION_VIEW -> Event.AppReceivedIntent.Source.LINK
+            else -> Event.AppReceivedIntent.Source.UNKNOWN
         }
     }
 
