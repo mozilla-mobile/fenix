@@ -234,7 +234,7 @@ Here is the list of current Events sent, which can be found here in the code bas
   <tr>
     <td>`E_Addon_Installed`</td>
     <td>The user has installed an addon from the addon management page.</td>
-    <td><a href="">#</a></td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/12136#issuecomment-651922547">#12136</a></td>
   </tr>
 </table>
 
