@@ -53,7 +53,7 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Disabling because of intermittent failures https://github.com/mozilla-mobile/fenix/issues/8663")
+    //@Ignore("Disabling because of intermittent failures https://github.com/mozilla-mobile/fenix/issues/8663")
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -98,7 +98,7 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Intermittent failure - https://github.com/mozilla-mobile/fenix/issues/8832")
+    //@Ignore("Intermittent failure - https://github.com/mozilla-mobile/fenix/issues/8832")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =

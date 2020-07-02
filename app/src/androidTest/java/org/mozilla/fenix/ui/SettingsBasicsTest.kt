@@ -104,7 +104,7 @@ class SettingsBasicsTest {
         }
     }
 
-    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
+    //@Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
     @Test
     fun toggleSearchSuggestions() {
         // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
@@ -123,7 +123,7 @@ class SettingsBasicsTest {
         }
     }
 
-    @Ignore("Currently failing on firebase: https://github.com/mozilla-mobile/fenix/issues/8747")
+    //@Ignore("Currently failing on firebase: https://github.com/mozilla-mobile/fenix/issues/8747")
     @Test
     fun toggleShowVisitedSitesAndBookmarks() {
         // Bookmarks a few websites, toggles the history and bookmarks setting to off, then verifies if the visited and bookmarked websites do not show in the suggestions.
