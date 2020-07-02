@@ -99,6 +99,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
         requireComponents.analytics.metrics.track(Event.InteractWithSearchURLArea)
 
+        val areShortcutsAvailable = areShortcutsAvailable()
         searchStore = StoreProvider.get(this) {
             SearchFragmentStore(
                 SearchFragmentState(
@@ -107,7 +108,10 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                     defaultEngineSource = currentSearchEngine,
                     showSearchSuggestions = shouldShowSearchSuggestions(isPrivate),
                     showSearchSuggestionsHint = false,
-                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts && url.isEmpty(),
+                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts &&
+                            url.isEmpty() &&
+                            areShortcutsAvailable,
+                    areShortcutsAvailable = areShortcutsAvailable,
                     showClipboardSuggestions = requireContext().settings().shouldShowClipboardSuggestions,
                     showHistorySuggestions = requireContext().settings().shouldShowHistorySuggestions,
                     showBookmarkSuggestions = requireContext().settings().shouldShowBookmarkSuggestions,
@@ -330,6 +334,12 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             )
         }
 
+        // Users can from this fragment go to install/uninstall search engines and then return.
+        val areShortcutsAvailable = areShortcutsAvailable()
+        if (searchStore.state.areShortcutsAvailable != areShortcutsAvailable) {
+            searchStore.dispatch(SearchFragmentAction.UpdateShortcutsAvailability(areShortcutsAvailable))
+        }
+
         if (!permissionDidUpdate) {
             toolbarView.view.edit.focus()
         }
@@ -427,6 +437,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
     private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
         view?.apply {
+            search_shortcuts_button.isVisible = searchState.areShortcutsAvailable
+
             val showShortcuts = searchState.showSearchShortcuts
             search_shortcuts_button.isChecked = showShortcuts
 
@@ -437,7 +449,16 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
     }
 
+    /**
+     * Return if the user has *at least 2* installed search engines.
+     * Useful to decide whether to show / enable certain functionalities.
+     */
+    private fun areShortcutsAvailable() =
+            requireContext().components.search.provider.installedSearchEngines(requireContext())
+                    .list.size >= MINIMUM_SEARCH_ENGINES_NUMBER_TO_SHOW_SHORTCUTS
+
     companion object {
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        private const val MINIMUM_SEARCH_ENGINES_NUMBER_TO_SHOW_SHORTCUTS = 2
     }
 }
