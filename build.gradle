@@ -181,9 +181,45 @@ tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class) {
     exclude("**/tmp/**")
 }
 
-task listRepositories {
+tasks.register("listRepositories") {
     doLast {
         println "Repositories:"
         project.repositories.each { println "Name: " + it.name + "; url: " + it.url }
    }
+}
+
+tasks.register("writeGithubTestDetails") {
+    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
+
+    doLast {
+        mkdir "/builds/worker/github"
+
+        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
+        details_file.text = """#### [Unit Test Results]($url/test/testGeckoNightlyDebugUnitTest/index.html)
+_(404 if compilation failed)_"""
+    }
+}
+
+tasks.register("writeGithubLintDetektDetails") {
+    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
+
+    doLast {
+        mkdir "/builds/worker/github"
+
+        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
+        details_file.text = """#### [Detekt Results]($url/detekt.html)
+_(404 if compilation failed)_"""
+    }
+}
+
+tasks.register("writeGithubLintAndroidDetails") {
+    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
+
+    doLast {
+        mkdir "/builds/worker/github"
+
+        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
+        details_file.text = """#### [Android Lint Results]($url/lint-results-geckoNightlyDebug.html)
+_(404 if compilation failed)_"""
+    }
 }
