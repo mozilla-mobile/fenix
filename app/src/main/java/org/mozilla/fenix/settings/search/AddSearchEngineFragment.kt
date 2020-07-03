@@ -255,7 +255,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
             .inflate(R.layout.custom_search_engine_radio_button, null) as ConstraintLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
-        wrapper.minHeight = res.getDimension(R.dimen.radio_button_preference_height).toInt()
+        wrapper.minHeight = res.getDimensionPixelSize(R.dimen.radio_button_preference_height)
         return wrapper
     }
 
