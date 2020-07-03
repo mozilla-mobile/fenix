@@ -281,7 +281,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         engineIcon.setBounds(0, 0, iconSize, iconSize)
         wrapper.engine_icon.setImageDrawable(engineIcon)
         wrapper.overflow_menu.visibility = View.GONE
-        wrapper.minHeight = res.getDimension(R.dimen.radio_button_preference_height).toInt()
+        wrapper.minHeight = res.getDimensionPixelSize(R.dimen.radio_button_preference_height)
         return wrapper
     }
 
