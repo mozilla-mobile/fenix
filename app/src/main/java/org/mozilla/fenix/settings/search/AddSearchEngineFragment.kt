@@ -93,7 +93,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
         availableEngines.forEachIndexed(setupSearchEngineItem)
 
-        val engineItem = makeCustomButton(layoutInflater, res = requireContext().resources)
+        val engineItem = makeCustomButton(layoutInflater, res = resources)
         engineItem.id = CUSTOM_INDEX
         engineItem.radio_button.isChecked = selectedIndex == CUSTOM_INDEX
         engineViews.add(engineItem)
