@@ -25,7 +25,6 @@ import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
-import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translatedName
 import org.mozilla.fenix.R
@@ -39,9 +38,9 @@ import java.util.concurrent.CancellationException
 /**
  * Fragment use for managing add-ons.
  */
-@Suppress("TooManyFunctions", "LargeClass")
-class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
-    AddonsManagerAdapterDelegate {
+@Suppress("TooManyFunctions")
+class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) {
+
     /**
      * Whether or not an add-on installation is in progress.
      */
@@ -65,23 +64,12 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
         }
     }
 
-    override fun onAddonItemClicked(addon: Addon) {
-        if (addon.isInstalled()) {
-            showInstalledAddonDetailsFragment(addon)
-        } else {
-            showDetailsFragment(addon)
-        }
-    }
-
-    override fun onInstallAddonButtonClicked(addon: Addon) {
-        showPermissionDialog(addon)
-    }
-
-    override fun onNotYetSupportedSectionClicked(unsupportedAddons: List<Addon>) {
-        showNotYetSupportedAddonFragment(ArrayList(unsupportedAddons))
-    }
-
     private fun bindRecyclerView(view: View) {
+        val managementView = AddonsManagementView(
+            navController = findNavController(),
+            showPermissionDialog = ::showPermissionDialog
+        )
+
         val recyclerView = view.add_ons_list
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val shouldRefresh = adapter != null
@@ -93,7 +81,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
                         if (!shouldRefresh) {
                             adapter = AddonsManagerAdapter(
                                 requireContext().components.addonCollectionProvider,
-                                this@AddonsManagementFragment,
+                                managementView,
                                 addons,
                                 style = createAddonStyle(requireContext())
                             )
@@ -133,30 +121,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management),
             addonBackgroundIconColor = ThemeManager.resolveAttribute(R.attr.inset, requireContext()),
             addonAllowPrivateBrowsingLabelDrawableRes = R.drawable.ic_add_on_private_browsing_label
         )
-    }
-
-    private fun showInstalledAddonDetailsFragment(addon: Addon) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToInstalledAddonDetails(
-                addon
-            )
-        findNavController().navigate(directions)
-    }
-
-    private fun showDetailsFragment(addon: Addon) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToAddonDetailsFragment(
-                addon
-            )
-        findNavController().navigate(directions)
-    }
-
-    private fun showNotYetSupportedAddonFragment(unsupportedAddons: ArrayList<Addon>) {
-        val directions =
-            AddonsManagementFragmentDirections.actionAddonsManagementFragmentToNotYetSupportedAddonFragment(
-                unsupportedAddons.toTypedArray()
-            )
-        findNavController().navigate(directions)
     }
 
     private fun findPreviousDialogFragment(): PermissionsDialogFragment? {
