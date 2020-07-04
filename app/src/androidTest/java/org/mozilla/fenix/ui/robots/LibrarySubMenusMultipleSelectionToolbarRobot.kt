@@ -5,6 +5,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
+import android.widget.TextView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -14,12 +15,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.hamcrest.Matchers.allOf
+import org.mozilla.fenix.helpers.TestAssetHelper
 
 /*
  * Implementation of Robot Pattern for the multiple selection toolbar of History and Bookmarks menus.
@@ -166,8 +169,14 @@ private fun assertShareBookmarksButton() =
 private fun assertShareOverlay() =
     onView(withId(R.id.shareWrapper)).check(matches(isDisplayed()))
 
-private fun assertShareAppsLayout() =
-    onView(withId(R.id.apps_layout)).check(matches(isDisplayed()))
+private fun assertShareAppsLayout() = {
+    val sendToDeviceTitle = mDevice.findObject(
+        UiSelector()
+            .instance(0)
+            .className(TextView::class.java)
+    )
+    sendToDeviceTitle.waitForExists(TestAssetHelper.waitingTime)
+}
 
 private fun assertShareTabTitle() =
     onView(withId(R.id.share_tab_title)).check(matches(isDisplayed()))
