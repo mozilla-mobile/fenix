@@ -220,12 +220,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             resources.getString(R.string.pref_key_rate) -> {
                 try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SupportUtils.RATE_APP_URL)))
+                    val playStoreUrl =
+                        if (Config.channel.isDebug) SupportUtils.FIREFOX_NIGHTLY_PLAY_STORE_URL
+                        else SupportUtils.RATE_APP_URL
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl)))
                 } catch (e: ActivityNotFoundException) {
                     // Device without the play store installed.
                     // Opening the play store website.
+                    val playStoreUrl =
+                        if (Config.channel.isDebug) SupportUtils.FENIX_RATE_APP_URL
+                        else SupportUtils.FENIX_PLAY_STORE_URL
                     (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
+                        searchTermOrURL = playStoreUrl,
                         newTab = true,
                         from = BrowserDirection.FromSettings
                     )

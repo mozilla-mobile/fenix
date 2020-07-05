@@ -24,6 +24,7 @@ object SupportUtils {
     const val POCKET_TRENDING_URL = "https://getpocket.com/fenix-top-articles"
     const val WIKIPEDIA_URL = "https://www.wikipedia.org/"
     const val FENIX_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+    const val FENIX_RATE_APP_URL = "https://play.google.com/store/apps/details?id=org.mozilla.fenix"
     const val FIREFOX_BETA_PLAY_STORE_URL = "market://details?id=org.mozilla.firefox_beta"
     const val FIREFOX_NIGHTLY_PLAY_STORE_URL = "market://details?id=org.mozilla.fenix"
     const val GOOGLE_URL = "https://www.google.com/"
