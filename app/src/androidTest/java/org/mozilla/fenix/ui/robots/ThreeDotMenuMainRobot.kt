@@ -8,7 +8,8 @@ package org.mozilla.fenix.ui.robots
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.*
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
@@ -18,7 +19,15 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -127,19 +136,7 @@ class ThreeDotMenuMainRobot {
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun clickAddOnsReportSiteIssue(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            //onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeUp())
             scrollToElementByText("Report Site Issue...")
-           /*onView(allOf(withResourceName("action_image"), withContentDescription("Report Site Issue..."))).click()
-                /*.check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-                .check(matches(isCompletelyDisplayed()))
-                .perform(ViewActions.click())*/
-            //mDevice.waitNotNull(Until.findObject(By.text("Report Site Issue...")), waitingTime)
-            addOnsReportSiteIssueButton().click()*/
-            //fun addonsreportButton() = mDevice.findObject(By.textContains("Report Site Issue..."))
-            //mDevice.findObject(By.textContains("Report Site Issue...")).click()
-            //mDevice.waitNotNull(Until.findObject(By.text("Report Site Issue...")), waitingTime)
-            //onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.click())
-            //addonsreportButton().click()
             addOnsReportSiteIssueButton().click()
 
             BrowserRobot().interact()
@@ -170,6 +167,14 @@ class ThreeDotMenuMainRobot {
             onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
             bookmarksButton().click()
+
+            BookmarksRobot().interact()
+            return BookmarksRobot.Transition()
+        }
+
+        fun openEditBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
+            // mDevice.waitNotNull(Until.findObject(By.text("Edit Bookmarks")), waitingTime)
+            editBookmarkButton().click()
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
@@ -342,7 +347,7 @@ class ThreeDotMenuMainRobot {
     }
 }
 
-fun openSaveToCollection(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition  {
+fun openSaveToCollection(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
     mDevice.waitNotNull(Until.findObject(By.text("Save to collection")), waitingTime)
     saveCollectionButton().click()
     ThreeDotMenuMainRobot().interact()

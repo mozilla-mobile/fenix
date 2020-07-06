@@ -5,10 +5,12 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
@@ -33,7 +35,6 @@ class SyncedTabsRobot {
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
-
     }
 }
 
@@ -49,4 +50,3 @@ private fun assertSyncedTabsStatus() {
     onView(withResourceName("sync_tabs_status"))
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 }
-

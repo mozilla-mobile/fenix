@@ -6,20 +6,16 @@ package org.mozilla.fenix.ui
 
 import android.content.pm.ActivityInfo
 import androidx.core.net.toUri
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.ext.toUri
-import org.mozilla.fenix.screenshots.addOns
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.openSaveToCollection
@@ -78,8 +74,8 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             verifyThreeDotMainMenuItems()
-            //addOns()
-        /*}.clickAddOnsReportSiteIssue {
+            // addOns()
+            /*}.clickAddOnsReportSiteIssue {
             verifyUrl("https://webcompat.com/issues/new")
         }.openTabDrawer {
         }.openTab(defaultWebPage.title){
@@ -125,7 +121,7 @@ class SmokeTest {
                 verifyCollectionNameTextField()
             }
         }.goBack {
-        }.openThreeDotMenu{
+        }.openThreeDotMenu {
         }.bookmarkPage {
             verifySnackBarText("Bookmark saved!")
         }.openThreeDotMenu {
@@ -147,132 +143,126 @@ class SmokeTest {
         }
     }
 
-        @Test
-        fun verifyPageMainMenuItemsListInPortraitPrivateModeTest() {
-            val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-            val youtubeUrl = "www.youtube.com"
-            homeScreen {
-                togglePrivateBrowsingModeOnOff()
+    @Test
+    fun verifyPageMainMenuItemsListInPortraitPrivateModeTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val youtubeUrl = "www.youtube.com"
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+            navigationToolbar {
                 navigationToolbar {
+                }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                }.openThreeDotMenu {
+                    verifyThreeDotMainMenuItems()
+                }.openHistory {
+                    verifyEmptyHistoryView()
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openBookmarks {
+                    verifyBookmarksMenuView()
+                    verifyEmptyBookmarksList()
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openSyncedTabs {
+                    verifyNavigationToolBarHeader()
+                    verifySyncedTabsStatus()
+                }.goBack {
+                }.openThreeDotMenu {
+                }.openSettings {
+                    verifySettingsView()
+                }.goBackToBrowser {
+                }.openThreeDotMenu {
+                }.openFindInPage {
+                    verifyFindInPageSearchBarItems()
+                }.closeFindInPage {
+                }.openThreeDotMenu {
+                }.addToFirefoxHome {
+                    verifySnackBarText("Added to top sites!")
+                }.openTabDrawer {
+                }.openHomeScreen {
+                    togglePrivateBrowsingModeOnOff()
+                    verifyExistingTopSitesTabs(defaultWebPage.title)
+                    togglePrivateBrowsingModeOnOff()
+                }.openTabDrawer {
+                }.openTab(defaultWebPage.title) {
+                }.openThreeDotMenu {
+                }.openAddToHomeScreen {
+                    verifyShortcutNameField(defaultWebPage.title)
+                    clickAddShortcutButton()
+                    clickAddAutomaticallyButton()
+                    verifyShortcutIcon()
+                }.openHomeScreenShortcut(defaultWebPage.title) {
+                }.openThreeDotMenu {
+                }.bookmarkPage {
+                    verifySnackBarText("Bookmark saved!")
+                }.openThreeDotMenu {
+                }.sharePage {
+                    verifyShareAppsLayout()
+                }.closeShareDialogReturnToPage {
+                }.openThreeDotMenu {
+                }.refreshPage {
+                    verifyUrl(defaultWebPage.url.toString())
+                }.openTabDrawer {
+                    closeTabViaXButton(defaultWebPage.title)
+                }.openHomeScreen {
                     navigationToolbar {
-                    }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+                    }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
+                        verifyBlueDot()
                     }.openThreeDotMenu {
-                        verifyThreeDotMainMenuItems()
-                    }.openHistory {
-                        verifyEmptyHistoryView()
-                    }.goBackToBrowser {
-                    }.openThreeDotMenu {
-                    }.openBookmarks {
-                        verifyBookmarksMenuView()
-                        verifyEmptyBookmarksList()
-                    }.goBackToBrowser {
-                    }.openThreeDotMenu {
-                    }.openSyncedTabs {
-                        verifyNavigationToolBarHeader()
-                        verifySyncedTabsStatus()
-                    }.goBack {
-                    }.openThreeDotMenu {
-                    }.openSettings {
-                        verifySettingsView()
-                    }.goBackToBrowser {
-                    }.openThreeDotMenu {
-                    }.openFindInPage {
-                        verifyFindInPageSearchBarItems()
-                    }.closeFindInPage {
-                    }.openThreeDotMenu {
-                    }.addToFirefoxHome {
-                        verifySnackBarText("Added to top sites!")
-                    }.openTabDrawer {
-                    }.openHomeScreen {
-                        togglePrivateBrowsingModeOnOff()
-                        verifyExistingTopSitesTabs(defaultWebPage.title)
-                        togglePrivateBrowsingModeOnOff()
-                    }.openTabDrawer {
-                        activityTestRule.getActivity()
-                            .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    }.openTab(defaultWebPage.title) {
-                        activityTestRule.getActivity()
-                            .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    }.openThreeDotMenu {
-                        activityTestRule.getActivity()
-                            .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    }.openAddToHomeScreen {
-                        verifyShortcutNameField(defaultWebPage.title)
-                        clickAddShortcutButton()
-                        clickAddAutomaticallyButton()
-                        verifyShortcutIcon()
-                    }.openHomeScreenShortcut(defaultWebPage.title) {
-                    }.openThreeDotMenu {
-                    }.bookmarkPage {
-                        verifySnackBarText("Bookmark saved!")
-                    }.openThreeDotMenu {
-                    }.sharePage {
-                        verifyShareAppsLayout()
-                    }.closeShareDialogReturnToPage {
-                    }.openThreeDotMenu {
-                    }.refreshPage {
-                        verifyUrl(defaultWebPage.url.toString())
-                    }.openTabDrawer {
-                        closeTabViaXButton(defaultWebPage.title)
-                    }.openHomeScreen {
-                        navigationToolbar {
-                        }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-                            verifyBlueDot()
-                        }.openThreeDotMenu {
-                            verifyOpenInApp()
-                        }
+                        verifyOpenInApp()
                     }
                 }
             }
         }
+    }
 
-        @Test
-        fun verifyPageMainMenuItemsListInLandscapeNormalModeTest() {
-            val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-            val youtubeUrl = "www.youtube.com"
+    @Test
+    fun verifyPageMainMenuItemsListInLandscapeNormalModeTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val youtubeUrl = "www.youtube.com"
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                // verifyThreeDotMainMenuItems()
-            }.openHistory {
-                // verifyTestPageUrl(defaultWebPage.url)
-            }.goBackToBrowser {
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openBookmarks {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifyBookmarksMenuView()
-                verifyEmptyBookmarksList()
-            }.goBackToBrowser {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openSyncedTabs {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifyNavigationToolBarHeader()
-                verifySyncedTabsStatus()
-            }.goBack {
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openSettings {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                // verifySettingsView()
-            }.goBackToBrowser {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            // verifyThreeDotMainMenuItems()
+        }.openHistory {
+            // verifyTestPageUrl(defaultWebPage.url)
+        }.goBackToBrowser {
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openBookmarks {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifyBookmarksMenuView()
+            verifyEmptyBookmarksList()
+        }.goBackToBrowser {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openSyncedTabs {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifyNavigationToolBarHeader()
+            verifySyncedTabsStatus()
+        }.goBack {
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openSettings {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            // verifySettingsView()
+        }.goBackToBrowser {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
             /* }.openFindInPage {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
@@ -283,85 +273,85 @@ class SmokeTest {
             }.openThreeDotMenu {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) */
-            }.addToFirefoxHome {
+        }.addToFirefoxHome {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifySnackBarText("Added to top sites!")
+        }.openTabDrawer {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openTab(defaultWebPage.title) {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openAddToHomeScreen {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifyShortcutNameField(defaultWebPage.title)
+            clickAddShortcutButton()
+            clickAddAutomaticallyButton()
+            verifyShortcutIcon()
+        }.openHomeScreenShortcut(defaultWebPage.title) {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            openSaveToCollection {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifySnackBarText("Added to top sites!")
-            }.openTabDrawer {
+                verifyCollectionNameTextField()
+            }
+        }.goBack {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.bookmarkPage {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifySnackBarText("Bookmark saved!")
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.sharePage {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifyShareAppsLayout()
+        }.closeShareDialogReturnToPage {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.openThreeDotMenu {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }.refreshPage {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            verifyUrl(defaultWebPage.url.toString())
+        }.openTabDrawer {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            closeTabViaXButton(defaultWebPage.title)
+        }.openHomeScreen {
+            activityTestRule.getActivity()
+                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            navigationToolbar {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openTab(defaultWebPage.title) {
+            }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                verifyBlueDot()
             }.openThreeDotMenu {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openAddToHomeScreen {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifyShortcutNameField(defaultWebPage.title)
-                clickAddShortcutButton()
-                clickAddAutomaticallyButton()
-                verifyShortcutIcon()
-            }.openHomeScreenShortcut(defaultWebPage.title) {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                openSaveToCollection {
-                    activityTestRule.getActivity()
-                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    verifyCollectionNameTextField()
-                }
-            }.goBack {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu{
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.bookmarkPage {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifySnackBarText("Bookmark saved!")
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.sharePage {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifyShareAppsLayout()
-            }.closeShareDialogReturnToPage {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.openThreeDotMenu {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            }.refreshPage {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                verifyUrl(defaultWebPage.url.toString())
-            }.openTabDrawer {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                closeTabViaXButton(defaultWebPage.title)
-            }.openHomeScreen {
-                activityTestRule.getActivity()
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                navigationToolbar {
-                    activityTestRule.getActivity()
-                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-                    activityTestRule.getActivity()
-                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    verifyBlueDot()
-                }.openThreeDotMenu {
-                    activityTestRule.getActivity()
-                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    verifyOpenInApp()
-                }
+                verifyOpenInApp()
             }
         }
+    }
 
     @Test
     fun verifyPageMainMenuItemsListInLandscapePrivateModeTest() {
@@ -416,7 +406,7 @@ class SmokeTest {
             }.openThreeDotMenu {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-            /* }.openFindInPage {
+                /* }.openFindInPage {
                 activityTestRule.getActivity()
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                 verifyFindInPageSearchBarItems()
