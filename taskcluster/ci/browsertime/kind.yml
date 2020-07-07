@@ -232,3 +232,32 @@ jobs:
         test-name: google-search-restaurants
         treeherder:
             symbol: 'Btime(tp6m-28-c)'
+
+    youtube-playback:
+        test-name: youtube-playback
+        run-visual-metrics: False
+        treeherder:
+            symbol: 'Btime(ytp)'
+        args:
+            by-abi:
+                # Bug 1558456 - Stop tracking youtube-playback-test on motoG5 for >1080p cases
+                armeabi-v7a:
+                    - '--test-url-params=exclude=1,2,9,10,17,18,21,22,26,28,30,32,39,40,47,48,55,56,63,64,71,72,79,80,83,84,89,90,95,96'
+                default: []
+        run:
+            using: run-task
+            checkout: false
+            run-as-root: true
+            command:
+                - 'bash'
+                - './test-linux.sh'
+                - '--cfg=mozharness/configs/raptor/android_hw_config.py'
+                - '--app=fenix'
+                - '--browsertime'
+                - '--binary=org.mozilla.fenix.nightly'
+                - '--activity=org.mozilla.fenix.IntentReceiverActivity'
+                - '--download-symbols=ondemand'
+                - '--browsertime-node=$MOZ_FETCHES_DIR/node/bin/node'
+                - '--browsertime-geckodriver=$MOZ_FETCHES_DIR/geckodriver'
+                - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
+                - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
