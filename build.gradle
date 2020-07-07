@@ -1,5 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import org.mozilla.fenix.gradle.tasks.GithubDetailsTask
+
 buildscript {
     // This logic is duplicated in the allprojects block: I don't know how to fix that.
     repositories {
@@ -188,38 +190,14 @@ tasks.register("listRepositories") {
    }
 }
 
-tasks.register("writeGithubTestDetails") {
-    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
-
-    doLast {
-        mkdir "/builds/worker/github"
-
-        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
-        details_file.text = """#### [Unit Test Results]($url/test/testGeckoNightlyDebugUnitTest/index.html)
-_(404 if compilation failed)_"""
-    }
+tasks.register("writeGithubTestDetails", GithubDetailsTask) {
+    text = "### [Unit Test Results](/reports/test/testGeckoNightlyDebugUnitTest/index.html)"
 }
 
-tasks.register("writeGithubLintDetektDetails") {
-    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
-
-    doLast {
-        mkdir "/builds/worker/github"
-
-        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
-        details_file.text = """#### [Detekt Results]($url/detekt.html)
-_(404 if compilation failed)_"""
-    }
+tasks.register("writeGithubLintDetektDetails", GithubDetailsTask) {
+    text = "### [Detekt Results](/reports/detekt.html)"
 }
 
-tasks.register("writeGithubLintAndroidDetails") {
-    ext.details_file = new File('/builds/worker/github/customCheckRunText.md')
-
-    doLast {
-        mkdir "/builds/worker/github"
-
-        def url = "https://firefoxci.taskcluster-artifacts.net/$System.env.TASK_ID/0/public/reports"
-        details_file.text = """#### [Android Lint Results]($url/lint-results-geckoNightlyDebug.html)
-_(404 if compilation failed)_"""
-    }
+tasks.register("writeGithubLintAndroidDetails", GithubDetailsTask) {
+    text = "### [Android Lint Results](/reports/lint-results-geckoNightlyDebug.html)"
 }
