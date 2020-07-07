@@ -129,8 +129,7 @@ class MenuScreenShotTest : ScreenshotTest() {
         openBookmarksThreeDotMenu()
         Screengrab.screenshot("BookmarksRobot_bookmarks-menu")
         bookmarksMenu {
-            // clickAddFolderButton()
-            onView(withId(R.id.add_bookmark_folder)).click()
+            clickAddFolderButtonUsingId()
             Screengrab.screenshot("BookmarksRobot_add-folder-view")
             saveNewFolder()
             Screengrab.screenshot("BookmarksRobot_error-empty-folder-name")
@@ -238,3 +237,5 @@ fun verifySaveLoginPromptIsShownNotSave() {
     val submitButton = mDevice.findObject(By.res("submit"))
     submitButton.clickAndWait(Until.newWindow(), TestAssetHelper.waitingTime)
 }
+
+fun clickAddFolderButtonUsingId() = onView(withId(R.id.add_bookmark_folder)).click()
