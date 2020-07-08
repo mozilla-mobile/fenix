@@ -189,7 +189,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             webExtensionPopupFeature,
             StartupTimeline.homeActivityLifecycleObserver
         )
-        StartupTimeline.onActivityCreateEndHome(this)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -197,6 +196,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
 
         captureSnapshotTelemetryMetrics()
+
+        StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
     @CallSuper
