@@ -235,7 +235,6 @@ jobs:
 
     youtube-playback:
         test-name: youtube-playback
-        run-on-tasks-for: [github-pull-request]
         treeherder:
             symbol: 'Btime(ytp)'
         args:
