@@ -190,14 +190,14 @@ tasks.register("listRepositories") {
    }
 }
 
-tasks.register("writeGithubTestDetails", GithubDetailsTask) {
+tasks.register("githubTestDetails", GithubDetailsTask) {
     text = "### [Unit Test Results](/reports/test/testGeckoNightlyDebugUnitTest/index.html)"
 }
 
-tasks.register("writeGithubLintDetektDetails", GithubDetailsTask) {
+tasks.register("githubLintDetektDetails", GithubDetailsTask) {
     text = "### [Detekt Results](/reports/detekt.html)"
 }
 
-tasks.register("writeGithubLintAndroidDetails", GithubDetailsTask) {
+tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
     text = "### [Android Lint Results](/reports/lint-results-geckoNightlyDebug.html)"
 }

@@ -16,7 +16,8 @@ import java.io.File
 open class GithubDetailsTask : DefaultTask() {
 
     /**
-     * Text to write to the file.
+     * Text to display in the Github Checks panel under "Details". Any markdown works here.
+     * The text is written to a markdown file which is used by Taskcluster.
      * Links are automatically rewritten to point to the correct Taskcluster URL.
      */
     @Input

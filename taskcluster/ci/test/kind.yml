@@ -44,7 +44,7 @@ jobs:
                 - 'clean'
                 - '-Pcoverage'
                 - 'jacocoGeckoNightlyDebugTestReport'
-                - 'writeGithubTestDetails'
+                - 'githubTestDetails'
 #            post-gradlew:
 #                - ['automation/taskcluster/upload_coverage_report.sh']
             secrets:
