@@ -6,5 +6,5 @@
     <item android:state_enabled="true"
         android:color="?primaryText" />
     <item android:state_enabled="false"
-        android:color="@android:color/transparent" />
+        android:color="?disabled" />
 </selector>

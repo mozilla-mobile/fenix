@@ -55,6 +55,7 @@ sealed class LoginsAction : Action {
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
     data class ListOfDupes(val dupeList: List<SavedLogin>) : LoginsAction()
+    data class LoginSelected(val item: SavedLogin) : LoginsAction()
 }
 
 /**
@@ -65,6 +66,8 @@ sealed class LoginsAction : Action {
  * @property sortingStrategy sorting strategy selected by the user (Currently we support
  * sorting alphabetically and by last used)
  * @property highlightedItem The current selected sorting strategy from the sort menu
+ * @property duplicateLogins The current list of possible duplicates for a selected login origin,
+ * httpRealm, and formActionOrigin
  */
 data class LoginsListState(
     val isLoading: Boolean = false,
@@ -109,6 +112,13 @@ private fun savedLoginsStateReducer(
                 state.searchedForText,
                 action.sortingStrategy,
                 state
+            )
+        }
+        is LoginsAction.LoginSelected -> {
+            state.copy(
+                isLoading = true,
+                loginList = emptyList(),
+                filteredItems = emptyList()
             )
         }
         is LoginsAction.ListOfDupes -> {

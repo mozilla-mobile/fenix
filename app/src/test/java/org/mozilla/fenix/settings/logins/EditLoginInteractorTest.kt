@@ -27,7 +27,7 @@ class EditLoginInteractorTest {
         val username = "usernameText"
         val password = "passwordText"
 
-        interactor.saveLogin(id, username, password)
+        interactor.onSaveLogin(id, username, password)
 
         verify { loginsController.save(id, username, password) }
     }

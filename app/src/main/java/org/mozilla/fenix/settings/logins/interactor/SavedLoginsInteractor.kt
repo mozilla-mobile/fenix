@@ -7,22 +7,33 @@ package org.mozilla.fenix.settings.logins.interactor
 import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 
 /**
  * Interactor for the saved logins screen
+ *
+ * @param loginsListController [LoginsListController] which will be delegated for all
+ * user interactions.
+ * @param savedLoginsStorageController [SavedLoginsStorageController] which will be delegated
+ * for all calls to the password storage component
  */
 class SavedLoginsInteractor(
     private val loginsListController: LoginsListController,
-    private val itemClicked: (SavedLogin) -> Unit,
-    private val learnMore: () -> Unit
+    private val savedLoginsStorageController: SavedLoginsStorageController
 ) {
-    fun itemClicked(item: SavedLogin) {
-        itemClicked.invoke(item)
+    fun onItemClicked(item: SavedLogin) {
+        loginsListController.handleItemClicked(item)
     }
-    fun onLearnMore() {
-        learnMore.invoke()
+
+    fun onLearnMoreClicked() {
+        loginsListController.handleLearnMoreClicked()
     }
-    fun sort(sortingStrategy: SortingStrategy) {
+
+    fun onSortingStrategyChanged(sortingStrategy: SortingStrategy) {
         loginsListController.handleSort(sortingStrategy)
+    }
+
+    fun loadAndMapLogins() {
+        savedLoginsStorageController.handleLoadAndMapLogins()
     }
 }

@@ -16,20 +16,13 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login_detail.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
@@ -45,11 +38,12 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
-import org.mozilla.fenix.settings.logins.view.LoginDetailView
-import org.mozilla.fenix.settings.logins.LoginsDataStore
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.interactor.LoginDetailInteractor
+import org.mozilla.fenix.settings.logins.view.LoginDetailView
 
 /**
  * Displays saved login information for a single website.
@@ -62,9 +56,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     private var login: SavedLogin? = null
     private lateinit var savedLoginsStore: LoginsFragmentStore
     private lateinit var loginDetailView: LoginDetailView
+    private lateinit var interactor: LoginDetailInteractor
     private lateinit var menu: Menu
     private var deleteDialog: AlertDialog? = null
-    private lateinit var datastore: LoginsDataStore
+    private var showPassword = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,7 +81,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             )
         }
         loginDetailView = LoginDetailView(
-            view?.findViewById(R.id.loginDetailLayout)
+            view.findViewById(R.id.loginDetailLayout)
         )
 
         return view
@@ -97,11 +92,15 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        datastore = LoginsDataStore(
-            this,
-            savedLoginsStore
+        interactor = LoginDetailInteractor(
+            SavedLoginsStorageController(
+                context = requireContext(),
+                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
+                navController = findNavController(),
+                loginsFragmentStore = savedLoginsStore
+            )
         )
-        datastore.fetchLoginDetails(args.savedLoginId)
+        interactor.onFetchLoginList(args.savedLoginId)
 
         consumeFrom(savedLoginsStore) {
             loginDetailView.update(it)
@@ -113,6 +112,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             )
             setUpPasswordReveal()
         }
+        loginDetailView.togglePasswordReveal(showPassword)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,10 +140,11 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
         revealPasswordButton.setOnClickListener {
-            togglePasswordReveal()
+            showPassword = !showPassword
+            loginDetailView.togglePasswordReveal(!showPassword)
         }
         passwordText.setOnClickListener {
-            togglePasswordReveal()
+            loginDetailView.togglePasswordReveal(!showPassword)
         }
     }
 
@@ -215,35 +216,12 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
                     requireComponents.analytics.metrics.track(Event.DeleteLogin)
-                    datastore.delete(args.savedLoginId)
+                    interactor.onDeleteLogin(args.savedLoginId)
                     dialog.dismiss()
                 }
                 create()
             }.show()
         }
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login detail and edit fragments.
-    private fun togglePasswordReveal() {
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
-            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
-            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
-            )
-            revealPasswordButton.contentDescription =
-                resources.getString(R.string.saved_login_hide_password)
-        } else {
-            passwordText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
-            )
-            revealPasswordButton.contentDescription =
-                context?.getString(R.string.saved_login_reveal_password)
-        }
-        // For the new type to take effect you need to reset the text
-        passwordText.text = login?.password
     }
 
     /**

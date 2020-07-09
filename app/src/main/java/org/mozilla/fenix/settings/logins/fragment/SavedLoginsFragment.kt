@@ -21,49 +21,40 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_saved_logins.view.*
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.browser.menu.BrowserMenu
-import mozilla.components.concept.storage.Login
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
 import org.mozilla.fenix.settings.logins.LoginsListState
-import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
-import org.mozilla.fenix.settings.logins.view.SavedLoginsView
+import org.mozilla.fenix.settings.logins.view.SavedLoginsListView
 import org.mozilla.fenix.settings.logins.SortingStrategy
-import org.mozilla.fenix.settings.logins.mapToSavedLogin
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
     private lateinit var savedLoginsStore: LoginsFragmentStore
-    private lateinit var savedLoginsView: SavedLoginsView
+    private lateinit var savedLoginsListView: SavedLoginsListView
     private lateinit var savedLoginsInteractor: SavedLoginsInteractor
     private lateinit var dropDownMenuAnchorView: View
     private lateinit var sortingStrategyMenu: SavedLoginsSortingStrategyMenu
     private lateinit var sortingStrategyPopupMenu: BrowserMenu
     private lateinit var toolbarChildContainer: FrameLayout
     private lateinit var sortLoginsMenuRoot: ConstraintLayout
+    private lateinit var loginsListController: LoginsListController
+    private lateinit var savedLoginsStorageController: SavedLoginsStorageController
 
     override fun onResume() {
         super.onResume()
@@ -98,24 +89,34 @@ class SavedLoginsFragment : Fragment() {
                 )
             )
         }
-        val savedLoginsController =
+
+        loginsListController =
             LoginsListController(
                 loginsFragmentStore = savedLoginsStore,
-                settings = requireContext().settings()
+                navController = findNavController(),
+                browserNavigator = ::openToBrowserAndLoad,
+                settings = requireContext().settings(),
+                metrics = requireContext().components.analytics.metrics
+            )
+        savedLoginsStorageController =
+            SavedLoginsStorageController(
+                context = requireContext(),
+                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
+                navController = findNavController(),
+                loginsFragmentStore = savedLoginsStore
             )
 
         savedLoginsInteractor =
             SavedLoginsInteractor(
-                savedLoginsController,
-                ::itemClicked,
-                ::openLearnMore
+                loginsListController,
+                savedLoginsStorageController
             )
-        savedLoginsView = SavedLoginsView(
+
+        savedLoginsListView = SavedLoginsListView(
             view.savedLoginsLayout,
             savedLoginsInteractor
         )
-        loadAndMapLogins()
-
+        savedLoginsInteractor.loadAndMapLogins()
         return view
     }
 
@@ -125,7 +126,7 @@ class SavedLoginsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         consumeFrom(savedLoginsStore) {
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
-            savedLoginsView.update(it)
+            savedLoginsListView.update(it)
         }
     }
 
@@ -165,46 +166,11 @@ class SavedLoginsFragment : Fragment() {
         super.onPause()
     }
 
-    private fun itemClicked(item: SavedLogin) {
-        context?.components?.analytics?.metrics?.track(Event.OpenOneLogin)
-        val directions =
-            SavedLoginsFragmentDirections.actionSavedLoginsFragmentToLoginDetailFragment(
-                item.guid
-            )
-        findNavController().navigate(directions)
-    }
-
-    private fun openLearnMore() {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.SYNC_SETUP),
-            newTab = true,
-            from = BrowserDirection.FromSavedLoginsFragment
-        )
-    }
-
-    private fun loadAndMapLogins() {
-        var deferredLogins: Deferred<List<Login>>? = null
-        val fetchLoginsJob = viewLifecycleOwner.lifecycleScope.launch(IO) {
-            deferredLogins = async {
-                requireContext().components.core.passwordsStorage.list()
-            }
-            val logins = deferredLogins?.await()
-            logins?.let {
-                withContext(Main) {
-                    savedLoginsStore.dispatch(
-                        LoginsAction.UpdateLoginsList(
-                            logins.map { it.mapToSavedLogin() })
-                    )
-                }
-            }
-        }
-        fetchLoginsJob.invokeOnCompletion {
-            if (it is CancellationException) {
-                deferredLogins?.cancel()
-            }
-        }
-    }
+    private fun openToBrowserAndLoad(
+        searchTermOrURL: String,
+        newTab: Boolean,
+        from: BrowserDirection
+    ) = (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
 
     private fun initToolbar() {
         showToolbar(getString(R.string.preferences_passwords_saved_logins))
@@ -260,7 +226,7 @@ class SavedLoginsFragment : Fragment() {
             ) {
                 when (it) {
                     SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
-                        savedLoginsInteractor.sort(
+                        savedLoginsInteractor.onSortingStrategyChanged(
                             SortingStrategy.Alphabetically(
                                 requireContext().applicationContext
                             )
@@ -268,7 +234,7 @@ class SavedLoginsFragment : Fragment() {
                     }
 
                     SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> {
-                        savedLoginsInteractor.sort(
+                        savedLoginsInteractor.onSortingStrategyChanged(
                             SortingStrategy.LastUsed(
                                 requireContext().applicationContext
                             )

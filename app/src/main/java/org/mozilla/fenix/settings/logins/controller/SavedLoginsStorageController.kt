@@ -18,7 +18,6 @@ import mozilla.components.concept.storage.Login
 import mozilla.components.service.sync.logins.InvalidRecordException
 import mozilla.components.service.sync.logins.LoginsStorageException
 import mozilla.components.service.sync.logins.NoSuchRecordException
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.logins.LoginsAction
@@ -30,21 +29,20 @@ import org.mozilla.fenix.settings.logins.mapToSavedLogin
  * Controller for all saved logins interactions with the password storage component
  */
 open class SavedLoginsStorageController(
-    context: Context,
+    private val context: Context,
     private val viewLifecycleScope: CoroutineScope,
     private val navController: NavController,
     private val loginsFragmentStore: LoginsFragmentStore
 ) {
-    private val activity: HomeActivity = context as HomeActivity
 
     private suspend fun getLogin(loginId: String): Login? =
-        activity.components.core.passwordsStorage.get(loginId)
+        context.components.core.passwordsStorage.get(loginId)
 
     fun delete(loginId: String) {
         var deleteLoginJob: Deferred<Boolean>? = null
         val deleteJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deleteLoginJob = async {
-                activity.components.core.passwordsStorage.delete(loginId)
+                context.components.core.passwordsStorage.delete(loginId)
             }
             deleteLoginJob?.await()
             withContext(Dispatchers.Main) {
@@ -63,7 +61,7 @@ open class SavedLoginsStorageController(
         viewLifecycleScope.launch(Dispatchers.IO) {
             saveLoginJob = async {
                 // must retrieve from storage to get the httpsRealm and formActionOrigin
-                val oldLogin = activity.components.core.passwordsStorage.get(loginId)
+                val oldLogin = context.components.core.passwordsStorage.get(loginId)
 
                 // Update requires a Login type, which needs at least one of
                 // httpRealm or formActionOrigin
@@ -97,7 +95,7 @@ open class SavedLoginsStorageController(
 
     private suspend fun save(loginToSave: Login) {
         try {
-            activity.components.core.passwordsStorage.update(loginToSave)
+            context.components.core.passwordsStorage.update(loginToSave)
         } catch (loginException: LoginsStorageException) {
             when (loginException) {
                 is NoSuchRecordException,
@@ -126,7 +124,7 @@ open class SavedLoginsStorageController(
         val fetchLoginJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deferredLogin = async {
                 val login = getLogin(loginId)
-                activity.components.core.passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
+                context.components.core.passwordsStorage.getPotentialDupesIgnoringUsername(login!!)
             }
             val fetchedDuplicatesList = deferredLogin?.await()
             fetchedDuplicatesList?.let { list ->
@@ -151,7 +149,7 @@ open class SavedLoginsStorageController(
         var deferredLogin: Deferred<List<Login>>? = null
         val fetchLoginJob = viewLifecycleScope.launch(Dispatchers.IO) {
             deferredLogin = async {
-                activity.components.core.passwordsStorage.list()
+                context.components.core.passwordsStorage.list()
             }
             val fetchedLoginList = deferredLogin?.await()
 
@@ -171,6 +169,29 @@ open class SavedLoginsStorageController(
         fetchLoginJob.invokeOnCompletion {
             if (it is CancellationException) {
                 deferredLogin?.cancel()
+            }
+        }
+    }
+
+    fun handleLoadAndMapLogins() {
+        var deferredLogins: Deferred<List<Login>>? = null
+        val fetchLoginsJob = viewLifecycleScope.launch(Dispatchers.IO) {
+            deferredLogins = async {
+                context.components.core.passwordsStorage.list()
+            }
+            val logins = deferredLogins?.await()
+            logins?.let {
+                withContext(Dispatchers.Main) {
+                    loginsFragmentStore.dispatch(
+                        LoginsAction.UpdateLoginsList(
+                            logins.map { it.mapToSavedLogin() })
+                    )
+                }
+            }
+        }
+        fetchLoginsJob.invokeOnCompletion {
+            if (it is CancellationException) {
+                deferredLogins?.cancel()
             }
         }
     }

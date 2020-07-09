@@ -16,12 +16,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import org.mozilla.fenix.ext.addUnderline
-import org.mozilla.fenix.utils.Settings
 
 /**
  * View that contains and configures the Saved Logins List
  */
-class SavedLoginsView(
+class SavedLoginsListView(
     override val containerView: ViewGroup,
     val interactor: SavedLoginsInteractor
 ) : LayoutContainer {
@@ -30,8 +29,7 @@ class SavedLoginsView(
         .inflate(R.layout.component_saved_logins, containerView, true)
         .findViewById(R.id.saved_logins_wrapper)
 
-    private val loginsAdapter =
-        LoginsAdapter(interactor)
+    private val loginsAdapter = LoginsAdapter(interactor)
 
     init {
         view.saved_logins_list.apply {
@@ -43,7 +41,7 @@ class SavedLoginsView(
         with(view.saved_passwords_empty_learn_more) {
             movementMethod = LinkMovementMethod.getInstance()
             addUnderline()
-            setOnClickListener { interactor.onLearnMore() }
+            setOnClickListener { interactor.onLearnMoreClicked() }
         }
 
         with(view.saved_passwords_empty_message) {

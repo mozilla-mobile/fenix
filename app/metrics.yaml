@@ -2443,7 +2443,7 @@ logins:
       - https://github.com/mozilla-mobile/fenix/pull/7767
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-09-01"
+    expires: "2020-10-01"
   open_login_editor:
     type: event
     description: |
@@ -2451,10 +2451,10 @@ logins:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10173
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10173
+      - https://github.com/mozilla-mobile/fenix/issues/11208
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-09-01"
+    expires: "2020-10-01"
   delete_saved_login:
     type: event
     description: |
@@ -2462,10 +2462,10 @@ logins:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10173
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10173
+      - https://github.com/mozilla-mobile/fenix/issues/11208
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-09-01"
+    expires: "2020-10-01"
   save_edited_login:
     type: event
     description: |
@@ -2473,10 +2473,10 @@ logins:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10173
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10173
+      - https://github.com/mozilla-mobile/fenix/issues/11208
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-09-01"
+    expires: "2020-10-01"
 
 download_notification:
   resume:

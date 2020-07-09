@@ -7,18 +7,18 @@ package org.mozilla.fenix.settings.logins.interactor
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 
 /**
- * Interactor for the edit login screen
+ * Interactor for the login detail screen
  *
  * @property savedLoginsController controller for the saved logins storage
  */
-class EditLoginInteractor(
+class LoginDetailInteractor(
     private val savedLoginsController: SavedLoginsStorageController
 ) {
-    fun findPotentialDuplicates(loginId: String) {
-        savedLoginsController.findPotentialDuplicates(loginId)
+    fun onFetchLoginList(loginId: String) {
+        savedLoginsController.fetchLoginDetails(loginId)
     }
 
-    fun onSaveLogin(loginId: String, usernameText: String, passwordText: String) {
-        savedLoginsController.save(loginId, usernameText, passwordText)
+    fun onDeleteLogin(loginId: String) {
+        savedLoginsController.delete(loginId)
     }
 }

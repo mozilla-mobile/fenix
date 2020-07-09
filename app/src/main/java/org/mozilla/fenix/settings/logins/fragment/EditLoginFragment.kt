@@ -52,9 +52,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private lateinit var oldLogin: SavedLogin
 
     private var listOfPossibleDupes: List<SavedLogin>? = null
+
     private var usernameChanged = false
     private var passwordChanged = false
     private var saveEnabled = false
+    private var showPassword = true
+
     private var validPassword = true
     private var validUsername = true
 
@@ -99,6 +102,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         initSaveState()
         setUpClickListeners()
         setUpTextListeners()
+        editLoginView.showPassword()
 
         consumeFrom(loginsFragmentStore) {
             listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
@@ -142,14 +146,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             it.isEnabled = false
         }
         revealPasswordButton.setOnClickListener {
-            editLoginView.togglePasswordReveal()
-        }
-
-        var firstClick = true
-        passwordText.setOnClickListener {
-            if (firstClick) {
-                editLoginView.togglePasswordReveal()
-                firstClick = false
+            showPassword = !showPassword
+            if (showPassword) {
+                editLoginView.showPassword()
+            } else {
+                editLoginView.hidePassword()
             }
         }
     }
@@ -283,7 +284,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
             if (saveEnabled) {
-                interactor.saveLogin(
+                interactor.onSaveLogin(
                     args.savedLoginItem.guid,
                     usernameText.text.toString(),
                     passwordText.text.toString()
