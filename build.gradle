@@ -191,7 +191,10 @@ tasks.register("listRepositories") {
 }
 
 tasks.register("githubTestDetails", GithubDetailsTask) {
-    text = "### [Unit Test Results](/reports/test/testGeckoNightlyDebugUnitTest/index.html)"
+    text = """
+### [Unit Test Results](/reports/test/testGeckoNightlyDebugUnitTest/index.html)
+### [Coverage](/reports/jacoco/jacocoGeckoNightlyDebugTestReport/html/index.html)
+"""
 }
 
 tasks.register("githubLintDetektDetails", GithubDetailsTask) {

@@ -63,6 +63,9 @@ jobs:
                 - name: public/reports/test
                   path: /builds/worker/checkouts/src/app/build/reports/tests
                   type: directory
+                - name: public/reports/jacoco
+                  path: /builds/worker/checkouts/src/app/build/reports/jacoco
+                  type: directory
                 - name: public/github
                   path: /builds/worker/github
                   type: directory
