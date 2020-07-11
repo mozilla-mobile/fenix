@@ -211,6 +211,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
                 ),
                 sessionManager = requireComponents.core.sessionManager,
+                sessionFeature = sessionFeature,
                 findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 engineView = engineView,
                 swipeRefresh = swipeRefresh,
@@ -466,8 +467,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             sessionFeature.set(
                 feature = SessionFeature(
-                    sessionManager,
-                    SessionUseCases(sessionManager),
+                    requireComponents.core.store,
+                    requireComponents.useCases.sessionUseCases.goBack,
+                    requireComponents.useCases.engineSessionUseCases,
                     view.engineView,
                     customTabSessionId
                 ),
@@ -517,7 +519,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             fullScreenFeature.set(
                 feature = FullScreenFeature(
-                    sessionManager,
+                    requireComponents.core.store,
                     SessionUseCases(sessionManager),
                     customTabSessionId,
                     ::viewportFitChange,
@@ -563,7 +565,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view.swipeRefresh.setColorSchemeColors(primaryTextColor)
                 swipeRefreshFeature.set(
                     feature = SwipeRefreshFeature(
-                        sessionManager,
+                        requireComponents.core.store,
                         context.components.useCases.sessionUseCases.reload,
                         view.swipeRefresh,
                         customTabSessionId

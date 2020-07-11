@@ -31,6 +31,21 @@ because we find ourselves in a constant need to prioritize
 certain issues/PRs over others. If you think your issue/PR is very important,
 try to popularize it by getting other users to comment and share their point of view.
 
+## I want to file an issue!
+
+Great! We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
+
+To make it easier to triage, we have these issue requirements:
+
+* Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean.
+* Every issue should have **exactly** one bug/feature request described in it. Please do not file meta feedback list tickets as it is difficult to parse them and address their individual points.
+* Feature Requests are better when they’re open-ended instead of demanding a specific solution -ie  “I want an easier way to do X” instead of “add Y”
+* Issues are not the place to go off topic or debate. If you have questions, please join the [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org).
+* Please always remember our [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
+* Please do not tag specific team members to try to get your issue looked at faster. We have a triage process that will tag and label issues correctly in due time. If you think an issue is very severe, you can ask about it in Matrix.
+
+Please keep in mind that even though a feature you have in mind may seem like a small ask, as a small team, we have to prioritize our planned work and every new feature adds complexity and maintenance and may take up design, research, marketing, product, and engineering time. We appreciate everyone’s passion but we will not be able to incorporate every feature request or even fix every bug. That being said, just because we haven't replied, doesn't mean we don't care about the issue, please be patient with our response times as we're very busy.
+
 ## Getting Involved
 
 Before you attempt to make a contribution please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
@@ -108,27 +123,7 @@ If you want to run **performance tests/benchmarks** in automation or locally:
 
 For additional context on these recommendations, see [the perf build variant analysis](https://docs.google.com/document/d/1aW-m0HYncTDDiRz_2x6EjcYkjBpL9SHhhYix13Vil30/edit#).
 
-You will **need to sign `forPerformanceTest` variants.** For local development, our recommendation is to add the following configuration to `app/build.gradle`:
-
-```groovy
-android { // this line already exists
-    // ...
-
-    buildTypes { // this line already exists
-        // ...
-
-        forPerformanceTest releaseTemplate >> { // this line already exists.
-            // ...
-
-            signingConfig signingConfigs.debug
-        }
-    }
-}
-```
-
-This recommendation will let you use AS just like you do with debug builds but **please do not check in these changes.**
-
-See [perf-frontend-issues#44](https://github.com/mozilla-mobile/perf-frontend-issues/issues/44) for efforts to make performance signing easier.
+Before you can install any release variants including `forPerformanceTest`, **you will need to sign them:** see [Automatically signing release builds](#automatically-sign-release-builds) for details.
 
 ## Pre-push hooks
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
@@ -166,8 +161,19 @@ Steps to downgrade Java Version on Mac with Brew:
 7. Verify java-version by running ```java -version```
 
 ## local.properties helpers
-There are multiple helper flags available via `local.properties` that will help speed up local development workflow
-when working across multiple layers of the dependency stack - specifically, with android-components, geckoview or application-services.
+You can speed up local development by setting a few helper flags available in `local.properties`. Some flags will make it easy to
+work across multiple layers of the dependency stack - specifically, with android-components, geckoview or application-services.
+
+### Automatically sign release builds
+To sign your release builds with your debug key automatically, add the following to `<proj-root>/local.properties`:
+
+```sh
+autosignReleaseWithDebugKey
+```
+
+With this line, release build variants will automatically be signed with your debug key (like debug builds), allowing them to be built and installed directly through Android Studio or the command line.
+
+This is helpful when you're building release variants frequently, for example to test feature flags and or do performance analyses.
 
 ### Auto-publication workflow for android-components and application-services
 If you're making changes to these projects and want to test them in Fenix, auto-publication workflow is the fastest, most reliable

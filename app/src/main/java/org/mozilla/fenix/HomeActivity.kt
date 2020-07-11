@@ -45,6 +45,8 @@ import mozilla.components.feature.search.SearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
+import mozilla.components.support.ktx.android.content.call
+import mozilla.components.support.ktx.android.content.email
 import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
@@ -53,6 +55,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -63,8 +66,8 @@ import org.mozilla.fenix.exceptions.ExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.resetPoliciesAfter
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
@@ -81,6 +84,7 @@ import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
+import org.mozilla.fenix.settings.logins.LoginDetailFragmentDirections
 import org.mozilla.fenix.settings.logins.SavedLoginsAuthFragmentDirections
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
@@ -100,7 +104,7 @@ import org.mozilla.fenix.utils.RunWhenReadyQueue
  * - browser screen
  */
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-open class HomeActivity : LocaleAwareAppCompatActivity() {
+open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
@@ -165,14 +169,24 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         }
 
         if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any { it.process(intent, navHost.navController, this.intent) }
+            externalSourceIntentProcessors.any {
+                it.process(
+                    intent,
+                    navHost.navController,
+                    this.intent
+                )
+            }
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
 
         if (settings().isTelemetryEnabled) {
-            lifecycle.addObserver(BreadcrumbsRecorder(components.analytics.crashReporter,
-                navHost.navController, ::getBreadcrumbMessage))
+            lifecycle.addObserver(
+                BreadcrumbsRecorder(
+                    components.analytics.crashReporter,
+                    navHost.navController, ::getBreadcrumbMessage
+                )
+            )
 
             val safeIntent = intent?.toSafeIntent()
             safeIntent
@@ -209,7 +223,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
                 components.backgroundServices.accountManager.initAsync().await()
                 // If we're authenticated, kick-off a sync and a device state refresh.
                 components.backgroundServices.accountManager.authenticatedAccount()?.let {
-                    components.backgroundServices.accountManager.syncNowAsync(SyncReason.Startup, debounce = true)
+                    components.backgroundServices.accountManager.syncNowAsync(
+                        SyncReason.Startup,
+                        debounce = true
+                    )
                 }
             }
         }
@@ -241,8 +258,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         super.onNewIntent(intent)
         intent ?: return
 
-        val intentProcessors = listOf(CrashReporterIntentProcessor()) + externalSourceIntentProcessors
-        val intentHandled = intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
+        val intentProcessors =
+            listOf(CrashReporterIntentProcessor()) + externalSourceIntentProcessors
+        val intentHandled =
+            intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
         browsingModeManager.mode = getModeFromIntentOrLastKnown(intent)
 
         if (intentHandled) {
@@ -278,10 +297,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             selectionActionDelegate = DefaultSelectionActionDelegate(
                 getSearchAdapter(components.core.store),
                 resources = context.resources,
-                appName = getString(R.string.app_name)
-            ) {
-                share(it)
-            }
+                shareTextClicked = { share(it) },
+                emailTextClicked = { email(it) },
+                callTextClicked = { call(it) },
+                actionSorter = ::actionSorter
+            )
         }.asView()
         TabsTray::class.java.name -> {
             val layout = LinearLayoutManager(context).apply {
@@ -295,6 +315,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             BrowserTabsTray(context, attrs, 0, adapter, layout)
         }
         else -> super.onCreateView(parent, name, context, attrs)
+    }
+
+    @Suppress("MagicNumber")
+    // Defining the positions as constants doesn't seem super useful here.
+    private fun actionSorter(actions: Array<String>): Array<String> {
+        val order = hashMapOf<String, Int>()
+
+        order["org.mozilla.geckoview.COPY"] = 0
+        order["CUSTOM_CONTEXT_MENU_SEARCH"] = 1
+        order["org.mozilla.geckoview.SELECT_ALL"] = 2
+        order["CUSTOM_CONTEXT_MENU_SHARE"] = 3
+
+        return actions.sortedBy { actionName ->
+            // Sort the actions in our preferred order, putting "other" actions unsorted at the end
+            order[actionName] ?: actions.size
+        }.toTypedArray()
     }
 
     final override fun onBackPressed() {
@@ -392,7 +428,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
      * Returns the [supportActionBar], inflating it if necessary.
      * Everyone should call this instead of supportActionBar.
      */
-    fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
+    override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
             navigationToolbar = navigationToolbarStub.inflate() as Toolbar
 
@@ -474,6 +510,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             AddSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromEditCustomSearchEngineFragment ->
             EditCustomSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromAddonDetailsFragment ->
+            AddonDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromLoginDetailFragment ->
+            LoginDetailFragmentDirections.actionGlobalBrowser(customTabSessionId)
     }
 
     private fun load(
@@ -482,6 +522,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
         engine: SearchEngine?,
         forceSearch: Boolean
     ) {
+        val startTime = components.core.engine.profiler?.getProfilerTime()
         val mode = browsingModeManager.mode
 
         val loadUrlUseCase = if (newTab) {
@@ -508,6 +549,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
             loadUrlUseCase.invoke(searchTermOrURL.toNormalizedUrl())
         } else {
             searchUseCase.invoke(searchTermOrURL)
+        }
+
+        if (components.core.engine.profiler?.isProfilerActive() == true) {
+            // Wrapping the `addMarker` method with `isProfilerActive` even though it's no-op when
+            // profiler is not active. That way, `text` argument will not create a string builder all the time.
+            components.core.engine.profiler?.addMarker("HomeActivity.load", startTime, "newTab: $newTab")
         }
     }
 
@@ -562,13 +609,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity() {
     }
 
     @VisibleForTesting
-    internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean =
+    internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
         // First time opening this activity in the task.
         // Cold start / start from Recents after back press.
-        activityIcicle == null &&
-        // Activity was restarted from Recents after it was destroyed by Android while in background
-        // in cases of memory pressure / "Don't keep activities".
-        startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+        return activityIcicle == null &&
+                // Activity was restarted from Recents after it was destroyed by Android while in background
+                // in cases of memory pressure / "Don't keep activities".
+                startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+    }
 
     companion object {
         const val OPEN_TO_BROWSER = "open_to_browser"

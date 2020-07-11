@@ -10,7 +10,6 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -44,7 +43,7 @@ class ThreeDotMenuMainTest {
         @JvmStatic
         fun setDevicePreference() {
             val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            mDevice.executeShellCommand("settings put secure long_press_timeout 1500")
+            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
         }
     }
 
@@ -53,7 +52,6 @@ class ThreeDotMenuMainTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Instrumentation crash: https://github.com/mozilla-mobile/fenix/issues/11642")
     @Test
     fun threeDotMenuItemsTest() {
         homeScreen {

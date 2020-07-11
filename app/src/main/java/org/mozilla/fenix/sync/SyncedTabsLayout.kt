@@ -34,6 +34,9 @@ class SyncedTabsLayout @JvmOverloads constructor(
     }
 
     override fun onError(error: SyncedTabsView.ErrorType) {
+        // We may still be displaying a "loading" spinner, hide it.
+        stopLoading()
+
         val stringResId = when (error) {
             SyncedTabsView.ErrorType.MULTIPLE_DEVICES_UNAVAILABLE -> R.string.synced_tabs_connect_another_device
             SyncedTabsView.ErrorType.SYNC_ENGINE_UNAVAILABLE -> R.string.synced_tabs_enable_tab_syncing
@@ -46,7 +49,8 @@ class SyncedTabsLayout @JvmOverloads constructor(
 
         synced_tabs_list.visibility = View.GONE
         sync_tabs_status.visibility = View.VISIBLE
-        synced_tabs_pull_to_refresh.isEnabled = false
+
+        synced_tabs_pull_to_refresh.isEnabled = pullToRefreshEnableState(error)
     }
 
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
@@ -77,5 +81,20 @@ class SyncedTabsLayout @JvmOverloads constructor(
 
     override fun stopLoading() {
         synced_tabs_pull_to_refresh.isRefreshing = false
+    }
+
+    companion object {
+        internal fun pullToRefreshEnableState(error: SyncedTabsView.ErrorType) = when (error) {
+            // Disable "pull-to-refresh" when we clearly can't sync tabs, and user needs to take an
+            // action within the app.
+            SyncedTabsView.ErrorType.SYNC_UNAVAILABLE,
+            SyncedTabsView.ErrorType.SYNC_NEEDS_REAUTHENTICATION -> false
+
+            // Enable "pull-to-refresh" when an external event (e.g. connecting a desktop client,
+            // or enabling tabs sync, or connecting to a network) may resolve our problem.
+            SyncedTabsView.ErrorType.SYNC_ENGINE_UNAVAILABLE,
+            SyncedTabsView.ErrorType.MULTIPLE_DEVICES_UNAVAILABLE,
+            SyncedTabsView.ErrorType.NO_TABS_AVAILABLE -> true
+        }
     }
 }

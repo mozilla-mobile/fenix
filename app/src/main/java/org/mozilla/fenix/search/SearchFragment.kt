@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.search_suggestions_onboarding.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
@@ -39,6 +40,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
+import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
@@ -49,7 +51,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getSpannable
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -86,11 +87,12 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     ): View? {
         val activity = activity as HomeActivity
         val args by navArgs<SearchFragmentArgs>()
-        val session = args.sessionId
-            ?.let(requireComponents.core.sessionManager::findSessionById)
+
+        val tabId = args.sessionId
+        val tab = tabId?.let { requireComponents.core.store.state.findTab(it) }
 
         val view = inflater.inflate(R.layout.fragment_search, container, false)
-        val url = session?.url.orEmpty()
+        val url = tab?.content?.url.orEmpty()
         val currentSearchEngine = SearchEngineSource.Default(
             requireComponents.search.provider.getDefaultEngine(requireContext())
         )
@@ -99,19 +101,25 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
         requireComponents.analytics.metrics.track(Event.InteractWithSearchURLArea)
 
+        val areShortcutsAvailable = areShortcutsAvailable()
         searchStore = StoreProvider.get(this) {
             SearchFragmentStore(
                 SearchFragmentState(
                     query = url,
+                    url = url,
+                    searchTerms = tab?.content?.searchTerms.orEmpty(),
                     searchEngineSource = currentSearchEngine,
                     defaultEngineSource = currentSearchEngine,
                     showSearchSuggestions = shouldShowSearchSuggestions(isPrivate),
                     showSearchSuggestionsHint = false,
-                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts && url.isEmpty(),
+                    showSearchShortcuts = requireContext().settings().shouldShowSearchShortcuts &&
+                            url.isEmpty() &&
+                            areShortcutsAvailable,
+                    areShortcutsAvailable = areShortcutsAvailable,
                     showClipboardSuggestions = requireContext().settings().shouldShowClipboardSuggestions,
                     showHistorySuggestions = requireContext().settings().shouldShowHistorySuggestions,
                     showBookmarkSuggestions = requireContext().settings().shouldShowBookmarkSuggestions,
-                    session = session,
+                    tabId = tabId,
                     pastedText = args.pastedText,
                     searchAccessPoint = args.searchAccessPoint
                 )
@@ -217,12 +225,10 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                     search_scan_button.isChecked = false
                     activity?.let {
                         AlertDialog.Builder(it).apply {
-                            val spannable = resources.getSpannable(
+                            val spannable = resources.getSpanned(
                                 R.string.qr_scanner_confirmation_dialog_message,
-                                listOf(
-                                    getString(R.string.app_name) to listOf(StyleSpan(BOLD)),
-                                    result to listOf(StyleSpan(ITALIC))
-                                )
+                                getString(R.string.app_name) to StyleSpan(BOLD),
+                                result to StyleSpan(ITALIC)
                             )
                             setMessage(spannable)
                             setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
@@ -234,7 +240,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                                 (activity as HomeActivity)
                                     .openToBrowserAndLoad(
                                         searchTermOrURL = result,
-                                        newTab = searchStore.state.session == null,
+                                        newTab = searchStore.state.tabId == null,
                                         from = BrowserDirection.FromSearch
                                     )
                                 dialog.dismiss()
@@ -265,7 +271,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                             SupportUtils.SumoTopic.SEARCH_SUGGESTION
                         ),
-                        newTab = searchStore.state.session == null,
+                        newTab = searchStore.state.tabId == null,
                         from = BrowserDirection.FromSearch
                     )
             }
@@ -298,7 +304,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             (activity as HomeActivity)
                 .openToBrowserAndLoad(
                     searchTermOrURL = requireContext().components.clipboardHandler.url ?: "",
-                    newTab = searchStore.state.session == null,
+                    newTab = searchStore.state.tabId == null,
                     from = BrowserDirection.FromSearch
                 )
         }
@@ -328,6 +334,12 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                 SearchFragmentAction.SelectNewDefaultSearchEngine
                     (currentDefaultEngine)
             )
+        }
+
+        // Users can from this fragment go to install/uninstall search engines and then return.
+        val areShortcutsAvailable = areShortcutsAvailable()
+        if (searchStore.state.areShortcutsAvailable != areShortcutsAvailable) {
+            searchStore.dispatch(SearchFragmentAction.UpdateShortcutsAvailability(areShortcutsAvailable))
         }
 
         if (!permissionDidUpdate) {
@@ -427,6 +439,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
 
     private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
         view?.apply {
+            search_shortcuts_button.isVisible = searchState.areShortcutsAvailable
+
             val showShortcuts = searchState.showSearchShortcuts
             search_shortcuts_button.isChecked = showShortcuts
 
@@ -437,7 +451,16 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
     }
 
+    /**
+     * Return if the user has *at least 2* installed search engines.
+     * Useful to decide whether to show / enable certain functionalities.
+     */
+    private fun areShortcutsAvailable() =
+            requireContext().components.search.provider.installedSearchEngines(requireContext())
+                    .list.size >= MINIMUM_SEARCH_ENGINES_NUMBER_TO_SHOW_SHORTCUTS
+
     companion object {
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        private const val MINIMUM_SEARCH_ENGINES_NUMBER_TO_SHOW_SHORTCUTS = 2
     }
 }

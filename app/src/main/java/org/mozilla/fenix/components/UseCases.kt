@@ -7,8 +7,8 @@ package org.mozilla.fenix.components
 import android.content.Context
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.usecases.EngineSessionUseCases
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
@@ -18,6 +18,7 @@ import mozilla.components.feature.pwa.WebAppUseCases
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SettingsUseCases
+import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.utils.Mockable
 
@@ -32,8 +33,7 @@ class UseCases(
     private val sessionManager: SessionManager,
     private val store: BrowserStore,
     private val searchEngineManager: SearchEngineManager,
-    private val shortcutManager: WebAppShortcutManager,
-    private val thumbnailStorage: ThumbnailStorage
+    private val shortcutManager: WebAppShortcutManager
 ) {
     /**
      * Use cases that provide engine interactions for a given browser session.
@@ -43,7 +43,7 @@ class UseCases(
     /**
      * Use cases that provide tab management.
      */
-    val tabsUseCases: TabsUseCases by lazy { TabsUseCases(sessionManager) }
+    val tabsUseCases: TabsUseCases by lazy { TabsUseCases(store, sessionManager) }
 
     /**
      * Use cases that provide search engine integration.
@@ -53,7 +53,7 @@ class UseCases(
     /**
      * Use cases that provide settings management.
      */
-    val settingsUseCases by lazy { SettingsUseCases(engine, sessionManager) }
+    val settingsUseCases by lazy { SettingsUseCases(engine, store) }
 
     val appLinksUseCases by lazy { AppLinksUseCases(context.applicationContext) }
 
@@ -64,4 +64,8 @@ class UseCases(
     val downloadUseCases by lazy { DownloadsUseCases(store) }
 
     val contextMenuUseCases by lazy { ContextMenuUseCases(sessionManager, store) }
+
+    val engineSessionUseCases by lazy { EngineSessionUseCases(sessionManager) }
+
+    val trackingProtectionUseCases by lazy { TrackingProtectionUseCases(store, engine) }
 }

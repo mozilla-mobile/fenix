@@ -20,7 +20,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -63,6 +62,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
@@ -133,11 +133,11 @@ class HomeFragment : Fragment() {
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            scrollAndAnimateCollection(sessions.size)
+            scrollAndAnimateCollection()
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
-            scrollAndAnimateCollection(sessions.size, tabCollection)
+            scrollAndAnimateCollection(tabCollection)
         }
 
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
@@ -218,7 +218,8 @@ class HomeFragment : Fragment() {
         sessionControlView = SessionControlView(
             view.sessionControlRecyclerView,
             sessionControlInteractor,
-            homeViewModel
+            homeViewModel,
+            requireComponents.core.store.state.normalTabs.isNotEmpty()
         )
 
         updateSessionControlView(view)
@@ -390,15 +391,9 @@ class HomeFragment : Fragment() {
         }
 
         consumeFrom(requireComponents.core.store) {
-            val tabCount = if (browsingModeManager.mode.isPrivate) {
-                it.privateTabs.size
-            } else {
-                it.normalTabs.size
-            }
-
-            view.tab_button?.setCountWithAnimation(tabCount)
-            view.add_tabs_to_collections_button?.isVisible = tabCount > 0
+            updateTabCounter(it)
         }
+        updateTabCounter(requireComponents.core.store.state)
     }
 
     override fun onDestroyView() {
@@ -470,11 +465,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showDeleteCollectionPrompt(tabCollection: TabCollection) {
+    private fun showDeleteCollectionPrompt(tabCollection: TabCollection, title: String?, message: String) {
         val context = context ?: return
         AlertDialog.Builder(context).apply {
-            val message =
-                context.getString(R.string.tab_collection_dialog_message, tabCollection.title)
+            setTitle(title)
             setMessage(message)
             setNegativeButton(R.string.tab_collection_dialog_negative) { dialog: DialogInterface, _ ->
                 dialog.cancel()
@@ -787,7 +781,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun scrollAndAnimateCollection(
-        tabsAddedToCollectionSize: Int,
         changedCollection: TabCollection? = null
     ) {
         if (view != null) {
@@ -818,7 +811,7 @@ class HomeFragment : Fragment() {
                         ) {
                             super.onScrollStateChanged(recyclerView, newState)
                             if (newState == SCROLL_STATE_IDLE) {
-                                animateCollection(tabsAddedToCollectionSize, indexOfCollection)
+                                animateCollection(indexOfCollection)
                                 recyclerView.removeOnScrollListener(this)
                             }
                         }
@@ -826,13 +819,13 @@ class HomeFragment : Fragment() {
                     recyclerView.addOnScrollListener(onScrollListener)
                     recyclerView.smoothScrollToPosition(indexOfCollection)
                 } else {
-                    animateCollection(tabsAddedToCollectionSize, indexOfCollection)
+                    animateCollection(indexOfCollection)
                 }
             }
         }
     }
 
-    private fun animateCollection(addedTabsSize: Int, indexOfCollection: Int) {
+    private fun animateCollection(indexOfCollection: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val viewHolder =
                 sessionControlView!!.view.findViewHolderForAdapterPosition(indexOfCollection)
@@ -859,26 +852,20 @@ class HomeFragment : Fragment() {
                 ?.setDuration(FADE_ANIM_DURATION)
                 ?.setListener(listener)?.start()
         }.invokeOnCompletion {
-            showSavedSnackbar(addedTabsSize)
+            showSavedSnackbar()
         }
     }
 
-    private fun showSavedSnackbar(tabSize: Int) {
+    private fun showSavedSnackbar() {
         viewLifecycleOwner.lifecycleScope.launch {
             delay(ANIM_SNACKBAR_DELAY)
             view?.let { view ->
-                @StringRes
-                val stringRes = if (tabSize > 1) {
-                    R.string.create_collection_tabs_saved
-                } else {
-                    R.string.create_collection_tab_saved
-                }
                 FenixSnackbar.make(
                     view = view,
                     duration = Snackbar.LENGTH_LONG,
                     isDisplayedWithBrowserToolbar = false
                 )
-                    .setText(view.context.getString(stringRes))
+                    .setText(view.context.getString(R.string.create_collection_tabs_saved_new_collection))
                     .setAnchorView(snackbarAnchorView)
                     .show()
             }
@@ -933,6 +920,17 @@ class HomeFragment : Fragment() {
 
     private fun openTabTray() {
         TabTrayDialogFragment.show(parentFragmentManager)
+    }
+
+    private fun updateTabCounter(browserState: BrowserState) {
+        val tabCount = if (browsingModeManager.mode.isPrivate) {
+            browserState.privateTabs.size
+        } else {
+            browserState.normalTabs.size
+        }
+
+        view?.tab_button?.setCountWithAnimation(tabCount)
+        view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
     }
 
     companion object {

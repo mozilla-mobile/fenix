@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,7 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -85,8 +87,9 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
         _bookmarkInteractor = BookmarkFragmentInteractor(
             bookmarksController = DefaultBookmarkController(
-                context = requireContext(),
+                activity = requireActivity() as HomeActivity,
                 navController = findNavController(),
+                clipboardManager = requireContext().getSystemService(),
                 scope = viewLifecycleOwner.lifecycleScope,
                 store = bookmarkStore,
                 sharedViewModel = sharedViewModel,
@@ -147,7 +150,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     override fun onResume() {
         super.onResume()
 
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().show()
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
 
         // Reload bookmarks when returning to this fragment in case they have been edited
         val args by navArgs<BookmarkFragmentArgs>()

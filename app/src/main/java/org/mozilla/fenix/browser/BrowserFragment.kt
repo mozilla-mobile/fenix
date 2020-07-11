@@ -24,7 +24,6 @@ import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.search.SearchFeature
-import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
@@ -207,11 +206,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun navToTrackingProtectionPanel(session: Session) {
         val navController = findNavController()
 
-        val useCase = TrackingProtectionUseCases(
-            sessionManager = requireComponents.core.sessionManager,
-            engine = requireComponents.core.engine
-        )
-        useCase.containsException(session) { contains ->
+        requireComponents.useCases.trackingProtectionUseCases.containsException(session.id) { contains ->
             val isEnabled = session.trackerBlockingEnabled && !contains
             val directions =
                 BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
@@ -226,21 +221,37 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            showTabSavedToCollectionSnackbar()
+            showTabSavedToCollectionSnackbar(sessions.size, true)
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
-            showTabSavedToCollectionSnackbar()
+            showTabSavedToCollectionSnackbar(sessions.size)
         }
 
-        private fun showTabSavedToCollectionSnackbar() {
+        private fun showTabSavedToCollectionSnackbar(tabSize: Int, isNewCollection: Boolean = false) {
             view?.let { view ->
+                val messageStringRes = when {
+                    isNewCollection -> {
+                        R.string.create_collection_tabs_saved_new_collection
+                    }
+                    tabSize > 1 -> {
+                        R.string.create_collection_tabs_saved
+                    }
+                    else -> {
+                        R.string.create_collection_tab_saved
+                    }
+                }
                 FenixSnackbar.make(
                     view = view,
                     duration = Snackbar.LENGTH_SHORT,
                     isDisplayedWithBrowserToolbar = true
                 )
-                    .setText(view.context.getString(R.string.create_collection_tab_saved))
+                    .setText(view.context.getString(messageStringRes))
+                    .setAction(requireContext().getString(R.string.create_collection_view)) {
+                        findNavController().navigate(
+                            BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
+                        )
+                    }
                     .show()
             }
         }
@@ -263,10 +274,5 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             FenixSnackbarDelegate(view)
         ) + ContextMenuCandidate.createOpenInExternalAppCandidate(requireContext(),
             contextMenuCandidateAppLinksUseCases)
-    }
-
-    companion object {
-        private const val SHARED_TRANSITION_MS = 200L
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
     }
 }

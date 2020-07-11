@@ -17,6 +17,8 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -30,8 +32,8 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
@@ -40,7 +42,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.requirePreference
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 
 @Suppress("TooManyFunctions", "LargeClass")
 class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
@@ -49,7 +51,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
     private lateinit var biometricPromptCallback: BiometricPrompt.AuthenticationCallback
 
     @TargetApi(M)
-    private val executor = Executors.newSingleThreadExecutor()
+    private lateinit var executor: Executor
 
     @TargetApi(M)
     private lateinit var biometricPrompt: BiometricPrompt
@@ -61,6 +63,28 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
         setPreferencesFromResource(R.xml.logins_preferences, rootKey)
     }
 
+    /**
+     * There is a bug where while the biometric prompt is showing, you were able to quickly navigate
+     * so we are disabling the settings that navigate while authenticating.
+     * https://github.com/mozilla-mobile/fenix/issues/12312
+     */
+    private fun togglePrefsEnabledWhileAuthenticating(enabled: Boolean) {
+        requirePreference<Preference>(R.string.pref_key_password_sync_logins).isEnabled = enabled
+        requirePreference<Preference>(R.string.pref_key_save_logins_settings).isEnabled = enabled
+        requirePreference<Preference>(R.string.pref_key_saved_logins).isEnabled = enabled
+    }
+
+    private fun navigateToSavedLogins() {
+        runIfFragmentIsAttached {
+            viewLifecycleOwner.lifecycleScope.launch(Main) {
+                // Workaround for likely biometric library bug
+                // https://github.com/mozilla-mobile/fenix/issues/8438
+                delay(SHORT_DELAY_MS)
+                navigateToSavedLoginsFragment()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,22 +92,21 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 Log.e(LOG_TAG, "onAuthenticationError $errString")
+                togglePrefsEnabledWhileAuthenticating(enabled = true)
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 Log.d(LOG_TAG, "onAuthenticationSucceeded")
-                viewLifecycleOwner.lifecycleScope.launch(Main) {
-                    // Workaround for likely biometric library bug
-                    // https://github.com/mozilla-mobile/fenix/issues/8438
-                    delay(SHORT_DELAY_MS)
-                    navigateToSavedLoginsFragment()
-                }
+                navigateToSavedLogins()
             }
 
             override fun onAuthenticationFailed() {
                 Log.e(LOG_TAG, "onAuthenticationFailed")
+                togglePrefsEnabledWhileAuthenticating(enabled = true)
             }
         }
+
+        executor = ContextCompat.getMainExecutor(requireContext())
 
         biometricPrompt = BiometricPrompt(this, executor, biometricPromptCallback)
 
@@ -111,9 +134,6 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_autofill_logins).apply {
-            // The ability to toggle autofill on the engine is only available in Nightly currently
-            // See https://github.com/mozilla-mobile/fenix/issues/11320
-            isVisible = Config.channel.isNightlyOrDebug
             isChecked = context.settings().shouldAutofillLogins
             onPreferenceChangeListener = object : SharedPreferenceUpdater() {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
@@ -126,6 +146,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
         requirePreference<Preference>(R.string.pref_key_saved_logins).setOnPreferenceClickListener {
             if (Build.VERSION.SDK_INT >= M && isHardwareAvailable && hasBiometricEnrolled) {
+                togglePrefsEnabledWhileAuthenticating(enabled = false)
                 biometricPrompt.authenticate(promptInfo)
             } else {
                 verifyPinOrShowSetupWarning()
@@ -152,7 +173,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
     override fun onAuthenticationProblems() = updateSyncPreferenceNeedsReauth()
 
-    val isHardwareAvailable: Boolean by lazy {
+    private val isHardwareAvailable: Boolean by lazy {
         if (Build.VERSION.SDK_INT >= M) {
             context?.let {
                 val bm = BiometricManager.from(it)
@@ -165,7 +186,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
         }
     }
 
-    val hasBiometricEnrolled: Boolean by lazy {
+    private val hasBiometricEnrolled: Boolean by lazy {
         if (Build.VERSION.SDK_INT >= M) {
             context?.let {
                 val bm = BiometricManager.from(it)
@@ -250,13 +271,15 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
         }
     }
 
+    @Suppress("Deprecation")
     private fun showPinVerification() {
-        val manager = activity?.getSystemService(KEYGUARD_SERVICE) as KeyguardManager
+        val manager = activity?.getSystemService<KeyguardManager>()!!
         val intent = manager.createConfirmDeviceCredentialIntent(
             getString(R.string.logins_biometric_prompt_message_pin),
             getString(R.string.logins_biometric_prompt_message)
         )
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             PIN_REQUEST
         )
     }
@@ -271,7 +294,8 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
 
     private fun navigateToSavedLoginsFragment() {
         context?.components?.analytics?.metrics?.track(Event.OpenLogins)
-        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
+        val directions =
+            SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToLoginsListFragment()
         findNavController().navigate(directions)
     }
 
@@ -287,7 +311,8 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     private fun navigateToTurnOnSyncFragment() {
-        val directions = SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
+        val directions =
+            SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
         findNavController().navigate(directions)
     }
 

@@ -28,6 +28,7 @@ import org.mozilla.fenix.settings.SupportUtils
  * along with controls to remove the exception.
  */
 class ExceptionsFragment : Fragment() {
+
     private lateinit var exceptionsStore: ExceptionsFragmentStore
     private lateinit var exceptionsView: ExceptionsView
     private lateinit var exceptionsInteractor: ExceptionsInteractor
@@ -44,14 +45,11 @@ class ExceptionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_exceptions, container, false)
-        trackingProtectionUseCases = TrackingProtectionUseCases(
-            sessionManager = view.context.components.core.sessionManager,
-            engine = view.context.components.core.engine
-        )
+        trackingProtectionUseCases = view.context.components.useCases.trackingProtectionUseCases
         exceptionsStore = StoreProvider.get(this) {
             ExceptionsFragmentStore(
                 ExceptionsFragmentState(
-                    items = listOf()
+                    items = emptyList()
                 )
             )
         }
@@ -64,7 +62,6 @@ class ExceptionsFragment : Fragment() {
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         consumeFrom(exceptionsStore) {
             exceptionsView.update(it)
         }
