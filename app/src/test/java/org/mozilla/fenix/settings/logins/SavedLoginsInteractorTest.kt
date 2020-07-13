@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings.logins
 
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyAll
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,8 +29,9 @@ class SavedLoginsInteractorTest {
         val item = SavedLogin("mozilla.org", "username", "password", "id", Random.nextLong())
         interactor.itemClicked(item)
 
-        verify {
+        verifyAll {
             savedLoginClicked.invoke(item)
+            controller.handleItemClicked(item)
         }
     }
 

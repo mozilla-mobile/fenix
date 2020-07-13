@@ -75,6 +75,7 @@ class SavedLoginsInteractor(
 ) {
     fun itemClicked(item: SavedLogin) {
         itemClicked.invoke(item)
+        savedLoginsController.handleItemClicked(item)
     }
     fun onLearnMore() {
         learnMore.invoke()
@@ -91,5 +92,9 @@ class SavedLoginsController(val store: LoginsFragmentStore, val settings: Settin
     fun handleSort(sortingStrategy: SortingStrategy) {
         store.dispatch(LoginsAction.SortLogins(sortingStrategy))
         settings.savedLoginsSortingStrategy = sortingStrategy
+    }
+
+    fun handleItemClicked(item: SavedLogin) {
+        store.dispatch(LoginsAction.LoginSelected(item))
     }
 }

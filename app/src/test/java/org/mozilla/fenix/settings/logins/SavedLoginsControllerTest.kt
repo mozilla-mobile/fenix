@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings.logins
 
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyAll
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +33,17 @@ class SavedLoginsControllerTest {
                 )
             )
             settings.savedLoginsSortingStrategy = sortingStrategy
+        }
+    }
+
+    @Test
+    fun `GIVEN a SavedLogin, WHEN handleItemClicked is called for it, THEN LoginsAction$LoginSelected should be emitted`() {
+        val login: SavedLogin = mockk()
+
+        controller.handleItemClicked(login)
+
+        verifyAll {
+            store.dispatch(LoginsAction.LoginSelected(login))
         }
     }
 }
