@@ -54,11 +54,6 @@ sealed class LoginsAction : Action {
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
-
-    /**
-     * Cleanup the list of logins currently shown and enter in a "loading" state
-     * until [UpdateLoginsList] is emitted with a new list of logins to be displayed.
-     */
     data class LoginSelected(val item: SavedLogin) : LoginsAction()
 }
 
