@@ -78,12 +78,24 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
             showUndoSnackbarForTab(sessionId)
             requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+
+            // If the tab tray is now empty, dismiss
+            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
+                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
+                dismissAllowingStateLoss()
+            }
         }
 
         override fun invoke(session: Session) {
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
             showUndoSnackbarForTab(session.id)
             requireComponents.useCases.tabsUseCases.removeTab(session)
+
+            // If the tab tray is now empty, dismiss
+            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
+                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
+                dismissAllowingStateLoss()
+            }
         }
     }
 
