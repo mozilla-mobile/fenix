@@ -255,6 +255,7 @@ jobs:
                 - '--cfg=mozharness/configs/raptor/android_hw_config.py'
                 - '--app=fenix'
                 - '--browsertime'
+                - '--browser-cycles=1'
                 - '--binary=org.mozilla.fenix.nightly'
                 - '--activity=org.mozilla.fenix.IntentReceiverActivity'
                 - '--download-symbols=ondemand'
