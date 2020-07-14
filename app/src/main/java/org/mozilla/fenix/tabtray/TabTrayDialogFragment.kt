@@ -82,10 +82,10 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
             requireComponents.useCases.tabsUseCases.removeTab(sessionId)
 
             // If the tab tray is now empty, dismiss
-            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
-                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
-                dismissAllowingStateLoss()
-            }
+//            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
+//                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
+//                dismissAllowingStateLoss()
+//            }
         }
 
         override fun invoke(session: Session) {
@@ -94,10 +94,10 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
             requireComponents.useCases.tabsUseCases.removeTab(session)
 
             // If the tab tray is now empty, dismiss
-            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
-                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
-                dismissAllowingStateLoss()
-            }
+//            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
+//                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
+//                dismissAllowingStateLoss()
+//            }
         }
     }
 
@@ -201,8 +201,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
         }
 
         view?.tabLayout?.let {
-            viewLifecycleOwner.lifecycleScope.allowUndo(
-                it,
+            requireActivity().lifecycleScope.allowUndo(
+                requireActivity().getRootView()!!,
                 snackbarMessage,
                 getString(R.string.snackbar_deleted_undo),
                 {
@@ -210,8 +210,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
                     tabTrayView.scrollToTab(snapshot.session.id)
                 },
                 operation = { },
-                elevation = ELEVATION,
-                anchorView = snackbarAnchor
+                elevation = ELEVATION
             )
         }
     }
