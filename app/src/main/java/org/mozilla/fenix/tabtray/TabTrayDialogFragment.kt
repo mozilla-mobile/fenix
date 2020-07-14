@@ -6,6 +6,7 @@ package org.mozilla.fenix.tabtray
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.utils.allowUndo
 
@@ -182,6 +184,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun showUndoSnackbarForTab(sessionId: String) {
+        Log.d("Sawyer", "for tab")
         val sessionManager = view?.context?.components?.core?.sessionManager
         val snapshot = sessionManager
             ?.findSessionById(sessionId)?.let {
@@ -243,6 +246,20 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun showUndoSnackbar(snackbarMessage: String, snapshot: SessionManager.Snapshot) {
+        // TODO: I think basically just don't anchor the snackbar since we want to display it on a different fragment.
+        Log.d("Sawyer", "regular")
+
+        // Hmm still doesn't work without an anchor? See what BaseBrowserFrag does.
+
+
+        FenixSnackbar.make(
+            view = requireActivity().getRootView()!!,
+            isDisplayedWithBrowserToolbar = false
+        ).setText("Hello")
+            .show()
+
+
+
         view?.let {
             viewLifecycleOwner.lifecycleScope.allowUndo(
                 it,
@@ -253,7 +270,9 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
                 },
                 operation = { },
                 elevation = ELEVATION,
-                anchorView = snackbarAnchor
+                    anchorView = requireParentFragment().requireActivity().getRootView()
+
+//                anchorView = snackbarAnchor
             )
         }
     }

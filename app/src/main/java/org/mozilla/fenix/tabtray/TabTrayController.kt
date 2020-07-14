@@ -13,6 +13,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.sessionsOfType
 
@@ -117,6 +118,28 @@ class DefaultTabTrayController(
         }
 
         showUndoSnackbar(snackbarMessage, snapshot)
+
+        // If the tab tray is now empty, dismiss
+        activity.components.analytics.metrics.track(Event.TabsTrayClosed)
+        //dismissTabTray()
+
+
+        /*
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+                        requireView(),
+                        snackbarMessage,
+                        requireContext().getString(R.string.snackbar_deleted_undo),
+                        {
+                            sessionManager.add(
+                                snapshot.session,
+                                isSelected,
+                                engineSessionState = state
+                            )
+                        },
+                        operation = { }
+                    )
+         */
+
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
