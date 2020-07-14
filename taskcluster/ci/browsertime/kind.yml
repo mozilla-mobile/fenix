@@ -249,17 +249,16 @@ jobs:
             using: run-task
             checkout: false
             run-as-root: true
-                command:
-                    - 'bash'
-                    - './test-linux.sh'
-                    - '--cfg=mozharness/configs/raptor/android_hw_config.py'
-                    - '--app=fenix'
-                    - '--browsertime'
-                    - '--binary=org.mozilla.fenix.nightly'
-                    - '--activity=org.mozilla.fenix.IntentReceiverActivity'
-                    - '--download-symbols=ondemand'
-                    - '--browsertime-node=$MOZ_FETCHES_DIR/node/bin/node'
-                    - '--browsertime-geckodriver=$MOZ_FETCHES_DIR/geckodriver'
-                    - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
-                    - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
->>>>>>> For #12240: Enable btime youtube-playback Fenix tests
+            command:
+                - 'bash'
+                - './test-linux.sh'
+                - '--cfg=mozharness/configs/raptor/android_hw_config.py'
+                - '--app=fenix'
+                - '--browsertime'
+                - '--binary=org.mozilla.fenix.nightly'
+                - '--activity=org.mozilla.fenix.IntentReceiverActivity'
+                - '--download-symbols=ondemand'
+                - '--browsertime-node=$MOZ_FETCHES_DIR/node/bin/node'
+                - '--browsertime-geckodriver=$MOZ_FETCHES_DIR/geckodriver'
+                - '--browsertime-ffmpeg=$MOZ_FETCHES_DIR/ffmpeg-4.1.4-i686-static/bin/ffmpeg'
+                - '--browsertime-browsertimejs=$MOZ_FETCHES_DIR/browsertime/node_modules/browsertime/bin/browsertime.js'
