@@ -71,7 +71,7 @@ fun CoroutineScope.allowUndo(
             val lengthToDelay = if (view.context.settings().accessibilityServicesEnabled) {
                 ACCESSIBLE_UNDO_DELAY
             } else {
-                ACCESSIBLE_UNDO_DELAY
+                UNDO_DELAY
             }
 
             delay(lengthToDelay)

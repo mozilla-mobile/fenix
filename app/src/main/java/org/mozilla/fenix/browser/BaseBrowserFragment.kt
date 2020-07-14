@@ -59,7 +59,6 @@ import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
-import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
@@ -517,17 +516,17 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             }
             assignSitePermissionsRules(context)
 
-            fullScreenFeature.set(
-                feature = FullScreenFeature(
-                    requireComponents.core.store,
-                    SessionUseCases(sessionManager),
-                    customTabSessionId,
-                    ::viewportFitChange,
-                    ::fullScreenChanged
-                ),
-                owner = this,
-                view = view
-            )
+//            fullScreenFeature.set(
+//                feature = FullScreenFeature(
+//                    requireComponents.core.store,
+//                    SessionUseCases(sessionManager),
+//                    customTabSessionId,
+//                    ::viewportFitChange,
+//                    ::fullScreenChanged
+//                ),
+//                owner = this,
+//                view = view
+//            )
 
             session.register(observer = object : Session.Observer {
                 override fun onUrlChanged(session: Session, url: String) {
@@ -740,18 +739,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         super.onStop()
         initUIJob?.cancel()
 
-        requireComponents.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)?.let { session ->
-            // If we didn't enter PiP, exit full screen on stop
-            if (!session.content.pictureInPictureEnabled && fullScreenFeature.onBackPressed()) {
-                fullScreenChanged(false)
-            }
-        }
+//        requireComponents.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)?.let { _ ->
+//            // If we didn't enter PiP, exit full screen on stop
+////            if (!session.content.pictureInPictureEnabled) {
+////                //fullScreenChanged(false)
+////            }
+//        }
     }
 
     @CallSuper
     override fun onBackPressed(): Boolean {
         return findInPageIntegration.onBackPressed() ||
-                fullScreenFeature.onBackPressed() ||
+               // fullScreenFeature.onBackPressed() ||
                 sessionFeature.onBackPressed() ||
                 removeSessionIfNeeded()
     }
@@ -949,7 +948,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private fun pipModeChanged(session: SessionState) {
         if (!session.content.pictureInPictureEnabled && session.content.fullScreen) {
             onBackPressed()
-            fullScreenChanged(false)
+           // fullScreenChanged(false)
         }
     }
 

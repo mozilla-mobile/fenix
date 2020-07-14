@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.component_tabstray.view.*
 import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
 import mozilla.components.browser.session.Session
@@ -75,22 +76,35 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
         }
     }
 
+    var sessionIdToRemove: SessionManager.Snapshot.Item? = null
+
     private val removeTabUseCase = object : TabsUseCases.RemoveTabUseCase {
         override fun invoke(sessionId: String) {
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
-            showUndoSnackbarForTab(sessionId)
+
+            Log.d("Sawyer", "showUndo called now....")
+
+            sessionIdToRemove = requireComponents.core.sessionManager.findSessionById(sessionId)?.let {
+                    requireComponents.core.sessionManager.createSessionSnapshot(it)
+                } ?: return
+
             requireComponents.useCases.tabsUseCases.removeTab(sessionId)
 
+            // TODO: Could just store the sessionId?  then showUndo later.
+
+
             // If the tab tray is now empty, dismiss
-//            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
-//                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
-//                dismissAllowingStateLoss()
-//            }
+            if (requireComponents.core.sessionManager.sessions.isEmpty()) {
+                Log.d("Sawyer", "isEmpty!")
+                requireContext().components.analytics.metrics.track(Event.TabsTrayClosed)
+                dismissAllowingStateLoss()
+            }
+
         }
 
         override fun invoke(session: Session) {
             requireContext().components.analytics.metrics.track(Event.ClosedExistingTab)
-            showUndoSnackbarForTab(session.id)
+            //showUndoSnackbarForTab(session.id)
             requireComponents.useCases.tabsUseCases.removeTab(session)
 
             // If the tab tray is now empty, dismiss
@@ -179,20 +193,22 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
 
         consumeFrom(requireComponents.core.store) {
             tabTrayView.updateState(it)
+
             navigateHomeIfNeeded(it)
         }
     }
 
-    private fun showUndoSnackbarForTab(sessionId: String) {
+    private fun showUndoSnackbarForTab(snapshot: SessionManager.Snapshot.Item) {
         Log.d("Sawyer", "for tab")
         val sessionManager = view?.context?.components?.core?.sessionManager
-        val snapshot = sessionManager
-            ?.findSessionById(sessionId)?.let {
-                sessionManager.createSessionSnapshot(it)
-            } ?: return
+        // Ah this early return is fucking me.
+//        val snapshot = sessionManager
+//            ?.findSessionById(sessionId)?.let {
+//                sessionManager.createSessionSnapshot(it)
+//            } ?: return
 
         val state = snapshot.engineSession?.saveState()
-        val isSelected = sessionId == requireComponents.core.store.state.selectedTabId ?: false
+            //val isSelected = sessionId == requireComponents.core.store.state.selectedTabId ?: false
 
         val snackbarMessage = if (snapshot.session.private) {
             getString(R.string.snackbar_private_tab_closed)
@@ -200,19 +216,21 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
             getString(R.string.snackbar_tab_closed)
         }
 
-        view?.tabLayout?.let {
+        // This works for when you're *on* the homescreen. Really I want to ensure that they're on the homescreen first by navving.
+        //view?.tabLayout?.let {
             requireActivity().lifecycleScope.allowUndo(
                 requireActivity().getRootView()!!,
                 snackbarMessage,
                 getString(R.string.snackbar_deleted_undo),
                 {
-                    sessionManager.add(snapshot.session, isSelected, engineSessionState = state)
-                    tabTrayView.scrollToTab(snapshot.session.id)
+                    sessionManager!!.add(snapshot.session, false, engineSessionState = state)
+                    //tabTrayView.scrollToTab(snapshot.session.id)
                 },
                 operation = { },
-                elevation = ELEVATION
+                elevation = ELEVATION,
+                anchorView = toolbarLayout
             )
-        }
+       // }
     }
 
     override fun onDestroyView() {
@@ -236,7 +254,12 @@ class TabTrayDialogFragment : AppCompatDialogFragment() {
         }
 
         if (shouldPop) {
+            Log.d("Sawyer", "naving home!")
             findNavController().popBackStack(R.id.homeFragment, false)
+            sessionIdToRemove?.let {
+                Log.d("Sawyer", "let")
+                showUndoSnackbarForTab(it)
+            }
         }
     }
 

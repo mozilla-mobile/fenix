@@ -117,11 +117,13 @@ class DefaultTabTrayController(
             activity.getString(R.string.snackbar_tabs_closed)
         }
 
+        dismissTabTray()
+
         showUndoSnackbar(snackbarMessage, snapshot)
 
         // If the tab tray is now empty, dismiss
         activity.components.analytics.metrics.track(Event.TabsTrayClosed)
-        //dismissTabTray()
+
 
 
         /*

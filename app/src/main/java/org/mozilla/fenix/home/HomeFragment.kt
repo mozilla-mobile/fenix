@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.Display.FLAG_SECURE
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -391,9 +392,50 @@ class HomeFragment : Fragment() {
         }
 
         consumeFrom(requireComponents.core.store) {
+            Log.d("Sawyer", "Yooo")
             updateTabCounter(it)
         }
+
+        // This somehow needs to get nulled out 😬
+        args.sessionToDelete?.also {
+            sessionManager.findSessionById(it)?.let { session ->
+                val snapshot = sessionManager.createSessionSnapshot(session)
+                val state = snapshot.engineSession?.saveState()
+                val isSelected =
+                    session.id == requireComponents.core.store.state.selectedTabId ?: false
+
+                val snackbarMessage = if (snapshot.session.private) {
+                    requireContext().getString(R.string.snackbar_private_tab_closed)
+                } else {
+                    requireContext().getString(R.string.snackbar_tab_closed)
+                }
+
+                viewLifecycleOwner.lifecycleScope.allowUndo(
+                    requireView(),
+                    snackbarMessage,
+                    requireContext().getString(R.string.snackbar_deleted_undo),
+                    {
+                        sessionManager.add(
+                            snapshot.session,
+                            isSelected,
+                            engineSessionState = state
+                        )
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null))
+                    },
+                    // TODO: Maybe add it here:         updateTabCounter(requireComponents.core.store.state)
+                    operation = {
+                        Log.d("Sawyer", "session: ${requireComponents.core.sessionManager.sessions.size}")
+                        Log.d("Sawyer", "state: ${requireComponents.core.store.state.normalTabs.size}")
+                        updateTabCounter(requireComponents.core.store.state)
+                    },
+                    anchorView = snackbarAnchorView
+                )
+                requireComponents.useCases.tabsUseCases.removeTab.invoke(session)
+            }
+        }
+
         updateTabCounter(requireComponents.core.store.state)
+
     }
 
     override fun onDestroyView() {
@@ -501,38 +543,6 @@ class HomeFragment : Fragment() {
         }
 
         hideToolbar()
-
-        args.sessionToDelete?.also {
-            sessionManager.findSessionById(it)?.let { session ->
-                val snapshot = sessionManager.createSessionSnapshot(session)
-                val state = snapshot.engineSession?.saveState()
-                val isSelected =
-                    session.id == requireComponents.core.store.state.selectedTabId ?: false
-
-                val snackbarMessage = if (snapshot.session.private) {
-                    requireContext().getString(R.string.snackbar_private_tab_closed)
-                } else {
-                    requireContext().getString(R.string.snackbar_tab_closed)
-                }
-
-                viewLifecycleOwner.lifecycleScope.allowUndo(
-                    requireView(),
-                    snackbarMessage,
-                    requireContext().getString(R.string.snackbar_deleted_undo),
-                    {
-                        sessionManager.add(
-                            snapshot.session,
-                            isSelected,
-                            engineSessionState = state
-                        )
-                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null))
-                    },
-                    operation = { },
-                    anchorView = snackbarAnchorView
-                )
-                requireComponents.useCases.tabsUseCases.removeTab.invoke(session)
-            }
-        }
     }
 
     override fun onPause() {
@@ -929,6 +939,7 @@ class HomeFragment : Fragment() {
             browserState.normalTabs.size
         }
 
+        Log.d("Sawyer", "update tab counter: ${browserState.normalTabs}")
         view?.tab_button?.setCountWithAnimation(tabCount)
         view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
     }
