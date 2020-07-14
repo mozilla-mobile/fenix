@@ -24,9 +24,9 @@ import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.R
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.asActivity
 import org.mozilla.fenix.ext.components
@@ -83,9 +83,10 @@ class DefaultToolbarMenu(
                 session?.canGoForward ?: true
             },
             secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
-            disableInSecondaryState = true
+            disableInSecondaryState = true,
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true)) }
         ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Forward)
+            onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = false))
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(

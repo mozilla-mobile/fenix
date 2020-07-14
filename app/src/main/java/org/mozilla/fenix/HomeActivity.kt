@@ -6,11 +6,14 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.format.DateUtils
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
@@ -31,6 +34,8 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.SessionManager
@@ -65,7 +70,6 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.trackingprotectionexceptions.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -97,6 +101,7 @@ import org.mozilla.fenix.tabtray.FenixTabsAdapter
 import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.trackingprotectionexceptions.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.RunWhenReadyQueue
 
@@ -139,6 +144,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             OpenSpecificTabIntentProcessor(this)
         )
     }
+
+    // See onKeyDown for why this is necessary
+    private var backLongPressJob: Job? = null
 
     private lateinit var navigationToolbar: Toolbar
 
@@ -346,6 +354,50 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
         super.onBackPressed()
+    }
+
+    private fun isAndroidN(): Boolean =
+        Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1
+
+    private fun handleBackLongPress(): Boolean {
+        supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.forEach {
+            if (it is OnBackLongPressedListener && it.onBackLongPressed()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    final override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        // Inspired by https://searchfox.org/mozilla-esr68/source/mobile/android/base/java/org/mozilla/gecko/BrowserApp.java#584-613
+        // Android N has broken passing onKeyLongPress events for the back button, so we
+        // instead implement the long press behavior ourselves
+        // - For short presses, we cancel the callback in onKeyUp
+        // - For long presses, the normal keypress is marked as cancelled, hence won't be handled elsewhere
+        //   (but Android still provides the haptic feedback), and the long press action is run
+        if (isAndroidN() && keyCode == KeyEvent.KEYCODE_BACK) {
+            backLongPressJob = lifecycleScope.launch {
+                delay(ViewConfiguration.getLongPressTimeout().toLong())
+                handleBackLongPress()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    final override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (isAndroidN() && keyCode == KeyEvent.KEYCODE_BACK) {
+            backLongPressJob?.cancel()
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    final override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        // onKeyLongPress is broken in Android N so we don't handle back button long presses here
+        // for N. The version check ensures we don't handle back button long presses twice.
+        if (!isAndroidN() && keyCode == KeyEvent.KEYCODE_BACK) {
+            return handleBackLongPress()
+        }
+        return super.onKeyLongPress(keyCode, event)
     }
 
     final override fun onUserLeaveHint() {
