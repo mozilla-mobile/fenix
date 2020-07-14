@@ -4,7 +4,7 @@
 
 object Versions {
     const val kotlin = "1.3.30"
-    const val coroutines = "1.3.3"
+    const val coroutines = "1.3.7"
     const val android_gradle_plugin = "3.5.0"
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
