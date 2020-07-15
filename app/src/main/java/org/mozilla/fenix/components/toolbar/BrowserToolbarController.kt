@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Intent
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -144,6 +145,7 @@ class DefaultBrowserToolbarController(
                     if (sessionManager.sessionsOfType(it.private).count() == 1) {
                         // The tab tray always returns to normal mode so do that here too
                         activity.browsingModeManager.mode = BrowsingMode.Normal
+                        Log.d("Sawyer", "navigating home!")
                         navController.navigate(BrowserFragmentDirections.actionGlobalHome(sessionToDelete = it.id))
                     } else {
                         onCloseTab.invoke(it)

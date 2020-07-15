@@ -116,6 +116,8 @@ import kotlin.math.min
 class HomeFragment : Fragment() {
     private val args by navArgs<HomeFragmentArgs>()
 
+    private lateinit var bundleArgs: Bundle
+
     private val homeViewModel: HomeScreenViewModel by viewModels {
         ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
     }
@@ -162,6 +164,9 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
+        Log.d("Sawyer", "onCreate")
+
+        bundleArgs = args.toBundle()
         lifecycleScope.launch(IO) {
             if (!onboarding.userHasBeenOnboarded()) {
                 requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
@@ -177,6 +182,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as HomeActivity
 
+        Log.d("Sawyer", "onCreateView")
         currentMode = CurrentMode(
             view.context,
             onboarding,
@@ -376,7 +382,10 @@ class HomeFragment : Fragment() {
             }
         }
 
-        if (view.context.settings().accessibilityServicesEnabled && args.focusOnAddressBar) {
+
+//        result.putBoolean("focusOnAddressBar", this.focusOnAddressBar)
+//        result.putString("session_to_delete", this.sessionToDelete)
+        if (view.context.settings().accessibilityServicesEnabled && bundleArgs.getBoolean("focusOnAddressBar")) {
             // We cannot put this in the fragment_home.xml file as it breaks tests
             view.toolbar_wrapper.isFocusableInTouchMode = true
             viewLifecycleOwner.lifecycleScope.launch {
@@ -397,7 +406,9 @@ class HomeFragment : Fragment() {
         }
 
         // This somehow needs to get nulled out 😬
-        args.sessionToDelete?.also {
+
+        ////        result.putString("session_to_delete", this.sessionToDelete)
+        bundleArgs.getString("session_to_delete")?.also {
             sessionManager.findSessionById(it)?.let { session ->
                 val snapshot = sessionManager.createSessionSnapshot(session)
                 val state = snapshot.engineSession?.saveState()
@@ -426,7 +437,7 @@ class HomeFragment : Fragment() {
                     operation = {
                         Log.d("Sawyer", "session: ${requireComponents.core.sessionManager.sessions.size}")
                         Log.d("Sawyer", "state: ${requireComponents.core.store.state.normalTabs.size}")
-                        updateTabCounter(requireComponents.core.store.state)
+                        //updateTabCounter(requireComponents.core.store.state)
                     },
                     anchorView = snackbarAnchorView
                 )
@@ -434,6 +445,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+        Log.d("Sawyer", "onViewCreated")
         updateTabCounter(requireComponents.core.store.state)
 
     }
@@ -442,6 +454,8 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _sessionControlInteractor = null
         sessionControlView = null
+        Log.d("Sawyer", "on destroy so we're clearing!")
+        bundleArgs.clear()
         requireView().homeAppBar.removeOnOffsetChangedListener(homeAppBarOffSetListener)
         requireActivity().window.clearFlags(FLAG_SECURE)
     }
@@ -939,7 +953,7 @@ class HomeFragment : Fragment() {
             browserState.normalTabs.size
         }
 
-        Log.d("Sawyer", "update tab counter: ${browserState.normalTabs}")
+        Log.d("Sawyer", "update tab counter: ${browserState.normalTabs.size}")
         view?.tab_button?.setCountWithAnimation(tabCount)
         view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
     }
