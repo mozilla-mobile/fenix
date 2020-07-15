@@ -33,7 +33,6 @@ import mozilla.components.service.sync.logins.NoSuchRecordException
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
@@ -105,13 +104,13 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             it.isEnabled = false
         }
         revealPasswordButton.setOnClickListener {
-            togglePasswordReveal()
+            togglePasswordReveal(passwordText, revealPasswordButton)
         }
 
         var firstClick = true
         passwordText.setOnClickListener {
             if (firstClick) {
-                togglePasswordReveal()
+                togglePasswordReveal(passwordText, revealPasswordButton)
                 firstClick = false
             }
         }
@@ -277,31 +276,5 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     private fun syncAndUpdateList(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
         savedLoginsStore.dispatch(LoginsAction.UpdateLoginsList(listOf(login)))
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
-    private fun togglePasswordReveal() {
-        val currText = passwordText.text
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
-            or InputType.TYPE_CLASS_TEXT
-        ) {
-            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
-            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
-            )
-            revealPasswordButton.contentDescription =
-                resources.getString(R.string.saved_login_hide_password)
-        } else {
-            passwordText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
-            )
-            revealPasswordButton.contentDescription =
-                context?.getString(R.string.saved_login_reveal_password)
-        }
-        // For the new type to take effect you need to reset the text to it's current edited version
-        passwordText?.text = currText
     }
 }

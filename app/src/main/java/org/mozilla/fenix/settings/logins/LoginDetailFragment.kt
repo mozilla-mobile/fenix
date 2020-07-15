@@ -124,7 +124,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
         revealPasswordButton.setOnClickListener {
-            togglePasswordReveal()
+            togglePasswordReveal(passwordText, revealPasswordButton, login?.password)
         }
     }
 
@@ -246,29 +246,6 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
                 deleteLoginJob?.cancel()
             }
         }
-    }
-
-    // TODO: create helper class for toggling passwords. Used in login info and edit fragments.
-    private fun togglePasswordReveal() {
-        if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT) {
-            context?.components?.analytics?.metrics?.track(Event.ViewLoginPassword)
-            passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_hide, null)
-            )
-            revealPasswordButton.contentDescription =
-                resources.getString(R.string.saved_login_hide_password)
-        } else {
-            passwordText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            revealPasswordButton.setImageDrawable(
-                resources.getDrawable(R.drawable.mozac_ic_password_reveal, null)
-            )
-            revealPasswordButton.contentDescription =
-                context?.getString(R.string.saved_login_reveal_password)
-        }
-        // For the new type to take effect you need to reset the text
-        passwordText.text = login?.password
     }
 
     /**
