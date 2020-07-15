@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.search
 
+import android.content.Intent
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.every
@@ -24,7 +25,9 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.intentFilterEq
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.searchEngineManager
@@ -91,7 +94,9 @@ class DefaultSearchControllerTest {
 
         controller.handleUrlCommitted(url)
 
-        verify { activity.startActivity(any()) }
+        verify {
+            activity.startActivity(intentFilterEq(Intent(testContext, CrashListActivity::class.java)))
+        }
     }
 
     @Test

@@ -32,6 +32,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.metrics.MozillaProductDetector.MozillaProducts
 import org.mozilla.fenix.components.tips.TipType
+import org.mozilla.fenix.ext.intentFilterEq
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
@@ -205,7 +206,4 @@ class MigrationTipProviderTest {
         every { settings.shouldDisplayFenixMovingTip() } returns true
         assertTrue(MigrationTipProvider(context).shouldDisplay)
     }
-
-    private fun MockKMatcherScope.intentFilterEq(value: Intent): Intent =
-        match { it.filterEquals(value) }
 }
