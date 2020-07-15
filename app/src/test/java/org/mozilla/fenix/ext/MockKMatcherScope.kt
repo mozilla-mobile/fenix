@@ -34,4 +34,6 @@ private data class EqIntentFilterMatcher(private val value: Intent) : Matcher<In
 
     override fun substitute(map: Map<Any, Any>) =
         copy(value = value.internalSubstitute(map))
+
+    override fun toString() = "intentFilterEq($value)"
 }

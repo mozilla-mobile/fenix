@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import androidx.core.net.toUri
-import io.mockk.MockKMatcherScope
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just

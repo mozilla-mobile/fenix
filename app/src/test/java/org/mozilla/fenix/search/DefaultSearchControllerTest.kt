@@ -91,6 +91,7 @@ class DefaultSearchControllerTest {
     @Test
     fun handleCrashesUrlCommitted() {
         val url = "about:crashes"
+        every { activity.packageName } returns testContext.packageName
 
         controller.handleUrlCommitted(url)
 
