@@ -17,9 +17,9 @@
 ./gradlew -q \
         ktlint \
         detekt \
-        assembleDebug \
-        assembleDebugAndroidTest \
-        testDebug
+        assembleFenixDebug \
+        assembleFenixDebugAndroidTest \
+        testFenixDebug
 
 # Tasks omitted because they take a long time to run:
 # - assembling all variants

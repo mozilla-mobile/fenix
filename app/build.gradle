@@ -122,21 +122,27 @@ android {
         animationsDisabled = true
     }
 
-    flavorDimensions "version"
+    flavorDimensions "flavor"
     productFlavors {
-        oss {
-            dimension "version"
+        fenix {
+            dimension "flavor"
+            buildConfigField "boolean", "OSS_FLAVOR", "false"
+        }
+        fenixOss {
+            dimension "flavor"
             applicationIdSuffix ".oss"
             versionNameSuffix "-oss"
             buildConfigField "boolean", "OSS_FLAVOR", "true"
         }
-        nonOss {
-            dimension "version"
-            buildConfigField "boolean", "OSS_FLAVOR", "false"
-        }
     }
 
     sourceSets {
+        fenix {
+            java.srcDirs += ['src/nonOss']
+        }
+        fenixOss {
+            java.srcDirs += ['src/oss']
+        }
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
@@ -449,10 +455,10 @@ dependencies {
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
 
-    nonOssImplementation Deps.leanplum_core
-    nonOssImplementation Deps.leanplum_fcm
-    nonOssImplementation Deps.mozilla_lib_push_firebase
-    nonOssImplementation Deps.google_ads_id // Required for the Google Advertising ID
+    fenixImplementation Deps.leanplum_core
+    fenixImplementation Deps.leanplum_fcm
+    fenixImplementation Deps.mozilla_lib_push_firebase
+    fenixImplementation Deps.google_ads_id // Required for the Google Advertising ID
 
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
@@ -556,17 +562,22 @@ task printVariants {
                         fileName: it.outputFileName,
                 ]},
                 build_type: it.buildType.name,
+                build_flavor: it.getFlavorName(),
                 name: it.name,
         ]}
         // AndroidTest is a special case not included above
-        variants.add([
-            apks: [[
-                abi: 'noarch',
-                fileName: 'app-debug-androidTest.apk',
-            ]],
-            build_type: 'androidTest',
-            name: 'androidTest',
-        ])
+        android.productFlavors.all { flavor ->
+            def flavorName = flavor.name
+            variants.add([
+                apks: [[
+                    abi: 'noarch',
+                    fileName: "app-${flavorName}-debug-androidTest.apk",
+                ]],
+                build_type: 'androidTest',
+                build_flavor: flavorName,
+                name: flavorName + 'AndroidTest',
+            ])
+        }
         println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
     }
 }

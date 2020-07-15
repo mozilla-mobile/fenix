@@ -12,4 +12,3 @@ abstract class LeanplumMetricsService(
     private val application: Application,
     private val deviceIdGenerator: () -> String = { UUID.randomUUID().toString() }
 ) : MetricsService, DeepLinkIntentProcessor.DeepLinkVerifier
-

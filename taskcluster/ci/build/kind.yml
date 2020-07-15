@@ -21,7 +21,7 @@ job-defaults:
     apk-artifact-template:
         type: file
         name: public/build/{abi}/target.apk
-        path: '/builds/worker/checkouts/src/app/build/outputs/apk/{gradle_build_type}/{fileName}'
+        path: '/builds/worker/checkouts/src/app/build/outputs/apk/{gradle_build_flavor}/{gradle_build_type}/{fileName}'
     description: Build Fenix from source code.
     fetches:
         toolchain:
@@ -61,7 +61,7 @@ jobs:
             gradle-build-type: androidTest
         apk-artifact-template:
             # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "debug"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
+            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/fenix/debug/{fileName}'
         treeherder:
             symbol: debug(Bat)
 
@@ -79,7 +79,7 @@ jobs:
             gradle-build-type: androidTest
         apk-artifact-template:
             # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "debug"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
+            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/fenix/debug/{fileName}'
         treeherder:
             symbol: nightly(Bat)
 

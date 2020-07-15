@@ -11,11 +11,12 @@ from taskgraph.util.memoize import memoize
 
 
 
-def get_variant(build_type):
+def get_variant(build_type, build_flavor='fenix'):
     all_variants = _fetch_all_variants()
     matching_variants = [
         variant for variant in all_variants
         if variant["build_type"] == build_type
+        and variant["build_flavor"] == build_flavor
     ]
     number_of_matching_variants = len(matching_variants)
     if number_of_matching_variants == 0:

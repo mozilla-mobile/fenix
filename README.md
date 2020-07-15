@@ -81,7 +81,7 @@ Pre-requisites:
 2. **Import** the project into Android Studio **or** build on the command line:
 
   ```shell
-  ./gradlew clean app:assembleDebug
+  ./gradlew clean app:assembleFenixDebug
   ```
 
   If this errors out, make sure that you have an `ANDROID_SDK_ROOT` environment
