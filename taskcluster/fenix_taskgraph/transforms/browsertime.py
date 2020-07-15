@@ -100,7 +100,7 @@ def build_browsertime_task(config, tasks):
         # taskcluster is merging task attributes with the default ones
         # resulting the --cold extra option in the ytp warm tasks
         if 'youtube-playback' in task["name"]:
-            task["run"]["command"].pop("--cold")
+            task["run"]["command"].remove("--cold")
 
         yield task
 
