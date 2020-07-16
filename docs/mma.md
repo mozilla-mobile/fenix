@@ -151,7 +151,7 @@ User Attributes
   </tr>
   <tr>
     <td>`tracking_protection_setting`</td>
-    <td>A string indicating the level at which the user has set tracking protection. Possible values are `null`, `standard`, `strict` and `custom`</td>
+    <td>A string indicating the level at which the user has set tracking protection. Possible values are `none`, `standard`, `strict` and `custom`</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/11965#issuecomment-649731798">#11965</a></td>
   </tr>
   <tr>

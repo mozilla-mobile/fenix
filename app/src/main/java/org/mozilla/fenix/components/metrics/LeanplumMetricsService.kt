@@ -104,7 +104,7 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
 
             val trackingProtection = application.settings().run {
                 when {
-                    !shouldUseTrackingProtection -> null
+                    !shouldUseTrackingProtection -> "none"
                     useStandardTrackingProtection -> "standard"
                     useStrictTrackingProtection -> "strict"
                     else -> "custom"
