@@ -24,10 +24,10 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.TopSiteStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.settings.SupportUtils
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
@@ -45,13 +45,10 @@ class DefaultSessionControlControllerTest {
     private val sessionManager: SessionManager = mockk(relaxed = true)
     private val engine: Engine = mockk(relaxed = true)
     private val tabCollectionStorage: TabCollectionStorage = mockk(relaxed = true)
+    private val topSiteStorage: TopSiteStorage = mockk(relaxed = true)
     private val tabsUseCases: TabsUseCases = mockk(relaxed = true)
 
-    private val getListOfTabs: () -> List<Tab> = { emptyList() }
     private val hideOnboarding: () -> Unit = mockk(relaxed = true)
-    private val openSettingsScreen: () -> Unit = mockk(relaxed = true)
-    private val openWhatsNewLink: () -> Unit = mockk(relaxed = true)
-    private val openPrivacyNotice: () -> Unit = mockk(relaxed = true)
     private val registerCollectionStorageObserver: () -> Unit = mockk(relaxed = true)
     private val showTabTray: () -> Unit = mockk(relaxed = true)
     private val showDeleteCollectionPrompt: (tabCollection: TabCollection, title: String?, message: String) -> Unit =
@@ -61,35 +58,31 @@ class DefaultSessionControlControllerTest {
 
     @Before
     fun setup() {
-        every { activity.components.core.engine } returns engine
-        every { activity.components.core.sessionManager } returns sessionManager
-        every { activity.components.core.tabCollectionStorage } returns tabCollectionStorage
-        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
-        every { activity.components.analytics.metrics } returns metrics
-
         every { fragmentStore.state } returns HomeFragmentState(
             collections = emptyList(),
             expandedCollections = emptySet(),
             mode = Mode.Normal,
             topSites = emptyList()
         )
-
+        every { sessionManager.sessions } returns emptyList()
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.homeFragment
         }
 
         controller = DefaultSessionControlController(
             activity = activity,
+            engine = engine,
+            metrics = metrics,
+            sessionManager = sessionManager,
+            tabCollectionStorage = tabCollectionStorage,
+            topSiteStorage = topSiteStorage,
+            addTabUseCase = tabsUseCases.addTab,
             fragmentStore = fragmentStore,
             navController = navController,
             viewLifecycleScope = TestCoroutineScope(),
-            getListOfTabs = getListOfTabs,
             hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             showDeleteCollectionPrompt = showDeleteCollectionPrompt,
-            openSettingsScreen = openSettingsScreen,
-            openWhatsNewLink = openWhatsNewLink,
-            openPrivacyNotice = openPrivacyNotice,
             showTabTray = showTabTray
         )
     }
@@ -288,19 +281,36 @@ class DefaultSessionControlControllerTest {
     @Test
     fun handleOpenSettingsClicked() {
         controller.handleOpenSettingsClicked()
-        verify { openSettingsScreen() }
+        verify {
+            navController.navigate(
+                match<NavDirections> { it.actionId == R.id.action_global_privateBrowsingFragment },
+                null
+            )
+        }
     }
 
     @Test
     fun handleWhatsNewGetAnswersClicked() {
         controller.handleWhatsNewGetAnswersClicked()
-        verify { openWhatsNewLink() }
+        verify {
+            activity.openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getWhatsNewUrl(activity),
+                newTab = true,
+                from = BrowserDirection.FromHome
+            )
+        }
     }
 
     @Test
     fun handleReadPrivacyNoticeClicked() {
         controller.handleReadPrivacyNoticeClicked()
-        verify { openPrivacyNotice() }
+        verify {
+            activity.openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
+                newTab = true,
+                from = BrowserDirection.FromHome
+            )
+        }
     }
 
     @Test
