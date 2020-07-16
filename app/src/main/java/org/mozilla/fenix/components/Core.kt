@@ -97,11 +97,7 @@ class Core(private val context: Context) {
              * disabled in Fenix Release builds for now.
              * This is consistent with both Fennec and Firefox Desktop.
              */
-            val shouldEnableWebcompatReporter = Config.channel !in setOf(
-                ReleaseChannel.FenixProduction,
-                ReleaseChannel.FennecProduction
-            )
-            if (shouldEnableWebcompatReporter) {
+            if (Config.channel.isNightlyOrDebug || Config.channel.isBeta) {
                 WebCompatReporterFeature.install(it)
             }
         }
