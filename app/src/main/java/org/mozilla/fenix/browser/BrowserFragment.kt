@@ -257,7 +257,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     }
                 }
                 FenixSnackbar.make(
-                    view = view,
+                    view = view.browserLayout,
                     duration = Snackbar.LENGTH_SHORT,
                     isDisplayedWithBrowserToolbar = true
                 )
