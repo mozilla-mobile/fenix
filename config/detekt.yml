@@ -23,10 +23,6 @@ console-reports:
   #  - 'NotificationReport'
   #  - 'FindingsReport'
   #  - 'BuildFailureReport'
-
-console-reports:
-  active: true
-  exclude:
   #  - 'HtmlOutputReport'
     - 'PlainOutputReport'
     - 'XmlOutputReport'
