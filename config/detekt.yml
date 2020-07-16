@@ -30,6 +30,8 @@ console-reports:
 comments:
   active: true
   excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/androidTest/**"
+  AbsentOrWrongFileLicense:
+    active: true
   CommentOverPrivateFunction:
     active: false
   CommentOverPrivateProperty:
