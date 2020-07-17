@@ -12,7 +12,6 @@ import org.mozilla.fenix.settings.logins.LoginsListState
 /**
  * View that contains and configures the Login Details
  */
-@Suppress("ForbiddenComment")
 class LoginDetailView(override val containerView: ViewGroup) : LayoutContainer {
     fun update(login: LoginsListState) {
         webAddressText.text = login.currentItem?.origin
