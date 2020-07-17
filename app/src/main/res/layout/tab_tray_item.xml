@@ -36,12 +36,12 @@
 
         <ImageView
             android:id="@+id/default_tab_thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no"
-            android:padding="22dp"
             android:src="@drawable/mozac_ic_globe"
-            android:tint="?tabTrayThumbnailIcon" />
+            android:tint="?tabTrayThumbnailIcon"
+            android:padding="22dp"
+            android:importantForAccessibility="no"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
             android:id="@+id/mozac_browser_tabstray_thumbnail"
