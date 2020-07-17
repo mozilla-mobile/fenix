@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.utils
 
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
@@ -19,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.ext.clearAndCommit
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 
@@ -101,28 +101,6 @@ class SettingsTest {
 
         // Then
         assertEquals("Mozilla", settings.defaultSearchEngineName)
-    }
-
-    @Test
-    fun isCrashReportingEnabled_enabledInBuild() {
-        // When
-        clearExistingInstance()
-        val settings = testContext.settings(true)
-            .apply(Settings::clear)
-
-        // Then
-        assertTrue(settings.isCrashReportingEnabled)
-    }
-
-    @Test
-    fun isCrashReportingEnabled_disabledInBuild() {
-        // When
-        clearExistingInstance()
-        val settings = testContext.settings(false)
-            .apply(Settings::clear)
-
-        // Then
-        assertFalse(settings.isCrashReportingEnabled)
     }
 
     @Test
@@ -523,10 +501,6 @@ class SettingsTest {
             settings.getSitePermissionsCustomSettingsRules()
         )
     }
-}
-
-private fun clearExistingInstance() {
-    Settings.instance = null
 }
 
 private fun Settings.clear() {

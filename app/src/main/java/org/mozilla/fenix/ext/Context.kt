@@ -12,8 +12,6 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.support.locale.LocaleManager
-import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricController
@@ -60,8 +58,7 @@ fun Context.getPreferenceKey(@StringRes resourceId: Int): String =
 fun Context.getRootView(): View? =
     asActivity()?.window?.decorView?.findViewById<View>(android.R.id.content) as? ViewGroup
 
-fun Context.settings(isCrashReportEnabledInBuild: Boolean = BuildConfig.CRASH_REPORTING && Config.channel.isReleased) =
-    Settings.getInstance(this, isCrashReportEnabledInBuild)
+fun Context.settings() = Settings.getInstance(this)
 
 /**
  * Used to catch IllegalArgumentException that is thrown when
