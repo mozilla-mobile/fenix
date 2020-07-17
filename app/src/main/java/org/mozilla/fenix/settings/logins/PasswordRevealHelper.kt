@@ -18,7 +18,6 @@ fun togglePasswordReveal(
     // If password null, then it means we're showing in EditLoginFragment then if not null
     // we're showing in LoginDetailFragment
     val currText = password ?: passwordText.text
-    
     if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
         or InputType.TYPE_CLASS_TEXT
     ) {

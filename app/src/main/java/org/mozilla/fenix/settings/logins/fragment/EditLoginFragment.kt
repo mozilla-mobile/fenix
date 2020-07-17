@@ -27,7 +27,11 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.settings.logins.*
+import org.mozilla.fenix.settings.logins.LoginsAction
+import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.LoginsListState
+import org.mozilla.fenix.settings.logins.SavedLogin
+import org.mozilla.fenix.settings.logins.togglePasswordReveal
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
 
