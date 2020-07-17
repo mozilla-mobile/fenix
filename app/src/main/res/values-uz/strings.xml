@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">Maxfiy %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (Maxfiy)</string>
+    <!-- Home Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
+    <string name="content_description_menu">Boshqa parametrlar</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_private_browsing_button">Maxfiy koʻrish rejimini yoqish</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_disable_private_browsing_button">Maxfiy koʻrishni oʻchirish</string>
+
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="search_hint">Qidiring yoki manzilni kiriting</string>
+    <!-- No Open Tabs Message Description -->
+    <string name="no_open_tabs_description">Ochiq varaqlar shu yerda koʻrinadi.</string>
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Maxfiy varaqlar shu yerda koʻrinadi.</string>
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 ta ochiq varaq. Boshqa varaqqa oʻtish uchun bosing.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s ta ochiq varaq. Boshqa varaqqa oʻtish uchun bosing.</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s brauzerini Mozilla ishlab chiqqan.</string>
+
+    <!-- Private Browsing -->
+    <!-- Title for private session option -->
+    <string name="private_browsing_title">Maxfiy seansdasiz</string>
+
+    </resources>

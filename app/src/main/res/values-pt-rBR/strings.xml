@@ -151,7 +151,7 @@
     <!-- Button in the search view that lets a user search by using a shortcut -->
     <string name="search_shortcuts_button">Atalhos</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
-    <string name="search_shortcuts_engine_settings">Configurações do mecanismo de pesquisa</string>
+    <string name="search_shortcuts_engine_settings">Configurações de mecanismos de pesquisa</string>
     <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
     <string name="search_shortcuts_search_with">Pesquisar com</string>
     <!-- Header displayed when selecting a shortcut search engine -->
