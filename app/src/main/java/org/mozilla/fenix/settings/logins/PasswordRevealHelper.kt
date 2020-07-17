@@ -1,0 +1,43 @@
+package org.mozilla.fenix.settings.logins
+
+import android.text.InputType
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.components
+
+fun togglePasswordReveal(
+    passwordText: TextView,
+    revealPasswordButton: ImageButton,
+    password: String? = null
+) {
+    val context = passwordText.context
+
+    // If password null, then it means we're showing in EditLoginFragment then if not null
+    // we're showing in LoginDetailFragment
+    val currText = password ?: passwordText.text
+    
+    if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
+        or InputType.TYPE_CLASS_TEXT
+    ) {
+        context.components.analytics.metrics.track(Event.ViewLoginPassword)
+        passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        revealPasswordButton.setImageDrawable(
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_password_hide)
+        )
+        revealPasswordButton.contentDescription =
+            context.resources?.getString(R.string.saved_login_hide_password)
+    } else {
+        passwordText.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        revealPasswordButton.setImageDrawable(
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_password_reveal)
+        )
+        revealPasswordButton.contentDescription =
+            context.getString(R.string.saved_login_reveal_password)
+    }
+    // We need to reset to take effect
+    passwordText.text = currText
+}
