@@ -46,7 +46,7 @@ private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
  * @param appContext Reference to application context.
  */
 @Suppress("LargeClass", "TooManyFunctions")
-class Settings private constructor(private val appContext: Context) : PreferencesHolder {
+class Settings(private val appContext: Context) : PreferencesHolder {
 
     companion object {
         const val showLoginsSecureWarningSyncMaxCount = 1
@@ -86,18 +86,6 @@ class Settings private constructor(private val appContext: Context) : Preference
             // Users from older versions may have saved invalid values. Migrate them to BLOCKED
             ASK_TO_ALLOW_INT -> AutoplayAction.BLOCKED
             else -> throw InvalidParameterException("$this is not a valid SitePermissionsRules.AutoplayAction")
-        }
-
-        @VisibleForTesting
-        internal var instance: Settings? = null
-
-        @JvmStatic
-        @Synchronized
-        fun getInstance(context: Context): Settings {
-            if (instance == null) {
-                instance = Settings(context.applicationContext)
-            }
-            return instance ?: throw AssertionError("Instance cleared")
         }
     }
 

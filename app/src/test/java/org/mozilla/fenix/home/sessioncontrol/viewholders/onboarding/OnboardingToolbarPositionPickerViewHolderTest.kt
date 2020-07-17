@@ -10,12 +10,13 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.android.synthetic.main.onboarding_toolbar_position_picker.view.*
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -23,20 +24,18 @@ import org.mozilla.fenix.utils.Settings
 class OnboardingToolbarPositionPickerViewHolderTest {
 
     private lateinit var view: View
+    private lateinit var metrics: MetricController
     private lateinit var settings: Settings
 
     @Before
     fun setup() {
         view = LayoutInflater.from(testContext)
             .inflate(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID, null)
+        metrics = mockk(relaxed = true)
         settings = mockk(relaxed = true)
 
-        Settings.instance = settings
-    }
-
-    @After
-    fun teardown() {
-        Settings.instance = null
+        every { testContext.components.settings } returns settings
+        every { testContext.components.analytics.metrics } returns metrics
     }
 
     @Test
