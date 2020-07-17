@@ -12,16 +12,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 
-fun togglePasswordReveal(
-    passwordText: TextView,
-    revealPasswordButton: ImageButton,
-    password: String? = null
-) {
+fun togglePasswordReveal(passwordText: TextView, revealPasswordButton: ImageButton) {
     val context = passwordText.context
 
-    // If password null, then it means we're showing in EditLoginFragment then if not null
-    // we're showing in LoginDetailFragment
-    val currText = password ?: passwordText.text
     if (passwordText.inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD
         or InputType.TYPE_CLASS_TEXT
     ) {
@@ -42,5 +35,5 @@ fun togglePasswordReveal(
             context.getString(R.string.saved_login_reveal_password)
     }
     // We need to reset to take effect
-    passwordText.text = currText
+    passwordText.text = passwordText.text
 }

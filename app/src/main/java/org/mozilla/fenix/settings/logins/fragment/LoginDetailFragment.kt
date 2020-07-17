@@ -112,7 +112,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             )
             setUpPasswordReveal()
         }
-        togglePasswordReveal(passwordText, revealPasswordButton, login?.password)
+        togglePasswordReveal(passwordText, revealPasswordButton)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,10 +140,10 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
         revealPasswordButton.setOnClickListener {
-            togglePasswordReveal(passwordText, revealPasswordButton, login?.password)
+            togglePasswordReveal(passwordText, revealPasswordButton)
         }
         passwordText.setOnClickListener {
-            togglePasswordReveal(passwordText, revealPasswordButton, login?.password)
+            togglePasswordReveal(passwordText, revealPasswordButton)
         }
     }
 
