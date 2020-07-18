@@ -33,6 +33,9 @@ import org.mozilla.fenix.ext.removeTouchDelegate
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toTab
 
+
+private const val WWW = "www."
+
 /**
  * A RecyclerView ViewHolder implementation for "tab" items.
  */
@@ -159,7 +162,13 @@ class TabTrayViewHolder(
         // is done in the toolbar and awesomebar:
         // https://github.com/mozilla-mobile/fenix/issues/1824
         // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.text = tab.url.tryGetHostFromUrl().take(MAX_URI_LENGTH)
+        var hostname = tab.url.tryGetHostFromUrl()
+
+        if (hostname.startsWith(WWW)) {
+            hostname = hostname.replaceFirst(WWW, "")
+        }
+
+        urlView?.text = hostname.take(MAX_URI_LENGTH)
     }
 
     @VisibleForTesting
