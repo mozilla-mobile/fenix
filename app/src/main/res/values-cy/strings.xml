@@ -805,7 +805,7 @@
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Tab wedi’i gau</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Ychwanegwyd at y gwefannau gorau!</string>
+    <string name="snackbar_added_to_top_sites">Ychwanegwyd at fy hoff wefannau!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Tab preifat wedi’i gau</string>
 
@@ -884,8 +884,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Yn dileu data pori’n awtomatig  pan fyddwch yn dewis &quot;Gadael&quot; o’r brif ddewislen</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Yn dileu data pori’n awtomatig  pan fyddwch yn dewis \&quot;Gadael\&quot; o’r brif ddewislen</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Hanes pori</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Gadael</string>
 
@@ -904,19 +902,19 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Mae Firefox Preview bellach yn Firefox Nightly</string>
+    <string name="tip_firefox_preview_moved_header">Firefox Preview yw Firefox Nightly nawr</string>
 
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">Mae Firefox Nightly yn cael ei ddiweddaru bob nos ac mae ganddo nodweddion newydd arbrofol.
-        Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr beta i gael profiad mwy sefydlog.</string>
+Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr beta i gael profiad mwy sefydlog.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Cael Firefox ar gyfer Android Beta</string>
+    <string name="tip_firefox_preview_moved_button_2">Estyn Firefox ar gyfer Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Mae Firefox Nightly wedi symud</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Ni fydd yr ap hon yn derbyn diweddariadau diogelwch mwyach. Peidiwch a defnyddio’r ap hon a symud i’r Nightly newydd.
+    <string name="tip_firefox_preview_moved_description_preview_installed">Ni fydd yr ap hwn yn derbyn diweddariadau diogelwch mwyach. Peidiwch â defnyddio’r ap hwn a newidiwch i’r Nightly newydd.
         \n\nEr mwyn trosglwyddo’ch nodau tudalen, eich mewngofnodion a’ch hanes i ap arall, crëwch gyfrif Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_installed">Newid i’r Nightly newydd</string>
@@ -924,7 +922,7 @@
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_not_installed">Mae Firefox Nightly wedi symud</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Ni fydd yr ap hon yn derbyn diweddariadau diogelwch bellach. Estynnwch y Nightly newydd a pheidio a defnyddio’r ap hon.
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">Ni fydd yr ap hwn yn derbyn diweddariadau diogelwch bellach. Estynnwch y Nightly newydd a pheidio â defnyddio’r ap hwn bellach.
         \n\nEr mwyn trosglwyddo’ch nodau tudalen, eich mewngofnodion a’ch hanes i ap arall, crëwch gyfrif Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_not_installed">Estyn y Nightly newydd</string>

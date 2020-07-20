@@ -20,6 +20,11 @@
     <!-- No Private Tabs Message Description -->
     <string name="no_private_tabs_description">Tu bodo prikazani vaši zasebni zavihki.</string>
 
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 odprt zavihek. Tapnite za preklop zavihkov.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">Odprtih zavihkov: %1$s. Tapnite za preklop zavihkov.</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s izdeluje Mozilla.</string>
 
@@ -291,6 +296,8 @@
     <string name="preferences_sync_bookmarks">Zaznamki</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Prijave</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Odprti zavihki</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Odjava</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -452,6 +459,10 @@
     <string name="add_tab">Dodaj zavihek</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Dodaj zasebni zavihek</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Zasebno</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Odprti zavihki</string>
     <!-- Text shown in the menu for saving tabs to a collection -->
     <string name="tab_tray_menu_item_save">Shrani v zbirko</string>
     <!-- Text shown in the menu for sharing all tabs -->
@@ -460,6 +471,10 @@
     <string name="tab_tray_menu_item_close">Zapri vse zavihke</string>
     <!-- Shortcut action to open new tab -->
     <string name="tab_tray_menu_open_new_tab">Nov zavihek</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Domov</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Preklopi način zavihkov</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Odstrani zavihek iz zbirke</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
@@ -472,6 +487,8 @@
     <string name="tabs_menu_close_all_tabs">Zapri vse zavihke</string>
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Deli zavihke</string>
+    <!-- Open tabs menu item to save tabs to collection -->
+    <string name="tabs_menu_save_to_collection1">Shrani zavihke v zbirko</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Meni zavihka</string>
     <!-- Tab menu item to share the tab -->
@@ -691,6 +708,10 @@
     <string name="collections_header">Zbirke</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Meni zbirk</string>
+    <!-- No Open Tabs Message Header -->
+    <string name="no_collections_header1">Zbirajte stvari, ki vam kaj pomenijo</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Združite podobna iskanja, spletne strani in zavihke za hitrejši dostop.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Izberi zavihke</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -719,6 +740,9 @@
     <string name="create_collection_close">Zapri</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Shrani</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Prikaži</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Zbirka %d</string>
@@ -895,6 +919,9 @@
     <string name="tip_firefox_preview_moved_description">Firefox Nightly se posodablja vsak dan in vsebuje poskusne nove možnosti.
         Njegovo delovanje je lahko nezanesljivo. Za zanesljivejše brskanje prenesite različico beta našega brskalnika.</string>
 
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Prenesite Firefox za Android Beta</string>
+
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly se je preselil</string>
     <!-- text for firefox preview moving tip description -->
@@ -948,6 +975,9 @@
     <string name="onboarding_firefox_account_automatic_signin_failed">Prijava ni uspela</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_2">Samodejna zasebnost</string>
+    <!-- text for the tracking protection card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_tracking_protection_description_2">Nastavitve zasebnosti in varnosti zavračajo sledilce, zlonamerno programsko opremo in podjetja, ki vam sledijo.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Običajno (privzeto)</string>
     <!-- text for standard blocking option button description -->
@@ -1418,6 +1448,14 @@
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Oglejte si seznam zavihkov drugih naprav.</string>
 
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Prijava v Sync</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Omejitev glavnih strani je dosežena</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content">Če želite dodati novo glavno stran, eno odstranite. Podržite prst na njej in izberite &quot;Odstrani&quot;.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">V redu, razumem</string>
 
