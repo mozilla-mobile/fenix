@@ -92,6 +92,7 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.SwipeRefreshScrollingViewBehavior
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.components
@@ -262,7 +263,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             _browserToolbarView = BrowserToolbarView(
                 container = view.browserLayout,
-                shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar,
+                toolbarPosition = context.settings().toolbarPosition,
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 lifecycleOwner = viewLifecycleOwner
@@ -675,10 +676,10 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private fun initializeEngineView(toolbarHeight: Int) {
         engineView.setDynamicToolbarMaxHeight(toolbarHeight)
 
-        val behavior = if (requireContext().settings().shouldUseBottomToolbar) {
-            EngineViewBottomBehavior(context, null)
-        } else {
-            SwipeRefreshScrollingViewBehavior(requireContext(), null, engineView, browserToolbarView)
+        val context = requireContext()
+        val behavior = when (context.settings().toolbarPosition) {
+            ToolbarPosition.BOTTOM -> EngineViewBottomBehavior(context, null)
+            ToolbarPosition.TOP -> SwipeRefreshScrollingViewBehavior(context, null, engineView, browserToolbarView)
         }
 
         (swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams).behavior = behavior
@@ -836,7 +837,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.
      */
     protected fun getAppropriateLayoutGravity(): Int =
-        if (context?.settings()?.shouldUseBottomToolbar == true) Gravity.BOTTOM else Gravity.TOP
+        context?.settings()?.toolbarPosition?.androidGravity ?: Gravity.BOTTOM
 
     /**
      * Updates the site permissions rules based on user settings.
