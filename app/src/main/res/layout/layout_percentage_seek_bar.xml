@@ -10,8 +10,8 @@
     android:baselineAligned="false"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:layout_marginStart="@dimen/top_bar_alignment_margin_start"
-    android:layout_marginEnd="@dimen/radio_button_preference_horizontal"
+    android:paddingStart="@dimen/top_bar_alignment_margin_start"
+    android:paddingEnd="@dimen/radio_button_preference_horizontal"
     android:paddingTop="@dimen/preference_seek_bar_padding"
     android:paddingBottom="@dimen/preference_seek_bar_padding">
 
