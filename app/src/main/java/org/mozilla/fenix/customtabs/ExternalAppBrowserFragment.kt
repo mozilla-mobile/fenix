@@ -30,7 +30,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -137,6 +139,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                             )
                         )
                     )
+                    activity.metrics.track(Event.ProgressiveWebAppOpenFromHomescreenTap)
                 } else {
                     viewLifecycleOwner.lifecycle.addObserver(
                         PoweredByNotification(

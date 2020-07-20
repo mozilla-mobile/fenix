@@ -678,17 +678,19 @@ private val Event.wrapper: EventWrapper<*>?
             { Autoplay.settingChanged.record(it) },
             { Autoplay.settingChangedKeys.valueOf(it) }
         )
-        is Event.ProgressiveWebAppHomescreenTap -> EventWrapper<NoExtraKeys>(
+        is Event.ProgressiveWebAppOpenFromHomescreenTap -> EventWrapper<NoExtraKeys>(
             { ProgressiveWebApp.homescreenTap.record(it) }
         )
-        is Event.ProgressiveWebAppInstallMenuTap -> EventWrapper<NoExtraKeys>(
-            { ProgressiveWebApp.installMenuTap.record(it) }
+        is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.installTap.record(it) }
         )
-        is Event.ProgressiveWebAppAddToHomescreenTap -> EventWrapper<NoExtraKeys>(
-            { ProgressiveWebApp.addToHomescreenTap.record(it) }
+        is Event.ProgressiveWebAppForeground -> EventWrapper(
+            { ProgressiveWebApp.foreground.record(it) },
+            { ProgressiveWebApp.foregroundKeys.valueOf(it) }
         )
-        is Event.ProgressiveWebAppBringToForeground -> EventWrapper<NoExtraKeys>(
-            { ProgressiveWebApp.bringToForeground.record(it) }
+        is Event.ProgressiveWebAppBackground -> EventWrapper(
+            { ProgressiveWebApp.background.record(it) },
+            { ProgressiveWebApp.backgroundKeys.valueOf(it) }
         )
 
         // Don't record other events in Glean:

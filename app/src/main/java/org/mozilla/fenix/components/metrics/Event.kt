@@ -5,6 +5,8 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import mozilla.components.browser.awesomebar.facts.BrowserAwesomeBarFacts
+import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.browser.search.SearchEngine
 import org.mozilla.fenix.GleanMetrics.Addons
@@ -26,6 +28,7 @@ import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
 import java.util.Locale
 
+@Suppress("LongMethod")
 sealed class Event {
 
     // Interaction Events
@@ -187,7 +190,21 @@ sealed class Event {
     object TabsTrayShareAllTabsPressed : Event()
     object TabsTrayCloseAllTabsPressed : Event()
 
+    object ProgressiveWebAppOpenFromHomescreenTap : Event()
+    object ProgressiveWebAppInstallAsShortcut : Event()
+
     // Interaction events with extras
+
+    data class ProgressiveWebAppForeground(val timeForegrounded: Long) : Event() {
+        override val extras: Map<ProgressiveWebApp.foregroundKeys, String>?
+            get() = mapOf(ProgressiveWebApp.foregroundKeys.timeMs to timeForegrounded.toString())
+    }
+
+    data class ProgressiveWebAppBackground(val timeBackgrounded: Long) : Event() {
+        override val extras: Map<ProgressiveWebApp.backgroundKeys, String>?
+            get() = mapOf(ProgressiveWebApp.backgroundKeys.timeMs to timeBackgrounded.toString())
+    }
+
     data class OnboardingToolbarPosition(val position: Position) : Event() {
         enum class Position { TOP, BOTTOM }
 
@@ -506,4 +523,220 @@ sealed class Event {
 
     internal open val extras: Map<*, String>?
         get() = null
+}
+
+@Suppress("LongMethod")
+private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
+    Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.CLOSE -> Event.FindInPageClosed
+    Component.FEATURE_FINDINPAGE to FindInPageFacts.Items.INPUT -> Event.FindInPageSearchCommitted
+    Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
+        metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
+    }
+
+    Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
+        metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened }
+    }
+    Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
+        metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
+    }
+    Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.CLOSE -> Event.CustomTabsClosed
+    Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.ACTION_BUTTON -> Event.CustomTabsActionTapped
+
+    Component.FEATURE_DOWNLOADS to DownloadsFacts.Items.NOTIFICATION -> {
+        when (action) {
+            Action.CANCEL -> Event.NotificationDownloadCancel
+            Action.OPEN -> Event.NotificationDownloadOpen
+            Action.PAUSE -> Event.NotificationDownloadPause
+            Action.RESUME -> Event.NotificationDownloadResume
+            Action.TRY_AGAIN -> Event.NotificationDownloadTryAgain
+            else -> null
+        }
+    }
+
+    Component.FEATURE_MEDIA to MediaFacts.Items.NOTIFICATION -> {
+        when (action) {
+            Action.PLAY -> Event.NotificationMediaPlay
+            Action.PAUSE -> Event.NotificationMediaPause
+            else -> null
+        }
+    }
+    Component.FEATURE_MEDIA to MediaFacts.Items.STATE -> {
+        when (action) {
+            Action.PLAY -> Event.MediaPlayState
+            Action.PAUSE -> Event.MediaPauseState
+            Action.STOP -> Event.MediaStopState
+            else -> null
+        }
+    }
+    Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
+        metadata?.get("installed")?.let { installedAddons ->
+            if (installedAddons is List<*>) {
+                Addons.installedAddons.set(installedAddons.map { it.toString() })
+                Addons.hasInstalledAddons.set(installedAddons.size > 0)
+            }
+        }
+
+        metadata?.get("enabled")?.let { enabledAddons ->
+            if (enabledAddons is List<*>) {
+                Addons.enabledAddons.set(enabledAddons.map { it.toString() })
+                Addons.hasEnabledAddons.set(enabledAddons.size > 0)
+            }
+        }
+
+        null
+    }
+    Component.BROWSER_AWESOMEBAR to BrowserAwesomeBarFacts.Items.PROVIDER_DURATION -> {
+        metadata?.get(BrowserAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
+            require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
+            when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
+                is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
+                is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
+                is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
+                is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
+                is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
+                is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
+                // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
+                else -> {
+                    Logger("Metrics").error("Unknown suggestion provider: $provider")
+                    null
+                }
+            }?.accumulateSamples(longArrayOf(providerTiming.second as Long))
+        }
+        null
+    }
+    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
+        Event.ProgressiveWebAppOpenFromHomescreenTap
+    }
+    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
+        Event.ProgressiveWebAppInstallAsShortcut
+    }
+    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.ENTER_BACKGROUND -> {
+        metadata?.get(ProgressiveWebAppFacts.MetadataKeys.BACKGROUND_TIME)?.let { duration ->
+            require(duration is Long) { "Expected duration to be a Long" }
+            Event.ProgressiveWebAppBackground(duration)
+        }
+    }
+    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.ENTER_FOREGROUND -> {
+        metadata?.get(ProgressiveWebAppFacts.MetadataKeys.FOREGROUND_TIME)?.let { duration ->
+            require(duration is Long) { "Expected duration to be a Long" }
+            Event.ProgressiveWebAppForeground(duration)
+        }
+    }
+    else -> null
+}
+
+enum class MetricServiceType {
+    Data, Marketing;
+}
+
+interface MetricsService {
+    val type: MetricServiceType
+
+    fun start()
+    fun stop()
+    fun track(event: Event)
+    fun shouldTrack(event: Event): Boolean
+}
+
+interface MetricController {
+    fun start(type: MetricServiceType)
+    fun stop(type: MetricServiceType)
+    fun track(event: Event)
+
+    companion object {
+        fun create(
+            services: List<MetricsService>,
+            isDataTelemetryEnabled: () -> Boolean,
+            isMarketingDataTelemetryEnabled: () -> Boolean
+        ): MetricController {
+            return if (BuildConfig.TELEMETRY) {
+                ReleaseMetricController(
+                    services,
+                    isDataTelemetryEnabled,
+                    isMarketingDataTelemetryEnabled
+                )
+            } else DebugMetricController()
+        }
+    }
+}
+
+private class DebugMetricController : MetricController {
+    override fun start(type: MetricServiceType) {
+        Logger.debug("DebugMetricController: start")
+    }
+
+    override fun stop(type: MetricServiceType) {
+        Logger.debug("DebugMetricController: stop")
+    }
+
+    override fun track(event: Event) {
+        Logger.debug("DebugMetricController: track event: $event")
+    }
+}
+
+private class ReleaseMetricController(
+    private val services: List<MetricsService>,
+    private val isDataTelemetryEnabled: () -> Boolean,
+    private val isMarketingDataTelemetryEnabled: () -> Boolean
+) : MetricController {
+    private var initialized = mutableSetOf<MetricServiceType>()
+
+    init {
+        Facts.registerProcessor(object : FactProcessor {
+            override fun process(fact: Fact) {
+                fact.toEvent()?.also {
+                    track(it)
+                }
+            }
+        })
+    }
+
+    override fun start(type: MetricServiceType) {
+        val isEnabled = isTelemetryEnabled(type)
+        val isInitialized = isInitialized(type)
+        if (!isEnabled || isInitialized) {
+            return
+        }
+
+        services
+            .filter { it.type == type }
+            .forEach { it.start() }
+
+        initialized.add(type)
+    }
+
+    override fun stop(type: MetricServiceType) {
+        val isEnabled = isTelemetryEnabled(type)
+        val isInitialized = isInitialized(type)
+        if (isEnabled || !isInitialized) {
+            return
+        }
+
+        services
+            .filter { it.type == type }
+            .forEach { it.stop() }
+
+        initialized.remove(type)
+    }
+
+    override fun track(event: Event) {
+        services
+            .filter { it.shouldTrack(event) }
+            .forEach {
+                val isEnabled = isTelemetryEnabled(it.type)
+                val isInitialized = isInitialized(it.type)
+                if (!isEnabled || !isInitialized) {
+                    return
+                }
+
+                it.track(event)
+            }
+    }
+
+    private fun isInitialized(type: MetricServiceType): Boolean = initialized.contains(type)
+
+    private fun isTelemetryEnabled(type: MetricServiceType): Boolean = when (type) {
+        MetricServiceType.Data -> isDataTelemetryEnabled()
+        MetricServiceType.Marketing -> isMarketingDataTelemetryEnabled()
+    }
 }

@@ -3324,47 +3324,52 @@ progressive_web_app:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10261
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10261
+      - https://github.com/mozilla-mobile/fenix/pull/11859
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-09-01"
-  install_menu_tap:
+    expires: "2021-03-01"
+  install_tap:
     type: event
     description: |
+      A user installs a PWA. Could be a shortcut or added to homescreen.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10261
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10261
+      - https://github.com/mozilla-mobile/fenix/pull/11859
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-09-01"
-  add_to_homescreen_tap:
+    expires: "2021-03-01"
+  foreground:
     type: event
     description: |
-      A user taps the add to homescreen icon for a PWA
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/10261
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10261
-    notification_emails:
-      - fenix-core@mozilla.com
-      - erichards@mozilla.com
-    expires: "2020-09-01"
-  bring_to_foreground:
-    type: event
-    description: |
-      A user brings the PWA into the foreground after a specified time interval.
+      A user brings the PWA into the foreground.
     extra_keys:
-      duration:
+      time_ms:
         description: |
-          The length of time in ms that the PWA was in the background
+          The current time in ms when the PWA was brought to the foreground.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/10261
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/10261
+      - https://github.com/mozilla-mobile/fenix/pull/11859
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-09-01"
+    expires: "2021-03-01"
+  background:
+    type: event
+    description: |
+      A user puts the PWA into the background.
+    extra_keys:
+      time_ms:
+        description: |
+          The current time in ms when the PWA was backgrounded.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/10261
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/11859
+    notification_emails:
+      - fenix-core@mozilla.com
+      - erichards@mozilla.com
+    expires: "2021-03-01"
