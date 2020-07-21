@@ -171,6 +171,10 @@ android {
             setIgnore true
         }
 
+        if (flavors.contains("geckoproduction") && buildType.name != 'fennecProduction') {
+            setIgnore true
+        }
+
         if ((buildType.name == 'fennecProduction' || buildType.name == 'fennecBeta') && flavors.contains("geckonightly")) {
             setIgnore true
         }
@@ -226,6 +230,10 @@ android {
         }
 
         geckoBeta {
+            dimension "engine"
+        }
+
+        geckoProduction {
             dimension "engine"
         }
     }
@@ -436,6 +444,7 @@ apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 dependencies {
     geckoNightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     geckoBetaImplementation Deps.mozilla_browser_engine_gecko_beta
+    geckoProductionImplementation Deps.mozilla_browser_engine_gecko_release
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
