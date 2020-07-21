@@ -93,17 +93,6 @@ jobs:
         treeherder:
             symbol: forPerformanceTest(B)
 
-    nightly:
-        attributes:
-            nightly: true
-        include-nightly-version: true
-        include-shippable-secrets: true
-        run:
-            geckoview-engine: geckoNightly
-            gradle-build-type: fenixNightly
-        treeherder:
-            symbol: nightly(B)
-
     nightly-simulation:
         attributes:
             nightly: false
@@ -112,46 +101,22 @@ jobs:
         include-shippable-secrets: true
         run:
             geckoview-engine: geckoNightly
-            gradle-build-type: fennecNightly
+            gradle-build-type: fenixProduction
         treeherder:
             symbol: nightlySim(B)
 
-    beta:
-        attributes:
-            release-type: beta
-        include-release-version: true
-        include-shippable-secrets: true
-        filter-incomplete-translations: true
-        run:
-            geckoview-engine: geckoBeta
-            gradle-build-type: fenixBeta
-        run-on-tasks-for: [github-release]
-        treeherder:
-            symbol: beta(B)
-
-    production:
-        attributes:
-            release-type: production
-        include-release-version: true
-        include-shippable-secrets: true
-        filter-incomplete-translations: true
-        run:
-            geckoview-engine: geckoBeta
-            gradle-build-type: fenixProduction
-        run-on-tasks-for: [github-release]
-        treeherder:
-            symbol: production(B)
-
-    fennec-nightly:
+    nightly:
         attributes:
             nightly: true
         include-nightly-version: true
         include-shippable-secrets: true
         run:
             geckoview-engine: geckoNightly
-            gradle-build-type: fennecNightly
+            # XXX `fenixProduction` is now the new nightly.
+            gradle-build-type: fenixProduction
+        run-on-tasks-for: []
         treeherder:
-            symbol: nightlyFennec(B)
+            symbol: nightly(B)
 
     fennec-beta:
         attributes:
