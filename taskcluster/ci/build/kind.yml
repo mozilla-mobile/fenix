@@ -172,7 +172,7 @@ jobs:
         include-shippable-secrets: true
         filter-incomplete-translations: true
         run:
-            geckoview-engine: geckoBeta
+            geckoview-engine: geckoProduction
             gradle-build-type: fennecProduction
         treeherder:
             symbol: productionFennec(B)
