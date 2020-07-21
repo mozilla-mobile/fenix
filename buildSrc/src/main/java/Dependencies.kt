@@ -148,6 +148,8 @@ object Deps {
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
+    const val leakcanary_test = "com.squareup.leakcanary:leakcanary-android-instrumentation:${Versions.leakcanary}"
+    const val leakcanary_plumber = "com.squareup.leakcanary:plumber-android:${Versions.leakcanary}"
 
     const val leanplum_core = "com.leanplum:leanplum-core:${Versions.leanplum}"
     const val leanplum_fcm = "com.leanplum:leanplum-fcm:${Versions.leanplum}"

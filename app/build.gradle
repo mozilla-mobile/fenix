@@ -38,6 +38,8 @@ android {
                 "isRaptorEnabled": "false",
                 "deepLinkScheme": deepLinkSchemeValue
         ]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument "listener", "leakcanary.FailTestOnLeakRunListener"
     }
 
     def releaseTemplate = {
@@ -489,6 +491,7 @@ dependencies {
     implementation Deps.mozilla_lib_push_firebase
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
+    implementation Deps.leakcanary_plumber
 
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
@@ -548,6 +551,7 @@ dependencies {
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
     androidTestImplementation Deps.mockwebserver
+    androidTestImplementation Deps.leakcanary_test
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.androidx_junit
     testImplementation Deps.androidx_work_testing
