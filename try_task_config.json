@@ -1,8 +1,7 @@
 {
     "parameters": {
         "optimize_target_tasks": true,
-        "release_type": "production",
-        "target_tasks_method": "release"
+        "tasks_for": "github-push"
     },
     "version": 2
 }
