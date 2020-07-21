@@ -1,7 +1,7 @@
 {
     "parameters": {
         "optimize_target_tasks": true,
-        "release_type": "beta",
+        "release_type": "production",
         "target_tasks_method": "release"
     },
     "version": 2
