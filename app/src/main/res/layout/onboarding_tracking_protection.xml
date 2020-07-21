@@ -76,8 +76,8 @@
         android:text="@string/onboarding_tracking_protection_standard_button_2"
         android:textColor="@color/primary_state_list_text_color"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/tracking_protection_standard_option"
-        app:layout_constraintTop_toTopOf="@+id/tracking_protection_standard_option" />
+        app:layout_constraintStart_toEndOf="@id/tracking_protection_standard_option"
+        app:layout_constraintTop_toTopOf="@id/tracking_protection_standard_option" />
 
     <TextView
         android:id="@+id/protection_standard_description"
@@ -87,7 +87,7 @@
         android:textColor="@color/secondary_state_list_text_color"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/protection_standard_title"
+        app:layout_constraintStart_toStartOf="@id/protection_standard_title"
         app:layout_constraintTop_toBottomOf="@id/protection_standard_title" />
 
     <View
@@ -123,8 +123,8 @@
         android:text="@string/onboarding_tracking_protection_strict_option"
         android:textColor="@color/primary_state_list_text_color"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/tracking_protection_strict_default"
-        app:layout_constraintTop_toTopOf="@+id/tracking_protection_strict_default" />
+        app:layout_constraintStart_toEndOf="@id/tracking_protection_strict_default"
+        app:layout_constraintTop_toTopOf="@id/tracking_protection_strict_default" />
 
     <TextView
         android:id="@+id/protection_strict_description"
@@ -135,6 +135,6 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/protection_strict_title"
+        app:layout_constraintStart_toStartOf="@id/protection_strict_title"
         app:layout_constraintTop_toBottomOf="@id/protection_strict_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

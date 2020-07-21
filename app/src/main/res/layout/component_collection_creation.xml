@@ -27,7 +27,7 @@
         android:textAppearance="@style/HeaderTextStyle"
         android:textColor="@color/neutral_text"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
