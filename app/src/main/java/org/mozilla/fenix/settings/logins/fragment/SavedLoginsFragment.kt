@@ -6,12 +6,12 @@ package org.mozilla.fenix.settings.logins.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.view.Menu
-import android.view.MenuInflater
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -35,13 +35,13 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
-import org.mozilla.fenix.settings.logins.controller.LoginsListController
 import org.mozilla.fenix.settings.logins.LoginsListState
-import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
-import org.mozilla.fenix.settings.logins.view.SavedLoginsListView
 import org.mozilla.fenix.settings.logins.SortingStrategy
+import org.mozilla.fenix.settings.logins.controller.LoginsListController
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
+import org.mozilla.fenix.settings.logins.view.SavedLoginsListView
 
 @SuppressWarnings("TooManyFunctions")
 class SavedLoginsFragment : Fragment() {
@@ -125,7 +125,8 @@ class SavedLoginsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         consumeFrom(savedLoginsStore) {
-            sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
+            sortingStrategyMenu.itemToHighlight = savedLoginsStore.state.highlightedItem
+            sortingStrategyPopupMenu.invalidate()
             savedLoginsListView.update(it)
         }
     }

@@ -13,7 +13,7 @@ import org.mozilla.fenix.theme.ThemeManager
 
 class SavedLoginsSortingStrategyMenu(
     private val context: Context,
-    private val itemToHighlight: Item,
+    var itemToHighlight: Item,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
     sealed class Item {
@@ -28,7 +28,6 @@ class SavedLoginsSortingStrategyMenu(
             SimpleBrowserMenuHighlightableItem(
                 label = context.getString(R.string.saved_logins_sort_strategy_alphabetically),
                 textColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-                itemType = Item.AlphabeticallySort,
                 backgroundTint = context.getColorFromAttr(R.attr.colorControlHighlight),
                 isHighlighted = { itemToHighlight == Item.AlphabeticallySort }
             ) {
@@ -38,18 +37,11 @@ class SavedLoginsSortingStrategyMenu(
             SimpleBrowserMenuHighlightableItem(
                 label = context.getString(R.string.saved_logins_sort_strategy_last_used),
                 textColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-                itemType = Item.LastUsedSort,
                 backgroundTint = context.getColorFromAttr(R.attr.colorControlHighlight),
                 isHighlighted = { itemToHighlight == Item.LastUsedSort }
             ) {
                 onItemTapped.invoke(Item.LastUsedSort)
             }
         )
-    }
-
-    internal fun updateMenu(itemToHighlight: Item) {
-        menuItems.forEach {
-            it.isHighlighted = { itemToHighlight == it.itemType }
-        }
     }
 }
