@@ -59,7 +59,6 @@
         android:ellipsize="end"
         android:paddingStart="16dp"
         android:textColor="@color/tab_tray_item_text_normal_theme"
-        android:textSize="16sp"
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="16sp"
         android:maxLines="2"
