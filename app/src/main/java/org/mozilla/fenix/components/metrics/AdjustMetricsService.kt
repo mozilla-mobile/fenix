@@ -13,6 +13,7 @@ import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.LogLevel
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.ext.settings
 
 class AdjustMetricsService(private val application: Application) : MetricsService {
@@ -22,7 +23,7 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
         if ((BuildConfig.ADJUST_TOKEN.isNullOrBlank())) {
             Log.i(LOGTAG, "No adjust token defined")
 
-            if (Config.channel.isReleased) {
+            if (Config.channel.isReleased && Config.channel != ReleaseChannel.FennecNightly) {
                 throw IllegalStateException("No adjust token defined for release build")
             }
 

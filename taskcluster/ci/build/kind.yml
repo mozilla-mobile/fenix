@@ -93,6 +93,17 @@ jobs:
         treeherder:
             symbol: forPerformanceTest(B)
 
+    nightly:
+        attributes:
+            nightly: true
+        include-nightly-version: true
+        include-shippable-secrets: true
+        run:
+            geckoview-engine: geckoNightly
+            gradle-build-type: fenixNightly
+        treeherder:
+            symbol: nightly(B)
+
     nightly-simulation:
         attributes:
             nightly: false
@@ -101,22 +112,47 @@ jobs:
         include-shippable-secrets: true
         run:
             geckoview-engine: geckoNightly
-            gradle-build-type: fenixProduction
+            gradle-build-type: fennecNightly
         treeherder:
             symbol: nightlySim(B)
 
-    nightly:
+    beta:
+        attributes:
+            release-type: beta
+        include-release-version: true
+        include-shippable-secrets: true
+        filter-incomplete-translations: true
+        run:
+            geckoview-engine: geckoBeta
+            gradle-build-type: fenixBeta
+        run-on-tasks-for: [github-release]
+        treeherder:
+            symbol: beta(B)
+
+    # XXX `production` is now the new nightly. We keep this name around while we officially remove
+    # `nightly` and `fennec-nightly`
+    production:
         attributes:
             nightly: true
         include-nightly-version: true
         include-shippable-secrets: true
         run:
             geckoview-engine: geckoNightly
-            # XXX `fenixProduction` is now the new nightly.
             gradle-build-type: fenixProduction
-        run-on-tasks-for: []
+        run-on-tasks-for: [github-release]
         treeherder:
-            symbol: nightly(B)
+            symbol: production(B)
+
+    fennec-nightly:
+        attributes:
+            nightly: true
+        include-nightly-version: true
+        include-shippable-secrets: true
+        run:
+            geckoview-engine: geckoNightly
+            gradle-build-type: fennecNightly
+        treeherder:
+            symbol: nightlyFennec(B)
 
     fennec-beta:
         attributes:

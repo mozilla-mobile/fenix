@@ -19,7 +19,7 @@ group-by: build-type
 only-for-build-types:
     - fennec-beta
     - fennec-production
-    - nightly
+    - production
 
 job-template:
     description: Publish Fenix
@@ -30,7 +30,7 @@ job-template:
             by-build-type:
                 fennec-beta: fennec-beta
                 fennec-production: fennec-production
-                nightly: production
+                production: production
         dep:
             by-level:
                 '3': false
