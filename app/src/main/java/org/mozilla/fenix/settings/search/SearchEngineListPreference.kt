@@ -56,7 +56,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     }
 
     fun reload(context: Context) {
-        searchEngineList = context.components.search.provider.installedSearchEngines(context)
+        searchEngineList = context.components.search.provider.installedSearchEngines()
         refreshSearchEngineViews(context)
     }
 

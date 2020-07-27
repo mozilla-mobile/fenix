@@ -56,7 +56,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
                 .components
                 .search
                 .provider
-                .uninstalledSearchEngines(requireContext())
+                .uninstalledSearchEngines()
                 .list
         }
 

@@ -6,6 +6,7 @@ package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.edit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,8 +94,11 @@ open class FenixSearchEngineProvider(
 
     private var loadedSearchEngines = refreshAsync()
 
+    @VisibleForTesting
+    internal val prefs = context.getSharedPreferences(PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
+
     fun getDefaultEngine(context: Context): SearchEngine {
-        val engines = installedSearchEngines(context)
+        val engines = installedSearchEngines()
         val selectedName = context.settings().defaultSearchEngineName
 
         return engines.list.find { it.name == selectedName } ?: engines.default ?: engines.list.first()
@@ -104,8 +108,8 @@ open class FenixSearchEngineProvider(
      * @return a list of all SearchEngines that are currently active. These are the engines that
      * are readily available throughout the app.
      */
-    fun installedSearchEngines(context: Context): SearchEngineList = runBlocking {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context)
+    fun installedSearchEngines(): SearchEngineList = runBlocking {
+        val installedIdentifiers = installedSearchEngineIdentifiers()
         val engineList = loadedSearchEngines.await()
 
         engineList.copy(
@@ -126,15 +130,15 @@ open class FenixSearchEngineProvider(
         loadedSearchEngines.await().list.map { it.identifier }
     }
 
-    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlocking {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context)
+    fun uninstalledSearchEngines(): SearchEngineList = runBlocking {
+        val installedIdentifiers = installedSearchEngineIdentifiers()
         val engineList = loadedSearchEngines.await()
 
         engineList.copy(list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) })
     }
 
     override suspend fun loadSearchEngines(context: Context): SearchEngineList {
-        return installedSearchEngines(context)
+        return installedSearchEngines()
     }
 
     fun installSearchEngine(context: Context, searchEngine: SearchEngine, isCustom: Boolean = false) = runBlocking {
@@ -143,10 +147,11 @@ open class FenixSearchEngineProvider(
             CustomSearchEngineStore.addSearchEngine(context, searchEngine.name, searchUrl)
             reload()
         } else {
-            val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
+            val installedIdentifiers = installedSearchEngineIdentifiers().toMutableSet()
             installedIdentifiers.add(searchEngine.identifier)
-            prefs(context).edit()
-                .putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
+            prefs.edit {
+                putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers)
+            }
         }
     }
 
@@ -155,9 +160,11 @@ open class FenixSearchEngineProvider(
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
             reload()
         } else {
-            val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
+            val installedIdentifiers = installedSearchEngineIdentifiers().toMutableSet()
             installedIdentifiers.remove(searchEngine.identifier)
-            prefs(context).edit().putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
+            prefs.edit {
+                putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers)
+            }
         }
     }
 
@@ -187,18 +194,12 @@ open class FenixSearchEngineProvider(
         engineList.copy(list = engineList.list + bundledList + customList)
     }
 
-    private fun prefs(context: Context) = context.getSharedPreferences(
-        PREF_FILE_SEARCH_ENGINES,
-        Context.MODE_PRIVATE
-    )
-
     /**
      * Returns the list of identifiers for installed search engines.
      * Will initialize the list with default engines if needed.
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal suspend fun installedSearchEngineIdentifiers(context: Context): Set<String> {
-        val prefs = prefs(context)
+    internal suspend fun installedSearchEngineIdentifiers(): Set<String> {
         val installedEnginesKey = localeAwareInstalledEnginesKey()
 
         if (!prefs.contains(installedEnginesKey)) {
@@ -211,10 +212,12 @@ open class FenixSearchEngineProvider(
                 .map { it.identifier }
                 .toSet()
 
-            prefs.edit().putStringSet(installedEnginesKey, defaultSet).apply()
+            prefs.edit {
+                putStringSet(installedEnginesKey, defaultSet)
+            }
         }
 
-        val installedIdentifiers = prefs(context).getStringSet(installedEnginesKey, setOf()) ?: setOf()
+        val installedIdentifiers = prefs.getStringSet(installedEnginesKey, emptySet()).orEmpty()
 
         val customEngineIdentifiers = customSearchEngines.await().list.map { it.identifier }.toSet()
         return installedIdentifiers + customEngineIdentifiers

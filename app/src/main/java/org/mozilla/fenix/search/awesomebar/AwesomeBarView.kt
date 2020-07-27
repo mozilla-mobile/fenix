@@ -288,7 +288,7 @@ class AwesomeBarView(
             val engineForSpeculativeConnects =
                 if (!isBrowsingModePrivate()) components.core.engine else null
             val searchEngine =
-                components.search.provider.installedSearchEngines(context).list.find { it.name == engine.name }
+                components.search.provider.installedSearchEngines().list.find { it.name == engine.name }
                     ?: components.search.provider.getDefaultEngine(context)
 
             listOf(

@@ -62,7 +62,7 @@ class ShortcutsSuggestionProviderTest {
             every { icon } returns mockk()
         }
         val searchEngineProvider = mockk<FenixSearchEngineProvider> {
-            every { installedSearchEngines(context) } returns SearchEngineList(
+            every { installedSearchEngines() } returns SearchEngineList(
                 list = listOf(engineOne, engineTwo),
                 default = null
             )
@@ -91,7 +91,7 @@ class ShortcutsSuggestionProviderTest {
     fun `callbacks are triggered when suggestions are clicked`() = runBlockingTest {
         val engineOne = mockk<SearchEngine>(relaxed = true)
         val searchEngineProvider = mockk<FenixSearchEngineProvider> {
-            every { installedSearchEngines(context) } returns SearchEngineList(
+            every { installedSearchEngines() } returns SearchEngineList(
                 list = listOf(engineOne),
                 default = null
             )

@@ -34,7 +34,7 @@ class ShortcutsSuggestionProvider(
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
         val suggestions = mutableListOf<AwesomeBar.Suggestion>()
 
-        searchEngineProvider.installedSearchEngines(context).list.mapTo(suggestions) {
+        searchEngineProvider.installedSearchEngines().list.mapTo(suggestions) {
             AwesomeBar.Suggestion(
                 provider = this,
                 id = it.identifier,

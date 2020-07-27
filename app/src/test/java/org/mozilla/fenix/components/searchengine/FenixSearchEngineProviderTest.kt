@@ -1,6 +1,7 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
+import androidx.core.content.edit
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -78,7 +79,7 @@ class FenixSearchEngineProviderTest {
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedDefaults + expectedCustom
 
-        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(testContext)
+        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers()
         assertEquals(expected, actual)
     }
 
@@ -86,14 +87,15 @@ class FenixSearchEngineProviderTest {
     fun `GIVEN sharedprefs contains installed engines WHEN installedSearchEngineIdentifiers THEN defaultEngines + customEngines ids are returned`() = scope.runBlockingTest {
         val persistedInstalledEngines = setOf("bing", "ecosia")
 
-        val sp = testContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
-        sp.edit().putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), persistedInstalledEngines).apply()
+        fenixSearchEngineProvider.prefs.edit(commit = true) {
+            putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), persistedInstalledEngines)
+        }
 
         val expectedStored = persistedInstalledEngines
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedStored + expectedCustom
 
-        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(testContext)
+        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers()
         assertEquals(expected, actual)
     }
 
