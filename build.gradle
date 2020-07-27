@@ -60,6 +60,7 @@ buildscript {
     dependencies {
         classpath Deps.tools_androidgradle
         classpath Deps.tools_kotlingradle
+        classpath Deps.tools_kotlin_serialization
         classpath Deps.androidx_safeargs
         classpath Deps.allopen
         classpath Deps.osslicenses_plugin

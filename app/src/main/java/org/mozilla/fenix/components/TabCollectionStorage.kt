@@ -5,12 +5,18 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.StrictMode
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.paging.DataSource
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.TabCollectionStorage
@@ -49,7 +55,66 @@ class TabCollectionStorage(
         fun onCollectionRenamed(tabCollection: TabCollection, title: String) = Unit
     }
 
-    var cachedTabCollections = listOf<TabCollection>()
+    private val preferences: SharedPreferences =
+        context.getSharedPreferences(COLLECTIONS_SETTINGS, Context.MODE_PRIVATE)
+
+    private val dummyCachedCollections = preferences.getString(COLLECTIONS_JSON_STRING_KEY, "")
+
+    @Serializable
+    data class CachedCollection(val title: String, val id: Long)
+
+    var cachedTabCollections = getDummyCachedCollections()
+        set(value) {
+            field = value
+            val serializer = Json(JsonConfiguration.Stable)
+            val json = serializer.stringify(
+                CachedCollection.serializer().list,
+                value.map { CachedCollection(it.title, it.id) })
+            preferences.edit()
+                .putString(
+                    COLLECTIONS_JSON_STRING_KEY,
+                    json
+                ).apply()
+        }
+
+    private fun getDummyCachedCollections(): List<TabCollection> {
+        if (dummyCachedCollections.isNullOrEmpty()) return listOf()
+        val serializer = Json(JsonConfiguration.Stable)
+        val collections =
+            serializer.parse(CachedCollection.serializer().list, dummyCachedCollections)
+        val dummyListTabCollection = mutableListOf<TabCollection>()
+        for (collection in collections) {
+            dummyListTabCollection.add(DummyTabCollection(collection.title, collection.id))
+        }
+        return dummyListTabCollection
+    }
+
+    class DummyTabCollection(private val dummyTitle: String, private val dummyId: Long) :
+        TabCollection {
+        override val id: Long
+            get() = dummyId
+        override val tabs: List<Tab>
+            get() = listOf()
+        override val title: String
+            get() = dummyTitle
+
+        override fun restore(
+            context: Context,
+            engine: Engine,
+            restoreSessionId: Boolean
+        ): List<SessionManager.Snapshot.Item> {
+            return listOf()
+        }
+
+        override fun restoreSubset(
+            context: Context,
+            engine: Engine,
+            tabs: List<Tab>,
+            restoreSessionId: Boolean
+        ): List<SessionManager.Snapshot.Item> {
+            return listOf()
+        }
+    }
 
     private val collectionStorage by lazy {
         StrictMode.allowThreadDiskReads().resetPoliciesAfter {
@@ -90,6 +155,11 @@ class TabCollectionStorage(
     fun renameCollection(tabCollection: TabCollection, title: String) {
         collectionStorage.renameCollection(tabCollection, title)
         notifyObservers { onCollectionRenamed(tabCollection, title) }
+    }
+
+    companion object {
+        const val COLLECTIONS_SETTINGS = "collections"
+        const val COLLECTIONS_JSON_STRING_KEY = "cached_collections"
     }
 }
 

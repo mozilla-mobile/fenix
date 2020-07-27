@@ -185,7 +185,9 @@ class HomeFragment : Fragment() {
         homeFragmentStore = StoreProvider.get(this) {
             HomeFragmentStore(
                 HomeFragmentState(
-                    collections = components.core.tabCollectionStorage.cachedTabCollections,
+                    collections = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+                        components.core.tabCollectionStorage.cachedTabCollections
+                    },
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
                     topSites = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
@@ -557,7 +559,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showDeleteCollectionPrompt(tabCollection: TabCollection, title: String?, message: String) {
+    private fun showDeleteCollectionPrompt(
+        tabCollection: TabCollection,
+        title: String?,
+        message: String
+    ) {
         val context = context ?: return
         AlertDialog.Builder(context).apply {
             setTitle(title)

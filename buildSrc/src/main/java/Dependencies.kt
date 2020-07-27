@@ -51,11 +51,13 @@ object Versions {
 @Suppress("unused")
 object Deps {
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
-    const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    const val kotlin_serialization_runtime = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
+    const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    const val tools_kotlin_serialization = "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlin}"
 
     const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"

@@ -5,11 +5,16 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSiteStorage
 import mozilla.components.support.locale.LocaleManager
@@ -22,7 +27,69 @@ import org.mozilla.fenix.utils.Mockable
 
 @Mockable
 class TopSiteStorage(private val context: Context) {
-    var cachedTopSites = listOf<TopSite>()
+    private val preferences: SharedPreferences =
+        context.getSharedPreferences(TOP_SITE_SETTINGS, Context.MODE_PRIVATE)
+
+    private val dummyCachedTopSites = preferences.getString(TOP_SITE_JSON_STRING_KEY, "")
+
+    var cachedTopSites = getDummyCachedTopSites()
+        set(value) {
+            field = value
+            val serializer = Json(JsonConfiguration.Stable)
+            val json = serializer.stringify(
+                CachedTopSite.serializer().list,
+                value.map {
+                    CachedTopSite(
+                        it.title,
+                        it.id,
+                        it.url
+                    )
+                })
+            preferences.edit()
+                .putString(
+                    TOP_SITE_JSON_STRING_KEY,
+                    json
+                ).apply()
+        }
+
+    @Serializable
+    data class CachedTopSite(
+        val title: String,
+        val id: Long,
+        val url: String
+    )
+
+    private fun getDummyCachedTopSites(): List<TopSite> {
+        if (dummyCachedTopSites.isNullOrEmpty()) return listOf()
+        val serializer = Json(JsonConfiguration.Stable)
+        val topSites = serializer.parse(CachedTopSite.serializer().list, dummyCachedTopSites)
+        val dummyListTopSites = mutableListOf<TopSite>()
+        for (topSite in topSites) {
+            dummyListTopSites.add(
+                DummyTopSite(
+                    topSite.title,
+                    topSite.url,
+                    topSite.id
+                )
+            )
+        }
+        return dummyListTopSites
+    }
+
+    class DummyTopSite(
+        private val dummyTitle: String,
+        private val dummyUrl: String,
+        private val dummyId: Long
+    ) : TopSite {
+        override val id: Long
+            get() = dummyId
+        override val isDefault: Boolean
+            get() = false
+        override val title: String
+            get() = dummyTitle
+        override val url: String
+            get() = dummyUrl
+    }
 
     val storage by lazy {
         TopSiteStorage(context)
@@ -92,5 +159,10 @@ class TopSiteStorage(private val context: Context) {
         getTopSites().observeOnce {
             cachedTopSites = it
         }
+    }
+
+    companion object {
+        const val TOP_SITE_SETTINGS = "top_sites"
+        const val TOP_SITE_JSON_STRING_KEY = "cached_top_sites"
     }
 }

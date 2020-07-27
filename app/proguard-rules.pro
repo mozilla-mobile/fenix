@@ -112,3 +112,14 @@
 # Keep Android Lifecycle methods
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1596302
 -keep class androidx.lifecycle.** { *; }
+
+# Keep classes for kotlinx.serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.SerializationKt
+-keep,includedescriptorclasses class org.mozilla.fenix.**$$serializer { *; }
+-keepclassmembers class org.mozilla.fenix.** {
+    *** Companion;
+}
+-keepclasseswithmembers class org.mozilla.fenix.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
