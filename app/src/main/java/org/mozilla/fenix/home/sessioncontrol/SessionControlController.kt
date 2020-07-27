@@ -38,7 +38,7 @@ import mozilla.components.feature.tab.collections.Tab as ComponentTab
  * [HomeFragment] controller. An interface that handles the view manipulation of the Tabs triggered
  * by the Interactor.
  */
-@SuppressWarnings("TooManyFunctions")
+@Suppress("TooManyFunctions")
 interface SessionControlController {
     /**
      * @see [CollectionInteractor.onCollectionAddTabTapped]
@@ -128,7 +128,7 @@ interface SessionControlController {
     fun handleCreateCollection()
 }
 
-@SuppressWarnings("TooManyFunctions", "LargeClass", "LongParameterList")
+@Suppress("TooManyFunctions", "LargeClass")
 class DefaultSessionControlController(
     private val activity: HomeActivity,
     private val engine: Engine,
