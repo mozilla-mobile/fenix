@@ -21,8 +21,9 @@ import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkSeparatorViewHold
 class BookmarkTouchHelper(interactor: BookmarkViewInteractor) :
     ItemTouchHelper(BookmarkTouchCallback(interactor))
 
-class BookmarkTouchCallback(private val interactor: BookmarkViewInteractor) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+class BookmarkTouchCallback(
+    private val interactor: BookmarkViewInteractor
+) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     override fun getSwipeDirs(
         recyclerView: RecyclerView,
@@ -106,6 +107,15 @@ class BookmarkTouchCallback(private val interactor: BookmarkViewInteractor) :
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean = false
+
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            interactor.onStartSwipingItem()
+        } else {
+            interactor.onStopSwipingItem()
+        }
+    }
 
     private fun setBounds(
         background: Drawable,
