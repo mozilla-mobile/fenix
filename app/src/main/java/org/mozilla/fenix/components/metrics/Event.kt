@@ -610,18 +610,6 @@ private fun Fact.toEvent(): Event? = when (Pair(component, item)) {
     Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
         Event.ProgressiveWebAppInstallAsShortcut
     }
-    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.ENTER_BACKGROUND -> {
-        metadata?.get(ProgressiveWebAppFacts.MetadataKeys.BACKGROUND_TIME)?.let { duration ->
-            require(duration is Long) { "Expected duration to be a Long" }
-            Event.ProgressiveWebAppBackground(duration)
-        }
-    }
-    Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.ENTER_FOREGROUND -> {
-        metadata?.get(ProgressiveWebAppFacts.MetadataKeys.FOREGROUND_TIME)?.let { duration ->
-            require(duration is Long) { "Expected duration to be a Long" }
-            Event.ProgressiveWebAppForeground(duration)
-        }
-    }
     else -> null
 }
 

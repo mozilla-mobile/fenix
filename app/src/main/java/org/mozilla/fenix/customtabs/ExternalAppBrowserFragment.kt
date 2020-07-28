@@ -6,6 +6,7 @@ package org.mozilla.fenix.customtabs
 
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
@@ -139,7 +140,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                             )
                         )
                     )
-                    activity.metrics.track(Event.ProgressiveWebAppOpenFromHomescreenTap)
                 } else {
                     viewLifecycleOwner.lifecycle.addObserver(
                         PoweredByNotification(
@@ -151,6 +151,22 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currTimeMs = SystemClock.elapsedRealtimeNanos() / MS_PRECISION
+        requireComponents.analytics.metrics.track(
+            Event.ProgressiveWebAppForeground(currTimeMs)
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val currTimeMs = SystemClock.elapsedRealtimeNanos() / MS_PRECISION
+        requireComponents.analytics.metrics.track(
+            Event.ProgressiveWebAppBackground(currTimeMs)
+        )
     }
 
     override fun removeSessionIfNeeded(): Boolean {
@@ -195,4 +211,9 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         view,
         FenixSnackbarDelegate(view)
     )
+
+    companion object {
+        // We only care about millisecond precision for telemetry events
+        internal const val MS_PRECISION = 1_000_000L
+    }
 }
