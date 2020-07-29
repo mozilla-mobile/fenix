@@ -408,7 +408,8 @@ class TabTrayView(
                 isPrivateModeSelected
             )
 
-            this.adapter?.notifyItemRangeChanged(0, tabs.size, true)
+            collectionsButtonAdapter.notifyItemChanged(0)
+            tabsAdapter.notifyItemRangeChanged(0, tabs.size, true)
         }
     }
 
@@ -420,7 +421,7 @@ class TabTrayView(
 
             val selectedBrowserTabIndex = tabs.indexOfFirst { it.id == itemId }
 
-            this.adapter?.notifyItemChanged(
+            tabsAdapter.notifyItemChanged(
                 selectedBrowserTabIndex, true
             )
         }
