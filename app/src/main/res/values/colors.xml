@@ -145,8 +145,8 @@
     <color name="secondary_text_private_theme">#A7A2B7</color>
     <color name="contrast_text_private_theme">@color/primary_text_private_theme</color>
     <color name="foundation_private_theme">#261E4B</color>
-    <color name="inset_private_theme">#291D4F</color>
-    <color name="above_private_theme">#291D4F</color>
+    <color name="inset_private_theme">@color/photonInk50</color>
+    <color name="above_private_theme">@color/photonInk50</color>
     <color name="accent_private_theme">#9059FF</color>
     <color name="accent_bright_private_theme">#592ACB</color>
     <color name="about_link_private_theme">#AB71FF</color>
@@ -181,8 +181,8 @@
     <color name="add_on_private_browsing_interior_icon_background_private_theme">#FFFFFF</color>
     <color name="prompt_login_edit_text_cursor_color_private_theme">#9059ff</color>
 
-    <color name="mozac_widget_favicon_background_private_theme">@color/photonDarkGrey50</color>
-    <color name="mozac_widget_favicon_border_private_theme">@color/photonDarkGrey10</color>
+    <color name="mozac_widget_favicon_background_private_theme">@color/photonInk50</color>
+    <color name="mozac_widget_favicon_border_private_theme">@color/photonInk50</color>
 
     <!-- Tab Tray -->
     <color name="tab_tray_item_text_private_theme">@color/photonLightGrey05</color>

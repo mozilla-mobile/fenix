@@ -81,8 +81,8 @@
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
 
         <!-- Shared widget colors -->
-        <item name="mozac_widget_favicon_background">@color/mozac_widget_favicon_background_normal_theme</item>
-        <item name="mozac_widget_favicon_border">@color/mozac_widget_favicon_border_normal_theme</item>
+        <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
+        <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
 
         <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
         <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
@@ -218,8 +218,8 @@
         <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</item>
 
         <!-- Shared widget colors -->
-        <item name="mozac_widget_favicon_background">@color/mozac_widget_favicon_background_private_theme</item>
-        <item name="mozac_widget_favicon_border">@color/mozac_widget_favicon_border_private_theme</item>
+        <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_private_theme</item>
+        <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_private_theme</item>
 
         <!-- Tab Tray -->
         <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
