@@ -31,7 +31,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.logins.LoginsAction
@@ -221,27 +220,7 @@ class SavedLoginsFragment : Fragment() {
     }
 
     private fun setupMenu(itemToHighlight: SavedLoginsSortingStrategyMenu.Item) {
-        sortingStrategyMenu =
-            SavedLoginsSortingStrategyMenu(
-                requireContext()
-            ) {
-                when (it) {
-                    SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
-                        savedLoginsInteractor.onSortingStrategyChanged(
-                            SortingStrategy.Alphabetically(
-                                requireComponents.publicSuffixList
-                            )
-                        )
-                    }
-
-                    SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> {
-                        savedLoginsInteractor.onSortingStrategyChanged(
-                            SortingStrategy.LastUsed
-                        )
-                    }
-                }
-            }
-
+        sortingStrategyMenu = SavedLoginsSortingStrategyMenu(requireContext(), savedLoginsInteractor)
         sortingStrategyMenu.updateMenu(itemToHighlight)
 
         attachMenu()

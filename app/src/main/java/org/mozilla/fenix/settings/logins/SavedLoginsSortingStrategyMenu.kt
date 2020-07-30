@@ -5,17 +5,19 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.menu2.BrowserMenuController
 import mozilla.components.concept.menu.candidate.HighPriorityHighlightEffect
-import mozilla.components.concept.menu.candidate.MenuCandidate
 import mozilla.components.concept.menu.candidate.TextMenuCandidate
 import mozilla.components.concept.menu.candidate.TextStyle
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 
 class SavedLoginsSortingStrategyMenu(
     private val context: Context,
-    private val onItemTapped: (Item) -> Unit = {}
+    private val savedLoginsInteractor: SavedLoginsInteractor
 ) {
     sealed class Item {
         object AlphabeticallySort : Item()
@@ -24,7 +26,8 @@ class SavedLoginsSortingStrategyMenu(
 
     val menuController by lazy { BrowserMenuController() }
 
-    private fun menuItems(itemToHighlight: Item): List<MenuCandidate> {
+    @VisibleForTesting
+    internal fun menuItems(itemToHighlight: Item): List<TextMenuCandidate> {
         val textStyle = TextStyle(
             color = context.getColorFromAttr(R.attr.primaryText)
         )
@@ -39,14 +42,18 @@ class SavedLoginsSortingStrategyMenu(
                 textStyle = textStyle,
                 effect = if (itemToHighlight == Item.AlphabeticallySort) highlight else null
             ) {
-                onItemTapped.invoke(Item.AlphabeticallySort)
+                savedLoginsInteractor.onSortingStrategyChanged(
+                    SortingStrategy.Alphabetically(context.components.publicSuffixList)
+                )
             },
             TextMenuCandidate(
                 text = context.getString(R.string.saved_logins_sort_strategy_last_used),
                 textStyle = textStyle,
                 effect = if (itemToHighlight == Item.LastUsedSort) highlight else null
             ) {
-                onItemTapped.invoke(Item.LastUsedSort)
+                savedLoginsInteractor.onSortingStrategyChanged(
+                    SortingStrategy.LastUsed
+                )
             }
         )
     }
