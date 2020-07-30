@@ -19,9 +19,17 @@ class SavedLoginsSortingStrategyMenu(
     private val context: Context,
     private val savedLoginsInteractor: SavedLoginsInteractor
 ) {
-    sealed class Item {
-        object AlphabeticallySort : Item()
-        object LastUsedSort : Item()
+    enum class Item(val strategyString: String) {
+        AlphabeticallySort("ALPHABETICALLY"),
+        LastUsedSort("LAST_USED");
+
+        companion object {
+            fun fromString(strategyString: String) = when (strategyString) {
+                AlphabeticallySort.strategyString -> AlphabeticallySort
+                LastUsedSort.strategyString -> LastUsedSort
+                else -> AlphabeticallySort
+            }
+        }
     }
 
     val menuController by lazy { BrowserMenuController() }

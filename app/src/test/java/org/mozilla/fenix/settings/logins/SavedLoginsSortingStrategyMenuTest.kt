@@ -40,6 +40,13 @@ class SavedLoginsSortingStrategyMenuTest {
     }
 
     @Test
+    fun `item enum can be deserialized from string`() {
+        assertEquals(Item.AlphabeticallySort, Item.fromString("ALPHABETICALLY"))
+        assertEquals(Item.LastUsedSort, Item.fromString("LAST_USED"))
+        assertEquals(Item.AlphabeticallySort, Item.fromString("OTHER"))
+    }
+
+    @Test
     fun `effect is set on alphabetical sort candidate`() {
         val (name, lastUsed) = menu.menuItems(Item.AlphabeticallySort)
         assertEquals(

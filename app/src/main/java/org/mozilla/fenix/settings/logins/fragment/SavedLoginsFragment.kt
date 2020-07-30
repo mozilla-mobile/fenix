@@ -225,9 +225,4 @@ class SavedLoginsFragment : Fragment() {
 
         attachMenu()
     }
-
-    companion object {
-        const val SORTING_STRATEGY_ALPHABETICALLY = "ALPHABETICALLY"
-        const val SORTING_STRATEGY_LAST_USED = "LAST_USED"
-    }
 }
