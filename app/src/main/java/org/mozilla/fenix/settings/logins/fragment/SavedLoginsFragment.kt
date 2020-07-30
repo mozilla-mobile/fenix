@@ -22,8 +22,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_saved_logins.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import mozilla.components.browser.menu.BrowserMenu
+import mozilla.components.concept.menu.MenuController
+import mozilla.components.concept.menu.Orientation
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -51,7 +51,6 @@ class SavedLoginsFragment : Fragment() {
     private lateinit var savedLoginsInteractor: SavedLoginsInteractor
     private lateinit var dropDownMenuAnchorView: View
     private lateinit var sortingStrategyMenu: SavedLoginsSortingStrategyMenu
-    private lateinit var sortingStrategyPopupMenu: BrowserMenu
     private lateinit var toolbarChildContainer: FrameLayout
     private lateinit var sortLoginsMenuRoot: ConstraintLayout
     private lateinit var loginsListController: LoginsListController
@@ -121,10 +120,8 @@ class SavedLoginsFragment : Fragment() {
         return view
     }
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         consumeFrom(savedLoginsStore) {
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
             savedLoginsListView.update(it)
@@ -161,7 +158,7 @@ class SavedLoginsFragment : Fragment() {
         toolbarChildContainer.removeAllViews()
         toolbarChildContainer.visibility = View.GONE
         (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().setDisplayShowTitleEnabled(true)
-        sortingStrategyPopupMenu.dismiss()
+        sortingStrategyMenu.menuController.dismiss()
 
         redirectToReAuth(listOf(R.id.loginDetailFragment), findNavController().currentDestination?.id)
         super.onPause()
@@ -206,24 +203,27 @@ class SavedLoginsFragment : Fragment() {
     }
 
     private fun attachMenu() {
-        sortingStrategyPopupMenu = sortingStrategyMenu.menuBuilder.build(requireContext())
-
-        sortLoginsMenuRoot.setOnClickListener {
-            sortLoginsMenuRoot.isActivated = true
-            sortingStrategyPopupMenu.show(
-                anchor = dropDownMenuAnchorView,
-                orientation = BrowserMenu.Orientation.DOWN
-            ) {
+        sortingStrategyMenu.menuController.register(object : MenuController.Observer {
+            override fun onDismiss() {
+                // Deactivate button on dismiss
                 sortLoginsMenuRoot.isActivated = false
             }
+        }, view = sortLoginsMenuRoot)
+
+        sortLoginsMenuRoot.setOnClickListener {
+            // Activate button on show
+            sortLoginsMenuRoot.isActivated = true
+            sortingStrategyMenu.menuController.show(
+                anchor = dropDownMenuAnchorView,
+                orientation = Orientation.DOWN
+            )
         }
     }
 
     private fun setupMenu(itemToHighlight: SavedLoginsSortingStrategyMenu.Item) {
         sortingStrategyMenu =
             SavedLoginsSortingStrategyMenu(
-                requireContext(),
-                itemToHighlight
+                requireContext()
             ) {
                 when (it) {
                     SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort -> {
@@ -241,6 +241,8 @@ class SavedLoginsFragment : Fragment() {
                     }
                 }
             }
+
+        sortingStrategyMenu.updateMenu(itemToHighlight)
 
         attachMenu()
     }

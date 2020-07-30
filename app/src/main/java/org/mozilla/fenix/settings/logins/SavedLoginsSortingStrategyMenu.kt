@@ -5,15 +5,16 @@
 package org.mozilla.fenix.settings.logins
 
 import android.content.Context
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuHighlightableItem
+import mozilla.components.browser.menu2.BrowserMenuController
+import mozilla.components.concept.menu.candidate.HighPriorityHighlightEffect
+import mozilla.components.concept.menu.candidate.MenuCandidate
+import mozilla.components.concept.menu.candidate.TextMenuCandidate
+import mozilla.components.concept.menu.candidate.TextStyle
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 
 class SavedLoginsSortingStrategyMenu(
     private val context: Context,
-    private val itemToHighlight: Item,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
     sealed class Item {
@@ -21,35 +22,36 @@ class SavedLoginsSortingStrategyMenu(
         object LastUsedSort : Item()
     }
 
-    val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
+    val menuController by lazy { BrowserMenuController() }
 
-    private val menuItems by lazy {
-        listOfNotNull(
-            SimpleBrowserMenuHighlightableItem(
-                label = context.getString(R.string.saved_logins_sort_strategy_alphabetically),
-                textColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-                itemType = Item.AlphabeticallySort,
-                backgroundTint = context.getColorFromAttr(R.attr.colorControlHighlight),
-                isHighlighted = { itemToHighlight == Item.AlphabeticallySort }
+    private fun menuItems(itemToHighlight: Item): List<MenuCandidate> {
+        val textStyle = TextStyle(
+            color = context.getColorFromAttr(R.attr.primaryText)
+        )
+
+        val highlight = HighPriorityHighlightEffect(
+            backgroundTint = context.getColorFromAttr(R.attr.colorControlHighlight)
+        )
+
+        return listOf(
+            TextMenuCandidate(
+                text = context.getString(R.string.saved_logins_sort_strategy_alphabetically),
+                textStyle = textStyle,
+                effect = if (itemToHighlight == Item.AlphabeticallySort) highlight else null
             ) {
                 onItemTapped.invoke(Item.AlphabeticallySort)
             },
-
-            SimpleBrowserMenuHighlightableItem(
-                label = context.getString(R.string.saved_logins_sort_strategy_last_used),
-                textColorResource = ThemeManager.resolveAttribute(R.attr.primaryText, context),
-                itemType = Item.LastUsedSort,
-                backgroundTint = context.getColorFromAttr(R.attr.colorControlHighlight),
-                isHighlighted = { itemToHighlight == Item.LastUsedSort }
+            TextMenuCandidate(
+                text = context.getString(R.string.saved_logins_sort_strategy_last_used),
+                textStyle = textStyle,
+                effect = if (itemToHighlight == Item.LastUsedSort) highlight else null
             ) {
                 onItemTapped.invoke(Item.LastUsedSort)
             }
         )
     }
 
-    internal fun updateMenu(itemToHighlight: Item) {
-        menuItems.forEach {
-            it.isHighlighted = { itemToHighlight == it.itemType }
-        }
+    fun updateMenu(itemToHighlight: Item) {
+        menuController.submitList(menuItems(itemToHighlight))
     }
 }
