@@ -2,7 +2,7 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<org.mozilla.fenix.browser.SwipeGestureLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mozilla.fenix.gestures.SwipeGestureLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gestureLayout"
@@ -79,4 +79,4 @@
         android:clickable="false"
         android:focusable="false"
         android:visibility="gone" />
-</org.mozilla.fenix.browser.SwipeGestureLayout>
+</org.mozilla.fenix.gestures.SwipeGestureLayout>

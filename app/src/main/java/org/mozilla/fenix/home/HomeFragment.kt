@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.home_gesture_wrapper.*
 import kotlinx.android.synthetic.main.no_collections_message.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -71,6 +72,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -92,6 +94,7 @@ import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gestures.ShowTabTrayGestureListener
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
@@ -179,7 +182,11 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val view = if (FeatureFlags.browserChromeGestures) {
+            inflater.inflate(R.layout.home_gesture_wrapper, container, false)
+        } else {
+            inflater.inflate(R.layout.fragment_home, container, false)
+        }
         val activity = activity as HomeActivity
         val components = requireComponents
 
@@ -361,6 +368,17 @@ class HomeFragment : Fragment() {
             }
         }
 
+        // gestureLayout won't exist if the flag is off so check the flag here
+        if (FeatureFlags.browserChromeGestures) {
+            gestureLayout.addGestureListener(
+                ShowTabTrayGestureListener(
+                    activity = requireActivity(),
+                    toolbarLayout = view.toolbarLayout,
+                    showTabTray = ::openTabTray
+                )
+            )
+        }
+
         createHomeMenu(requireContext(), WeakReference(view.menuButton))
         val tabCounterMenu = TabCounterMenu(
             view.context,
@@ -480,7 +498,7 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.allowUndo(
-            requireView(),
+            requireView().homeLayout,
             snackbarMessage,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
@@ -503,7 +521,7 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.allowUndo(
-            requireView(),
+            requireView().homeLayout,
             snackbarMessage,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
@@ -565,7 +583,7 @@ class HomeFragment : Fragment() {
             requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
                 override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
                     if (authType != AuthType.Existing) {
-                        view?.let {
+                        view?.homeLayout?.let {
                             FenixSnackbar.make(
                                 view = it,
                                 duration = Snackbar.LENGTH_SHORT,
@@ -798,7 +816,7 @@ class HomeFragment : Fragment() {
                         deleteAndQuit(
                             activity,
                             viewLifecycleOwner.lifecycleScope,
-                            view?.let { view ->
+                            view?.homeLayout?.let { view ->
                                 FenixSnackbar.make(
                                     view = view,
                                     isDisplayedWithBrowserToolbar = false
@@ -919,7 +937,7 @@ class HomeFragment : Fragment() {
     private fun showSavedSnackbar() {
         viewLifecycleOwner.lifecycleScope.launch {
             delay(ANIM_SNACKBAR_DELAY)
-            view?.let { view ->
+            view?.homeLayout?.let { view ->
                 FenixSnackbar.make(
                     view = view,
                     duration = Snackbar.LENGTH_LONG,
@@ -933,7 +951,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showRenamedSnackbar() {
-        view?.let { view ->
+        view?.homeLayout?.let { view ->
             val string = view.context.getString(R.string.snackbar_collection_renamed)
             FenixSnackbar.make(
                 view = view,

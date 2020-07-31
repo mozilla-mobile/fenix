@@ -30,6 +30,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
@@ -40,6 +41,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gestures.ShowTabTrayGestureListener
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
@@ -74,12 +76,22 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         return super.initializeUI(view)?.also {
             if (context.settings().isSwipeToolbarToSwitchTabsEnabled) {
                 gestureLayout.addGestureListener(
-                    ToolbarGestureHandler(
+                    SwitchTabsGestureListener(
                         activity = requireActivity(),
                         contentLayout = browserLayout,
                         tabPreview = tabPreview,
                         toolbarLayout = browserToolbarView.view,
                         sessionManager = components.core.sessionManager
+                    )
+                )
+            }
+
+            if (FeatureFlags.browserChromeGestures) {
+                gestureLayout.addGestureListener(
+                    ShowTabTrayGestureListener(
+                        activity = requireActivity(),
+                        toolbarLayout = browserToolbarView.view,
+                        showTabTray = browserInteractor::onTabCounterClicked
                     )
                 )
             }

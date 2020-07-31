@@ -13,29 +13,26 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.animation.doOnEnd
-import androidx.core.graphics.contains
-import androidx.core.graphics.toPoint
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.support.ktx.android.view.getRectWithViewLocation
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getRectWithScreenLocation
-import org.mozilla.fenix.ext.getWindowInsets
 import org.mozilla.fenix.ext.isKeyboardVisible
 import org.mozilla.fenix.ext.sessionsOfType
-import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gestures.SwipeGestureListener
+import org.mozilla.fenix.gestures.isInToolbar
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Handles intercepting touch events on the toolbar for swipe gestures and executes the
+ * Handles intercepting touch events on the toolbar for swipe to switch tabs and executes the
  * necessary animations.
  */
 @Suppress("LargeClass", "TooManyFunctions")
-class ToolbarGestureHandler(
+class SwitchTabsGestureListener(
     private val activity: Activity,
     private val contentLayout: View,
     private val tabPreview: TabPreview,
@@ -61,7 +58,8 @@ class ToolbarGestureHandler(
     private val touchSlop = ViewConfiguration.get(activity).scaledTouchSlop
     private val minimumFlingVelocity = ViewConfiguration.get(activity).scaledMinimumFlingVelocity
 
-    private var gestureDirection = GestureDirection.LEFT_TO_RIGHT
+    private var gestureDirection =
+        GestureDirection.LEFT_TO_RIGHT
 
     override fun onSwipeStarted(start: PointF, next: PointF): Boolean {
         val dx = next.x - start.x
@@ -75,7 +73,7 @@ class ToolbarGestureHandler(
         @Suppress("ComplexCondition")
         return if (
             !activity.window.decorView.isKeyboardVisible() &&
-            start.isInToolbar() &&
+            start.isInToolbar(toolbarLayout) &&
             abs(dx) > touchSlop &&
             abs(dy) < abs(dx)
         ) {
@@ -168,7 +166,9 @@ class ToolbarGestureHandler(
             }
 
             if (index < sessions.count() && index >= 0) {
-                Destination.Tab(sessions.elementAt(index))
+                Destination.Tab(
+                    sessions.elementAt(index)
+                )
             } else {
                 Destination.None
             }
@@ -269,18 +269,6 @@ class ToolbarGestureHandler(
                 tabPreview.isVisible = false
             }
         }.start()
-    }
-
-    private fun PointF.isInToolbar(): Boolean {
-        val toolbarLocation = toolbarLayout.getRectWithScreenLocation()
-        // In Android 10, the system gesture touch area overlaps the bottom of the toolbar, so
-        // lets make our swipe area taller by that amount
-        activity.window.decorView.getWindowInsets()?.let { insets ->
-            if (activity.settings().shouldUseBottomToolbar) {
-                toolbarLocation.top -= (insets.mandatorySystemGestureInsets.bottom - insets.stableInsetBottom)
-            }
-        }
-        return toolbarLocation.contains(toPoint())
     }
 
     private val Rect.visibleWidth: Int
