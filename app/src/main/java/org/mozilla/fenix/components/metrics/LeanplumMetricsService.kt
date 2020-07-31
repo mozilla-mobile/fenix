@@ -34,7 +34,9 @@ private val Event.name: String?
         is Event.InteractWithSearchURLArea -> "E_Interact_With_Search_URL_Area"
         is Event.CollectionSaved -> "E_Collection_Created"
         is Event.CollectionTabRestored -> "E_Collection_Tab_Opened"
-        is Event.SyncAuthSignIn -> "E_Sign_In_FxA"
+        is Event.SyncAuthSignUp -> "E_FxA_New_Signup"
+        is Event.SyncAuthSignIn, Event.SyncAuthPaired, Event.SyncAuthOtherExternal -> "E_Sign_In_FxA"
+        is Event.SyncAuthFromShared -> "E_Sign_In_FxA_Fennec_to_Fenix"
         is Event.SyncAuthSignOut -> "E_Sign_Out_FxA"
         is Event.ClearedPrivateData -> "E_Cleared_Private_Data"
         is Event.DismissedOnboarding -> "E_Dismissed_Onboarding"
@@ -87,13 +89,13 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
             val currentLocale = applicationSetLocale ?: Locale.getDefault()
             val languageCode =
                 currentLocale.iso3LanguageOrNull
-                ?: currentLocale.language.let {
-                    if (it.isNotBlank()) {
-                        it
-                    } else {
-                        currentLocale.toString()
+                    ?: currentLocale.language.let {
+                        if (it.isNotBlank()) {
+                            it
+                        } else {
+                            currentLocale.toString()
+                        }
                     }
-                }
 
             if (!isLeanplumEnabled(languageCode)) {
                 Log.i(LOGTAG, "Leanplum is not available for this locale: $languageCode")
@@ -122,18 +124,21 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
                 }
             }
 
-            Leanplum.start(application, hashMapOf(
-                "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
-                "fennec_installed" to installedApps.contains(MozillaProducts.FIREFOX.productName),
-                "focus_installed" to installedApps.contains(MozillaProducts.FOCUS.productName),
-                "klar_installed" to installedApps.contains(MozillaProducts.KLAR.productName),
-                "fxa_signed_in" to application.settings().fxaSignedIn,
-                "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
-                "search_widget_installed" to application.settings().searchWidgetInstalled,
-                "tracking_protection_enabled" to application.settings().shouldUseTrackingProtection,
-                "tracking_protection_setting" to trackingProtection,
-                "fenix" to true
-            ))
+            Leanplum.start(
+                application, hashMapOf(
+                    "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application)
+                        .orEmpty(),
+                    "fennec_installed" to installedApps.contains(MozillaProducts.FIREFOX.productName),
+                    "focus_installed" to installedApps.contains(MozillaProducts.FOCUS.productName),
+                    "klar_installed" to installedApps.contains(MozillaProducts.KLAR.productName),
+                    "fxa_signed_in" to application.settings().fxaSignedIn,
+                    "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
+                    "search_widget_installed" to application.settings().searchWidgetInstalled,
+                    "tracking_protection_enabled" to application.settings().shouldUseTrackingProtection,
+                    "tracking_protection_setting" to trackingProtection,
+                    "fenix" to true
+                )
+            )
 
             withContext(Main) {
                 LeanplumInternal.setCalledStart(true)
@@ -182,7 +187,9 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         get() =
             try {
                 this.isO3Language
-            } catch (_: MissingResourceException) { null }
+            } catch (_: MissingResourceException) {
+                null
+            }
 
     companion object {
         private const val LOGTAG = "LeanplumMetricsService"
@@ -193,6 +200,7 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         private val LeanplumToken: String
             // Debug builds have a null (nullable) LEANPLUM_TOKEN
             get() = BuildConfig.LEANPLUM_TOKEN.orEmpty()
+
         // Leanplum needs to be enabled for the following locales.
         // Irrespective of the actual device location.
         private val LEANPLUM_ENABLED_LOCALES = setOf(
