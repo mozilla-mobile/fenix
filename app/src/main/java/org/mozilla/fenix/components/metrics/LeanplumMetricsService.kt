@@ -5,7 +5,9 @@
 package org.mozilla.fenix.components.metrics
 
 import android.app.Application
+import android.content.Context.MODE_PRIVATE
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
 import com.leanplum.annotations.Parser
@@ -43,7 +45,10 @@ private val Event.name: String?
         else -> ""
     }
 
-class LeanplumMetricsService(private val application: Application) : MetricsService {
+class LeanplumMetricsService(
+    private val application: Application,
+    private val deviceIdGenerator: () -> String = { randomUUID().toString() }
+) : MetricsService {
     val scope = CoroutineScope(Dispatchers.IO)
     var leanplumJob: Job? = null
 
@@ -67,13 +72,27 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
     override val type = MetricServiceType.Marketing
     private val token = Token(LeanplumId, LeanplumToken)
 
+    private val preferences = application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
+
+    @VisibleForTesting
+    internal val deviceId by lazy {
+        var deviceId = preferences.getString(DEVICE_ID_KEY, null)
+
+        if (deviceId == null) {
+            deviceId = deviceIdGenerator.invoke()
+            preferences.edit().putString(DEVICE_ID_KEY, deviceId).apply()
+        }
+
+        deviceId
+    }
+
     override fun start() {
 
         if (!application.settings().isMarketingTelemetryEnabled) return
 
         Leanplum.setIsTestModeEnabled(false)
         Leanplum.setApplicationContext(application)
-        Leanplum.setDeviceId(randomUUID().toString())
+        Leanplum.setDeviceId(deviceId)
         Parser.parseVariables(application)
 
         leanplumJob = scope.launch {
@@ -183,5 +202,8 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
             "ara", // Arabic
             "jpn" // Japanese
         )
+
+        private const val PREFERENCE_NAME = "LEANPLUM_PREFERENCES"
+        private const val DEVICE_ID_KEY = "LP_DEVICE_ID"
     }
 }
