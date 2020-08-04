@@ -22,6 +22,20 @@
         app:drawableTint="@color/white_color"
         tools:text="@string/onboarding_firefox_account_header" />
 
+    <org.mozilla.fenix.utils.LinkTextView
+        android:id="@+id/learn_more"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/exceptions_empty_message_learn_more_link"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?attr/accentHighContrast"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/header_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:textColor="@color/accent_high_contrast_private_theme"/>
+
     <Button
         style="@style/NeutralButton"
         android:id="@+id/turn_on_sync_button"
