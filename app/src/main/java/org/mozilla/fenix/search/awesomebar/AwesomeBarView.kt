@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.search.awesomebar
 
+import android.content.Context
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
@@ -34,7 +35,7 @@ import org.mozilla.fenix.search.SearchFragmentState
  * View that contains and configures the BrowserAwesomeBar
  */
 class AwesomeBarView(
-    private val container: ViewGroup,
+    private val context: Context,
     val interactor: AwesomeBarInteractor,
     val view: BrowserAwesomeBar
 ) {
@@ -91,7 +92,7 @@ class AwesomeBarView(
     init {
         view.itemAnimator = null
 
-        val context = container.context
+        val context = context
         val components = context.components
         val primaryTextColor = context.getColorFromAttr(R.attr.primaryText)
 
@@ -255,7 +256,7 @@ class AwesomeBarView(
     }
 
     private fun isBrowsingModePrivate(): Boolean {
-        return (container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate
+        return (context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate
             ?: false
     }
 
@@ -280,7 +281,6 @@ class AwesomeBarView(
 
     private fun getSuggestionProviderForEngine(engine: SearchEngine): List<AwesomeBar.SuggestionProvider> {
         return searchSuggestionProviderMap.getOrPut(engine) {
-            val context = container.context
             val components = context.components
             val primaryTextColor = context.getColorFromAttr(R.attr.primaryText)
 
