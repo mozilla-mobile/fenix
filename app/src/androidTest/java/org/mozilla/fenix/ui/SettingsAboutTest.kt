@@ -68,7 +68,7 @@ class SettingsAboutTest {
         }
 
     }
-
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/13219")
     @Test
     fun verifyAboutFirefoxPreview() {
         homeScreen {
