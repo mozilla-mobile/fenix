@@ -27,7 +27,7 @@ class BookmarkItemViewHolder(
 
         containerView.displayAs(LibrarySiteItemView.ItemType.SITE)
 
-        if (selectionHolder.selectedItems.isEmpty()) {
+        if (item !in selectionHolder.selectedItems) {
             containerView.overflowView.showAndEnable()
         } else {
             containerView.overflowView.hideAndDisable()
