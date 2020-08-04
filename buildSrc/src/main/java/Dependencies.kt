@@ -5,7 +5,7 @@
 object Versions {
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.3"
-    const val android_gradle_plugin = "3.5.0"
+    const val android_gradle_plugin = "4.0.1"
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
     const val leanplum = "5.4.0"
@@ -234,7 +234,7 @@ object Deps {
 object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
-    const val comAndroid = "com\\.android\\..*"
+    const val comAndroid = "com\\.android.*"
     const val comGoogleFirebase = "com\\.google\\.firebase"
 
     /**
