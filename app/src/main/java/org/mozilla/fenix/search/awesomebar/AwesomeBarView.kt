@@ -5,7 +5,6 @@
 package org.mozilla.fenix.search.awesomebar
 
 import android.content.Context
-import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat.SRC_IN
@@ -39,7 +38,6 @@ class AwesomeBarView(
     val interactor: AwesomeBarInteractor,
     val view: BrowserAwesomeBar
 ) {
-
     private val sessionProvider: SessionSuggestionProvider
     private val historyStorageProvider: HistoryStorageSuggestionProvider
     private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
@@ -92,7 +90,6 @@ class AwesomeBarView(
     init {
         view.itemAnimator = null
 
-        val context = context
         val components = context.components
         val primaryTextColor = context.getColorFromAttr(R.attr.primaryText)
 
