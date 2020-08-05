@@ -31,10 +31,10 @@ class BookmarkItemViewHolder(
 
         containerView.displayAs(LibrarySiteItemView.ItemType.SITE)
 
-        if (selectionHolder.selectedItems.isEmpty()) {
-            containerView.overflowView.showAndEnable()
-        } else {
+        if (mode is BookmarkFragmentState.Mode.Selecting) {
             containerView.overflowView.hideAndDisable()
+        } else {
+            containerView.overflowView.showAndEnable()
         }
         setupMenu(item)
         containerView.titleView.text = if (item.title.isNullOrBlank()) item.url else item.title

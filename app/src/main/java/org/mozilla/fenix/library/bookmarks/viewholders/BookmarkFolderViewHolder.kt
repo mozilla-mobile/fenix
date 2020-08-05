@@ -40,10 +40,10 @@ class BookmarkFolderViewHolder(
 
         if (!item.inRoots()) {
             setupMenu(item)
-            if (selectionHolder.selectedItems.isEmpty()) {
-                containerView.overflowView.showAndEnable()
-            } else {
+            if (mode is BookmarkFragmentState.Mode.Selecting) {
                 containerView.overflowView.hideAndDisable()
+            } else {
+                containerView.overflowView.showAndEnable()
             }
         } else {
             containerView.overflowView.visibility = View.GONE
