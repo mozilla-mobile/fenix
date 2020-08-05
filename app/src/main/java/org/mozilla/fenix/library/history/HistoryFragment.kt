@@ -45,6 +45,7 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
+import kotlin.properties.Delegates
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandler {
@@ -152,21 +153,13 @@ class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandl
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val menuRes = when (historyStore.state.mode) {
-            HistoryFragmentState.Mode.Normal -> R.menu.library_menu
-            is HistoryFragmentState.Mode.Syncing -> R.menu.library_menu
-            is HistoryFragmentState.Mode.Editing -> R.menu.history_select_multi
+        if (historyStore.state.mode is HistoryFragmentState.Mode.Editing) {
+            inflater.inflate(R.menu.history_select_multi, menu)
+            menu.findItem(R.id.share_history_multi_select)?.isVisible = true
         }
-
-        inflater.inflate(menuRes, menu)
-        menu.findItem(R.id.share_history_multi_select)?.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.close_history -> {
-            close()
-            true
-        }
         R.id.share_history_multi_select -> {
             val selectedHistory = historyStore.state.mode.selectedItems
             val shareTabs = selectedHistory.map { ShareData(url = it.url, title = it.title) }
