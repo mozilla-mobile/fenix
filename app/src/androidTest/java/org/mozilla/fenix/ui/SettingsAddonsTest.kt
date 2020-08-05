@@ -76,7 +76,6 @@ class SettingsAddonsTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/13220")
     // Opens the addons settings menu, installs an addon, then uninstalls
     @Test
     fun verifyAddonsCanBeUninstalled() {
