@@ -10,6 +10,8 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS
 import androidx.navigation.NavController
+import mozilla.components.concept.engine.EngineSession
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GlobalDirections
 import org.mozilla.fenix.HomeActivity
@@ -18,10 +20,14 @@ import org.mozilla.fenix.ext.alreadyOnDestination
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.
+ *
+ * @param verifier [DeepLinkVerifier] that will be used to verify deep links before handling them.
  */
 class DeepLinkIntentProcessor(
-    private val activity: HomeActivity
+    private val activity: HomeActivity,
+    private val verifier: DeepLinkVerifier
 ) : HomeIntentProcessor {
+    private val logger = Logger("DeepLinkIntentProcessor")
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
         val scheme = intent.scheme?.contains("fenix") ?: return false
@@ -35,6 +41,11 @@ class DeepLinkIntentProcessor(
 
     @Suppress("ComplexMethod")
     private fun handleDeepLink(deepLink: Uri, navController: NavController) {
+        if (!verifier.verifyDeepLink(deepLink)) {
+            logger.warn("Invalid deep link: $deepLink")
+            return
+        }
+
         handleDeepLinkSideEffects(deepLink)
 
         val globalDirections = when (deepLink.host) {
@@ -68,14 +79,30 @@ class DeepLinkIntentProcessor(
                 }
             }
             "open" -> {
-                deepLink.getQueryParameter("url")?.let { searchTermOrUrl ->
-                    activity.openToBrowserAndLoad(
-                        searchTermOrUrl,
-                        newTab = true,
-                        from = BrowserDirection.FromGlobal
-                    )
+                val url = deepLink.getQueryParameter("url")
+                if (url == null || !url.startsWith("https://")) {
+                    logger.info("Not opening deep link: $url")
+                    return
                 }
+
+                activity.openToBrowserAndLoad(
+                    url,
+                    newTab = true,
+                    from = BrowserDirection.FromGlobal,
+                    flags = EngineSession.LoadUrlFlags.external()
+                )
             }
         }
+    }
+
+    /**
+     * Interface for a class that verifies deep links before they get handled.
+     */
+    interface DeepLinkVerifier {
+        /**
+         * Verifies the given deep link and returns `true` for verified deep links or `false` for
+         * rejected deep links.
+         */
+        fun verifyDeepLink(deepLink: Uri): Boolean
     }
 }
