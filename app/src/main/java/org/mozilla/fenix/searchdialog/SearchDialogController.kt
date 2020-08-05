@@ -108,6 +108,8 @@ class SearchDialogController(
     }
 
     override fun handleUrlTapped(url: String) {
+        clearToolbarFocus()
+
         activity.openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = store.state.tabId == null,
@@ -119,6 +121,7 @@ class SearchDialogController(
 
     override fun handleSearchTermsTapped(searchTerms: String) {
         settings.incrementActiveSearchCount()
+        clearToolbarFocus()
 
         activity.openToBrowserAndLoad(
             searchTermOrURL = searchTerms,
@@ -161,6 +164,7 @@ class SearchDialogController(
     }
 
     override fun handleExistingSessionSelected(session: Session) {
+        clearToolbarFocus()
         sessionManager.select(session)
         activity.openToBrowser(
             from = BrowserDirection.FromSearchDialog
