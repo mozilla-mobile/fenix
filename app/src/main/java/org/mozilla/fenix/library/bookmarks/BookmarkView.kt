@@ -139,6 +139,8 @@ class BookmarkView(
         }
 
         bookmarkAdapter.updateData(state.tree, mode)
+        bookmarkAdapter.notifyDataSetChanged()
+
         when (mode) {
             is BookmarkFragmentState.Mode.Normal -> {
                 setUiForNormalMode(state.tree)
