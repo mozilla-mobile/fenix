@@ -297,14 +297,4 @@ class HistoryTest {
             verifyShareTabUrl()
         }
     }
-
-    @Test
-    fun verifyCloseMenu() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openHistory {
-        }.closeMenu {
-            verifyHomeScreen()
-        }
-    }
 }
