@@ -45,7 +45,6 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
-import kotlin.properties.Delegates
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class HistoryFragment : LibraryPageFragment<HistoryItem>(), UserInteractionHandler {
