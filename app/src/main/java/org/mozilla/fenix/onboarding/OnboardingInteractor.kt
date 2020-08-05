@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.onboarding
 
-class OnboardingInteractor(val onboardingController: OnboardingController) {
+class OnboardingInteractor(private val onboardingController: OnboardingController) {
 
     /**
      * Called when the user clicks the learn more link

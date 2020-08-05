@@ -967,6 +967,8 @@
     <string name="onboarding_whats_new_description_linktext">Get answers here</string>
     <!-- text for the firefox account onboarding card header -->
     <string name="onboarding_firefox_account_header">Start syncing bookmarks, passwords, and more with your Firefox account.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Learn more</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->

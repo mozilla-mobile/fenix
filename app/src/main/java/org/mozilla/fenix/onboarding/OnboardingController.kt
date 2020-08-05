@@ -11,7 +11,6 @@ import org.mozilla.fenix.settings.SupportUtils
 class OnboardingController(
     private val activity: HomeActivity
 ) {
-
     fun handleLearnMoreClicked() {
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getFirefoxAccountSumoUrl(),
@@ -20,4 +19,3 @@ class OnboardingController(
         )
     }
 }
-
