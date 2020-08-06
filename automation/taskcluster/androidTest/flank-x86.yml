@@ -38,8 +38,8 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-   - class org.mozilla.fenix.ui.TabbedBrowsingTest.closeTabTest
-   - class org.mozilla.fenix.ui.TabbedBrowsingTest.closePrivateTabTest
+   - class org.mozilla.fenix.ui.TabbedBrowsingTest#closeTabTest
+   - class org.mozilla.fenix.ui.TabbedBrowsingTest#closePrivateTabTest
 
   device:
    - model: Pixel2
