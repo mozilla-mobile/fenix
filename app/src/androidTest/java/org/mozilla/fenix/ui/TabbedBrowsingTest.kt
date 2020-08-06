@@ -148,7 +148,7 @@ class TabbedBrowsingTest {
     }
 
     @Test
-    @Ignore("For some reason this intermittently fails with the drawer :(")
+    //@Ignore("For some reason this intermittently fails with the drawer :(")
     fun closeTabTest() {
         var genericURLS = TestAssetHelper.getGenericAssets(mockWebServer)
 
@@ -179,7 +179,7 @@ class TabbedBrowsingTest {
     }
 
     @Test
-    @Ignore("For some reason this intermittently fails with the drawer :(")
+    //@Ignore("For some reason this intermittently fails with the drawer :(")
     fun closePrivateTabTest() {
         var genericURLS = TestAssetHelper.getGenericAssets(mockWebServer)
 
