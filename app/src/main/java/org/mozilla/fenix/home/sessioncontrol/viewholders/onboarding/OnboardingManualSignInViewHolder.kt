@@ -8,7 +8,6 @@ import android.view.View
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_manual_signin.view.*
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.addUnderline
@@ -24,7 +23,7 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
     init {
         val interactor = OnboardingInteractor(OnboardingController(itemView.context))
 
-        view.turn_on_sync_button.setOnClickListener {
+        view.fxa_sign_in_button.setOnClickListener {
             it.context.components.analytics.metrics.track(Event.OnboardingManualSignIn)
 
             val directions = HomeFragmentDirections.actionGlobalTurnOnSync()

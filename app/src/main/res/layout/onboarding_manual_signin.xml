@@ -51,7 +51,7 @@
 
     <Button
         style="@style/NeutralButton"
-        android:id="@+id/turn_on_sync_button"
+        android:id="@+id/fxa_sign_in_button"
         android:background="@drawable/onboarding_padded_background"
         android:layout_marginTop="10dp"
         android:text="@string/onboarding_firefox_account_sign_in"

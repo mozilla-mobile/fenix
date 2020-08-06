@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +23,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.onboarding.OnboardingInteractor
-import org.mozilla.fenix.share.ShareToAppsInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingManualSignInViewHolderTest {
@@ -47,9 +44,9 @@ class OnboardingManualSignInViewHolderTest {
         itemView = mockk(relaxed = true)
 
         mockkStatic(Navigation::class)
-        every { Navigation.findNavController(view) } returns navController
         every { itemView.context } returns testContext
         every { interactor.onLearnMoreClicked() } just Runs
+        every { Navigation.findNavController(view) } returns navController
     }
 
     @After
@@ -70,7 +67,7 @@ class OnboardingManualSignInViewHolderTest {
     @Test
     fun `navigate on click`() {
         OnboardingManualSignInViewHolder(view)
-        view.turn_on_sync_button.performClick()
+        view.fxa_sign_in_button.performClick()
 
         verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }
