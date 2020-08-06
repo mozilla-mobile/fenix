@@ -4,11 +4,15 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -20,23 +24,32 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.onboarding.OnboardingInteractor
+import org.mozilla.fenix.share.ShareToAppsInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingManualSignInViewHolderTest {
 
     private lateinit var view: View
     private lateinit var navController: NavController
+    private lateinit var interactor: OnboardingInteractor
+    private lateinit var itemView: ViewGroup
 
     @Before
     fun setup() {
         view = LayoutInflater.from(testContext)
             .inflate(OnboardingManualSignInViewHolder.LAYOUT_ID, null)
         navController = mockk(relaxed = true)
+        interactor = mockk(relaxUnitFun = true)
+        itemView = mockk(relaxed = true)
 
         mockkStatic(Navigation::class)
         every { Navigation.findNavController(view) } returns navController
+        every { itemView.context } returns testContext
+        every { interactor.onLearnMoreClicked() } just Runs
     }
 
     @After
@@ -48,7 +61,10 @@ class OnboardingManualSignInViewHolderTest {
     fun `bind header text`() {
         OnboardingManualSignInViewHolder(view).bind()
 
-        assertEquals("Get the most out of Firefox Preview.", view.header_text.text)
+        assertEquals(
+            "Start syncing bookmarks, passwords, and more with your Firefox account.",
+            view.header_text.text
+        )
     }
 
     @Test

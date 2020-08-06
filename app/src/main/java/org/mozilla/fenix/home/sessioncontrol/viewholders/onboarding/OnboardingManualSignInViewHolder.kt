@@ -22,7 +22,7 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
     private val headerText = view.header_text
 
     init {
-        val interactor = OnboardingInteractor(OnboardingController(itemView.context as HomeActivity))
+        val interactor = OnboardingInteractor(OnboardingController(itemView.context))
 
         view.turn_on_sync_button.setOnClickListener {
             it.context.components.analytics.metrics.track(Event.OnboardingManualSignIn)

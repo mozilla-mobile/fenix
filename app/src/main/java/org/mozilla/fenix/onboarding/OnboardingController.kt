@@ -4,15 +4,16 @@
 
 package org.mozilla.fenix.onboarding
 
+import android.content.Context
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.settings.SupportUtils
 
 class OnboardingController(
-    private val activity: HomeActivity
+    private val context: Context
 ) {
     fun handleLearnMoreClicked() {
-        activity.openToBrowserAndLoad(
+        (context as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getFirefoxAccountSumoUrl(),
             newTab = true,
             from = BrowserDirection.FromHome
