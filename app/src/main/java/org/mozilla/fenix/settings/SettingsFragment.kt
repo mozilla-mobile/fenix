@@ -270,6 +270,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_delete_browsing_data_on_quit_preference) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataOnQuitFragment()
             }
+            resources.getString(R.string.pref_key_notifications) -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    startActivity(intent)
+                } else {
+                    (activity as HomeActivity).openToBrowserAndLoad(
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.HELP
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromSettings
+                    )
+                }
+                null
+            }
             resources.getString(R.string.pref_key_customize) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToCustomizationFragment()
             }
