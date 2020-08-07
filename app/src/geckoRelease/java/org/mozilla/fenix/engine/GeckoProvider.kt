@@ -52,7 +52,7 @@ object GeckoProvider {
             .telemetryDelegate(GeckoAdapter())
             // TODO: Fix me!
             // .contentBlocking(policy.toContentBlockingSetting())
-            .aboutConfigEnabled(Config.channel.isBeta)
+            .aboutConfigEnabled(true)
             .debugLogging(Config.channel.isDebug)
             .build()
 
