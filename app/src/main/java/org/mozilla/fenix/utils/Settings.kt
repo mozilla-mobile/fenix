@@ -30,6 +30,7 @@ import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
+import org.mozilla.fenix.components.settings.featureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -542,12 +543,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val accessibilityServicesEnabled: Boolean
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
-        }
-
-    val toolbarSettingString: String
-        get() = when {
-            shouldUseBottomToolbar -> appContext.getString(R.string.preference_bottom_toolbar)
-            else -> appContext.getString(R.string.preference_top_toolbar)
         }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
