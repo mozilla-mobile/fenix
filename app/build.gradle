@@ -108,6 +108,9 @@ android {
             applicationIdSuffix ".fenix.debug"
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
+            // Need to replicate default debug config features
+            signingConfig signingConfigs.debug
+            debuggable true
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -441,6 +444,7 @@ dependencies {
     implementation Deps.mozilla_lib_push_firebase
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
+    forkDebugImplementation Deps.leakcanary
 
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
