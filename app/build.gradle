@@ -102,6 +102,13 @@ android {
                     "deepLinkScheme": deepLinkSchemeValue
             ]
         }
+        forkDebug {
+            shrinkResources false
+            minifyEnabled false
+            applicationIdSuffix ".fenix.debug"
+            resValue "bool", "IS_DEBUG", "true"
+            pseudoLocalesEnabled true
+        }
     }
 
     aaptOptions {
@@ -141,6 +148,9 @@ android {
         release {
             java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
+        }
+        forkDebug {
+            java.srcDirs = ['src/geckoNightly/java']
         }
     }
 
@@ -316,6 +326,7 @@ apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 dependencies {
     debugImplementation Deps.mozilla_browser_engine_gecko_nightly
+    forkDebugImplementation Deps.mozilla_browser_engine_gecko_nightly
 
     nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     betaImplementation Deps.mozilla_browser_engine_gecko_beta
@@ -527,6 +538,9 @@ if (project.hasProperty("coverage")) {
     android {
         buildTypes {
             debug {
+                testCoverageEnabled true
+            }
+            forkDebug {
                 testCoverageEnabled true
             }
         }
