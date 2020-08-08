@@ -109,6 +109,16 @@ android {
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
         }
+        forkRelease releaseTemplate >> {
+            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            applicationIdSuffix ".firefox"
+            def deepLinkSchemeValue = "fenix"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            manifestPlaceholders = [
+                    "deepLinkScheme": deepLinkSchemeValue
+            ]
+        }
+        
     }
 
     aaptOptions {
@@ -151,6 +161,10 @@ android {
         }
         forkDebug {
             java.srcDirs = ['src/geckoNightly/java']
+        }
+        forkRelease {
+            // No migration needed for fork
+            java.srcDirs = ['src/geckoRelease/java']
         }
     }
 
@@ -331,6 +345,7 @@ dependencies {
     nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     betaImplementation Deps.mozilla_browser_engine_gecko_beta
     releaseImplementation Deps.mozilla_browser_engine_gecko_release
+    forkReleaseImplementation Deps.mozilla_browser_engine_gecko_release
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines

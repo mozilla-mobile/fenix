@@ -9,7 +9,8 @@ enum class ReleaseChannel {
     ForkDebug,
     Nightly,
     Beta,
-    Release;
+    Release,
+    ForkRelease;
 
     val isReleased: Boolean
         get() = when (this) {
@@ -29,11 +30,12 @@ enum class ReleaseChannel {
         get() = !this.isReleased
 
     val isReleaseOrBeta: Boolean
-        get() = this == Release || this == Beta
+        get() = this == Release || this == Beta || this == ForkRelease
 
     val isRelease: Boolean
         get() = when (this) {
             Release -> true
+            ForkRelease -> true
             else -> false
         }
 
@@ -63,6 +65,7 @@ object Config {
         "beta" -> ReleaseChannel.Beta
         "release" -> ReleaseChannel.Release
         "forkDebug" -> ReleaseChannel.ForkDebug
+        "forkRelease" -> ReleaseChannel.ForkRelease
         else -> {
             throw IllegalStateException("Unknown build type: ${BuildConfig.BUILD_TYPE}")
         }
