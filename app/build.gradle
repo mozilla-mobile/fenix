@@ -20,7 +20,7 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
-        applicationId "org.mozilla"
+        applicationId "network.novak"
         minSdkVersion Config.minSdkVersion
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
