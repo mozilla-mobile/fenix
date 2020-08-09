@@ -30,6 +30,7 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
+        buildConfigField "String", "AMO_ACCOUNT", "\"mozilla\""
         buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
@@ -111,6 +112,9 @@ android {
             // Need to replicate default debug config features
             signingConfig signingConfigs.debug
             debuggable true
+            // Use custom allowed addon list
+            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -120,6 +124,9 @@ android {
             manifestPlaceholders = [
                     "deepLinkScheme": deepLinkSchemeValue
             ]
+            // Use custom allowed addon list
+            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
         }
         
     }

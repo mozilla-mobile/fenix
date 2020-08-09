@@ -74,6 +74,7 @@ class Components(private val context: Context) {
             AddonCollectionProvider(
                 context,
                 core.client,
+                collectionAccount = BuildConfig.AMO_ACCOUNT,
                 collectionName = BuildConfig.AMO_COLLECTION,
                 maxCacheAgeInMinutes = DAY_IN_MINUTES
             )
