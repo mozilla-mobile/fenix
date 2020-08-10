@@ -7,9 +7,6 @@ package org.mozilla.fenix.components.metrics
 import android.content.Context
 import android.util.Base64
 import androidx.annotation.VisibleForTesting
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
@@ -17,13 +14,24 @@ import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.SearchAccessPoint
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.searchEngineManager
-import java.io.IOException
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-object MetricsUtils {
+interface AdvertisingID {
+    /**
+     * Query the Google Advertising API to get the Google Advertising ID.
+     *
+     * This is meant to be used off the main thread. The API will throw an
+     * exception and we will print a log message otherwise.
+     *
+     * @return a String containing the Google Advertising ID or null.
+     */
+    fun getAdvertisingID(context: Context): String?
+}
+
+object MetricsUtils : AdvertisingIDImpl {
     fun createSearchEvent(
         engine: SearchEngine,
         context: Context,
@@ -71,38 +79,6 @@ object MetricsUtils {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun getHashingSalt(): String = "org.mozilla.fenix-salt"
-
-    /**
-     * Query the Google Advertising API to get the Google Advertising ID.
-     *
-     * This is meant to be used off the main thread. The API will throw an
-     * exception and we will print a log message otherwise.
-     *
-     * @return a String containing the Google Advertising ID or null.
-     */
-    @Suppress("TooGenericExceptionCaught")
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun getAdvertisingID(context: Context): String? {
-        return try {
-            AdvertisingIdClient.getAdvertisingIdInfo(context).id
-        } catch (e: GooglePlayServicesNotAvailableException) {
-            Logger.debug("ActivationPing - Google Play not installed on the device")
-            null
-        } catch (e: GooglePlayServicesRepairableException) {
-            Logger.debug("ActivationPing - recoverable error connecting to Google Play Services")
-            null
-        } catch (e: IllegalStateException) {
-            // This is unlikely to happen, as this should be running off the main thread.
-            Logger.debug("ActivationPing - AdvertisingIdClient must be called off the main thread")
-            null
-        } catch (e: IOException) {
-            Logger.debug("ActivationPing - unable to connect to Google Play Services")
-            null
-        } catch (e: NullPointerException) {
-            Logger.debug("ActivationPing - no Google Advertising ID available")
-            null
-        }
-    }
 
     /**
      * Produces a hashed version of the Google Advertising ID.

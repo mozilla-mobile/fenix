@@ -52,7 +52,7 @@ private val Event.name: String?
         else -> null
     }
 
-class LeanplumMetricsService(
+class LeanplumMetricsServiceImpl(
     private val application: Application,
     private val deviceIdGenerator: () -> String = { randomUUID().toString() }
 ) : MetricsService {

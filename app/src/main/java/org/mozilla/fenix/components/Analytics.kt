@@ -20,7 +20,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
-import org.mozilla.fenix.components.metrics.LeanplumMetricsService
+import org.mozilla.fenix.components.metrics.LeanplumMetricsServiceImpl
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.Mockable
@@ -88,7 +88,7 @@ class Analytics(
         MetricController.create(
             listOf(
                 GleanMetricsService(context),
-                LeanplumMetricsService(context as Application),
+                LeanplumMetricsServiceImpl(context as Application),
                 AdjustMetricsService(context)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
