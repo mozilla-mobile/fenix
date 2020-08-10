@@ -9,6 +9,7 @@ import android.content.Intent
 
 class OssLicensesMenuImpl : OssLicensesMenu {
     override fun getIntent(context: Context?, title: String): Intent {
+        // This menu shouldn't displayed on the free variant anyways.
         throw NotImplementedError()
     }
 }

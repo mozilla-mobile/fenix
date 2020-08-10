@@ -5,15 +5,17 @@
 package org.mozilla.fenix.components.metrics
 
 import android.app.Application
+import android.net.Uri
 import java.util.UUID
 
 class LeanplumMetricsServiceImpl(
-    private val application: Application,
-    private val deviceIdGenerator: () -> String = { UUID.randomUUID().toString() }
-) : MetricsService {
+    application: Application,
+    deviceIdGenerator: () -> String = { UUID.randomUUID().toString() }
+) : LeanplumMetricsService(application, deviceIdGenerator) {
     override val type = MetricServiceType.Marketing
     override fun start() {}
     override fun stop() {}
     override fun track(event: Event) {}
-    override fun shouldTrack(event: Event): Boolean {return false;}
+    override fun shouldTrack(event: Event): Boolean { return false }
+    override fun verifyDeepLink(deepLink: Uri): Boolean { return false }
 }

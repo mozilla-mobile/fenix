@@ -57,7 +57,7 @@ private val Event.name: String?
 class LeanplumMetricsServiceImpl(
     private val application: Application,
     private val deviceIdGenerator: () -> String = { randomUUID().toString() }
-) : MetricsService, DeepLinkIntentProcessor.DeepLinkVerifier {
+) : LeanplumMetricsService(application, deviceIdGenerator) {
     val scope = CoroutineScope(Dispatchers.IO)
     var leanplumJob: Job? = null
 
