@@ -100,23 +100,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         )
 
         preferenceManager.sharedPreferences
-            .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
-                try {
-                    context?.let { context ->
-                        context.components.analytics.metrics.track(
-                            Event.PreferenceToggled(
-                                key,
-                                sharedPreferences.getBoolean(key, false),
-                                context
-                            )
+        .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
+            try {
+                context?.let { context ->
+                    context.components.analytics.metrics.track(
+                        Event.PreferenceToggled(
+                            key,
+                            sharedPreferences.getBoolean(key, false),
+                            context
                         )
-                    }
-                } catch (e: IllegalArgumentException) {
-                    // The event is not tracked
-                } catch (e: ClassCastException) {
-                    // The setting is not a boolean, not tracked
+                    )
                 }
+            } catch (e: IllegalArgumentException) {
+                // The event is not tracked
+            } catch (e: ClassCastException) {
+                // The setting is not a boolean, not tracked
             }
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -368,6 +368,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_debug_settings)
         )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
+
+        findPreference<Preference>(
+            getPreferenceKey(R.string.pref_key_notifications)
+        )?.isVisible = requireContext().settings().showNotificationsSetting
     }
 
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {
