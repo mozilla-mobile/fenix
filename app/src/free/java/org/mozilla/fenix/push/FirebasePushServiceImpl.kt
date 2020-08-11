@@ -7,7 +7,7 @@ package org.mozilla.fenix.push
 import android.content.Context
 import mozilla.components.concept.push.PushService
 
-class PushServiceImpl : PushService {
+class FirebasePushServiceImpl : PushService {
     override fun deleteToken() {}
     override fun isServiceAvailable(context: Context): Boolean { return false }
     override fun start(context: Context) {}

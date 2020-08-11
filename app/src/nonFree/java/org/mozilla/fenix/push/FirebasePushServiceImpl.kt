@@ -41,7 +41,7 @@ import mozilla.components.feature.push.AutoPushFeature
  * that lets us easily delegate the implementation to that, as well as make invocations when FCM
  * receives new messages.
  */
-class PushServiceImpl : LeanplumPushFirebaseMessagingService(),
+class FirebasePushServiceImpl : LeanplumPushFirebaseMessagingService(),
     PushService by AutoPushService {
 
     override fun onCreate() {

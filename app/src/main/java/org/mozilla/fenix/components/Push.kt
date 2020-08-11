@@ -10,7 +10,7 @@ import mozilla.components.feature.push.PushConfig
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.R
-import org.mozilla.fenix.push.PushServiceImpl
+import org.mozilla.fenix.push.FirebasePushServiceImpl
 
 /**
  * Component group for push services. These components use services that strongly depend on
@@ -42,5 +42,5 @@ class Push(context: Context, crashReporter: CrashReporter) {
         PushConfig(projectId)
     }
 
-    private val pushService by lazy { PushServiceImpl() }
+    private val pushService by lazy { FirebasePushServiceImpl() }
 }
