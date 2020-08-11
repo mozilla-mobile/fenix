@@ -97,10 +97,10 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -812,11 +812,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     override fun onBackLongPressed(): Boolean {
-        if (FeatureFlags.tabHistory) {
-            findNavController().navigate(R.id.action_global_tabHistoryDialogFragment)
-            return true
-        }
-        return false
+        findNavController().navigate(R.id.action_global_tabHistoryDialogFragment)
+        return true
     }
 
     /**
