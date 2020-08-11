@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.mikepenz.aboutlibraries.LibsBuilder
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
@@ -151,7 +152,7 @@ class AboutFragment : Fragment(), AboutPageListener {
                 AboutItem.ExternalLink(LICENSING_INFO, ABOUT_LICENSE_URL),
                 getString(R.string.about_licensing_information)
             ),
-            if (BuildConfig.USE_FREE_IMPLEMENTATION) null else AboutPageItem(
+            AboutPageItem(
                 AboutItem.Libraries,
                 getString(R.string.about_other_open_source_libraries)
             )
@@ -167,10 +168,11 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     private fun openLibrariesPage() {
-        val title = getString(R.string.open_source_licenses_title, appName)
-        val ossLicensesMenu = OssLicensesMenuImpl()
-        val intent = ossLicensesMenu.getIntent(context, title)
-        startActivity(intent)
+        val ctx = context
+        if (ctx != null) {
+            val title = getString(R.string.open_source_licenses_title, appName)
+            LibsBuilder().withAboutAppName(title).start(ctx)
+        }
     }
 
     override fun onAboutItemClicked(item: AboutItem) {

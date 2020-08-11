@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 
 import com.android.build.OutputFile
@@ -340,6 +340,7 @@ dependencies {
     implementation Deps.androidx_coordinatorlayout
 
     implementation Deps.sentry
+    implementation Deps.aboutlibraries
 
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -450,7 +451,6 @@ dependencies {
         implementation Deps.leanplum_core
         implementation Deps.leanplum_fcm
         implementation Deps.mozilla_lib_push_firebase
-        implementation Deps.osslicenses_library
         implementation Deps.google_ads_id // Required for the Google Advertising ID
     }
 
