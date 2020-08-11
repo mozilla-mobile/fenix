@@ -154,12 +154,6 @@ android {
             java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
-        oss {
-            java.srcDirs += ["src/oss"]
-        }
-        nonOss {
-            java.srcDirs += ["src/nonOss"]
-        }
     }
 
     splits {
