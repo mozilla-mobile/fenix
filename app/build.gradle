@@ -235,11 +235,14 @@ android.applicationVariants.all { variant ->
     println("Flavor:            " + variant.flavorName)
     println("Telemetry enabled: " + !isDebug)
 
+
     if (useReleaseVersioning) {
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
-
+        
+        println("Version Name:      " + versionName)
+        
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
