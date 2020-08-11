@@ -11,9 +11,9 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException
 import mozilla.components.support.base.log.logger.Logger
 import java.io.IOException
 
-interface AdvertisingIDImpl : AdvertisingID {
+class AdvertisingIDImpl : AdvertisingID() {
     @Suppress("TooGenericExceptionCaught")
-    override fun getAdvertisingID(context: Context): String? {
+    override fun query(context: Context): String? {
         return try {
             AdvertisingIdClient.getAdvertisingIdInfo(context).id
         } catch (e: GooglePlayServicesNotAvailableException) {

@@ -19,19 +19,7 @@ import java.security.spec.InvalidKeySpecException
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-interface AdvertisingID {
-    /**
-     * Query the Google Advertising API to get the Google Advertising ID.
-     *
-     * This is meant to be used off the main thread. The API will throw an
-     * exception and we will print a log message otherwise.
-     *
-     * @return a String containing the Google Advertising ID or null.
-     */
-    fun getAdvertisingID(context: Context): String?
-}
-
-object MetricsUtils : AdvertisingIDImpl {
+object MetricsUtils {
     fun createSearchEvent(
         engine: SearchEngine,
         context: Context,
@@ -90,7 +78,7 @@ object MetricsUtils : AdvertisingIDImpl {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun getHashedIdentifier(context: Context): String? = withContext(Dispatchers.Default) {
-        getAdvertisingID(context)?.let { unhashedID ->
+        AdvertisingIDImpl().query(context)?.let { unhashedID ->
             // Add some salt to the ID, before hashing. For this specific use-case, it's ok
             // to use the same salt value for all the hashes. We want hashes to be stable
             // within a single product, but we don't want hashes to be the same across different
