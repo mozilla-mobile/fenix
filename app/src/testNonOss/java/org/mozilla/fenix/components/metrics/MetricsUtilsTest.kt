@@ -22,7 +22,7 @@ class MetricsUtilsTest {
     private val context: Context = mockk(relaxed = true)
 
     @Test
-    fun `getAdvertisingID() returns null if the API throws`() {
+    fun `query advertisingID returns null if the API throws`() {
         mockkStatic("com.google.android.gms.ads.identifier.AdvertisingIdClient")
 
         val exceptions = listOf(
@@ -37,7 +37,7 @@ class MetricsUtilsTest {
                 AdvertisingIdClient.getAdvertisingIdInfo(any())
             } throws it
 
-            assertNull(MetricsUtils.getAdvertisingID(context))
+            assertNull(AdvertisingIDImpl().query(context))
         }
 
         unmockkStatic("com.google.android.gms.ads.identifier.AdvertisingIdClient")
@@ -48,7 +48,7 @@ class MetricsUtilsTest {
         mockkStatic(AdvertisingIdClient::class)
         every { AdvertisingIdClient.getAdvertisingIdInfo(any()) } returns null
 
-        assertNull(MetricsUtils.getAdvertisingID(context))
+        assertNull(AdvertisingIDImpl().query(context))
     }
 
     @Test
@@ -60,7 +60,7 @@ class MetricsUtilsTest {
             AdvertisingIdClient.getAdvertisingIdInfo(any())
         } returns AdvertisingIdClient.Info(testId, false)
 
-        assertEquals(testId, MetricsUtils.getAdvertisingID(context))
+        assertEquals(testId, AdvertisingIDImpl().query(context))
     }
 
     @Test
@@ -81,7 +81,7 @@ class MetricsUtilsTest {
 
         // Get the hash identifier.
         mockkObject(MetricsUtils)
-        every { MetricsUtils.getAdvertisingID(context) } returns testId
+        every { AdvertisingIDImpl().query(context) } returns testId
         every { MetricsUtils.getHashingSalt() } returns testPackageName
         runBlocking {
             assertEquals(mockedHexReturn, MetricsUtils.getHashedIdentifier(context))

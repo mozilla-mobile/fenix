@@ -17,8 +17,6 @@ import org.mozilla.fenix.gradle.tasks.LintUnitTestRunner
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
-def useFreeImplementation = project.properties['org.mozilla.fenix.useFreeImplementation'].toBoolean()
-
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
@@ -33,7 +31,6 @@ android {
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
         buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
-        buildConfigField "boolean", "USE_FREE_IMPLEMENTATION", useFreeImplementation.toString()
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
@@ -125,7 +122,19 @@ android {
         animationsDisabled = true
     }
 
-    flavorDimensions "engine"
+    flavorDimensions "version"
+    productFlavors {
+        oss {
+            dimension "version"
+            applicationIdSuffix ".oss"
+            versionNameSuffix "-oss"
+            buildConfigField "boolean", "OSS_FLAVOR", "true"
+        }
+        nonOss {
+            dimension "version"
+            buildConfigField "boolean", "OSS_FLAVOR", "false"
+        }
+    }
 
     sourceSets {
         androidTest {
@@ -145,12 +154,11 @@ android {
             java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
-        main {
-            if (useFreeImplementation) {
-                java.srcDirs += ["src/free"]
-            } else {
-                java.srcDirs += ["src/nonFree"]
-            }
+        oss {
+            java.srcDirs += ["src/oss"]
+        }
+        nonOss {
+            java.srcDirs += ["src/nonOss"]
         }
     }
 
@@ -447,12 +455,10 @@ dependencies {
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
 
-    if (!useFreeImplementation) {
-        implementation Deps.leanplum_core
-        implementation Deps.leanplum_fcm
-        implementation Deps.mozilla_lib_push_firebase
-        implementation Deps.google_ads_id // Required for the Google Advertising ID
-    }
+    nonOssImplementation Deps.leanplum_core
+    nonOssImplementation Deps.leanplum_fcm
+    nonOssImplementation Deps.mozilla_lib_push_firebase
+    nonOssImplementation Deps.google_ads_id // Required for the Google Advertising ID
 
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes

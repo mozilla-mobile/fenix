@@ -30,10 +30,10 @@ class LeanplumMetricsServiceTest {
 
         assertNull(sharedPreferences.getString("LP_DEVICE_ID", null))
 
-        val leanplumMetricService = LeanplumMetricsService(testContext.application, idGenerator)
+        val leanplumMetricService = LeanplumMetricsServiceImpl(testContext.application, idGenerator)
         assertEquals("TEST_DEVICE_ID", leanplumMetricService.deviceId)
 
-        val leanplumMetricService2 = LeanplumMetricsService(testContext.application, idGenerator)
+        val leanplumMetricService2 = LeanplumMetricsServiceImpl(testContext.application, idGenerator)
         assertEquals("TEST_DEVICE_ID", leanplumMetricService2.deviceId)
         assertEquals(1, callCount)
 
