@@ -134,7 +134,12 @@ class BrowserToolbarView(
                     ThemeManager.resolveAttribute(R.attr.toolbarDivider, container.context)
                 )
 
-                display.urlFormatter = { url -> URLStringUtils.toDisplayUrl(url) }
+                display.urlFormatter =
+                    if (context.settings().shouldStripUrl) {
+                            url -> URLStringUtils.toDisplayUrl(url)
+                    } else {
+                            url -> url
+                    }
 
                 display.colors = display.colors.copy(
                     text = primaryTextColor,

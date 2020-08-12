@@ -36,6 +36,7 @@ import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.Do
 import kotlin.math.max
 
@@ -163,6 +164,17 @@ class TabTrayViewHolder(
         urlView?.text = tab.url
             .toShortUrl(itemView.context.components.publicSuffixList)
             .take(MAX_URI_LENGTH)
+
+        urlView?.apply {
+            text =
+                if (context.settings().shouldStripUrl) {
+                    tab.url
+                        .toShortUrl(itemView.context.components.publicSuffixList)
+                        .take(MAX_URI_LENGTH)
+                } else {
+                    tab.url.take(MAX_URI_LENGTH)
+                }
+        }
     }
 
     @VisibleForTesting

@@ -43,5 +43,10 @@
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_bottom"
             android:title="@string/preference_bottom_toolbar" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_strip_url"
+            android:summary="@string/preferences_strip_url_description"
+            android:title="@string/preferences_strip_url_title" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

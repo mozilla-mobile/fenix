@@ -10,6 +10,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
@@ -32,6 +33,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.customization_preferences, rootKey)
+
+        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
+            isChecked = context.settings().shouldStripUrl
+
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     override fun onResume() {
