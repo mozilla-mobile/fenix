@@ -57,7 +57,7 @@ private val Event.name: String?
 class LeanplumMetricsServiceImpl(
     private val application: Application,
     private val deviceIdGenerator: () -> String = { randomUUID().toString() }
-) : LeanplumMetricsService(application, deviceIdGenerator) {
+) : MetricsService, DeepLinkIntentProcessor.DeepLinkVerifier {
     val scope = CoroutineScope(Dispatchers.IO)
     var leanplumJob: Job? = null
 
@@ -95,6 +95,7 @@ class LeanplumMetricsServiceImpl(
         deviceId
     }
 
+    @Suppress("ComplexMethod")
     override fun start() {
 
         if (!application.settings().isMarketingTelemetryEnabled) return
@@ -255,7 +256,7 @@ class LeanplumMetricsServiceImpl(
             "jpn" // Japanese
         )
 
-        private val PREFERENCE_NAME = "LEANPLUM_PREFERENCES"
-        private val DEVICE_ID_KEY = "LP_DEVICE_ID"
+        private const val PREFERENCE_NAME = "LEANPLUM_PREFERENCES"
+        private const val DEVICE_ID_KEY = "LP_DEVICE_ID"
     }
 }

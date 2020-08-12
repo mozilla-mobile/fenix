@@ -8,6 +8,7 @@ import android.app.Application
 import android.net.Uri
 import java.util.UUID
 
+@SuppressWarnings("EmptyFunctionBlock")
 class LeanplumMetricsServiceImpl(
     application: Application,
     deviceIdGenerator: () -> String = { UUID.randomUUID().toString() }

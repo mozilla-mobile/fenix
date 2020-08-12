@@ -6,7 +6,7 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 
-class AdvertisingIDImpl : AdvertisingID() {
+class AdvertisingIDImpl : AdvertisingID {
     override fun query(context: Context): String? {
         return null
     }

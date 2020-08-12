@@ -6,7 +6,7 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 
-abstract class AdvertisingID {
+interface AdvertisingID {
     /**
      * Query the Google Advertising API to get the Google Advertising ID.
      *
@@ -15,5 +15,5 @@ abstract class AdvertisingID {
      *
      * @return a String containing the Google Advertising ID or null.
      */
-    abstract fun query(context: Context): String?
+    fun query(context: Context): String?
 }
