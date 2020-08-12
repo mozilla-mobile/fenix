@@ -42,7 +42,6 @@ import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -97,10 +96,10 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -140,7 +139,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
-    private val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
     private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
@@ -279,12 +277,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 interactor = browserInteractor,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
                 lifecycleOwner = viewLifecycleOwner
-            )
-
-            thumbnailsFeature.set(
-                feature = BrowserThumbnails(context, view.engineView, store),
-                owner = this,
-                view = view
             )
 
             toolbarIntegration.set(
