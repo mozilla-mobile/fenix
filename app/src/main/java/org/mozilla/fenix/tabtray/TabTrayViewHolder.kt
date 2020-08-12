@@ -161,10 +161,6 @@ class TabTrayViewHolder(
         // is done in the toolbar and awesomebar:
         // https://github.com/mozilla-mobile/fenix/issues/1824
         // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.text = tab.url
-            .toShortUrl(itemView.context.components.publicSuffixList)
-            .take(MAX_URI_LENGTH)
-
         urlView?.apply {
             text =
                 if (context.settings().shouldStripUrl) {
