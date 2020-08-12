@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
 
 import com.android.build.OutputFile
@@ -348,7 +348,7 @@ dependencies {
     implementation Deps.androidx_coordinatorlayout
 
     implementation Deps.sentry
-    implementation Deps.aboutlibraries
+    implementation Deps.osslicenses_library
 
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
