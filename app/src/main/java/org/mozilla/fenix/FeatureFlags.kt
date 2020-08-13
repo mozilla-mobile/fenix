@@ -42,12 +42,12 @@ object FeatureFlags {
     /**
      * Enables the new search experience
      */
-    val newSearchExperience = Config.channel.isNightlyOrDebug
+    val newSearchExperience = true // Just enables the setting in Secret Settings
 
     /**
      * Enables wait til first contentful paint
      */
-    val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
+    val waitUntilPaintToDraw = true // Just enables the setting in secret settings
 
     /**
      * Enables downloads with external download managers.
