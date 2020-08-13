@@ -26,7 +26,7 @@
     <string name="open_tab_tray_plural">Адкрытых картак: %1$s. Націсніце, каб пераключыць карткі.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s распрацаваны Mozilla.</string>
+    <string name="about_content">%1$s распрацаваны Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

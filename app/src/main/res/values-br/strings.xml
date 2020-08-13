@@ -23,7 +23,7 @@
     <string name="open_tab_tray_plural">%1$s ivinell digor. Stokit evit mont dʼun ivinell all.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">Gant Mozilla eo produet %1$s.</string>
+    <string name="about_content">Gant Adam Novak eo produet %1$s.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

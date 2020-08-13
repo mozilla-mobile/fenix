@@ -35,7 +35,7 @@
     <string name="tab_tray_select_collection">Επιλογή συλλογής</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">Το %1$s αναπτύσσεται από τη Mozilla.</string>
+    <string name="about_content">Το %1$s αναπτύσσεται από τη Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

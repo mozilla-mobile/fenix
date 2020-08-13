@@ -25,7 +25,7 @@
     <string name="open_tab_tray_plural">%1$s pestañas abiertas. Tocar para cambiar de pestaña.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s es producido por Mozilla.</string>
+    <string name="about_content">%1$s es producido por Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

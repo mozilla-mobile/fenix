@@ -26,7 +26,7 @@
     <string name="open_tab_tray_plural">%1$s unghjette aperte. Picchichjà per cambià d’unghjetta.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s hè sviluppatu da Mozilla.</string>
+    <string name="about_content">%1$s hè sviluppatu da Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

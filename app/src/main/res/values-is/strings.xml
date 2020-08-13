@@ -25,7 +25,7 @@
     <string name="open_tab_tray_plural">%1$s opnir flipar. Snertu til að skipta um flipa.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s er framleitt af Mozilla.</string>
+    <string name="about_content">%1$s er framleitt af Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

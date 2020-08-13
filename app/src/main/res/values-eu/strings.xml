@@ -26,7 +26,7 @@
     <string name="open_tab_tray_plural">Irekitako %1$s fitxa. Sakatu fitxaz aldatzeko.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s Mozillak egina da.</string>
+    <string name="about_content">%1$s Adam Novakk egina da.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

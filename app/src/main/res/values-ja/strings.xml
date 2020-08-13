@@ -43,7 +43,7 @@
     <string name="tab_tray_exit_multiselect_content_description">複数選択モードを終了しました</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s は Mozilla の製品です。</string>
+    <string name="about_content">%1$s は Adam Novak の製品です。</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

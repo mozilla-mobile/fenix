@@ -50,7 +50,7 @@
     <string name="tab_tray_multiselect_selected_content_description">S’ha seleccionat</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">El %1$s està creat per Mozilla.</string>
+    <string name="about_content">El %1$s està creat per Adam Novak.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
