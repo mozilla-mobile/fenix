@@ -17,6 +17,26 @@ import org.mozilla.fenix.gradle.tasks.LintUnitTestRunner
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
+def initBuildFeatures() {
+    def properties = project.getProperties()
+    def allBuildFeatures = file('src/features')
+        .listFiles()
+        .findAll { f -> f.isDirectory() }
+        .name
+
+    def features = [:]
+    for (feature in allBuildFeatures) {
+        def property = "org.mozilla.fenix.enableFeature${feature.capitalize()}"
+        def isEnabled = (properties."${property}" ?: "true").toBoolean()
+        features.put feature, isEnabled
+        println("Feature ${feature}: ${isEnabled ? 'enabled' : 'disabled'}.")
+    }
+
+    return features
+}
+
+project.ext.set("buildFeatures", initBuildFeatures())
+
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
@@ -33,6 +53,13 @@ android {
         buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+        project.ext.buildFeatures.each { feature, isEnabled ->
+            def featureToUpper = feature.replaceAll(/\B([A-Z])/, '_\$1').toUpperCase()
+            def featureKey = "ENABLE_FEATURE_" + featureToUpper
+            def featureValue = isEnabled.toString()
+            buildConfigField "boolean", featureKey, featureValue
+            resValue "bool", featureKey, featureValue
+        }
         manifestPlaceholders = [
                 "deepLinkScheme": deepLinkSchemeValue
         ]
@@ -125,6 +152,15 @@ android {
     flavorDimensions "engine"
 
     sourceSets {
+        main {
+            project.ext.buildFeatures.each { feature, isEnabled ->
+                if (isEnabled) {
+                    java.srcDirs += ["src/features/${feature}/impl"]
+                } else {
+                    java.srcDirs += ["src/features/${feature}/stub"]
+                }
+            }
+        }
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
@@ -141,6 +177,13 @@ android {
         release {
             java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
+        }
+        test {
+            project.ext.buildFeatures.each { feature, isEnabled ->
+                if (isEnabled) {
+                    java.srcDirs += ["src/features/${feature}/test"]
+                }
+            }
         }
     }
 
