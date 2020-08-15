@@ -81,7 +81,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     @RelaxedMockK private lateinit var tabCollectionStorage: TabCollectionStorage
     @RelaxedMockK private lateinit var topSitesUseCase: TopSitesUseCases
     @RelaxedMockK private lateinit var readerModeController: ReaderModeController
-    @RelaxedMockK private lateinit var sessionFeatureWrapper: ViewBoundFeatureWrapper<SessionFeature>
+    @MockK private lateinit var sessionFeatureWrapper: ViewBoundFeatureWrapper<SessionFeature>
     @RelaxedMockK private lateinit var sessionFeature: SessionFeature
 
     @Before
@@ -104,6 +104,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.browserFragment
         }
+        every { currentSession.id } returns "1"
 
         val onComplete = slot<() -> Unit>()
         every { browserAnimator.captureEngineViewAndDrawStatically(capture(onComplete)) } answers { onComplete.captured.invoke() }
@@ -133,8 +134,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         val controller = createController(scope = this)
         controller.handleToolbarItemInteraction(item)
 
+        val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment()
+
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
-        verify { navController.navigate(R.id.action_global_tabHistoryDialogFragment) }
+        verify { navController.navigate(directions) }
     }
 
     @Test
@@ -155,8 +158,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         val controller = createController(scope = this)
         controller.handleToolbarItemInteraction(item)
 
+        val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment()
+
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
-        verify { navController.navigate(R.id.action_global_tabHistoryDialogFragment) }
+        verify { navController.navigate(directions) }
     }
 
     @Test
@@ -204,11 +209,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         val controller = createController(scope = this)
         controller.handleToolbarItemInteraction(item)
 
+        val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
+
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
-        verify {
-            val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
-            navController.navigate(directions, null)
-        }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -229,11 +233,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         val controller = createController(scope = this)
         controller.handleToolbarItemInteraction(item)
 
+        val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARKS)) }
-        verify {
-            val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
-            navController.navigate(directions, null)
-        }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -243,11 +246,10 @@ class DefaultBrowserToolbarMenuControllerTest {
         val controller = createController(scope = this)
         controller.handleToolbarItemInteraction(item)
 
+        val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
+
         verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.HISTORY)) }
-        verify {
-            val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
-            navController.navigate(directions, null)
-        }
+        verify { navController.navigate(directions, null) }
     }
 
     @Test
@@ -385,9 +387,7 @@ class DefaultBrowserToolbarMenuControllerTest {
             tabIds = arrayOf(currentSession.id),
             selectedTabIds = arrayOf(currentSession.id)
         )
-        verify {
-            navController.navigate(directionsEq(directions), null)
-        }
+        verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test
@@ -407,15 +407,12 @@ class DefaultBrowserToolbarMenuControllerTest {
                 )
             )
         }
-
         val directions = BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
             saveCollectionStep = SaveCollectionStep.NameCollection,
             tabIds = arrayOf(currentSession.id),
             selectedTabIds = arrayOf(currentSession.id)
         )
-        verify {
-            navController.navigate(directionsEq(directions), null)
-        }
+        verify { navController.navigate(directionsEq(directions), null) }
     }
 
     @Test
@@ -446,6 +443,29 @@ class DefaultBrowserToolbarMenuControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { deleteAndQuit(activity, testScope, null) }
+    }
+
+    @Test
+    fun handleToolbarReaderModeAppearancePress() = runBlockingTest {
+        val item = ToolbarMenu.Item.ReaderModeAppearance
+
+        val controller = createController(scope = this)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { readerModeController.showControls() }
+        verify { metrics.track(Event.ReaderModeAppearanceOpened) }
+    }
+
+    @Test
+    fun handleToolbarOpenInAppPress() = runBlockingTest {
+        val item = ToolbarMenu.Item.OpenInApp
+
+        val controller = createController(scope = this)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify { settings.openInAppOpened = true }
     }
 
     private fun createController(

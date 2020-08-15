@@ -7,14 +7,15 @@ package org.mozilla.fenix.components.toolbar
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineView
@@ -22,10 +23,8 @@ import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSitesUseCases
-import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
@@ -33,29 +32,23 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.browser.browsingmode.SimpleBrowsingModeManager
 import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
 
-    @get:Rule
-    val coroutinesTestRule = MainCoroutineRule()
-
     @RelaxedMockK private lateinit var activity: HomeActivity
-    @RelaxedMockK private lateinit var navController: NavController
+    @MockK(relaxUnitFun = true) private lateinit var navController: NavController
     @RelaxedMockK private lateinit var onTabCounterClicked: () -> Unit
     @RelaxedMockK private lateinit var onCloseTab: (Session) -> Unit
     @RelaxedMockK private lateinit var sessionManager: SessionManager
-    @RelaxedMockK private lateinit var engineView: EngineView
-    @RelaxedMockK private lateinit var currentSession: Session
+    @MockK(relaxUnitFun = true) private lateinit var engineView: EngineView
+    @MockK private lateinit var currentSession: Session
     @RelaxedMockK private lateinit var metrics: MetricController
     @RelaxedMockK private lateinit var searchUseCases: SearchUseCases
     @RelaxedMockK private lateinit var sessionUseCases: SessionUseCases
@@ -74,30 +67,44 @@ class DefaultBrowserToolbarControllerTest {
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.browserFragment
         }
+        every { currentSession.id } returns "1"
+        every { currentSession.private } returns false
+        every { currentSession.searchTerms = any() } just Runs
 
         val onComplete = slot<() -> Unit>()
         every { browserAnimator.captureEngineViewAndDrawStatically(capture(onComplete)) } answers { onComplete.captured.invoke() }
     }
 
     @Test
-    fun handleBrowserToolbarPaste() = runBlockingTest {
-        every { currentSession.id } returns "1"
-
+    fun handleBrowserToolbarPaste() {
         val pastedText = "Mozilla"
-        val controller = createController()
+        val controller = createController(useNewSearchExperience = false)
         controller.handleToolbarPaste(pastedText)
 
         val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
             sessionId = "1",
             pastedText = pastedText
         )
-        verify {
-            navController.navigate(directionsEq(directions), any<NavOptions>())
-        }
+
+        verify { navController.navigate(directions, any<NavOptions>()) }
     }
 
     @Test
-    fun handleBrowserToolbarPasteAndGoSearch() = runBlockingTest {
+    fun handleBrowserToolbarPaste_useNewSearchExperience() {
+        val pastedText = "Mozilla"
+        val controller = createController(useNewSearchExperience = true)
+        controller.handleToolbarPaste(pastedText)
+
+        val directions = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1",
+            pastedText = pastedText
+        )
+
+        verify { navController.navigate(directions, any<NavOptions>()) }
+    }
+
+    @Test
+    fun handleBrowserToolbarPasteAndGoSearch() {
         val pastedText = "Mozilla"
 
         val controller = createController()
@@ -109,7 +116,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleBrowserToolbarPasteAndGoUrl() = runBlockingTest {
+    fun handleBrowserToolbarPasteAndGoUrl() {
         val pastedText = "https://mozilla.org"
 
         val controller = createController()
@@ -121,7 +128,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleTabCounterClick() = runBlockingTest {
+    fun handleTabCounterClick() {
         val controller = createController()
         controller.handleTabCounterClick()
 
@@ -129,7 +136,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun `handle reader mode enabled`() = runBlockingTest {
+    fun `handle reader mode enabled`() {
         val controller = createController()
         controller.handleReaderModePressed(enabled = true)
 
@@ -137,7 +144,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun `handle reader mode disabled`() = runBlockingTest {
+    fun `handle reader mode disabled`() {
         val controller = createController()
         controller.handleReaderModePressed(enabled = false)
 
@@ -145,27 +152,34 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleToolbarClick() = runBlockingTest {
-        every { currentSession.id } returns "1"
-
-        val controller = createController()
+    fun handleToolbarClick() {
+        val controller = createController(useNewSearchExperience = false)
         controller.handleToolbarClick()
 
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+        val expected = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
             sessionId = "1"
         )
+
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
-        verify {
-            navController.navigate(directionsEq(directions), any<NavOptions>())
-        }
+        verify { navController.navigate(expected, any<NavOptions>()) }
     }
 
     @Test
-    fun handleToolbarCloseTabPressWithLastPrivateSession() = runBlockingTest {
-        every { currentSession.id } returns "1"
-        val browsingModeManager = object : BrowsingModeManager {
-            override var mode = BrowsingMode.Private
-        }
+    fun handleToolbarClick_useNewSearchExperience() {
+        val controller = createController(useNewSearchExperience = true)
+        controller.handleToolbarClick()
+
+        val expected = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1"
+        )
+
+        verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
+        verify { navController.navigate(expected, any<NavOptions>()) }
+    }
+
+    @Test
+    fun handleToolbarCloseTabPressWithLastPrivateSession() {
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
         val item = TabCounterMenuItem.CloseTab
         val sessions = listOf(
             mockk<Session> {
@@ -184,7 +198,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleToolbarCloseTabPress() = runBlockingTest {
+    fun handleToolbarCloseTabPress() {
         val tabsUseCases: TabsUseCases = mockk(relaxed = true)
         val removeTabUseCase: TabsUseCases.RemoveTabUseCase = mockk(relaxed = true)
         val item = TabCounterMenuItem.CloseTab
@@ -199,35 +213,38 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     @Test
-    fun handleToolbarNewTabPress() = runBlockingTest {
-        val browsingModeManager: BrowsingModeManager = DefaultBrowsingModeManager(
-            BrowsingMode.Private,
-            mockk(relaxed = true)
-        ) {}
+    fun handleToolbarNewTabPress() {
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
         val item = TabCounterMenuItem.NewTab(false)
 
         every { activity.browsingModeManager } returns browsingModeManager
+        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        assertEquals(BrowsingMode.Normal, activity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
         verify { navController.popBackStack(R.id.homeFragment, false) }
     }
 
     @Test
-    fun handleToolbarNewPrivateTabPress() = runBlockingTest {
-        val browsingModeManager: BrowsingModeManager = DefaultBrowsingModeManager(
-            BrowsingMode.Normal,
-            mockk(relaxed = true)
-        ) {}
+    fun handleToolbarNewPrivateTabPress() {
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Normal)
         val item = TabCounterMenuItem.NewTab(true)
 
         every { activity.browsingModeManager } returns browsingModeManager
+        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        assertEquals(BrowsingMode.Private, activity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Private, browsingModeManager.mode)
         verify { navController.popBackStack(R.id.homeFragment, false) }
+    }
+
+    @Test
+    fun handleScroll() {
+        val controller = createController()
+        controller.handleScroll(10)
+        verify { engineView.setVerticalClipping(10) }
     }
 
     private fun createController(

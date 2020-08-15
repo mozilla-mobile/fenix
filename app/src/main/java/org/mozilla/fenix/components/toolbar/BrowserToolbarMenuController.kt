@@ -11,7 +11,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
@@ -47,6 +46,7 @@ interface BrowserToolbarMenuController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
 }
 
+@Suppress("LargeClass")
 class DefaultBrowserToolbarMenuController(
     private val activity: HomeActivity,
     private val navController: NavController,
@@ -74,7 +74,6 @@ class DefaultBrowserToolbarMenuController(
     @VisibleForTesting
     internal var ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    @ExperimentalCoroutinesApi
     @Suppress("ComplexMethod", "LongMethod")
     override fun handleToolbarItemInteraction(item: ToolbarMenu.Item) {
         val sessionUseCases = activity.components.useCases.sessionUseCases
@@ -83,14 +82,18 @@ class DefaultBrowserToolbarMenuController(
         Do exhaustive when (item) {
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
-                    navController.navigate(R.id.action_global_tabHistoryDialogFragment)
+                    navController.navigate(
+                        BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment()
+                    )
                 } else {
                     sessionUseCases.goBack.invoke(currentSession)
                 }
             }
             is ToolbarMenu.Item.Forward -> {
                 if (item.viewHistory) {
-                    navController.navigate(R.id.action_global_tabHistoryDialogFragment)
+                    navController.navigate(
+                        BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment()
+                    )
                 } else {
                     sessionUseCases.goForward.invoke(currentSession)
                 }

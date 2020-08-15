@@ -36,7 +36,6 @@ interface BrowserToolbarController {
     fun handleReaderModePressed(enabled: Boolean)
 }
 
-@Suppress("LargeClass", "TooManyFunctions")
 class DefaultBrowserToolbarController(
     private val activity: HomeActivity,
     private val navController: NavController,
@@ -57,10 +56,12 @@ class DefaultBrowserToolbarController(
     override fun handleToolbarPaste(text: String) {
         if (useNewSearchExperience) {
             navController.nav(
-                R.id.browserFragment, BrowserFragmentDirections.actionGlobalSearchDialog(
+                R.id.browserFragment,
+                BrowserFragmentDirections.actionGlobalSearchDialog(
                     sessionId = currentSession?.id,
                     pastedText = text
-                ), getToolbarNavOptions(activity)
+                ),
+                getToolbarNavOptions(activity)
             )
         } else {
             browserAnimator.captureEngineViewAndDrawStatically {
@@ -91,15 +92,15 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleToolbarClick() {
-        metrics.track(
-            Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)
-        )
+        metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
 
         if (useNewSearchExperience) {
             navController.nav(
-                R.id.browserFragment, BrowserFragmentDirections.actionGlobalSearchDialog(
+                R.id.browserFragment,
+                BrowserFragmentDirections.actionGlobalSearchDialog(
                     currentSession?.id
-                ), getToolbarNavOptions(activity)
+                ),
+                getToolbarNavOptions(activity)
             )
         } else {
             browserAnimator.captureEngineViewAndDrawStatically {
