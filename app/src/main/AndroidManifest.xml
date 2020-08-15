@@ -265,6 +265,7 @@
 
         <service
             android:name=".push.FirebasePushService"
+            android:enabled="@bool/ENABLE_FEATURE_FIREBASE"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -455,7 +455,9 @@ dependencies {
     implementation Deps.mozilla_ui_widgets
 
     implementation Deps.mozilla_lib_crash
-    implementation Deps.mozilla_lib_push_firebase
+    if (project.ext.buildFeatures['firebase']) {
+        implementation Deps.mozilla_lib_push_firebase
+    }
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
