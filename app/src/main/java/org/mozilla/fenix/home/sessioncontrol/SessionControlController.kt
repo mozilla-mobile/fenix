@@ -22,7 +22,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
-import org.mozilla.fenix.components.TopSiteStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -153,7 +152,6 @@ class DefaultSessionControlController(
     private val metrics: MetricController,
     private val sessionManager: SessionManager,
     private val tabCollectionStorage: TabCollectionStorage,
-    private val topSiteStorage: TopSiteStorage,
     private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
@@ -273,7 +271,9 @@ class DefaultSessionControlController(
         }
 
         viewLifecycleScope.launch(Dispatchers.IO) {
-            topSiteStorage.removeTopSite(topSite)
+            with(activity.components.useCases.topSitesUseCase) {
+                removeTopSites(topSite)
+            }
         }
     }
 
