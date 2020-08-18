@@ -56,6 +56,7 @@ import mozilla.components.feature.privatemode.feature.SecureWindowFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
+import mozilla.components.feature.search.SearchFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
@@ -149,6 +150,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val secureWindowFeature = ViewBoundFeatureWrapper<SecureWindowFeature>()
     private var fullScreenMediaFeature =
         ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
+    private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
     private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
@@ -211,6 +213,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         }
 
         return getSessionById()?.also { session ->
+            val openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
+                action = Intent.ACTION_VIEW
+                putExtra(HomeActivity.OPEN_TO_BROWSER, true)
+            }
+
             val browserToolbarController = DefaultBrowserToolbarController(
                 activity = requireActivity() as HomeActivity,
                 navController = findNavController(),
@@ -226,10 +233,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 swipeRefresh = swipeRefresh,
                 browserAnimator = browserAnimator,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
-                    action = Intent.ACTION_VIEW
-                    putExtra(HomeActivity.OPEN_TO_BROWSER, true)
-                },
+                openInFenixIntent = openInFenixIntent,
                 bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
                 scope = viewLifecycleOwner.lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
@@ -489,6 +493,26 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     view.engineView,
                     customTabSessionId
                 ),
+                owner = this,
+                view = view
+            )
+
+            searchFeature.set(
+                feature = SearchFeature(store, customTabSessionId) { request, tabId ->
+                    val parentSession = sessionManager.findSessionById(tabId)
+                    val useCase = if (request.isPrivate) {
+                        requireComponents.useCases.searchUseCases.newPrivateTabSearch
+                    } else {
+                        requireComponents.useCases.searchUseCases.newTabSearch
+                    }
+
+                    if (parentSession?.isCustomTabSession() == true) {
+                        useCase.invoke(request.query)
+                        requireActivity().startActivity(openInFenixIntent)
+                    } else {
+                        useCase.invoke(request.query, parentSession = parentSession)
+                    }
+                },
                 owner = this,
                 view = view
             )

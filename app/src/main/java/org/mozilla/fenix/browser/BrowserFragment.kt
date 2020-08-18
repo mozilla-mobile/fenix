@@ -26,7 +26,6 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.feature.search.SearchFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
@@ -55,7 +54,6 @@ import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
-    private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
     private val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
 
     private var readerModeAvailable = false
@@ -145,23 +143,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     store = components.core.store,
                     tabsUseCases = components.useCases.tabsUseCases
                 ),
-                owner = this,
-                view = view
-            )
-            searchFeature.set(
-                feature = SearchFeature(components.core.store) {
-                    if (it.isPrivate) {
-                        components.useCases.searchUseCases.newPrivateTabSearch.invoke(
-                            it.query,
-                            parentSession = getSessionById()
-                        )
-                    } else {
-                        components.useCases.searchUseCases.newTabSearch.invoke(
-                            it.query,
-                            parentSession = getSessionById()
-                        )
-                    }
-                },
                 owner = this,
                 view = view
             )
