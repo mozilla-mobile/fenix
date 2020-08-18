@@ -189,6 +189,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         browserInitialized = initializeUI(view) != null
+        requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
     }
 
     @Suppress("ComplexMethod", "LongMethod")
@@ -439,7 +440,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     sessionManager = sessionManager,
                     sessionId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
-                    launchInApp = { context.settings().openLinksInExternalApp }
+                    launchInApp = { context.settings().openLinksInExternalApp },
+                    loadUrlUseCase = context.components.useCases.sessionUseCases.loadUrl
                 ),
                 owner = this,
                 view = view
@@ -756,7 +758,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         super.onStart()
         requireComponents.core.sessionManager.register(this, this, autoPause = true)
         sitePermissionWifiIntegration.get()?.maybeAddWifiConnectedListener()
-        requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
     }
 
     @CallSuper
@@ -1062,9 +1063,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      */
     override fun onDestroyView() {
         super.onDestroyView()
+        requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
         _browserToolbarView = null
         _browserInteractor = null
-        requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
     }
 
     companion object {

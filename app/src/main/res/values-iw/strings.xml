@@ -299,6 +299,8 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">פתיחת קישורים ביישומונים</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">מנהל הורדות חיצוני</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">תוספות</string>
 
@@ -1444,6 +1446,9 @@
     <string name="synced_tabs_no_tabs">אין לך לשוניות פתוחות ב־Firefox בשאר המכשירים שלך.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">הצגת רשימת הלשוניות מהמכשירים האחרים שלך.</string>
+
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">יש להתחבר כדי לסנכרן</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->

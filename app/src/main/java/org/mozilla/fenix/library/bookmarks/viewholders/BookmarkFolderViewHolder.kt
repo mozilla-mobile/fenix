@@ -12,8 +12,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.LibrarySiteItemView
-import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentState
+import org.mozilla.fenix.library.bookmarks.BookmarkPayload
 import org.mozilla.fenix.library.bookmarks.BookmarkViewInteractor
 import org.mozilla.fenix.library.bookmarks.inRoots
 
@@ -22,34 +22,44 @@ import org.mozilla.fenix.library.bookmarks.inRoots
  */
 class BookmarkFolderViewHolder(
     view: LibrarySiteItemView,
-    interactor: BookmarkViewInteractor,
-    private val selectionHolder: SelectionHolder<BookmarkNode>
+    interactor: BookmarkViewInteractor
 ) : BookmarkNodeViewHolder(view, interactor) {
 
     override var item: BookmarkNode? = null
+
+    init {
+        containerView.displayAs(LibrarySiteItemView.ItemType.FOLDER)
+    }
 
     override fun bind(
         item: BookmarkNode,
         mode: BookmarkFragmentState.Mode
     ) {
+        bind(item, mode, BookmarkPayload(true, true, true, true))
+    }
+
+    override fun bind(item: BookmarkNode, mode: BookmarkFragmentState.Mode, payload: BookmarkPayload) {
         this.item = item
 
-        containerView.displayAs(LibrarySiteItemView.ItemType.FOLDER)
-
-        setSelectionListeners(item, selectionHolder)
+        setSelectionListeners(item, mode)
 
         if (!item.inRoots()) {
-            setupMenu(item)
-            if (mode is BookmarkFragmentState.Mode.Selecting) {
-                containerView.overflowView.hideAndDisable()
-            } else {
-                containerView.overflowView.showAndEnable()
+            updateMenu(item.type)
+            if (payload.modeChanged) {
+                if (mode is BookmarkFragmentState.Mode.Selecting) {
+                    containerView.overflowView.hideAndDisable()
+                } else {
+                    containerView.overflowView.showAndEnable()
+                }
             }
         } else {
             containerView.overflowView.visibility = View.GONE
         }
 
-        containerView.changeSelected(item in selectionHolder.selectedItems)
+        if (payload.selectedChanged) {
+            containerView.changeSelected(item in mode.selectedItems)
+        }
+
         containerView.iconView.setImageDrawable(
             AppCompatResources.getDrawable(
                 containerView.context,
@@ -63,6 +73,9 @@ class BookmarkFolderViewHolder(
                 )
             }
         )
-        containerView.titleView.text = item.title
+
+        if (payload.titleChanged) {
+            containerView.titleView.text = item.title
+        }
     }
 }

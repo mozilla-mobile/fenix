@@ -4,12 +4,13 @@
 
 package org.mozilla.fenix.library.bookmarks.viewholders
 
+import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.storage.BookmarkNode
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.LibrarySiteItemView
-import org.mozilla.fenix.library.SelectionHolder
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentState
+import org.mozilla.fenix.library.bookmarks.BookmarkPayload
 import org.mozilla.fenix.library.bookmarks.BookmarkViewInteractor
 
 /**
@@ -17,36 +18,55 @@ import org.mozilla.fenix.library.bookmarks.BookmarkViewInteractor
  */
 class BookmarkItemViewHolder(
     view: LibrarySiteItemView,
-    interactor: BookmarkViewInteractor,
-    private val selectionHolder: SelectionHolder<BookmarkNode>
+    interactor: BookmarkViewInteractor
 ) : BookmarkNodeViewHolder(view, interactor) {
 
     override var item: BookmarkNode? = null
+
+    init {
+        containerView.displayAs(LibrarySiteItemView.ItemType.SITE)
+    }
 
     override fun bind(
         item: BookmarkNode,
         mode: BookmarkFragmentState.Mode
     ) {
-        this.item = item
-
-        containerView.displayAs(LibrarySiteItemView.ItemType.SITE)
-
-        if (mode is BookmarkFragmentState.Mode.Selecting) {
-            containerView.overflowView.hideAndDisable()
-        } else {
-            containerView.overflowView.showAndEnable()
-        }
-        setupMenu(item)
-        containerView.titleView.text = if (item.title.isNullOrBlank()) item.url else item.title
-        containerView.urlView.text = item.url
-
-        setSelectionListeners(item, selectionHolder)
-
-        containerView.changeSelected(item in selectionHolder.selectedItems)
-        setColorsAndIcons(item.url)
+        bind(item, mode, BookmarkPayload(true, true, true, true))
     }
 
-    private fun setColorsAndIcons(url: String?) {
+    override fun bind(item: BookmarkNode, mode: BookmarkFragmentState.Mode, payload: BookmarkPayload) {
+        this.item = item
+
+        updateMenu(item.type)
+
+        if (payload.modeChanged) {
+            if (mode is BookmarkFragmentState.Mode.Selecting) {
+                containerView.overflowView.hideAndDisable()
+            } else {
+                containerView.overflowView.showAndEnable()
+            }
+        }
+
+        if (payload.selectedChanged) {
+            containerView.changeSelected(item in mode.selectedItems)
+        }
+
+        if (payload.titleChanged) {
+            containerView.titleView.text = if (item.title.isNullOrBlank()) item.url else item.title
+        } else if (payload.urlChanged && item.title.isNullOrBlank()) {
+            containerView.titleView.text = item.url
+        }
+
+        if (payload.urlChanged) {
+            containerView.urlView.text = item.url
+            setColorsAndIcons(item.url)
+        }
+
+        setSelectionListeners(item, mode)
+    }
+
+    @VisibleForTesting
+    internal fun setColorsAndIcons(url: String?) {
         if (url != null && url.startsWith("http")) {
             containerView.loadFavicon(url)
         } else {

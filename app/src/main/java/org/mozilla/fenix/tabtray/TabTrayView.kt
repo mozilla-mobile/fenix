@@ -39,9 +39,14 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
+import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
+import org.mozilla.fenix.components.toolbar.TabCounter.Companion.SO_MANY_TABS_OPEN
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
+import org.mozilla.fenix.tabtray.TabTrayDialogFragmentState.Mode
+import java.text.NumberFormat
 
 /**
  * View that contains and configures the BrowserAwesomeBar
@@ -71,7 +76,6 @@ class TabTrayView(
     private val tabTrayItemMenu: TabTrayItemMenu
     private var menu: BrowserMenu? = null
 
-    private val bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
     private var tabsTouchHelper: TabsTouchHelper
     private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
 
@@ -85,9 +89,9 @@ class TabTrayView(
 
         toggleFabText(isPrivate)
 
-        bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (!hasAccessibilityEnabled) {
+                if (interactor.onModeRequested() is Mode.Normal && !hasAccessibilityEnabled) {
                     if (slideOffset >= SLIDE_OFFSET) {
                         fabView.new_tab_button.show()
                     } else {
@@ -102,9 +106,7 @@ class TabTrayView(
                     interactor.onTabTrayDismissed()
                 }
             }
-        }
-
-        behavior.addBottomSheetCallback(bottomSheetCallback)
+        })
 
         val selectedTabIndex = if (!isPrivate) {
             DEFAULT_TAB_ID
@@ -133,12 +135,14 @@ class TabTrayView(
 
         setTopOffset(startingInLandscape)
 
+        val concatAdapter = ConcatAdapter(tabsAdapter)
+
         view.tabsTray.apply {
             layoutManager = LinearLayoutManager(container.context).apply {
                 reverseLayout = true
                 stackFromEnd = true
             }
-            adapter = ConcatAdapter(collectionsButtonAdapter, tabsAdapter)
+            adapter = concatAdapter
 
             tabsTouchHelper = TabsTouchHelper(
                 observable = tabsAdapter,
@@ -149,6 +153,9 @@ class TabTrayView(
 
             tabsAdapter.tabTrayInteractor = interactor
             tabsAdapter.onTabsUpdated = {
+                // Put the 'Add to collections' button after the tabs have loaded.
+                concatAdapter.addAdapter(0, collectionsButtonAdapter)
+
                 if (hasAccessibilityEnabled) {
                     tabsAdapter.notifyDataSetChanged()
                 }
@@ -266,17 +273,17 @@ class TabTrayView(
     override fun onTabUnselected(tab: TabLayout.Tab?) { /*noop*/
     }
 
-    var mode: TabTrayDialogFragmentState.Mode = TabTrayDialogFragmentState.Mode.Normal
+    var mode: Mode = Mode.Normal
         private set
 
     fun updateState(state: TabTrayDialogFragmentState) {
         val oldMode = mode
 
         if (oldMode::class != state.mode::class) {
-            updateTabsForMultiselectModeChanged(state.mode is TabTrayDialogFragmentState.Mode.MultiSelect)
+            updateTabsForMultiselectModeChanged(state.mode is Mode.MultiSelect)
             if (view.context.settings().accessibilityServicesEnabled) {
                 view.announceForAccessibility(
-                    if (state.mode == TabTrayDialogFragmentState.Mode.Normal) view.context.getString(
+                    if (state.mode == Mode.Normal) view.context.getString(
                         R.string.tab_tray_exit_multiselect_content_description
                     ) else view.context.getString(R.string.tab_tray_enter_multiselect_content_description)
                 )
@@ -285,20 +292,18 @@ class TabTrayView(
 
         mode = state.mode
         when (state.mode) {
-            TabTrayDialogFragmentState.Mode.Normal -> {
+            Mode.Normal -> {
                 view.tabsTray.apply {
                     tabsTouchHelper.attachToRecyclerView(this)
                 }
-                behavior.addBottomSheetCallback(bottomSheetCallback)
 
                 toggleUIMultiselect(multiselect = false)
 
                 updateUINormalMode(state.browserState)
             }
-            is TabTrayDialogFragmentState.Mode.MultiSelect -> {
+            is Mode.MultiSelect -> {
                 // Disable swipe to delete while in multiselect
                 tabsTouchHelper.attachToRecyclerView(null)
-                behavior.removeBottomSheetCallback(bottomSheetCallback)
 
                 toggleUIMultiselect(multiselect = true)
 
@@ -372,7 +377,7 @@ class TabTrayView(
         }
         view.tab_tray_overflow.isVisible = !hasNoTabs
 
-        counter_text.text = "${browserState.normalTabs.size}"
+        counter_text.text = updateTabCounter(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
 
         adjustNewTabButtonsForNormalMode()
@@ -455,6 +460,14 @@ class TabTrayView(
         } else {
             view.context?.getString(R.string.open_tab_tray_plural, count.toString())
         }
+    }
+
+    private fun updateTabCounter(count: Int): String {
+        if (count > MAX_VISIBLE_TABS) {
+            counter_text.setPadding(0, 0, 0, INFINITE_CHAR_PADDING_BOTTOM)
+            return SO_MANY_TABS_OPEN
+        }
+        return NumberFormat.getInstance().format(count.toLong())
     }
 
     fun setTopOffset(landscape: Boolean) {
