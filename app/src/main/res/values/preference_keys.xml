@@ -112,6 +112,7 @@
     <!-- Toolbar Settings -->
     <string name="pref_key_toolbar_top" translatable="false">pref_key_toolbar_top</string>
     <string name="pref_key_toolbar_bottom" translatable="false">pref_key_toolbar_bottom</string>
+    <string name="pref_key_strip_url" translatable="false">pref_key_strip_url</string>
 
     <!-- Theme Settings -->
     <string name="pref_key_light_theme" translatable="false">pref_key_light_theme</string>

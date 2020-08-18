@@ -1259,6 +1259,10 @@
     <string name="preferences_passwords_saved_logins_username">Username</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Password</string>
+    <!-- Title for strip url preference in customization settings -->
+    <string name="preferences_strip_url_title">Strip HTTP/HTTPS/WWW from urls</string>
+    <!-- Description for strip url preference in customization settings -->
+    <string name="preferences_strip_url_description">Enable to strip out HTTP/HTTPS/WWW from urls in toolbar and tab tray</string>
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">Re-enter your PIN</string>
     <!-- Message displayed in security prompt to access saved logins -->
