@@ -32,6 +32,11 @@ object FeatureFlags {
     val newSearchExperience = Config.channel.isNightlyOrDebug
 
     /**
+     * Enables showing the top frequently visited sites
+     */
+    val topFrecentSite = Config.channel.isNightlyOrDebug
+
+    /**
      * Enables wait til first contentful paint
      */
     val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
