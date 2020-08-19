@@ -100,23 +100,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         )
 
         preferenceManager.sharedPreferences
-        .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
-            try {
-                context?.let { context ->
-                    context.components.analytics.metrics.track(
-                        Event.PreferenceToggled(
-                            key,
-                            sharedPreferences.getBoolean(key, false),
-                            context
+            .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
+                try {
+                    context?.let { context ->
+                        context.components.analytics.metrics.track(
+                            Event.PreferenceToggled(
+                                key,
+                                sharedPreferences.getBoolean(key, false),
+                                context
+                            )
                         )
-                    )
+                    }
+                } catch (e: IllegalArgumentException) {
+                    // The event is not tracked
+                } catch (e: ClassCastException) {
+                    // The setting is not a boolean, not tracked
                 }
-            } catch (e: IllegalArgumentException) {
-                // The event is not tracked
-            } catch (e: ClassCastException) {
-                // The setting is not a boolean, not tracked
             }
-        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -274,15 +274,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                     startActivity(intent)
-                } else {
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                            requireContext(),
-                            SupportUtils.SumoTopic.HELP
-                        ),
-                        newTab = true,
-                        from = BrowserDirection.FromSettings
-                    )
                 }
                 null
             }
