@@ -19,7 +19,11 @@ object FxaServer {
     fun config(context: Context): ServerConfig {
         val serverOverride = context.settings().overrideFxAServer
         val tokenServerOverride = context.settings().overrideSyncTokenServer.ifEmpty { null }
+        val useLocalFxAServer = context.settings().useLocalFxAServer
         if (serverOverride.isEmpty()) {
+            if (useLocalFxAServer) {
+                return ServerConfig(Server.CHINA, CLIENT_ID, REDIRECT_URL, tokenServerOverride)
+            }
             return ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL, tokenServerOverride)
         }
         return ServerConfig(serverOverride, CLIENT_ID, REDIRECT_URL, tokenServerOverride)

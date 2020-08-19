@@ -15,11 +15,13 @@ import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.paging.Config
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
@@ -67,7 +69,10 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                         false
                     )
                 },
-                scanMessage = R.string.pair_instructions_2
+                scanMessage =
+                if (requireContext().settings().useLocalFxAServer && org.mozilla.fenix.Config.channel.isMozillaOnline)
+                    R.string.pair_instructions_2_cn
+                else R.string.pair_instructions_2
             ),
             owner = this,
             view = view
