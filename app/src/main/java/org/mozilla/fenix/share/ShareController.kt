@@ -28,7 +28,7 @@ import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -65,6 +65,7 @@ interface ShareController {
 @Suppress("TooManyFunctions")
 class DefaultShareController(
     private val context: Context,
+    private val metrics: MetricController,
     private val shareSubject: String?,
     private val shareData: List<ShareData>,
     private val sendTabUseCases: SendTabUseCases,
@@ -115,7 +116,7 @@ class DefaultShareController(
     }
 
     override fun handleShareToDevice(device: Device) {
-        context.metrics.track(Event.SendTab)
+        metrics.track(Event.SendTab)
         shareToDevicesWithRetry { sendTabUseCases.sendToDeviceAsync(device.id, shareData.toTabData()) }
     }
 
@@ -124,7 +125,7 @@ class DefaultShareController(
     }
 
     override fun handleSignIn() {
-        context.metrics.track(Event.SignInToSendTab)
+        metrics.track(Event.SignInToSendTab)
         val directions =
             ShareFragmentDirections.actionGlobalTurnOnSync(padSnackbar = true)
         navController.nav(R.id.shareFragment, directions)
