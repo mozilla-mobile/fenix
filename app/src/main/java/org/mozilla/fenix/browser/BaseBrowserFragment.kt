@@ -59,7 +59,6 @@ import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
-import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
@@ -481,7 +480,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 feature = SessionFeature(
                     requireComponents.core.store,
                     requireComponents.useCases.sessionUseCases.goBack,
-                    requireComponents.useCases.engineSessionUseCases,
                     view.engineView,
                     customTabSessionId
                 ),
@@ -536,7 +534,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             fullScreenFeature.set(
                 feature = FullScreenFeature(
                     requireComponents.core.store,
-                    SessionUseCases(sessionManager),
+                    requireComponents.useCases.sessionUseCases,
                     customTabSessionId,
                     ::viewportFitChange,
                     ::fullScreenChanged
