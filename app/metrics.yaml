@@ -1484,11 +1484,12 @@ activation:
       - https://bugzilla.mozilla.org/1501822
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1707#issuecomment-486972209
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - highly_sensitive
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   activation_id:
     type: uuid
     lifetime: user
@@ -1501,11 +1502,12 @@ activation:
       - https://bugzilla.mozilla.org/1538011
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1707#issuecomment-486972209
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - highly_sensitive
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
     no_lint:
       - USER_LIFETIME_EXPIRATION
 
@@ -3167,11 +3169,12 @@ about_page:
       - https://github.com/mozilla-mobile/fenix/issues/6834
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/8047
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   privacy_notice_tapped:
     type: event
     description: |
@@ -3180,50 +3183,12 @@ about_page:
       - https://github.com/mozilla-mobile/fenix/issues/6834
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/8047
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
-  rights_tapped:
-    type: event
-    description: |
-      A user tapped on "Know your rights" item from About page
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/6834
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/8047
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - fenix-core@mozilla.com
-    expires: "2020-10-01"
-  licensing_tapped:
-    type: event
-    description: |
-      A user tapped on "Licensing information" item from About page
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/6834
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/8047
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - fenix-core@mozilla.com
-    expires: "2020-10-01"
-  libraries_tapped:
-    type: event
-    description: |
-      A user tapped on "Libraries that we use" item from About page
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/6834
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/8047
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2020-04-01"
 
 app_theme:
   dark_theme_selected:
