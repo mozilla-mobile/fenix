@@ -327,6 +327,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifications</string>
 
+    <!--  Download preferences  -->
+    <!-- Preference for downloads -->
+    <string name="preferences_downloads">Downloads</string>
+    <!-- Preference for specifying a download path -->
+    <string name="preferences_download_path">Download path</string>
+    <!-- Preference for the default download path -->
+    <string name="preferences_default_download_path">Default path</string>
+    <!-- Preference for a custom download path -->
+    <string name="preferences_custom_download_path">Custom path</string>
+    <!-- Preference description for the default download path option -->
+    <string name="preferences_default_download_path_description">Default path defined by your device.</string>
+    <!-- Preference description for the custom download path option -->
+    <string name="preferences_custom_download_path_description">Set a custom download path.</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sync now</string>

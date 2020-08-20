@@ -137,11 +137,10 @@
             android:key="@string/pref_key_open_links_in_external_app"
             android:title="@string/preferences_open_links_in_apps" />
 
-        <androidx.preference.SwitchPreference
-            android:defaultValue="false"
+        <androidx.preference.Preference
             android:icon="@drawable/ic_download"
-            android:key="@string/pref_key_external_download_manager"
-            android:title="@string/preferences_external_download_manager"
+            android:key="@string/pref_key_downloads"
+            android:title="@string/preferences_downloads"
             app:isPreferenceVisible="false"/>
 
         <androidx.preference.SwitchPreference
@@ -156,6 +155,11 @@
             android:key="@string/pref_key_remote_debugging"
             android:title="@string/preferences_remote_debugging"
             android:defaultValue="false" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_data_collection"
+            android:key="@string/pref_key_data_choices"
+            android:title="@string/preferences_data_collection" />
     </PreferenceCategory>
 
     <androidx.preference.PreferenceCategory

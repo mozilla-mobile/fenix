@@ -394,6 +394,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         false
     )
 
+    // Download path prefs
+    val useDefaultDownloadPath by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_default_download_path),
+        true
+    )
+
+    val useCustomDownloadPath by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_download_path),
+        false
+    )
+
     @VisibleForTesting(otherwise = PRIVATE)
     fun setStrictETP() {
         preferences.edit().putBoolean(
