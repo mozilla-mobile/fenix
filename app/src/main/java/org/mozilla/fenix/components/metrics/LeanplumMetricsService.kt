@@ -6,8 +6,8 @@ package org.mozilla.fenix.components.metrics
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.net.Uri
-import android.os.StrictMode
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.leanplum.Leanplum
@@ -23,7 +23,6 @@ import kotlinx.coroutines.withContext
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.components.metrics.MozillaProductDetector.MozillaProducts
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
 import java.util.Locale
@@ -83,9 +82,7 @@ class LeanplumMetricsService(
     override val type = MetricServiceType.Marketing
     private val token = Token(LeanplumId, LeanplumToken)
 
-    private val preferences = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
-        application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
-    }
+    private lateinit var preferences: SharedPreferences
 
     @VisibleForTesting
     internal val deviceId by lazy {
@@ -110,7 +107,9 @@ class LeanplumMetricsService(
         Parser.parseVariables(application)
 
         leanplumJob = scope.launch {
-
+            withContext(Dispatchers.IO) {
+                preferences = application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
+            }
             val applicationSetLocale = LocaleManager.getCurrentLocale(application)
             val currentLocale = applicationSetLocale ?: Locale.getDefault()
             val languageCode =
