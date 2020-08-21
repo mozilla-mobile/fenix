@@ -340,6 +340,8 @@
     <string name="preferences_default_download_path_description">Default path defined by your device.</string>
     <!-- Preference description for the custom download path option -->
     <string name="preferences_custom_download_path_description">Set a custom download path.</string>
+    <!-- Preference description for the add menu button -->
+    <string name="download_path_add_button_content_description">Add</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->

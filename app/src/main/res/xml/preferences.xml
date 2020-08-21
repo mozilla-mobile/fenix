@@ -141,7 +141,7 @@
             android:icon="@drawable/ic_download"
             android:key="@string/pref_key_downloads"
             android:title="@string/preferences_downloads"
-            app:isPreferenceVisible="false"/>
+            app:isPreferenceVisible="true"/>
 
         <androidx.preference.SwitchPreference
             android:defaultValue="false"

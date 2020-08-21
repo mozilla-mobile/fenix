@@ -2,23 +2,19 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <Preference
-        android:key="@string/pref_key_download_path"
-        android:title="@string/preferences_download_path" />
-    <org.mozilla.fenix.settings.RadioButtonInfoPreference
-        android:defaultValue="true"
-        android:key="@string/pref_key_default_download_path"
-        android:summary="@string/preferences_default_download_path_description"
-        android:title="@string/preferences_default_download_path" />
-    <org.mozilla.fenix.settings.RadioButtonInfoPreference
         android:defaultValue="false"
         android:key="@string/pref_key_custom_download_path"
         android:summary="@string/preferences_custom_download_path_description"
         android:title="@string/preferences_custom_download_path" />
     <EditTextPreference
         android:key="@string/pref_key_custom_path_text"
-        android:title="@string/preferences_custom_download_path"
+        android:title="@string/preferences_custom_download_path_description"
+        android:dependency="@string/pref_key_custom_download_path"
+        android:enabled="false"
         />
 
 </PreferenceScreen>

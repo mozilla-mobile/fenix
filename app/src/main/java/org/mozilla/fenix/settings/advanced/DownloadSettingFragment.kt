@@ -6,29 +6,29 @@ package org.mozilla.fenix.settings.advanced
 
 import android.os.Bundle
 import android.os.Environment
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.PrivateShortcutCreateManager
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.metrics
-import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.RadioButtonInfoPreference
-import org.mozilla.fenix.settings.SharedPreferenceUpdater
-import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.requirePreference
+import org.mozilla.fenix.settings.search.AddSearchEngineFragment
+import org.mozilla.fenix.settings.setOnPreferenceChangeListener
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
  * Lets the user customize Download options.
  */
 class DownloadSettingFragment : PreferenceFragmentCompat() {
+
+//    private val engine = requireComponents.core.engine
 
     override fun onResume() {
         super.onResume()
@@ -37,59 +37,49 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.downloads_preferences, rootKey)
-        val radioDefault = bindDownloadPathRadio(DownloadPathMode.DEFAULT)
-        val radioCustom = bindDownloadPathRadio(DownloadPathMode.CUSTOM)
-        requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text).isEnabled =
-            radioCustom.isEnabled
-
-        addToRadioGroup(radioDefault, radioCustom)
+        bindPrefs()
     }
 
-    private fun bindDownloadPathRadio(
-        mode: DownloadPathMode
-    ): RadioButtonInfoPreference {
-        val radioButton = requirePreference<RadioButtonInfoPreference>(mode.preferenceKey)
-        radioButton.contentDescription = getString(mode.contentDescriptionRes)
+    private fun bindPrefs() {
+        val customPathSwitch = requirePreference<Preference>(R.string.pref_key_custom_download_path)
+        val pathText = requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text)
+        pathText.isEnabled = customPathSwitch.isEnabled
 
-        radioButton.onClickListener {
-            // send telemetry event
-            // update mode in engine
-            updateDownloadPath(mode)
+        pathText.setOnPreferenceChangeListener{ preference, _ ->
+            val path = pathText.text
+            preference.context.settings().preferences.edit().putString(preference.key, path).apply()
+//            engine.settings.downloadPath = path
+            true
         }
-//        val metrics = requireComponents.analytics.metrics
-//        radioButton.onClickListener {
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.add_custom_download_path_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.add_search_engine ->  {
+                updateDownloadPath()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    private fun updateDownloadPath() {
+//        with(requireComponents.core) {
 //            when (mode) {
-//                DownloadPathMode.DEFAULT ->
-//                    Event.DownloadPathSettingChanged.Setting.DEFAULT
-//                DownloadPathMode.CUSTOM ->
-//                    Event.DownloadPathSettingChanged.Setting.CUSTOM
-//            }.let { setting ->
-//                metrics.track(Event.DownloadPathSettingChanged(setting))
+//                DownloadPathMode.DEFAULT -> {
+//                    DOWNLOAD_PATH_DEFAULT
+//                }
+//                else -> {
+//                    requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text).text
+//                }
+//            }.let { path ->
+//                engine.settings.downloadPath = path
 //            }
 //        }
-
-        return radioButton
-    }
-
-    private fun updateDownloadPath(
-        mode: DownloadPathMode
-    ) {
-        with(requireComponents.core) {
-            when (mode) {
-                DownloadPathMode.DEFAULT -> {
-                    DOWNLOAD_PATH_DEFAULT
-                }
-                else -> {
-                    requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text).text
-                }
-            }.let { path ->
-                engine.settings.downloadPath = path
-            }
-        }
-
-    }
-
-    companion object {
-        val DOWNLOAD_PATH_DEFAULT: String = Environment.DIRECTORY_DOWNLOADS
     }
 }
