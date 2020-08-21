@@ -34,12 +34,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/issues/11830
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/12114#pullrequestreview-445245341
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - esmyth@mozilla.com
       - perf-android-fe@mozilla.com
-    expires: "2020-12-01"
+    expires: "2021-06-01"
   app_received_intent:
     type: event
     description: |
@@ -62,10 +63,11 @@ events:
       - https://github.com/mozilla-mobile/fenix/issues/11830
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/11940/
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     notification_emails:
       - esmyth@mozilla.com
       - perf-android-fe@mozilla.com
-    expires: "2020-12-01"
+    expires: "2021-06-01"
   app_opened:
     type: event
     description: |
@@ -80,12 +82,13 @@ events:
       - https://github.com/mozilla-mobile/fenix/issues/10616
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1067#issuecomment-474598673
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - telemetry-client-dev@mozilla.com
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   search_bar_tapped:
     type: event
     description: |
@@ -1598,11 +1601,12 @@ error_page:
       - https://github.com/mozilla-mobile/fenix/issues/1242
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/2491#issuecomment-492414486
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
 
 sync_auth:
   opened:
