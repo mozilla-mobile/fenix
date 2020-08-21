@@ -2176,12 +2176,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   tab_restored:
     type: event
     description: |
@@ -2190,12 +2191,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   all_tabs_restored:
     type: event
     description: |
@@ -2204,12 +2206,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   tab_removed:
     type: event
     description: |
@@ -2218,12 +2221,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   shared:
     type: event
     description: |
@@ -2232,12 +2236,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   removed:
     type: event
     description: |
@@ -2246,12 +2251,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   saved:
     type: event
     description: |
@@ -2265,12 +2271,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   tabs_added:
     type: event
     description: |
@@ -2284,12 +2291,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   tab_select_opened:
     type: event
     description: |
@@ -2299,12 +2307,13 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/3935
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - technical
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   add_tab_button:
     type: event
     description: |
@@ -2313,11 +2322,12 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/4358
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   long_press:
     type: event
     description: |
@@ -2326,11 +2336,12 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/4358
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   save_button:
     type: event
     description: |
@@ -2341,11 +2352,12 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/4358
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
     extra_keys:
       from_screen:
         description: |
@@ -2359,11 +2371,12 @@ collections:
       - https://github.com/mozilla-mobile/fenix/issues/969
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/4539
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
 
 search_widget:
   new_tab_button:
