@@ -76,6 +76,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             it.identifier == defaultEngine
         } ?: searchEngineList.list.first()).identifier
 
+        context.components.search.searchEngineManager.defaultSearchEngine =
+            searchEngineList.list.find {
+                it.identifier == selectedEngine
+            }
+
         searchEngineGroup!!.removeAllViews()
 
         val layoutInflater = LayoutInflater.from(context)
