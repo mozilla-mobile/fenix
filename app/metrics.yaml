@@ -1453,11 +1453,12 @@ custom_tab:
       - https://github.com/mozilla-mobile/fenix/issues/977
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1697
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   action_button:
     type: event
     description: |
@@ -1466,11 +1467,12 @@ custom_tab:
       - https://github.com/mozilla-mobile/fenix/issues/977
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1697
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   menu:
     type: event
     description: |
@@ -1479,11 +1481,12 @@ custom_tab:
       - https://github.com/mozilla-mobile/fenix/issues/977
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/1697
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
 
 activation:
   identifier:
@@ -2990,11 +2993,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   pause:
     type: event
     description: |
@@ -3003,11 +3007,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   cancel:
     type: event
     description: |
@@ -3016,11 +3021,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   try_again:
     type: event
     description: |
@@ -3030,11 +3036,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   open:
     type: event
     description: |
@@ -3043,11 +3050,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   in_app_open:
     type: event
     description: |
@@ -3056,11 +3064,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
   in_app_try_again:
     type: event
     description: |
@@ -3070,11 +3079,12 @@ download_notification:
       - https://github.com/mozilla-mobile/fenix/issues/5583
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/6554
+      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
     data_sensitivity:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-10-01"
+    expires: "2021-04-01"
 
 user_specified_search_engines:
   custom_engine_added:
