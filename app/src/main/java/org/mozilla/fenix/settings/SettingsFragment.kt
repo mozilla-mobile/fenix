@@ -289,7 +289,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
             }
             resources.getString(R.string.pref_key_downloads) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToDownloadsFragment()
             }
             else -> null
         }
@@ -303,7 +303,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val leakKey = getPreferenceKey(R.string.pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(R.string.pref_key_remote_debugging)
-
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
         val preferenceMakeDefaultBrowser = requirePreference<Preference>(R.string.pref_key_make_default_browser)
@@ -351,6 +350,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_debug_settings)
         )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
+    }
+
+    private fun setUpDownloadManager() {
+        val preferenceExternalDownloadManager =
+            requirePreference<Preference>(R.string.pref_key_external_download_manager)
+        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
     }
 
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {

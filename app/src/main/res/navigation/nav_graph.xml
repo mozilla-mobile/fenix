@@ -526,7 +526,7 @@
             app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_settingsFragment_to_downloadsFragment"
-            app:destination="@id/downloadSettingsFragment"
+            app:destination="@id/downloadSettingFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -569,6 +569,12 @@
         <action
             android:id="@+id/action_accountSettingsFragment_to_signOutFragment"
             app:destination="@id/signOutFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/downloadSettingFragment"
+        android:name="org.mozilla.fenix.settings.advanced.DownloadSettingFragment"
+        android:label="@string/preferences_downloads">
     </fragment>
 
     <fragment

@@ -3,11 +3,6 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pref_key_external_download_manager"
-        android:title="@string/preferences_external_download_manager" />
-
     <Preference
         android:key="@string/pref_key_download_path"
         android:title="@string/preferences_download_path" />
@@ -21,4 +16,9 @@
         android:key="@string/pref_key_custom_download_path"
         android:summary="@string/preferences_custom_download_path_description"
         android:title="@string/preferences_custom_download_path" />
+    <EditTextPreference
+        android:key="@string/pref_key_custom_path_text"
+        android:title="@string/preferences_custom_download_path"
+        />
+
 </PreferenceScreen>
