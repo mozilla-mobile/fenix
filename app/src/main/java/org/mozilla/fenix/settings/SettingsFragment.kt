@@ -17,6 +17,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -319,6 +320,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 context?.application?.updateLeakCanaryState(isEnabled)
                 true
             }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
+            isVisible = FeatureFlags.topFrecentSite
+            isChecked = context.settings().showTopFrecentSites
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager

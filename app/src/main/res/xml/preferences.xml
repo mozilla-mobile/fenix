@@ -146,6 +146,12 @@
 
         <androidx.preference.SwitchPreference
             android:defaultValue="true"
+            android:icon="@drawable/ic_top_sites"
+            android:key="@string/pref_key_enable_top_frecent_sites"
+            android:title="@string/top_sites_toggle_top_frecent_sites" />
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="true"
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key_leakcanary"
             android:title="@string/preference_leakcanary"

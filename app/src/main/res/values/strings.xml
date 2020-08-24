@@ -1468,5 +1468,7 @@
     <string name="top_sites_max_limit_content">To add a new top site, remove one. Long press the site and select remove.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
+    <!-- Label for the show top frequently visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Show Top Frequently Visited Sites</string>
 
 </resources>
