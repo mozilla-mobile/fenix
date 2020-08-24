@@ -55,4 +55,10 @@ object FeatureFlags {
      * Enables selecting from multiple logins.
      */
     val loginSelect = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables setting a custom download location.
+     */
+    val customDownloadPath = Config.channel.isNightlyOrDebug
+
 }

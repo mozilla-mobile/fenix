@@ -298,9 +298,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupPreferences() {
-
-        setUpDownloadManager()
-
         val leakKey = getPreferenceKey(R.string.pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(R.string.pref_key_remote_debugging)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
@@ -350,12 +347,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_debug_settings)
         )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
-    }
-
-    private fun setUpDownloadManager() {
-        val preferenceExternalDownloadManager =
-            requirePreference<Preference>(R.string.pref_key_external_download_manager)
-        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
+        
+        findPreference<Preference>(
+            getPreferenceKey(R.string.pref_key_downloads)
+        )?.isVisible = FeatureFlags.customDownloadPath || FeatureFlags.externalDownloadManager
     }
 
     private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {

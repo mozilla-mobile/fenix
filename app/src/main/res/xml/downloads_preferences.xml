@@ -2,19 +2,19 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-    <Preference
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.preference.SwitchPreference
         android:defaultValue="false"
-        android:key="@string/pref_key_custom_download_path"
-        android:summary="@string/preferences_custom_download_path_description"
-        android:title="@string/preferences_custom_download_path" />
+        android:icon="@drawable/ic_download"
+        android:key="@string/pref_key_external_download_manager"
+        android:title="@string/preferences_external_download_manager"
+        app:isPreferenceVisible="false"/>
     <EditTextPreference
-        android:key="@string/pref_key_custom_path_text"
-        android:title="@string/preferences_custom_download_path_description"
-        android:dependency="@string/pref_key_custom_download_path"
+        android:key="@string/pref_key_download_path"
+        android:title="@string/preferences_download_path"
+        android:summary="@string/preferences_custom_download_path_description"
         android:enabled="false"
         />
-
 </PreferenceScreen>

@@ -11,10 +11,15 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.os.Build
+import android.os.Environment
 import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
@@ -394,16 +399,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         false
     )
 
-    // Download path prefs
-    val useDefaultDownloadPath by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_default_download_path),
-        true
+    val downloadPath by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_download_path),
+        default = getEngineDownloadPath()
     )
 
-    val useCustomDownloadPath by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_custom_download_path),
-        false
-    )
+    private fun getEngineDownloadPath(): String {
+//        return appContext.components.core.engine.settings.downloadPath
+        return Environment.DIRECTORY_DOWNLOADS
+    }
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun setStrictETP() {

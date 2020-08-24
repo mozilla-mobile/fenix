@@ -6,22 +6,20 @@ package org.mozilla.fenix.settings.advanced
 
 import android.os.Bundle
 import android.os.Environment
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import kotlinx.android.synthetic.main.fragment_download_preferences.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.settings.RadioButtonInfoPreference
 import org.mozilla.fenix.settings.requirePreference
-import org.mozilla.fenix.settings.search.AddSearchEngineFragment
-import org.mozilla.fenix.settings.setOnPreferenceChangeListener
-import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
  * Lets the user customize Download options.
@@ -41,45 +39,33 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindPrefs() {
-        val customPathSwitch = requirePreference<Preference>(R.string.pref_key_custom_download_path)
-        val pathText = requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text)
-        pathText.isEnabled = customPathSwitch.isEnabled
+        val downloadPath = requirePreference<EditTextPreference>(R.string.pref_key_download_path)
+        downloadPath.isVisible = FeatureFlags.customDownloadPath
+        getFullPath(requireContext().settings().downloadPath).let {
+            downloadPath.summary = it
+            downloadPath.text = it
+        }
 
-        pathText.setOnPreferenceChangeListener{ preference, _ ->
-            val path = pathText.text
-            preference.context.settings().preferences.edit().putString(preference.key, path).apply()
-//            engine.settings.downloadPath = path
+        downloadPath.setOnPreferenceChangeListener{ preference, _ ->
+            val path = downloadPath.text
+            setDownloadPath(preference, path)
             true
         }
+
+        val preferenceExternalDownloadManager =
+            requirePreference<Preference>(R.string.pref_key_external_download_manager)
+        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_custom_download_path_menu, menu)
+    @Suppress("DEPRECATION")
+    private fun getFullPath(path: String): String {
+        return Environment.getExternalStoragePublicDirectory(path).path
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.add_search_engine ->  {
-                updateDownloadPath()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    private fun setDownloadPath(preference: Preference, path: String) {
+        preference.context.settings().preferences.edit().putString(preference.key, path).apply()
+        lifecycleScope.launch(Dispatchers.IO) {
+            requireComponents.core.engine.settings.downloadPath = path
         }
-    }
-
-
-    private fun updateDownloadPath() {
-//        with(requireComponents.core) {
-//            when (mode) {
-//                DownloadPathMode.DEFAULT -> {
-//                    DOWNLOAD_PATH_DEFAULT
-//                }
-//                else -> {
-//                    requirePreference<EditTextPreference>(R.string.pref_key_custom_path_text).text
-//                }
-//            }.let { path ->
-//                engine.settings.downloadPath = path
-//            }
-//        }
     }
 }
