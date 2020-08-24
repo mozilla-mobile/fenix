@@ -57,6 +57,8 @@
     <string name="pref_key_open_in_app_opened" translatable="false">pref_key_open_in_app_opened</string>
     <string name="pref_key_install_pwa_opened" translatable="false">pref_key_install_pwa_opened</string>
     <string name="pref_key_install_pwa_visits" translatable="false">pref_key_install_pwa_visits</string>
+    <string name="pref_key_times_app_opened" translatable="false">pref_key_times_app_opened</string>
+    <string name="pref_key_last_review_prompt_shown_time" translatable="false">pref_key_last_review_prompt_shown_time</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
