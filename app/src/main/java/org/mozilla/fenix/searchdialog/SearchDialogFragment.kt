@@ -28,10 +28,6 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
-import kotlinx.android.synthetic.main.fragment_search_dialog.fill_link_from_clipboard
-import kotlinx.android.synthetic.main.fragment_search_dialog.pill_wrapper
-import kotlinx.android.synthetic.main.fragment_search_dialog.qr_scan_button
-import kotlinx.android.synthetic.main.fragment_search_dialog.toolbar
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
@@ -71,7 +72,7 @@ import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
@@ -297,13 +298,13 @@ class HomeFragment : Fragment() {
                     applyTo(view.toolbarLayout)
                 }
 
-                view.bottom_bar.background = resources.getDrawable(
-                    ThemeManager.resolveAttribute(R.attr.bottomBarBackgroundTop, requireContext()),
-                    null
+                view.bottom_bar.background = AppCompatResources.getDrawable(
+                    view.context,
+                    view.context.theme.resolveAttribute(R.attr.bottomBarBackgroundTop)
                 )
 
                 view.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    topMargin = HEADER_MARGIN.dpToPx(resources.displayMetrics)
+                    topMargin = resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
                 }
             }
             ToolbarPosition.BOTTOM -> {
@@ -710,14 +711,6 @@ class HomeFragment : Fragment() {
         nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
     }
 
-    private fun openInNormalTab(url: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = true,
-            from = BrowserDirection.FromHome
-        )
-    }
-
     private fun createTabCounterMenu(context: Context): BrowserMenu {
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
         val isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private
@@ -1008,8 +1001,5 @@ class HomeFragment : Fragment() {
         private const val ANIM_SNACKBAR_DELAY = 100L
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
-
-        // Layout
-        private const val HEADER_MARGIN = 60
     }
 }
