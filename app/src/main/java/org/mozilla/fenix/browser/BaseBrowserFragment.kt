@@ -490,9 +490,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
             sessionFeature.set(
                 feature = SessionFeature(
-                    requireComponents.core.store,
+                    requireComponents.core.sessionManager,
                     requireComponents.useCases.sessionUseCases.goBack,
-                    requireComponents.useCases.engineSessionUseCases,
                     view.engineView,
                     customTabSessionId
                 ),
