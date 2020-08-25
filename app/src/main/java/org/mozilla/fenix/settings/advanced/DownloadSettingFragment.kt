@@ -20,6 +20,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.requirePreference
+import java.io.File
 
 /**
  * Lets the user customize Download options.
@@ -46,15 +47,15 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
             downloadPath.text = it
         }
 
-        downloadPath.setOnPreferenceChangeListener{ preference, _ ->
-            val path = downloadPath.text
-            setDownloadPath(preference, path)
+        downloadPath.setOnPreferenceChangeListener{ preference, newPath ->
+            setDownloadPath(preference, newPath.toString())
             true
         }
 
         val preferenceExternalDownloadManager =
             requirePreference<Preference>(R.string.pref_key_external_download_manager)
         preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
+        //File("").e
     }
 
     @Suppress("DEPRECATION")
@@ -64,8 +65,7 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
 
     private fun setDownloadPath(preference: Preference, path: String) {
         preference.context.settings().preferences.edit().putString(preference.key, path).apply()
-        lifecycleScope.launch(Dispatchers.IO) {
             requireComponents.core.engine.settings.downloadPath = path
-        }
+
     }
 }

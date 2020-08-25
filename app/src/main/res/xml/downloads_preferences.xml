@@ -15,6 +15,6 @@
         android:key="@string/pref_key_download_path"
         android:title="@string/preferences_download_path"
         android:summary="@string/preferences_custom_download_path_description"
-        android:enabled="false"
+        android:enabled="true"
         />
 </PreferenceScreen>
