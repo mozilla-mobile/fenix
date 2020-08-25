@@ -172,6 +172,12 @@ android {
     }
 }
 
+configurations {
+    // Removes unwanted Firebase services that we do not want running (MeasurementBrokerService).
+    // See https://github.com/mozilla-mobile/fenix/issues/13228
+    all*.exclude group: 'com.google.firebase', module: 'firebase-core'
+}
+
 android.applicationVariants.all { variant ->
 
 // -------------------------------------------------------------------------------------------------
