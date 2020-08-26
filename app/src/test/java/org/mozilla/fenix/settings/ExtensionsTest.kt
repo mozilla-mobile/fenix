@@ -4,7 +4,12 @@
 
 package org.mozilla.fenix.settings
 
+import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.graphics.Rect
+import android.os.Build
+import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
+import android.provider.Settings.EXTRA_APP_PACKAGE
 import android.widget.RadioButton
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -26,6 +31,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.Config.OLDEST_SDK
 
 @RunWith(FenixRobolectricTestRunner::class)
 class ExtensionsTest {
@@ -91,5 +98,33 @@ class ExtensionsTest {
         }
 
         assertNotNull(exception)
+    }
+
+    @Config(sdk = [Build.VERSION_CODES.O])
+    @Test
+    fun `create notificationsSettingsIntent on Oreo`() {
+        val context = mockk<Context> {
+            every { packageName } returns "org.mozilla.fenix"
+        }
+
+        val intent = notificationsSettingsIntent(context)
+        assertEquals(ACTION_APP_NOTIFICATION_SETTINGS, intent.action)
+        assertEquals("org.mozilla.fenix", intent.getStringExtra(EXTRA_APP_PACKAGE))
+    }
+
+    @Config(sdk = [OLDEST_SDK])
+    @Test
+    fun `create notificationsSettingsIntent on Lollipop`() {
+        val context = mockk<Context> {
+            every { packageName } returns "org.mozilla.fenix"
+            every { applicationInfo } returns ApplicationInfo().apply {
+                uid = 1234
+            }
+        }
+
+        val intent = notificationsSettingsIntent(context)
+        assertEquals(ACTION_APP_NOTIFICATION_SETTINGS, intent.action)
+        assertEquals("org.mozilla.fenix", intent.getStringExtra("app_package"))
+        assertEquals(1234, intent.getIntExtra("app_uid", 0))
     }
 }

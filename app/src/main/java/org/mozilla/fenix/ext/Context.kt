@@ -6,13 +6,9 @@ package org.mozilla.fenix.ext
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
-import android.view.accessibility.AccessibilityManager
 import androidx.annotation.StringRes
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.support.locale.LocaleManager
@@ -84,29 +80,4 @@ fun Context.getStringWithArgSafe(@StringRes resId: Int, formatArg: String): Stri
         val localizedContext: Context = this.createConfigurationContext(config)
         return format(localizedContext.getString(resId), formatArg)
     }
-}
-
-/**
- * Used to obtain a reference to an AccessibilityManager
- * @return accessibilityManager
- */
-val Context.accessibilityManager: AccessibilityManager get() =
-    getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-
-/**
- * Used to navigate to system notifications settings for app
- */
-fun Context.navigateToNotificationsSettings() {
-    val intent = Intent()
-    intent.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            it.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            it.putExtra(Settings.EXTRA_APP_PACKAGE, this.packageName)
-        } else {
-            it.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-            it.putExtra("app_package", this.packageName)
-            it.putExtra("app_uid", this.applicationInfo.uid)
-        }
-    }
-    startActivity(intent)
 }

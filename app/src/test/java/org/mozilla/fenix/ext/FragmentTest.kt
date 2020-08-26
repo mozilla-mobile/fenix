@@ -4,65 +4,75 @@
 
 package org.mozilla.fenix.ext
 
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
-import androidx.navigation.Navigator.Extras
 import androidx.navigation.fragment.NavHostFragment
+import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.spyk
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@RunWith(FenixRobolectricTestRunner::class)
 class FragmentTest {
 
-    private val navDirections: NavDirections = mockk(relaxed = true)
-    private val mockDestination = spyk(NavDestination("hi"))
-    private val mockExtras: Extras = mockk(relaxed = true)
+    @MockK private lateinit var navDirections: NavDirections
+    @MockK private lateinit var mockFragment: Fragment
+    @MockK private lateinit var mockOptions: NavOptions
+    @MockK private lateinit var mockDestination: NavDestination
+    @MockK private lateinit var navController: NavController
     private val mockId = 4
-    private val navController = spyk(NavController(testContext))
-    private val mockFragment: Fragment = mockk(relaxed = true)
-    private val mockOptions: NavOptions = mockk(relaxed = true)
 
     @Before
     fun setup() {
+        MockKAnnotations.init(this)
         mockkStatic(NavHostFragment::class)
-        every { (NavHostFragment.findNavController(mockFragment)) } returns navController
-        every { (NavHostFragment.findNavController(mockFragment).currentDestination) } returns mockDestination
-        every { (mockDestination.id) } returns mockId
-        every { (navController.currentDestination) } returns mockDestination
-        every { (NavHostFragment.findNavController(mockFragment).currentDestination?.id) } answers { (mockDestination.id) }
+
+        every { NavHostFragment.findNavController(mockFragment) } returns navController
+        every { navController.currentDestination } returns mockDestination
+        every { mockDestination.id } returns mockId
     }
 
     @Test
     fun `Test nav fun with ID and directions`() {
-        every { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, null)) } just Runs
+        every { navController.navigate(navDirections, null) } just Runs
 
         mockFragment.nav(mockId, navDirections)
-        verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, null)) }
+        verify { navController.currentDestination }
+        verify { navController.navigate(navDirections, null) }
         confirmVerified(mockFragment)
     }
 
     @Test
     fun `Test nav fun with ID, directions, and options`() {
-        every { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, mockOptions)) } just Runs
+        every { navController.navigate(navDirections, mockOptions) } just Runs
 
         mockFragment.nav(mockId, navDirections, mockOptions)
-        verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, mockOptions)) }
+        verify { navController.currentDestination }
+        verify { navController.navigate(navDirections, mockOptions) }
         confirmVerified(mockFragment)
+    }
+
+    @Test
+    fun `hide fragment toolbar`() {
+        val actionBar = mockk<ActionBar>(relaxUnitFun = true)
+        val activity = mockk<AppCompatActivity> {
+            every { supportActionBar } returns actionBar
+        }
+        every { mockFragment.requireActivity() } returns activity
+
+        mockFragment.hideToolbar()
+
+        verify { actionBar.hide() }
     }
 }

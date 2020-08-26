@@ -4,11 +4,13 @@
 
 package org.mozilla.fenix.ext
 
+import androidx.annotation.DrawableRes
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.downloads.DownloadItem
 
 // While this looks complex, it's actually pretty simple.
 @SuppressWarnings("ComplexMethod")
+@DrawableRes
 fun DownloadItem.getIcon(): Int {
     fun getIconCornerCases(fileName: String?): Int {
         return when {

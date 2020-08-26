@@ -4,6 +4,10 @@
 
 package org.mozilla.fenix.settings
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import android.widget.RadioButton
 import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -72,3 +76,17 @@ inline fun <reified T> Preference.setOnPreferenceChangeListener(
  */
 fun <T : Preference> PreferenceFragmentCompat.requirePreference(@StringRes preferenceId: Int) =
     requireNotNull(findPreference<T>(getPreferenceKey(preferenceId)))
+
+/**
+ * Used to navigate to system notifications settings for app
+ */
+fun notificationsSettingsIntent(context: Context) = Intent().apply {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    } else {
+        action = "android.settings.APP_NOTIFICATION_SETTINGS"
+        putExtra("app_package", context.packageName)
+        putExtra("app_uid", context.applicationInfo.uid)
+    }
+}

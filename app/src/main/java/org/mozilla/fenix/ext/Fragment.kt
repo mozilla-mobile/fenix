@@ -51,7 +51,6 @@ fun Fragment.hideToolbar() {
  * while being inside the saved logins flow
  *
  * Does nothing if the user is currently navigating to any of the [destinations] given as a parameter
- *
  */
 fun Fragment.redirectToReAuth(destinations: List<Int>, currentDestination: Int?) {
     if (currentDestination !in destinations) {
