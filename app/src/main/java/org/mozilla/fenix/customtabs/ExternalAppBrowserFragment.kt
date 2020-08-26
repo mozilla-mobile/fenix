@@ -209,8 +209,13 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         context,
         context.components.useCases.contextMenuUseCases,
         view,
-        FenixSnackbarDelegate(view)
+        FenixSnackbarDelegate(view),
+        getDefaultDownloadPath()
     )
+
+    private fun getDefaultDownloadPath(): String {
+        return requireActivity().settings().downloadPath
+    }
 
     companion object {
         // We only care about millisecond precision for telemetry events

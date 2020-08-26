@@ -9,6 +9,7 @@ import android.view.View
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.contextmenu.DefaultSnackbarDelegate
+import org.mozilla.fenix.ext.settings
 
 class CustomTabContextMenuCandidate {
     companion object {
@@ -28,12 +29,22 @@ class CustomTabContextMenuCandidate {
                 snackbarDelegate
             ),
             ContextMenuCandidate.createShareLinkCandidate(context),
-            ContextMenuCandidate.createSaveImageCandidate(context, contextMenuUseCases),
+            ContextMenuCandidate.createSaveImageCandidate(
+                context,
+                contextMenuUseCases,
+                getDefaultDownloadPath(context)
+            ),
             ContextMenuCandidate.createCopyImageLocationCandidate(
                 context,
                 snackBarParentView,
                 snackbarDelegate
             )
         )
+
+        private fun getDefaultDownloadPath(context: Context): String {
+            return context.settings().downloadPath
+        }
     }
+
+
 }

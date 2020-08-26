@@ -272,8 +272,13 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             context.components.useCases.tabsUseCases,
             context.components.useCases.contextMenuUseCases,
             view,
-            FenixSnackbarDelegate(view)
+            FenixSnackbarDelegate(view),
+            getDefaultDownloadPath()
         ) + ContextMenuCandidate.createOpenInExternalAppCandidate(requireContext(),
             contextMenuCandidateAppLinksUseCases)
+    }
+
+    private fun getDefaultDownloadPath(): String {
+        return requireActivity().settings().downloadPath
     }
 }
