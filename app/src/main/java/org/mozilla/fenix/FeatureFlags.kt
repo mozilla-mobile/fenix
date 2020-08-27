@@ -60,5 +60,4 @@ object FeatureFlags {
      * Enables setting a custom download location.
      */
     val customDownloadPath = Config.channel.isNightlyOrDebug
-
 }

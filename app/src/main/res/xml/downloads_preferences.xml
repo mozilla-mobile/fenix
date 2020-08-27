@@ -10,11 +10,26 @@
         android:icon="@drawable/ic_download"
         android:key="@string/pref_key_external_download_manager"
         android:title="@string/preferences_external_download_manager"
-        app:isPreferenceVisible="false"/>
-    <EditTextPreference
-        android:key="@string/pref_key_download_path"
+        app:isPreferenceVisible="true"/>
+
+    <androidx.preference.PreferenceCategory
         android:title="@string/preferences_download_path"
-        android:summary="@string/preferences_custom_download_path_description"
-        android:enabled="true"
-        />
+        app:iconSpaceReserved="false"
+        app:allowDividerBelow="false"
+        app:isPreferenceVisible="true"
+        android:layout="@layout/preference_cat_style">
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="true"
+            app:isPreferenceVisible="true"
+            android:key="@string/pref_key_default_download_path"
+            android:title="@string/preferences_default_download_path" />
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="false"
+            app:isPreferenceVisible="true"
+            android:key="@string/pref_key_external_download_path"
+            android:title="@string/preferences_external_download_path" />
+    </androidx.preference.PreferenceCategory>
+
 </PreferenceScreen>

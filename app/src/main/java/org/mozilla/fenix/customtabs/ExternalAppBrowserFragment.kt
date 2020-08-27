@@ -33,7 +33,6 @@ import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -209,13 +208,8 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         context,
         context.components.useCases.contextMenuUseCases,
         view,
-        FenixSnackbarDelegate(view),
-        getDefaultDownloadPath()
+        FenixSnackbarDelegate(view)
     )
-
-    private fun getDefaultDownloadPath(): String {
-        return requireActivity().settings().downloadPath
-    }
 
     companion object {
         // We only care about millisecond precision for telemetry events

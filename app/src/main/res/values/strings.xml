@@ -334,8 +334,8 @@
     <string name="preferences_download_path">Download path</string>
     <!-- Preference for the default download path -->
     <string name="preferences_default_download_path">Default path</string>
-    <!-- Preference for a custom download path -->
-    <string name="preferences_custom_download_path">Custom path</string>
+    <!-- Preference for setting download path to external storage -->
+    <string name="preferences_external_download_path">External storage</string>
     <!-- Preference description for the default download path option -->
     <string name="preferences_default_download_path_description">Default path defined by your device.</string>
     <!-- Preference description for the custom download path option -->

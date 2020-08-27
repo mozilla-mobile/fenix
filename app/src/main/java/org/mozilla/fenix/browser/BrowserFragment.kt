@@ -36,6 +36,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
@@ -273,12 +274,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             context.components.useCases.contextMenuUseCases,
             view,
             FenixSnackbarDelegate(view),
-            getDefaultDownloadPath()
+            { getDefaultDownloadPath()!! }
         ) + ContextMenuCandidate.createOpenInExternalAppCandidate(requireContext(),
             contextMenuCandidateAppLinksUseCases)
     }
 
-    private fun getDefaultDownloadPath(): String {
-        return requireActivity().settings().downloadPath
+    private fun getDefaultDownloadPath(): String? {
+        val downloadPathPrefKey = requireContext().getPreferenceKey(R.string.pref_key_download_path)
+        return requireContext().settings().preferences.getString(
+            downloadPathPrefKey, null
+        )
     }
 }

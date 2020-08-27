@@ -6,28 +6,31 @@ package org.mozilla.fenix.settings.advanced
 
 import android.os.Bundle
 import android.os.Environment
-import android.view.MenuItem
-import androidx.lifecycle.lifecycleScope
-import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import kotlinx.android.synthetic.main.fragment_download_preferences.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.RadioButtonPreference
 import org.mozilla.fenix.settings.requirePreference
-import java.io.File
 
 /**
  * Lets the user customize Download options.
+ *
+ *  Scoped storage is introduced in Android 10 (Q) and will become default in
+ *  Android 11 (R). Users should only be allowed to use default internal storage or
+ *  external/SD storage when available.
+ *  See https://developer.android.com/preview/privacy/storage
  */
 class DownloadSettingFragment : PreferenceFragmentCompat() {
 
-//    private val engine = requireComponents.core.engine
+    private val defaultInternalStorageDirectory: String = Environment.DIRECTORY_DOWNLOADS
+    // Passing null will return the root directory for external storage
+    // This value will be return null if external storage is not present
+    private val externalStorageDirectory: String? =
+        requireContext().getExternalFilesDir(null)?.path
 
     override fun onResume() {
         super.onResume()
@@ -40,22 +43,35 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindPrefs() {
-        val downloadPath = requirePreference<EditTextPreference>(R.string.pref_key_download_path)
-        downloadPath.isVisible = FeatureFlags.customDownloadPath
-        getFullPath(requireContext().settings().downloadPath).let {
-            downloadPath.summary = it
-            downloadPath.text = it
-        }
-
-        downloadPath.setOnPreferenceChangeListener{ preference, newPath ->
-            setDownloadPath(preference, newPath.toString())
-            true
-        }
-
+        // External download manager
         val preferenceExternalDownloadManager =
             requirePreference<Preference>(R.string.pref_key_external_download_manager)
         preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
-        //File("").e
+
+        // Download path
+        val defaultPath = requirePreference<RadioButtonPreference>(R.string.pref_key_default_download_path)
+        val externalStoragePath = requirePreference<RadioButtonPreference>(R.string.pref_key_external_download_path)
+
+        defaultPath.summary = getFullPath(defaultInternalStorageDirectory)
+
+        defaultPath.onClickListener {
+            requireContext().settings().preferences.edit()
+                .putString(defaultPath.key, defaultInternalStorageDirectory).apply()
+            setDownloadPath(defaultInternalStorageDirectory)
+        }
+
+        externalStoragePath.isEnabled = isExternalStoragePresent()
+
+        if (externalStoragePath.isEnabled) {
+            externalStoragePath.summary =
+                getFullPath(externalStorageDirectory ?: defaultInternalStorageDirectory)
+        }
+
+        externalStoragePath.onClickListener {
+            requireContext().settings().preferences.edit()
+                .putString(externalStoragePath.key, externalStorageDirectory).apply()
+            setDownloadPath(externalStorageDirectory ?: defaultInternalStorageDirectory)
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -63,9 +79,11 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
         return Environment.getExternalStoragePublicDirectory(path).path
     }
 
-    private fun setDownloadPath(preference: Preference, path: String) {
-        preference.context.settings().preferences.edit().putString(preference.key, path).apply()
-            requireComponents.core.engine.settings.downloadPath = path
-
+    private fun setDownloadPath(path: String) {
+        requireComponents.core.engine.settings.downloadPath = path
     }
+
+    private fun isExternalStoragePresent(): Boolean =
+        Environment.isExternalStorageRemovable() &&
+                (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED)
 }

@@ -344,10 +344,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         preferenceFxAOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
         preferenceSyncOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
+
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_debug_settings)
         )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
-        
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_downloads)
         )?.isVisible = FeatureFlags.customDownloadPath || FeatureFlags.externalDownloadManager

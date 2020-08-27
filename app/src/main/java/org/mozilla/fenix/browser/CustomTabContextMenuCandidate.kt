@@ -5,11 +5,14 @@
 package org.mozilla.fenix.browser
 
 import android.content.Context
+import android.os.Environment
 import android.view.View
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.contextmenu.DefaultSnackbarDelegate
+import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.getPreferenceKey
 
 class CustomTabContextMenuCandidate {
     companion object {
@@ -22,29 +25,28 @@ class CustomTabContextMenuCandidate {
             contextMenuUseCases: ContextMenuUseCases,
             snackBarParentView: View,
             snackbarDelegate: ContextMenuCandidate.SnackbarDelegate = DefaultSnackbarDelegate()
-        ): List<ContextMenuCandidate> = listOf(
-            ContextMenuCandidate.createCopyLinkCandidate(
-                context,
-                snackBarParentView,
-                snackbarDelegate
-            ),
-            ContextMenuCandidate.createShareLinkCandidate(context),
-            ContextMenuCandidate.createSaveImageCandidate(
-                context,
-                contextMenuUseCases,
-                getDefaultDownloadPath(context)
-            ),
-            ContextMenuCandidate.createCopyImageLocationCandidate(
-                context,
-                snackBarParentView,
-                snackbarDelegate
+        ): List<ContextMenuCandidate> {
+            val downloadPathPrefKey = context.getPreferenceKey(R.string.pref_key_download_path)
+            return listOf(
+                ContextMenuCandidate.createCopyLinkCandidate(
+                    context,
+                    snackBarParentView,
+                    snackbarDelegate
+                ),
+                ContextMenuCandidate.createShareLinkCandidate(context),
+                ContextMenuCandidate.createSaveImageCandidate(
+                    context,
+                    contextMenuUseCases,
+                    context.settings().preferences.getString(
+                        downloadPathPrefKey, null
+                    ) ?: Environment.DIRECTORY_DOWNLOADS
+                ),
+                ContextMenuCandidate.createCopyImageLocationCandidate(
+                    context,
+                    snackBarParentView,
+                    snackbarDelegate
+                )
             )
-        )
-
-        private fun getDefaultDownloadPath(context: Context): String {
-            return context.settings().downloadPath
         }
     }
-
-
 }
