@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -132,7 +133,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         toolbarView = ToolbarView(
             requireContext(),
             interactor,
-            null,
+            historyStorageProvider(),
             isPrivate,
             view.toolbar,
             requireComponents.core.engine
@@ -284,6 +285,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
         }
+    }
+
+    private fun historyStorageProvider(): HistoryStorage? {
+        return if (requireContext().settings().shouldShowHistorySuggestions) {
+            requireComponents.core.historyStorage
+        } else null
     }
 
     private fun createQrFeature(): QrFeature {
