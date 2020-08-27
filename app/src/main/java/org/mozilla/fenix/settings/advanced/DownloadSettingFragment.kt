@@ -35,20 +35,20 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_downloads))
+        setUpPreferences()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.downloads_preferences, rootKey)
-        bindPrefs()
+        setUpPreferences()
     }
 
-    private fun bindPrefs() {
-        // External download manager
-        val preferenceExternalDownloadManager =
-            requirePreference<Preference>(R.string.pref_key_external_download_manager)
-        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
+    private fun setUpPreferences() {
+        bindExternalDownloadManager()
+        bindDownloadPath()
+    }
 
-        // Download path
+    private fun bindDownloadPath() {
         val defaultPath = requirePreference<RadioButtonPreference>(R.string.pref_key_default_download_path)
         val externalStoragePath = requirePreference<RadioButtonPreference>(R.string.pref_key_external_download_path)
 
@@ -72,6 +72,12 @@ class DownloadSettingFragment : PreferenceFragmentCompat() {
                 .putString(externalStoragePath.key, externalStorageDirectory).apply()
             setDownloadPath(externalStorageDirectory ?: defaultInternalStorageDirectory)
         }
+    }
+
+    private fun bindExternalDownloadManager() {
+        val preferenceExternalDownloadManager =
+            requirePreference<Preference>(R.string.pref_key_external_download_manager)
+        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
     }
 
     @Suppress("DEPRECATION")
