@@ -48,10 +48,13 @@ class ReviewPromptController(
     private val timeNowInMillis: () -> Long = { System.currentTimeMillis() },
     private val tryPromptReview: suspend (Activity) -> Unit = {
         val manager = ReviewManagerFactory.create(context)
-        val reviewInfo = manager.requestReview()
-
+        val flow = manager.requestReviewFlow()
         withContext(Main) {
-            manager.launchReview(it, reviewInfo)
+            flow.addOnCompleteListener { reviewInfo ->
+                if (reviewInfo.isSuccessful) {
+                    manager.launchReviewFlow(it, reviewInfo.result)
+                }
+            }
         }
     }
 ) {
