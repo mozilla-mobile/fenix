@@ -4,18 +4,16 @@
 
 package org.mozilla.fenix.library.bookmarks.selectfolder
 
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.support.ktx.android.content.getDrawableWithTint
 import org.mozilla.fenix.R
-import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.SelectableWidgetSiteItem
 import org.mozilla.fenix.library.bookmarks.BookmarkNodeWithDepth
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.flatNodeList
@@ -33,16 +31,8 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         submitList(updatedData)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkFolderViewHolder {
-        val view = LibrarySiteItemView(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-
-        return BookmarkFolderViewHolder(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        BookmarkFolderViewHolder(SelectableWidgetSiteItem(parent))
 
     override fun onBindViewHolder(holder: BookmarkFolderViewHolder, position: Int) {
         val item = getItem(position)
@@ -60,34 +50,24 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
     }
 
     class BookmarkFolderViewHolder(
-        val view: LibrarySiteItemView
-    ) : RecyclerView.ViewHolder(view), LayoutContainer {
-
-        override val containerView get() = view
-
-        init {
-            view.displayAs(LibrarySiteItemView.ItemType.FOLDER)
-            view.overflowView.visibility = View.GONE
-        }
+        private val viewWrapper: SelectableWidgetSiteItem
+    ) : RecyclerView.ViewHolder(viewWrapper.widget) {
 
         fun bind(folder: BookmarkNodeWithDepth, selected: Boolean, onSelect: (BookmarkNode) -> Unit) {
-            view.changeSelected(selected)
-            view.iconView.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    containerView.context,
-                    R.drawable.ic_folder_icon
-                )?.apply {
-                    setTint(ContextCompat.getColor(containerView.context,
-                        R.color.primary_text_light_theme))
-                }
+            viewWrapper.changeSelected(selected)
+            viewWrapper.widget.iconView.setImageDrawable(
+                viewWrapper.context.getDrawableWithTint(
+                    R.drawable.ic_folder_icon,
+                    ContextCompat.getColor(viewWrapper.context, R.color.primary_text_light_theme)
+                )
             )
-            view.titleView.text = folder.node.title
-            view.setOnClickListener {
+            viewWrapper.widget.setText(label = folder.node.title.orEmpty(), caption = null)
+            viewWrapper.widget.setOnClickListener {
                 onSelect(folder.node)
             }
             val pxToIndent = view.resources.getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
             val padding = pxToIndent * minOf(MAX_DEPTH, folder.depth)
-            view.updatePaddingRelative(start = padding)
+            viewWrapper.widget.updatePaddingRelative(start = padding)
         }
 
         companion object {

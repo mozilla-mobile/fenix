@@ -20,10 +20,7 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.hideAndDisable
-import org.mozilla.fenix.ext.showAndEnable
-import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.SelectableWidgetSiteItem
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentInteractor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentState
 import org.mozilla.fenix.library.bookmarks.BookmarkPayload
@@ -31,7 +28,7 @@ import org.mozilla.fenix.library.bookmarks.BookmarkPayload
 class BookmarkNodeViewHolderTest {
 
     @MockK private lateinit var interactor: BookmarkFragmentInteractor
-    @MockK(relaxed = true) private lateinit var siteItemView: LibrarySiteItemView
+    @MockK(relaxed = true) private lateinit var siteItemView: SelectableWidgetSiteItem
     @MockK private lateinit var icons: BrowserIcons
     private lateinit var holder: BookmarkNodeViewHolder
 
@@ -68,10 +65,9 @@ class BookmarkNodeViewHolderTest {
 
         mockkStatic(AppCompatResources::class)
         every { AppCompatResources.getDrawable(any(), any()) } returns mockk(relaxed = true)
-        every { siteItemView.context.components.core.icons } returns icons
-        every { icons.loadIntoView(siteItemView.iconView, any()) } returns mockk()
+        every { icons.loadIntoView(siteItemView.widget.iconView, any()) } returns mockk()
 
-        holder = BookmarkNodeViewHolder(siteItemView, interactor)
+        holder = BookmarkNodeViewHolder(siteItemView, interactor, icons)
     }
 
     @After
@@ -86,11 +82,10 @@ class BookmarkNodeViewHolderTest {
 
         verify {
             siteItemView.setSelectionInteractor(item, mode, interactor)
-            siteItemView.titleView.text = item.title
-            siteItemView.urlView.text = item.url
-            siteItemView.overflowView.showAndEnable()
+            siteItemView.widget.setText(item.title!!, item.url)
+            siteItemView.attachMenu(any())
             siteItemView.changeSelected(false)
-            icons.loadIntoView(siteItemView.iconView, IconRequest(item.url!!))
+            icons.loadIntoView(siteItemView.widget.iconView, IconRequest(item.url!!))
         }
     }
 
@@ -101,9 +96,8 @@ class BookmarkNodeViewHolderTest {
 
         verify {
             siteItemView.setSelectionInteractor(item, mode, interactor)
-            siteItemView.titleView.text = item.title
-            siteItemView.urlView.text = item.url
-            siteItemView.overflowView.hideAndDisable()
+            siteItemView.widget.setText(item.title!!, item.url)
+            siteItemView.widget.removeSecondaryButton()
             siteItemView.changeSelected(true)
         }
     }
@@ -117,13 +111,12 @@ class BookmarkNodeViewHolderTest {
         )
 
         verify(inverse = true) {
-            siteItemView.titleView.text = item.title
-            siteItemView.urlView.text = item.url
-            siteItemView.overflowView.showAndEnable()
-            siteItemView.overflowView.hideAndDisable()
+            siteItemView.widget.setText(item.title!!, item.url)
+            siteItemView.attachMenu(any())
+            siteItemView.widget.removeSecondaryButton()
             siteItemView.changeSelected(any())
         }
-        verify { siteItemView.iconView wasNot Called }
+        verify { siteItemView.widget.iconView wasNot Called }
     }
 
     @Test
@@ -131,7 +124,7 @@ class BookmarkNodeViewHolderTest {
         val item = item.copy(title = null)
         holder.bind(item, BookmarkFragmentState.Mode.Normal(), BookmarkPayload())
 
-        verify { siteItemView.titleView.text = item.url }
+        verify { siteItemView.widget.setText(label = item.url!!, caption = null) }
     }
 
     @Test
@@ -139,7 +132,7 @@ class BookmarkNodeViewHolderTest {
         val item = item.copy(title = " ")
         holder.bind(item, BookmarkFragmentState.Mode.Normal(), BookmarkPayload())
 
-        verify { siteItemView.titleView.text = item.url }
+        verify { siteItemView.widget.setText(label = item.url!!, caption = null) }
     }
 
     @Test
@@ -157,7 +150,7 @@ class BookmarkNodeViewHolderTest {
             )
         )
 
-        verify { siteItemView.titleView.text = item.url }
+        verify { siteItemView.widget.setText(label = item.url!!, caption = null) }
     }
 
     @Test
@@ -175,7 +168,7 @@ class BookmarkNodeViewHolderTest {
             )
         )
 
-        verify { siteItemView.titleView.text = item.url }
+        verify { siteItemView.widget.setText(label = item.url!!, caption = null) }
     }
 
     @Test
@@ -183,16 +176,16 @@ class BookmarkNodeViewHolderTest {
         holder.bind(folder, BookmarkFragmentState.Mode.Normal(), BookmarkPayload())
 
         verify {
-            siteItemView.titleView.text = folder.title
-            siteItemView.overflowView.showAndEnable()
+            siteItemView.widget.setText(label = folder.title!!, caption = null)
+            siteItemView.attachMenu(any())
             siteItemView.changeSelected(false)
         }
 
         holder.bind(folder, BookmarkFragmentState.Mode.Selecting(setOf(folder)), BookmarkPayload())
 
         verify {
-            siteItemView.titleView.text = folder.title
-            siteItemView.overflowView.hideAndDisable()
+            siteItemView.widget.setText(label = folder.title!!, caption = null)
+            siteItemView.widget.removeSecondaryButton()
             siteItemView.changeSelected(true)
         }
     }
@@ -206,9 +199,9 @@ class BookmarkNodeViewHolderTest {
         )
 
         verify(inverse = true) {
-            siteItemView.titleView.text = folder.title
-            siteItemView.overflowView.showAndEnable()
-            siteItemView.overflowView.hideAndDisable()
+            siteItemView.widget.setText(label = folder.title!!, caption = null)
+            siteItemView.attachMenu(any())
+            siteItemView.widget.removeSecondaryButton()
             siteItemView.changeSelected(any())
         }
     }

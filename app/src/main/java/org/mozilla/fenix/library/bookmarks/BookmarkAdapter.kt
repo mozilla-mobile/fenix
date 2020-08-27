@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.SelectableWidgetSiteItem
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkNodeViewHolder
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkSeparatorViewHolder
 
@@ -91,19 +91,19 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-
         return when (viewType) {
-            BookmarkNodeViewHolder.LAYOUT_ID ->
-                BookmarkNodeViewHolder(view as LibrarySiteItemView, interactor)
-            BookmarkSeparatorViewHolder.LAYOUT_ID ->
+            BookmarkNodeViewHolder.VIEW_TYPE ->
+                BookmarkNodeViewHolder(SelectableWidgetSiteItem(parent), interactor)
+            BookmarkSeparatorViewHolder.LAYOUT_ID -> {
+                val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
                 BookmarkSeparatorViewHolder(view)
+            }
             else -> throw IllegalStateException("ViewType $viewType does not match to a ViewHolder")
         }
     }
 
     override fun getItemViewType(position: Int) = when (tree[position].type) {
-        BookmarkNodeType.ITEM, BookmarkNodeType.FOLDER -> BookmarkNodeViewHolder.LAYOUT_ID
+        BookmarkNodeType.ITEM, BookmarkNodeType.FOLDER -> BookmarkNodeViewHolder.VIEW_TYPE
         BookmarkNodeType.SEPARATOR -> BookmarkSeparatorViewHolder.LAYOUT_ID
     }
 

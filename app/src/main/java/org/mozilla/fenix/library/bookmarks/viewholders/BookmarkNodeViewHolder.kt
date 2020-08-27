@@ -5,18 +5,15 @@
 package org.mozilla.fenix.library.bookmarks.viewholders
 
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getDrawableWithTint
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.removeAndDisable
-import org.mozilla.fenix.ext.hideAndDisable
-import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
-import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.SelectableWidgetSiteItem
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentState
 import org.mozilla.fenix.library.bookmarks.BookmarkItemMenu
 import org.mozilla.fenix.library.bookmarks.BookmarkPayload
@@ -28,15 +25,16 @@ import org.mozilla.fenix.utils.Do
  * Base class for bookmark node view holders.
  */
 class BookmarkNodeViewHolder(
-    private val containerView: LibrarySiteItemView,
-    private val interactor: BookmarkViewInteractor
-) : RecyclerView.ViewHolder(containerView) {
+    private val viewWrapper: SelectableWidgetSiteItem,
+    private val interactor: BookmarkViewInteractor,
+    private val icons: BrowserIcons = viewWrapper.context.components.core.icons
+) : RecyclerView.ViewHolder(viewWrapper.widget) {
 
     var item: BookmarkNode? = null
     private val menu: BookmarkItemMenu
 
     init {
-        menu = BookmarkItemMenu(containerView.context) { menuItem ->
+        menu = BookmarkItemMenu(viewWrapper.context) { menuItem ->
             val item = this.item ?: return@BookmarkItemMenu
             Do exhaustive when (menuItem) {
                 BookmarkItemMenu.Item.Edit -> interactor.onEditPressed(item)
@@ -48,7 +46,7 @@ class BookmarkNodeViewHolder(
             }
         }
 
-        containerView.attachMenu(menu.menuController)
+        viewWrapper.attachMenu(menu.menuController)
     }
 
     fun bind(
@@ -58,34 +56,30 @@ class BookmarkNodeViewHolder(
     ) {
         this.item = item
 
-        containerView.urlView.isVisible = item.type == BookmarkNodeType.ITEM
-        containerView.setSelectionInteractor(item, mode, interactor)
+        viewWrapper.setSelectionInteractor(item, mode, interactor)
         menu.updateMenu(item.type)
 
         // Hide menu button if this item is a root folder or is selected
         if (item.type == BookmarkNodeType.FOLDER && item.inRoots()) {
-            containerView.overflowView.removeAndDisable()
+            viewWrapper.widget.removeSecondaryButton()
         } else if (payload.modeChanged) {
             if (mode is BookmarkFragmentState.Mode.Selecting) {
-                containerView.overflowView.hideAndDisable()
+                viewWrapper.widget.removeSecondaryButton()
             } else {
-                containerView.overflowView.showAndEnable()
+                viewWrapper.attachMenu(menu.menuController)
             }
         }
 
         if (payload.selectedChanged) {
-            containerView.changeSelected(item in mode.selectedItems)
+            viewWrapper.changeSelected(item in mode.selectedItems)
         }
 
         val useTitleFallback = item.type == BookmarkNodeType.ITEM && item.title.isNullOrBlank()
-        if (payload.titleChanged) {
-            containerView.titleView.text = if (useTitleFallback) item.url else item.title
-        } else if (payload.urlChanged && useTitleFallback) {
-            containerView.titleView.text = item.url
-        }
-
-        if (payload.urlChanged) {
-            containerView.urlView.text = item.url
+        if (payload.titleChanged || payload.urlChanged) {
+            viewWrapper.widget.setText(
+                label = (if (useTitleFallback) item.url else item.title).orEmpty(),
+                caption = if (useTitleFallback) null else item.url
+            )
         }
 
         if (payload.iconChanged) {
@@ -94,8 +88,8 @@ class BookmarkNodeViewHolder(
     }
 
     private fun updateIcon(item: BookmarkNode) {
-        val context = containerView.context
-        val iconView = containerView.iconView
+        val context = viewWrapper.context
+        val iconView = viewWrapper.widget.iconView
         val url = item.url
 
         when {
@@ -109,13 +103,13 @@ class BookmarkNodeViewHolder(
                 )
             // Item has a http/https URL
             url != null && url.startsWith("http") ->
-                context.components.core.icons.loadIntoView(iconView, url)
+                icons.loadIntoView(iconView, url)
             else ->
                 iconView.setImageDrawable(null)
         }
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.bookmark_list_item
+        const val VIEW_TYPE = R.layout.site_list_item_selectable
     }
 }
