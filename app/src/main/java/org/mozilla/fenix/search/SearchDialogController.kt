@@ -55,7 +55,8 @@ class SearchDialogController(
     private val settings: Settings,
     private val metrics: MetricController,
     private val dismissDialog: () -> Unit,
-    private val clearToolbarFocus: () -> Unit
+    private val clearToolbarFocus: () -> Unit,
+    private val focusToolbar: () -> Unit
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String) {
@@ -176,6 +177,7 @@ class SearchDialogController(
     }
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
+        focusToolbar()
         store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine))
         val isCustom =
             CustomSearchEngineStore.isCustomSearchEngine(activity, searchEngine.identifier)
