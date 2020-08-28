@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -113,6 +114,11 @@ import java.lang.ref.WeakReference
 @OptIn(ExperimentalCoroutinesApi::class)
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
+    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
+    // we need to store startup timestamp for warm startup. we cant directly store
+    // inside AppStartupTelemetry since that class lives inside components and
+    // components requires context to access.
+    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
@@ -236,13 +242,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+        components.appStartupTelemetry.onHomeActivityOnCreate(
+            safeIntent,
+            hasSavedInstanceState,
+            homeActivityInitTimeStampNanoSeconds, rootContainer
+        )
     }
 
     override fun onRestart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS..
+        // we are measuring startup time for hot startup type
+        startupTelemetryOnRestartCalled()
         super.onRestart()
+    }
 
-        components.appStartupTelemetry.onHomeActivityOnRestart()
+    private fun startupTelemetryOnRestartCalled() {
+        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -254,8 +269,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onResume()"
         )
-
-        components.appStartupTelemetry.onHomeActivityOnResume()
 
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
@@ -315,6 +328,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
+
+        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
@@ -751,7 +766,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (components.core.engine.profiler?.isProfilerActive() == true) {
             // Wrapping the `addMarker` method with `isProfilerActive` even though it's no-op when
             // profiler is not active. That way, `text` argument will not create a string builder all the time.
-            components.core.engine.profiler?.addMarker("HomeActivity.load", startTime, "newTab: $newTab")
+            components.core.engine.profiler?.addMarker(
+                "HomeActivity.load",
+                startTime,
+                "newTab: $newTab"
+            )
         }
     }
 
