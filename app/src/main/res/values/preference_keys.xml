@@ -20,6 +20,7 @@
     <string name="pref_key_privacy_link" translatable="false">pref_key_privacy_link</string>
     <string name="pref_key_delete_browsing_data" translatable="false">pref_key_delete_browsing_data</string>
     <string name="pref_key_delete_browsing_data_on_quit_preference" translatable="false">pref_key_delete_browsing_data_on_quit_preference</string>
+    <string name="pref_key_notifications" translatable="false">pref_key_notifications</string>
     <string name="pref_key_delete_browsing_data_on_quit" translatable="false">pref_key_delete_browsing_data_on_quit</string>
     <string name="pref_key_delete_open_tabs_on_quit" translatable="false">pref_key_delete_open_tabs_on_quit</string>
     <string name="pref_key_delete_browsing_history_on_quit" translatable="false">pref_key_delete_browsing_history_on_quit</string>
@@ -57,6 +58,8 @@
     <string name="pref_key_open_in_app_opened" translatable="false">pref_key_open_in_app_opened</string>
     <string name="pref_key_install_pwa_opened" translatable="false">pref_key_install_pwa_opened</string>
     <string name="pref_key_install_pwa_visits" translatable="false">pref_key_install_pwa_visits</string>
+    <string name="pref_key_times_app_opened" translatable="false">pref_key_times_app_opened</string>
+    <string name="pref_key_last_review_prompt_shown_time" translatable="false">pref_key_last_review_prompt_shown_time</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -120,6 +123,9 @@
     <string name="pref_key_auto_battery_theme" translatable="false">pref_key_auto_battery_theme</string>
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
+    <!-- Customization Settings -->
+    <string name="pref_home_category" translatable="false">pref_home_category</string>
+
     <!-- Tracking Protection Settings -->
     <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>
     <string name="pref_key_tracking_protection_settings" translatable="false">pref_key_tracking_protection_settings</string>
@@ -165,19 +171,25 @@
     <string name="pref_key_testing_stage" translatable="false">pref_key_testing_stage</string>
 
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
+
+    <!-- Top Sites -->
     <string name="default_top_sites_added" translatable="false">pref_key_pocket_top_site_added</string>
     <string name="pref_key_top_sites_size" translatable="false">pref_key_top_sites_size</string>
+    <!-- Maximum number of top sites to display -->
+    <string name="pref_key_top_sites_max_limit" translatable="false">pref_key_top_sites_max_limit</string>
+    <!-- Whether or not the top frecent sites are shown along with pinned top sites -->
+    <string name="pref_key_enable_top_frecent_sites" translatable="false">pref_key_top_frecent_sites</string>
 
-    <!-- A value  of `true` means the PWA dialog has been showed or user already has PWAs installed-->
+    <!-- A value  of `true` means the PWA dialog has been showed or user already has PWAs installed -->
     <string name="pref_key_user_knows_about_pwa" translatable="false">pref_key_user_knows_about_pwa</string>
 
     <string name="pref_key_migrating_from_fenix_nightly_tip" translatable="false">pref_key_migrating_from_fenix_nightly_tip</string>
     <string name="pref_key_migrating_from_firefox_nightly_tip" translatable="false">pref_key_migrating_from_firefox_nightly_tip</string>
     <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
 
-    <string name="pref_key_use_new_search_experience" translatable="false">pref_key_use_new_search_experience</string>
-
     <string name="pref_key_wait_first_paint" translatable="false">pref_key_wait_first_paint</string>
+
+    <string name="pref_key_synced_tabs_tabs_tray" translatable="false">pref_key_synced_tabs_tabs_tray</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
@@ -193,4 +205,7 @@
     <string name="pref_key_default_browser" translatable="false">pref_key_default_browser</string>
 
     <string name="pref_key_login_exceptions" translatable="false">pref_key_login_exceptions</string>
+
+    <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
+    <string name="pref_key_temp_review_prompt">pref_key_temp_review_prompt</string>
 </resources>

@@ -15,10 +15,10 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Gueta o introduz una direición</string>
     <!-- No Open Tabs Message Description -->
-    <string name="no_open_tabs_description">Equi van amosase les llingüetes abiertes.</string>
+    <string name="no_open_tabs_description">Equí van amosase les llingüetes abiertes.</string>
 
     <!-- No Private Tabs Message Description -->
-    <string name="no_private_tabs_description">Equi van amosase les llingüetes abiertes.</string>
+    <string name="no_private_tabs_description">Equí van amosase les llingüetes abiertes.</string>
 
     <!-- Message announced to the user when tab tray is selected with 1 tab -->
     <string name="open_tab_tray_single">1 llingüeta abierta. Toca pa cambiar a otra.</string>
@@ -27,8 +27,13 @@
 
     <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
     <string name="tab_tray_multi_select_title">%1$d esbillaes</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Coleición nueva</string>
     <!-- Label of editable text in create collection dialog for naming a new collection  -->
     <string name="tab_tray_add_new_collection_name">Nome</string>
+
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Esbilla d\'una coleición</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s ta producíu por Adam Novak.</string>
@@ -126,6 +131,8 @@
     <string name="browser_menu_powered_by2">Cola potencia de %1$s</string>
     <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Mou de llector</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Zarrar la vista de llector</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Abrir nuna aplicación</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -247,6 +254,8 @@
     <string name="preferences_sign_in_description">Sincroniza los marcadores, l\'historial y muncho más cola to cuenta de Firefox</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Cuenta de Firefox</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">Reconéutate pa siguir cola sincronización</string>
     <!-- Preference for language -->
     <string name="preferences_language">Llingua</string>
     <!-- Preference for data collection -->
@@ -278,6 +287,9 @@
     <string name="preferences_external_download_manager">Xestor de descargues esternu</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Complementos</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Avisos</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -363,6 +375,11 @@
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Activación de Sync</string>
+
+    <!-- Preference for reconnecting to FxA sync -->
+    <string name="preferences_sync_sign_in_to_reconnect">Aniciar sesión pa reconeutar</string>
+    <!-- Preference for removing FxA account -->
+    <string name="preferences_sync_remove_account">Desaniciar la cuenta</string>
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
@@ -473,6 +490,9 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (en privao)</string>
 
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Guardar</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Desaniciar l\'historial</string>
@@ -502,6 +522,10 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Nun hai nada</string>
+
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Equí nun hai descargues</string>
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
@@ -659,6 +683,8 @@
     <string name="create_collection_save_to_collection_tab_selected">Esbillóse %d llingüeta</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">¡Guardáronse les llingüetes!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">¡Guardóse la coleición!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">¡Guardóse la llingüeta!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
@@ -690,6 +716,8 @@
 
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Unviar a tolos preseos</string>
+    <!-- An option from the share dialog to reconnect to sync -->
+    <string name="sync_reconnect">Reconexón con Sync</string>
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">Coneutar otru preséu</string>
     <!-- The dialog text shown when additional devices are not available -->
@@ -879,8 +907,7 @@
     <string name="onboarding_whats_new_description">¿Tienes entrugues tocante al rediseñu de %s?¿Quies saber qué camudó?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Consigui rempuestes equí</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <!-- text for the firefox account onboarding card header -->
     <string name="onboarding_firefox_account_header">Aprovecha %s al máximu.</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Aniciando sesión…</string>

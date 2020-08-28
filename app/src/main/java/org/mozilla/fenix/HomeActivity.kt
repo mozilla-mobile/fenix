@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -21,7 +22,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -40,13 +40,11 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
-import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
-import mozilla.components.feature.search.SearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
@@ -56,7 +54,6 @@ import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
-import mozilla.components.support.utils.RunWhenReadyQueue
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
@@ -71,6 +68,7 @@ import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
+import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
@@ -100,9 +98,11 @@ import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirection
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
 import org.mozilla.fenix.sync.SyncedTabsFragmentDirections
 import org.mozilla.fenix.tabtray.TabTrayDialogFragment
+import org.mozilla.fenix.tabtray.TabTrayDialogFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
+import java.lang.ref.WeakReference
 
 /**
  * The main activity of the application. The application is primarily a single Activity (this one)
@@ -121,7 +121,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var isVisuallyComplete = false
 
-    private var visualCompletenessQueue: RunWhenReadyQueue? = null
     private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? = null
 
     private var isToolbarInflated = false
@@ -156,6 +155,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             super.onCreate(savedInstanceState)
         }
 
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onCreate()",
+            data = mapOf(
+                "recreated" to (savedInstanceState != null).toString(),
+                "intent" to (intent?.action ?: "null")
+            )
+        )
+
         components.publicSuffixList.prefetch()
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
@@ -163,13 +172,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
-            rootContainer.doOnPreDraw {
-                // This delay is temporary. We are delaying 5 seconds until the performance
-                // team can locate the real point of visual completeness.
-                it.postDelayed({
-                    visualCompletenessQueue!!.ready()
-                }, delay)
-            }
+            components.performance.visualCompletenessQueue
+                .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
         }
 
         sessionObserver = UriOpenedObserver(this)
@@ -226,18 +230,32 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         captureSnapshotTelemetryMetrics()
 
-        setAppAllStartTelemetry(intent.toSafeIntent())
+        startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
 
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun setAppAllStartTelemetry(safeIntent: SafeIntent) {
-        components.appAllSourceStartTelemetry.receivedIntentInHomeActivity(safeIntent)
+    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
+        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+
+        components.appStartupTelemetry.onHomeActivityOnRestart()
     }
 
     @CallSuper
     override fun onResume() {
         super.onResume()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onResume()"
+        )
+
+        components.appStartupTelemetry.onHomeActivityOnResume()
 
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
@@ -266,12 +284,44 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onStart()"
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onStop()",
+            data = mapOf(
+                "finishing" to isFinishing.toString()
+            )
+        )
+    }
+
     final override fun onPause() {
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
 
         super.onPause()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onPause()",
+            data = mapOf(
+                "finishing" to isFinishing.toString()
+            )
+        )
 
         // Every time the application goes into the background, it is possible that the user
         // is about to change the browsers installed on their system. Therefore, we reset the cache of
@@ -283,7 +333,37 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onDestroy()",
+            data = mapOf(
+                "finishing" to isFinishing.toString()
+            )
+        )
+
         privateNotificationObserver?.stop()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onConfigurationChanged()"
+        )
+    }
+
+    override fun recreate() {
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "recreate()"
+        )
+
+        super.recreate()
     }
 
     /**
@@ -292,6 +372,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     final override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent ?: return
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onNewIntent()",
+            data = mapOf(
+                "intent" to intent.action.toString()
+            )
+        )
 
         val intentProcessors =
             listOf(CrashReporterIntentProcessor()) + externalSourceIntentProcessors
@@ -317,7 +406,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             .let(::getIntentAllSource)
             ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
 
-        setAppAllStartTelemetry(intent.toSafeIntent())
+        components.appStartupTelemetry.onHomeActivityOnNewIntent(intent.toSafeIntent())
     }
 
     /**
@@ -331,7 +420,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     ): View? = when (name) {
         EngineView::class.java.name -> components.core.engine.createView(context, attrs).apply {
             selectionActionDelegate = DefaultSelectionActionDelegate(
-                getSearchAdapter(components.core.store),
+                BrowserStoreSearchAdapter(
+                    components.core.store,
+                    tabId = getIntentSessionId(intent.toSafeIntent())
+                ),
                 resources = context.resources,
                 shareTextClicked = { share(it) },
                 emailTextClicked = { email(it) },
@@ -423,9 +515,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         super.onUserLeaveHint()
     }
-
-    protected open fun getSearchAdapter(store: BrowserStore): SearchAdapter =
-        BrowserStoreSearchAdapter(store)
 
     protected open fun getBreadcrumbMessage(destination: NavDestination): String {
         val fragmentName = resources.getResourceEntryName(destination.id)
@@ -597,6 +686,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             AddonPermissionsDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromLoginDetailFragment ->
             LoginDetailFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromTabTray ->
+            TabTrayDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
     }
 
     /**
@@ -675,9 +766,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * The root container is null at this point, so let the HomeActivity know that
      * we are visually complete.
      */
-    fun postVisualCompletenessQueue(visualCompletenessQueue: RunWhenReadyQueue) {
+    fun setVisualCompletenessQueueReady() {
         isVisuallyComplete = true
-        this.visualCompletenessQueue = visualCompletenessQueue
     }
 
     private fun captureSnapshotTelemetryMetrics() = CoroutineScope(Dispatchers.IO).launch {
@@ -714,7 +804,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val EXTRA_DELETE_PRIVATE_TABS = "notification_delete_and_open"
         const val EXTRA_OPENED_FROM_NOTIFICATION = "notification_open"
-        const val delay = 5000L
         const val START_IN_RECENTS_SCREEN = "start_in_recents_screen"
 
         // PWA must have been used within last 30 days to be considered "recently used" for the

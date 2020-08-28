@@ -106,7 +106,7 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.appReceivedIntent.record(it) },
             { Events.appReceivedIntentKeys.valueOf(it) }
         )
-        is Event.AppOpenedAllSourceStartup -> EventWrapper(
+        is Event.AppAllStartup -> EventWrapper(
             { Events.appOpenedAllStartup.record(it) },
             { Events.appOpenedAllStartupKeys.valueOf(it) }
         )
@@ -531,15 +531,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.PrivacyNoticeTapped -> EventWrapper<NoExtraKeys>(
             { AboutPage.privacyNoticeTapped.record(it) }
         )
-        is Event.RightsTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.rightsTapped.record(it) }
-        )
-        is Event.LicensingTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.licensingTapped.record(it) }
-        )
-        is Event.LibrariesThatWeUseTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.librariesTapped.record(it) }
-        )
         is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
             { Pocket.pocketTopSiteClicked.record(it) }
         )
@@ -725,7 +716,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
         // The code below doesn't need to execute immediately, so we'll add them to the visual
         // completeness task queue to be run later.
-        context.components.performance.visualCompletenessQueue.runIfReadyOrQueue {
+        context.components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
             // We have to initialize Glean *on* the main thread, because it registers lifecycle
             // observers. However, the activation ping must be sent *off* of the main thread,
             // because it calls Google ad APIs that must be called *off* of the main thread.

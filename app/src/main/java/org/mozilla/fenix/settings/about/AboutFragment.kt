@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.fenix.BrowserDirection
@@ -167,8 +168,8 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     private fun openLibrariesPage() {
-        val intent = Intent(requireContext(), AboutLibrariesActivity::class.java)
-        startActivity(intent)
+        val navController = findNavController()
+        navController.navigate(R.id.action_aboutFragment_to_aboutLibrariesFragment)
     }
 
     override fun onAboutItemClicked(item: AboutItem) {
@@ -185,18 +186,12 @@ class AboutFragment : Fragment(), AboutPageListener {
                     PRIVACY_NOTICE -> {
                         requireComponents.analytics.metrics.track(Event.PrivacyNoticeTapped)
                     }
-                    RIGHTS -> {
-                        requireComponents.analytics.metrics.track(Event.RightsTapped)
-                    }
-                    LICENSING_INFO -> {
-                        requireComponents.analytics.metrics.track(Event.LicensingTapped)
-                    }
+                    LICENSING_INFO, RIGHTS -> {} // no telemetry needed
                 }
 
                 openLinkInNormalTab(item.url)
             }
             is AboutItem.Libraries -> {
-                requireComponents.analytics.metrics.track(Event.LibrariesThatWeUseTapped)
                 openLibrariesPage()
             }
             is AboutItem.Crashes -> {

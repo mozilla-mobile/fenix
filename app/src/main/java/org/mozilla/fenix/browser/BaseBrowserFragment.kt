@@ -42,6 +42,7 @@ import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -56,10 +57,10 @@ import mozilla.components.feature.privatemode.feature.SecureWindowFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
+import mozilla.components.feature.search.SearchFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
-import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
@@ -98,6 +99,7 @@ import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.accessibilityManager
+import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.enterToImmersiveMode
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -133,6 +135,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         get() = _browserToolbarView!!
 
     protected val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
+    protected val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
 
     private val sessionFeature = ViewBoundFeatureWrapper<SessionFeature>()
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
@@ -150,6 +153,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private val secureWindowFeature = ViewBoundFeatureWrapper<SecureWindowFeature>()
     private var fullScreenMediaFeature =
         ViewBoundFeatureWrapper<MediaFullscreenOrientationFeature>()
+    private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
     private var pipFeature: PictureInPictureFeature? = null
 
     var customTabSessionId: String? = null
@@ -169,11 +173,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         require(arguments != null)
         customTabSessionId = arguments?.getString(EXTRA_SESSION_ID)
 
-        val view = if (FeatureFlags.browserChromeGestures) {
-            inflater.inflate(R.layout.browser_gesture_wrapper, container, false)
-        } else {
-            inflater.inflate(R.layout.fragment_browser, container, false)
-        }
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onCreateView()",
+            data = mapOf(
+                "customTabSessionId" to customTabSessionId.toString()
+            )
+        )
+
+        val view = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val activity = activity as HomeActivity
         activity.themeManager.applyStatusBarTheme(activity)
@@ -212,6 +221,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         }
 
         return getSessionById()?.also { session ->
+            val openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
+                action = Intent.ACTION_VIEW
+                putExtra(HomeActivity.OPEN_TO_BROWSER, true)
+            }
+
             val browserToolbarController = DefaultBrowserToolbarController(
                 activity = requireActivity() as HomeActivity,
                 navController = findNavController(),
@@ -227,15 +241,12 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 swipeRefresh = swipeRefresh,
                 browserAnimator = browserAnimator,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
-                    action = Intent.ACTION_VIEW
-                    putExtra(HomeActivity.OPEN_TO_BROWSER, true)
-                },
+                openInFenixIntent = openInFenixIntent,
                 bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
                 scope = viewLifecycleOwner.lifecycleScope,
                 tabCollectionStorage = requireComponents.core.tabCollectionStorage,
-                topSiteStorage = requireComponents.core.topSiteStorage,
                 onTabCounterClicked = {
+                    thumbnailsFeature.get()?.requestScreenshot()
                     findNavController().nav(
                         R.id.browserFragment,
                         BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
@@ -477,7 +488,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     },
                     onNeedToRequestPermissions = { permissions ->
                         requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
-                    }),
+                    },
+                    loginPickerView = if (FeatureFlags.loginSelect) loginSelectBar else null,
+                    onManageLogins = {
+                        browserAnimator.captureEngineViewAndDrawStatically {
+                            val directions =
+                                NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
+                            findNavController().navigate(directions)
+                        }
+                    }
+                ),
                 owner = this,
                 view = view
             )
@@ -486,10 +506,29 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 feature = SessionFeature(
                     requireComponents.core.store,
                     requireComponents.useCases.sessionUseCases.goBack,
-                    requireComponents.useCases.engineSessionUseCases,
                     view.engineView,
                     customTabSessionId
                 ),
+                owner = this,
+                view = view
+            )
+
+            searchFeature.set(
+                feature = SearchFeature(store, customTabSessionId) { request, tabId ->
+                    val parentSession = sessionManager.findSessionById(tabId)
+                    val useCase = if (request.isPrivate) {
+                        requireComponents.useCases.searchUseCases.newPrivateTabSearch
+                    } else {
+                        requireComponents.useCases.searchUseCases.newTabSearch
+                    }
+
+                    if (parentSession?.isCustomTabSession() == true) {
+                        useCase.invoke(request.query)
+                        requireActivity().startActivity(openInFenixIntent)
+                    } else {
+                        useCase.invoke(request.query, parentSession = parentSession)
+                    }
+                },
                 owner = this,
                 view = view
             )
@@ -541,7 +580,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             fullScreenFeature.set(
                 feature = FullScreenFeature(
                     requireComponents.core.store,
-                    SessionUseCases(sessionManager),
+                    requireComponents.useCases.sessionUseCases,
                     customTabSessionId,
                     ::viewportFitChange,
                     ::fullScreenChanged
@@ -593,7 +632,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
                             if (showEngineView) {
                                 engineView?.asView()?.isVisible = true
-                                swipeRefresh.alpha = 1f
+                                swipeRefresh?.alpha = 1f
                             } else {
                                 engineView?.asView()?.isVisible = false
                             }
@@ -1063,9 +1102,36 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      */
     override fun onDestroyView() {
         super.onDestroyView()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onDestroyView()"
+        )
+
         requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
         _browserToolbarView = null
         _browserInteractor = null
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onAttach()"
+        )
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        // Diagnostic breadcrumb for "Display already aquired" crash:
+        // https://github.com/mozilla-mobile/android-components/issues/7960
+        breadcrumb(
+            message = "onDetach()"
+        )
     }
 
     companion object {

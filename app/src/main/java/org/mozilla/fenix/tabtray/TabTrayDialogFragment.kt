@@ -177,6 +177,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             adapter,
             interactor = TabTrayFragmentInteractor(
                 DefaultTabTrayController(
+                    activity = activity,
                     profiler = activity.components.core.engine.profiler,
                     sessionManager = activity.components.core.sessionManager,
                     browsingModeManager = activity.browsingModeManager,
@@ -191,10 +192,11 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     showAddNewCollectionDialog = ::showAddNewCollectionDialog
                 )
             ),
+            store = tabTrayDialogStore,
             isPrivate = isPrivate,
             startingInLandscape = requireContext().resources.configuration.orientation ==
                     Configuration.ORIENTATION_LANDSCAPE,
-            lifecycleScope = viewLifecycleOwner.lifecycleScope
+            lifecycleOwner = viewLifecycleOwner
         ) { private ->
             val filter: (TabSessionState) -> Boolean = { state -> private == state.content.private }
 

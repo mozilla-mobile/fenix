@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.browser_gesture_wrapper.*
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,13 +25,11 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
-import mozilla.components.feature.search.SearchFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
@@ -55,8 +52,6 @@ import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
-    private val searchFeature = ViewBoundFeatureWrapper<SearchFeature>()
-    private val thumbnailsFeature = ViewBoundFeatureWrapper<BrowserThumbnails>()
 
     private var readerModeAvailable = false
 
@@ -77,19 +72,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val components = context.components
 
         return super.initializeUI(view)?.also {
-            // We need to wrap this whole thing in an if here because gestureLayout will not exist
-            // if the feature flag is off
-            if (FeatureFlags.browserChromeGestures) {
-                gestureLayout.addGestureListener(
-                    ToolbarGestureHandler(
-                        activity = requireActivity(),
-                        contentLayout = browserLayout,
-                        tabPreview = tabPreview,
-                        toolbarLayout = browserToolbarView.view,
-                        sessionManager = components.core.sessionManager
-                    )
+            gestureLayout.addGestureListener(
+                ToolbarGestureHandler(
+                    activity = requireActivity(),
+                    contentLayout = browserLayout,
+                    tabPreview = tabPreview,
+                    toolbarLayout = browserToolbarView.view,
+                    sessionManager = components.core.sessionManager
                 )
-            }
+            )
 
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
@@ -145,23 +136,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     store = components.core.store,
                     tabsUseCases = components.useCases.tabsUseCases
                 ),
-                owner = this,
-                view = view
-            )
-            searchFeature.set(
-                feature = SearchFeature(components.core.store) {
-                    if (it.isPrivate) {
-                        components.useCases.searchUseCases.newPrivateTabSearch.invoke(
-                            it.query,
-                            parentSession = getSessionById()
-                        )
-                    } else {
-                        components.useCases.searchUseCases.newTabSearch.invoke(
-                            it.query,
-                            parentSession = getSessionById()
-                        )
-                    }
-                },
                 owner = this,
                 view = view
             )

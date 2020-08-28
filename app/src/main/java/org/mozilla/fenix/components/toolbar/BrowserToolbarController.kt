@@ -23,6 +23,7 @@ import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlin.isUrl
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -34,7 +35,6 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
-import org.mozilla.fenix.components.TopSiteStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
@@ -75,13 +75,12 @@ class DefaultBrowserToolbarController(
     private val bookmarkTapped: (Session) -> Unit,
     private val scope: CoroutineScope,
     private val tabCollectionStorage: TabCollectionStorage,
-    private val topSiteStorage: TopSiteStorage,
     private val onTabCounterClicked: () -> Unit,
     private val onCloseTab: (Session) -> Unit
 ) : BrowserToolbarController {
 
     private val useNewSearchExperience
-        get() = activity.settings().useNewSearchExperience
+        get() = FeatureFlags.newSearchExperience
 
     private val currentSession
         get() = customTabSession ?: activity.components.core.sessionManager.selectedSession
@@ -245,7 +244,9 @@ class DefaultBrowserToolbarController(
                 scope.launch {
                     ioScope.launch {
                         currentSession?.let {
-                            topSiteStorage.addTopSite(it.title, it.url)
+                            with(activity.components.useCases.topSitesUseCase) {
+                                addPinnedSites(it.title, it.url)
+                            }
                         }
                     }.join()
 
@@ -380,6 +381,13 @@ class DefaultBrowserToolbarController(
                     BrowserFragmentDirections.actionGlobalHistoryFragment()
                 )
             }
+
+            ToolbarMenu.Item.Downloads -> browserAnimator.captureEngineViewAndDrawStatically {
+                navController.nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionGlobalDownloadsFragment()
+                )
+            }
         }
     }
 
@@ -414,6 +422,7 @@ class DefaultBrowserToolbarController(
             ToolbarMenu.Item.AddonsManager -> Event.BrowserMenuItemTapped.Item.ADDONS_MANAGER
             ToolbarMenu.Item.Bookmarks -> Event.BrowserMenuItemTapped.Item.BOOKMARKS
             ToolbarMenu.Item.History -> Event.BrowserMenuItemTapped.Item.HISTORY
+            ToolbarMenu.Item.Downloads -> Event.BrowserMenuItemTapped.Item.DOWNLOADS
         }
 
         activity.components.analytics.metrics.track(Event.BrowserMenuItemTapped(eventItem))

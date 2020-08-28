@@ -16,7 +16,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -68,10 +67,13 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.feature.top.sites.TopSitesConfig
+import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -97,6 +99,7 @@ import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.DefaultTopSitesView
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
@@ -146,8 +149,11 @@ class HomeFragment : Fragment() {
     private val store: BrowserStore
         get() = requireComponents.core.store
 
-    private val onboarding by lazy { StrictMode.allowThreadDiskReads().resetPoliciesAfter {
-        FenixOnboarding(requireContext()) } }
+    private val onboarding by lazy {
+        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+            FenixOnboarding(requireContext())
+        }
+    }
 
     private lateinit var homeFragmentStore: HomeFragmentStore
     private var _sessionControlInteractor: SessionControlInteractor? = null
@@ -156,6 +162,8 @@ class HomeFragment : Fragment() {
 
     private var sessionControlView: SessionControlView? = null
     private lateinit var currentMode: CurrentMode
+
+    private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -190,22 +198,31 @@ class HomeFragment : Fragment() {
                     collections = components.core.tabCollectionStorage.cachedTabCollections,
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
-                    topSites = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
-                        components.core.topSiteStorage.cachedTopSites
-                    },
-                    tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip()
+                    topSites = components.core.topSiteStorage.cachedTopSites,
+                    tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip(),
+                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
                 )
             )
         }
 
+        topSitesFeature.set(
+            feature = TopSitesFeature(
+                view = DefaultTopSitesView(homeFragmentStore),
+                storage = components.core.topSiteStorage,
+                config = ::getTopSitesConfig
+            ),
+            owner = this,
+            view = view
+        )
+
         _sessionControlInteractor = SessionControlInteractor(
             DefaultSessionControlController(
                 activity = activity,
+                settings = components.settings,
                 engine = components.core.engine,
                 metrics = components.analytics.metrics,
                 sessionManager = sessionManager,
                 tabCollectionStorage = components.core.tabCollectionStorage,
-                topSiteStorage = components.core.topSiteStorage,
                 addTabUseCase = components.useCases.tabsUseCases.addTab,
                 fragmentStore = homeFragmentStore,
                 navController = findNavController(),
@@ -220,15 +237,24 @@ class HomeFragment : Fragment() {
         updateLayout(view)
         sessionControlView = SessionControlView(
             view.sessionControlRecyclerView,
+            viewLifecycleOwner,
             sessionControlInteractor,
-            homeViewModel,
-            requireComponents.core.store.state.normalTabs.isNotEmpty()
+            homeViewModel
         )
 
         updateSessionControlView(view)
 
         activity.themeManager.applyStatusBarTheme(activity)
         return view
+    }
+
+    /**
+     * Returns a [TopSitesConfig] which specifies how many top sites to display and whether or
+     * not frequently visited sites should be displayed.
+     */
+    private fun getTopSitesConfig(): TopSitesConfig {
+        val settings = requireContext().settings()
+        return TopSitesConfig(settings.topSitesMaxLimit, settings.showTopFrecentSites)
     }
 
     /**
@@ -344,7 +370,7 @@ class HomeFragment : Fragment() {
 
         view.toolbar_wrapper.setOnLongClickListener {
             ToolbarPopupWindow.show(
-                WeakReference(view),
+                WeakReference(it),
                 handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
                 handlePaste = sessionControlInteractor::onPaste,
                 copyVisible = false
@@ -374,7 +400,8 @@ class HomeFragment : Fragment() {
         // We call this onLayout so that the bottom bar width is correctly set for us to center
         // the CFR in.
         view.toolbar_wrapper.doOnLayout {
-            if (!browsingModeManager.mode.isPrivate) {
+            val willNavigateToSearch = !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience
+            if (!browsingModeManager.mode.isPrivate && !willNavigateToSearch) {
                 SearchWidgetCFR(
                     context = view.context,
                     settings = view.context.settings(),
@@ -382,19 +409,6 @@ class HomeFragment : Fragment() {
                 ) {
                     view.toolbar_wrapper
                 }.displayIfNecessary()
-            }
-        }
-
-        val args by navArgs<HomeFragmentArgs>()
-
-        if (view.context.settings().accessibilityServicesEnabled &&
-            args.focusOnAddressBar
-        ) {
-            // We cannot put this in the fragment_home.xml file as it breaks tests
-            view.toolbar_wrapper.isFocusableInTouchMode = true
-            viewLifecycleOwner.lifecycleScope.launch {
-                view.toolbar_wrapper?.requestFocus()
-                view.toolbar_wrapper?.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
             }
         }
 
@@ -418,7 +432,7 @@ class HomeFragment : Fragment() {
 
         updateTabCounter(requireComponents.core.store.state)
 
-        if (args.focusOnAddressBar && requireContext().settings().useNewSearchExperience) {
+        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience) {
             navigateToSearch()
         }
     }
@@ -506,7 +520,6 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         subscribeToTabCollections()
-        subscribeToTopSites()
 
         val context = requireContext()
         val components = context.components
@@ -516,7 +529,8 @@ class HomeFragment : Fragment() {
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
                 topSites = components.core.topSiteStorage.cachedTopSites,
-                tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip()
+                tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip(),
+                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
             )
         )
 
@@ -556,6 +570,10 @@ class HomeFragment : Fragment() {
 
         // We only want this observer live just before we navigate away to the collection creation screen
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
+
+        lifecycleScope.launch(IO) {
+            requireComponents.reviewPromptController.promptReview(requireActivity())
+        }
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -679,7 +697,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToSearch() {
-        val directions = if (requireContext().settings().useNewSearchExperience) {
+        val directions = if (FeatureFlags.newSearchExperience) {
             HomeFragmentDirections.actionGlobalSearchDialog(
                 sessionId = null
             )
@@ -771,6 +789,15 @@ class HomeFragment : Fragment() {
                             HomeFragmentDirections.actionGlobalHistoryFragment()
                         )
                     }
+
+                    HomeMenu.Item.Downloads -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalDownloadsFragment()
+                        )
+                    }
+
                     HomeMenu.Item.Help -> {
                         hideOnboardingIfNeeded()
                         (activity as HomeActivity).openToBrowserAndLoad(
@@ -829,17 +856,6 @@ class HomeFragment : Fragment() {
             homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(it))
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
-        }
-    }
-
-    private fun subscribeToTopSites(): Observer<List<TopSite>> {
-        return Observer<List<TopSite>> { topSites ->
-            requireComponents.core.topSiteStorage.cachedTopSites = topSites
-            context?.settings()?.preferences?.edit()
-                ?.putInt(getString(R.string.pref_key_top_sites_size), topSites.size)?.apply()
-            homeFragmentStore.dispatch(HomeFragmentAction.TopSitesChange(topSites))
-        }.also { observer ->
-            requireComponents.core.topSiteStorage.getTopSites().observe(this, observer)
         }
     }
 

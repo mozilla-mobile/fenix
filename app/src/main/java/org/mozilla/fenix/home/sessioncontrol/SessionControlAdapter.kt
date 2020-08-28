@@ -8,11 +8,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
@@ -20,7 +22,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSiteViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
@@ -40,14 +42,14 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         ButtonTipViewHolder.LAYOUT_ID
     )
 
-    data class TopSiteList(val topSites: List<TopSite>) : AdapterItem(TopSiteViewHolder.LAYOUT_ID) {
+    data class TopSitePager(val topSites: List<TopSite>) : AdapterItem(TopSitePagerViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem): Boolean {
-            val newTopSites = (other as? TopSiteList) ?: return false
+            val newTopSites = (other as? TopSitePager) ?: return false
             return newTopSites.topSites == this.topSites
         }
 
         override fun contentsSameAs(other: AdapterItem): Boolean {
-            val newTopSites = (other as? TopSiteList) ?: return false
+            val newTopSites = (other as? TopSitePager) ?: return false
             if (newTopSites.topSites.size != this.topSites.size) return false
             val newSitesSequence = newTopSites.topSites.asSequence()
             val oldTopSites = this.topSites.asSequence()
@@ -135,7 +137,8 @@ class AdapterItemDiffCallback : DiffUtil.ItemCallback<AdapterItem>() {
 
 class SessionControlAdapter(
     private val interactor: SessionControlInteractor,
-    private val hasNormalTabsOpened: Boolean
+    private val viewLifecycleOwner: LifecycleOwner,
+    private val components: Components
 ) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItemDiffCallback()) {
 
     // This method triggers the ComplexMethod lint error when in fact it's quite simple.
@@ -144,13 +147,18 @@ class SessionControlAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             ButtonTipViewHolder.LAYOUT_ID -> ButtonTipViewHolder(view, interactor)
-            TopSiteViewHolder.LAYOUT_ID -> TopSiteViewHolder(view, interactor)
+            TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(view, interactor)
             PrivateBrowsingDescriptionViewHolder.LAYOUT_ID -> PrivateBrowsingDescriptionViewHolder(
                 view,
                 interactor
             )
             NoCollectionsMessageViewHolder.LAYOUT_ID ->
-                NoCollectionsMessageViewHolder(view, interactor, hasNormalTabsOpened)
+                NoCollectionsMessageViewHolder(
+                    view,
+                    viewLifecycleOwner,
+                    components.core.store,
+                    interactor
+                )
             CollectionHeaderViewHolder.LAYOUT_ID -> CollectionHeaderViewHolder(view)
             CollectionViewHolder.LAYOUT_ID -> CollectionViewHolder(view, interactor)
             TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
@@ -195,8 +203,8 @@ class SessionControlAdapter(
                 val tipItem = item as AdapterItem.TipItem
                 holder.bind(tipItem.tip)
             }
-            is TopSiteViewHolder -> {
-                holder.bind((item as AdapterItem.TopSiteList).topSites)
+            is TopSitePagerViewHolder -> {
+                holder.bind((item as AdapterItem.TopSitePager).topSites)
             }
             is CollectionViewHolder -> {
                 val (collection, expanded) = item as AdapterItem.CollectionItem

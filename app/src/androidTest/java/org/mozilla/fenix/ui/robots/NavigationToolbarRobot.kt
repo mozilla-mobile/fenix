@@ -26,6 +26,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
@@ -239,12 +240,18 @@ fun navigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationTo
     return NavigationToolbarRobot.Transition()
 }
 
+fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+    urlBar().click()
+    SearchRobot().interact()
+    return SearchRobot.Transition()
+}
+
 private fun assertSuggestionsAreEqualTo(suggestionSize: Int, searchTerm: String) {
     mDevice.waitForIdle()
     awesomeBar().perform(typeText(searchTerm))
 
     mDevice.waitForIdle()
-    onView(withId(R.id.awesomeBar)).check(suggestionsAreEqualTo(suggestionSize))
+    onView(withId(R.id.awesome_bar)).check(suggestionsAreEqualTo(suggestionSize))
 }
 
 private fun assertSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String) {
@@ -252,7 +259,7 @@ private fun assertSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String
     awesomeBar().perform(typeText(searchTerm))
 
     mDevice.waitForIdle()
-    onView(withId(R.id.awesomeBar)).check(suggestionsAreGreaterThan(suggestionSize))
+    onView(withId(R.id.awesome_bar)).check(suggestionsAreGreaterThan(suggestionSize))
 }
 
 private fun assertNoHistoryBookmarks() {

@@ -307,6 +307,9 @@
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Dodaci</string>
 
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Obavijesti</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sinkroniziraj sada</string>
@@ -581,6 +584,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Nema povijesti</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Ovdje nema preuzimanja</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">Odabrano: %1$d</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Oprosti. %1$s ne može učitati tu stranicu.</string>
@@ -738,10 +748,8 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Izbornik za zbirke</string>
 
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header1">Skupi stvari koje su ti bitne</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Grupiraj slične pretrage, stranice i kartice za brži pristup kasnije.</string>
+    <string name="no_collections_description2">Skupi stvari koje su ti bitne.\nGrupiraj slična pretraživanja, stranice i kartice za kasniji brzi pristup.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Odaberi kartice</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -988,9 +996,10 @@
     <string name="onboarding_whats_new_description">Imaš pitanja o redizajniranom %su? Želiš znati što se promijenilo?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Potraži odgovore ovdje</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Iskoristi sve prednosti %sa</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Počni sinkronizirati zabilješke, lozinke i ostalo sa svojim Firefox računom.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Saznaj više</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -1488,6 +1497,9 @@
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">Prijavi se za sinkronizaciju</string>
 
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Nema otvorenih kartica</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Dostignuto ograničenje za omiljene stranice</string>
@@ -1496,4 +1508,6 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">U redu, shvaćam</string>
 
-    </resources>
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Ukloni</string>
+</resources>

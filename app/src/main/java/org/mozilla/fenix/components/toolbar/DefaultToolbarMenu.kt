@@ -177,11 +177,14 @@ class DefaultToolbarMenu(
             ?.browsingModeManager?.mode == BrowsingMode.Normal
         val shouldDeleteDataOnQuit = context.components.settings
             .shouldDeleteBrowsingDataOnQuit
+        val syncedTabsInTabsTray = context.components.settings
+            .syncedTabsInTabsTray
 
         val menuItems = listOfNotNull(
+            if (FeatureFlags.viewDownloads) downloadsItem else null,
             historyItem,
             bookmarksItem,
-            if (FeatureFlags.syncedTabs) syncedTabs else null,
+            if (syncedTabsInTabsTray) null else syncedTabs,
             settings,
             if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,
             BrowserMenuDivider(),
@@ -331,6 +334,14 @@ class DefaultToolbarMenu(
         primaryTextColor()
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Bookmarks)
+    }
+
+    val downloadsItem = BrowserMenuImageText(
+        "Downloads",
+        R.drawable.ic_download,
+        primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Downloads)
     }
 
     @ColorRes

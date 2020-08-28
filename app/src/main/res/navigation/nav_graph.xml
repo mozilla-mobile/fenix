@@ -41,9 +41,6 @@
         android:id="@+id/action_global_turn_on_sync"
         app:destination="@id/turnOnSyncFragment" />
     <action
-        android:id="@+id/action_global_settings_addonsManagementFragment"
-        app:destination="@id/addons_management_graph" />
-    <action
         android:id="@+id/action_global_searchEngineFragment"
         app:destination="@id/search_engine_graph" />
     <action
@@ -70,6 +67,9 @@
     <action
         android:id="@+id/action_global_historyFragment"
         app:destination="@id/historyFragment" />
+
+    <action android:id="@+id/action_global_downloadsFragment"
+        app:destination="@id/downloadsFragment" />
     <action
         android:id="@+id/action_global_accountProblemFragment"
         app:destination="@id/accountProblemFragment" />
@@ -238,6 +238,12 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/downloadsFragment"
+        android:name="org.mozilla.fenix.library.downloads.DownloadFragment"
+        android:label="Downloads"
+        tools:layout="@layout/fragment_downloads" />
 
     <fragment
         android:id="@+id/bookmarkFragment"
@@ -578,7 +584,16 @@
 
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="org.mozilla.fenix.settings.about.AboutFragment" />
+        android:name="org.mozilla.fenix.settings.about.AboutFragment"
+        tools:layout="@layout/fragment_about">
+        <action
+            android:id="@+id/action_aboutFragment_to_aboutLibrariesFragment"
+            app:destination="@id/aboutLibrariesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/secretSettingsPreference"
         android:name="org.mozilla.fenix.settings.SecretSettingsFragment"
@@ -590,6 +605,10 @@
             android:name="crashIntent"
             app:argType="android.content.Intent" />
     </fragment>
+    <fragment
+        android:id="@+id/aboutLibrariesFragment"
+        android:name="org.mozilla.fenix.settings.about.AboutLibrariesFragment"
+        tools:layout="@layout/fragment_about_libraries" />
     <fragment
         android:id="@+id/customizationFragment"
         android:name="org.mozilla.fenix.settings.CustomizationFragment"

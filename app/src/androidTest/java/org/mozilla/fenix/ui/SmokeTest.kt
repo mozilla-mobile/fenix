@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -16,6 +15,7 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -57,7 +57,8 @@ class SmokeTest {
             }.goBackToWebsite {
             }.openTabDrawer {
                 verifyExistingTabList()
-            }.openHomeScreen {
+            }.openNewTab {
+            }.dismiss {
                 verifyHomeScreen()
             }
         }
@@ -105,7 +106,8 @@ class SmokeTest {
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
         }.openTabDrawer {
-        }.openHomeScreen {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesTabs(defaultWebPage.title)
         }.openTabDrawer {
         }.openTab(defaultWebPage.title) {
@@ -131,13 +133,11 @@ class SmokeTest {
             verifyUrl(defaultWebPage.url.toString())
         }.openTabDrawer {
             closeTabViaXButton(defaultWebPage.title)
-        }.openHomeScreen {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-                verifyBlueDot()
-            }.openThreeDotMenu {
-                verifyOpenInAppButton()
-            }
+        }.openNewTab {
+        }.submitQuery(youtubeUrl) {
+            verifyBlueDot()
+        }.openThreeDotMenu {
+            verifyOpenInAppButton()
         }
     }
 
@@ -184,7 +184,8 @@ class SmokeTest {
             }.addToFirefoxHome {
                 verifySnackBarText("Added to top sites!")
             }.openTabDrawer {
-            }.openHomeScreen {
+            }.openNewTab {
+            }.dismiss {
                 togglePrivateBrowsingModeOnOff()
                 verifyExistingTopSitesTabs(defaultWebPage.title)
                 togglePrivateBrowsingModeOnOff()
@@ -208,13 +209,11 @@ class SmokeTest {
                 verifyUrl(defaultWebPage.url.toString())
             }.openTabDrawer {
                 closeTabViaXButton(defaultWebPage.title)
-            }.openHomeScreen {
-                navigationToolbar {
-                }.enterURLAndEnterToBrowser(youtubeUrl.toUri()) {
-                    verifyBlueDot()
-                }.openThreeDotMenu {
-                    verifyOpenInAppButton()
-                }
+            }.openNewTab {
+            }.submitQuery(youtubeUrl) {
+                verifyBlueDot()
+            }.openThreeDotMenu {
+                verifyOpenInAppButton()
             }
         }
     }
@@ -239,7 +238,8 @@ class SmokeTest {
                 verifyUrl("webcompat.com/issues/new")
                 verifyTabCounter("2")
             }.openTabDrawer {
-            }.openHomeScreen {
+            }.openNewTab {
+            }.dismiss {
             }.openThreeDotMenu {
             }.openSettings {
             }.openEnhancedTrackingProtectionSubMenu {
@@ -251,6 +251,62 @@ class SmokeTest {
                 verifyEnhancedTrackingProtectionSwitch()
                 // Turning off TP Switch results in adding the WebPage to exception list
                 clickEnhancedTrackingProtectionSwitchOffOn()
+            }
+        }
+    }
+
+    @Test
+    fun verifySearchEngineCanBeChangedTemporarilyUsingShortcuts() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.openSearch {
+            verifyKeyboardVisibility()
+            clickSearchEngineButton()
+            verifySearchEngineList()
+            changeDefaultSearchEngine("Amazon.com")
+            verifySearchEngineIcon("Amazon.com")
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+            clickSearchEngineButton()
+            mDevice.waitForIdle()
+            changeDefaultSearchEngine("Bing")
+            verifySearchEngineIcon("Bing")
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+            clickSearchEngineButton()
+            mDevice.waitForIdle()
+            changeDefaultSearchEngine("DuckDuckGo")
+            verifySearchEngineIcon("DuckDuckGo")
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+            clickSearchEngineButton()
+            mDevice.waitForIdle()
+            changeDefaultSearchEngine("Twitter")
+            verifySearchEngineIcon("Twitter")
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+            clickSearchEngineButton()
+            changeDefaultSearchEngine("Wikipedia")
+            verifySearchEngineIcon("Wikipedia")
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+            // Checking whether the next search will be with default or not
+        }.openNewTab {
+        }.goToSearchEngine {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openNavigationToolbar {
+            clickUrlbar {
+                verifyDefaultSearchEngine("Google")
             }
         }
     }

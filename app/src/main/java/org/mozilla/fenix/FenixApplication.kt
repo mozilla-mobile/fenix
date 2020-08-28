@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.lib.crash.CrashReporter
@@ -42,6 +43,7 @@ import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.StrictModeManager.enableStrictMode
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.StorageStatsMetrics
@@ -141,7 +143,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         }
 
-        prefetchForHomeFragment()
         setupLeakCanary()
         startMetricsIfEnabled()
         setupPush()
@@ -156,18 +157,20 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         // }
 
         initVisualCompletenessQueueAndQueueTasks()
+
+        components.appStartupTelemetry.onFenixApplicationOnCreate()
     }
 
     private fun initVisualCompletenessQueueAndQueueTasks() {
-        val taskQueue = components.performance.visualCompletenessQueue
+        val queue = components.performance.visualCompletenessQueue.queue
 
         fun initQueue() {
-            registerActivityLifecycleCallbacks(PerformanceActivityLifecycleCallbacks(taskQueue))
+            registerActivityLifecycleCallbacks(PerformanceActivityLifecycleCallbacks(queue))
         }
 
         fun queueInitExperiments() {
             if (settings().isExperimentationEnabled) {
-                taskQueue.runIfReadyOrQueue {
+                queue.runIfReadyOrQueue {
                     Experiments.initialize(
                         applicationContext = applicationContext,
                         onExperimentsUpdated = {
@@ -188,7 +191,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         fun queueInitStorageAndServices() {
-            components.performance.visualCompletenessQueue.runIfReadyOrQueue {
+            components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
                     logger.info("Running post-visual completeness tasks...")
                     logElapsedTime(logger, "Storage initialization") {
@@ -208,12 +211,18 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         fun queueMetrics() {
             if (SDK_INT >= Build.VERSION_CODES.O) { // required by StorageStatsMetrics.
-                taskQueue.runIfReadyOrQueue {
+                queue.runIfReadyOrQueue {
                     // Because it may be slow to capture the storage stats, it might be preferred to
                     // create a WorkManager task for this metric, however, I ran out of
                     // implementation time and WorkManager is harder to test.
                     StorageStatsMetrics.report(this.applicationContext)
                 }
+            }
+        }
+
+        fun queueReviewPrompt() {
+            GlobalScope.launch(Dispatchers.IO) {
+                components.reviewPromptController.trackApplicationLaunch()
             }
         }
 
@@ -224,6 +233,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         queueInitExperiments()
         queueInitStorageAndServices()
         queueMetrics()
+        queueReviewPrompt()
     }
 
     private fun startMetricsIfEnabled() {
@@ -255,14 +265,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     open fun updateLeakCanaryState(isEnabled: Boolean) {
         // no-op, LeakCanary is disabled by default
-    }
-
-    // This is for issue https://github.com/mozilla-mobile/fenix/issues/11660. We prefetch our info for startup
-    // so that we're sure that we have all the data available as our fragment is launched.
-    private fun prefetchForHomeFragment() {
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
-            components.core.topSiteStorage.prefetch()
-        }
     }
 
     private fun setupPush() {
@@ -318,7 +320,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
-            components.core.sessionManager.onTrimMemory(level)
+            components.core.store.dispatch(SystemAction.LowMemoryAction(level))
         }
     }
 

@@ -18,7 +18,7 @@ import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.components.metrics.AppAllSourceStartTelemetry
+import org.mozilla.fenix.components.metrics.AppStartupTelemetry
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
@@ -44,7 +44,7 @@ class Components(private val context: Context) {
         )
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
-    val core by lazy { Core(context) }
+    val core by lazy { Core(context, analytics.crashReporter) }
     val search by lazy { Search(context) }
     val useCases by lazy {
         UseCases(
@@ -53,7 +53,8 @@ class Components(private val context: Context) {
             core.sessionManager,
             core.store,
             search.searchEngineManager,
-            core.webAppShortcutManager
+            core.webAppShortcutManager,
+            core.topSiteStorage
         )
     }
     val intentProcessors by lazy {
@@ -83,7 +84,7 @@ class Components(private val context: Context) {
         }
     }
 
-    val appAllSourceStartTelemetry by lazy { AppAllSourceStartTelemetry(analytics.metrics) }
+    val appStartupTelemetry by lazy { AppStartupTelemetry(analytics.metrics) }
 
     @Suppress("MagicNumber")
     val addonUpdater by lazy {
@@ -114,4 +115,11 @@ class Components(private val context: Context) {
     val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context.getSystemService()!!) }
 
     val settings by lazy { Settings(context) }
+
+    val reviewPromptController by lazy {
+        ReviewPromptController(
+            context,
+            FenixReviewSettings(settings)
+        )
+    }
 }

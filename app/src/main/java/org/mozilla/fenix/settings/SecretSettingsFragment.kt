@@ -5,8 +5,14 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.google.android.play.core.ktx.launchReview
+import com.google.android.play.core.ktx.requestReview
+import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
@@ -25,9 +31,9 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
-        requirePreference<SwitchPreference>(R.string.pref_key_use_new_search_experience).apply {
-            isVisible = FeatureFlags.newSearchExperience
-            isChecked = context.settings().useNewSearchExperience
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
+            isVisible = FeatureFlags.topFrecentSite
+            isChecked = context.settings().showTopFrecentSites
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
@@ -35,6 +41,23 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isVisible = FeatureFlags.waitUntilPaintToDraw
             isChecked = context.settings().waitToShowPageUntilFirstPaint
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_synced_tabs_tabs_tray).apply {
+            isVisible = FeatureFlags.syncedTabsInTabsTray
+            isChecked = context.settings().syncedTabsInTabsTray
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<Preference>(R.string.pref_key_temp_review_prompt).apply {
+            setOnPreferenceClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val manager = ReviewManagerFactory.create(requireContext())
+                    val reviewInfo = manager.requestReview()
+                    manager.launchReview(requireActivity(), reviewInfo)
+                }
+                true
+            }
         }
     }
 }

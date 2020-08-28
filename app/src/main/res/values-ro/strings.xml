@@ -303,6 +303,9 @@
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Suplimente</string>
 
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Notificări</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Sincronizează acum</string>
@@ -400,7 +403,7 @@
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Autentificare</string>
     <!-- Preference for reconnecting to FxA sync -->
-    <string name="preferences_sync_sign_in_to_reconnect">Autentifică-te pentru reconectare</string>
+    <string name="preferences_sync_sign_in_to_reconnect">Intră în cont pentru reconectare</string>
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">Șterge contul</string>
 
@@ -569,6 +572,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Fără istoric</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Nu există descărcări aici</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d selectate</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Ne cerem scuze. %1$s nu poate încărca pagina.</string>
@@ -632,7 +642,7 @@
     <!-- Bookmark folder editing screen title -->
     <string name="edit_bookmark_folder_fragment_title">Editează dosarul</string>
     <!-- Bookmark sign in button message -->
-    <string name="bookmark_sign_in_button">Autentifică-te pentru a vedea marcajele sincronizate</string>
+    <string name="bookmark_sign_in_button">Intră în cont pentru a vedea marcajele sincronizate</string>
     <!-- Bookmark URL editing field label -->
     <string name="bookmark_url_label">URL</string>
     <!-- Bookmark FOLDER editing field label -->
@@ -724,10 +734,8 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Meniu de colecții</string>
 
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header1">Colectează ce te interesează</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">Grupează căutările similare, site-urile și filele pentru acces mai rapid ulterior.</string>
+    <string name="no_collections_description2">Colectează ce contează pentru tine.\nGrupează laolaltă căutări, site-uri și file similare pentru acces facil ulterior.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Selectează filele</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -782,7 +790,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Folosite recent</string>
     <!-- An option from the share dialog to sign into sync -->
-    <string name="sync_sign_in">Autentifică-te în Sync</string>
+    <string name="sync_sign_in">Intră în contul Sync</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Trimite pe toate dispozitivele</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -792,7 +800,7 @@
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">Conectează alt dispozitiv</string>
     <!-- The dialog text shown when additional devices are not available -->
-    <string name="sync_connect_device_dialog">Pentru a trimite o filă, autentifică-te în Firefox pe cel puțin un alt dispozitiv.</string>
+    <string name="sync_connect_device_dialog">Pentru a trimite o filă, intră în contul Firefox de pe cel puțin un alt dispozitiv.</string>
 
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">Am înțeles</string>
@@ -974,9 +982,10 @@
     <string name="onboarding_whats_new_description">Ai întrebări despre %s reproiectat? Vrei să știi ce s-a schimbat?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Obține răspunsuri aici</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Profită la maxim de %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Începe să sincronizezi marcaje, parole și multe altele din contul Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Află mai multe</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
@@ -986,7 +995,7 @@
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">Autentificare…</string>
     <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
-    <string name="onboarding_firefox_account_sign_in">Autentifică-te în Firefox</string>
+    <string name="onboarding_firefox_account_sign_in">Intră în contul Firefox</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
     <string name="onboarding_firefox_account_stay_signed_out">Rămâi deconectat</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1068,7 +1077,7 @@
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">Gata de scanare</string>
     <!-- Text shown for settings option for sign with pairing -->
-    <string name="sign_in_with_camera">Autentifică-te cu camera</string>
+    <string name="sign_in_with_camera">Autentificare cu camera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Folosește e-mailul în schimb</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
@@ -1116,7 +1125,7 @@
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">Cookie-uri</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Elemente de urmărire ale rețelelor sociale și între site-uri</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Elemente de urmărire de pe rețele de socializare și inter-site-uri</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_2">Cookie-uri de pe site-uri nevizitate</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
@@ -1139,7 +1148,7 @@
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Permise</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_social_media_trackers_title">Elemente de urmărire de pe rețelele de socializare</string>
+    <string name="etp_social_media_trackers_title">Elemente de urmărire de pe rețele de socializare</string>
     <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_description">Limitează capacitatea rețelelor de socializare de a-ți urmări activitatea de navigare pe web.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
@@ -1246,7 +1255,7 @@
     <!-- Syncing saved logins in Fenix needs reconnect to sync -->
     <string name="preferences_passwords_sync_logins_reconnect">Reconectare</string>
     <!-- Syncing saved logins in Fenix needs login -->
-    <string name="preferences_passwords_sync_logins_sign_in">Autentifică-te în Sync</string>
+    <string name="preferences_passwords_sync_logins_sign_in">Intră în contul Sync</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Date de autentificare salvate</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1464,7 +1473,10 @@
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Afișează o listă de file de pe celelalte dispozitive.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
-    <string name="synced_tabs_sign_in_button">Autentifică-te în Sync</string>
+    <string name="synced_tabs_sign_in_button">Intră în contul Sync</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Nicio filă deschisă</string>
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
@@ -1474,4 +1486,6 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Ok, am înțeles</string>
 
-    </resources>
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Elimină</string>
+</resources>

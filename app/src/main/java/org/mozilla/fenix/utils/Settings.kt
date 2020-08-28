@@ -54,6 +54,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         const val showLoginsSecureWarningMaxCount = 1
         const val trackingProtectionOnboardingMaximumCount = 1
         const val pwaVisitsToShowPromptMaxCount = 3
+        const val topSitesMaxCount = 16
         const val FENIX_PREFERENCES = "fenix_preferences"
 
         private const val showSearchWidgetCFRMaxCount = 3
@@ -62,6 +63,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
+        private const val MIN_DAYS_SINCE_FEEDBACK_PROMPT = 120
 
         private fun Action.toInt() = when (this) {
             Action.BLOCKED -> BLOCKED_INT
@@ -97,16 +99,32 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var useNewSearchExperience by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_use_new_search_experience),
+    var showTopFrecentSites by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
         default = false,
-        featureFlag = FeatureFlags.newSearchExperience
+        featureFlag = FeatureFlags.topFrecentSite
+    )
+
+    var numberOfAppLaunches by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_times_app_opened),
+        default = 0
+    )
+
+    var lastReviewPromptTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_review_prompt_shown_time),
+        default = 0L
     )
 
     var waitToShowPageUntilFirstPaint by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
         default = false,
         featureFlag = FeatureFlags.waitUntilPaintToDraw
+    )
+
+    var syncedTabsInTabsTray by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_synced_tabs_tabs_tray),
+        default = false,
+        featureFlag = FeatureFlags.syncedTabsInTabsTray
     )
 
     var forceEnableZoom by booleanPreference(
@@ -243,6 +261,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    var showCollectionsPlaceholderOnHome by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_collections_placeholder_home),
+        default = true
+    )
+
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
                 preferences.getBoolean(
@@ -279,6 +302,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                         !trackingProtectionOnboardingShownThisSession)
 
     var showSecretDebugMenuThisSession = false
+    var showNotificationsSetting = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
     val shouldShowSecurityPinWarningSync: Boolean
         get() = loginsSecureWarningSyncCount < showLoginsSecureWarningSyncMaxCount
@@ -820,6 +844,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val topSitesSize by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
+    )
+
+    val topSitesMaxLimit by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_top_sites_max_limit),
+        default = topSitesMaxCount
     )
 
     fun setOpenTabsCount(count: Int) {

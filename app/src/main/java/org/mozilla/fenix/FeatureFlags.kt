@@ -15,24 +15,11 @@ object FeatureFlags {
     const val pullToRefreshEnabled = false
 
     /**
-     * Allows edit of saved logins.
+     * Shows Synced Tabs in the tabs tray.
+     *
+     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
      */
-    const val loginsEdit = true
-
-    /**
-     * Enable tab sync feature
-     */
-    const val syncedTabs = true
-
-    /**
-     * Enables new tab tray pref
-     */
-    val tabTray = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables gestures on the browser chrome that depend on a [SwipeGestureLayout]
-     */
-    val browserChromeGestures = Config.channel.isNightlyOrDebug
+    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
      * Enables viewing tab history
@@ -42,15 +29,30 @@ object FeatureFlags {
     /**
      * Enables the new search experience
      */
-    val newSearchExperience = true // Just enables the setting in Secret Settings
+    const val newSearchExperience = true
+
+    /**
+     * Enables showing the top frequently visited sites
+     */
+    val topFrecentSite = Config.channel.isNightlyOrDebug
 
     /**
      * Enables wait til first contentful paint
      */
-    val waitUntilPaintToDraw = true // Just enables the setting in secret settings
+    val waitUntilPaintToDraw = true // Just enables the setting in Secret Settings
 
     /**
      * Enables downloads with external download managers.
      */
-    val externalDownloadManager = true
+    val externalDownloadManager = true // Just enables the setting in Secret Settings
+
+    /**
+     * Enables viewing downloads in browser.
+     */
+    val viewDownloads = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables selecting from multiple logins.
+     */
+    val loginSelect = Config.channel.isNightlyOrDebug
 }

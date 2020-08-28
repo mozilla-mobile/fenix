@@ -25,7 +25,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -169,11 +168,7 @@ class LoginDetailFragment : Fragment(R.layout.fragment_login_detail) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (FeatureFlags.loginsEdit) {
-            inflater.inflate(R.menu.login_options_menu, menu)
-        } else {
-            inflater.inflate(R.menu.login_delete, menu)
-        }
+        inflater.inflate(R.menu.login_options_menu, menu)
         this.menu = menu
     }
 

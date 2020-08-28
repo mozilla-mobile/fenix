@@ -7,6 +7,7 @@ package org.mozilla.fenix.components
 import GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
+import android.os.StrictMode
 import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -15,7 +16,9 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -37,6 +40,8 @@ import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.session.HistoryDelegate
+import mozilla.components.feature.top.sites.DefaultTopSitesStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
@@ -46,16 +51,21 @@ import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.crash.CrashReporting
+import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.media.MediaService
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
+import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.utils.Mockable
 import java.util.concurrent.TimeUnit
 
@@ -63,7 +73,7 @@ import java.util.concurrent.TimeUnit
  * Component group for all core browser functionality.
  */
 @Mockable
-class Core(private val context: Context) {
+class Core(private val context: Context, private val crashReporter: CrashReporting) {
     /**
      * The browser engine component initialized based on the build
      * configuration (see build variants).
@@ -134,8 +144,12 @@ class Core(private val context: Context) {
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
                 ThumbnailsMiddleware(thumbnailStorage)
-            )
+            ) + EngineMiddleware.create(engine, ::findSessionById)
         )
+    }
+
+    private fun findSessionById(tabId: String): Session? {
+        return sessionManager.findSessionById(tabId)
     }
 
     /**
@@ -184,7 +198,7 @@ class Core(private val context: Context) {
 
                 // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
                 // the app is used.
-                sessionStorage.autoSave(sessionManager)
+                sessionStorage.autoSave(store)
                     .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                     .whenGoingToBackground()
                     .whenSessionsChange()
@@ -228,7 +242,7 @@ class Core(private val context: Context) {
     // Use these for startup-path code, where we don't want to do any work that's not strictly necessary.
     // For example, this is how the GeckoEngine delegates (history, logins) are configured.
     // We can fully initialize GeckoEngine without initialized our storage.
-    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context) }
+    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context, crashReporter) }
     val lazyBookmarksStorage = lazy { PlacesBookmarksStorage(context) }
     val lazyPasswordsStorage = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
 
@@ -249,7 +263,46 @@ class Core(private val context: Context) {
      */
     val thumbnailStorage by lazy { ThumbnailStorage(context) }
 
-    val topSiteStorage by lazy { TopSiteStorage(context) }
+    val pinnedSiteStorage by lazy { PinnedSiteStorage(context) }
+
+    val topSiteStorage by lazy {
+        val defaultTopSites = mutableListOf<Pair<String, String>>()
+
+        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+            if (!context.settings().defaultTopSitesAdded) {
+                defaultTopSites.add(
+                    Pair(
+                        context.getString(R.string.default_top_site_google),
+                        SupportUtils.GOOGLE_URL
+                    )
+                )
+
+                if (LocaleManager.getSelectedLocale(context).language == "en") {
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.pocket_pinned_top_articles),
+                            SupportUtils.POCKET_TRENDING_URL
+                        )
+                    )
+                }
+
+                defaultTopSites.add(
+                    Pair(
+                        context.getString(R.string.default_top_site_wikipedia),
+                        SupportUtils.WIKIPEDIA_URL
+                    )
+                )
+
+                context.settings().defaultTopSitesAdded = true
+            }
+        }
+
+        DefaultTopSitesStorage(
+            pinnedSiteStorage,
+            historyStorage,
+            defaultTopSites
+        )
+    }
 
     val permissionStorage by lazy { PermissionStorage(context) }
 
@@ -273,7 +326,8 @@ class Core(private val context: Context) {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
                 if (context.settings().passwordsEncryptionKeyGenerated &&
-                    isSentryEnabled()) {
+                    isSentryEnabled()
+                ) {
                     // We already had previously generated an encryption key, but we have lost it
                     Sentry.capture("Passwords encryption key for passwords storage was lost and we generated a new one")
                 }
@@ -290,7 +344,7 @@ class Core(private val context: Context) {
     fun getPreferredColorScheme(): PreferredColorScheme {
         val inDark =
             (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_YES
+                Configuration.UI_MODE_NIGHT_YES
         return when {
             context.settings().shouldUseDarkTheme -> PreferredColorScheme.Dark
             context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
