@@ -2,7 +2,7 @@
 
 Fenix (internal codename) is the all-new IceWeasel for Android browser, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
 
-Our goal is to be a close fork of the new Firefox for Android that seeks to provide users with more options, more opportunities to customize (Including a broad extension library), and more information about the pages they visit and how their browsers are interacting with those pages.
+Our goal is to be a close fork of the new Firefox for Android that seeks to provide users with more options, more opportunities to customize (including a broad extension library), and more information about the pages they visit and how their browsers are interacting with those pages.
 
 In addition, we intend to try to cut down on telemetry and proprietary code to as great of an extent as possible as long as doing so does not compromise the user experience or make the fork too hard to maintain.
 
@@ -12,13 +12,75 @@ Iceweasel also honors the spirit of the Debian Iceweasel desktop Firefox forks o
 
 That said, Iceweasel is an independent all-volunteer project, and has no affiliation with Netscape, Netscape Navigator, Mozilla, Mozilla Firefox, Mozila Phoenix, Debian, Debian Iceweasel, America Online, or Verizon, among others. :)  Basically, if you don't like the browser, it's not their fault. :)
 
+## Building
+
+1. Set up the environment. We need the Android SDK at `$ANDROID_SDK_ROOT` and a Java JDK at `$JAVA_HOME` that isn't the Ubuntu Java 8 one. We want environment variables that look something like:
+
+```
+# Where does our system install the JDK? This is the right path for the Ubuntu Java 11 JDK, if it is installed.
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+# Where did we install the Android SDK?
+export ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux/
+```
+
+If we don't have the Android SDK, we can install it thusly on Linux:
+
+```
+mkdir -p $HOME/android-sdk/android-sdk-linux
+cd $HOME/android-sdk/android-sdk-linux
+mkdir -p licenses
+echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> licenses/android-sdk-license
+echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> licenses/android-sdk-license
+echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> licenses/android-sdk-license
+mkdir cmdline-tools
+cd cmdline-tools
+wget "$(curl -s https://developer.android.com/studio | grep -oP "https://dl.google.com/android/repository/commandlinetools-linux-[0-9]+_latest.zip")"
+unzip commandlinetools-linux-*_latest.zip
+cd ..
+```
+
+2. Clone the project. We will need *both* `fenix` and `android-components` checked out next to each other.
+
+```
+git clone https://github.com/interfect/fenix
+git clone https://github.com/interfect/android-components
+```
+
+4. Go inside `fenix`. That's where the build is coordinated from.
+
+```
+cd fenix
+```
+
+5. Configure the project. We need to set the release builds to be signed with the debug key, because proper code signing isn't set up yet and the completely unsigned APKs that are produced by default cannot be installed.
+
+```
+echo "autosignReleaseWithDebugKey=" >>local.properties
+```
+
+We also need to set the build to use the `android-components` we checked out earlier:
+
+```
+echo "autoPublish.android-components.dir=../android-components" >>local.properties
+```
+
+6. Build the project. To build the Iceweasle-branded release APKs, you can do:
+
+```
+./gradlew assembleForkRelease -PversionName="$(git describe --tags HEAD)"
+```
+
+The APKs will show up in `app/build/outputs/apk/forkRelease/`.
+
 ## Getting Involved
 
-This is an all-volunteer project.  No one is getting paid (At least not by the project itself.).
+This is an all-volunteer project. No one is getting paid (at least not by the project itself.).
 
 Therefore, everyone should feel free to open issues and pull requests.  Join the club!
 
 Developers are especially welcome, wanted, and needed.
+
+We are also [looking for maintainers](https://github.com/interfect/fenix/issues/23).
 
 
 ## I want to open a Pull Request!
