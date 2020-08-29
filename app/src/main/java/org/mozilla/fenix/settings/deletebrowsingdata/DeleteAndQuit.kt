@@ -26,6 +26,7 @@ fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: 
             activity.components.useCases.tabsUseCases.removeAllTabs,
             activity.components.core.historyStorage,
             activity.components.core.permissionStorage,
+            activity.components.core.icons,
             activity.components.core.engine,
             coroutineContext
         )
@@ -53,7 +54,7 @@ fun deleteAndQuit(activity: Activity, coroutineScope: CoroutineScope, snackbar: 
 private suspend fun DeleteBrowsingDataController.deleteType(type: DeleteBrowsingDataOnQuitType) {
     when (type) {
         DeleteBrowsingDataOnQuitType.TABS -> deleteTabs()
-        DeleteBrowsingDataOnQuitType.HISTORY -> deleteHistoryAndDOMStorages()
+        DeleteBrowsingDataOnQuitType.HISTORY -> deleteBrowsingData()
         DeleteBrowsingDataOnQuitType.COOKIES -> deleteCookies()
         DeleteBrowsingDataOnQuitType.CACHE -> deleteCachedFiles()
         DeleteBrowsingDataOnQuitType.PERMISSIONS -> withContext(IO) {
