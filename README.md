@@ -49,11 +49,10 @@ unzip commandlinetools-linux-*_latest.zip
 cd ..
 ```
 
-2. Clone the project. We will need *both* `fenix` and `android-components` checked out next to each other.
+2. Clone the project.
 
 ```
 git clone https://github.com/interfect/fenix
-git clone https://github.com/interfect/android-components
 ```
 
 4. Go inside `fenix`. That's where the build is coordinated from.
@@ -66,12 +65,6 @@ cd fenix
 
 ```
 echo "autosignReleaseWithDebugKey=" >>local.properties
-```
-
-We also need to set the build to use the `android-components` we checked out earlier:
-
-```
-echo "autoPublish.android-components.dir=../android-components" >>local.properties
 ```
 
 6. Build the project. To build the Iceweasle-branded release APKs, you can do:
