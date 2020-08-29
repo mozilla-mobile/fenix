@@ -27,6 +27,8 @@ import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translatedName
+import network.novak.fenix.components.PagedAddonsManagerAdapter
+import network.novak.fenix.components.PagedAddonInstallationDialogFragment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
@@ -47,7 +49,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
      * Whether or not an add-on installation is in progress.
      */
     private var isInstallationInProgress = false
-    private var adapter: AddonsManagerAdapter? = null
+    private var adapter: PagedAddonsManagerAdapter? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,7 +89,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 lifecycleScope.launch(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
-                            adapter = AddonsManagerAdapter(
+                            adapter = PagedAddonsManagerAdapter(
                                 requireContext().components.addonCollectionProvider,
                                 managementView,
                                 addons,
@@ -120,8 +122,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         }
     }
 
-    private fun createAddonStyle(context: Context): AddonsManagerAdapter.Style {
-        return AddonsManagerAdapter.Style(
+    private fun createAddonStyle(context: Context): PagedAddonsManagerAdapter.Style {
+        return PagedAddonsManagerAdapter.Style(
             sectionsTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
             addonNameTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context),
             addonSummaryTextColor = ThemeManager.resolveAttribute(R.attr.secondaryText, context),
@@ -140,7 +142,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun hasExistingAddonInstallationDialogFragment(): Boolean {
         return parentFragmentManager.findFragmentByTag(INSTALLATION_DIALOG_FRAGMENT_TAG)
-            as? AddonInstallationDialogFragment != null
+            as? PagedAddonInstallationDialogFragment != null
     }
 
     private fun showPermissionDialog(addon: Addon) {
@@ -171,10 +173,10 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             requireComponents.analytics.metrics.track(Event.AddonInstalled(addon.id))
             val addonCollectionProvider = requireContext().components.addonCollectionProvider
 
-            val dialog = AddonInstallationDialogFragment.newInstance(
+            val dialog = PagedAddonInstallationDialogFragment.newInstance(
                 addon = addon,
                 addonCollectionProvider = addonCollectionProvider,
-                promptsStyling = AddonInstallationDialogFragment.PromptsStyling(
+                promptsStyling = PagedAddonInstallationDialogFragment.PromptsStyling(
                     gravity = Gravity.BOTTOM,
                     shouldWidthMatchParent = true,
                     confirmButtonBackgroundColor = ThemeManager.resolveAttribute(

@@ -9,6 +9,7 @@ import android.content.Intent
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import mozilla.components.feature.addons.AddonManager
+import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.migration.SupportedAddonsChecker
@@ -16,6 +17,7 @@ import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
+import network.novak.fenix.components.PagedAddonCollectionProvider
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
@@ -72,7 +74,7 @@ class Components(private val context: Context) {
 
     val addonCollectionProvider by lazy {
         if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
-            AddonCollectionProvider(
+            PagedAddonCollectionProvider(
                 context,
                 core.client,
                 collectionAccount = BuildConfig.AMO_ACCOUNT,
@@ -80,7 +82,7 @@ class Components(private val context: Context) {
                 maxCacheAgeInMinutes = DAY_IN_MINUTES
             )
         } else {
-            AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
+            PagedAddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
         }
     }
 
