@@ -28,7 +28,6 @@ import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
-import java.util.Locale
 
 /**
  * Fragment to enter a custom search engine name and URL template.
@@ -103,11 +102,10 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             .search
             .provider
             .allSearchEngineIdentifiers()
-            .map { it.toLowerCase(Locale.ROOT) }
 
-        val nameHasChanged = name != args.searchEngineIdentifier
+        val nameHasChanged = !name.equals(args.searchEngineIdentifier, ignoreCase = true)
 
-        if (existingIdentifiers.contains(name.toLowerCase(Locale.ROOT)) && nameHasChanged) {
+        if (nameHasChanged && existingIdentifiers.any { it.equals(name, ignoreCase = true) }) {
             custom_search_engine_name_field.error = resources
                 .getString(R.string.search_add_custom_engine_error_existing_name, name)
             hasError = true
