@@ -26,7 +26,7 @@ That said, Iceweasel Mobile is an independent all-volunteer project, and has no 
 
 1. Set up the environment. We need the Android SDK at `$ANDROID_SDK_ROOT` and a Java JDK at `$JAVA_HOME` that isn't the Ubuntu Java 8 one. We want environment variables that look something like:
 
-```
+```sh
 # Where does our system install the JDK? This is the right path for the Ubuntu Java 11 JDK, if it is installed.
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 # Where did we install the Android SDK?
@@ -35,7 +35,7 @@ export ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux/
 
 If we don't have the Android SDK, we can install it thusly on Linux:
 
-```
+```sh
 mkdir -p $HOME/android-sdk/android-sdk-linux
 cd $HOME/android-sdk/android-sdk-linux
 mkdir -p licenses
@@ -51,25 +51,25 @@ cd ..
 
 2. Clone the project.
 
-```
+```sh
 git clone https://github.com/interfect/fenix
 ```
 
 4. Go inside `fenix`. That's where the build is coordinated from.
 
-```
+```sh
 cd fenix
 ```
 
 5. Configure the project. We need to set the release builds to be signed with the debug key, because proper code signing isn't set up yet and the completely unsigned APKs that are produced by default cannot be installed.
 
-```
+```sh
 echo "autosignReleaseWithDebugKey=" >>local.properties
 ```
 
 6. Build the project. To build the Iceweasle-branded release APKs, you can do:
 
-```
+```sh
 ./gradlew assembleForkRelease -PversionName="$(git describe --tags HEAD)"
 ```
 
