@@ -6,9 +6,9 @@ Iceweasle Mobile is a web browser for Android, based on [Mozilla's Fenix version
 Our goal is to be a close fork of the new Firefox for Android that seeks to provide users with more options, more opportunities to customize (including a broad extension library), and more information about the pages they visit and how their browsers are interacting with those pages.
 
 Notable features include:
-    * `about:config` support
-    * The ability to *attempt* to install a much longer list of add-ons than Mozilla's Fenix version of Firefox accepts. Currently the browser queries [this AMO collection](https://addons.mozilla.org/en-US/firefox/collections/16201230/What-I-want-on-Fenix/) **Most of them will not work**, because they depend on code that Mozilla is still working on writing in `android-components`, but you may attempt to install them. If you don't see an add-on you want, you can [request it](https://github.com/interfect/fenix/issues/new).
-    * **No warranties or guarantee of security or updates**. Binaries are currently are manually built and are not meaningfully signed. Why should you trust random people on the Internet to provide your web browser, one of the most important pieces of software you use? You probably shouldn't. Go away.
+  * `about:config` support
+  * The ability to *attempt* to install a much longer list of add-ons than Mozilla's Fenix version of Firefox accepts. Currently the browser queries [this AMO collection](https://addons.mozilla.org/en-US/firefox/collections/16201230/What-I-want-on-Fenix/) **Most of them will not work**, because they depend on code that Mozilla is still working on writing in `android-components`, but you may attempt to install them. If you don't see an add-on you want, you can [request it](https://github.com/interfect/fenix/issues/new).
+  * **No warranties or guarantee of security or updates**. Binaries are currently are manually built and are not meaningfully signed. Why should you trust random people on the Internet to provide your web browser, one of the most important pieces of software you use? You probably shouldn't. Go away.
 
 In addition, we intend to try to cut down on telemetry and proprietary code to as great of an extent as possible as long as doing so does not compromise the user experience or make the fork too hard to maintain. **Right now, the Iceweasle Mobile browser still (tries to) send telemetry to Mozilla, even though it's not their browser.** We haven't managed to turn it off yet. Presumably that data is governed by Mozilla's privacy policy, but as Iceweasle Mobile is, again **not a Mozilla product**, we can make no promises.
 
@@ -26,7 +26,7 @@ That said, Iceweasel Mobile is an independent all-volunteer project, and has no 
 
 1. Set up the environment. We need the Android SDK at `$ANDROID_SDK_ROOT` and a Java JDK at `$JAVA_HOME` that isn't the Ubuntu Java 8 one. We want environment variables that look something like:
 
-```
+```sh
 # Where does our system install the JDK? This is the right path for the Ubuntu Java 11 JDK, if it is installed.
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 # Where did we install the Android SDK?
@@ -35,7 +35,7 @@ export ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux/
 
 If we don't have the Android SDK, we can install it thusly on Linux:
 
-```
+```sh
 mkdir -p $HOME/android-sdk/android-sdk-linux
 cd $HOME/android-sdk/android-sdk-linux
 mkdir -p licenses
@@ -51,25 +51,25 @@ cd ..
 
 2. Clone the project.
 
-```
+```sh
 git clone https://github.com/interfect/fenix
 ```
 
 4. Go inside `fenix`. That's where the build is coordinated from.
 
-```
+```sh
 cd fenix
 ```
 
 5. Configure the project. We need to set the release builds to be signed with the debug key, because proper code signing isn't set up yet and the completely unsigned APKs that are produced by default cannot be installed.
 
-```
+```sh
 echo "autosignReleaseWithDebugKey=" >>local.properties
 ```
 
 6. Build the project. To build the Iceweasle-branded release APKs, you can do:
 
-```
+```sh
 ./gradlew assembleForkRelease -PversionName="$(git describe --tags HEAD)"
 ```
 
