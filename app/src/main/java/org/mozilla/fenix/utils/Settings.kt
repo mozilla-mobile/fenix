@@ -62,6 +62,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
+        private const val MIN_DAYS_SINCE_FEEDBACK_PROMPT = 120
 
         private fun Action.toInt() = when (this) {
             Action.BLOCKED -> BLOCKED_INT
@@ -101,6 +102,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_use_new_search_experience),
         default = false,
         featureFlag = FeatureFlags.newSearchExperience
+    )
+
+    var numberOfAppLaunches by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_times_app_opened),
+        default = 0
+    )
+
+    var lastReviewPromptTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_review_prompt_shown_time),
+        default = 0L
     )
 
     var waitToShowPageUntilFirstPaint by featureFlagPreference(
