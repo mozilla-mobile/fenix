@@ -24,8 +24,7 @@ object FeatureFlags {
     /**
      * Enables viewing tab history
      */
-    val tabHistory = Config.channel.isNightlyOrDebug
-
+    val tabHistory = true
     /**
      * Enables the new search experience
      */
@@ -49,10 +48,9 @@ object FeatureFlags {
     /**
      * Enables viewing downloads in browser.
      */
-    val viewDownloads = Config.channel.isNightlyOrDebug
-
+    val viewDownloads = true
     /**
      * Enables selecting from multiple logins.
      */
-    val loginSelect = Config.channel.isNightlyOrDebug
+    val loginSelect = true
 }
