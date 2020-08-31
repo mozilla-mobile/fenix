@@ -57,7 +57,6 @@ class TabTrayViewHolder(
         itemView.findViewById(R.id.mozac_browser_tabstray_thumbnail)
 
     @VisibleForTesting
-    internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
 
     override var tab: Tab? = null
@@ -75,7 +74,6 @@ class TabTrayViewHolder(
 
         // Basic text
         updateTitle(tab)
-        updateUrl(tab)
         updateCloseButtonDescription(tab.title)
 
         // Drawables and theme
@@ -153,24 +151,6 @@ class TabTrayViewHolder(
             tab.url
         }
         titleView.text = title
-    }
-
-    private fun updateUrl(tab: Tab) {
-        // Truncate to MAX_URI_LENGTH to prevent the UI from locking up for
-        // extremely large URLs such as data URIs or bookmarklets. The same
-        // is done in the toolbar and awesomebar:
-        // https://github.com/mozilla-mobile/fenix/issues/1824
-        // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.apply {
-            text =
-                if (context.settings().shouldStripUrl) {
-                    tab.url
-                        .toShortUrl(itemView.context.components.publicSuffixList)
-                        .take(MAX_URI_LENGTH)
-                } else {
-                    tab.url.take(MAX_URI_LENGTH)
-                }
-        }
     }
 
     @VisibleForTesting

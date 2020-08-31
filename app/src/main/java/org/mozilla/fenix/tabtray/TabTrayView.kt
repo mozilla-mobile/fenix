@@ -20,12 +20,11 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.component_tabstray.view.*
-import kotlinx.android.synthetic.main.component_tabstray_fab.view.*
 import kotlinx.android.synthetic.main.tabs_tray_tab_counter.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -68,10 +67,6 @@ class TabTrayView(
     private val filterTabs: (Boolean) -> Unit
 ) : LayoutContainer, TabLayout.OnTabSelectedListener {
     val lifecycleScope = lifecycleOwner.lifecycleScope
-    val fabView = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_tabstray_fab, container, true)
-
-    private val hasAccessibilityEnabled = container.context.settings().accessibilityServicesEnabled
 
     val view = LayoutInflater.from(container.context)
         .inflate(R.layout.component_tabstray, container, true)
@@ -100,17 +95,8 @@ class TabTrayView(
     init {
         components.analytics.metrics.track(Event.TabsTrayOpened)
 
-        toggleFabText(isPrivate)
-
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (interactor.onModeRequested() is Mode.Normal && !hasAccessibilityEnabled) {
-                    if (slideOffset >= SLIDE_OFFSET) {
-                        fabView.new_tab_button.show()
-                    } else {
-                        fabView.new_tab_button.hide()
-                    }
-                }
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -163,11 +149,8 @@ class TabTrayView(
             )
         }
 
+        updateTabsTrayLayout()
         view.tabsTray.apply {
-            layoutManager = LinearLayoutManager(container.context).apply {
-                reverseLayout = true
-                stackFromEnd = true
-            }
             adapter = concatAdapter
 
             tabsTouchHelper = TabsTouchHelper(
@@ -180,14 +163,11 @@ class TabTrayView(
             tabsAdapter.tabTrayInteractor = interactor
             tabsAdapter.onTabsUpdated = {
                 // Put the 'Add to collections' button after the tabs have loaded.
-                concatAdapter.addAdapter(0, collectionsButtonAdapter)
+                concatAdapter.addAdapter(collectionsButtonAdapter)
 
                 // Put the Synced Tabs adapter at the end.
-                concatAdapter.addAdapter(0, syncedTabsController.adapter)
+                concatAdapter.addAdapter(syncedTabsController.adapter)
 
-                if (hasAccessibilityEnabled) {
-                    tabsAdapter.notifyDataSetChanged()
-                }
                 if (!hasLoaded) {
                     hasLoaded = true
                     scrollToTab(view.context.components.core.store.state.selectedTabId)
@@ -235,24 +215,24 @@ class TabTrayView(
                 }
         }
 
-        adjustNewTabButtonsForNormalMode()
+        adjustNewTabButtonForNormalMode()
+    }
+
+    private fun gridViewNumberOfCols(context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+        val columnWidthDp = 190
+        val columnCount = (dpWidth / columnWidthDp).toInt()
+        return if (columnCount >= 2) columnCount else 2
     }
 
     private fun handleTabClicked(tab: SyncTab) {
         interactor.onSyncedTabClicked(tab)
     }
 
-    private fun adjustNewTabButtonsForNormalMode() {
+    private fun adjustNewTabButtonForNormalMode() {
         view.tab_tray_new_tab.apply {
-            isVisible = hasAccessibilityEnabled
-            setOnClickListener {
-                sendNewTabEvent(isPrivateModeSelected)
-                interactor.onNewTabTapped(isPrivateModeSelected)
-            }
-        }
-
-        fabView.new_tab_button.apply {
-            isVisible = !hasAccessibilityEnabled
+            visibility = View.VISIBLE
             setOnClickListener {
                 sendNewTabEvent(isPrivateModeSelected)
                 interactor.onNewTabTapped(isPrivateModeSelected)
@@ -268,6 +248,24 @@ class TabTrayView(
         }
 
         components.analytics.metrics.track(eventToSend)
+    }
+
+    fun updateTabsTrayLayout() {
+        view.tabsTray.apply {
+            val gridLayoutManager = GridLayoutManager(container.context, gridViewNumberOfCols(container.context))
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val numTabs = tabsAdapter.itemCount
+                    return if (position < numTabs) {
+                        1
+                    } else {
+                        gridViewNumberOfCols(container.context)
+                    }
+                }
+            }
+
+            layoutManager = gridLayoutManager
+        }
     }
 
     fun expand() {
@@ -286,7 +284,6 @@ class TabTrayView(
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        toggleFabText(isPrivateModeSelected)
         filterTabs.invoke(isPrivateModeSelected)
         toggleSaveToCollectionButton(isPrivateModeSelected)
 
@@ -337,7 +334,6 @@ class TabTrayView(
 
                 toggleUIMultiselect(multiselect = true)
 
-                fabView.new_tab_button.isVisible = false
                 view.tab_tray_new_tab.isVisible = false
                 view.collect_multi_select.isVisible = state.mode.selectedItems.isNotEmpty()
 
@@ -410,7 +406,7 @@ class TabTrayView(
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
 
-        adjustNewTabButtonsForNormalMode()
+        adjustNewTabButtonForNormalMode()
     }
 
     private fun toggleUIMultiselect(multiselect: Boolean) {
@@ -514,18 +510,6 @@ class TabTrayView(
         menu?.dismiss()
     }
 
-    private fun toggleFabText(private: Boolean) {
-        if (private) {
-            fabView.new_tab_button.extend()
-            fabView.new_tab_button.contentDescription =
-                view.context.resources.getString(R.string.add_private_tab)
-        } else {
-            fabView.new_tab_button.shrink()
-            fabView.new_tab_button.contentDescription =
-                view.context.resources.getString(R.string.add_tab)
-        }
-    }
-
     fun onBackPressed(): Boolean {
         return interactor.onBackPressed()
     }
@@ -541,13 +525,7 @@ class TabTrayView(
             val selectedBrowserTabIndex = tabs
                 .indexOfFirst { it.id == sessionId }
 
-            // We offset the tab index by the number of items in the other adapters.
-            // We add the offset, because the layoutManager is initialized with `reverseLayout`.
-            val recyclerViewIndex = selectedBrowserTabIndex +
-                collectionsButtonAdapter.itemCount +
-                syncedTabsController.adapter.itemCount
-
-            layoutManager?.scrollToPosition(recyclerViewIndex)
+            layoutManager?.scrollToPosition(selectedBrowserTabIndex)
         }
     }
 
