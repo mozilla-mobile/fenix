@@ -102,6 +102,10 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             engineItem.tag = engineId
             if (engineId == selectedEngine) {
                 updateDefaultItem(engineItem.radio_button)
+                /* #11465 -> radio_button.isChecked = true does not trigger
+                * onSearchEngineSelected because searchEngineGroup has null views at that point.
+                * So we trigger it here.*/
+                onSearchEngineSelected(engine)
             }
             searchEngineGroup!!.addView(engineItem, layoutParams)
         }
