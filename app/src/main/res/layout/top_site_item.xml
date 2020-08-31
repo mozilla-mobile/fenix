@@ -13,7 +13,7 @@
 
     <ImageView
         android:id="@+id/favicon_image"
-        style="@style/Mozac.Widgets.TopSite.Favicon"
+        style="@style/TopSite.Favicon"
         android:layout_gravity="center"
         android:importantForAccessibility="no" />
 
