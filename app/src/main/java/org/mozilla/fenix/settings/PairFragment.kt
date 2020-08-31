@@ -4,12 +4,17 @@
 
 package org.mozilla.fenix.settings
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.Settings
+import android.text.SpannableString
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
@@ -100,9 +105,40 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                         it.onPermissionsResult(permissions, grantResults)
                     }
                 } else {
+                    showPermissionsNeededDialog()
                     findNavController().popBackStack(R.id.turnOnSyncFragment, false)
                 }
             }
         }
+    }
+
+    private fun showPermissionsNeededDialog() {
+        AlertDialog.Builder(requireContext()).apply {
+            val spannableText = SpannableString(
+                resources.getString(R.string.camera_permissions_needed_message)
+            )
+            setMessage(spannableText)
+            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
+                    dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
+            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
+                    dialog: DialogInterface, _ ->
+                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                } else {
+                    SupportUtils.createCustomTabIntent(
+                        requireContext(),
+                        SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
+                        )
+                    )
+                }
+                dialog.cancel()
+                startActivity(intent)
+            }
+            create()
+        }.show()
     }
 }
