@@ -1083,6 +1083,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     override fun onAccessibilityStateChanged(enabled: Boolean) {
-        browserToolbarView.setScrollFlags(enabled)
+        if (_browserToolbarView != null) {
+            browserToolbarView.setScrollFlags(enabled)
+        }
     }
 }
