@@ -4,14 +4,18 @@
 
 package org.mozilla.fenix.searchdialog
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.speech.RecognizerIntent
+import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -28,12 +32,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.fill_link_from_clipboard
 import kotlinx.android.synthetic.main.fragment_search_dialog.pill_wrapper
 import kotlinx.android.synthetic.main.fragment_search_dialog.qr_scan_button
 import kotlinx.android.synthetic.main.fragment_search_dialog.toolbar
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
+import kotlinx.android.synthetic.main.fragment_search_dialog.view.search_engines_shortcut_button
+import kotlinx.android.synthetic.main.fragment_search_dialog.view.toolbar
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -44,6 +51,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
+import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
@@ -57,6 +65,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.SearchFragment
 import org.mozilla.fenix.search.SearchFragmentAction
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.search.SearchFragmentStore
@@ -348,6 +357,55 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     requireComponents.analytics.metrics.track(Event.QRScannerPromptDisplayed)
                 }
             })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
+                it.onPermissionsResult(permissions, grantResults)
+
+                context?.let { context: Context ->
+                    if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
+                        showPermissionsNeededDialog()
+                    }
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun showPermissionsNeededDialog() {
+        AlertDialog.Builder(requireContext()).apply {
+            val spannableText = SpannableString(
+                resources.getString(R.string.camera_permissions_needed_message)
+            )
+            setMessage(spannableText)
+            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
+                    dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
+            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
+                    dialog: DialogInterface, _ ->
+                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                } else {
+                    SupportUtils.createCustomTabIntent(
+                        requireContext(),
+                        SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
+                        )
+                    )
+                }
+                dialog.cancel()
+                startActivity(intent)
+            }
+            create()
+        }.show()
     }
 
     private fun setupConstraints(view: View) {

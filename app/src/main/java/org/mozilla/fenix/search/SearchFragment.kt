@@ -421,7 +421,6 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
     }
 
-
     private fun showPermissionsNeededDialog() {
         AlertDialog.Builder(requireContext()).apply {
             val spannableText = SpannableString(
@@ -451,7 +450,6 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             create()
         }.show()
     }
-
 
     private fun historyStorageProvider(): HistoryStorage? {
         return if (requireContext().settings().shouldShowHistorySuggestions) {
