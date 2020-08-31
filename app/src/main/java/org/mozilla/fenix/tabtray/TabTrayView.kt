@@ -167,6 +167,10 @@ class TabTrayView(
 
                 // Put the Synced Tabs adapter at the end.
                 concatAdapter.addAdapter(syncedTabsController.adapter)
+                
+                if (view.context.settings().accessibilityServicesEnabled) {
+                    tabsAdapter.notifyDataSetChanged()
+                }
 
                 if (!hasLoaded) {
                     hasLoaded = true
