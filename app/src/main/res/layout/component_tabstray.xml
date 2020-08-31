@@ -135,7 +135,7 @@
             android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/add_tab"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/tab_layout"
             app:layout_constraintEnd_toStartOf="@id/tab_tray_overflow"
             app:layout_constraintTop_toTopOf="@id/tab_layout"

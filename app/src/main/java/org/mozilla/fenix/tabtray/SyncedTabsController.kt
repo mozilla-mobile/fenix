@@ -50,7 +50,7 @@ class SyncedTabsController(
                 .collect { mode ->
                     when (mode) {
                         is TabTrayDialogFragmentState.Mode.Normal -> {
-                            concatAdapter.addAdapter(0, adapter)
+                            concatAdapter.addAdapter(adapter)
                         }
                         is TabTrayDialogFragmentState.Mode.MultiSelect -> {
                             concatAdapter.removeAdapter(adapter)
@@ -63,8 +63,7 @@ class SyncedTabsController(
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         scope.launch {
             val tabsList = listOf(SyncedTabsAdapter.AdapterItem.Title) + syncedTabs.toAdapterList()
-            // Reverse layout for TabTrayView which does things backwards.
-            adapter.submitList(tabsList.reversed())
+            adapter.submitList(tabsList)
         }
     }
 
