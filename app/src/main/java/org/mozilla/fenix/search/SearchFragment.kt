@@ -11,9 +11,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.ITALIC
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.speech.RecognizerIntent.EXTRA_RESULTS
+import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -410,12 +413,45 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                         permissionDidUpdate = true
                     } else {
                         view?.search_scan_button?.isChecked = false
+                        showPermissionsNeededDialog()
                     }
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
+
+
+    private fun showPermissionsNeededDialog() {
+        AlertDialog.Builder(requireContext()).apply {
+            val spannableText = SpannableString(
+                resources.getString(R.string.camera_permissions_needed_message)
+            )
+            setMessage(spannableText)
+            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
+                    dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
+            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
+                    dialog: DialogInterface, _ ->
+                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                } else {
+                    SupportUtils.createCustomTabIntent(
+                        requireContext(),
+                        SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
+                        )
+                    )
+                }
+                dialog.cancel()
+                startActivity(intent)
+            }
+            create()
+        }.show()
+    }
+
 
     private fun historyStorageProvider(): HistoryStorage? {
         return if (requireContext().settings().shouldShowHistorySuggestions) {
