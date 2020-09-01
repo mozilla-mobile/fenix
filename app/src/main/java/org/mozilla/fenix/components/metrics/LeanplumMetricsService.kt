@@ -14,12 +14,13 @@ import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
 import com.leanplum.annotations.Parser
 import com.leanplum.internal.LeanplumInternal
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.components.metrics.MozillaProductDetector.MozillaProducts
@@ -98,18 +99,21 @@ class LeanplumMetricsService(
 
     @Suppress("ComplexMethod")
     override fun start() {
+        val preferencesLoaded = scope.async(Dispatchers.IO) {
+                preferences = application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
+        }
 
         if (!application.settings().isMarketingTelemetryEnabled) return
 
-        Leanplum.setIsTestModeEnabled(false)
-        Leanplum.setApplicationContext(application)
-        Leanplum.setDeviceId(deviceId)
-        Parser.parseVariables(application)
+        scope.launch {
+            preferencesLoaded.await()
+            Leanplum.setIsTestModeEnabled(false)
+            Leanplum.setApplicationContext(application)
+            Leanplum.setDeviceId(deviceId)
+            Parser.parseVariables(application)
+        }
 
         leanplumJob = scope.launch {
-            withContext(Dispatchers.IO) {
-                preferences = application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
-            }
             val applicationSetLocale = LocaleManager.getCurrentLocale(application)
             val currentLocale = applicationSetLocale ?: Locale.getDefault()
             val languageCode =
