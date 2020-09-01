@@ -126,6 +126,11 @@
     <!-- Customization Settings -->
     <string name="pref_home_category" translatable="false">pref_home_category</string>
 
+    <!-- Add-ons Source Customization Settings -->
+    <string name="pref_addons_settings_category" translatable="false">pref_addons_settings_category</string>
+    <string name="pref_key_addons_custom_account" translatable="false">pref_key_addons_custom_account</string>
+    <string name="pref_key_addons_custom_collection" translatable="false">pref_key_addons_custom_collection</string>
+
     <!-- Tracking Protection Settings -->
     <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>
     <string name="pref_key_tracking_protection_settings" translatable="false">pref_key_tracking_protection_settings</string>

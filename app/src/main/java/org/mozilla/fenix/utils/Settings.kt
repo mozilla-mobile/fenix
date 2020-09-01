@@ -15,6 +15,7 @@ import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.LifecycleOwner
+import androidx.preference.EditTextPreference
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
@@ -812,6 +813,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
             0
         )
+
+    val customAddonsAccount by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addons_custom_account),
+        "16201230"
+    )
+
+    val customAddonsCollection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
+        "What-I-want-on-Fenix"
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
