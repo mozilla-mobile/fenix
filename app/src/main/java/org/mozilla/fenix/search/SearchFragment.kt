@@ -413,7 +413,10 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                         permissionDidUpdate = true
                     } else {
                         view?.search_scan_button?.isChecked = false
-                        showPermissionsNeededDialog()
+                        // if the permission hasn't been updated
+                        if (!permissionDidUpdate) {
+                            showPermissionsNeededDialog()
+                        }
                     }
                 }
             }

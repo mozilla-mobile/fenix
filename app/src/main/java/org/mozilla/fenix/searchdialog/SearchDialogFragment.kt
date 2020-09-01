@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -87,6 +88,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
     private var firstUpdate = true
+    private var permissionsDenied = false
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -214,7 +216,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
             toolbarView.view.clearFocus()
             requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-            qrFeature.get()?.scan(R.id.search_wrapper)
+            if (permissionsDenied) {
+                showPermissionsNeededDialog()
+            } else {
+                qrFeature.get()?.scan(R.id.search_wrapper)
+            }
         }
 
         fill_link_from_clipboard.setOnClickListener {
@@ -366,16 +372,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     ) {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
-                it.onPermissionsResult(permissions, grantResults)
-
                 context?.let { context: Context ->
+                    it.onPermissionsResult(permissions, grantResults)
                     if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        showPermissionsNeededDialog()
+                        view?.qr_scan_button?.isChecked = false
+                        permissionsDenied = true
                     }
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+    
+    private fun dismissAndResetFocus() {
+        toolbarView.view.edit.focus()
+        view?.qr_scan_button?.isChecked = false
+        toolbarView.view.requestFocus()
     }
 
     private fun showPermissionsNeededDialog() {
@@ -390,8 +402,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
                     dialog: DialogInterface, _ ->
-                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", requireContext().packageName, null)
+                    intent.data = uri
+                    intent
                 } else {
                     SupportUtils.createCustomTabIntent(
                         requireContext(),
@@ -402,10 +417,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     )
                 }
                 dialog.cancel()
-                startActivity(intent)
+                requireActivity().startActivity(intent)
             }
             create()
         }.show()
+        dismissAndResetFocus()
     }
 
     private fun setupConstraints(view: View) {
