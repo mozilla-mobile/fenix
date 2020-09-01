@@ -45,6 +45,8 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.SO_MANY_TABS_OPEN
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.components.topsheet.TopSheetBehavior
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
@@ -68,12 +70,17 @@ class TabTrayView(
 ) : LayoutContainer, TabLayout.OnTabSelectedListener {
     val lifecycleScope = lifecycleOwner.lifecycleScope
 
-    val view = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_tabstray, container, true)
+    val view = when (container.context.settings().toolbarPosition) {
+        ToolbarPosition.BOTTOM -> LayoutInflater.from(container.context).inflate(R.layout.component_tabstray_bottom, container, true)
+        ToolbarPosition.TOP -> LayoutInflater.from(container.context).inflate(R.layout.component_tabstray, container, true)
+    }
 
     private val isPrivateModeSelected: Boolean get() = view.tab_layout.selectedTabPosition == PRIVATE_TAB_ID
 
-    private val behavior = BottomSheetBehavior.from(view.tab_wrapper)
+    private val behavior = when (container.context.settings().toolbarPosition) {
+        ToolbarPosition.BOTTOM -> TopSheetBehavior.from(view.tab_wrapper)
+        ToolbarPosition.TOP -> BottomSheetBehavior.from(view.tab_wrapper)
+    }
 
     private val concatAdapter = ConcatAdapter(tabsAdapter)
     private val tabTrayItemMenu: TabTrayItemMenu
@@ -95,17 +102,33 @@ class TabTrayView(
     init {
         components.analytics.metrics.track(Event.TabsTrayOpened)
 
-        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    components.analytics.metrics.track(Event.TabsTrayClosed)
-                    interactor.onTabTrayDismissed()
+        if (container.context.settings().toolbarPosition == ToolbarPosition.TOP) {
+            (behavior as BottomSheetBehavior).addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 }
-            }
-        })
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        components.analytics.metrics.track(Event.TabsTrayClosed)
+                        interactor.onTabTrayDismissed()
+                    }
+                }
+            })
+        } else {
+            (behavior as TopSheetBehavior).setTopSheetCallback(object :
+            TopSheetBehavior.TopSheetCallback() {
+                override fun onSlide(topSheet: View, slideOffset: Float, isOpening: Boolean?) {
+                }
+
+                override fun onStateChanged(topSheet: View, newState: Int) {
+                    if (newState == TopSheetBehavior.STATE_HIDDEN) {
+                        components.analytics.metrics.track(Event.TabsTrayClosed)
+                        interactor.onTabTrayDismissed()
+                    }
+                }
+            })
+        }
 
         val selectedTabIndex = if (!isPrivate) {
             DEFAULT_TAB_ID
@@ -273,7 +296,11 @@ class TabTrayView(
     }
 
     fun expand() {
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        if (container.context.settings().toolbarPosition == ToolbarPosition.TOP) {
+            (behavior as BottomSheetBehavior).state = BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            (behavior as TopSheetBehavior).state = TopSheetBehavior.STATE_EXPANDED
+        }
     }
 
     enum class TabChange {
@@ -507,7 +534,9 @@ class TabTrayView(
             view.context.resources.getDimension(R.dimen.tab_tray_top_offset).toInt()
         }
 
-        behavior.setExpandedOffset(topOffset)
+        if (container.context.settings().toolbarPosition == ToolbarPosition.TOP) {
+            (behavior as BottomSheetBehavior).setExpandedOffset(topOffset)
+        }
     }
 
     fun dismissMenu() {
