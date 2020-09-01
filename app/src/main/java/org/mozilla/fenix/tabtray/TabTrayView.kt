@@ -280,6 +280,9 @@ class TabTrayView(
     fun updateTabsTrayLayout() {
         view.tabsTray.apply {
             val gridLayoutManager = GridLayoutManager(container.context, gridViewNumberOfCols(container.context))
+            if (container.context.settings().toolbarPosition == ToolbarPosition.BOTTOM) {
+                gridLayoutManager.reverseLayout = true
+            }
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     val numTabs = tabsAdapter.itemCount
