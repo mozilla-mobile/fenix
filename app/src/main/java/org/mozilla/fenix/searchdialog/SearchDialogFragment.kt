@@ -375,18 +375,18 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 context?.let { context: Context ->
                     it.onPermissionsResult(permissions, grantResults)
                     if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        view?.qr_scan_button?.isChecked = false
                         permissionsDenied = true
+                        dismissAndResetFocus()
                     }
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
-    
+
     private fun dismissAndResetFocus() {
-        toolbarView.view.edit.focus()
         view?.qr_scan_button?.isChecked = false
+        toolbarView.view.edit.focus()
         toolbarView.view.requestFocus()
     }
 
@@ -399,6 +399,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
                     dialog: DialogInterface, _ ->
                 dialog.cancel()
+                dismissAndResetFocus()
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
                     dialog: DialogInterface, _ ->
@@ -418,6 +419,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 }
                 dialog.cancel()
                 requireActivity().startActivity(intent)
+                dismissAndResetFocus()
             }
             create()
         }.show()
