@@ -33,7 +33,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.fill_link_from_clipboard
 import kotlinx.android.synthetic.main.fragment_search_dialog.pill_wrapper
@@ -66,7 +65,6 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.search.SearchFragment
 import org.mozilla.fenix.search.SearchFragmentAction
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.search.SearchFragmentStore
@@ -88,7 +86,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
     private var firstUpdate = true
-    private var permissionsDenied = false
+    private var cameraPermissionsDenied = false
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -216,7 +214,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
             toolbarView.view.clearFocus()
             requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-            if (permissionsDenied) {
+            if (cameraPermissionsDenied) {
                 showPermissionsNeededDialog()
             } else {
                 qrFeature.get()?.scan(R.id.search_wrapper)
@@ -375,7 +373,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 context?.let { context: Context ->
                     it.onPermissionsResult(permissions, grantResults)
                     if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        permissionsDenied = true
+                        cameraPermissionsDenied = true
                         dismissAndResetFocus()
                     }
                 }
@@ -423,7 +421,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             }
             create()
         }.show()
-        dismissAndResetFocus()
     }
 
     private fun setupConstraints(view: View) {

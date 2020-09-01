@@ -31,6 +31,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
+import kotlinx.android.synthetic.main.fragment_search.view.search_engines_shortcut_button
+import kotlinx.android.synthetic.main.fragment_search.view.toolbar
+import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -69,6 +72,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     private lateinit var awesomeBarView: AwesomeBarView
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private var permissionDidUpdate = false
+    private var cameraPermissionsDenied = false
     private lateinit var searchStore: SearchFragmentStore
     private lateinit var searchInteractor: SearchInteractor
 
@@ -222,6 +226,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                             setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
                                 requireComponents.analytics.metrics.track(Event.QRScannerNavigationDenied)
                                 dialog.cancel()
+                                dismissAndResetFocus()
                             }
                             setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
                                 requireComponents.analytics.metrics.track(Event.QRScannerNavigationAllowed)
@@ -232,6 +237,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                                         from = BrowserDirection.FromSearch
                                     )
                                 dialog.dismiss()
+                                dismissAndResetFocus()
                             }
                             create()
                         }.show()
@@ -245,7 +251,11 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         view.search_scan_button.setOnClickListener {
             toolbarView.view.clearFocus()
             requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-            qrFeature.get()?.scan(R.id.container)
+            if (cameraPermissionsDenied) {
+                showPermissionsNeededDialog()
+            } else {
+                qrFeature.get()?.scan(R.id.container)
+            }
         }
 
         view.search_engines_shortcut_button.setOnClickListener {
@@ -380,6 +390,12 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
     }
 
+    private fun dismissAndResetFocus() {
+        view?.search_scan_button?.isChecked = false
+        toolbarView.view.edit.focus()
+        toolbarView.view.requestFocus()
+    }
+
     private fun updateSearchWithLabel(searchState: SearchFragmentState) {
         search_engine_shortcut.visibility =
             if (searchState.showSearchShortcuts) View.VISIBLE else View.GONE
@@ -412,11 +428,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                     if (context.isPermissionGranted(Manifest.permission.CAMERA)) {
                         permissionDidUpdate = true
                     } else {
-                        view?.search_scan_button?.isChecked = false
-                        // if the permission hasn't been updated
-                        if (!permissionDidUpdate) {
-                            showPermissionsNeededDialog()
-                        }
+                        cameraPermissionsDenied = true
+                        dismissAndResetFocus()
                     }
                 }
             }

@@ -30,6 +30,7 @@ import org.mozilla.fenix.ext.showToolbar
 class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
+    private var cameraPermissionsDenied = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,7 +70,11 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
         )
 
         qrFeature.withFeature {
-            it.scan(R.id.pair_layout)
+            if (cameraPermissionsDenied) {
+                showPermissionsNeededDialog()
+            } else {
+                it.scan(R.id.pair_layout)
+            }
         }
     }
 
@@ -105,7 +110,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                         it.onPermissionsResult(permissions, grantResults)
                     }
                 } else {
-                    showPermissionsNeededDialog()
+                    cameraPermissionsDenied = true
                     findNavController().popBackStack(R.id.turnOnSyncFragment, false)
                 }
             }
