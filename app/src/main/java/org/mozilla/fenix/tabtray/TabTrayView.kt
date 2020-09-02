@@ -462,9 +462,15 @@ class TabTrayView(
                 if (multiselect) MULTISELECT_HANDLE_HEIGHT.dpToPx(displayMetrics) else NORMAL_HANDLE_HEIGHT.dpToPx(
                     displayMetrics
                 )
-            topMargin = if (multiselect) 0.dpToPx(displayMetrics) else NORMAL_TOP_MARGIN.dpToPx(
-                displayMetrics
-            )
+            if (container.context.settings().toolbarPosition == ToolbarPosition.TOP) {
+                topMargin = if (multiselect) 0.dpToPx(displayMetrics) else NORMAL_TOP_MARGIN.dpToPx(
+                    displayMetrics
+                )
+            } else {
+                bottomMargin = if (multiselect) 0.dpToPx(displayMetrics) else NORMAL_BOTTOM_MARGIN.dpToPx(
+                    displayMetrics
+                )
+            }
         }
 
         view.tab_wrapper.setChildWPercent(
@@ -574,6 +580,7 @@ class TabTrayView(
         private const val MULTISELECT_HANDLE_HEIGHT = 11
         private const val NORMAL_HANDLE_HEIGHT = 3
         private const val NORMAL_TOP_MARGIN = 8
+        private const val NORMAL_BOTTOM_MARGIN = 8
         private const val NORMAL_HANDLE_PERCENT_WIDTH = 0.1F
     }
 }
