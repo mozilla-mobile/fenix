@@ -12,13 +12,13 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.state.MediaState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
-import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.media.ext.pauseIfPlaying
@@ -35,8 +35,6 @@ import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
 import org.mozilla.fenix.ext.showAndEnable
-import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.Do
 import kotlin.math.max
 
@@ -50,6 +48,8 @@ class TabTrayViewHolder(
     private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
+    private val iconCard: CardView = itemView.findViewById(R.id.mozac_browser_tabstray_icon_card)
+    private val iconView: ImageView = itemView.findViewById(R.id.mozac_browser_tabstray_icon)
     private val titleView: TextView = itemView.findViewById(R.id.mozac_browser_tabstray_title)
     private val closeView: AppCompatImageButton =
         itemView.findViewById(R.id.mozac_browser_tabstray_close)
@@ -74,6 +74,7 @@ class TabTrayViewHolder(
 
         // Basic text
         updateTitle(tab)
+        updateIcon(tab)
         updateCloseButtonDescription(tab.title)
 
         // Drawables and theme
@@ -151,6 +152,15 @@ class TabTrayViewHolder(
             tab.url
         }
         titleView.text = title
+    }
+
+    private fun updateIcon(tab: Tab) {
+        if (tab.icon != null) {
+            iconCard.visibility = View.VISIBLE
+            iconView.setImageBitmap(tab.icon)
+        } else {
+            iconCard.visibility = View.GONE
+        }
     }
 
     @VisibleForTesting
