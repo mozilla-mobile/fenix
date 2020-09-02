@@ -29,7 +29,7 @@ object FeatureFlags {
     /**
      * Enables showing the top frequently visited sites
      */
-    val topFrecentSite = Config.channel.isNightlyOrDebug
+    const val topFrecentSite = true
 
     /**
      * Enables wait til first contentful paint
@@ -39,5 +39,5 @@ object FeatureFlags {
     /**
      * Enables downloads with external download managers.
      */
-    val externalDownloadManager = Config.channel.isNightlyOrDebug
+    const val externalDownloadManager = true
 }
