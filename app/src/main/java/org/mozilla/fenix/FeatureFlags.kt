@@ -22,10 +22,6 @@ object FeatureFlags {
     val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables viewing tab history
-     */
-    val tabHistory = true
-    /**
      * Enables the new search experience
      */
     const val newSearchExperience = true
@@ -38,19 +34,11 @@ object FeatureFlags {
     /**
      * Enables wait til first contentful paint
      */
-    val waitUntilPaintToDraw = true // Just enables the setting in Secret Settings
+    val waitUntilPaintToDraw = true 
 
     /**
      * Enables downloads with external download managers.
      */
-    val externalDownloadManager = true // Just enables the setting in Secret Settings
+    val externalDownloadManager = true 
 
-    /**
-     * Enables viewing downloads in browser.
-     */
-    val viewDownloads = true
-    /**
-     * Enables selecting from multiple logins.
-     */
-    val loginSelect = true
 }

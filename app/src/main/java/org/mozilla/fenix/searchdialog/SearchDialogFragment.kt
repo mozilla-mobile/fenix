@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
@@ -40,6 +41,7 @@ import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.view.hideKeyboard
@@ -78,6 +80,21 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+
+    override fun onStart() {
+        super.onStart()
+        // https://github.com/mozilla-mobile/fenix/issues/14279
+        // To prevent GeckoView from resizing we're going to change the softInputMode to not adjust
+        // the size of the window.
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // https://github.com/mozilla-mobile/fenix/issues/14279
+        // Let's reset back to the default behavior after we're done searching
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -254,6 +271,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             updateSearchSuggestionsHintVisibility(it)
             updateClipboardSuggestion(it, requireContext().components.clipboardHandler.url)
             updateToolbarContentDescription(it)
+            updateSearchShortcutsIcon(it)
             toolbarView.update(it)
             awesomeBarView.update(it)
             firstUpdate = false
@@ -414,6 +432,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         toolbarView.view.contentDescription =
             searchState.searchEngineSource.searchEngine.name + ", " + urlView.hint
         urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+
+    private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
+        view?.apply {
+            search_engines_shortcut_button.isVisible = searchState.areShortcutsAvailable
+
+            val showShortcuts = searchState.showSearchShortcuts
+            search_engines_shortcut_button.isChecked = showShortcuts
+
+            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
+            search_engines_shortcut_button.compoundDrawables[0]?.setTint(
+                requireContext().getColorFromAttr(color)
+            )
+        }
     }
 
     companion object {
