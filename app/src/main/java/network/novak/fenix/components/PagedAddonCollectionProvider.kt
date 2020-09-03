@@ -62,14 +62,22 @@ class PagedAddonCollectionProvider(
     private val context: Context,
     private val client: Client,
     private val serverURL: String = DEFAULT_SERVER_URL,
-    private val collectionAccount: String = DEFAULT_COLLECTION_ACCOUNT,
-    private val collectionName: String = DEFAULT_COLLECTION_NAME,
+    private var collectionAccount: String = DEFAULT_COLLECTION_ACCOUNT,
+    private var collectionName: String = DEFAULT_COLLECTION_NAME,
     private val maxCacheAgeInMinutes: Long = -1
 ) : AddonsProvider {
 
     private val logger = Logger("PagedAddonCollectionProvider")
 
     private val diskCacheLock = Any()
+
+    fun setCollectionAccount(account: String) {
+        collectionAccount = account
+    }
+
+    fun setCollectionName(collection: String) {
+        collectionName = collection
+    }
 
     /**
      * Interacts with the collections endpoint to provide a list of available
@@ -215,6 +223,11 @@ class PagedAddonCollectionProvider(
 
     private fun getBaseCacheFile(context: Context): File {
         return File(context.filesDir, COLLECTION_FILE_NAME.format(collectionAccount, collectionName))
+    }
+
+    fun deleteCacheFile(context: Context): Boolean {
+        val file = getBaseCacheFile(context)
+        return if (file.exists()) file.delete() else false
     }
 }
 

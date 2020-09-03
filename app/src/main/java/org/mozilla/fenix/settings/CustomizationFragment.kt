@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
@@ -57,6 +58,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupRadioGroups()
         setupToolbarCategory()
         setupHomeCategory()
+        setupAddonsCustomizationCategory()
     }
 
     private fun setupRadioGroups() {
@@ -149,5 +151,18 @@ class CustomizationFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().showTopFrecentSites
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+    }
+
+    private fun setupAddonsCustomizationCategory() {
+        requirePreference<EditTextPreference>(R.string.pref_key_addons_custom_account).apply {
+            text = context.settings().customAddonsAccount
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<EditTextPreference>(R.string.pref_key_addons_custom_collection).apply {
+            text = context.settings().customAddonsCollection
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
     }
 }

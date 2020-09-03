@@ -61,4 +61,18 @@
             android:key="@string/pref_key_enable_top_frecent_sites"
             android:title="@string/top_sites_toggle_top_frecent_sites" />
     </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_addons_settings_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_addons_customization"
+        app:allowDividerAbove="false"
+        app:iconSpaceReserved="false">
+        <androidx.preference.EditTextPreference
+            android:key="@string/pref_key_addons_custom_account"
+            android:title="@string/addons_custom_source_account" />
+        <androidx.preference.EditTextPreference
+            android:key="@string/pref_key_addons_custom_collection"
+            android:title="@string/addons_custom_source_collection" />
+    </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

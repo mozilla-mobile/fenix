@@ -324,6 +324,10 @@
     <string name="preferences_external_download_manager">External download manager</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
+    <!-- Preference for add-ons custom source -->
+    <string name="preferences_addons_customization">Configure custom add-ons source</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="addons_search_hint">Search add-ons</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifications</string>
 
@@ -1525,6 +1529,11 @@
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Show most visited sites</string>
+
+    <!-- Label for add-ons custom source account -->
+    <string name="addons_custom_source_account">Set custom add-ons account</string>
+    <!-- Label for add-ons custom source collection -->
+    <string name="addons_custom_source_collection">Set custom add-ons collection</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remove</string>

@@ -115,9 +115,6 @@ android {
             // Need to replicate default debug config features
             signingConfig signingConfigs.debug
             debuggable true
-            // Use custom allowed addon list
-            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
-            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -127,9 +124,6 @@ android {
             manifestPlaceholders = [
                     "deepLinkScheme": deepLinkSchemeValue
             ]
-            // Use custom allowed addon list
-            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
-            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
         }
         
     }
