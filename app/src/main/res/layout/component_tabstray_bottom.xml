@@ -6,45 +6,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_wrapper"
-    style="@style/BottomSheetModal"
+    style="@style/TopSheetModal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@color/foundation_normal_theme"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    app:layout_behavior="org.mozilla.fenix.components.topsheet.TopSheetBehavior">
 
     <View
         android:id="@+id/handle"
         android:layout_width="0dp"
         android:layout_height="3dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/secondary_text_normal_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintWidth_percent="0.1" />
 
     <TextView
         android:id="@+id/tab_tray_empty_view"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="center_horizontal"
-        android:paddingTop="80dp"
+        android:paddingBottom="80dp"
         android:text="@string/no_open_tabs_description"
         android:textColor="?secondaryText"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBar" />
+        app:layout_constraintBottom_toTopOf="@+id/divider" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@color/foundation_normal_theme"
-        app:layout_constraintTop_toBottomOf="@+id/handle">
+        app:layout_constraintBottom_toTopOf="@id/handle">
 
         <ImageButton
             android:id="@+id/exit_multi_select"
@@ -162,18 +161,17 @@
         android:background="@color/tab_tray_item_divider_normal_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topBar" />
+        app:layout_constraintBottom_toTopOf="@+id/topBar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabsTray"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="140dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/divider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
