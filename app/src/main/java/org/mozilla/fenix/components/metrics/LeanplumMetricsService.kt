@@ -99,21 +99,19 @@ class LeanplumMetricsService(
 
     @Suppress("ComplexMethod")
     override fun start() {
-        val preferencesLoaded = scope.async(Dispatchers.IO) {
+        val preferencesLoaded = scope.async {
                 preferences = application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
         }
 
         if (!application.settings().isMarketingTelemetryEnabled) return
 
-        scope.launch {
+        leanplumJob = scope.launch {
             preferencesLoaded.await()
             Leanplum.setIsTestModeEnabled(false)
             Leanplum.setApplicationContext(application)
             Leanplum.setDeviceId(deviceId)
             Parser.parseVariables(application)
-        }
 
-        leanplumJob = scope.launch {
             val applicationSetLocale = LocaleManager.getCurrentLocale(application)
             val currentLocale = applicationSetLocale ?: Locale.getDefault()
             val languageCode =
