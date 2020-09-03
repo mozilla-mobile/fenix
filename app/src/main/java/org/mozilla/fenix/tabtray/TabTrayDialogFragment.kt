@@ -21,7 +21,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.component_tabstray.view.*
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.*
+import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.*
 import kotlinx.android.synthetic.main.fragment_tab_tray_dialog.view.*
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +67,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
     private lateinit var tabTrayDialogStore: TabTrayDialogFragmentStore
 
     private val snackbarAnchor: View?
-        get() = null
+        get() = if (tabTrayView.fabView.new_tab_button.isVisible) tabTrayView.fabView.new_tab_button
+        else null
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {

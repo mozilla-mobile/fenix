@@ -282,6 +282,10 @@
     <string name="preferences_theme">Theme</string>
     <!-- Preference for customizing the home screen -->
     <string name="preferences_home">Home</string>
+    <!-- Preference for customizing the tabs tray -->
+    <string name="preferences_tabs_tray">Tabs tray</string>
+    <!-- Preference for customizing the tabs tray FAB -->
+    <string name="preferences_tabs_tray_fab">Floating action button (FAB)</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Customize</string>
     <!-- Preference description for banner about signing in -->
@@ -1530,10 +1534,25 @@
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Show most visited sites</string>
 
-    <!-- Label for add-ons custom source account -->
+    <!-- Label for add-ons custom source account preference -->
     <string name="addons_custom_source_account">Set custom add-ons account</string>
-    <!-- Label for add-ons custom source collection -->
+    <!-- Label for add-ons custom source collection preference -->
     <string name="addons_custom_source_collection">Set custom add-ons collection</string>
+
+    <!-- Label for enable compact tabs in tabs tray preference -->
+    <string name="enable_compact_tabs">Enable compact tabs</string>
+    <!-- Label for enable top tabs tray preference -->
+    <string name="enable_top_tabs_tray">Enable top tabs tray</string>
+    <!-- Label for reverse tab order in tabs tray preference -->
+    <string name="reverse_tab_order_tabs_tray">Reverse tab order in tray</string>
+    <!-- Summary for reverse tab order preference -->
+    <string name="reverse_tab_order_description">Enable to put new tabs at start of the tabs list, disable to put new tabs at end of the tabs list</string>
+    <!-- Label for enable FAB in tabs tray preference -->
+    <string name="enable_fab_tabs_tray">Enable FAB for new tab</string>
+    <!-- Label for top FAB position in tabs tray preference -->
+    <string name="fab_tabs_tray_top">Place FAB at the top</string>
+    <!-- Label for top FAB position in tabs tray preference -->
+    <string name="fab_tabs_tray_top_description">Enable to place button for new tab at the top, disable to place it at the bottom</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remove</string>

@@ -875,6 +875,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         BuildConfig.AMO_COLLECTION
     )
 
+    val enableCompactTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_compact_tab),
+        default = false
+    )
+
+    val useTopTabsTray by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_top_tray),
+        default = false
+    )
+
+    val reverseTabOrderInTabsTray by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_reverse_tab_order),
+        default = true
+    )
+
+    val useNewTabFloatingActionButton by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_use_fab),
+        default = true
+    )
+
+    val placeNewTabFloatingActionButtonAtTop by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_fab_top_position),
+        default = false
+    )
+
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
         default = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString

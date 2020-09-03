@@ -19,6 +19,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
+import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.media.ext.pauseIfPlaying
@@ -29,12 +30,7 @@ import mozilla.components.support.images.loader.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getMediaStateForSession
-import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.ext.removeAndDisable
-import org.mozilla.fenix.ext.removeTouchDelegate
-import org.mozilla.fenix.ext.showAndEnable
+import org.mozilla.fenix.ext.*
 import org.mozilla.fenix.utils.Do
 import kotlin.math.max
 
@@ -57,6 +53,7 @@ class TabTrayViewHolder(
         itemView.findViewById(R.id.mozac_browser_tabstray_thumbnail)
 
     @VisibleForTesting
+    internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
 
     override var tab: Tab? = null
@@ -74,6 +71,7 @@ class TabTrayViewHolder(
 
         // Basic text
         updateTitle(tab)
+        updateUrl(tab)
         updateIcon(tab)
         updateCloseButtonDescription(tab.title)
 
@@ -146,6 +144,24 @@ class TabTrayViewHolder(
             tab.url
         }
         titleView.text = title
+    }
+
+    private fun updateUrl(tab: Tab) {
+        // Truncate to MAX_URI_LENGTH to prevent the UI from locking up for
+        // extremely large URLs such as data URIs or bookmarklets. The same
+        // is done in the toolbar and awesomebar:
+        // https://github.com/mozilla-mobile/fenix/issues/1824
+        // https://github.com/mozilla-mobile/android-components/issues/6985
+        urlView?.apply {
+            text =
+                if (context.settings().shouldStripUrl) {
+                    tab.url
+                        .toShortUrl(itemView.context.components.publicSuffixList)
+                        .take(MAX_URI_LENGTH)
+                } else {
+                    tab.url.take(MAX_URI_LENGTH)
+                }
+        }
     }
 
     private fun updateIcon(tab: Tab) {

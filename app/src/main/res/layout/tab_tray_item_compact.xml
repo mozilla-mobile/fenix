@@ -7,7 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_item"
     android:layout_width="match_parent"
-    android:layout_height="88dp"
+    android:layout_height="165dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:selectableItemBackground">
@@ -16,22 +16,21 @@
         android:id="@+id/play_pause_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="23dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/mozac_feature_media_notification_action_pause"
         android:elevation="10dp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/mozac_browser_tabstray_card"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/media_state_play" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/mozac_browser_tabstray_card"
-        android:layout_width="@dimen/tab_tray_thumbnail_width_original"
-        android:layout_height="@dimen/tab_tray_thumbnail_height_original"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tab_tray_thumbnail_height"
+        android:layout_marginHorizontal="7dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="?tabTrayThumbnailItemBackground"
         app:cardBackgroundColor="@color/photonWhite"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,9 +77,9 @@
         android:id="@+id/mozac_browser_tabstray_icon_card"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_card"
-        app:layout_constraintBottom_toBottomOf="@id/mozac_browser_tabstray_title"
+        app:layout_constraintStart_toStartOf="@id/mozac_browser_tabstray_card"
+        app:layout_constraintBottom_toTopOf="@id/mozac_browser_tabstray_card"
+        app:layout_constraintTop_toTopOf="parent"
         app:cardCornerRadius="5dp" >
 
         <ImageView
@@ -91,6 +90,7 @@
 
     </androidx.cardview.widget.CardView>
 
+
     <TextView
         android:id="@+id/mozac_browser_tabstray_title"
         android:layout_width="0dp"
@@ -100,13 +100,13 @@
         android:fadingEdgeLength="25dp"
         android:ellipsize="none"
         android:singleLine="true"
-        android:paddingStart="8dp"
-        android:paddingTop="22dp"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="5dp"
         android:textColor="@color/tab_tray_item_text_normal_theme"
-        android:textSize="16sp"
-        tools:text="This is the title of the tab and it is long"
+        android:textSize="14sp"
+        android:visibility="visible"
+        tools:text="Webpage tile that is long and will overflow textview widget"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_icon_card"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -115,14 +115,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:requiresFadingEdge="horizontal"
-        android:fadingEdgeLength="25dp"
-        android:ellipsize="none"
-        android:singleLine="true"
+        android:lines="1"
         android:paddingStart="8dp"
         android:textColor="@color/tab_tray_item_url_normal_theme"
         android:textSize="14sp"
         tools:text="https://www.google.com"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/mozac_browser_tabstray_close"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/mozac_browser_tabstray_card"
@@ -130,12 +128,12 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/mozac_browser_tabstray_close"
-        android:layout_width="48dp"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/close_tab"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toEndOf="@id/mozac_browser_tabstray_card"
+        app:layout_constraintBottom_toTopOf="@id/mozac_browser_tabstray_card"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/mozac_ic_close"
         app:tint="@color/tab_tray_item_text_normal_theme" />

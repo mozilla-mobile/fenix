@@ -57,6 +57,8 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
+        setupTabsTrayCategory()
+        setupFabCategory()
         setupHomeCategory()
         setupAddonsCustomizationCategory()
     }
@@ -142,10 +144,40 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         addToRadioGroup(topPreference, bottomPreference)
     }
 
+    private fun setupTabsTrayCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
+            isChecked = context.settings().enableCompactTabs
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_top_tray).apply {
+            isChecked = context.settings().useTopTabsTray
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_reverse_tab_order).apply {
+            isChecked = context.settings().reverseTabOrderInTabsTray
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupFabCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_use_fab).apply {
+            isChecked = context.settings().useNewTabFloatingActionButton
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_fab_top_position).apply {
+            isChecked = context.settings().placeNewTabFloatingActionButtonAtTop
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
     private fun setupHomeCategory() {
         requirePreference<PreferenceCategory>(R.string.pref_home_category).apply {
             isVisible = FeatureFlags.topFrecentSite
         }
+
         requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
             isVisible = FeatureFlags.topFrecentSite
             isChecked = context.settings().showTopFrecentSites
