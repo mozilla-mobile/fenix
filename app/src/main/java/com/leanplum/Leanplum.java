@@ -41,6 +41,9 @@ public class Leanplum {
   public static void setIsTestModeEnabled(boolean isTestModeEnabled) {
   }
 
+  public static void setUserAttributes(Map<String, ?> userAttributes) {
+  }
+
   public static void start(Context context) {
   }
 
