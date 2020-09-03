@@ -7,7 +7,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
 
 import com.android.build.OutputFile
@@ -367,8 +366,6 @@ dependencies {
 
     implementation Deps.sentry
 
-    implementation Deps.leanplum_core
-    implementation Deps.leanplum_fcm
 
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -447,7 +444,6 @@ dependencies {
     implementation Deps.mozilla_ui_widgets
 
     implementation Deps.mozilla_lib_crash
-    implementation Deps.mozilla_lib_push_firebase
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
     forkDebugImplementation Deps.leakcanary
@@ -471,10 +467,7 @@ dependencies {
 
     implementation Deps.lottie
 
-    implementation Deps.adjust
-    implementation Deps.installreferrer // Required by Adjust
 
-    implementation Deps.google_ads_id // Required for the Google Advertising ID
 
     implementation Deps.google_play_store // Required for in-app reviews
 
