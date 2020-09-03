@@ -867,12 +867,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val customAddonsAccount by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_account),
-        "16201230"
+        BuildConfig.AMO_ACCOUNT
     )
 
     val customAddonsCollection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
-        "What-I-want-on-Fenix"
+        BuildConfig.AMO_COLLECTION
     )
 
     private var savedLoginsSortingStrategyString by stringPreference(
