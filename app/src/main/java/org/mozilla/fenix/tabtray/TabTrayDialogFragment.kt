@@ -373,7 +373,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                     val selectedCollection =
                         (list.adapter as CollectionsAdapter).getSelectedCollection()
                     val collection = tabCollectionStorage.cachedTabCollections[selectedCollection]
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    viewLifecycleOwner.lifecycleScope.launch(Main) {
                         tabCollectionStorage.addTabsToCollection(collection, sessionList)
                         it.metrics.track(
                             Event.CollectionTabsAdded(
@@ -381,10 +381,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
                                 sessionList.size
                             )
                         )
-                        launch(Main) {
-                            tabTrayDialogStore.dispatch(TabTrayDialogFragmentAction.ExitMultiSelectMode)
-                            dialog.dismiss()
-                        }
+                        tabTrayDialogStore.dispatch(TabTrayDialogFragmentAction.ExitMultiSelectMode)
+                        dialog.dismiss()
                     }
                 }.setNegativeButton(android.R.string.cancel) { dialog, _ ->
                     tabTrayDialogStore.dispatch(TabTrayDialogFragmentAction.ExitMultiSelectMode)
