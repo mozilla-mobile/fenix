@@ -40,8 +40,8 @@ class PermissionStorage(private val context: Context) {
         return sitePermissions
     }
 
-    fun findSitePermissionsBy(origin: String): SitePermissions? {
-        return permissionsStorage.findSitePermissionsBy(origin)
+    suspend fun findSitePermissionsBy(origin: String): SitePermissions? = withContext(Dispatchers.IO) {
+        permissionsStorage.findSitePermissionsBy(origin)
     }
 
     suspend fun updateSitePermissions(sitePermissions: SitePermissions) = withContext(Dispatchers.IO) {
