@@ -274,6 +274,11 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
+    <style name="TopTabTrayAnimation">
+        <item name="android:windowEnterAnimation">@anim/fade_in_down</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_up</item>
+    </style>
+
     <!-- UI button styling -->
     <style name="NeutralButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="iconTint">@color/button_text_color</item>

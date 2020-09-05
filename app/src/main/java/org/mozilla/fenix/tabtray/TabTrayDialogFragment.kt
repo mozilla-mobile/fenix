@@ -169,6 +169,10 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         val activity = activity as HomeActivity
         val isPrivate = activity.browsingModeManager.mode.isPrivate
 
+        if (requireContext().settings().useTopTabsTray) {
+            dialog?.window?.attributes?.windowAnimations = R.style.TopTabTrayAnimation
+        }
+
         val thumbnailLoader = ThumbnailLoader(requireContext().components.core.thumbnailStorage)
         val adapter = FenixTabsAdapter(requireContext(), thumbnailLoader)
         currentOrientation = resources.configuration.orientation
