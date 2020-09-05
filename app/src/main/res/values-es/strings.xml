@@ -31,7 +31,7 @@
     <string name="tab_tray_item_selected_multiselect_content_description">%1$s seleccionado</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s es producido por Adam Novak.</string>
+    <string name="about_content">%1$s es producido por @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

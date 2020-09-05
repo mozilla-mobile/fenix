@@ -25,7 +25,7 @@
     <string name="open_tab_tray_plural">ເປີດ %1$s ແຖບ. ແຕະເພື່ອປ່ຽນແທັບ.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s ແມ່ນຜະລິດຂື້ນໂດຍ Adam Novak.</string>
+    <string name="about_content">%1$s ແມ່ນຜະລິດຂື້ນໂດຍ @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

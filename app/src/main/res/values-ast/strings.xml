@@ -45,7 +45,7 @@
     <string name="tab_tray_enter_multiselect_content_description">Entresti nel mou d\'esbilla múltiple, esbilla les llingüetes pa guardar nuna coleición</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s ta producíu por Adam Novak.</string>
+    <string name="about_content">%1$s ta producíu por @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
