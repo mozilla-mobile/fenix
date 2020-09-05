@@ -218,6 +218,8 @@ class TabTrayView(
                 // Put the 'Add to collections' button after the tabs have loaded.
                 // And, put the Synced Tabs adapter at the end.
                 if (reverseTabOrderInTabsTray) {
+                    // Put these at the start when reverse tab order is enabled. Also, we disallow
+                    // reverse tab order for compact tabs in settings.
                     concatAdapter.addAdapter(0, collectionsButtonAdapter)
                     concatAdapter.addAdapter(0, syncedTabsController.adapter)
                 } else {
@@ -330,32 +332,15 @@ class TabTrayView(
             if (enableCompactTabs) {
                 val gridLayoutManager = GridLayoutManager(container.context, gridViewNumberOfCols(container.context))
                 if (useTopTabsTray) {
-                    if (!reverseTabOrderInTabsTray) {
-                        gridLayoutManager.reverseLayout = true
-                    }
-                } else {
-                    if (reverseTabOrderInTabsTray) {
-                        gridLayoutManager.reverseLayout = true
-                    }
+                    gridLayoutManager.reverseLayout = true
                 }
                 gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
                         val numTabs = tabsAdapter.itemCount
-                        val totalItems = numTabs + collectionsButtonAdapter.itemCount +
-                                syncedTabsController.adapter.itemCount
-
-                        return if (reverseTabOrderInTabsTray) {
-                            if (totalItems - 1 - position < numTabs) {
-                                1
-                            } else {
-                                gridViewNumberOfCols(container.context)
-                            }
+                        return if (position < numTabs) {
+                            1
                         } else {
-                            if (position < numTabs) {
-                                1
-                            } else {
-                                gridViewNumberOfCols(container.context)
-                            }
+                            gridViewNumberOfCols(container.context)
                         }
                     }
                 }
@@ -664,18 +649,12 @@ class TabTrayView(
             val selectedBrowserTabIndex = tabs
                 .indexOfFirst { it.id == sessionId }
 
-            val recyclerViewIndex = if (reverseTabOrderInTabsTray && !enableCompactTabs) {
+            val recyclerViewIndex = if (reverseTabOrderInTabsTray) {
                 // For reverse tab order and non-compact tabs, we add the items in collections button
                 // adapter and synced tabs adapter, and offset by 1 to show the tab above the
                 // current tab, unless current tab is first in reverse order.
                 min(selectedBrowserTabIndex + 1, tabsAdapter.itemCount - 1) +
                         collectionsButtonAdapter.itemCount + syncedTabsController.adapter.itemCount
-            } else if (reverseTabOrderInTabsTray && enableCompactTabs) {
-                // For reverse tab order and compact tabs, we add the items in collections button
-                //  adapter and synced tabs adapter, and offset by -1 to show the tab above the
-                //  current tab, unless current tab is first in reverse order.
-                max(0, selectedBrowserTabIndex - 1 + collectionsButtonAdapter.itemCount +
-                    syncedTabsController.adapter.itemCount)
             } else {
                 // We offset index by -1 to show the tab above the current tab, unless current tab
                 // is the first.

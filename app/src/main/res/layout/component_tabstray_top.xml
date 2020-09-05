@@ -108,6 +108,7 @@
             app:tabGravity="fill"
             app:tabIconTint="@color/tab_icon"
             app:tabIndicatorColor="@color/accent_normal_theme"
+            app:tabIndicatorGravity="top"
             app:tabRippleColor="@android:color/transparent">
 
             <com.google.android.material.tabs.TabItem

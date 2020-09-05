@@ -9,10 +9,8 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.core.content.edit
+import androidx.preference.*
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -145,19 +143,37 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupTabsTrayCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
-            isChecked = context.settings().enableCompactTabs
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_top_tray).apply {
             isChecked = context.settings().useTopTabsTray
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_reverse_tab_order).apply {
-            isChecked = context.settings().reverseTabOrderInTabsTray
+        val reverseOrderPref = requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_reverse_tab_order).apply {
+            if (context.settings().enableCompactTabs) {
+                isChecked = false
+                isEnabled = false
+            } else {
+                isChecked = context.settings().reverseTabOrderInTabsTray
+                isEnabled = true
+            }
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
+            isChecked = context.settings().enableCompactTabs
+
+            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+                val newValueBoolean = newValue as Boolean
+                preference.context.settings().preferences.edit {
+                    putBoolean(preference.key, newValueBoolean)
+                    if (newValueBoolean) {
+                        reverseOrderPref.isChecked = false
+                        putBoolean(getString(R.string.pref_key_tabs_tray_reverse_tab_order), false)
+                    }
+                    reverseOrderPref.isEnabled = !newValueBoolean
+                }
+                true
+            }
         }
     }
 
