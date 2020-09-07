@@ -99,6 +99,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
             AdapterItem.OnboardingThemePicker,
             AdapterItem.OnboardingPrivateBrowsing,
             AdapterItem.OnboardingToolbarPositionPicker,
+            AdapterItem.OnboardingTabsTrayLayoutPicker,
             AdapterItem.OnboardingPrivacyNotice,
             AdapterItem.OnboardingFinish
         )

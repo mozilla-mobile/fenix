@@ -23,17 +23,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageVie
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.TopSitePagerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingAutomaticSignInViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingWhatsNewViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.*
 import org.mozilla.fenix.home.tips.ButtonTipViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
@@ -106,6 +96,7 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
     object OnboardingToolbarPositionPicker :
         AdapterItem(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID)
+    object OnboardingTabsTrayLayoutPicker : AdapterItem(OnboardingTabsTrayLayoutViewHolder.LAYOUT_ID)
 
     object OnboardingWhatsNew : AdapterItem(OnboardingWhatsNewViewHolder.LAYOUT_ID)
 
@@ -189,6 +180,7 @@ class SessionControlAdapter(
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
+            OnboardingTabsTrayLayoutViewHolder.LAYOUT_ID -> OnboardingTabsTrayLayoutViewHolder(view)
             else -> throw IllegalStateException()
         }
     }

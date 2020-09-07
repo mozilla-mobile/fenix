@@ -33,6 +33,8 @@
     <string name="tab_tray_select_collection">Select collection</string>
     <!-- Content description for close button while in multiselect mode in tab tray -->
     <string name="tab_tray_close_multiselect_content_description">Exit multiselect mode</string>
+    <!-- Content description for back button in full screen tabs screen -->
+    <string name="tabs_screen_close_screen_description">Close tabs screen</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Save selected tabs to collection</string>
     <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
@@ -1072,6 +1074,18 @@
     <string name="onboarding_tracking_protection_strict_option">Strict</string>
     <!-- text for strict blocking option button description -->
     <string name="onboarding_tracking_protection_strict_button_description_2">Blocks more trackers, ads, and popups. Pages load faster, but some functionality might not work.</string>
+    <!-- text for the tabs tray layout onboarding card header -->
+    <string name="onboarding_tabs_layout_header">Choose your tabs tray layout</string>
+    <!-- text for the tabs tray layout card description-->
+    <string name="onboarding_tabs_tray_layout_description">Pick either the old Firefox (Fennec) style tabs screen or the new and fancy (Fenix) style tabs tray.</string>
+    <!-- text for old Fennec style tab screen layout -->
+    <string name="onboarding_tabs_tray_fennec_layout_button">Old Fennec style (default)</string>
+    <!-- text for old Fennec style description -->
+    <string name="onboarding_tabs_tray_fennec_layout_description">Clicking the tab count on the toolbar will show you a tabs screen with a layout similar to the previous (Fennec) version of Firefox.</string>
+    <!-- text for Fenix style tab tray layout -->
+    <string name="onboarding_tabs_tray_fenix_layout_button">New Fenix style</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tabs_tray_fenix_layout_description">Clicking the tab count on the toolbar will show you a new tabs tray layout from the Fenix version of Firefox.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1549,6 +1563,8 @@
     <string name="enable_compact_tabs">Enable compact tabs</string>
     <!-- Label for enable top tabs tray preference -->
     <string name="enable_top_tabs_tray">Enable top tabs tray</string>
+    <!-- Label for fullscreen tabs tray preference -->
+    <string name="use_fullscreen_tabs_screen">Enable fullscreen tabs screen</string>
     <!-- Label for reverse tab order in tabs tray preference -->
     <string name="reverse_tab_order_tabs_tray">Reverse tab order in tray</string>
     <!-- Summary for reverse tab order preference -->

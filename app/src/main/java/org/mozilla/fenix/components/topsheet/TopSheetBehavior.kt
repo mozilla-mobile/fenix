@@ -35,7 +35,7 @@ import kotlin.math.abs
 * limitations under the License.
 */ /**
  * An interaction behavior plugin for a child view of [CoordinatorLayout] to make it work as
- * a bottom sheet.
+ * a top sheet.
  */
 class TopSheetBehavior<V : View?>
 /**

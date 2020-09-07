@@ -9,10 +9,8 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.core.content.edit
+import androidx.preference.*
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -145,32 +143,74 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupTabsTrayCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
-            isChecked = context.settings().enableCompactTabs
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_top_tray).apply {
             isChecked = context.settings().useTopTabsTray
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_reverse_tab_order).apply {
-            isChecked = context.settings().reverseTabOrderInTabsTray
+        requirePreference<SwitchPreference>(R.string.pref_key_use_fullscreen_tabs_screen).apply {
+            isChecked = context.settings().useFullScreenTabScreen
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        val reverseOrderPref = requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_reverse_tab_order).apply {
+            if (context.settings().enableCompactTabs) {
+                isChecked = false
+                isEnabled = false
+            } else {
+                isChecked = context.settings().reverseTabOrderInTabsTray
+                isEnabled = true
+            }
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_compact_tab).apply {
+            isChecked = context.settings().enableCompactTabs
+
+            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+                val newValueBoolean = newValue as Boolean
+                preference.context.settings().preferences.edit {
+                    putBoolean(preference.key, newValueBoolean)
+                    if (newValueBoolean) {
+                        reverseOrderPref.isChecked = false
+                        putBoolean(getString(R.string.pref_key_tabs_tray_reverse_tab_order), false)
+                    }
+                    reverseOrderPref.isEnabled = !newValueBoolean
+                }
+                true
+            }
         }
     }
 
     private fun setupFabCategory() {
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_use_fab).apply {
-            isChecked = context.settings().useNewTabFloatingActionButton
+        val fabPositionTop = requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_fab_top_position).apply {
+            if (context.settings().useNewTabFloatingActionButton) {
+                isChecked = context.settings().placeNewTabFloatingActionButtonAtTop
+                isEnabled = true
+            } else {
+                isChecked = false
+                isEnabled = false
+            }
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_fab_top_position).apply {
-            isChecked = context.settings().placeNewTabFloatingActionButtonAtTop
-            onPreferenceChangeListener = SharedPreferenceUpdater()
+        requirePreference<SwitchPreference>(R.string.pref_key_tabs_tray_use_fab).apply {
+            isChecked = context.settings().useNewTabFloatingActionButton
+            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+                val newValueBoolean = newValue as Boolean
+                preference.context.settings().preferences.edit {
+                    putBoolean(preference.key, newValueBoolean)
+                    if (!newValueBoolean) {
+                        fabPositionTop.isChecked = false
+                        putBoolean(getString(R.string.pref_key_tabs_tray_fab_top_position), false)
+                    }
+                    fabPositionTop.isEnabled = newValueBoolean
+                }
+                true
+            }
         }
+
+
     }
 
     private fun setupHomeCategory() {
