@@ -8,7 +8,7 @@ object Versions {
     const val android_gradle_plugin = "3.5.0"
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-    const val leanplum = "5.4.0"
+
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
 
@@ -31,8 +31,6 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
-    const val adjust = "4.18.3"
-    const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
     const val mockk = "1.10.0"
@@ -40,9 +38,6 @@ object Versions {
     const val mockwebserver = "3.11.0"
     const val uiautomator = "2.2.0"
 
-    const val google_ads_id_version = "16.0.0"
-
-    const val google_play_store_version = "1.8.0"
 
     const val airbnb_lottie = "3.4.0"
 }
@@ -202,10 +197,6 @@ object Deps {
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
     const val robolectric = "org.robolectric:robolectric:4.3.1"
 
-    const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
-
-    // Required for in-app reviews
-    const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
 
     const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 
