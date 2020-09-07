@@ -57,7 +57,7 @@
         app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_key_tabs_tray_compact_tab"
             android:title="@string/enable_compact_tabs" />
         <SwitchPreference
@@ -66,6 +66,10 @@
             android:title="@string/enable_top_tabs_tray" />
         <SwitchPreference
             android:defaultValue="true"
+            android:key="@string/pref_key_use_fullscreen_tabs_screen"
+            android:title="@string/use_fullscreen_tabs_screen" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="@string/pref_key_tabs_tray_reverse_tab_order"
             android:title="@string/reverse_tab_order_tabs_tray"
             android:summary="@string/reverse_tab_order_description" />
@@ -78,7 +82,7 @@
         app:allowDividerAbove="false"
         app:iconSpaceReserved="false">
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_key_tabs_tray_use_fab"
             android:title="@string/enable_fab_tabs_tray" />
         <SwitchPreference

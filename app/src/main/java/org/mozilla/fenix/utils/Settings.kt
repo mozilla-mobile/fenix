@@ -875,9 +875,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         BuildConfig.AMO_COLLECTION
     )
 
-    val enableCompactTabs by booleanPreference(
+    var enableCompactTabs by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tabs_tray_compact_tab),
-        default = false
+        default = true
     )
 
     val useTopTabsTray by booleanPreference(
@@ -885,17 +885,25 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    val reverseTabOrderInTabsTray by booleanPreference(
+    var useFullScreenTabScreen by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_use_fullscreen_tabs_screen),
+        default = true
+    )
+
+    val shouldUseFennecStyleTabsScreen: Boolean
+        get() = enableCompactTabs && useFullScreenTabScreen
+
+    var reverseTabOrderInTabsTray by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tabs_tray_reverse_tab_order),
-        default = true
+        default = false
     )
 
-    val useNewTabFloatingActionButton by booleanPreference(
+    var useNewTabFloatingActionButton by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tabs_tray_use_fab),
-        default = true
+        default = false
     )
 
-    val placeNewTabFloatingActionButtonAtTop by booleanPreference(
+    var placeNewTabFloatingActionButtonAtTop by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tabs_tray_fab_top_position),
         default = false
     )

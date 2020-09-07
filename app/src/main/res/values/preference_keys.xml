@@ -130,6 +130,8 @@
     <string name="pref_tabs_tray_settings_category" translatable="false">pref_tabs_tray_settings_category</string>
     <string name="pref_key_tabs_tray_compact_tab" translatable="false">pref_key_tabs_tray_compact_tab</string>
     <string name="pref_key_tabs_tray_top_tray" translatable="false">pref_key_tabs_tray_top_tray</string>
+    <string name="pref_key_use_fullscreen_tabs_screen" translatable="false">pref_key_use_fullscreen_tabs_screen</string>
+    <string name="pref_key_use_fenix_tabs_tray" translatable="false">pref_key_use_fenix_tabs_tray</string>
     <string name="pref_key_tabs_tray_reverse_tab_order" translatable="false">pref_key_tabs_tray_reverse_tab_order</string>
 
     <!-- Tabs Tray FAB Customization Settings -->
