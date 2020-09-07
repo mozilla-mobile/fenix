@@ -1,0 +1,4 @@
+language: android
+dist: trusty
+script:
+  - ./gradlew assembleForkRelease -PversionName="$(git describe --tags HEAD)"
