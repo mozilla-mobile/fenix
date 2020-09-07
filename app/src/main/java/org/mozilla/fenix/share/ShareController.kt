@@ -19,11 +19,13 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import mozilla.appservices.fxaclient.FxaException
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
+import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -72,6 +74,7 @@ class DefaultShareController(
     private val navController: NavController,
     private val recentAppsStorage: RecentAppsStorage,
     private val viewLifecycleScope: CoroutineScope,
+    private val crashReporter: CrashReporter,
     private val dismiss: (ShareController.Result) -> Unit
 ) : ShareController {
 
@@ -131,16 +134,21 @@ class DefaultShareController(
         dismiss(ShareController.Result.DISMISSED)
     }
 
-    private fun shareToDevicesWithRetry(shareOperation: () -> Deferred<Boolean>) {
+    @VisibleForTesting
+    @Suppress("TooGenericExceptionCaught")
+    internal fun shareToDevicesWithRetry(shareOperation: () -> Deferred<Unit>) {
         // Use GlobalScope to allow the continuation of this method even if the share fragment is closed.
         GlobalScope.launch(Dispatchers.Main) {
-            val result = if (shareOperation.invoke().await()) {
+            val result = try {
+                shareOperation.invoke().await()
                 showSuccess()
                 ShareController.Result.SUCCESS
-            } else {
+            } catch (exception: FxaException) {
+                reportException(exception)
                 showFailureWithRetryOption { shareToDevicesWithRetry(shareOperation) }
                 ShareController.Result.DISMISSED
             }
+
             if (navController.currentDestination?.id == R.id.shareFragment) {
                 dismiss(result)
             }
@@ -193,6 +201,13 @@ class DefaultShareController(
 
     @VisibleForTesting
     internal fun getShareSubject() = shareSubject ?: shareData.map { it.title }.joinToString(", ")
+
+    @VisibleForTesting
+    internal fun reportException(exception: Exception) {
+        GlobalScope.launch(Dispatchers.IO) {
+            crashReporter.submitCaughtException(exception)
+        }
+    }
 
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
     @VisibleForTesting

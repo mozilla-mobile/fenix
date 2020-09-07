@@ -17,6 +17,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -26,6 +27,7 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
+import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -65,9 +67,10 @@ class ShareControllerTest {
     private val navController = mockk<NavController>(relaxed = true)
     private val dismiss = mockk<(ShareController.Result) -> Unit>(relaxed = true)
     private val recentAppStorage = mockk<RecentAppsStorage>(relaxed = true)
+    private val crashReporter = mockk<CrashReporter>(relaxed = true)
     private val controller = DefaultShareController(
         context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
-        recentAppStorage, testCoroutineScope, dismiss
+        recentAppStorage, testCoroutineScope, crashReporter, dismiss
     )
 
     @Before
@@ -93,7 +96,7 @@ class ShareControllerTest {
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, dismiss)
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, crashReporter, dismiss)
         every { activityContext.startActivity(capture(shareIntent)) } just Runs
         every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
 
@@ -127,7 +130,7 @@ class ShareControllerTest {
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
-            snackbar, mockk(), mockk(), testCoroutineScope, dismiss)
+            snackbar, mockk(), mockk(), testCoroutineScope, crashReporter, dismiss)
         every { activityContext.startActivity(capture(shareIntent)) } throws SecurityException()
         every { activityContext.getString(R.string.share_error_snackbar) } returns "Cannot share to this app"
 
@@ -256,6 +259,7 @@ class ShareControllerTest {
             mockk(),
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
         val controllerWithMoreSharedTabs = controller
@@ -284,7 +288,7 @@ class ShareControllerTest {
         )
         val controller = DefaultShareController(
             context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
-            recentAppStorage, testCoroutineScope, dismiss
+            recentAppStorage, testCoroutineScope, crashReporter, dismiss
         )
 
         val expectedShareText = "${shareData[0].url}\n\nurl0\n\n${shareData[2].url}"
@@ -300,7 +304,7 @@ class ShareControllerTest {
     fun `getShareSubject will return a concatenation of tab titles if "shareSubject" is null`() {
         val controller = DefaultShareController(
             context, null, shareData, sendTabUseCases, snackbar, navController,
-            recentAppStorage, testCoroutineScope, dismiss
+            recentAppStorage, testCoroutineScope, crashReporter, dismiss
         )
 
         assertEquals("title0, title1", controller.getShareSubject())
@@ -333,5 +337,64 @@ class ShareControllerTest {
         }
 
         assertEquals(expected, tabData)
+    }
+
+    @Test
+    fun `shareToDevicesWithRetry shows success if share operation succeeded`() {
+        val spyController = spyk(controller)
+        every { spyController.showSuccess() } just Runs
+
+        spyController.shareToDevicesWithRetry {
+            CompletableDeferred(Unit).also { it.complete(Unit) }
+        }
+
+        verify {
+            spyController.showSuccess()
+            spyController.shareToDevicesWithRetry(any())
+        }
+        verify(exactly = 0) { spyController.reportException(any()) }
+    }
+
+    @Test
+    @Suppress("UNUSED_EXPRESSION")
+    fun `shareToDevicesWithRetry will retry if the share operation failed`() {
+        val spyController = spyk(controller)
+        every { spyController.showFailureWithRetryOption(any()) } just Runs
+        val operation = CompletableDeferred<Unit>()
+
+        spyController.shareToDevicesWithRetry { operation }
+        operation.completeExceptionally(Exception())
+
+        verify {
+            spyController.reportException(any())
+            spyController.showFailureWithRetryOption(any())
+        }
+        verify(exactly = 0) { spyController.showSuccess() }
+    }
+
+    @Test
+    fun `shareToDevicesWithRetry will dismiss the dialog after successfully executing the share operation`() {
+        every { navController.currentDestination?.id } returns R.id.shareFragment
+
+        controller.shareToDevicesWithRetry {
+            CompletableDeferred(Unit).also { it.complete(Unit) }
+        }
+
+        verify {
+            dismiss(ShareController.Result.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `shareToDevicesWithRetry will dismiss the dialog after executing the share operation even if that errored`() {
+        val operation = CompletableDeferred<Unit>()
+        every { navController.currentDestination?.id } returns R.id.shareFragment
+
+        controller.shareToDevicesWithRetry { operation }
+        operation.completeExceptionally(Exception())
+
+        verify {
+            dismiss(ShareController.Result.DISMISSED)
+        }
     }
 }
