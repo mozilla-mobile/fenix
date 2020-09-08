@@ -8,13 +8,15 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.ReleaseChannel.Debug
+import org.mozilla.fenix.ReleaseChannel.ForkDebug
 
 class ReleaseChannelTest {
 
     @Test
     fun `isReleased and isDebug channels are mutually exclusive`() {
         val debugChannels = setOf(
-            Debug
+            Debug,
+            ForkDebug
         )
 
         val nonDebugChannels = ReleaseChannel.values().toSet() - debugChannels
