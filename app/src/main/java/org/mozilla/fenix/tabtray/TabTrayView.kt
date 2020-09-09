@@ -186,7 +186,7 @@ class TabTrayView(
                 concatAdapter.addAdapter(0, syncedTabsController.adapter)
 
                 if (hasAccessibilityEnabled) {
-                    tabsAdapter.notifyDataSetChanged()
+                    tabsAdapter.notifyItemRangeChanged(0, tabsAdapter.itemCount)
                 }
                 if (!hasLoaded) {
                     hasLoaded = true
