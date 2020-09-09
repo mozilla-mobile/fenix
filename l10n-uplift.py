@@ -8,6 +8,8 @@
 # Uplift, actually perform the work: ./l10n-uplift.py releases/48.0 --uplift
 # Process multiple branches at once: ./l10n-uplift.py releases/48.0 releases/44.0 --uplift --verbose
 
+# Note: there can often be conflicts between cherry-picks, to catch duplication errors, build after conflict resolution: ./gradlew assembleDebug
+
 import subprocess
 import argparse
 
