@@ -138,6 +138,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 navController = findNavController(),
                 settings = requireContext().settings(),
                 metrics = requireComponents.analytics.metrics,
+                dismissDialog = { dismissAllowingStateLoss() },
                 clearToolbarFocus = {
                     toolbarView.view.hideKeyboard()
                     toolbarView.view.clearFocus()
