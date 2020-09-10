@@ -38,6 +38,7 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
@@ -253,13 +254,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
                     )
                 },
-                onCloseTab = {
-                    val snapshot = sessionManager.createSessionSnapshot(it)
-                    val state = snapshot.engineSession?.saveState()
-                    val isSelected =
-                        it.id == context.components.core.store.state.selectedTabId ?: false
+                onCloseTab = { closedSession ->
+                    val tab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
+                    val isSelected = tab.id == context.components.core.store.state.selectedTabId
 
-                    val snackbarMessage = if (snapshot.session.private) {
+                    val snackbarMessage = if (tab.content.private) {
                         requireContext().getString(R.string.snackbar_private_tab_closed)
                     } else {
                         requireContext().getString(R.string.snackbar_tab_closed)
@@ -271,9 +270,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         requireContext().getString(R.string.snackbar_deleted_undo),
                         {
                             sessionManager.add(
-                                snapshot.session,
+                                closedSession,
                                 isSelected,
-                                engineSessionState = state
+                                engineSessionState = tab.engineState.engineSessionState
                             )
                         },
                         operation = { }
@@ -295,7 +294,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 openInFenixIntent = openInFenixIntent,
                 bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
                 scope = viewLifecycleOwner.lifecycleScope,
-                tabCollectionStorage = requireComponents.core.tabCollectionStorage
+                tabCollectionStorage = requireComponents.core.tabCollectionStorage,
+                topSitesStorage = requireComponents.core.topSitesStorage
             )
 
             _browserInteractor = BrowserInteractor(
@@ -659,9 +659,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 }
             }
 
-            view.swipeRefresh.isEnabled = FeatureFlags.pullToRefreshEnabled
-            @Suppress("ConstantConditionIf")
-            if (FeatureFlags.pullToRefreshEnabled) {
+            view.swipeRefresh.isEnabled =
+                FeatureFlags.pullToRefreshEnabled && context.settings().isPullToRefreshEnabledInBrowser
+            if (view.swipeRefresh.isEnabled) {
                 val primaryTextColor =
                     ThemeManager.resolveAttribute(R.attr.primaryText, context)
                 view.swipeRefresh.setColorSchemeColors(primaryTextColor)
@@ -964,11 +964,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private fun showQuickSettingsDialog() {
         val session = getSessionById() ?: return
         viewLifecycleOwner.lifecycleScope.launch(Main) {
-            val sitePermissions: SitePermissions? = withContext(IO) {
-                session.url.toUri().host?.let { host ->
-                    val storage = requireContext().components.core.permissionStorage
-                    storage.findSitePermissionsBy(host)
-                }
+            val sitePermissions: SitePermissions? = session.url.toUri().host?.let { host ->
+                val storage = requireComponents.core.permissionStorage
+                storage.findSitePermissionsBy(host)
             }
 
             view?.let {
