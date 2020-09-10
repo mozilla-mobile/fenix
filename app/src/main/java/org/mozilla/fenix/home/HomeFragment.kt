@@ -55,6 +55,7 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -84,7 +85,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
-import org.mozilla.fenix.components.tips.providers.MigrationTipProvider
 import org.mozilla.fenix.components.toolbar.TabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
@@ -199,7 +199,7 @@ class HomeFragment : Fragment() {
                     collections = components.core.tabCollectionStorage.cachedTabCollections,
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
-                    topSites = components.core.topSiteStorage.cachedTopSites,
+                    topSites = components.core.topSitesStorage.cachedTopSites,
                     tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
                         FenixTipManager(
                             listOf(
@@ -207,8 +207,7 @@ class HomeFragment : Fragment() {
                                     requireContext(),
                                     ::navToSavedLogins,
                                     ::dismissTip
-                                ),
-                                MigrationTipProvider(requireContext())
+                                )
                             )
                         ).getTip()
                     },
@@ -220,7 +219,7 @@ class HomeFragment : Fragment() {
         topSitesFeature.set(
             feature = TopSitesFeature(
                 view = DefaultTopSitesView(homeFragmentStore),
-                storage = components.core.topSiteStorage,
+                storage = components.core.topSitesStorage,
                 config = ::getTopSitesConfig
             ),
             owner = this,
@@ -471,16 +470,10 @@ class HomeFragment : Fragment() {
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         val tabs = sessionManager.sessionsOfType(private = sessionCode == ALL_PRIVATE_TABS).toList()
         val selectedIndex = sessionManager
-            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
+            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: SessionManager.NO_SELECTION
 
         val snapshot = tabs
             .map(sessionManager::createSessionSnapshot)
-            .map {
-                it.copy(
-                    engineSession = null,
-                    engineSessionState = it.engineSession?.saveState()
-                )
-            }
             .let { SessionManager.Snapshot(it, selectedIndex) }
 
         tabs.forEach {
@@ -508,7 +501,7 @@ class HomeFragment : Fragment() {
     private fun removeTabAndShowSnackbar(sessionId: String) {
         sessionManager.findSessionById(sessionId)?.let { session ->
             val snapshot = sessionManager.createSessionSnapshot(session)
-            val state = snapshot.engineSession?.saveState()
+            val state = store.state.findTab(sessionId)?.engineState?.engineSessionState
             val isSelected =
                 session.id == requireComponents.core.store.state.selectedTabId ?: false
 
@@ -559,7 +552,7 @@ class HomeFragment : Fragment() {
             HomeFragmentAction.Change(
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
-                topSites = components.core.topSiteStorage.cachedTopSites,
+                topSites = components.core.topSitesStorage.cachedTopSites,
                 tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
                     FenixTipManager(
                         listOf(
@@ -567,8 +560,7 @@ class HomeFragment : Fragment() {
                                 requireContext(),
                                 ::navToSavedLogins,
                                 ::dismissTip
-                            ),
-                            MigrationTipProvider(requireContext())
+                            )
                         )
                     ).getTip()
                 },

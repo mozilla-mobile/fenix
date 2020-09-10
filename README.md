@@ -83,9 +83,6 @@ Therefore, everyone should feel free to open issues and pull requests.  Join the
 
 Developers are especially welcome, wanted, and needed.
 
-We are also [looking for maintainers](https://github.com/interfect/fenix/issues/23).
-
-
 ## I want to open a Pull Request!
 
 We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
