@@ -11,12 +11,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.speech.RecognizerIntent
-import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -35,13 +31,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
-import kotlinx.android.synthetic.main.fragment_search_dialog.fill_link_from_clipboard
-import kotlinx.android.synthetic.main.fragment_search_dialog.pill_wrapper
-import kotlinx.android.synthetic.main.fragment_search_dialog.qr_scan_button
-import kotlinx.android.synthetic.main.fragment_search_dialog.toolbar
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_search_dialog.view.search_engines_shortcut_button
-import kotlinx.android.synthetic.main.fragment_search_dialog.view.toolbar
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -222,7 +212,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             )
 
             if (cameraPermissionsDenied) {
-                showPermissionsNeededDialog()
+                interactor.onCameraPermissionsNeeded()
             } else {
                 requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                 qrFeature.get()?.scan(R.id.search_wrapper)
@@ -314,9 +304,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onBackPressed(): Boolean {
         return when {
             qrFeature.onBackPressed() -> {
-                toolbarView.view.edit.focus()
-                view?.qr_scan_button?.isChecked = false
-                toolbarView.view.requestFocus()
+                resetFocus()
                 true
             }
             else -> {
@@ -384,7 +372,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                         preferences.edit().putBoolean(
                             getPreferenceKey(R.string.pref_key_camera_permissions), true
                         ).apply()
-                        dismissAndResetFocus()
+                        resetFocus()
                     } else {
                         preferences.edit().putBoolean(
                             getPreferenceKey(R.string.pref_key_camera_permissions), false
@@ -396,45 +384,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
-    private fun dismissAndResetFocus() {
-        view?.qr_scan_button?.isChecked = false
+    private fun resetFocus() {
+        qr_scan_button.isChecked = false
         toolbarView.view.edit.focus()
         toolbarView.view.requestFocus()
-    }
-
-    private fun showPermissionsNeededDialog() {
-        AlertDialog.Builder(requireContext()).apply {
-            val spannableText = SpannableString(
-                resources.getString(R.string.camera_permissions_needed_message)
-            )
-            setMessage(spannableText)
-            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
-                    dialog: DialogInterface, _ ->
-                dialog.cancel()
-                dismissAndResetFocus()
-            }
-            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-                    dialog: DialogInterface, _ ->
-                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri = Uri.fromParts("package", requireContext().packageName, null)
-                    intent.data = uri
-                    intent
-                } else {
-                    SupportUtils.createCustomTabIntent(
-                        requireContext(),
-                        SupportUtils.getSumoURLForTopic(
-                            requireContext(),
-                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
-                        )
-                    )
-                }
-                dialog.cancel()
-                requireActivity().startActivity(intent)
-                dismissAndResetFocus()
-            }
-            create()
-        }.show()
     }
 
     private fun setupConstraints(view: View) {

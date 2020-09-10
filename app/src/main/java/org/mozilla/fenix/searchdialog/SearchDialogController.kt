@@ -166,6 +166,10 @@ class SearchDialogController(
         store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(!isOpen))
     }
 
+    override fun handleCameraPermissionsNeeded() {
+        TODO("Not yet implemented")
+    }
+
     override fun handleClickSearchEngineSettings() {
         clearToolbarFocus()
         val directions = SearchDialogFragmentDirections.actionGlobalSearchEngineFragment()

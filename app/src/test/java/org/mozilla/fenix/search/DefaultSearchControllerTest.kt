@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.search
 
+import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
@@ -13,6 +16,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +36,8 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
+typealias AlertDialogBuilder = AlertDialog.Builder
+
 @ExperimentalCoroutinesApi
 class DefaultSearchControllerTest {
 
@@ -43,6 +49,10 @@ class DefaultSearchControllerTest {
     @MockK(relaxed = true) private lateinit var settings: Settings
     @MockK private lateinit var sessionManager: SessionManager
     @MockK(relaxed = true) private lateinit var clearToolbarFocus: () -> Unit
+//    @MockK(relaxed = true) private lateinit var dialogBuilder: AlertDialogBuilder
+//    @MockK(relaxed = true) private lateinit var dialog: AlertDialog
+    @MockK(relaxed = true) private lateinit var context: Context
+    @MockK(relaxed = true) private var config: Configuration = Configuration()
 
     private lateinit var controller: DefaultSearchController
 
@@ -58,7 +68,7 @@ class DefaultSearchControllerTest {
             every { id } returns R.id.searchFragment
         }
         every { MetricsUtils.createSearchEvent(searchEngine, activity, any()) } returns null
-
+        every { context.applicationContext.resources.configuration } returns config
         controller = DefaultSearchController(
             activity = activity,
             sessionManager = sessionManager,
@@ -327,5 +337,17 @@ class DefaultSearchControllerTest {
 
         verify { sessionManager.select(any()) }
         verify { activity.openToBrowser(from = BrowserDirection.FromSearch) }
+    }
+
+    @Test
+    fun `show camera permissions denied dialog`() {
+        val dialogBuilder: AlertDialogBuilder = mockk(relaxed = true)
+
+        val spyController = spyk(controller)
+        every { spyController.buildDialog() } returns dialogBuilder
+
+        spyController.handleCameraPermissionsNeeded()
+
+        verify { dialogBuilder.show() }
     }
 }

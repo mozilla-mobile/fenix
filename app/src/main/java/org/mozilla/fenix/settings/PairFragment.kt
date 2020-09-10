@@ -129,6 +129,15 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
         }
     }
 
+    /**
+     * Shows an [AlertDialog] when camera permissions are needed.
+     *
+     * In versions above M, [AlertDialog.BUTTON_POSITIVE] takes the user to the app settings. This
+     * intent only exists in M and above. Below M, [AlertDialog.BUTTON_POSITIVE] routes to a SUMO
+     * help page to find the app settings.
+     *
+     * [AlertDialog.BUTTON_NEGATIVE] dismisses the dialog.
+     */
     private fun showPermissionsNeededDialog() {
         AlertDialog.Builder(requireContext()).apply {
             val spannableText = SpannableString(
