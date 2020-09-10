@@ -20,17 +20,19 @@ import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 
 class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
-    private var cameraPermissionsDenied = false
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,6 +69,11 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
             scanMessage = R.string.pair_instructions_2),
             owner = this,
             view = view
+        )
+
+        val cameraPermissionsDenied = preferences.getBoolean(
+            getPreferenceKey(R.string.pref_key_camera_permissions),
+            false
         )
 
         qrFeature.withFeature {
@@ -109,8 +116,13 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                     qrFeature.withFeature {
                         it.onPermissionsResult(permissions, grantResults)
                     }
+                    preferences.edit().putBoolean(
+                        getPreferenceKey(R.string.pref_key_camera_permissions), false
+                    ).apply()
                 } else {
-                    cameraPermissionsDenied = true
+                    preferences.edit().putBoolean(
+                        getPreferenceKey(R.string.pref_key_camera_permissions), true
+                    ).apply()
                     findNavController().popBackStack(R.id.turnOnSyncFragment, false)
                 }
             }

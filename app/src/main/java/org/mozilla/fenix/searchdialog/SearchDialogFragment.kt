@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.fill_link_from_clipboard
 import kotlinx.android.synthetic.main.fragment_search_dialog.pill_wrapper
@@ -63,6 +64,7 @@ import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentAction
@@ -86,7 +88,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
     private var firstUpdate = true
-    private var cameraPermissionsDenied = false
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -213,10 +215,16 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             if (!requireContext().hasCamera()) { return@setOnClickListener }
 
             toolbarView.view.clearFocus()
-            requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+
+            val cameraPermissionsDenied = preferences.getBoolean(
+                getPreferenceKey(R.string.pref_key_camera_permissions),
+                false
+            )
+
             if (cameraPermissionsDenied) {
                 showPermissionsNeededDialog()
             } else {
+                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                 qrFeature.get()?.scan(R.id.search_wrapper)
             }
         }
@@ -373,8 +381,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 context?.let { context: Context ->
                     it.onPermissionsResult(permissions, grantResults)
                     if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        cameraPermissionsDenied = true
+                        preferences.edit().putBoolean(
+                            getPreferenceKey(R.string.pref_key_camera_permissions), true
+                        ).apply()
                         dismissAndResetFocus()
+                    } else {
+                        preferences.edit().putBoolean(
+                            getPreferenceKey(R.string.pref_key_camera_permissions), false
+                        ).apply()
                     }
                 }
             }
