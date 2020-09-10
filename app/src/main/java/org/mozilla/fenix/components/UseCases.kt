@@ -9,6 +9,7 @@ import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.DownloadsUseCases
@@ -36,7 +37,8 @@ class UseCases(
     private val store: BrowserStore,
     private val searchEngineManager: SearchEngineManager,
     private val shortcutManager: WebAppShortcutManager,
-    private val topSitesStorage: TopSitesStorage
+    private val topSitesStorage: TopSitesStorage,
+    private val bookmarksStorage: BookmarksStorage
 ) {
     /**
      * Use cases that provide engine interactions for a given browser session.
@@ -51,7 +53,7 @@ class UseCases(
     /**
      * Use cases that provide search engine integration.
      */
-    val searchUseCases by lazy { SearchUseCases(context, store, searchEngineManager, sessionManager) }
+    val searchUseCases by lazy { SearchUseCases(context, store, searchEngineManager, sessionManager, bookmarksStorage) }
 
     /**
      * Use cases that provide settings management.

@@ -24,7 +24,8 @@ class TestComponents(private val context: Context) : Components(context) {
             core.store,
             search.searchEngineManager,
             core.webAppShortcutManager,
-            core.topSitesStorage
+            core.topSitesStorage,
+            core.bookmarksStorage
         )
     }
     override val intentProcessors by lazy { mockk<IntentProcessors>(relaxed = true) }
