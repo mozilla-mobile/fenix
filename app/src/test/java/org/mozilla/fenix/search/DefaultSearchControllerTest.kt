@@ -49,10 +49,6 @@ class DefaultSearchControllerTest {
     @MockK(relaxed = true) private lateinit var settings: Settings
     @MockK private lateinit var sessionManager: SessionManager
     @MockK(relaxed = true) private lateinit var clearToolbarFocus: () -> Unit
-//    @MockK(relaxed = true) private lateinit var dialogBuilder: AlertDialogBuilder
-//    @MockK(relaxed = true) private lateinit var dialog: AlertDialog
-    @MockK(relaxed = true) private lateinit var context: Context
-    @MockK(relaxed = true) private var config: Configuration = Configuration()
 
     private lateinit var controller: DefaultSearchController
 
@@ -68,7 +64,6 @@ class DefaultSearchControllerTest {
             every { id } returns R.id.searchFragment
         }
         every { MetricsUtils.createSearchEvent(searchEngine, activity, any()) } returns null
-        every { context.applicationContext.resources.configuration } returns config
         controller = DefaultSearchController(
             activity = activity,
             sessionManager = sessionManager,
@@ -340,7 +335,7 @@ class DefaultSearchControllerTest {
     }
 
     @Test
-    fun `show camera permissions denied dialog`() {
+    fun `show camera permissions needed dialog`() {
         val dialogBuilder: AlertDialogBuilder = mockk(relaxed = true)
 
         val spyController = spyk(controller)
