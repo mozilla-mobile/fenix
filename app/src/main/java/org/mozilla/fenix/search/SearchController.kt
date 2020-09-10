@@ -6,6 +6,7 @@ package org.mozilla.fenix.search
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.text.SpannableString
 import androidx.annotation.VisibleForTesting
@@ -240,6 +241,8 @@ class DefaultSearchController(
                         )
                     )
                 }
+                val uri = Uri.fromParts("package", activity.packageName, null)
+                intent.data = uri
                 dialog.cancel()
                 activity.startActivity(intent)
             }

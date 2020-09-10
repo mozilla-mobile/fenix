@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.search
 
-import android.content.Context
-import android.content.res.Configuration
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections

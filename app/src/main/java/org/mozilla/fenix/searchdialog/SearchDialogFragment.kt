@@ -78,7 +78,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
     private var firstUpdate = true
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -206,13 +205,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
             toolbarView.view.clearFocus()
 
-            val cameraPermissionsDenied = preferences.getBoolean(
-                getPreferenceKey(R.string.pref_key_camera_permissions),
-                false
-            )
+            val cameraPermissionsDenied =
+                PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                    getPreferenceKey(R.string.pref_key_camera_permissions),
+                    false
+                )
 
             if (cameraPermissionsDenied) {
                 interactor.onCameraPermissionsNeeded()
+                resetFocus()
+                view.hideKeyboard()
+                toolbarView.view.requestFocus()
             } else {
                 requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                 qrFeature.get()?.scan(R.id.search_wrapper)
@@ -289,6 +292,19 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             awesomeBarView.update(it)
             firstUpdate = false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resetFocus()
+        toolbarView.view.edit.focus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        qr_scan_button.isChecked = false
+        view?.hideKeyboard()
+        toolbarView.view.requestFocus()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -369,14 +385,16 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 context?.let { context: Context ->
                     it.onPermissionsResult(permissions, grantResults)
                     if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        preferences.edit().putBoolean(
-                            getPreferenceKey(R.string.pref_key_camera_permissions), true
-                        ).apply()
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .edit().putBoolean(
+                                getPreferenceKey(R.string.pref_key_camera_permissions), true
+                            ).apply()
                         resetFocus()
                     } else {
-                        preferences.edit().putBoolean(
-                            getPreferenceKey(R.string.pref_key_camera_permissions), false
-                        ).apply()
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .edit().putBoolean(
+                                getPreferenceKey(R.string.pref_key_camera_permissions), false
+                            ).apply()
                     }
                 }
             }

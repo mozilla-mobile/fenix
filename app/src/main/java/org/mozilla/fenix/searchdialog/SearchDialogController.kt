@@ -6,6 +6,7 @@ package org.mozilla.fenix.searchdialog
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.text.SpannableString
 import androidx.annotation.VisibleForTesting
@@ -213,9 +214,8 @@ class SearchDialogController(
                 activity.resources.getString(R.string.camera_permissions_needed_message)
             )
             setMessage(spannableText)
-            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
-                    dialog: DialogInterface, _ ->
-                dialog.cancel()
+            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) { _, _ ->
+                dismissDialog()
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
                     dialog: DialogInterface, _ ->
@@ -230,6 +230,8 @@ class SearchDialogController(
                         )
                     )
                 }
+                val uri = Uri.fromParts("package", activity.packageName, null)
+                intent.data = uri
                 dialog.cancel()
                 activity.startActivity(intent)
             }
