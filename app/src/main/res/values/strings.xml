@@ -286,6 +286,8 @@
     <string name="preferences_theme">Theme</string>
     <!-- Preference for customizing the home screen -->
     <string name="preferences_home">Home</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Gestures</string>
     <!-- Preference for customizing the tabs tray -->
     <string name="preferences_tabs_tray">Tabs tray</string>
     <!-- Preference for customizing the tabs tray FAB -->
@@ -462,6 +464,16 @@
     <string name="preference_auto_battery_theme">Set by Battery Saver</string>
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Follow device theme</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Pull to refresh</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Scroll to hide toolbar</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Swipe toolbar sideways to switch tabs</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Swipe toolbar up to open tabs</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -1548,7 +1560,7 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Top site limit reached</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">To add a new top site, remove one. Long press the site and select remove.</string>
+    <string name="top_sites_max_limit_content_2">To add a new top site, remove one. Touch and hold the site and select remove.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
     <!-- Label for the show most visited sites preference -->

@@ -58,6 +58,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupTabsTrayCategory()
         setupFabCategory()
         setupHomeCategory()
+        setupGesturesCategory()
         setupAddonsCustomizationCategory()
     }
 
@@ -223,6 +224,23 @@ class CustomizationFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().showTopFrecentSites
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+    }
+
+    private fun setupGesturesCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_website_pull_to_refresh).apply {
+            isVisible = FeatureFlags.pullToRefreshEnabled
+            isChecked = context.settings().isPullToRefreshEnabledInBrowser
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+        requirePreference<SwitchPreference>(R.string.pref_key_dynamic_toolbar).apply {
+            isChecked = context.settings().isDynamicToolbarEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+        requirePreference<SwitchPreference>(R.string.pref_key_swipe_toolbar_switch_tabs).apply {
+            isChecked = context.settings().isSwipeToolbarToSwitchTabsEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
     }
 
     private fun setupAddonsCustomizationCategory() {

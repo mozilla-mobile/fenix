@@ -214,7 +214,8 @@ class BrowserToolbarView(
         when (settings.toolbarPosition) {
             ToolbarPosition.BOTTOM -> {
                 (view.layoutParams as CoordinatorLayout.LayoutParams).apply {
-                    (behavior as BrowserToolbarBottomBehavior).forceExpand(view)
+                    // behavior can be null if the "Scroll to hide toolbar" setting is toggled off.
+                    (behavior as? BrowserToolbarBottomBehavior)?.forceExpand(view)
                 }
             }
             ToolbarPosition.TOP -> {
@@ -225,7 +226,8 @@ class BrowserToolbarView(
 
     /**
      * Dynamically sets scroll flags for the toolbar when the user does not have a screen reader enabled
-     * Note that the bottom toolbar has a feature flag for being dynamic, so it may not get flags set.
+     * Note that the toolbar will have the flags set and be able to be hidden
+     * only if the user didn't disabled this behavior in app's settings.
      */
     fun setScrollFlags(shouldDisableScroll: Boolean = false) {
         when (settings.toolbarPosition) {
@@ -236,7 +238,10 @@ class BrowserToolbarView(
             }
             ToolbarPosition.TOP -> {
                 view.updateLayoutParams<AppBarLayout.LayoutParams> {
-                    scrollFlags = if (settings.shouldUseFixedTopToolbar || shouldDisableScroll) {
+                    scrollFlags =
+                        if (settings.shouldUseFixedTopToolbar ||
+                            !settings.isDynamicToolbarEnabled ||
+                            shouldDisableScroll) {
                         // Force expand the toolbar so the user is not stuck with a hidden toolbar
                         expand()
                         0
