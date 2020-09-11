@@ -73,17 +73,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val components = context.components
 
         return super.initializeUI(view)?.also {
-            if (context.settings().isSwipeToolbarToSwitchTabsEnabled) {
-                gestureLayout.addGestureListener(
-                    ToolbarGestureHandler(
-                        activity = requireActivity(),
-                        contentLayout = browserLayout,
-                        tabPreview = tabPreview,
-                        toolbarLayout = browserToolbarView.view,
-                        sessionManager = components.core.sessionManager
-                    )
+            gestureLayout.addGestureListener(
+                ToolbarGestureHandler(
+                    activity = requireActivity(),
+                    contentLayout = browserLayout,
+                    tabPreview = tabPreview,
+                    toolbarLayout = browserToolbarView.view,
+                    sessionManager = components.core.sessionManager
                 )
-            }
+            )
 
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
