@@ -10,7 +10,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -231,7 +230,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     toolbarView.view.requestFocus()
                 }
             }
-            requireContext().settings().setCameraPermissionState(false)
+            requireContext().settings().setCameraPermissionNeededState(false)
         }
 
         fill_link_from_clipboard.setOnClickListener {
@@ -391,7 +390,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 context?.let { _ ->
                     it.onPermissionsResult(permissions, grantResults)
                     resetFocus()
-                    requireContext().settings().setCameraPermissionState(false)
+                    requireContext().settings().setCameraPermissionNeededState(false)
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)

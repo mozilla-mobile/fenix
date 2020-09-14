@@ -749,32 +749,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         )
     }
 
-//    fun setCameraAppPermissionListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
-//        preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
-//            if (key in permissionKey) listener.invoke()
-//        }
-//    }
-//
-//
-//    fun getCameraPermissionState(): Boolean =
-//        preferences.getBoolean(
-//            appContext.getString(R.string.pref_key_camera_permissions),
-//            false
-//        )
-//
-//    fun setCameraPermissionState(value: Boolean) {
-//        preferences.edit().putBoolean(
-//            appContext.getPreferenceKey(R.string.pref_key_camera_permissions), value
-//        ).apply()
-//    }
-//
-//    var shouldPromptForCameraPermissions by booleanPreference(
-//        appContext.getString(R.string.pref_key_camera_permissions),
-//        default = true
-//    )
-
-
-
     fun setSitePermissionSettingListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
         val sitePermissionKeys = listOf(
             PhoneFeature.NOTIFICATION,
@@ -795,22 +769,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    /**
+     * Used in [SearchDialogFragment.kt], [SearchFragment.kt] (deprecated), and [PairFragment.kt]
+     * to see if we need to check for camera permissions before using the QR code scanner.
+     */
     var shouldShowCameraPermissionPrompt by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
         default = true
     )
 
-    var cameraPermissionGranted = ContextCompat.checkSelfPermission(
-        appContext,
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
-
-    fun setCameraPermissionState(state: Boolean) {
-//        val permissionGranted = ContextCompat.checkSelfPermission(
-//                appContext,
-//                Manifest.permission.CAMERA
-//            ) == PackageManager.PERMISSION_GRANTED
-
+    /**
+     * Sets the state of permissions that have been checked, where [false] denotes already checked
+     * and [true] denotes needing to check. See [shouldShowCameraPermissionPrompt].
+     */
+    fun setCameraPermissionNeededState(state: Boolean) {
         preferences.edit().putBoolean(
             appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed), state
         ).apply()

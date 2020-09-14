@@ -246,18 +246,18 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         view.search_scan_button.setOnClickListener {
             toolbarView.view.clearFocus()
 
-            val cameraPermissionsDenied = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(
-                    getPreferenceKey(R.string.pref_key_camera_permissions),
-                    false
-                )
-
-            if (cameraPermissionsDenied) {
-                searchInteractor.onCameraPermissionsNeeded()
-            } else {
-                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-                qrFeature.get()?.scan(R.id.container)
-            }
+//            val cameraPermissionsDenied = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getBoolean(
+//                    getPreferenceKey(R.string.pref_key_camera_permissions),
+//                    false
+//                )
+//
+//            if (cameraPermissionsDenied) {
+//                searchInteractor.onCameraPermissionsNeeded()
+//            } else {
+//                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+//                qrFeature.get()?.scan(R.id.container)
+//            }
         }
 
         view.search_engines_shortcut_button.setOnClickListener {
@@ -427,15 +427,15 @@ class SearchFragment : Fragment(), UserInteractionHandler {
                 context?.let { context: Context ->
                     if (context.isPermissionGranted(Manifest.permission.CAMERA)) {
                         permissionDidUpdate = true
-                        PreferenceManager.getDefaultSharedPreferences(context)
-                            .edit().putBoolean(
-                                getPreferenceKey(R.string.pref_key_camera_permissions), false
-                            ).apply()
+//                        PreferenceManager.getDefaultSharedPreferences(context)
+//                            .edit().putBoolean(
+//                                getPreferenceKey(R.string.pref_key_camera_permissions), false
+//                            ).apply()
                     } else {
-                        PreferenceManager.getDefaultSharedPreferences(context)
-                            .edit().putBoolean(
-                                getPreferenceKey(R.string.pref_key_camera_permissions), true
-                            ).apply()
+//                        PreferenceManager.getDefaultSharedPreferences(context)
+//                            .edit().putBoolean(
+//                                getPreferenceKey(R.string.pref_key_camera_permissions), true
+//                            ).apply()
                         resetFocus()
                     }
                 }

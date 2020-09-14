@@ -99,20 +99,15 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
     ) {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> {
-                qrFeature.withFeature {
-                    it.onPermissionsResult(permissions, grantResults)
-                }
                 if (ContextCompat.checkSelfPermission(
                         requireContext(),
                         android.Manifest.permission.CAMERA
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-//                    setCamera
+                    qrFeature.withFeature {
+                        it.onPermissionsResult(permissions, grantResults)
+                    }
                 } else {
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                        .edit().putBoolean(
-                            getPreferenceKey(R.string.pref_key_camera_permissions), true
-                        ).apply()
                     findNavController().popBackStack(R.id.turnOnSyncFragment, false)
                 }
             }
@@ -128,35 +123,35 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
      *
      * [AlertDialog.BUTTON_NEGATIVE] dismisses the dialog.
      */
-    private fun showPermissionsNeededDialog() {
-        AlertDialog.Builder(requireContext()).apply {
-            val spannableText = SpannableString(
-                resources.getString(R.string.camera_permissions_needed_message)
-            )
-            setMessage(spannableText)
-            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
-                    dialog: DialogInterface, _ ->
-                dialog.cancel()
-            }
-            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-                    dialog: DialogInterface, _ ->
-                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                } else {
-                    SupportUtils.createCustomTabIntent(
-                        requireContext(),
-                        SupportUtils.getSumoURLForTopic(
-                            requireContext(),
-                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
-                        )
-                    )
-                }
-                val uri = Uri.fromParts("package", activity?.packageName, null)
-                intent.data = uri
-                dialog.cancel()
-                startActivity(intent)
-            }
-            create()
-        }.show()
-    }
+//    private fun showPermissionsNeededDialog() {
+//        AlertDialog.Builder(requireContext()).apply {
+//            val spannableText = SpannableString(
+//                resources.getString(R.string.camera_permissions_needed_message)
+//            )
+//            setMessage(spannableText)
+//            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
+//                    dialog: DialogInterface, _ ->
+//                dialog.cancel()
+//            }
+//            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
+//                    dialog: DialogInterface, _ ->
+//                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//                } else {
+//                    SupportUtils.createCustomTabIntent(
+//                        requireContext(),
+//                        SupportUtils.getSumoURLForTopic(
+//                            requireContext(),
+//                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
+//                        )
+//                    )
+//                }
+//                val uri = Uri.fromParts("package", activity?.packageName, null)
+//                intent.data = uri
+//                dialog.cancel()
+//                startActivity(intent)
+//            }
+//            create()
+//        }.show()
+//    }
 }
