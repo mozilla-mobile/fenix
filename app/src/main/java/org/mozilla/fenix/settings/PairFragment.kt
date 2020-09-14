@@ -7,6 +7,7 @@ package org.mozilla.fenix.settings
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -163,6 +164,8 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                         )
                     )
                 }
+                val uri = Uri.fromParts("package", activity?.packageName, null)
+                intent.data = uri
                 dialog.cancel()
                 startActivity(intent)
             }
