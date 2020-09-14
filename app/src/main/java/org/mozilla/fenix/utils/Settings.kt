@@ -4,16 +4,19 @@
 
 package org.mozilla.fenix.utils
 
+import android.Manifest
 import android.accessibilityservice.AccessibilityServiceInfo.CAPABILITY_CAN_PERFORM_GESTURES
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.pm.ShortcutManager
 import android.os.Build
 import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
@@ -746,6 +749,32 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         )
     }
 
+//    fun setCameraAppPermissionListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
+//        preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
+//            if (key in permissionKey) listener.invoke()
+//        }
+//    }
+//
+//
+//    fun getCameraPermissionState(): Boolean =
+//        preferences.getBoolean(
+//            appContext.getString(R.string.pref_key_camera_permissions),
+//            false
+//        )
+//
+//    fun setCameraPermissionState(value: Boolean) {
+//        preferences.edit().putBoolean(
+//            appContext.getPreferenceKey(R.string.pref_key_camera_permissions), value
+//        ).apply()
+//    }
+//
+//    var shouldPromptForCameraPermissions by booleanPreference(
+//        appContext.getString(R.string.pref_key_camera_permissions),
+//        default = true
+//    )
+
+
+
     fun setSitePermissionSettingListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
         val sitePermissionKeys = listOf(
             PhoneFeature.NOTIFICATION,
@@ -765,6 +794,27 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_show_voice_search),
         default = true
     )
+
+    var shouldShowCameraPermissionPrompt by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
+        default = true
+    )
+
+    var cameraPermissionGranted = ContextCompat.checkSelfPermission(
+        appContext,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+
+    fun setCameraPermissionState(state: Boolean) {
+//        val permissionGranted = ContextCompat.checkSelfPermission(
+//                appContext,
+//                Manifest.permission.CAMERA
+//            ) == PackageManager.PERMISSION_GRANTED
+
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed), state
+        ).apply()
+    }
 
     var shouldPromptToSaveLogins by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_save_logins),

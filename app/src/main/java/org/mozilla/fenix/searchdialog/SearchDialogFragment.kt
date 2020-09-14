@@ -10,6 +10,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -29,7 +30,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
@@ -54,7 +54,6 @@ import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.isKeyboardVisible
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -205,28 +204,34 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             interactor.onSearchShortcutsButtonClicked()
         }
 
+        qrFeature.set(
+            createQrFeature(),
+            owner = this,
+            view = view
+        )
+
         qr_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
 
         qr_scan_button.setOnClickListener {
             if (!requireContext().hasCamera()) { return@setOnClickListener }
-
+            view.hideKeyboard()
             toolbarView.view.clearFocus()
 
-            val cameraPermissionsDenied =
-                PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                    getPreferenceKey(R.string.pref_key_camera_permissions),
-                    false
-                )
-
-            if (cameraPermissionsDenied) {
-                interactor.onCameraPermissionsNeeded()
-                resetFocus()
-                view.hideKeyboard()
-                toolbarView.view.requestFocus()
-            } else {
+            if (requireContext().settings().shouldShowCameraPermissionPrompt) {
                 requireComponents.analytics.metrics.track(Event.QRScannerOpened)
                 qrFeature.get()?.scan(R.id.search_wrapper)
+            } else {
+                if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
+                    requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+                    qrFeature.get()?.scan(R.id.search_wrapper)
+                } else {
+                    interactor.onCameraPermissionsNeeded()
+                    resetFocus()
+                    view.hideKeyboard()
+                    toolbarView.view.requestFocus()
+                }
             }
+            requireContext().settings().setCameraPermissionState(false)
         }
 
         fill_link_from_clipboard.setOnClickListener {
@@ -237,12 +242,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     from = BrowserDirection.FromSearchDialog
                 )
         }
-
-        qrFeature.set(
-            createQrFeature(),
-            owner = this,
-            view = view
-        )
 
         val stubListener = ViewStub.OnInflateListener { _, inflated ->
             inflated.learn_more.setOnClickListener {
@@ -389,20 +388,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     ) {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
-                context?.let { context: Context ->
+                context?.let { _ ->
                     it.onPermissionsResult(permissions, grantResults)
-                    if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        PreferenceManager.getDefaultSharedPreferences(context)
-                            .edit().putBoolean(
-                                getPreferenceKey(R.string.pref_key_camera_permissions), true
-                            ).apply()
-                        resetFocus()
-                    } else {
-                        PreferenceManager.getDefaultSharedPreferences(context)
-                            .edit().putBoolean(
-                                getPreferenceKey(R.string.pref_key_camera_permissions), false
-                            ).apply()
-                    }
+                    resetFocus()
+                    requireContext().settings().setCameraPermissionState(false)
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)

@@ -71,18 +71,8 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
             view = view
         )
 
-        val cameraPermissionsDenied = PreferenceManager.getDefaultSharedPreferences(context)
-            .getBoolean(
-                getPreferenceKey(R.string.pref_key_camera_permissions),
-                false
-            )
-
         qrFeature.withFeature {
-            if (cameraPermissionsDenied) {
-                showPermissionsNeededDialog()
-            } else {
-                it.scan(R.id.pair_layout)
-            }
+            it.scan(R.id.pair_layout)
         }
     }
 
@@ -109,18 +99,15 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
     ) {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> {
+                qrFeature.withFeature {
+                    it.onPermissionsResult(permissions, grantResults)
+                }
                 if (ContextCompat.checkSelfPermission(
                         requireContext(),
                         android.Manifest.permission.CAMERA
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    qrFeature.withFeature {
-                        it.onPermissionsResult(permissions, grantResults)
-                    }
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                        .edit().putBoolean(
-                            getPreferenceKey(R.string.pref_key_camera_permissions), false
-                        ).apply()
+//                    setCamera
                 } else {
                     PreferenceManager.getDefaultSharedPreferences(context)
                         .edit().putBoolean(
