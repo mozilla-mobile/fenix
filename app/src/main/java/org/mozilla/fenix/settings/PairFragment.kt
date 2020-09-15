@@ -4,29 +4,21 @@
 
 package org.mozilla.fenix.settings
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.provider.Settings
-import android.text.SpannableString
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceManager
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 
@@ -66,7 +58,8 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                         false
                     )
                 },
-            scanMessage = R.string.pair_instructions_2),
+                scanMessage = R.string.pair_instructions_2
+            ),
             owner = this,
             view = view
         )
@@ -113,45 +106,4 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
             }
         }
     }
-
-    /**
-     * Shows an [AlertDialog] when camera permissions are needed.
-     *
-     * In versions above M, [AlertDialog.BUTTON_POSITIVE] takes the user to the app settings. This
-     * intent only exists in M and above. Below M, [AlertDialog.BUTTON_POSITIVE] routes to a SUMO
-     * help page to find the app settings.
-     *
-     * [AlertDialog.BUTTON_NEGATIVE] dismisses the dialog.
-     */
-//    private fun showPermissionsNeededDialog() {
-//        AlertDialog.Builder(requireContext()).apply {
-//            val spannableText = SpannableString(
-//                resources.getString(R.string.camera_permissions_needed_message)
-//            )
-//            setMessage(spannableText)
-//            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
-//                    dialog: DialogInterface, _ ->
-//                dialog.cancel()
-//            }
-//            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-//                    dialog: DialogInterface, _ ->
-//                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//                } else {
-//                    SupportUtils.createCustomTabIntent(
-//                        requireContext(),
-//                        SupportUtils.getSumoURLForTopic(
-//                            requireContext(),
-//                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
-//                        )
-//                    )
-//                }
-//                val uri = Uri.fromParts("package", activity?.packageName, null)
-//                intent.data = uri
-//                dialog.cancel()
-//                startActivity(intent)
-//            }
-//            create()
-//        }.show()
-//    }
 }

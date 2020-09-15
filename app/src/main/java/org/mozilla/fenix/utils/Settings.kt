@@ -4,19 +4,16 @@
 
 package org.mozilla.fenix.utils
 
-import android.Manifest
 import android.accessibilityservice.AccessibilityServiceInfo.CAPABILITY_CAN_PERFORM_GESTURES
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.pm.ShortcutManager
 import android.os.Build
 import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
@@ -63,7 +60,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
-        private const val MIN_DAYS_SINCE_FEEDBACK_PROMPT = 120
 
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
         const val ONE_WEEK_MS = 60 * 60 * 24 * 7 * 1000L
