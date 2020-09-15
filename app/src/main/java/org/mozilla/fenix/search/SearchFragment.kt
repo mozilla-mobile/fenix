@@ -26,7 +26,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
@@ -51,7 +50,6 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -202,62 +200,26 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         search_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
 
         qrFeature.set(
-            QrFeature(
-                requireContext(),
-                fragmentManager = parentFragmentManager,
-                onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
-                },
-                onScanResult = { result ->
-                    search_scan_button.isChecked = false
-                    activity?.let {
-                        AlertDialog.Builder(it).apply {
-                            val spannable = resources.getSpanned(
-                                R.string.qr_scanner_confirmation_dialog_message,
-                                getString(R.string.app_name) to StyleSpan(BOLD),
-                                result to StyleSpan(ITALIC)
-                            )
-                            setMessage(spannable)
-                            setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
-                                requireComponents.analytics.metrics.track(Event.QRScannerNavigationDenied)
-                                dialog.cancel()
-                                resetFocus()
-                            }
-                            setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                                requireComponents.analytics.metrics.track(Event.QRScannerNavigationAllowed)
-                                (activity as HomeActivity)
-                                    .openToBrowserAndLoad(
-                                        searchTermOrURL = result,
-                                        newTab = searchStore.state.tabId == null,
-                                        from = BrowserDirection.FromSearch
-                                    )
-                                dialog.dismiss()
-                                resetFocus()
-                            }
-                            create()
-                        }.show()
-                        requireComponents.analytics.metrics.track(Event.QRScannerPromptDisplayed)
-                    }
-                }),
+            creatQrFeature(),
             owner = this,
             view = view
         )
 
         view.search_scan_button.setOnClickListener {
-            toolbarView.view.clearFocus()
-
-//            val cameraPermissionsDenied = PreferenceManager.getDefaultSharedPreferences(context)
-//                .getBoolean(
-//                    getPreferenceKey(R.string.pref_key_camera_permissions),
-//                    false
-//                )
-//
-//            if (cameraPermissionsDenied) {
-//                searchInteractor.onCameraPermissionsNeeded()
-//            } else {
-//                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-//                qrFeature.get()?.scan(R.id.container)
-//            }
+            if (requireContext().settings().shouldShowCameraPermissionPrompt) {
+                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+                qrFeature.get()?.scan(R.id.container)
+            } else {
+                if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
+                    requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+                    qrFeature.get()?.scan(R.id.container)
+                } else {
+                    searchInteractor.onCameraPermissionsNeeded()
+                }
+            }
+            view.hideKeyboard()
+            search_scan_button.isChecked = false
+            requireContext().settings().setCameraPermissionNeededState(false)
         }
 
         view.search_engines_shortcut_button.setOnClickListener {
@@ -320,6 +282,47 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         }
 
         startPostponedEnterTransition()
+    }
+
+    private fun creatQrFeature(): QrFeature {
+        return QrFeature(
+            requireContext(),
+            fragmentManager = parentFragmentManager,
+            onNeedToRequestPermissions = { permissions ->
+                requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
+            },
+            onScanResult = { result ->
+                search_scan_button.isChecked = false
+                activity?.let {
+                    AlertDialog.Builder(it).apply {
+                        val spannable = resources.getSpanned(
+                            R.string.qr_scanner_confirmation_dialog_message,
+                            getString(R.string.app_name) to StyleSpan(BOLD),
+                            result to StyleSpan(ITALIC)
+                        )
+                        setMessage(spannable)
+                        setNegativeButton(R.string.qr_scanner_dialog_negative) { dialog: DialogInterface, _ ->
+                            requireComponents.analytics.metrics.track(Event.QRScannerNavigationDenied)
+                            dialog.cancel()
+                            resetFocus()
+                        }
+                        setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
+                            requireComponents.analytics.metrics.track(Event.QRScannerNavigationAllowed)
+                            (activity as HomeActivity)
+                                .openToBrowserAndLoad(
+                                    searchTermOrURL = result,
+                                    newTab = searchStore.state.tabId == null,
+                                    from = BrowserDirection.FromSearch
+                                )
+                            dialog.dismiss()
+                            resetFocus()
+                        }
+                        create()
+                    }.show()
+                    requireComponents.analytics.metrics.track(Event.QRScannerPromptDisplayed)
+                }
+            }
+        )
     }
 
     private fun updateToolbarContentDescription(searchState: SearchFragmentState) {

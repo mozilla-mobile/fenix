@@ -377,7 +377,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     }.show()
                     requireComponents.analytics.metrics.track(Event.QRScannerPromptDisplayed)
                 }
-            })
+            }
+        )
     }
 
     override fun onRequestPermissionsResult(
