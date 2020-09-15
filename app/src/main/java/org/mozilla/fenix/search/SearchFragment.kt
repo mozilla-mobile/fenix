@@ -65,7 +65,6 @@ class SearchFragment : Fragment(), UserInteractionHandler {
     private lateinit var toolbarView: ToolbarView
     private lateinit var awesomeBarView: AwesomeBarView
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
-    private var permissionDidUpdate = false
     private lateinit var searchStore: SearchFragmentStore
     private lateinit var searchInteractor: SearchInteractor
 
@@ -355,16 +354,11 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             searchStore.dispatch(SearchFragmentAction.UpdateShortcutsAvailability(areShortcutsAvailable))
         }
 
-        if (!permissionDidUpdate) {
-            toolbarView.view.edit.focus()
-        }
-
         updateClipboardSuggestion(
             searchStore.state,
             requireComponents.clipboardHandler.url
         )
 
-        permissionDidUpdate = false
         hideToolbar()
     }
 
@@ -426,22 +420,8 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
-
-                context?.let { context: Context ->
-                    if (context.isPermissionGranted(Manifest.permission.CAMERA)) {
-                        permissionDidUpdate = true
-//                        PreferenceManager.getDefaultSharedPreferences(context)
-//                            .edit().putBoolean(
-//                                getPreferenceKey(R.string.pref_key_camera_permissions), false
-//                            ).apply()
-                    } else {
-//                        PreferenceManager.getDefaultSharedPreferences(context)
-//                            .edit().putBoolean(
-//                                getPreferenceKey(R.string.pref_key_camera_permissions), true
-//                            ).apply()
-                        resetFocus()
-                    }
-                }
+                resetFocus()
+                requireContext().settings().setCameraPermissionNeededState(false)
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }

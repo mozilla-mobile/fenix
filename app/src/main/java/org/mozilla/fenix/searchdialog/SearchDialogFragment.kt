@@ -388,11 +388,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     ) {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
-                context?.let { _ ->
-                    it.onPermissionsResult(permissions, grantResults)
-                    resetFocus()
-                    requireContext().settings().setCameraPermissionNeededState(false)
-                }
+                it.onPermissionsResult(permissions, grantResults)
+                resetFocus()
+                requireContext().settings().setCameraPermissionNeededState(false)
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
