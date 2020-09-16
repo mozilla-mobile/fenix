@@ -81,7 +81,6 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:text="@string/etp_cryptominers_title"
             android:visibility="gone"
-            app:drawableStartCompat="@drawable/ic_cryptominers"
             app:layout_constraintTop_toBottomOf="@id/fingerprinters" />
 
         <TextView
