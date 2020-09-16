@@ -96,10 +96,7 @@ class TabTrayViewHolder(
                     contentDescription =
                         context.getString(R.string.mozac_feature_media_notification_action_play)
                     setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            context,
-                            R.drawable.tab_tray_play_with_background
-                        )
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_play)
                     )
                 }
 
@@ -108,10 +105,7 @@ class TabTrayViewHolder(
                     contentDescription =
                         context.getString(R.string.mozac_feature_media_notification_action_pause)
                     setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            context,
-                            R.drawable.tab_tray_pause_with_background
-                        )
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_pause)
                     )
                 }
 
@@ -193,25 +187,22 @@ class TabTrayViewHolder(
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 
-    internal fun updateAccessibilityRowIndex(item: View, newIndex: Int) {
+    internal fun updateAccessibilityRowInfo(item: View, newIndex: Int, isSelected: Boolean) {
         item.accessibilityDelegate = object : View.AccessibilityDelegate() {
             override fun onInitializeAccessibilityNodeInfo(
                 host: View?,
                 info: AccessibilityNodeInfo?
             ) {
                 super.onInitializeAccessibilityNodeInfo(host, info)
-                info?.let {
-                    info.collectionItemInfo = info.collectionItemInfo?.let { initialInfo ->
-                        AccessibilityNodeInfo.CollectionItemInfo.obtain(
-                            newIndex,
-                            initialInfo.rowSpan,
-                            initialInfo.columnIndex,
-                            initialInfo.columnSpan,
-                            false,
-                            initialInfo.isSelected
-                        )
-                    }
-                }
+                info?.collectionItemInfo =
+                    AccessibilityNodeInfo.CollectionItemInfo.obtain(
+                        newIndex,
+                        1,
+                        1,
+                        1,
+                        false,
+                        isSelected
+                    )
             }
         }
     }

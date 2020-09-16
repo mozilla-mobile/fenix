@@ -2,9 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.components.toolbar
+package org.mozilla.fenix.browser.browsingmode
 
-sealed class TabCounterMenuItem {
-    object CloseTab : TabCounterMenuItem()
-    class NewTab(val isPrivate: Boolean) : TabCounterMenuItem()
-}
+data class SimpleBrowsingModeManager(
+    override var mode: BrowsingMode
+) : BrowsingModeManager

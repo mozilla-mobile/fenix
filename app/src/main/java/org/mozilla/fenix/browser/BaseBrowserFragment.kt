@@ -38,6 +38,7 @@ import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
@@ -65,7 +66,6 @@ import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.session.behavior.EngineViewBottomBehavior
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
-import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
 import mozilla.components.support.base.feature.PermissionsFeature
@@ -82,6 +82,7 @@ import org.mozilla.fenix.OnBackLongPressedListener
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
+import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
@@ -92,6 +93,7 @@ import org.mozilla.fenix.components.toolbar.BrowserInteractor
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
+import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
 import org.mozilla.fenix.components.toolbar.SwipeRefreshScrollingViewBehavior
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
@@ -122,8 +124,10 @@ import java.lang.ref.WeakReference
 @Suppress("TooManyFunctions", "LargeClass")
 abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, SessionManager.Observer,
     OnBackLongPressedListener, AccessibilityManager.AccessibilityStateChangeListener {
+
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
+    private lateinit var components: Components
 
     private var _browserInteractor: BrowserToolbarViewInteractor? = null
     protected val browserInteractor: BrowserToolbarViewInteractor
@@ -169,8 +173,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        require(arguments != null)
-        customTabSessionId = arguments?.getString(EXTRA_SESSION_ID)
+        customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
@@ -192,6 +195,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             )
         }
 
+        components = requireComponents
+
         return view
     }
 
@@ -206,6 +211,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
         val context = requireContext()
         val sessionManager = context.components.core.sessionManager
         val store = context.components.core.store
+        val activity = requireActivity() as HomeActivity
 
         val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
@@ -214,6 +220,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             engineView = WeakReference(engineView),
             swipeRefresh = WeakReference(swipeRefresh),
             viewLifecycleScope = WeakReference(viewLifecycleOwner.lifecycleScope),
+            settings = context.components.settings,
             firstContentfulHappened = ::didFirstContentfulHappen
         ).apply {
             beginAnimateInIfNecessary()
@@ -225,25 +232,20 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 putExtra(HomeActivity.OPEN_TO_BROWSER, true)
             }
 
+            val readerMenuController = DefaultReaderModeController(
+                readerViewFeature,
+                view.readerViewControlsBar,
+                isPrivate = activity.browsingModeManager.mode.isPrivate
+            )
             val browserToolbarController = DefaultBrowserToolbarController(
-                activity = requireActivity() as HomeActivity,
+                activity = activity,
                 navController = findNavController(),
-                readerModeController = DefaultReaderModeController(
-                    readerViewFeature,
-                    view.readerViewControlsBar,
-                    isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
-                ),
+                metrics = requireComponents.analytics.metrics,
+                readerModeController = readerMenuController,
                 sessionManager = requireComponents.core.sessionManager,
-                sessionFeature = sessionFeature,
-                findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
                 engineView = engineView,
-                swipeRefresh = swipeRefresh,
                 browserAnimator = browserAnimator,
                 customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
-                openInFenixIntent = openInFenixIntent,
-                bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
-                scope = viewLifecycleOwner.lifecycleScope,
-                tabCollectionStorage = requireComponents.core.tabCollectionStorage,
                 onTabCounterClicked = {
                     thumbnailsFeature.get()?.requestScreenshot()
                     findNavController().nav(
@@ -251,13 +253,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         BrowserFragmentDirections.actionGlobalTabTrayDialogFragment()
                     )
                 },
-                onCloseTab = {
-                    val snapshot = sessionManager.createSessionSnapshot(it)
-                    val state = snapshot.engineSession?.saveState()
-                    val isSelected =
-                        it.id == context.components.core.store.state.selectedTabId ?: false
+                onCloseTab = { closedSession ->
+                    val tab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
+                    val isSelected = tab.id == context.components.core.store.state.selectedTabId
 
-                    val snackbarMessage = if (snapshot.session.private) {
+                    val snackbarMessage = if (tab.content.private) {
                         requireContext().getString(R.string.snackbar_private_tab_closed)
                     } else {
                         requireContext().getString(R.string.snackbar_tab_closed)
@@ -269,18 +269,37 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         requireContext().getString(R.string.snackbar_deleted_undo),
                         {
                             sessionManager.add(
-                                snapshot.session,
+                                closedSession,
                                 isSelected,
-                                engineSessionState = state
+                                engineSessionState = tab.engineState.engineSessionState
                             )
                         },
                         operation = { }
                     )
                 }
             )
+            val browserToolbarMenuController = DefaultBrowserToolbarMenuController(
+                activity = activity,
+                navController = findNavController(),
+                metrics = requireComponents.analytics.metrics,
+                settings = context.settings(),
+                readerModeController = readerMenuController,
+                sessionManager = requireComponents.core.sessionManager,
+                sessionFeature = sessionFeature,
+                findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
+                swipeRefresh = swipeRefresh,
+                browserAnimator = browserAnimator,
+                customTabSession = customTabSessionId?.let { sessionManager.findSessionById(it) },
+                openInFenixIntent = openInFenixIntent,
+                bookmarkTapped = { viewLifecycleOwner.lifecycleScope.launch { bookmarkTapped(it) } },
+                scope = viewLifecycleOwner.lifecycleScope,
+                tabCollectionStorage = requireComponents.core.tabCollectionStorage,
+                topSitesStorage = requireComponents.core.topSitesStorage
+            )
 
             _browserInteractor = BrowserInteractor(
-                browserToolbarController = browserToolbarController
+                browserToolbarController,
+                browserToolbarMenuController
             )
 
             _browserToolbarView = BrowserToolbarView(
@@ -488,7 +507,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     onNeedToRequestPermissions = { permissions ->
                         requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
                     },
-                    loginPickerView = if (FeatureFlags.loginSelect) loginSelectBar else null,
+                    loginPickerView = loginSelectBar,
                     onManageLogins = {
                         browserAnimator.captureEngineViewAndDrawStatically {
                             val directions =
@@ -572,9 +591,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             context.settings().setSitePermissionSettingListener(viewLifecycleOwner) {
                 // If the user connects to WIFI while on the BrowserFragment, this will update the
                 // SitePermissionsRules (specifically autoplay) accordingly
-                assignSitePermissionsRules(context)
+                assignSitePermissionsRules()
             }
-            assignSitePermissionsRules(context)
+            assignSitePermissionsRules()
 
             fullScreenFeature.set(
                 feature = FullScreenFeature(
@@ -639,8 +658,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 }
             }
 
-            @Suppress("ConstantConditionIf")
-            if (FeatureFlags.pullToRefreshEnabled) {
+            view.swipeRefresh.isEnabled =
+                FeatureFlags.pullToRefreshEnabled && context.settings().isPullToRefreshEnabledInBrowser
+            if (view.swipeRefresh.isEnabled) {
                 val primaryTextColor =
                     ThemeManager.resolveAttribute(R.attr.primaryText, context)
                 view.swipeRefresh.setColorSchemeColors(primaryTextColor)
@@ -654,9 +674,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     owner = this,
                     view = view
                 )
-            } else {
-                // Disable pull to refresh
-                view.swipeRefresh.setOnChildScrollUpCallback { _, _ -> true }
             }
 
             webchannelIntegration.set(
@@ -715,7 +732,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             return
         }
 
-        val onTryAgain: (Long) -> Unit = {
+        val onTryAgain: (String) -> Unit = {
             savedDownloadState.first?.let { dlState ->
                 store.dispatch(
                     ContentAction.UpdateDownloadAction(
@@ -753,20 +770,35 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     private fun initializeEngineView(toolbarHeight: Int) {
-        engineView.setDynamicToolbarMaxHeight(toolbarHeight)
-
         val context = requireContext()
-        val behavior = when (context.settings().toolbarPosition) {
-            ToolbarPosition.BOTTOM -> EngineViewBottomBehavior(context, null)
-            ToolbarPosition.TOP -> SwipeRefreshScrollingViewBehavior(
-                context,
-                null,
-                engineView,
-                browserToolbarView
-            )
-        }
 
-        (swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams).behavior = behavior
+        if (context.settings().isDynamicToolbarEnabled) {
+            engineView.setDynamicToolbarMaxHeight(toolbarHeight)
+
+            val behavior = when (context.settings().toolbarPosition) {
+                // Set engineView dynamic vertical clipping depending on the toolbar position.
+                ToolbarPosition.BOTTOM -> EngineViewBottomBehavior(context, null)
+                // Set scroll flags depending on if if the browser or the website is doing the scroll.
+                ToolbarPosition.TOP -> SwipeRefreshScrollingViewBehavior(
+                    context,
+                    null,
+                    engineView,
+                    browserToolbarView
+                )
+            }
+
+            (swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams).behavior = behavior
+        } else {
+            // Ensure webpage's bottom elements are aligned to the very bottom of the engineView.
+            engineView.setDynamicToolbarMaxHeight(0)
+
+            // Effectively place the engineView on top of the toolbar if that is not dynamic.
+            if (context.settings().shouldUseBottomToolbar) {
+                val browserEngine = swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+                browserEngine.bottomMargin =
+                    requireContext().resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+            }
+        }
     }
 
     /**
@@ -898,14 +930,13 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      */
     protected open fun removeSessionIfNeeded(): Boolean {
         getSessionById()?.let { session ->
-            val sessionManager = requireComponents.core.sessionManager
             return if (session.source == SessionState.Source.ACTION_VIEW) {
                 activity?.finish()
-                sessionManager.remove(session)
+                requireComponents.useCases.tabsUseCases.removeTab(session)
                 true
             } else {
                 if (session.hasParentSession) {
-                    sessionManager.remove(session, true)
+                    requireComponents.useCases.tabsUseCases.removeTab(session)
                 }
                 // We want to return to home if this session didn't have a parent session to select.
                 val goToOverview = !session.hasParentSession
@@ -926,15 +957,13 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      * Returns the layout [android.view.Gravity] for the quick settings and ETP dialog.
      */
     protected fun getAppropriateLayoutGravity(): Int =
-        context?.settings()?.toolbarPosition?.androidGravity ?: Gravity.BOTTOM
+        components.settings.toolbarPosition.androidGravity
 
     /**
      * Updates the site permissions rules based on user settings.
      */
-    private fun assignSitePermissionsRules(context: Context) {
-        val settings = context.settings()
-
-        val rules: SitePermissionsRules = settings.getSitePermissionsCustomSettingsRules()
+    private fun assignSitePermissionsRules() {
+        val rules = components.settings.getSitePermissionsCustomSettingsRules()
 
         sitePermissionsFeature.withFeature {
             it.sitePermissionsRules = rules
@@ -948,11 +977,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     private fun showQuickSettingsDialog() {
         val session = getSessionById() ?: return
         viewLifecycleOwner.lifecycleScope.launch(Main) {
-            val sitePermissions: SitePermissions? = withContext(IO) {
-                session.url.toUri().host?.let { host ->
-                    val storage = requireContext().components.core.permissionStorage
-                    storage.findSitePermissionsBy(host)
-                }
+            val sitePermissions: SitePermissions? = session.url.toUri().host?.let { host ->
+                val storage = requireComponents.core.permissionStorage
+                storage.findSitePermissionsBy(host)
             }
 
             view?.let {
@@ -980,7 +1007,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
      * Returns the current session.
      */
     protected fun getSessionById(): Session? {
-        val sessionManager = context?.components?.core?.sessionManager ?: return null
+        val sessionManager = components.core.sessionManager
         val localCustomTabId = customTabSessionId
         return if (localCustomTabId != null) {
             sessionManager.findSessionById(localCustomTabId)
@@ -1085,16 +1112,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
             if (webAppToolbarShouldBeVisible) {
                 browserToolbarView.view.isVisible = true
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
-                engineView.setDynamicToolbarMaxHeight(toolbarHeight)
+                initializeEngineView(toolbarHeight)
             }
         }
     }
 
     private fun didFirstContentfulHappen() =
-        if (!requireContext().settings().waitToShowPageUntilFirstPaint) true else
-            context?.components?.core?.store?.state?.findTabOrCustomTabOrSelectedTab(
-                customTabSessionId
-            )?.content?.firstContentfulPaint ?: false
+        if (components.settings.waitToShowPageUntilFirstPaint) {
+            val tab = components.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)
+            tab?.content?.firstContentfulPaint ?: false
+        } else {
+            true
+        }
 
     /*
      * Dereference these views when the fragment view is destroyed to prevent memory leaks
@@ -1143,6 +1172,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     override fun onAccessibilityStateChanged(enabled: Boolean) {
-        browserToolbarView.setScrollFlags(enabled)
+        if (_browserToolbarView != null) {
+            browserToolbarView.setScrollFlags(enabled)
+        }
     }
 }

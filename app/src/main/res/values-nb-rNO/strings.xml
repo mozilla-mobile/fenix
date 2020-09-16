@@ -270,6 +270,8 @@
     <string name="preferences_open_links_in_a_private_tab">Åpne lenke i en privat fane</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Tillat å ta skjermbilder i privat nettlesing</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Hvis tillatt, vil private faner også være synlige når flere apper er åpne</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Legg til snarvei for privat nettlesing</string>
     <!-- Preference for accessibility -->
@@ -288,6 +290,10 @@
     <string name="preferences_toolbar">Verktøylinje</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Hjem</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Bevegelser</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Tilpass</string>
     <!-- Preference description for banner about signing in -->
@@ -323,8 +329,12 @@
     <string name="preferences_search_browsing_history">Søk i nettleserhistorikk</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Søk i bokmerker</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Søk i synkroniserte faner</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Kontoinnstillinger</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Autofullfør nettadresser</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Åpne lenker i apper</string>
     <!-- Preference for open download with an external download manager app -->
@@ -464,6 +474,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Følg enhetens tema</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Trekk for å oppdatere</string>
+
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Bla for å skjule verktøylinjen</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Sveip verktøylinjen sidelengs for å bytte fane</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Sveip verktøylinjen opp for å åpne faner</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Økter</string>
@@ -497,6 +518,31 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Lukk</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Nylig lukkede faner</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Vis all historikk</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d faner</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d fane</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Ingen nylige lukkede faner her</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Lukk faner</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Manuelt</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Etter en dag</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Etter en uke</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Etter en måned</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Åpne faner</string>
@@ -517,6 +563,10 @@
     <string name="tab_tray_menu_item_save">Lagre i samling</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Del alle faner</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Nylig lukkede faner</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Fane-innstillinger</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Lukk alle faner</string>
     <!-- Shortcut action to open new tab -->
@@ -1031,7 +1081,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Du er logget inn som %s på en annen Firefox-nettleser på denne telefonen. Vil du logge inn med denne kontoen?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Du er logget inn som %s på en annen Firefox-nettleser på denne enheten. Vil du logge inn med denne kontoen?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Ja, logg meg inn</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1283,7 +1333,7 @@
     <string name="add_to_homescreen_text_placeholder">Navn på snarvei</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Du kan enkelt legge til dette nettstedet på telefonens startskjermen for å få øyeblikkelig tilgang og surfe raskere med en app-lignende opplevelse.</string>
+    <string name="add_to_homescreen_description_2">Du kan enkelt legge til dette nettstedet på enhetens startskjerm for å få øyeblikkelig tilgang og surfe raskere med en app-lignende opplevelse.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Innlogginger og passord</string>
@@ -1355,8 +1405,12 @@
     <string name="logins_site_copied">Nettsted kopiert til utklippstavlen</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Kopier passord</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Tøm passord</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Kopier brukernavn</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Tøm brukernavn</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Kopier nettsted</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1516,7 +1570,7 @@
     <string name="saved_login_duplicate">En innlogging med det brukernavnet eksisterer allerede</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Koble til en annen enhet.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Autentiser på nytt.</string>
@@ -1536,14 +1590,17 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Grense for populære nettsteder nådd</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">For å legge til et nytt populært nettsted må du fjern en annen. Trykk lenge på nettstedet og velg fjern.</string>
+    <string name="top_sites_max_limit_content_2">For å legge til et nytt populært nettsted må du fjerne et annet. Trykk og hold på nettstedet, og velg fjern.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, jeg skjønner</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Vis mest besøkte nettsteder</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Fjern</string>
 
-    <!-- depcrecated: text for the firefox account onboarding card header
+    <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Få mest mulig ut av %s.</string>
 
@@ -1551,4 +1608,9 @@
     <string name="no_collections_header1">Samle tingene som betyr noe for deg</string>
     <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
     <string name="no_collections_description1">Grupper sammen lignende søk, nettsteder og faner for rask tilgang senere.</string>
-</resources>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Du er logget inn som %s på en annen Firefox-nettleser på denne telefonen. Vil du logge inn med denne kontoen?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Du kan enkelt legge til dette nettstedet på telefonens startskjerm for å få øyeblikkelig tilgang og surfe raskere med en app-lignende opplevelse.</string>
+
+    </resources>

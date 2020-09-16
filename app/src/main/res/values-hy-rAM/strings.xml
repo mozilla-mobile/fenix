@@ -78,6 +78,28 @@
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">Ոչ հիմա</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Դուք կարող եք կայել Firefox-ը ինքնաշխատ բացել հղումները հավելվածներում:</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Անցնել Կարգավորումներին</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Բաց թողնել</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Անհրաժեշտ է տեսախցիկի մատչում: Անցեք Android-ի կարգավորումներ, հպեք թույլտվություններին և հպեք թույլատրել:</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Անցնել Կարգավորումներին</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Բաց թողնել</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Կայեք բացված ներդիրների ինքնաբար փակումը, որոնք վերջին մեկ օրում, շաբաթում կամ ամսում չեն դիտվել:</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Դիտել ընտրանքները</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Նոր ներդիր</string>
@@ -245,6 +267,8 @@
     <string name="preferences_open_links_in_a_private_tab">Բացել հղումը գաղտնի ներդիրում</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Թույլ տալ էկրանի կորզումը գաղտնի դիտարկումում</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Թույլատրելու դեպքում գաղտնի ներդիրները նույնպես տեսանելի կլինեն, երբ բազմաթիվ հավելվածներ բաց լինեն</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Ավելացնել գաղտնի դիտարկման դյուրանցում</string>
     <!-- Preference for accessibility -->
@@ -263,6 +287,10 @@
     <string name="preferences_toolbar">Գործիքագոտի</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Ոճ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Տուն</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Ժեստեր</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Հարմարեցնել</string>
     <!-- Preference description for banner about signing in -->
@@ -301,6 +329,8 @@
     <string name="preferences_search_bookmarks">Որոնել էջանիշեր</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Հաշվի կարգավորումներ</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Ինքնալրացում</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Բացել հղումները հավելվածներում</string>
     <!-- Preference for open download with an external download manager app -->
@@ -437,6 +467,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Ըստ սարքի ոճի</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Քաշեք՝ թարմացնելու համար</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Ոլորեք՝ գործիքագոտին թաքցնելու համար</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Սեղմեք գործիքագոտը կողքից՝ ներդիրներին անցնելու համար</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Սահեցրեք գործիքագոտին վերև՝ ներդիրները բացելու համար</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Աշխատաշրջաններ</string>
@@ -469,6 +509,31 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Փակել</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Վերջերս փակված ներդիրներ</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Ցուցադրել ամբողջ պատմությունը</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d ներդիրներ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d ներդիր</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Վերջերս փակված ներդիրներ չկան</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Փակել ներդիրները</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Ձեռքով</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Մեկ օր անց</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Մեկ շաբաթ անց</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Մեկ ամիս անց</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Բաց ներդիրներ</string>
@@ -488,6 +553,10 @@
     <string name="tab_tray_menu_item_save">Պահպանել հավաքածուում</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Համօգտագործել ներդիրները</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Վերջերս փակված ներդիրներ</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Ներդիրի կարգավորումներ</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Փակել բոլոր ներդիրները</string>
     <!-- Shortcut action to open new tab -->
@@ -533,6 +602,8 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Ջնջել</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Ջնջել Պատմությունից</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Գաղտնի կերպ)</string>
 
@@ -997,7 +1068,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Դուք մուտք եք գործել որպես %s այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Դուք մուտք եք գործել որպես %s տվյալ սարքից այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Այո, գրանցեք ինձ</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1242,7 +1313,7 @@
     <string name="add_to_homescreen_text_placeholder">Դյուրանցման անունը</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
+    <string name="add_to_homescreen_description_2">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Մուտքանուններ և գաղտնաբառեր</string>
@@ -1313,8 +1384,12 @@
     <string name="logins_site_copied">Կայքը պատճենված է</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Պատճենել գաղտնաբառը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Մաքրել գաղտնաբառը</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Պատճենել օգտվողի անունը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Մաքրել օգտվողի անունը</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Պատճենել կայքը</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1470,7 +1545,7 @@
     <string name="saved_login_duplicate">Այդ անունով մուտքանուն արդեն գոյություն ունի</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Կապակցել այլ սարքի:</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Խնդրում ենք վերահաստատել:</string>
@@ -1491,10 +1566,27 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Լավագույն կայքերի ցանկը լրացել է</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">Նոր լավագույն կայքի ավելացման համար հեռացրեք մեկը: Սեղմած պահեք կայքին և ընտրեք հեռացնել:</string>
+    <string name="top_sites_max_limit_content_2">Նոր լավագույն կայքի ավելացման համար հեռացրեք մեկը: Հպեք և սեղմած պահեք կայքը և ընտրեք հեռացնել:</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Հասկանալի է</string>
 
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Ցուցադրել ամենաշատ այցելվող կայքերը</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Հեռացնել</string>
-</resources>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Ստացեք առավելագույնը %s-ից:</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Հավաքեք ձեզ համար կարևոր բաները</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Խմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ հետո արագ մատչելու համար:</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Դուք մուտք եք գործել որպես %s այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
+
+    </resources>

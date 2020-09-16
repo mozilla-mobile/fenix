@@ -39,8 +39,17 @@
     <string name="tab_tray_close_multiselect_content_description">複数選択モードを終了</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">選択したタブをコレクションに保存</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">選択 %1$s 個</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">未選択 %1$s 個</string>
     <!-- Content description announcement when exiting multiselect mode in tab tray -->
     <string name="tab_tray_exit_multiselect_content_description">複数選択モードを終了しました</string>
+
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">複数選択モードです。コレクションの保存するタブを選択してください</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">選択</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s は Mozilla の製品です。</string>
@@ -50,7 +59,7 @@
     <string name="private_browsing_title">プライベートセッションです</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s のプライベートタブを閉じるかアプリを終了すると、その検索履歴とブラウジング履歴が消去されます。これは、ウェブサイトやインターネットサービスプロバイダーに対して匿名でアクセスしているわけではありません。この機能は、この端末を使用する他者に対してオンライン上のプライベートな行動を隠すものです。</string>
+    <string name="private_browsing_placeholder_description_2">%1$s のプライベートタブを閉じるかアプリを終了すると、その検索履歴と閲覧履歴が消去されます。これは、ウェブサイトやインターネットサービスプロバイダーに対して匿名でアクセスしているわけではありません。この機能は、この端末を使用する他者に対してオンライン上のプライベートな行動を隠すものです。</string>
     <string name="private_browsing_common_myths">
        プライベートブラウジングについての誤解
     </string>
@@ -72,6 +81,28 @@
     <string name="search_widget_cfr_pos_button_text">ウィジェットを追加</string>
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">後で</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">アプリでリンクを自動的に開くように Firefox を設定できます。</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">設定を開く</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">閉じる</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">カメラへのアクセスが必要です。Android の設定から、権限をタップし、許可をタップしてください。</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">設定を開く</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">閉じる</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">開いたタブのうち、過去の一定期間表示されていないものを自動的に閉じるように設定します。</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">オプションを表示</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">閉じる</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -243,6 +274,8 @@
     <string name="preferences_open_links_in_a_private_tab">リンクをプライベートタブで開く</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">プライベートブラウジングモードでスクリーンショットの撮影を許可する</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">許可すると、複数のアプリを開いているときにプライベートタブも表示されます</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">プライベートブラウジングショートカットを追加する</string>
     <!-- Preference for accessibility -->
@@ -261,6 +294,10 @@
     <string name="preferences_toolbar">ツールバー</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">テーマ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">ホーム画面</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">ジェスチャー</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">カスタマイズ</string>
     <!-- Preference description for banner about signing in -->
@@ -282,11 +319,11 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">USB 経由でリモートデバッグする</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">検索エンジンを表示</string>
+    <string name="preferences_show_search_engines">検索エンジンを表示する</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">検索語句の候補を表示する</string>
     <!-- Preference title for switch preference to show voice search button -->
-    <string name="preferences_show_voice_search">音声検索を表示</string>
+    <string name="preferences_show_voice_search">音声検索を表示する</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">プライベートセッションで表示する</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -298,11 +335,18 @@
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">アカウント設定</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">自動補完 URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">リンクをアプリで開く</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">外部のダウンロードマネージャー</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">アドオン</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">通知</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -433,13 +477,23 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">端末のテーマに従う</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">プルダウンで更新</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">スクロール時にツールバーを隠す</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">ツールバーの横スワイプでタブ切り替え</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">ツールバーの上スワイプでタブ表示</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">セッション</string>
     <!-- Option in Library to open Screenshots page -->
     <string name="library_screenshots">スクリーンショット</string>
     <!-- Option in Library to open Downloads page -->
-    <string name="library_downloads">ダウンロード</string>
+    <string name="library_downloads">ダウンロード一覧</string>
     <!-- Option in library to open Bookmarks page -->
     <string name="library_bookmarks">ブックマーク</string>
     <!-- Option in library to open Desktop Bookmarks root page -->
@@ -465,6 +519,31 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">閉じる</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">最近閉じたタブ</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">すべての履歴を表示</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d 個のタブ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d 個のタブ</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">最近閉じたタブはありません</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">タブを閉じる期間</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">手動</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">1 日後</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">1 週間後</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">1 か月後</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">タブを開く</string>
@@ -484,6 +563,10 @@
     <string name="tab_tray_menu_item_save">コレクションに保存</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">すべてのタブを共有</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">最近閉じたタブ</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">タブ設定</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">すべてのタブを閉じる</string>
     <!-- Shortcut action to open new tab -->
@@ -532,6 +615,8 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">削除</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">履歴から削除</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (プライベートモード)</string>
 
@@ -546,7 +631,7 @@
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
     <string name="history_delete_multiple_items_snackbar">履歴が削除されました</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
-    <string name="history_delete_single_item_snackbar">%1$s のブラウジング履歴が削除されました</string>
+    <string name="history_delete_single_item_snackbar">%1$s を履歴から削除しました</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">消去</string>
     <!-- History overflow menu copy button -->
@@ -577,6 +662,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">履歴はありません</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">ダウンロードしたファイルはありません</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d 件選択</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">申し訳ありません。%1$s はそのページを読み込めません。</string>
@@ -604,6 +696,8 @@
     <string name="bookmark_select_folder">フォルダー選択</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">このフォルダーを削除してもよろしいですか？</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">選択したアイテムを %s から削除します</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s フォルダーを削除しました</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -663,6 +757,8 @@
 
     <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">ブックマークを削除しました</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">選択したフォルダーを削除します</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">元に戻す</string>
 
@@ -732,10 +828,8 @@
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">コレクションメニュー</string>
 
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header1">あなたにとって関心のある事柄を集めましょう</string>
     <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="no_collections_description1">類似の検索結果、サイト、タブをグループ化して、後ですばやくアクセスできます。</string>
+    <string name="no_collections_description2">ページを集めてグループ化しましょう。\n類似の検索、ウェブサイト、タブに後ですばやくアクセスできます。</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">タブの選択</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -866,6 +960,10 @@
     <string name="qr_scanner_dialog_negative">拒否</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">本当に %1$s を削除してもよろしいですか？</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">このタブを削除するとコレクション全体が削除されます。新しいコレクションはいつでも作成できます。</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">%1$s のコレクションを削除しますか？</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">削除</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -887,16 +985,16 @@
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_2">フォントサイズを自動調整</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size_summary">フォントサイズは Android の設定に従います。このフォントサイズの管理は無効化されます。</string>
+    <string name="preference_accessibility_auto_size_summary">フォントサイズは Android の設定に従います。ここでフォントサイズを管理するには無効化してください。</string>
 
     <!-- Title for the Delete browsing data preference -->
-    <string name="preferences_delete_browsing_data">ブラウジングデータを削除</string>
+    <string name="preferences_delete_browsing_data">閲覧データを削除</string>
     <!-- Title for the tabs item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_tabs_title_2">開いているタブ</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d 個のタブ</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">ブラウジング履歴とサイトデータ</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title">閲覧履歴とサイトデータ</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d 件のアドレス</string>
@@ -908,38 +1006,38 @@
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Cookie</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies_subtitle">ほとんどのサイトからログアウトされます</string>
+    <string name="preferences_delete_browsing_data_cookies_subtitle">ログイン状態がリセットされます</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cached_files">キャッシュされた画像とファイル</string>
+    <string name="preferences_delete_browsing_data_cached_files">画像とファイルのキャッシュ</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">ストレージ領域を空けます</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">サイトの許可設定</string>
     <!-- Text for the button to delete browsing data -->
-    <string name="preferences_delete_browsing_data_button">ブラウジングデータを削除</string>
+    <string name="preferences_delete_browsing_data_button">閲覧データを削除</string>
 
     <!-- Title for the Delete browsing data on quit preference -->
-    <string name="preferences_delete_browsing_data_on_quit">終了時にブラウジングデータを削除</string>
+    <string name="preferences_delete_browsing_data_on_quit">終了時に閲覧データを削除</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit">メインメニューから [終了] を選択すると、ブラウジングデータが自動的に削除されます</string>
+    <string name="preference_summary_delete_browsing_data_on_quit">メインメニューから [終了] を選択すると、閲覧データが自動的に削除されます</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
-    <string name="preference_summary_delete_browsing_data_on_quit_2">メインメニューから [終了] を選択すると、ブラウジングデータが自動的に削除されます</string>
+    <string name="preference_summary_delete_browsing_data_on_quit_2">メインメニューから [終了] を選択すると、閲覧データが自動的に削除されます</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">終了</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">この操作はすべてのブラウジングデータを削除します。</string>
+    <string name="delete_browsing_data_prompt_message">この操作はすべての閲覧データを削除します。</string>
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
-    <string name="delete_browsing_data_prompt_message_3">選択したブラウジングデータを %s から削除します。</string>
+    <string name="delete_browsing_data_prompt_message_3">選択した閲覧データを %s から削除します。</string>
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">キャンセル</string>
     <!-- Text for the allow button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_allow">削除</string>
     <!-- Text for the snackbar confirmation that the data was deleted -->
-    <string name="preferences_delete_browsing_data_snackbar">ブラウジングデータを削除しました</string>
+    <string name="preferences_delete_browsing_data_snackbar">閲覧データを削除しました</string>
 
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
-    <string name="deleting_browsing_data_in_progress">ブラウジングデータを削除しています...</string>
+    <string name="deleting_browsing_data_in_progress">閲覧データを削除しています...</string>
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
@@ -983,13 +1081,14 @@
     <string name="onboarding_whats_new_description">再設計された %s について、どこが新しくなったのか知りたいですか？</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">その答えはこちらにあります</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">%s を最大限に活用しよう。</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Firefox アカウントでブックマークやパスワード、他の設定を同期しましょう。</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">詳細情報</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">すでに、この端末の別の Firefox ブラウザーで %s としてログインしています。このアカウントでログインしますか？</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">この端末の別の Firefox ブラウザーで %s としてログインしています。このアカウントでログインしますか？</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">はい、ログインします</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1022,7 +1121,7 @@
         but it is ok to make this more literally about "choosing a position in a physical space -->
     <string name="onboarding_toolbar_position_header">ツールバーをお好みの配置に</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">ツールバーを下部に置いて片手でブラウジングをお試しください。上部にも移動できます。</string>
+    <string name="onboarding_toolbar_position_description">ツールバーを下部に置いて片手での操作をお試しください。上部にも移動できます。</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">プライベートなブラウジング</string>
     <!-- text for the private browsing onboarding card description
@@ -1079,7 +1178,7 @@
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">代わりにメールアドレスを使う</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_confirmation_message">Firefox はアカウントとの同期を停止しますが、この端末上のブラウジングデータは削除されません。</string>
+    <string name="sign_out_confirmation_message">Firefox はアカウントとの同期を停止しますが、この端末上の閲覧データは削除されません。</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="sign_out_confirmation_message_2">%s はあなたのアカウントとの同期を中止しますが、この端末上の閲覧履歴は削除されません。</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
@@ -1095,7 +1194,7 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">強化されたトラッキング防止</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">ブラウジング中のプライバシーを保護します</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title">閲覧中のプライバシーを保護します</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation">個人データの収集を防止します。%s はオンラインでのあなたの行動を追跡するよく知られた数多くのトラッカーからあなたを守ります。</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1147,11 +1246,11 @@
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">SNS メディアトラッカー</string>
     <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_social_media_trackers_description">ソーシャルネットワークによるウェブ上のブラウジング行動の追跡を制限します。</string>
+    <string name="etp_social_media_trackers_description">ソーシャルネットワークによるウェブ上の行動追跡を制限します。</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">クロスサイトトラッキング Cookie</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description">広告ネットワークやアクセス解析サービスが様々なサイトからブラウジングデータを収集するために使用する Cookie をブロックします。</string>
+    <string name="etp_cookies_description">広告ネットワークやアクセス解析サービスが様々なサイトから閲覧データを収集するための Cookie をブロックします。</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">暗号通貨マイニング</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1232,7 +1331,7 @@
     <string name="add_to_homescreen_text_placeholder">ショートカット名</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">このウェブサイトを簡単な操作で端末のホーム画面に追加しましょう。アプリのような感覚で手軽にアクセスして素早くブラウジングできます。</string>
+    <string name="add_to_homescreen_description_2">このウェブサイトを端末のホーム画面に簡単な操作で追加できます。アプリのような感覚で素早くアクセスして閲覧しましょう。</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">ログイン情報とパスワード</string>
@@ -1266,6 +1365,8 @@
     <string name="preferences_passwords_exceptions_description_empty">ログイン情報が保存されないサイトがここに表示されます。</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">これらのサイトではログイン情報が保存されません。</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">すべての例外を削除</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">ログイン情報を検索</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1300,8 +1401,12 @@
     <string name="logins_site_copied">サイトをクリップボードにコピーしました</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">パスワードをコピー</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">パスワードを消去</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">ユーザー名をコピー</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">ユーザー名を消去</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">サイトをコピー</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1458,7 +1563,7 @@
     <string name="saved_login_duplicate">このユーザー名を持つログイン情報がすでに存在します。</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">他の端末を接続してください。</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">再認証してください。</string>
@@ -1472,12 +1577,34 @@
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">Sync にログイン</string>
 
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">開いたタブはありません</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">トップサイトの上限に達しました</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">新しいトップサイトを追加するには、いずれかを削除してください。サイトを長押しして削除を選択します。</string>
+    <string name="top_sites_max_limit_content_2">新しいトップサイトを追加するには、いずれかを削除してください。サイトを長押しして削除を選択します。</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">よく訪れるサイトを表示</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">削除</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">%s を最大限に活用しよう。</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">あなたにとって関心のある事柄を集めましょう</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">類似の検索結果、サイト、タブをグループ化して、後ですばやくアクセスできます。</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">すでに、この端末の別の Firefox ブラウザーで %s としてログインしています。このアカウントでログインしますか？</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">このウェブサイトを簡単な操作で端末のホーム画面に追加しましょう。アプリのような感覚で手軽にアクセスして素早く閲覧できます。</string>
 
     </resources>

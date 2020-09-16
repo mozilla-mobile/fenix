@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityNodeInfo.CollectionInfo
 import androidx.annotation.IdRes
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -185,7 +187,7 @@ class TabTrayView(
                 concatAdapter.addAdapter(0, syncedTabsController.adapter)
 
                 if (hasAccessibilityEnabled) {
-                    tabsAdapter.notifyDataSetChanged()
+                    tabsAdapter.notifyItemRangeChanged(0, tabs.size)
                 }
                 if (!hasLoaded) {
                     hasLoaded = true
@@ -213,10 +215,12 @@ class TabTrayView(
                     is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
                         isPrivateModeSelected
                     )
+                    is TabTrayItemMenu.Item.OpenTabSettings -> interactor.onTabSettingsClicked()
                     is TabTrayItemMenu.Item.SaveToCollection -> interactor.onEnterMultiselect()
                     is TabTrayItemMenu.Item.CloseAllTabs -> interactor.onCloseAllTabsClicked(
                         isPrivateModeSelected
                     )
+                    is TabTrayItemMenu.Item.OpenRecentlyClosed -> interactor.onOpenRecentlyClosedClicked()
                 }
             }
 
@@ -494,6 +498,22 @@ class TabTrayView(
         } else {
             view.context?.getString(R.string.open_tab_tray_plural, count.toString())
         }
+
+        view.tabsTray.accessibilityDelegate = object : View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View?,
+                info: AccessibilityNodeInfo?
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info?.let {
+                    info.collectionInfo = CollectionInfo.obtain(
+                        tabsAdapter.tabCount,
+                        1,
+                        false
+                    )
+                }
+            }
+        }
     }
 
     private fun updateTabCounter(count: Int): String {
@@ -547,9 +567,11 @@ class TabTrayView(
 
             // We offset the tab index by the number of items in the other adapters.
             // We add the offset, because the layoutManager is initialized with `reverseLayout`.
+            // We also add 1 to display the tab item above the selected browser tab.
             val recyclerViewIndex = selectedBrowserTabIndex +
                 collectionsButtonAdapter.itemCount +
-                syncedTabsController.adapter.itemCount
+                syncedTabsController.adapter.itemCount +
+                1
 
             layoutManager?.scrollToPosition(recyclerViewIndex)
         }
@@ -573,8 +595,10 @@ class TabTrayItemMenu(
 
     sealed class Item {
         object ShareAllTabs : Item()
+        object OpenTabSettings : Item()
         object SaveToCollection : Item()
         object CloseAllTabs : Item()
+        object OpenRecentlyClosed : Item()
     }
 
     val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
@@ -595,6 +619,20 @@ class TabTrayItemMenu(
             ) {
                 context.components.analytics.metrics.track(Event.TabsTrayShareAllTabsPressed)
                 onItemTapped.invoke(Item.ShareAllTabs)
+            },
+
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_tab_settings),
+                textColorResource = R.color.primary_text_normal_theme
+            ) {
+                onItemTapped.invoke(Item.OpenTabSettings)
+            },
+
+            SimpleBrowserMenuItem(
+                context.getString(R.string.tab_tray_menu_recently_closed),
+                textColorResource = R.color.primary_text_normal_theme
+            ) {
+                onItemTapped.invoke(Item.OpenRecentlyClosed)
             },
 
             SimpleBrowserMenuItem(

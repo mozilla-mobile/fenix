@@ -54,6 +54,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
 
     private var readerModeAvailable = false
+    private var openInAppOnboardingObserver: OpenInAppOnboardingObserver? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,15 +73,17 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val components = context.components
 
         return super.initializeUI(view)?.also {
-            gestureLayout.addGestureListener(
-                ToolbarGestureHandler(
-                    activity = requireActivity(),
-                    contentLayout = browserLayout,
-                    tabPreview = tabPreview,
-                    toolbarLayout = browserToolbarView.view,
-                    sessionManager = components.core.sessionManager
+            if (context.settings().isSwipeToolbarToSwitchTabsEnabled) {
+                gestureLayout.addGestureListener(
+                    ToolbarGestureHandler(
+                        activity = requireActivity(),
+                        contentLayout = browserLayout,
+                        tabPreview = tabPreview,
+                        toolbarLayout = browserToolbarView.view,
+                        sessionManager = components.core.sessionManager
+                    )
                 )
-            )
+            }
 
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
@@ -157,6 +160,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
         session?.register(toolbarSessionObserver, viewLifecycleOwner, autoPause = true)
 
+        if (settings.shouldShowOpenInAppBanner && session != null) {
+            openInAppOnboardingObserver = OpenInAppOnboardingObserver(
+                context = context,
+                navController = findNavController(),
+                settings = settings,
+                appLinksUseCases = context.components.useCases.appLinksUseCases,
+                container = browserToolbarView.view.parent as ViewGroup
+            )
+            session.register(
+                openInAppOnboardingObserver!!,
+                owner = this,
+                autoPause = true
+            )
+        }
+
         if (!settings.userKnowsAboutPwas) {
             session?.register(
                 PwaOnboardingObserver(
@@ -170,6 +188,16 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
 
         subscribeToTabCollections()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // This observer initialized in onStart has a reference to fragment's view.
+        // Prevent it leaking the view after the latter onDestroyView.
+        if (openInAppOnboardingObserver != null) {
+            getSessionById()?.unregister(openInAppOnboardingObserver!!)
+            openInAppOnboardingObserver = null
+        }
     }
 
     private fun subscribeToTabCollections() {

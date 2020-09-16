@@ -53,12 +53,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.components.browser.menu.BrowserMenu
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -86,7 +84,9 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.tips.FenixTipManager
-import org.mozilla.fenix.components.tips.providers.MigrationTipProvider
+import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
+import org.mozilla.fenix.components.toolbar.TabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
@@ -177,6 +177,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @Suppress("LongMethod")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -199,8 +200,18 @@ class HomeFragment : Fragment() {
                     collections = components.core.tabCollectionStorage.cachedTabCollections,
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
-                    topSites = components.core.topSiteStorage.cachedTopSites,
-                    tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip(),
+                    topSites = components.core.topSitesStorage.cachedTopSites,
+                    tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+                        FenixTipManager(
+                            listOf(
+                                MasterPasswordTipProvider(
+                                    requireContext(),
+                                    ::navToSavedLogins,
+                                    ::dismissTip
+                                )
+                            )
+                        ).getTip()
+                    },
                     showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
                 )
             )
@@ -209,7 +220,7 @@ class HomeFragment : Fragment() {
         topSitesFeature.set(
             feature = TopSitesFeature(
                 view = DefaultTopSitesView(homeFragmentStore),
-                storage = components.core.topSiteStorage,
+                storage = components.core.topSitesStorage,
                 config = ::getTopSitesConfig
             ),
             owner = this,
@@ -235,6 +246,7 @@ class HomeFragment : Fragment() {
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
             )
         )
+
         updateLayout(view)
         sessionControlView = SessionControlView(
             view.sessionControlRecyclerView,
@@ -247,6 +259,10 @@ class HomeFragment : Fragment() {
 
         activity.themeManager.applyStatusBarTheme(activity)
         return view
+    }
+
+    private fun dismissTip(tip: Tip) {
+        sessionControlInteractor.onCloseTip(tip)
     }
 
     /**
@@ -312,7 +328,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @SuppressWarnings("LongMethod")
+    @Suppress("LongMethod", "ComplexMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -349,8 +365,21 @@ class HomeFragment : Fragment() {
         }
 
         createHomeMenu(requireContext(), WeakReference(view.menuButton))
+        val tabCounterMenu = TabCounterMenu(
+            view.context,
+            metrics = view.context.components.analytics.metrics
+        ) {
+            if (it is TabCounterMenu.Item.NewTab) {
+                (activity as HomeActivity).browsingModeManager.mode = it.mode
+            }
+        }
+        val inverseBrowsingMode = when ((activity as HomeActivity).browsingModeManager.mode) {
+            BrowsingMode.Normal -> BrowsingMode.Private
+            BrowsingMode.Private -> BrowsingMode.Normal
+        }
+        tabCounterMenu.updateMenu(showOnly = inverseBrowsingMode)
         view.tab_button.setOnLongClickListener {
-            createTabCounterMenu(requireContext()).show(view.tab_button)
+            tabCounterMenu.menuController.show(anchor = it)
             true
         }
 
@@ -401,7 +430,8 @@ class HomeFragment : Fragment() {
         // We call this onLayout so that the bottom bar width is correctly set for us to center
         // the CFR in.
         view.toolbar_wrapper.doOnLayout {
-            val willNavigateToSearch = !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience
+            val willNavigateToSearch =
+                !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience
             if (!browsingModeManager.mode.isPrivate && !willNavigateToSearch) {
                 SearchWidgetCFR(
                     context = view.context,
@@ -441,20 +471,14 @@ class HomeFragment : Fragment() {
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         val tabs = sessionManager.sessionsOfType(private = sessionCode == ALL_PRIVATE_TABS).toList()
         val selectedIndex = sessionManager
-            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: 0
+            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: SessionManager.NO_SELECTION
 
         val snapshot = tabs
             .map(sessionManager::createSessionSnapshot)
-            .map {
-                it.copy(
-                    engineSession = null,
-                    engineSessionState = it.engineSession?.saveState()
-                )
-            }
             .let { SessionManager.Snapshot(it, selectedIndex) }
 
         tabs.forEach {
-            sessionManager.remove(it)
+            requireComponents.useCases.tabsUseCases.removeTab(it)
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
@@ -478,11 +502,11 @@ class HomeFragment : Fragment() {
     private fun removeTabAndShowSnackbar(sessionId: String) {
         sessionManager.findSessionById(sessionId)?.let { session ->
             val snapshot = sessionManager.createSessionSnapshot(session)
-            val state = snapshot.engineSession?.saveState()
+            val state = store.state.findTab(sessionId)?.engineState?.engineSessionState
             val isSelected =
                 session.id == requireComponents.core.store.state.selectedTabId ?: false
 
-            sessionManager.remove(session)
+            requireComponents.useCases.tabsUseCases.removeTab(sessionId)
 
             val snackbarMessage = if (snapshot.session.private) {
                 requireContext().getString(R.string.snackbar_private_tab_closed)
@@ -529,8 +553,18 @@ class HomeFragment : Fragment() {
             HomeFragmentAction.Change(
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
-                topSites = components.core.topSiteStorage.cachedTopSites,
-                tip = FenixTipManager(listOf(MigrationTipProvider(requireContext()))).getTip(),
+                topSites = components.core.topSitesStorage.cachedTopSites,
+                tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+                    FenixTipManager(
+                        listOf(
+                            MasterPasswordTipProvider(
+                                requireContext(),
+                                ::navToSavedLogins,
+                                ::dismissTip
+                            )
+                        )
+                    ).getTip()
+                },
                 showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
             )
         )
@@ -575,6 +609,10 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(IO) {
             requireComponents.reviewPromptController.promptReview(requireActivity())
         }
+    }
+
+    private fun navToSavedLogins() {
+        findNavController().navigate(HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment())
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -709,42 +747,6 @@ class HomeFragment : Fragment() {
         }
 
         nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
-    }
-
-    private fun createTabCounterMenu(context: Context): BrowserMenu {
-        val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
-        val isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private
-        val menuItems = listOf(
-            BrowserMenuImageText(
-                label = context.getString(
-                    if (isPrivate) {
-                        R.string.browser_menu_new_tab
-                    } else {
-                        R.string.home_screen_shortcut_open_new_private_tab_2
-                    }
-                ),
-                imageResource = if (isPrivate) {
-                    R.drawable.ic_new
-                } else {
-                    R.drawable.ic_private_browsing
-                },
-                iconTintColorResource = primaryTextColor,
-                textColorResource = primaryTextColor
-            ) {
-                requireComponents.analytics.metrics.track(
-                    Event.TabCounterMenuItemTapped(
-                        if (isPrivate) {
-                            Event.TabCounterMenuItemTapped.Item.NEW_TAB
-                        } else {
-                            Event.TabCounterMenuItemTapped.Item.NEW_PRIVATE_TAB
-                        }
-                    )
-                )
-                (activity as HomeActivity).browsingModeManager.mode =
-                    BrowsingMode.fromBoolean(!isPrivate)
-            }
-        )
-        return BrowserMenuBuilder(menuItems).build(context)
     }
 
     @SuppressWarnings("ComplexMethod", "LongMethod")

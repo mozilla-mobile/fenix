@@ -82,6 +82,31 @@
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">Не сейчас</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Вы можете настроить Firefox на автоматическое открытие ссылок в приложениях.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Перейти в настройки</string>
+
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Пропустить</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Требуется доступ к камере. Перейдите в настройки системы, коснитесь разрешений и нажмите «разрешить».</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Перейти в настройки</string>
+
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Пропустить</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Настройте автоматическое закрытие открытых вкладок, которые не просматривались в последний день, неделю или месяц.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Открыть настройки</string>
+
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Пропустить</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Новая вкладка</string>
@@ -253,6 +278,8 @@
     <string name="preferences_open_links_in_a_private_tab">Открывать ссылки в приватной вкладке</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Разрешить скриншоты при приватном просмотре</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">В случае, если разрешено, приватные вкладки будут видны при просмотре нескольких приложений</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Добавить ярлык приватного просмотра</string>
     <!-- Preference for accessibility -->
@@ -271,6 +298,10 @@
     <string name="preferences_toolbar">Панель инструментов</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Домой</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Жесты</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Персонализация</string>
     <!-- Preference description for banner about signing in -->
@@ -308,6 +339,8 @@
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Настройки Аккаунта</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Автозаполнение URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Открывать ссылки в приложениях</string>
 
@@ -447,6 +480,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Использовать тему устройства</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Потяните, чтобы обновить</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Прокрутите страницу, чтобы скрыть панель инструментов</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Проведите в сторону по панели инструментов, чтобы переключить вкладки</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Проведите вверх по панели инструментов, чтобы открыть вкладки</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Сессии</string>
@@ -479,6 +522,32 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Закрыть</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Недавно закрытые вкладки</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Показать всю историю</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d вкладки(ок)</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d вкладка</string>
+
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Здесь нет недавно закрытых вкладок</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Закрывать вкладки</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Вручную</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Через день</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Через неделю</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Через месяц</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Открытые вкладки</string>
@@ -498,6 +567,10 @@
     <string name="tab_tray_menu_item_save">Сохранить в коллекцию</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Поделиться всеми вкладками</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Недавно закрытые вкладки</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Параметры вкладок</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Закрыть все вкладки</string>
     <!-- Shortcut action to open new tab -->
@@ -545,6 +618,8 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Удалить</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Удалить из истории</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Приватный просмотр)</string>
 
@@ -1028,7 +1103,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Да, авторизоваться</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1273,7 +1348,7 @@
     <string name="add_to_homescreen_text_placeholder">Название ярлыка</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Вы можете легко добавить этот веб-сайт на домашний экран вашего телефона, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
+    <string name="add_to_homescreen_description_2">Вы можете легко добавить этот веб-сайт на домашний экран вашего устройства, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Логины и пароли</string>
@@ -1343,8 +1418,12 @@
     <string name="logins_site_copied">Сайт скопирован в буфер обмена</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Копировать пароль</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Очистить пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Копировать имя пользователя</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Очистить имя пользователя</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копировать сайт</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1499,7 +1578,7 @@
     <string name="saved_login_duplicate">Логин с таким именем пользователя уже существует</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Подключить другое устройство.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Пожалуйста, авторизуйтесь повторно.</string>
@@ -1519,10 +1598,27 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Достигнут лимит топа сайтов</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">Чтобы добавить новый сайт в топ, удалите другой. Долгим нажатием по нему откройте меню и нажмите удалить.</string>
+    <string name="top_sites_max_limit_content_2">Чтобы добавить новый сайт в топ, удалите другой. Нажмите и удерживайте карточку с сайтом, затем откройте меню и нажмите удалить.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, понятно</string>
 
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Показать самые посещаемые сайты</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Убрать</string>
-</resources>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Получите максимум от %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Собирайте то, что важно для вас</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Объединяйте похожие запросы, сайты и вкладки, для быстрого доступа к ним в будущем.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Вы можете легко добавить этот веб-сайт на домашний экран вашего телефона, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
+
+    </resources>

@@ -21,7 +21,6 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -146,7 +145,7 @@ class HomeMenu(
         }
 
         val downloadsItem = BrowserMenuImageText(
-            "Downloads",
+            context.getString(R.string.library_downloads),
             R.drawable.ic_download,
             primaryTextColor
         ) {
@@ -170,7 +169,7 @@ class HomeMenu(
             if (settings.syncedTabsInTabsTray) null else syncedTabsItem,
             bookmarksItem,
             historyItem,
-            if (FeatureFlags.viewDownloads) downloadsItem else null,
+            downloadsItem,
             BrowserMenuDivider(),
             addons,
             BrowserMenuDivider(),

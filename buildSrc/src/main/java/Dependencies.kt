@@ -43,7 +43,6 @@ object Versions {
     const val google_ads_id_version = "16.0.0"
 
     const val google_play_store_version = "1.8.0"
-    const val google_play_core_ktx_version = "1.8.1"
 
     const val airbnb_lottie = "3.4.0"
 }
@@ -112,6 +111,7 @@ object Deps {
     const val mozilla_feature_site_permissions = "org.mozilla.components:feature-sitepermissions:${Versions.mozilla_android_components}"
     const val mozilla_feature_readerview = "org.mozilla.components:feature-readerview:${Versions.mozilla_android_components}"
     const val mozilla_feature_tab_collections = "org.mozilla.components:feature-tab-collections:${Versions.mozilla_android_components}"
+    const val mozilla_feature_recentlyclosed = "org.mozilla.components:feature-recentlyclosed:${Versions.mozilla_android_components}"
     const val mozilla_feature_accounts_push = "org.mozilla.components:feature-accounts-push:${Versions.mozilla_android_components}"
     const val mozilla_feature_top_sites = "org.mozilla.components:feature-top-sites:${Versions.mozilla_android_components}"
     const val mozilla_feature_share = "org.mozilla.components:feature-share:${Versions.mozilla_android_components}"
@@ -214,7 +214,6 @@ object Deps {
 
     // Required for in-app reviews
     const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
-    const val google_play_core_ktx = "com.google.android.play:core-ktx:${Versions.google_play_core_ktx_version}"
 
     const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 

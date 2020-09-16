@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.searchdialog
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -17,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
@@ -27,16 +29,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import kotlinx.android.synthetic.main.search_suggestions_hint.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.hasCamera
+import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
@@ -48,6 +54,8 @@ import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.components.searchengine.FenixSearchEngineProvider
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.isKeyboardVisible
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentAction
@@ -75,6 +83,27 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
 
+    private var keyboardVisible: Boolean = false
+
+    override fun onStart() {
+        super.onStart()
+        // https://github.com/mozilla-mobile/fenix/issues/14279
+        // To prevent GeckoView from resizing we're going to change the softInputMode to not adjust
+        // the size of the window.
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        if (keyboardVisible) {
+            toolbarView.view.edit.focus()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // https://github.com/mozilla-mobile/fenix/issues/14279
+        // Let's reset back to the default behavior after we're done searching
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        keyboardVisible = toolbarView.view.isKeyboardVisible()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.SearchDialogStyle)
@@ -95,12 +124,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     ): View? {
         val args by navArgs<SearchDialogFragmentArgs>()
         val view = inflater.inflate(R.layout.fragment_search_dialog, container, false)
+        val activity = requireActivity() as HomeActivity
+        val isPrivate = activity.browsingModeManager.mode.isPrivate
 
         requireComponents.analytics.metrics.track(Event.InteractWithSearchURLArea)
 
         store = SearchDialogFragmentStore(
             createInitialSearchFragmentState(
-                activity as HomeActivity,
+                activity,
                 requireComponents,
                 tabId = args.sessionId,
                 pastedText = args.pastedText,
@@ -110,14 +141,15 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         interactor = SearchDialogInteractor(
             SearchDialogController(
-                activity = requireActivity() as HomeActivity,
+                activity = activity,
                 sessionManager = requireComponents.core.sessionManager,
                 store = store,
                 navController = findNavController(),
                 settings = requireContext().settings(),
                 metrics = requireComponents.analytics.metrics,
+                dismissDialog = { dismissAllowingStateLoss() },
                 clearToolbarFocus = {
-                    toolbarView.view.hideKeyboard()
+                    toolbarView.view.hideKeyboardAndSave()
                     toolbarView.view.clearFocus()
                 }
             )
@@ -126,14 +158,14 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         toolbarView = ToolbarView(
             requireContext(),
             interactor,
-            null,
-            false,
+            historyStorageProvider(),
+            isPrivate,
             view.toolbar,
             requireComponents.core.engine
         ).also(::addSearchButton)
 
         awesomeBarView = AwesomeBarView(
-            requireContext(),
+            activity,
             interactor,
             view.awesome_bar
         )
@@ -142,7 +174,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         setShortcutsChangedListener(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES)
 
         view.awesome_bar.setOnTouchListener { _, _ ->
-            view.hideKeyboard()
+            view.hideKeyboardAndSave()
             false
         }
 
@@ -152,7 +184,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             .findViewById<InlineAutocompleteEditText>(R.id.mozac_browser_toolbar_edit_url_view)
         urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
 
-        val isPrivate = (requireActivity() as HomeActivity).browsingModeManager.mode.isPrivate
         requireComponents.core.engine.speculativeCreateSession(isPrivate)
 
         return view
@@ -166,7 +197,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         setupConstraints(view)
 
         search_wrapper.setOnClickListener {
-            it.hideKeyboard()
+            it.hideKeyboardAndSave()
             dismissAllowingStateLoss()
         }
 
@@ -180,8 +211,22 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             if (!requireContext().hasCamera()) { return@setOnClickListener }
 
             toolbarView.view.clearFocus()
-            requireComponents.analytics.metrics.track(Event.QRScannerOpened)
-            qrFeature.get()?.scan(R.id.search_wrapper)
+
+            val cameraPermissionsDenied =
+                PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                    getPreferenceKey(R.string.pref_key_camera_permissions),
+                    false
+                )
+
+            if (cameraPermissionsDenied) {
+                interactor.onCameraPermissionsNeeded()
+                resetFocus()
+                view.hideKeyboard()
+                toolbarView.view.requestFocus()
+            } else {
+                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+                qrFeature.get()?.scan(R.id.search_wrapper)
+            }
         }
 
         fill_link_from_clipboard.setOnClickListener {
@@ -207,7 +252,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             SupportUtils.SumoTopic.SEARCH_SUGGESTION
                         ),
                         newTab = store.state.tabId == null,
-                        from = BrowserDirection.FromSearch
+                        from = BrowserDirection.FromSearchDialog
                     )
             }
 
@@ -249,10 +294,24 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             updateSearchSuggestionsHintVisibility(it)
             updateClipboardSuggestion(it, requireContext().components.clipboardHandler.url)
             updateToolbarContentDescription(it)
+            updateSearchShortcutsIcon(it)
             toolbarView.update(it)
             awesomeBarView.update(it)
             firstUpdate = false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resetFocus()
+        toolbarView.view.edit.focus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        qr_scan_button.isChecked = false
+        view?.hideKeyboard()
+        toolbarView.view.requestFocus()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -268,17 +327,21 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onBackPressed(): Boolean {
         return when {
             qrFeature.onBackPressed() -> {
-                toolbarView.view.edit.focus()
-                view?.qr_scan_button?.isChecked = false
-                toolbarView.view.requestFocus()
+                resetFocus()
                 true
             }
             else -> {
-                view?.hideKeyboard()
+                view?.hideKeyboardAndSave()
                 dismissAllowingStateLoss()
                 true
             }
         }
+    }
+
+    private fun historyStorageProvider(): HistoryStorage? {
+        return if (requireContext().settings().shouldShowHistorySuggestions) {
+            requireComponents.core.historyStorage
+        } else null
     }
 
     private fun createQrFeature(): QrFeature {
@@ -308,7 +371,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                                 .openToBrowserAndLoad(
                                     searchTermOrURL = result,
                                     newTab = store.state.tabId == null,
-                                    from = BrowserDirection.FromSearch
+                                    from = BrowserDirection.FromSearchDialog
                                 )
                             dialog.dismiss()
                         }
@@ -319,6 +382,39 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             })
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
+                context?.let { context: Context ->
+                    it.onPermissionsResult(permissions, grantResults)
+                    if (!context.isPermissionGranted(Manifest.permission.CAMERA)) {
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .edit().putBoolean(
+                                getPreferenceKey(R.string.pref_key_camera_permissions), true
+                            ).apply()
+                        resetFocus()
+                    } else {
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .edit().putBoolean(
+                                getPreferenceKey(R.string.pref_key_camera_permissions), false
+                            ).apply()
+                    }
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun resetFocus() {
+        qr_scan_button.isChecked = false
+        toolbarView.view.edit.focus()
+        toolbarView.view.requestFocus()
+    }
+
     private fun setupConstraints(view: View) {
         if (view.context.settings().toolbarPosition == ToolbarPosition.BOTTOM) {
             ConstraintSet().apply {
@@ -327,10 +423,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 clear(toolbar.id, TOP)
                 connect(toolbar.id, BOTTOM, PARENT_ID, BOTTOM)
 
-                clear(awesome_bar.id, TOP)
                 clear(pill_wrapper.id, BOTTOM)
-                connect(awesome_bar.id, TOP, PARENT_ID, TOP)
                 connect(pill_wrapper.id, BOTTOM, toolbar.id, TOP)
+
+                clear(search_suggestions_hint.id, TOP)
+                connect(search_suggestions_hint.id, TOP, PARENT_ID, TOP)
 
                 clear(fill_link_from_clipboard.id, TOP)
                 connect(fill_link_from_clipboard.id, BOTTOM, pill_wrapper.id, TOP)
@@ -361,6 +458,15 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 listener = ::launchVoiceSearch
             )
         )
+    }
+
+    /**
+     * Used to save keyboard status on stop/sleep, to be restored later.
+     * See #14559
+     * */
+    private fun View.hideKeyboardAndSave() {
+        keyboardVisible = false
+        this.hideKeyboard()
     }
 
     private fun launchVoiceSearch() {
@@ -409,6 +515,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         toolbarView.view.contentDescription =
             searchState.searchEngineSource.searchEngine.name + ", " + urlView.hint
         urlView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+
+    private fun updateSearchShortcutsIcon(searchState: SearchFragmentState) {
+        view?.apply {
+            search_engines_shortcut_button.isVisible = searchState.areShortcutsAvailable
+
+            val showShortcuts = searchState.showSearchShortcuts
+            search_engines_shortcut_button.isChecked = showShortcuts
+
+            val color = if (showShortcuts) R.attr.contrastText else R.attr.primaryText
+            search_engines_shortcut_button.compoundDrawables[0]?.setTint(
+                requireContext().getColorFromAttr(color)
+            )
+        }
     }
 
     companion object {

@@ -22,11 +22,6 @@ object FeatureFlags {
     val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables viewing tab history
-     */
-    val tabHistory = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables the new search experience
      */
     const val newSearchExperience = true
@@ -34,7 +29,7 @@ object FeatureFlags {
     /**
      * Enables showing the top frequently visited sites
      */
-    val topFrecentSite = Config.channel.isNightlyOrDebug
+    const val topFrecentSite = true
 
     /**
      * Enables wait til first contentful paint
@@ -44,15 +39,10 @@ object FeatureFlags {
     /**
      * Enables downloads with external download managers.
      */
-    val externalDownloadManager = Config.channel.isNightlyOrDebug
+    const val externalDownloadManager = true
 
     /**
-     * Enables viewing downloads in browser.
+     * Enables swipe to delete in bookmarks
      */
-    val viewDownloads = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables selecting from multiple logins.
-     */
-    val loginSelect = Config.channel.isNightlyOrDebug
+    val bookmarkSwipeToDelete = Config.channel.isNightlyOrDebug
 }

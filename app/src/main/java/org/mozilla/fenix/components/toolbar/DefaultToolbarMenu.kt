@@ -24,7 +24,6 @@ import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -51,7 +50,8 @@ class DefaultToolbarMenu(
     shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {},
     private val lifecycleOwner: LifecycleOwner,
-    private val bookmarksStorage: BookmarksStorage
+    private val bookmarksStorage: BookmarksStorage,
+    val isPinningSupported: Boolean
 ) : ToolbarMenu {
 
     private var currentUrlIsBookmarked = false
@@ -154,11 +154,11 @@ class DefaultToolbarMenu(
 
     // Predicates that need to be repeatedly called as the session changes
     private fun canAddToHomescreen(): Boolean =
-        session != null && context.components.useCases.webAppUseCases.isPinningSupported() &&
+        session != null && isPinningSupported &&
                 !context.components.useCases.webAppUseCases.isInstallable()
 
     private fun canInstall(): Boolean =
-        session != null && context.components.useCases.webAppUseCases.isPinningSupported() &&
+        session != null && isPinningSupported &&
                 context.components.useCases.webAppUseCases.isInstallable()
 
     private fun shouldShowOpenInApp(): Boolean = session?.let { session ->
@@ -181,7 +181,7 @@ class DefaultToolbarMenu(
             .syncedTabsInTabsTray
 
         val menuItems = listOfNotNull(
-            if (FeatureFlags.viewDownloads) downloadsItem else null,
+            downloadsItem,
             historyItem,
             bookmarksItem,
             if (syncedTabsInTabsTray) null else syncedTabs,
@@ -337,7 +337,7 @@ class DefaultToolbarMenu(
     }
 
     val downloadsItem = BrowserMenuImageText(
-        "Downloads",
+        context.getString(R.string.library_downloads),
         R.drawable.ic_download,
         primaryTextColor()
     ) {

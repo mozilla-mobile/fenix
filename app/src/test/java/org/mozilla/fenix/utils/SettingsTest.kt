@@ -128,13 +128,13 @@ class SettingsTest {
     fun showLoginsDialogWarningSync() {
         // When just created
         // Then
-        assertEquals(0, settings.loginsSecureWarningSyncCount)
+        assertEquals(0, settings.loginsSecureWarningSyncCount.value)
 
         // When
         settings.incrementShowLoginsSecureWarningSyncCount()
 
         // Then
-        assertEquals(1, settings.loginsSecureWarningSyncCount)
+        assertEquals(1, settings.loginsSecureWarningSyncCount.value)
     }
 
     @Test
@@ -154,13 +154,13 @@ class SettingsTest {
     fun showLoginsDialogWarning() {
         // When just created
         // Then
-        assertEquals(0, settings.loginsSecureWarningCount)
+        assertEquals(0, settings.loginsSecureWarningCount.value)
 
         // When
         settings.incrementShowLoginsSecureWarningCount()
 
         // Then
-        assertEquals(1, settings.loginsSecureWarningCount)
+        assertEquals(1, settings.loginsSecureWarningCount.value)
     }
 
     @Test
@@ -187,6 +187,47 @@ class SettingsTest {
 
         // Then
         assertTrue(settings.shouldUseLightTheme)
+    }
+
+    @Test
+    fun shouldManuallyCloseTabs() {
+        // When just created
+        // Then
+        assertTrue(settings.manuallyCloseTabs)
+
+        // When
+        settings.manuallyCloseTabs = false
+
+        // Then
+        assertFalse(settings.shouldUseLightTheme)
+    }
+
+    @Test
+    fun getTabTimeout() {
+        // When just created
+        // Then
+        assertTrue(settings.manuallyCloseTabs)
+
+        // When
+        settings.manuallyCloseTabs = false
+        settings.closeTabsAfterOneDay = true
+
+        // Then
+        assertEquals(settings.getTabTimeout(), Settings.ONE_DAY_MS)
+
+        // When
+        settings.closeTabsAfterOneDay = false
+        settings.closeTabsAfterOneWeek = true
+
+        // Then
+        assertEquals(settings.getTabTimeout(), Settings.ONE_WEEK_MS)
+
+        // When
+        settings.closeTabsAfterOneWeek = false
+        settings.closeTabsAfterOneMonth = true
+
+        // Then
+        assertEquals(settings.getTabTimeout(), Settings.ONE_MONTH_MS)
     }
 
     @Test

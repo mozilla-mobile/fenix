@@ -82,6 +82,28 @@
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">Ani ko’ág̃a</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Embohekokuaa Firefox ombojuruja hag̃ua ijehegui juajuha tembipuru’ípe.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Eho ñembohekópe</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Mboyke</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Eikotevẽ eike ta’ãngamýime. Eho Android ñembohekópe, eukutu ñemoneĩ ha moneĩ.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Eho ñembohekópe</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Mboyke</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Emboheko tendayke ijurujáva oñemboty hag̃ua ijehegui ojehecha’ỹva pe ára, arapokõindy térã jasýpe.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Ehecha jeporavorã</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Mboyke</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Tendayke pyahu</string>
@@ -250,6 +272,8 @@
     <string name="preferences_open_links_in_a_private_tab">Embojuruja juajuha tendayke ñemíme</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Emoneĩ mba’erechaha japyhy kundaha ñemíme</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Oñemoneĩrõ, umi tendayke ñemigua ojehecháta oĩ vove heta tembipuru’i ijurujáva</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Embojuaju jeike pya’eha tendayke ñemiguáre</string>
     <!-- Preference for accessibility -->
@@ -268,6 +292,10 @@
     <string name="preferences_toolbar">Tembiporu renda</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Téma</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Ñepyrũ</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Ñeha’ãnga</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Ñemomba’ete</string>
     <!-- Preference description for banner about signing in -->
@@ -304,6 +332,8 @@
     <string name="preferences_search_bookmarks">Eheka techaukaha</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Mba’ete ñemboheko</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Moĩmbajehegui URLs</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Embojuruja juajuha tembipuru’ípe</string>
     <!-- Preference for open download with an external download manager app -->
@@ -442,6 +472,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Ehapykueho mba’e’oka téma</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Embosyryry hekopyahu hag̃ua</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Emongu’e emoñemi hag̃ua mba’erenda</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Eraha mba’erenda yke gotyo emoambue hag̃ua tendayke</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Eraha mba’erenda yvate gotyo embojuruja hag̃ua tendayke</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Tembiapo</string>
@@ -475,6 +516,31 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Mboty</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Tendayke oñemboty ramóva</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Tembiasakue jehechaukapa</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d tendaykekuéra</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d tendayke</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Ndaipóri tendayke oñemboty ramóva</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Emboty tendayke</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Popegua</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Peteĩ ára rire</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Peteĩ arapokõindy rire</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Peteĩ jasy rire</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Tendayke ijurujáva</string>
@@ -495,6 +561,10 @@
     <string name="tab_tray_menu_item_save">Eñongatu atyhápe</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Emoherakuã opaite tendayke</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Tendayke oñemboty ramóva</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Tendayke ñemboheko</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Emboty opaite tendayke</string>
     <!-- Shortcut action to open new tab -->
@@ -541,6 +611,8 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Mboguete</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Emboguete tembiasakuégui</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Ayvu Ñemigua)</string>
 
@@ -1013,7 +1085,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Eñepyrũ tembiapo %s ramo ambue Firefox kundahára ko pumbyry pegua. ¿Eñepyrũse tembiapo ko mba’ete ndive?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Eike %s ramo ambue Firefox kundahára ko mba’e’oka pegua. ¿Eikese añetépa ko mba’ete ndive?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Héẽ, eñepyrũ tembiapo</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1265,7 +1337,7 @@
     <string name="add_to_homescreen_text_placeholder">Jeike pya’eha réra</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Ikatu embojuaju ko ñanduti renda ne mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve rekávo tembipuru’ícharamo.</string>
+    <string name="add_to_homescreen_description_2">Ikatu embojuaju ko ñanduti renda ne mba’e’oka mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve, peteĩ tembipuru’ícharamo.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Tembiapo ñepyrũ ha ñe’ẽñemi</string>
@@ -1335,8 +1407,12 @@
     <string name="logins_site_copied">Tenda ohasáva kuatiajokohápe</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Emonguatia ñe’ẽñemi</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Embogue ñe’ẽñemi</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Emonguatia puruhára réra</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Embogue puruhára réra</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Emonguatia tenda</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1495,7 +1571,7 @@
     <string name="saved_login_duplicate">Oĩma tembiapo ñepyrũ puruhára réra peichagua</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Emoinge ambue mba’e’oka.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Ikatúpiko emoneĩjey.</string>
@@ -1516,10 +1592,27 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Ehupytýma hu’ã tenda mba’guasúvape g̃uarã</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">Embojuaju hag̃ua tenda pyahu, omboguéta peteĩ. Ejopy are tenda ha eiporavo mboguete.</string>
+    <string name="top_sites_max_limit_content_2">Embojuaju hag̃ua tenda pyahu, embogue peteĩ. Ejopy are tenda ha eiporavo mboguete.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Oĩma, aikumby</string>
 
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Ehechauka tenda ojeikeveha</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Mboguete</string>
-</resources>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Eguenohẽ %s-gui eikotevẽva.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Embyaty umi mba’ekuéra ehayhu añetéva</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Emboaty hekaha, tenda ha tendayke ojueheguáva eike pya’eve hag̃ua ag̃ave.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Eñepyrũ tembiapo %s ramo ambue Firefox kundahára ko pumbyry pegua. ¿Eñepyrũse tembiapo ko mba’ete ndive?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Ikatu embojuaju ko ñanduti renda ne mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve rekávo tembipuru’ícharamo.</string>
+
+    </resources>

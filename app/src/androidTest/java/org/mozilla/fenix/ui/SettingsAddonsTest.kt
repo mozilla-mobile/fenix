@@ -1,5 +1,6 @@
 package org.mozilla.fenix.ui
 
+import androidx.test.espresso.IdlingRegistry
 import org.mozilla.fenix.helpers.TestAssetHelper
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
@@ -10,9 +11,12 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
 import org.junit.Before
 import org.junit.After
+import org.junit.Ignore
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -25,6 +29,7 @@ class SettingsAddonsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
 
     private lateinit var mockWebServer: MockWebServer
+    private var addonsListIdlingResource: RecyclerViewIdlingResource? = null
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -40,6 +45,10 @@ class SettingsAddonsTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+
+        if (addonsListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
+        }
     }
 
     // Walks through settings add-ons menu to ensure all items are present
@@ -51,6 +60,9 @@ class SettingsAddonsTest {
             verifyAdvancedHeading()
             verifyAddons()
         }.openAddonsManagerMenu {
+            addonsListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
+            IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
             verifyAddonsItems()
         }
     }
@@ -65,6 +77,9 @@ class SettingsAddonsTest {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
         }.openAddonsManagerMenu {
+            addonsListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
+            IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
             clickInstallAddon(addonName)
             verifyAddonPrompt(addonName)
             cancelInstallAddon()
@@ -74,6 +89,7 @@ class SettingsAddonsTest {
         }
     }
 
+    @Ignore("Failing intermittently on Firebase: https://github.com/mozilla-mobile/fenix/issues/13829")
     // Opens the addons settings menu, installs an addon, then uninstalls
     @Test
     fun verifyAddonsCanBeUninstalled() {
@@ -85,6 +101,9 @@ class SettingsAddonsTest {
             verifyAdvancedHeading()
             verifyAddons()
         }.openAddonsManagerMenu {
+            addonsListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
+            IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
             clickInstallAddon(addonName)
             acceptInstallAddon()
             verifyDownloadAddonPrompt(addonName, activityTestRule)

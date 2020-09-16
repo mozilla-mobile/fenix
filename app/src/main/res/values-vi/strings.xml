@@ -79,6 +79,28 @@
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">Không phải bây giờ</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Bạn có thể đặt Firefox để tự động mở các liên kết trong ứng dụng.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Đi đến cài đặt</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Bỏ qua</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Cần có quyền truy cập máy ảnh. Đi tới cài đặt Android, chạm vào quyền và chạm cho phép.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Đi đến cài đặt</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Bỏ qua</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Đặt các thẻ đang mở để tự động đóng mà bạn chưa xem trong ngày, tuần hoặc tháng trước.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Xem tùy chọn</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
+
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
     <string name="home_screen_shortcut_open_new_tab_2">Thẻ mới</string>
@@ -245,6 +267,8 @@
     <string name="preferences_open_links_in_a_private_tab">Mở liên kết trong thẻ riêng tư</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Cho phép chụp ảnh màn hình trong trình duyệt riêng tư</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Nếu được phép, các thẻ riêng tư cũng sẽ hiển thị khi nhiều ứng dụng đang mở</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Thêm lối tắt duyệt web riêng tư</string>
     <!-- Preference for accessibility -->
@@ -263,6 +287,10 @@
     <string name="preferences_toolbar">Thanh công cụ</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Chủ đề</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Trang chủ</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Cử chỉ</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Tùy biến</string>
     <!-- Preference description for banner about signing in -->
@@ -299,6 +327,8 @@
     <string name="preferences_search_bookmarks">Tìm kiếm dấu trang</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Cài đặt tài khoản</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Tự động điền URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Mở liên kết trong ứng dụng</string>
 
@@ -432,9 +462,19 @@
     <!-- Preference for using dark theme -->
     <string name="preference_dark_theme">Tối</string>
     <!-- Preference for using using dark or light theme automatically set by battery -->
-    <string name="preference_auto_battery_theme">Đặt theo tiết kiệm pin</string>
+    <string name="preference_auto_battery_theme">Đặt theo trình tiết kiệm pin</string>
     <!-- Preference for using following device theme -->
-    <string name="preference_follow_device_theme">Theo chủ đề thiết bị</string>
+    <string name="preference_follow_device_theme">Đặt theo chủ đề thiết bị</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Kéo để làm mới</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Cuộn để ẩn thanh công cụ</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Vuốt thanh công cụ sang hai bên để chuyển đổi các thẻ</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Vuốt thanh công cụ lên để mở các thẻ</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -468,6 +508,31 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Đóng</string>
 
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Các thẻ đã đóng gần đây</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Hiển thị toàn bộ lịch sử</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d thẻ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d thẻ</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Không có thẻ nào đã đóng gần đây ở đây</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Đóng thẻ</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Thủ công</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Sau một ngày</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Sau một tuần</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Sau một tháng</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Các thẻ đang mở</string>
@@ -487,6 +552,10 @@
     <string name="tab_tray_menu_item_save">Lưu vào bộ sưu tập</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Chia sẻ tất cả các thẻ</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Các thẻ đã đóng gần đây</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Cài đặt thẻ</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Đóng tất cả các thẻ</string>
     <!-- Shortcut action to open new tab -->
@@ -533,6 +602,8 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Xóa</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Xóa khỏi lịch sử</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Chế độ riêng tư)</string>
 
@@ -991,7 +1062,7 @@
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Bạn đã đăng nhập dưới dạng %s trên một trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Bạn đã đăng nhập dưới dạng %s trên trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Có, đăng nhập cho tôi</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1235,7 +1306,7 @@
     <string name="add_to_homescreen_text_placeholder">Tên lối tắt</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Bạn có thể dễ dàng thêm trang web vào màn hình chính của điện thoại của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
+    <string name="add_to_homescreen_description_2">Bạn có thể dễ dàng thêm trang web vào màn hình chính thiết bị của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Đăng nhập và mật khẩu</string>
@@ -1305,8 +1376,12 @@
     <string name="logins_site_copied">Đã sao chép trang web vào bộ nhớ tạm</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Sao chép mật khẩu</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Xóa mật khẩu</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Sao chép tên người dùng</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Xóa tên người dùng</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Sao chép URL trang web</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1461,7 +1536,7 @@
     <string name="saved_login_duplicate">Một thông tin đăng nhập với tên người dùng đó đã tồn tại</string>
 
     <!-- Synced Tabs -->
-   <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
     <string name="synced_tabs_connect_another_device">Kết nối thiết bị khác.</string>
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Vui lòng xác thực lại.</string>
@@ -1481,10 +1556,27 @@
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Đã đạt đến giới hạn trang web hàng đầu</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content">Để thêm một trang web hàng đầu mới, loại bỏ một cái cũ trước. Chạm và giữ trang web và chọn xóa.</string>
+    <string name="top_sites_max_limit_content_2">Để thêm một trang web hàng đầu mới, loại bỏ một cái cũ trước. Chạm và giữ trang web và chọn xóa.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, đã hiểu</string>
 
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Hiển thị các trang web được truy cập nhiều nhất</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Xóa</string>
-</resources>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Tận dụng tối đa %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Thu thập những thứ quan trọng với bạn</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Nhóm các tìm kiếm, trang web và thẻ tương tự để truy cập nhanh sau này.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Bạn đã đăng nhập dưới dạng %s trên một trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Bạn có thể dễ dàng thêm trang web vào màn hình chính của điện thoại của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
+
+    </resources>
