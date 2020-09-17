@@ -15,7 +15,7 @@
 
     <!-- MP Migration -->
     <string name="mp_homescreen_tip_title">Ищете свои логины?</string>
-    <string name="mp_homescreen_tip_message">Если у вас был мастер-пароль до обновления Iceweasel, вам нужно будет ввести его, чтобы перенести сохранённые логины.</string>
+    <string name="mp_homescreen_tip_message">Если у вас был мастер-пароль до обновления Iceraven, вам нужно будет ввести его, чтобы перенести сохранённые логины.</string>
     <string name="mp_homescreen_button">Введите мастер-пароль</string>
     <string name="mp_dialog_title_recovery_transfer_saved_logins">Перенести сохранённые логины</string>
     <string name="mp_dialog_message_recovery_transfer_saved_logins">Введите свой предыдущий мастер-пароль.</string>
@@ -23,7 +23,7 @@
     <string name="mp_dialog_negative_transfer_saved_logins">Отмена</string>
     <string name="mp_dialog_error_transfer_saved_logins">Неправильный пароль</string>
     <string name="mp_dialog_title_transfer_success">Перенесено успешно</string>
-    <string name="mp_dialog_message_transfer_success">Ваши сохранённые логины были перенесены в Iceweasel.</string>
+    <string name="mp_dialog_message_transfer_success">Ваши сохранённые логины были перенесены в Iceraven.</string>
     <string name="mp_dialog_positive_transfer_success">Просмотр сохранённых логинов</string>
     <string name="mp_dialog_close_transfer">Закрыть</string>
     <string name="mp_dialog_title_transfer_failure">Перенос не удался</string>
