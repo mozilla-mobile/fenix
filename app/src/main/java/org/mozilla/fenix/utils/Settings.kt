@@ -778,11 +778,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Sets the state of permissions that have been checked, where [false] denotes already checked
      * and [true] denotes needing to check. See [shouldShowCameraPermissionPrompt].
      */
-    fun setCameraPermissionNeededState(state: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed), state
-        ).apply()
-    }
+    var setCameraPermissionNeededState by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
+        default = true
+    )
 
     var shouldPromptToSaveLogins by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_save_logins),

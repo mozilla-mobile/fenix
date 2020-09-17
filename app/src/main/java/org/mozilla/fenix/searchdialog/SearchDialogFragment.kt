@@ -230,7 +230,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     toolbarView.view.requestFocus()
                 }
             }
-            requireContext().settings().setCameraPermissionNeededState(false)
+            requireContext().settings().setCameraPermissionNeededState = false
         }
 
         fill_link_from_clipboard.setOnClickListener {
@@ -390,7 +390,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
                 resetFocus()
-                requireContext().settings().setCameraPermissionNeededState(false)
+                requireContext().settings().setCameraPermissionNeededState = false
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }

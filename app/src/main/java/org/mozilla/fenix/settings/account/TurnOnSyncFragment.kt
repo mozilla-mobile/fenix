@@ -32,7 +32,7 @@ import org.mozilla.fenix.ext.showToolbar
 class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     private val args by navArgs<TurnOnSyncFragmentArgs>()
-    private lateinit var interactor: SyncInteractor
+    private lateinit var interactor: DefaultSyncInteractor
 
     private var shouldLoginJustWithEmail = false
     private var pairWithEmailStarted = false
@@ -55,7 +55,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             }
         }
         view?.hideKeyboard()
-        requireContext().settings().setCameraPermissionNeededState(false)
+        requireContext().settings().setCameraPermissionNeededState = false
     }
 
     private fun navigateToPairFragment() {
@@ -114,8 +114,8 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 
-        interactor = SyncInteractor(
-            SyncController(activity = activity as HomeActivity)
+        interactor = DefaultSyncInteractor(
+            DefaultSyncController(activity = activity as HomeActivity)
         )
 
         return view

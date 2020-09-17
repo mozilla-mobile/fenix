@@ -15,15 +15,15 @@ import org.junit.Test
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.search.AlertDialogBuilder
 
-class SyncControllerTest {
+class DefaultSyncControllerTest {
 
-    private lateinit var syncController: SyncController
+    private lateinit var syncController: DefaultSyncController
     @MockK(relaxed = true) private lateinit var activity: HomeActivity
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        syncController = SyncController(activity)
+        syncController = DefaultSyncController(activity)
     }
 
     @Test

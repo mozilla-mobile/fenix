@@ -9,15 +9,15 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
-class SyncInteractorTest {
+class DefaultSyncInteractorTest {
 
-    private lateinit var syncInteractor: SyncInteractor
-    private lateinit var syncController: SyncController
+    private lateinit var syncInteractor: DefaultSyncInteractor
+    private lateinit var syncController: DefaultSyncController
 
     @Before
     fun setUp() {
         syncController = mockk(relaxed = true)
-        syncInteractor = SyncInteractor(syncController)
+        syncInteractor = DefaultSyncInteractor(syncController)
     }
 
     @Test

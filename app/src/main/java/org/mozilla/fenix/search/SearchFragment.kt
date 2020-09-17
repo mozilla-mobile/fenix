@@ -199,7 +199,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         search_scan_button.visibility = if (context?.hasCamera() == true) View.VISIBLE else View.GONE
 
         qrFeature.set(
-            creatQrFeature(),
+            createQrFeature(),
             owner = this,
             view = view
         )
@@ -218,7 +218,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             }
             view.hideKeyboard()
             search_scan_button.isChecked = false
-            requireContext().settings().setCameraPermissionNeededState(false)
+            requireContext().settings().setCameraPermissionNeededState = false
         }
 
         view.search_engines_shortcut_button.setOnClickListener {
@@ -283,7 +283,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
         startPostponedEnterTransition()
     }
 
-    private fun creatQrFeature(): QrFeature {
+    private fun createQrFeature(): QrFeature {
         return QrFeature(
             requireContext(),
             fragmentManager = parentFragmentManager,
@@ -421,7 +421,7 @@ class SearchFragment : Fragment(), UserInteractionHandler {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
                 resetFocus()
-                requireContext().settings().setCameraPermissionNeededState(false)
+                requireContext().settings().setCameraPermissionNeededState = false
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }

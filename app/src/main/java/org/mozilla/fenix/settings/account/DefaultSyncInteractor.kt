@@ -4,13 +4,17 @@
 
 package org.mozilla.fenix.settings.account
 
+interface SyncInteractor {
+    fun onCameraPermissionsNeeded()
+}
+
 /**
  * Interactor for [TurnOnSyncFragment].
  *
  * @param syncController Handles the interactions
  */
-class SyncInteractor(private val syncController: SyncController) {
-    fun onCameraPermissionsNeeded() {
+class DefaultSyncInteractor(private val syncController: DefaultSyncController): SyncInteractor {
+    override fun onCameraPermissionsNeeded() {
         syncController.handleCameraPermissionsNeeded()
     }
 }

@@ -16,12 +16,16 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.SupportUtils
 
+interface SyncController {
+    fun handleCameraPermissionsNeeded()
+}
+
 /**
- * Controller for handling [SyncInteractor] requests.
+ * Controller for handling [DefaultSyncInteractor] requests.
  */
-class SyncController(
+class DefaultSyncController(
     private val activity: HomeActivity
-) {
+) : SyncController {
 
     /**
      * Creates and shows an [AlertDialog] when camera permissions are needed.
@@ -32,7 +36,7 @@ class SyncController(
      *
      * [AlertDialog.BUTTON_NEGATIVE] dismisses the dialog.
      */
-    fun handleCameraPermissionsNeeded() {
+    override fun handleCameraPermissionsNeeded() {
         val dialog = buildDialog()
         dialog.show()
     }
@@ -44,12 +48,10 @@ class SyncController(
                 activity.resources.getString(R.string.camera_permissions_needed_message)
             )
             setMessage(spannableText)
-            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) {
-                    dialog: DialogInterface, _ ->
+            setNegativeButton(R.string.camera_permissions_needed_negative_button_text) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }
-            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-                    dialog: DialogInterface, _ ->
+            setPositiveButton(R.string.camera_permissions_needed_positive_button_text) { dialog: DialogInterface, _ ->
                 val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 } else {
