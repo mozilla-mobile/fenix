@@ -13,7 +13,7 @@ interface SyncInteractor {
  *
  * @param syncController Handles the interactions
  */
-class DefaultSyncInteractor(private val syncController: DefaultSyncController): SyncInteractor {
+class DefaultSyncInteractor(private val syncController: DefaultSyncController) : SyncInteractor {
     override fun onCameraPermissionsNeeded() {
         syncController.handleCameraPermissionsNeeded()
     }
