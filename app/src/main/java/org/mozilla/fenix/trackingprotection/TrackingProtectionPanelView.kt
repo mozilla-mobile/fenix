@@ -152,7 +152,6 @@ class TrackingProtectionPanelView(
     private fun getLastUsedCategoryView(categoryTitle: String) = when (categoryTitle) {
         CROSS_SITE_TRACKING_COOKIES.name -> {
             if (cross_site_tracking.isGone) cross_site_tracking_loaded else cross_site_tracking
-
         }
         SOCIAL_MEDIA_TRACKERS.name -> {
             if (social_media_trackers.isGone) social_media_trackers_loaded else social_media_trackers
