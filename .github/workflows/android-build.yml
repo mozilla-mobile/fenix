@@ -6,8 +6,6 @@ on:
   pull_request:
     branches:
       - fork
-  schedule:
-    - cron:  '0 12 * * *' # Every day at 12 PM UTC
 jobs:
   run-build:
     runs-on: ubuntu-latest
