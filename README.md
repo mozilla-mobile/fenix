@@ -1,4 +1,5 @@
-# Iceweasel Mobile! [![Build Status](https://travis-ci.org/fork-maintainers/iceweasel.svg?branch=fork)](https://travis-ci.org/fork-maintainers/iceweasel)
+# Iceweasel Mobile! [![Build Status](https://travis-ci.org/fork-maintainers/iceweasel.svg?branch=fork)](https://travis-ci.org/fork-maintainers/iceweasel) ![Android build](https://github.com/fork-maintainers/iceweasel/workflows/Android%20build/badge.svg)
+
 Definitely not brought to you by Mozilla!
 
 Iceweasel Mobile is a web browser for Android, based on [Mozilla's Fenix version of Firefox](https://github.com/mozilla-mobile/fenix/), [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
