@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.searchdialog
+package org.mozilla.fenix.search
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -25,9 +25,7 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
-import org.mozilla.fenix.search.SearchController
-import org.mozilla.fenix.search.SearchFragmentAction
-import org.mozilla.fenix.search.SearchFragmentStore
+import org.mozilla.fenix.searchdialog.SearchDialogFragmentDirections
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 

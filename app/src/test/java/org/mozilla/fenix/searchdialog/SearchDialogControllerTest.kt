@@ -31,6 +31,8 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.search.AlertDialogBuilder
+import org.mozilla.fenix.search.SearchDialogController
+import org.mozilla.fenix.search.SearchDialogFragmentStore
 import org.mozilla.fenix.search.SearchFragmentAction
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
