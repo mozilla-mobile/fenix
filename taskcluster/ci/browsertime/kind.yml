@@ -235,6 +235,7 @@ jobs:
 
     youtube-playback:
         test-name: youtube-playback
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         treeherder:
             symbol: 'Btime(ytp)'
@@ -247,18 +248,21 @@ jobs:
 
     youtube-playback-av1-sfr:
         test-name: youtube-playback-av1-sfr
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         treeherder:
             symbol: 'Btime(ytp-av1-sfr)'
 
     youtube-playback-h264-sfr:
         test-name: youtube-playback-h264-sfr
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         treeherder:
             symbol: Btime(ytp-h264-sfr)
 
     youtube-playback-h264:
         description: "Raptor YouTube Playback H264 on Fenix"
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         test-name: youtube-playback-h264
         treeherder:
@@ -266,6 +270,7 @@ jobs:
 
     youtube-playback-vp9-sfr:
         description: "Raptor YouTube Playback VP9 SFR on Fenix"
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         test-name: youtube-playback-vp9-sfr
         treeherder:
@@ -273,6 +278,7 @@ jobs:
 
     youtube-playback-widevine-hfr:
         description: "Raptor YouTube Playback Widevine HFR on Fenix"
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         test-name: youtube-playback-widevine-hfr
         treeherder:
@@ -280,6 +286,7 @@ jobs:
 
     youtube-playback-widevine-h264-sfr:
         description: "Raptor YouTube Playback Widevine H264 SFR on Fenix"
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         test-name: youtube-playback-widevine-h264-sfr
         treeherder:
@@ -287,6 +294,7 @@ jobs:
 
     youtube-playback-widevine-vp9-sfr:
         description: "Raptor YouTube Playback Widevine VP9 SFR on Fenix"
+        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         test-name: youtube-playback-widevine-vp9-sfr
         treeherder:
