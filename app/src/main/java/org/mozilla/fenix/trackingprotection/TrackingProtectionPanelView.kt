@@ -149,6 +149,11 @@ class TrackingProtectionPanelView(
         }
     }
 
+    /**
+     * Checks whether the permission was allowed or blocked when they were last used based on
+     * visibility, where "..._loaded" titles correspond to "Allowed" permissions and the other
+     * corresponds to "Blocked" permissions for each category.
+     */
     private fun getLastUsedCategoryView(categoryTitle: String) = when (categoryTitle) {
         CROSS_SITE_TRACKING_COOKIES.name -> {
             if (cross_site_tracking.isGone) cross_site_tracking_loaded else cross_site_tracking
