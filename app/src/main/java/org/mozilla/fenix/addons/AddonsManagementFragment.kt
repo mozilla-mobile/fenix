@@ -34,8 +34,8 @@ import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.feature.addons.ui.translatedName
-import network.novak.fenix.components.PagedAddonInstallationDialogFragment
-import network.novak.fenix.components.PagedAddonsManagerAdapter
+import io.github.fork_maintainers.iceraven.components.PagedAddonInstallationDialogFragment
+import io.github.fork_maintainers.iceraven.components.PagedAddonsManagerAdapter
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components

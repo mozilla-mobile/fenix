@@ -15,7 +15,7 @@ import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
-import network.novak.fenix.components.PagedAddonCollectionProvider
+import io.github.fork_maintainers.iceraven.components.PagedAddonCollectionProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
 import org.mozilla.fenix.ext.settings

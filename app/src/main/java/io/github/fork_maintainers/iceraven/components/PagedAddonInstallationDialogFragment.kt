@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package network.novak.fenix.components
+package io.github.fork_maintainers.iceraven.components
 
 import android.annotation.SuppressLint
 import android.app.Dialog
