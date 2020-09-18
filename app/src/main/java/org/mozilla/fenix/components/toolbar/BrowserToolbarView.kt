@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.component_browser_top_toolbar.*
 import kotlinx.android.synthetic.main.component_browser_top_toolbar.view.*
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
 import mozilla.components.browser.toolbar.display.DisplayToolbar
@@ -76,6 +77,10 @@ class BrowserToolbarView(
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
+
+    private val isPwaTabOrTwaTab: Boolean
+        get() = customTabSession?.customTabConfig?.externalAppType == ExternalAppType.PROGRESSIVE_WEB_APP ||
+                customTabSession?.customTabConfig?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
 
     init {
         val isCustomTabSession = customTabSession != null
@@ -213,9 +218,13 @@ class BrowserToolbarView(
     }
 
     fun expand() {
+        // expand only for normal tabs and custom tabs not for PWA or TWA
+        if (isPwaTabOrTwaTab) {
+            return
+        }
         when (settings.toolbarPosition) {
             ToolbarPosition.BOTTOM -> {
-                (view.layoutParams as CoordinatorLayout.LayoutParams).apply {
+                (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
                     // behavior can be null if the "Scroll to hide toolbar" setting is toggled off.
                     (behavior as? BrowserToolbarBottomBehavior)?.forceExpand(view)
                 }
@@ -234,7 +243,7 @@ class BrowserToolbarView(
     fun setScrollFlags(shouldDisableScroll: Boolean = false) {
         when (settings.toolbarPosition) {
             ToolbarPosition.BOTTOM -> {
-                if (settings.isDynamicToolbarEnabled) {
+                if (settings.isDynamicToolbarEnabled && !isPwaTabOrTwaTab) {
                     (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
                         behavior = BrowserToolbarBottomBehavior(view.context, null)
                     }
