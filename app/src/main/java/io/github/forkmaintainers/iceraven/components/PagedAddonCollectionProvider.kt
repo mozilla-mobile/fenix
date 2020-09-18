@@ -4,7 +4,7 @@
 
 @file:Suppress("TooManyFunctions")
 
-package io.github.fork_maintainers.iceraven.components
+package io.github.forkmaintainers.iceraven.components
 
 import android.content.Context
 import android.util.AtomicFile

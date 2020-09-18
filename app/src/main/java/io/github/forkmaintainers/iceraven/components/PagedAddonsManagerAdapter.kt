@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package io.github.fork_maintainers.iceraven.components
+package io.github.forkmaintainers.iceraven.components
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

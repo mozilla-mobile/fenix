@@ -21,7 +21,7 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
-        applicationId "io.github.fork_maintainers"
+        applicationId "io.github.forkmaintainers"
         minSdkVersion Config.minSdkVersion
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
