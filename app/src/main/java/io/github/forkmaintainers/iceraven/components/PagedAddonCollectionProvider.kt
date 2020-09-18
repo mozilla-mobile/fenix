@@ -4,7 +4,7 @@
 
 @file:Suppress("TooManyFunctions")
 
-package network.novak.fenix.components
+package io.github.forkmaintainers.iceraven.components
 
 import android.content.Context
 import android.util.AtomicFile

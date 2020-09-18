@@ -21,7 +21,7 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
-        applicationId "network.novak"
+        applicationId "io.github.forkmaintainers"
         minSdkVersion Config.minSdkVersion
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
@@ -109,20 +109,22 @@ android {
         forkDebug {
             shrinkResources false
             minifyEnabled false
-            applicationIdSuffix ".fenix.debug"
+            applicationIdSuffix ".iceraven.debug"
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
             // Need to replicate default debug config features
             signingConfig signingConfigs.debug
             debuggable true
+            def deepLinkSchemeValue = "iceraven-debug"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             // Use custom default allowed addon list
             buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
             buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            applicationIdSuffix ".iceweasel"
-            def deepLinkSchemeValue = "fenix"
+            applicationIdSuffix ".iceraven"
+            def deepLinkSchemeValue = "iceraven"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             manifestPlaceholders = [
                     "deepLinkScheme": deepLinkSchemeValue
