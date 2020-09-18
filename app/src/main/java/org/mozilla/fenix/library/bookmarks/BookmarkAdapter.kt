@@ -14,15 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibrarySiteItemView
-import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkFolderViewHolder
-import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkItemViewHolder
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkNodeViewHolder
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkSeparatorViewHolder
 
 class BookmarkAdapter(private val emptyView: View, private val interactor: BookmarkViewInteractor) :
-    RecyclerView.Adapter<BookmarkNodeViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var tree: List<BookmarkNode> = listOf()
     private var mode: BookmarkFragmentState.Mode = BookmarkFragmentState.Mode.Normal()
@@ -70,7 +67,8 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
                 titleChanged = oldItem.title != newItem.title,
                 urlChanged = oldItem.url != newItem.url,
                 selectedChanged = oldItem in oldMode.selectedItems != newItem in newMode.selectedItems,
-                modeChanged = oldMode::class != newMode::class
+                modeChanged = oldMode::class != newMode::class,
+                iconChanged = oldItem.type != newItem.type || oldItem.url != newItem.url
             )
         }
 
@@ -78,43 +76,42 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
         override fun getNewListSize(): Int = new.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkNodeViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.bookmark_list_item, parent, false) as LibrarySiteItemView
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
         return when (viewType) {
-            LibrarySiteItemView.ItemType.SITE.ordinal -> BookmarkItemViewHolder(view, interactor)
-            LibrarySiteItemView.ItemType.FOLDER.ordinal -> BookmarkFolderViewHolder(view, interactor)
-            LibrarySiteItemView.ItemType.SEPARATOR.ordinal -> BookmarkSeparatorViewHolder(view, interactor)
+            BookmarkNodeViewHolder.LAYOUT_ID ->
+                BookmarkNodeViewHolder(view as LibrarySiteItemView, interactor)
+            BookmarkSeparatorViewHolder.LAYOUT_ID ->
+                BookmarkSeparatorViewHolder(view)
             else -> throw IllegalStateException("ViewType $viewType does not match to a ViewHolder")
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (tree[position].type) {
-            BookmarkNodeType.ITEM -> LibrarySiteItemView.ItemType.SITE
-            BookmarkNodeType.FOLDER -> LibrarySiteItemView.ItemType.FOLDER
-            BookmarkNodeType.SEPARATOR -> LibrarySiteItemView.ItemType.SEPARATOR
-            else -> throw IllegalStateException("Item $tree[position] does not match to a ViewType")
-        }.ordinal
+    override fun getItemViewType(position: Int) = when (tree[position].type) {
+        BookmarkNodeType.ITEM, BookmarkNodeType.FOLDER -> BookmarkNodeViewHolder.LAYOUT_ID
+        BookmarkNodeType.SEPARATOR -> BookmarkSeparatorViewHolder.LAYOUT_ID
     }
 
     override fun getItemCount(): Int = tree.size
 
     override fun onBindViewHolder(
-        holder: BookmarkNodeViewHolder,
+        holder: RecyclerView.ViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {
-        if (payloads.isNotEmpty() && payloads[0] is BookmarkPayload) {
-            holder.bind(tree[position], mode, payloads[0] as BookmarkPayload)
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
+        (holder as? BookmarkNodeViewHolder)?.apply {
+            val diffPayload = if (payloads.isNotEmpty() && payloads[0] is BookmarkPayload) {
+                payloads[0] as BookmarkPayload
+            } else {
+                BookmarkPayload()
+            }
+            bind(tree[position], mode, diffPayload)
         }
     }
 
-    override fun onBindViewHolder(holder: BookmarkNodeViewHolder, position: Int) {
-        holder.bind(tree[position], mode)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as? BookmarkNodeViewHolder)?.bind(tree[position], mode, BookmarkPayload())
     }
 }
 
@@ -125,12 +122,22 @@ class BookmarkAdapter(private val emptyView: View, private val interactor: Bookm
  * @property urlChanged true if there has been a change to [BookmarkNode.url].
  * @property selectedChanged true if there has been a change in the BookmarkNode's selected state.
  * @property modeChanged true if there has been a change in the state's mode type.
+ * @property iconChanged true if the icon displayed for the node should be changed.
  */
 data class BookmarkPayload(
     val titleChanged: Boolean,
     val urlChanged: Boolean,
     val selectedChanged: Boolean,
-    val modeChanged: Boolean
-)
+    val modeChanged: Boolean,
+    val iconChanged: Boolean
+) {
+    constructor() : this(
+        titleChanged = true,
+        urlChanged = true,
+        selectedChanged = true,
+        modeChanged = true,
+        iconChanged = true
+    )
+}
 
 fun BookmarkNode.inRoots() = enumValues<BookmarkRoot>().any { it.id == guid }

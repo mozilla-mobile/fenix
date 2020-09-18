@@ -63,8 +63,6 @@ class LibrarySiteItemView @JvmOverloads constructor(
 
     val overflowView: ImageButton get() = overflow_menu
 
-    private var iconUrl: String? = null
-
     init {
         LayoutInflater.from(context).inflate(R.layout.library_site_item, this, true)
 
@@ -75,13 +73,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
      * Change visibility of parts of this view based on what type of item is being represented.
      */
     fun displayAs(mode: ItemType) {
-        favicon.isVisible = mode != ItemType.SEPARATOR
-        title.isVisible = mode != ItemType.SEPARATOR
         url.isVisible = mode == ItemType.SITE
-        overflow_menu.isVisible = mode != ItemType.SEPARATOR
-        separator.isVisible = mode == ItemType.SEPARATOR
-        isClickable = mode != ItemType.SEPARATOR
-        isFocusable = mode != ItemType.SEPARATOR
     }
 
     /**
@@ -92,9 +84,6 @@ class LibrarySiteItemView @JvmOverloads constructor(
     }
 
     fun loadFavicon(url: String) {
-        if (iconUrl == url) return
-
-        iconUrl = url
         context.components.core.icons.loadIntoView(favicon, url)
     }
 
@@ -136,7 +125,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
     }
 
     enum class ItemType {
-        SITE, FOLDER, SEPARATOR;
+        SITE, FOLDER;
     }
 
     companion object {
