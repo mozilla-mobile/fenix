@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.logins.fragment
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -13,6 +14,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -249,6 +251,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             validPassword = false
             layout.error = context?.getString(R.string.saved_login_password_required)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+            layout.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
         }
     }
 
