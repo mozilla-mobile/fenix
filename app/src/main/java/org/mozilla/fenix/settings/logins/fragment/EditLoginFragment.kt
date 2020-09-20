@@ -13,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -140,7 +141,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             passwordText.isCursorVisible = true
             passwordText.hasFocus()
             inputLayoutPassword.hasFocus()
-            it.isEnabled = false
         }
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal(passwordText, revealPasswordButton)
@@ -192,7 +192,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 when {
                     p.toString().isEmpty() -> {
                         passwordChanged = true
-                        clearPasswordTextButton.isEnabled = false
+                        revealPasswordButton.isVisible = false
+                        clearPasswordTextButton.isVisible = false
                         setPasswordError()
                     }
                     p.toString() == oldLogin.password -> {
@@ -200,14 +201,16 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
-                        clearPasswordTextButton.isEnabled = true
+                        revealPasswordButton.isVisible = true
+                        clearPasswordTextButton.isVisible = true
                     }
                     else -> {
                         passwordChanged = true
                         validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
-                        clearPasswordTextButton.isEnabled = true
+                        revealPasswordButton.isVisible = true
+                        clearPasswordTextButton.isVisible = true
                     }
                 }
                 setSaveButtonState()
