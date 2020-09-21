@@ -250,7 +250,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         inputLayoutPassword?.let { layout ->
             validPassword = false
             layout.error = context?.getString(R.string.saved_login_password_required)
-            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
         }
     }
