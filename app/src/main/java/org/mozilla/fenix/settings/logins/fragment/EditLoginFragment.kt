@@ -244,6 +244,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             usernameChanged = true
             validUsername = true
             inputLayoutUsername.error = null
+            inputLayoutUsername.errorIconDrawable = null
         }
     }
 
