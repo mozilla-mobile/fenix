@@ -237,6 +237,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 usernameChanged = true
                 validUsername = false
                 it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+                it.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
                 it.error = context?.getString(R.string.saved_login_duplicate)
             }
         } else {
