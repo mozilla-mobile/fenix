@@ -170,6 +170,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         validUsername = true
                         inputLayoutUsername.error = null
                         inputLayoutUsername.errorIconDrawable = null
+                        clearUsernameTextButton.isVisible = true
                     }
                     else -> {
                         usernameChanged = true
@@ -239,12 +240,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 it.error = context?.getString(R.string.saved_login_duplicate)
                 it.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 it.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
+                clearUsernameTextButton.isVisible = false
             }
         } else {
             usernameChanged = true
             validUsername = true
             inputLayoutUsername.error = null
             inputLayoutUsername.errorIconDrawable = null
+            clearUsernameTextButton.isVisible = true
         }
     }
 
