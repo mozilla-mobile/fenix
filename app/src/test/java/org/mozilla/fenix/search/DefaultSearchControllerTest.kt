@@ -27,6 +27,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -59,7 +60,7 @@ class DefaultSearchControllerTest {
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
         every { sessionManager.select(any()) } just Runs
         every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.searchFragment
+            every { id } returns R.id.searchDialogFragment
         }
         every { MetricsUtils.createSearchEvent(searchEngine, activity, any()) } returns null
         controller = DefaultSearchController(
@@ -88,7 +89,7 @@ class DefaultSearchControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = false,
-                from = BrowserDirection.FromSearch,
+                from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine
             )
         }
@@ -105,7 +106,7 @@ class DefaultSearchControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = searchTerm,
                 newTab = false,
-                from = BrowserDirection.FromSearch,
+                from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine
             )
         }
@@ -127,7 +128,7 @@ class DefaultSearchControllerTest {
     @Test
     fun handleAddonsUrlCommitted() {
         val url = "about:addons"
-        val directions = SearchFragmentDirections.actionGlobalAddonsManagementFragment()
+        val directions = actionGlobalAddonsManagementFragment()
 
         controller.handleUrlCommitted(url)
 
@@ -144,7 +145,7 @@ class DefaultSearchControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
                 newTab = false,
-                from = BrowserDirection.FromSearch,
+                from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine
             )
         }
@@ -240,7 +241,7 @@ class DefaultSearchControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = false,
-                from = BrowserDirection.FromSearch
+                from = BrowserDirection.FromSearchDialog
             )
         }
         verify { metrics.track(Event.EnteredUrl(false)) }
@@ -256,7 +257,7 @@ class DefaultSearchControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = searchTerms,
                 newTab = false,
-                from = BrowserDirection.FromSearch,
+                from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
                 forceSearch = true
             )
@@ -276,7 +277,7 @@ class DefaultSearchControllerTest {
     @Test
     fun handleClickSearchEngineSettings() {
         val directions: NavDirections =
-            SearchFragmentDirections.actionGlobalSearchEngineFragment()
+            SearchDialogFragmentDirections.actionGlobalSearchEngineFragment()
 
         controller.handleClickSearchEngineSettings()
 
@@ -308,7 +309,7 @@ class DefaultSearchControllerTest {
         controller.handleExistingSessionSelected(session)
 
         verify { sessionManager.select(session) }
-        verify { activity.openToBrowser(from = BrowserDirection.FromSearch) }
+        verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
     }
 
     @Test
@@ -318,7 +319,7 @@ class DefaultSearchControllerTest {
         controller.handleExistingSessionSelected("tab-id")
 
         verify(inverse = true) { sessionManager.select(any()) }
-        verify(inverse = true) { activity.openToBrowser(from = BrowserDirection.FromSearch) }
+        verify(inverse = true) { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
     }
 
     @Test
@@ -329,7 +330,7 @@ class DefaultSearchControllerTest {
         controller.handleExistingSessionSelected("tab-id")
 
         verify { sessionManager.select(any()) }
-        verify { activity.openToBrowser(from = BrowserDirection.FromSearch) }
+        verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
     }
 
     @Test
