@@ -117,6 +117,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         usernameChanged = false
         passwordChanged = false
+
+        clearUsernameTextButton.isEnabled = oldLogin.username.isNotEmpty()
     }
 
     private fun formatEditableValues() {
