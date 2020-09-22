@@ -52,7 +52,7 @@ object GeckoProvider {
             .crashHandler(CrashHandlerService::class.java)
             .telemetryDelegate(GeckoAdapter())
             .contentBlocking(policy.toContentBlockingSetting())
-            .aboutConfigEnabled(Config.channel.isBeta)
+            .aboutConfigEnabled(true)
             .debugLogging(Config.channel.isDebug)
             .build()
 

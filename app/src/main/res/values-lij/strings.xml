@@ -24,7 +24,7 @@
     <string name="open_tab_tray_plural">Averti %1$s feuggi. Tocca chi pe cangiâ feuggio.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s o l\'é svilupou da Mozilla.</string>
+    <string name="about_content">%1$s o l\'é svilupou da @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

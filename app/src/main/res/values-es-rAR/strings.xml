@@ -49,7 +49,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Seleccionadas</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s es producido por Mozilla.</string>
+    <string name="about_content">%1$s es producido por @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

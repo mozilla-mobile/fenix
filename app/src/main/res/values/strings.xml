@@ -33,6 +33,8 @@
     <string name="tab_tray_select_collection">Select collection</string>
     <!-- Content description for close button while in multiselect mode in tab tray -->
     <string name="tab_tray_close_multiselect_content_description">Exit multiselect mode</string>
+    <!-- Content description for back button in full screen tabs screen -->
+    <string name="tabs_screen_close_screen_description">Close tabs screen</string>
     <!-- Content description for save to collection button while in multiselect mode in tab tray -->
     <string name="tab_tray_collection_button_multiselect_content_description">Save selected tabs to collection</string>
     <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
@@ -47,7 +49,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Selected</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s is produced by Mozilla.</string>
+    <string name="about_content">%1$s is produced by @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -288,6 +290,10 @@
     <string name="preferences_home">Home</string>
     <!-- Preference for gestures based actions -->
     <string name="preferences_gestures">Gestures</string>
+    <!-- Preference for customizing the tabs tray -->
+    <string name="preferences_tabs_tray">Tabs tray</string>
+    <!-- Preference for customizing the tabs tray FAB -->
+    <string name="preferences_tabs_tray_fab">Floating action button (FAB)</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Customize</string>
     <!-- Preference description for banner about signing in -->
@@ -334,6 +340,10 @@
     <string name="preferences_external_download_manager">External download manager</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
+    <!-- Preference for add-ons custom source -->
+    <string name="preferences_addons_customization">Configure custom add-ons source</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="addons_search_hint">Search add-ons</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notifications</string>
 
@@ -1082,6 +1092,18 @@
     <string name="onboarding_tracking_protection_strict_option">Strict</string>
     <!-- text for strict blocking option button description -->
     <string name="onboarding_tracking_protection_strict_button_description_2">Blocks more trackers, ads, and popups. Pages load faster, but some functionality might not work.</string>
+    <!-- text for the tabs tray layout onboarding card header -->
+    <string name="onboarding_tabs_layout_header">Choose your tabs tray layout</string>
+    <!-- text for the tabs tray layout card description-->
+    <string name="onboarding_tabs_tray_layout_description">Pick either the old Firefox (Fennec) style tabs screen or the new and fancy (Fenix) style tabs tray.</string>
+    <!-- text for old Fennec style tab screen layout -->
+    <string name="onboarding_tabs_tray_fennec_layout_button">Old Fennec style (default)</string>
+    <!-- text for old Fennec style description -->
+    <string name="onboarding_tabs_tray_fennec_layout_description">Clicking the tab count on the toolbar will show you a tabs screen with a layout similar to the previous (Fennec) version of Firefox.</string>
+    <!-- text for Fenix style tab tray layout -->
+    <string name="onboarding_tabs_tray_fenix_layout_button">New Fenix style</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tabs_tray_fenix_layout_description">Clicking the tab count on the toolbar will show you a new tabs tray layout from the Fenix version of Firefox.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1351,6 +1373,10 @@
     <string name="preferences_passwords_saved_logins_username">Username</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Password</string>
+    <!-- Title for strip url preference in customization settings -->
+    <string name="preferences_strip_url_title">Strip HTTP/HTTPS/WWW from urls</string>
+    <!-- Description for strip url preference in customization settings -->
+    <string name="preferences_strip_url_description">Enable to strip out HTTP/HTTPS/WWW from urls in toolbar and tab tray</string>
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">Re-enter your PIN</string>
     <!-- Message displayed in security prompt to access saved logins -->
@@ -1554,6 +1580,28 @@
     <string name="top_sites_max_limit_confirmation_button">OK, Got It</string>
     <!-- Label for the show most visited sites preference -->
     <string name="top_sites_toggle_top_frecent_sites">Show most visited sites</string>
+
+    <!-- Label for add-ons custom source account preference -->
+    <string name="addons_custom_source_account">Set custom add-ons account</string>
+    <!-- Label for add-ons custom source collection preference -->
+    <string name="addons_custom_source_collection">Set custom add-ons collection</string>
+
+    <!-- Label for enable compact tabs in tabs tray preference -->
+    <string name="enable_compact_tabs">Enable compact tabs</string>
+    <!-- Label for enable top tabs tray preference -->
+    <string name="enable_top_tabs_tray">Enable top tabs tray</string>
+    <!-- Label for fullscreen tabs tray preference -->
+    <string name="use_fullscreen_tabs_screen">Enable fullscreen tabs screen</string>
+    <!-- Label for reverse tab order in tabs tray preference -->
+    <string name="reverse_tab_order_tabs_tray">Reverse tab order in tray</string>
+    <!-- Summary for reverse tab order preference -->
+    <string name="reverse_tab_order_description">Enable to put new tabs at start of the tabs list, disable to put new tabs at end of the tabs list</string>
+    <!-- Label for enable FAB in tabs tray preference -->
+    <string name="enable_fab_tabs_tray">Enable FAB for new tab</string>
+    <!-- Label for top FAB position in tabs tray preference -->
+    <string name="fab_tabs_tray_top">Place FAB at the top</string>
+    <!-- Label for top FAB position in tabs tray preference -->
+    <string name="fab_tabs_tray_top_description">Enable to place button for new tab at the top, disable to place it at the bottom</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Remove</string>

@@ -27,7 +27,7 @@
     <string name="open_tab_tray_plural">%1$s nā\'nïn nej rakïj ñanj. Gūru\'man ra\'a da\' nādūnāt nej rakïj ñanj.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s huin \’ngō sa giri Mozilla.</string>
+    <string name="about_content">%1$s huin \’ngō sa giri @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

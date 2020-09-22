@@ -99,6 +99,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
+import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components

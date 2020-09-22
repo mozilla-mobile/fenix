@@ -35,7 +35,7 @@
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_toolbar"
-        app:allowDividerAbove="false"
+        app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_top"
@@ -43,13 +43,60 @@
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:key="@string/pref_key_toolbar_bottom"
             android:title="@string/preference_bottom_toolbar" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_strip_url"
+            android:summary="@string/preferences_strip_url_description"
+            android:title="@string/preferences_strip_url_title" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_tabs_tray_settings_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_tabs_tray"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_tabs_tray_compact_tab"
+            android:title="@string/enable_compact_tabs" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_tabs_tray_top_tray"
+            android:title="@string/enable_top_tabs_tray" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_use_fullscreen_tabs_screen"
+            android:title="@string/use_fullscreen_tabs_screen" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_tabs_tray_reverse_tab_order"
+            android:title="@string/reverse_tab_order_tabs_tray"
+            android:summary="@string/reverse_tab_order_description" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_tabs_tray_fab_settings_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_tabs_tray_fab"
+        app:allowDividerAbove="false"
+        app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_tabs_tray_use_fab"
+            android:title="@string/enable_fab_tabs_tray" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_tabs_tray_fab_top_position"
+            android:title="@string/fab_tabs_tray_top"
+            android:summary="@string/fab_tabs_tray_top_description" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
         android:key="@string/pref_home_category"
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_home"
-        app:allowDividerAbove="false"
+        app:allowDividerAbove="true"
         app:iconSpaceReserved="false"
         app:isPreferenceVisible="false">
         <androidx.preference.SwitchPreference
@@ -60,7 +107,7 @@
     <androidx.preference.PreferenceCategory
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_gestures"
-        app:allowDividerAbove="false"
+        app:allowDividerAbove="true"
         app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_website_pull_to_refresh"
@@ -76,4 +123,19 @@
             android:title="@string/preference_gestures_swipe_toolbar_show_tabs"
             app:isPreferenceVisible="false"/>
     </androidx.preference.PreferenceCategory>
+    
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_addons_settings_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_addons_customization"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <androidx.preference.EditTextPreference
+            android:key="@string/pref_key_addons_custom_account"
+            android:title="@string/addons_custom_source_account" />
+        <androidx.preference.EditTextPreference
+            android:key="@string/pref_key_addons_custom_collection"
+            android:title="@string/addons_custom_source_collection" />
+    </androidx.preference.PreferenceCategory>
+    
 </androidx.preference.PreferenceScreen>

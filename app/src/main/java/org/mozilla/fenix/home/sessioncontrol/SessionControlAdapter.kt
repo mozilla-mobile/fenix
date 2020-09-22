@@ -30,6 +30,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingMa
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivateBrowsingViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
+import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTabsTrayLayoutViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
@@ -106,6 +107,7 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
     object OnboardingToolbarPositionPicker :
         AdapterItem(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID)
+    object OnboardingTabsTrayLayoutPicker : AdapterItem(OnboardingTabsTrayLayoutViewHolder.LAYOUT_ID)
 
     object OnboardingWhatsNew : AdapterItem(OnboardingWhatsNewViewHolder.LAYOUT_ID)
 
@@ -189,6 +191,7 @@ class SessionControlAdapter(
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
+            OnboardingTabsTrayLayoutViewHolder.LAYOUT_ID -> OnboardingTabsTrayLayoutViewHolder(view)
             else -> throw IllegalStateException()
         }
     }

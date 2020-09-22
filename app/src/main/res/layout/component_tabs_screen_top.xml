@@ -4,20 +4,19 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:mozac="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_wrapper"
     style="@style/BottomSheetModal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/foundation_normal_theme"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    android:backgroundTint="@color/foundation_normal_theme">
 
     <View
         android:id="@+id/handle"
         android:layout_width="0dp"
         android:layout_height="3dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         android:background="@color/secondary_text_normal_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +42,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="50dp"
         android:background="@color/foundation_normal_theme"
         app:layout_constraintTop_toBottomOf="@+id/handle">
 
@@ -99,14 +98,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/exit_tabs_screen"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="0dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/tabs_screen_close_screen_description"
+            app:layout_constraintBottom_toBottomOf="@+id/tab_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tab_layout"
+            app:srcCompat="@drawable/mozac_ic_back"
+            app:tint="@color/primary_text_normal_theme" />
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="match_parent"
             android:background="@color/foundation_normal_theme"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/exit_tabs_screen"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintWidth_percent="0.35"
             app:tabGravity="fill"
             app:tabIconTint="@color/tab_icon"
             app:tabIndicatorColor="@color/accent_normal_theme"
@@ -135,7 +147,7 @@
             android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/add_tab"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/tab_layout"
             app:layout_constraintEnd_toStartOf="@id/tab_tray_overflow"
             app:layout_constraintTop_toTopOf="@id/tab_layout"

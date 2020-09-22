@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.state.MediaState
 import mozilla.components.browser.state.store.BrowserStore
@@ -34,6 +35,7 @@ import org.mozilla.fenix.ext.getMediaStateForSession
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.utils.Do
@@ -49,6 +51,8 @@ class TabTrayViewHolder(
     private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
+    private val iconCard: CardView = itemView.findViewById(R.id.mozac_browser_tabstray_icon_card)
+    private val iconView: ImageView = itemView.findViewById(R.id.mozac_browser_tabstray_icon)
     private val titleView: TextView = itemView.findViewById(R.id.mozac_browser_tabstray_title)
     private val closeView: AppCompatImageButton =
         itemView.findViewById(R.id.mozac_browser_tabstray_close)
@@ -75,6 +79,7 @@ class TabTrayViewHolder(
         // Basic text
         updateTitle(tab)
         updateUrl(tab)
+        updateIcon(tab)
         updateCloseButtonDescription(tab.title)
 
         // Drawables and theme
@@ -154,9 +159,25 @@ class TabTrayViewHolder(
         // is done in the toolbar and awesomebar:
         // https://github.com/mozilla-mobile/fenix/issues/1824
         // https://github.com/mozilla-mobile/android-components/issues/6985
-        urlView?.text = tab.url
-            .toShortUrl(itemView.context.components.publicSuffixList)
-            .take(MAX_URI_LENGTH)
+        urlView?.apply {
+            text =
+                if (context.settings().shouldStripUrl) {
+                    tab.url
+                        .toShortUrl(itemView.context.components.publicSuffixList)
+                        .take(MAX_URI_LENGTH)
+                } else {
+                    tab.url.take(MAX_URI_LENGTH)
+                }
+        }
+    }
+
+    private fun updateIcon(tab: Tab) {
+        if (tab.icon != null) {
+            iconCard.visibility = View.VISIBLE
+            iconView.setImageBitmap(tab.icon)
+        } else {
+            iconCard.visibility = View.GONE
+        }
     }
 
     @VisibleForTesting

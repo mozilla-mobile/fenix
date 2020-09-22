@@ -1,0 +1,60 @@
+AntiFeatures:
+  - NonFreeAdd
+  - Tracking
+  - UpstreamNonFree
+Categories:
+  - Internet
+License: MPL-2.0
+WebSite: https://wiki.mozilla.org/Mobile/Platforms/Android#System_Requirements
+SourceCode: https://github.com/mozilla-mobile/fenix
+IssueTracker: https://bugzilla.mozilla.org
+Translation: https://pontoon.mozilla.org/projects/firefox-for-android/
+Changelog: https://www.mozilla.org/en-US/firefox/android/notes/
+Donate: https://sendto.mozilla.org/page/contribute/openwebfund
+
+RepoType: git
+Repo: https://github.com/mozilla-mobile/fenix
+
+Builds:
+  - versionName: 79.0.5
+    versionCode: 790000
+    commit: v79.0.5
+    timeout: 10800
+    sudo:
+      - apt-get update || apt-get update
+      - apt-get install -y g++ python-setuptools tcl gyp ninja-build libffi-dev libsqlite3-dev
+        llvm-6.0
+    output: app/build/outputs/apk/geckoProduction/fennecProduction/app-geckoProduction-*-fennecProduction-unsigned.apk
+    srclibs:
+      - MozAndroidComponents@v48.0.15
+      - MozAndroidComponentsAS@v24.0.0
+      - MozAppServices@v61.0.10
+      - MozBuild@68a4e48c20d2612c97d502ca073d2c8cd819074d
+      - MozFennec@FIREFOX_79_0_RELEASE
+      - MozGlean@v32.1.0
+      - MozGleanAS@v21.3.0
+      - pyenv@v1.2.20
+      - rustup@1.22.1
+    prebuild:
+      - sed -i -e 's/org.mozilla.fennec_fdroid.sharedID/org.mozilla.foo.sharedID/'
+        app/build.gradle
+      - sed -i -e 's/fennec_fdroid/fenix_fdroid/' $$MozBuild$$/prebuild.sh
+      - $$MozBuild$$/prebuild.sh $$VERSION$$ $$VERCODE$$
+    build: $$MozBuild$$/build.sh
+    ndk: r21d
+
+MaintainerNotes: |-
+    Android Components version:
+    grep VERSION build/org.mozilla.fenix_fdroid/buildSrc/src/main/java/AndroidComponents.kt
+
+    Application Services version:
+    grep 'mozilla_appservices =' build/srclib/MozAndroidComponents/buildSrc/src/main/java/Dependencies.kt
+
+    Glean version:
+    grep 'mozilla_glean =' build/srclib/MozAndroidComponents/buildSrc/src/main/java/Dependencies.kt
+
+    GeckoView version:
+    grep 'beta_version =' build/srclib/MozAndroidComponents/buildSrc/src/main/java/Gecko.kt
+
+AutoUpdateMode: None
+UpdateCheckMode: None

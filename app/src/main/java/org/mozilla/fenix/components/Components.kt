@@ -9,16 +9,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import mozilla.components.feature.addons.AddonManager
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.migration.SupportedAddonsChecker
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
-import org.mozilla.fenix.BuildConfig
+import io.github.forkmaintainers.iceraven.components.PagedAddonCollectionProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
@@ -71,16 +71,15 @@ class Components(private val context: Context) {
     }
 
     val addonCollectionProvider by lazy {
-        if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
-            AddonCollectionProvider(
-                context,
-                core.client,
-                collectionName = BuildConfig.AMO_COLLECTION,
-                maxCacheAgeInMinutes = DAY_IN_MINUTES
-            )
-        } else {
-            AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
-        }
+        val addonsAccount = context.settings().customAddonsAccount
+        val addonsCollection = context.settings().customAddonsCollection
+        PagedAddonCollectionProvider(
+            context,
+            core.client,
+            collectionAccount = addonsAccount,
+            collectionName = addonsCollection,
+            maxCacheAgeInMinutes = DAY_IN_MINUTES
+        )
     }
 
     val appStartupTelemetry by lazy { AppStartupTelemetry(analytics.metrics) }
@@ -103,6 +102,15 @@ class Components(private val context: Context) {
 
     val addonManager by lazy {
         AddonManager(core.store, core.engine, addonCollectionProvider, addonUpdater)
+    }
+
+    fun updateAddonManager() {
+        addonCollectionProvider.deleteCacheFile(context)
+
+        val addonsAccount = context.settings().customAddonsAccount
+        val addonsCollection = context.settings().customAddonsCollection
+        addonCollectionProvider.setCollectionAccount(addonsAccount)
+        addonCollectionProvider.setCollectionName(addonsCollection)
     }
 
     val analytics by lazy { Analytics(context) }

@@ -46,7 +46,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Diuzet</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">Gant Mozilla eo produet %1$s.</string>
+    <string name="about_content">Gant @fork-maintainers eo produet %1$s.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

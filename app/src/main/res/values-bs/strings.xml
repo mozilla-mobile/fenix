@@ -47,7 +47,7 @@
     <string name="tab_tray_multiselect_selected_content_description">Označeno</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s je razvila Mozilla.</string>
+    <string name="about_content">%1$s je razvila @fork-maintainers.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

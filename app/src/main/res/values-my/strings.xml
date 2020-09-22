@@ -38,7 +38,7 @@
     <string name="tab_tray_collection_button_multiselect_content_description">စုဆောင်းမှု သို့ တက်ဗ်များ သိမ်းရန်</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s ကို Mozilla မှ ထုတ်လုပ်သည်။</string>
+    <string name="about_content">%1$s ကို @fork-maintainers မှ ထုတ်လုပ်သည်။</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

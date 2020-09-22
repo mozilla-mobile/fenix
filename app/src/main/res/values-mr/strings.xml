@@ -25,7 +25,7 @@
     <string name="open_tab_tray_plural">%1$s टॅब उघड्या. टॅब स्विच करण्यासाठी टॅप करा.</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s Mozilla द्वारा निर्मित केले गेले आहे.</string>
+    <string name="about_content">%1$s @fork-maintainers द्वारा निर्मित केले गेले आहे.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->

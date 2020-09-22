@@ -268,17 +268,17 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val isTelemetryEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_telemetry),
-        default = true
+        default = false
     )
 
     val isMarketingTelemetryEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_marketing_telemetry),
-        default = true
+        default = false
     )
 
     val isExperimentationEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_experimentation),
-        default = true
+        default = false
     )
 
     private var trackingProtectionOnboardingShownThisSession = false
@@ -545,6 +545,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     val toolbarPosition: ToolbarPosition
         get() = if (shouldUseBottomToolbar) ToolbarPosition.BOTTOM else ToolbarPosition.TOP
+
+    var shouldStripUrl by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_strip_url),
+        default = true
+    )
 
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
@@ -890,6 +895,49 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
             0
         )
+
+    val customAddonsAccount by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addons_custom_account),
+        BuildConfig.AMO_ACCOUNT
+    )
+
+    val customAddonsCollection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addons_custom_collection),
+        BuildConfig.AMO_COLLECTION
+    )
+
+    var enableCompactTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_compact_tab),
+        default = true
+    )
+
+    val useTopTabsTray by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_top_tray),
+        default = false
+    )
+
+    var useFullScreenTabScreen by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_use_fullscreen_tabs_screen),
+        default = true
+    )
+
+    val shouldUseFennecStyleTabsScreen: Boolean
+        get() = enableCompactTabs && useFullScreenTabScreen
+
+    var reverseTabOrderInTabsTray by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_reverse_tab_order),
+        default = false
+    )
+
+    var useNewTabFloatingActionButton by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_use_fab),
+        default = false
+    )
+
+    var placeNewTabFloatingActionButtonAtTop by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tabs_tray_fab_top_position),
+        default = false
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),

@@ -8,7 +8,7 @@ object Versions {
     const val android_gradle_plugin = "3.5.0"
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
-    const val leanplum = "5.4.0"
+
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
 
@@ -31,8 +31,6 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
-    const val adjust = "4.18.3"
-    const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
     const val mockk = "1.10.0"
@@ -40,9 +38,6 @@ object Versions {
     const val mockwebserver = "3.11.0"
     const val uiautomator = "2.2.0"
 
-    const val google_ads_id_version = "16.0.0"
-
-    const val google_play_store_version = "1.8.0"
 
     const val airbnb_lottie = "3.4.0"
 }
@@ -134,7 +129,6 @@ object Deps {
     const val mozilla_ui_widgets = "org.mozilla.components:ui-widgets:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
-    const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
@@ -151,9 +145,6 @@ object Deps {
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
-
-    const val leanplum_core = "com.leanplum:leanplum-core:${Versions.leanplum}"
-    const val leanplum_fcm = "com.leanplum:leanplum-fcm:${Versions.leanplum}"
 
     const val androidx_annotation = "androidx.annotation:annotation:${Versions.androidx_annotation}"
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.androidx_biometric}"
@@ -177,9 +168,6 @@ object Deps {
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
-
-    const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
-    const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
 
     const val junit = "junit:junit:${Versions.junit}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
@@ -210,10 +198,6 @@ object Deps {
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
     const val robolectric = "org.robolectric:robolectric:4.3.1"
 
-    const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
-
-    // Required for in-app reviews
-    const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
 
     const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 

@@ -21,7 +21,7 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 android {
     compileSdkVersion Config.compileSdkVersion
     defaultConfig {
-        applicationId "org.mozilla"
+        applicationId "io.github.forkmaintainers"
         minSdkVersion Config.minSdkVersion
         targetSdkVersion Config.targetSdkVersion
         versionCode 1
@@ -31,6 +31,7 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
+        buildConfigField "String", "AMO_ACCOUNT", "\"mozilla\""
         buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
@@ -105,6 +106,34 @@ android {
                     "deepLinkScheme": deepLinkSchemeValue
             ]
         }
+        forkDebug {
+            shrinkResources false
+            minifyEnabled false
+            applicationIdSuffix ".iceraven.debug"
+            resValue "bool", "IS_DEBUG", "true"
+            pseudoLocalesEnabled true
+            // Need to replicate default debug config features
+            signingConfig signingConfigs.debug
+            debuggable true
+            def deepLinkSchemeValue = "iceraven-debug"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            // Use custom default allowed addon list
+            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
+        }
+        forkRelease releaseTemplate >> {
+            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            applicationIdSuffix ".iceraven"
+            def deepLinkSchemeValue = "iceraven"
+            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+            manifestPlaceholders = [
+                    "deepLinkScheme": deepLinkSchemeValue
+            ]
+            // Use custom default allowed addon list
+            buildConfigField "String", "AMO_ACCOUNT", "\"16201230\""
+            buildConfigField "String", "AMO_COLLECTION", "\"What-I-want-on-Fenix\""
+        }
+        
     }
 
     aaptOptions {
@@ -144,6 +173,13 @@ android {
         release {
             java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
+        }
+        forkDebug {
+            java.srcDirs = ['src/geckoNightly/java']
+        }
+        forkRelease {
+            // No migration needed for fork
+            java.srcDirs = ['src/geckoRelease/java']
         }
     }
 
@@ -195,7 +231,7 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = Config.releaseVersionName(project)
+    def versionName = Config.releaseVersionName(project) == "" ? Config.generateDebugVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -204,11 +240,14 @@ android.applicationVariants.all { variant ->
     println("Flavor:            " + variant.flavorName)
     println("Telemetry enabled: " + !isDebug)
 
+
     if (useReleaseVersioning) {
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
-
+        
+        println("Version Name:      " + versionName)
+        
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
@@ -319,10 +358,12 @@ apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 dependencies {
     debugImplementation Deps.mozilla_browser_engine_gecko_nightly
+    forkDebugImplementation Deps.mozilla_browser_engine_gecko_nightly
 
     nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
     betaImplementation Deps.mozilla_browser_engine_gecko_beta
     releaseImplementation Deps.mozilla_browser_engine_gecko_release
+    forkReleaseImplementation Deps.mozilla_browser_engine_gecko_release
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
@@ -334,8 +375,6 @@ dependencies {
 
     implementation Deps.sentry
 
-    implementation Deps.leanplum_core
-    implementation Deps.leanplum_fcm
 
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
@@ -415,9 +454,9 @@ dependencies {
     implementation Deps.mozilla_ui_widgets
 
     implementation Deps.mozilla_lib_crash
-    implementation Deps.mozilla_lib_push_firebase
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
+    forkDebugImplementation Deps.leakcanary
 
     implementation Deps.androidx_legacy
     implementation Deps.androidx_biometric
@@ -438,12 +477,6 @@ dependencies {
 
     implementation Deps.lottie
 
-    implementation Deps.adjust
-    implementation Deps.installreferrer // Required by Adjust
-
-    implementation Deps.google_ads_id // Required for the Google Advertising ID
-
-    implementation Deps.google_play_store // Required for in-app reviews
 
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
@@ -529,6 +562,9 @@ if (project.hasProperty("coverage")) {
     android {
         buildTypes {
             debug {
+                testCoverageEnabled true
+            }
+            forkDebug {
                 testCoverageEnabled true
             }
         }
