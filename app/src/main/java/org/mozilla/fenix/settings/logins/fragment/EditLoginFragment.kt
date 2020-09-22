@@ -174,10 +174,10 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                     }
                     else -> {
                         usernameChanged = true
-                        clearUsernameTextButton.isEnabled = true
                         setDupeError()
                     }
                 }
+                clearUsernameTextButton.isEnabled = u.toString().isNotEmpty()
                 setSaveButtonState()
             }
 
