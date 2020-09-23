@@ -255,7 +255,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     )
                 },
                 onCloseTab = { closedSession ->
-                    val tab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
+                    val tab = store.state.findTab(closedSession.id)
+                        ?: return@DefaultBrowserToolbarController
                     val isSelected = tab.id == context.components.core.store.state.selectedTabId
 
                     val snackbarMessage = if (tab.content.private) {
@@ -372,11 +373,6 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                 view = view
             )
 
-            val shouldForwardToThirdParties =
-                PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                    context.getPreferenceKey(R.string.pref_key_external_download_manager), false
-                )
-
             val downloadFeature = DownloadsFeature(
                 context.applicationContext,
                 store = store,
@@ -388,7 +384,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     store,
                     DownloadService::class
                 ),
-                shouldForwardToThirdParties = { shouldForwardToThirdParties },
+                shouldForwardToThirdParties = {
+                    PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                        context.getPreferenceKey(R.string.pref_key_external_download_manager), false
+                    )
+                },
                 promptsStyling = DownloadsFeature.PromptsStyling(
                     gravity = Gravity.BOTTOM,
                     shouldWidthMatchParent = true,
@@ -877,7 +877,11 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigate(R.id.action_global_tabHistoryDialogFragment)
+        findNavController().navigate(
+            NavGraphDirections.actionGlobalTabHistoryDialogFragment(
+                activeSessionId = customTabSessionId
+            )
+        )
         return true
     }
 
@@ -1120,7 +1124,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
 
     private fun didFirstContentfulHappen() =
         if (components.settings.waitToShowPageUntilFirstPaint) {
-            val tab = components.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)
+            val tab =
+                components.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)
             tab?.content?.firstContentfulPaint ?: false
         } else {
             true

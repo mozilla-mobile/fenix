@@ -30,8 +30,12 @@ class BookmarkTouchCallback(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
+        // Swiping separators is currently not supported.
+        if (viewHolder is BookmarkSeparatorViewHolder) {
+            return 0
+        }
         val item = (viewHolder as BookmarkNodeViewHolder).item
-        return if (viewHolder is BookmarkSeparatorViewHolder || item?.inRoots() == true) {
+        return if (item?.inRoots() == true) {
             0
         } else {
             super.getSwipeDirs(recyclerView, viewHolder)
@@ -72,7 +76,7 @@ class BookmarkTouchCallback(
             R.drawable.swipe_delete_background
         )!!
         val margin =
-            SwipeToDeleteCallback.MARGIN.dpToPx(recyclerView.context.resources.displayMetrics)
+            SwipeToDeleteCallback.MARGIN.dpToPx(recyclerView.resources.displayMetrics)
         val cellHeight = viewHolder.itemView.bottom - viewHolder.itemView.top
         val iconTop = viewHolder.itemView.top + (cellHeight - icon.intrinsicHeight) / 2
         val iconBottom = iconTop + icon.intrinsicHeight

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibrarySiteItemView
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
@@ -25,12 +24,19 @@ import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderAdap
 class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedViewModel) :
     ListAdapter<BookmarkNodeWithDepth, BookmarkFolderViewHolder>(DiffCallback) {
 
-    fun updateData(tree: BookmarkNode?) {
+    fun updateData(tree: BookmarkNode?, hideFolderGuid: String?) {
         val updatedData = tree
             ?.convertToFolderDepthTree()
             ?.drop(1)
             .orEmpty()
-        submitList(updatedData)
+
+        val filteredData = if (hideFolderGuid != null && updatedData.isNotEmpty()) {
+            updatedData.filter { it.node.guid != hideFolderGuid }
+        } else {
+            updatedData
+        }
+
+        submitList(filteredData)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkFolderViewHolder {
@@ -85,8 +91,8 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
             view.setOnClickListener {
                 onSelect(folder.node)
             }
-            val pxToIndent = dpsToIndent.dpToPx(view.context.resources.displayMetrics)
-            val padding = pxToIndent * if (folder.depth > maxDepth) maxDepth else folder.depth
+            val pxToIndent = view.resources.getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
+            val padding = pxToIndent * minOf(MAX_DEPTH, folder.depth)
             view.updatePaddingRelative(start = padding)
         }
 
@@ -117,8 +123,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         this == sharedViewModel.selectedFolder
 
     companion object {
-        private const val maxDepth = 10
-        private const val dpsToIndent = 10
+        private const val MAX_DEPTH = 10
     }
 }
 

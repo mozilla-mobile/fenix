@@ -298,10 +298,6 @@
         android:name="org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderFragment"
         android:label="@string/bookmark_select_folder_fragment_label"
         tools:layout="@layout/fragment_select_bookmark_folder">
-        <argument
-            android:name="folderGuid"
-            app:argType="string"
-            app:nullable="true" />
         <action
             android:id="@+id/action_bookmarkSelectFolderFragment_self"
             app:destination="@id/bookmarkSelectFolderFragment" />
@@ -309,9 +305,14 @@
             android:id="@+id/action_bookmarkSelectFolderFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
         <argument
-            android:name="visitedAddBookmark"
+            android:name="allowCreatingNewFolder"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="hideFolderGuid"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -835,7 +836,12 @@
     <dialog
         android:id="@+id/tabHistoryDialogFragment"
         android:name="org.mozilla.fenix.tabhistory.TabHistoryDialogFragment"
-        tools:layout="@layout/fragment_tab_history_dialog" />
+        tools:layout="@layout/fragment_tab_history_dialog">
+        <argument
+            android:name="activeSessionId"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
 
     <navigation
         android:id="@+id/site_permissions_exceptions_graph"

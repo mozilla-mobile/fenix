@@ -144,6 +144,8 @@
     <string name="browser_menu_install_on_homescreen">Instaliraj</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Sinkronizirane kartice</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Ponovna sinkronizacija</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Pronađi na stranici</string>
     <!-- Browser menu button that creates a private tab -->
@@ -325,6 +327,8 @@
     <string name="preferences_search_browsing_history">Pretraži povijest pregledavanja</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Pretraži zabilješke</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Pretraži sinkronizirane kartice</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Postavke računa</string>
     <!-- Preference for enabling url autocomplete-->
@@ -1166,7 +1170,7 @@
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Prijavi se pomoću kamere</string>
     <!-- Text shown for settings option for sign with email -->
-    <string name="sign_in_with_email">Umjesto toga koristi e-mail</string>
+    <string name="sign_in_with_email">Umjesto toga koristi e-poštu</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox će prestati sinkronizirati s tvojim računom, ali neće izbrisati podatke o tvom pregledavanju na ovom uređaju.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->

@@ -155,7 +155,7 @@ class TopSheetBehavior<V : View?>
             a.hasValue(R.styleable.BottomSheetBehavior_Layout_shapeAppearance)
         createMaterialShapeDrawable(context, attrs!!)
         createShapeValueAnimator()
-        peekHeight = context.resources.displayMetrics.heightPixels * PEEK_HEIGHT_RATIO
+        peekHeight = (context.resources.displayMetrics.heightPixels * PEEK_HEIGHT_RATIO).toInt()
         isHideable = a.getBoolean(
             R.styleable.BottomSheetBehavior_Layout_behavior_hideable,
             false
@@ -821,7 +821,7 @@ class TopSheetBehavior<V : View?>
         private const val CORNER_ANIMATION_DURATION = 500
         private val DEF_STYLE_RES = R.style.Widget_Design_BottomSheet_Modal
 
-        private const val PEEK_HEIGHT_RATIO = 3 / 4
+        private const val PEEK_HEIGHT_RATIO = 0.75
         private const val VELOCITY_UNITS = 1000
     }
 }

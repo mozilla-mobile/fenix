@@ -149,6 +149,8 @@
     <string name="browser_menu_install_on_homescreen">Mohenda</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Tendayke mbojuehepyre</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Mbojuajujey</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Eheka kuatiaroguépe</string>
     <!-- Browser menu button that creates a private tab -->
@@ -330,6 +332,8 @@
     <string name="preferences_search_browsing_history">Eheka kundahára rembiasakue</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Eheka techaukaha</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Eheka tendayke mbojuehepyre</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Mba’ete ñemboheko</string>
     <!-- Preference for enabling url autocomplete-->
