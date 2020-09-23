@@ -241,7 +241,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 validUsername = false
                 it.error = context?.getString(R.string.saved_login_duplicate)
                 it.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
-                it.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
+                it.setErrorIconTintList(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                    )
+                )
                 clearUsernameTextButton.isVisible = false
             }
         } else {
@@ -258,7 +262,11 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             validPassword = false
             layout.error = context?.getString(R.string.saved_login_password_required)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
-            layout.setErrorIconTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.design_error)))
+            layout.setErrorIconTintList(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                )
+            )
         }
     }
 
