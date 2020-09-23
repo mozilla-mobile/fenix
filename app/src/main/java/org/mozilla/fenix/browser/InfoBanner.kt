@@ -34,6 +34,7 @@ class InfoBanner(
     private val dismissText: String,
     private val actionText: String? = null,
     private val dismissByHiding: Boolean = false,
+    private val dismissAction: (() -> Unit)? = null,
     private val actionToPerform: (() -> Unit)? = null
 ) {
     @SuppressLint("InflateParams")
@@ -57,6 +58,7 @@ class InfoBanner(
         params.width = MATCH_PARENT
 
         bannerLayout.dismiss.setOnClickListener {
+            dismissAction?.invoke()
             if (dismissByHiding) { bannerLayout.visibility = GONE } else { dismiss() }
         }
 

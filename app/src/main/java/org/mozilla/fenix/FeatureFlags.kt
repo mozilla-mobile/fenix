@@ -50,9 +50,4 @@ object FeatureFlags {
      * Enables ETP cookie purging
      */
     val etpCookiePurging = Config.channel.isNightlyOrDebug
-
-    /**
-     * Enables the CFR for closing tabs automatically
-     */
-    const val showCloseTabsAutomaticallyCFR = false
 }
