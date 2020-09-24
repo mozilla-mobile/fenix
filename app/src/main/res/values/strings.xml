@@ -631,6 +631,8 @@
     <string name="history_delete_some">Delete %1$d items</string>
     <!-- Text for the header that groups the history for today -->
     <string name="history_today">Today</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Yesterday</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Last 24 hours</string>
     <!-- Text for the header that groups the history the past 7 days -->
