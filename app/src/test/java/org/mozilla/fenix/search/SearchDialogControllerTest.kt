@@ -2,8 +2,9 @@
  *  License, v. 2.0. If a copy of the MPL was not distributed with this
  *  file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.searchdialog
+package org.mozilla.fenix.search
 
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
@@ -30,12 +31,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.search.AlertDialogBuilder
-import org.mozilla.fenix.search.SearchDialogController
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
-import org.mozilla.fenix.search.SearchDialogFragmentStore
-import org.mozilla.fenix.search.SearchFragmentAction
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
@@ -350,7 +347,7 @@ class SearchDialogControllerTest {
 
     @Test
     fun `show camera permissions needed dialog`() {
-        val dialogBuilder: AlertDialogBuilder = mockk(relaxed = true)
+        val dialogBuilder: AlertDialog.Builder = mockk(relaxed = true)
 
         val spyController = spyk(controller)
         every { spyController.buildDialog() } returns dialogBuilder

@@ -28,6 +28,24 @@ import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
+/**
+ * An interface that handles the view manipulation of the Search, triggered by the Interactor
+ */
+@Suppress("TooManyFunctions")
+interface SearchController {
+    fun handleUrlCommitted(url: String)
+    fun handleEditingCancelled()
+    fun handleTextChanged(text: String)
+    fun handleUrlTapped(url: String)
+    fun handleSearchTermsTapped(searchTerms: String)
+    fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
+    fun handleClickSearchEngineSettings()
+    fun handleExistingSessionSelected(session: Session)
+    fun handleExistingSessionSelected(tabId: String)
+    fun handleSearchShortcutsButtonClicked()
+    fun handleCameraPermissionsNeeded()
+}
+
 @Suppress("TooManyFunctions", "LongParameterList")
 class SearchDialogController(
     private val activity: HomeActivity,

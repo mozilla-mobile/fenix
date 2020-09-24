@@ -63,7 +63,6 @@ import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.widget.VoiceSearchActivity
 
 typealias SearchDialogFragmentStore = SearchFragmentStore
-typealias SearchDialogInteractor = SearchInteractor
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
 class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
