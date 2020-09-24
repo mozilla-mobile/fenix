@@ -275,6 +275,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                                 engineSessionState = tab.engineState.engineSessionState
                             )
                         },
+                        paddedForBottomToolbar = true,
                         operation = { }
                     )
                 }
