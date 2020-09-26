@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -86,8 +87,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.StartupTimeline
-import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.searchdialog.SearchDialogFragmentDirections
+import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
@@ -261,10 +261,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
                 // Make sure accountManager is initialized.
-                components.backgroundServices.accountManager.initAsync().await()
+                components.backgroundServices.accountManager.start()
                 // If we're authenticated, kick-off a sync and a device state refresh.
                 components.backgroundServices.accountManager.authenticatedAccount()?.let {
-                    components.backgroundServices.accountManager.syncNowAsync(
+                    components.backgroundServices.accountManager.syncNow(
                         SyncReason.Startup,
                         debounce = true
                     )
@@ -284,10 +284,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
 
             if (!settings().manuallyCloseTabs) {
-                components.core.store.state.tabs.filter {
+                val toClose = components.core.store.state.tabs.filter {
                     (System.currentTimeMillis() - it.lastAccess) > settings().getTabTimeout()
-                }.forEach {
-                    components.useCases.tabsUseCases.removeTab(it.id)
+                }
+                // Removal needs to happen on the main thread.
+                lifecycleScope.launch(Main) {
+                    toClose.forEach { components.useCases.tabsUseCases.removeTab(it.id) }
                 }
             }
         }
@@ -670,8 +672,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             NavGraphDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHome ->
             HomeFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSearch ->
-            SearchFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSearchDialog ->
             SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSettings ->

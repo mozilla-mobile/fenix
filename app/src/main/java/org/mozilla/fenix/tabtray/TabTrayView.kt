@@ -27,10 +27,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.component_tabs_screen_top.view.*
+import kotlinx.android.synthetic.main.component_tabs_screen_top.view.exit_tabs_screen
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.collect_multi_select
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.exit_multi_select
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.handle
+import kotlinx.android.synthetic.main.component_tabstray_bottom.view.infoBanner
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.multiselect_title
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_layout
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_empty_view
@@ -39,8 +40,8 @@ import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_tray_ov
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tab_wrapper
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.tabsTray
 import kotlinx.android.synthetic.main.component_tabstray_bottom.view.topBar
-import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.*
-import kotlinx.android.synthetic.main.tabs_tray_tab_counter.*
+import kotlinx.android.synthetic.main.component_tabstray_fab_bottom.view.new_tab_button
+import kotlinx.android.synthetic.main.tabs_tray_tab_counter.counter_text
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,6 +56,7 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
@@ -314,7 +316,29 @@ class TabTrayView(
                 }
         }
 
-        adjustNewTabButtonForNormalMode()
+        adjustNewTabButtonsForNormalMode()
+
+        if (
+                view.context.settings().shouldShowAutoCloseTabsBanner &&
+                view.context.settings().canShowCfr &&
+                tabs.size >= TAB_COUNT_SHOW_CFR
+        ) {
+            InfoBanner(
+                    context = view.context,
+                    message = view.context.getString(R.string.tab_tray_close_tabs_banner_message),
+                    dismissText = view.context.getString(R.string.tab_tray_close_tabs_banner_negative_button_text),
+                    actionText = view.context.getString(R.string.tab_tray_close_tabs_banner_positive_button_text),
+                    container = view.infoBanner,
+                    dismissByHiding = true,
+                    dismissAction = { view.context.settings().shouldShowAutoCloseTabsBanner = false }
+            ) {
+                interactor.onSetUpAutoCloseTabsClicked()
+                view.context.settings().shouldShowAutoCloseTabsBanner = false
+            }.apply {
+                view.infoBanner.visibility = View.VISIBLE
+                showBanner()
+            }
+        }
     }
 
     private fun gridViewNumberOfCols(context: Context): Int {
@@ -329,9 +353,9 @@ class TabTrayView(
         interactor.onSyncedTabClicked(tab)
     }
 
-    private fun adjustNewTabButtonForNormalMode() {
+    private fun adjustNewTabButtonsForNormalMode() {
         view.tab_tray_new_tab.apply {
-            visibility = if (useFab) View.GONE else View.VISIBLE
+            isVisible = !useFab
             setOnClickListener {
                 sendNewTabEvent(isPrivateModeSelected)
                 interactor.onNewTabTapped(isPrivateModeSelected)
@@ -552,7 +576,7 @@ class TabTrayView(
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
 
-        adjustNewTabButtonForNormalMode()
+        adjustNewTabButtonsForNormalMode()
     }
 
     private fun toggleUIMultiselect(multiselect: Boolean) {
@@ -572,7 +596,7 @@ class TabTrayView(
                 if (multiselect) {
                     R.dimen.tab_tray_multiselect_handle_height
                 } else {
-                    R.dimen.tab_tray_normal_handle_height
+                    R.dimen.bottom_sheet_handle_height
                 }
             )
             if (useTopTabsTray) {
@@ -580,7 +604,7 @@ class TabTrayView(
                     if (multiselect) {
                         R.dimen.tab_tray_multiselect_handle_bottom_margin
                     } else {
-                        R.dimen.tab_tray_normal_handle_bottom_margin
+                        R.dimen.top_sheet_handle_bottom_margin
                     }
                 )
             } else {
@@ -588,7 +612,7 @@ class TabTrayView(
                     if (multiselect) {
                         R.dimen.tab_tray_multiselect_handle_top_margin
                     } else {
-                        R.dimen.tab_tray_normal_handle_top_margin
+                        R.dimen.bottom_sheet_handle_top_margin
                     }
                 )
             }
@@ -737,6 +761,7 @@ class TabTrayView(
     }
 
     companion object {
+        private const val TAB_COUNT_SHOW_CFR = 6
         private const val DEFAULT_TAB_ID = 0
         private const val PRIVATE_TAB_ID = 1
         private const val EXPAND_AT_SIZE = 3
