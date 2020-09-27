@@ -64,6 +64,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupHomeCategory()
         setupGesturesCategory()
         setupAddonsCustomizationCategory()
+        setupSystemBehaviorCategory()
     }
 
     private fun setupRadioGroups() {
@@ -253,6 +254,13 @@ class CustomizationFragment : PreferenceFragmentCompat() {
 
         requirePreference<EditTextPreference>(R.string.pref_key_addons_custom_collection).apply {
             text = context.settings().customAddonsCollection
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupSystemBehaviorCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_relinquish_memory_under_pressure).apply {
+            isChecked = context.settings().shouldRelinquishMemoryUnderPressure
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

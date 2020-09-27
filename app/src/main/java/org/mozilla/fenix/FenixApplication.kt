@@ -326,7 +326,22 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
-            components.core.store.dispatch(SystemAction.LowMemoryAction(level))
+
+            // We want to be judicious in passing low mamory messages to
+            // android-components, because it is (at time of writing) hardcoded
+            // to drop tab states (and any user data in them) as soon as we
+            // reach "moderate" memory pressure on the system, even if the
+            // browser is in no danger of being killed. See
+            // https://github.com/mozilla-mobile/android-components/blob/38186676d46c555b5a24268e5fa361e45e57102c/components/browser/session/src/main/java/mozilla/components/browser/session/engine/middleware/TrimMemoryMiddleware.kt#L53-L64
+            // for the relvant android-components code and
+            // https://stuff.mit.edu/afs/sipb/project/android/docs/reference/android/content/ComponentCallbacks2.html
+            // for the list of memory pressure levels.
+            val settings = this.settings()
+            if (settings.shouldRelinquishMemoryUnderPressure) {
+                // We will give up our RAM when asked nicely
+                components.core.store.dispatch(SystemAction.LowMemoryAction(level))
+            }
+            // Otherwise we will die for our RAM, if pressed.
         }
     }
 

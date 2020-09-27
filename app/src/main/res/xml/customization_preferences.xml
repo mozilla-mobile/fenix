@@ -138,4 +138,17 @@
             android:title="@string/addons_custom_source_collection" />
     </androidx.preference.PreferenceCategory>
     
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_system_behavior_settings_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_system_behavior"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+            <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_relinquish_memory_under_pressure"
+            android:summary="@string/preferences_relinquish_memory_description"
+            android:title="@string/preferences_relinquish_memory_title" />
+    </androidx.preference.PreferenceCategory>
+    
 </androidx.preference.PreferenceScreen>

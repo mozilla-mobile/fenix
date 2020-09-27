@@ -551,6 +551,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    var shouldRelinquishMemoryUnderPressure by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_relinquish_memory_under_pressure),
+        default = true
+    )
+
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
      * then it is *likely* a switch service is enabled. We are assuming this to be the case based on #7486

@@ -133,7 +133,7 @@
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
-
+    
     <!-- Tabs Tray Customization Settings -->
     <string name="pref_tabs_tray_settings_category" translatable="false">pref_tabs_tray_settings_category</string>
     <string name="pref_key_tabs_tray_compact_tab" translatable="false">pref_key_tabs_tray_compact_tab</string>
@@ -151,6 +151,10 @@
     <string name="pref_addons_settings_category" translatable="false">pref_addons_settings_category</string>
     <string name="pref_key_addons_custom_account" translatable="false">pref_key_addons_custom_account</string>
     <string name="pref_key_addons_custom_collection" translatable="false">pref_key_addons_custom_collection</string>
+    
+    <!-- System Customization Settings -->
+    <string name="pref_system_behavior_settings_category" translatable="false">pref_system_behavior_settings_category</string>
+    <string name="pref_key_relinquish_memory_under_pressure" translatable="false">pref_key_relinquish_memory_under_pressure</string>
 
     <!-- Tracking Protection Settings -->
     <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>

@@ -1585,6 +1585,13 @@
     <string name="addons_custom_source_account">Set custom add-ons account</string>
     <!-- Label for add-ons custom source collection preference -->
     <string name="addons_custom_source_collection">Set custom add-ons collection</string>
+    
+    <!-- Preference category for system behavior customization -->
+    <string name="preferences_system_behavior">Configure system behavior</string>
+    <!-- Title for relinquish memory preference in customization settings -->
+    <string name="preferences_relinquish_memory_title">Suspend tabs to avoid being killed for memory</string>
+    <!-- Description for relinquish memory preference in customization settings -->
+    <string name="preferences_relinquish_memory_description">If enabled, tabs will be suspended and page state lost when the system is low on memory</string>
 
     <!-- Label for enable compact tabs in tabs tray preference -->
     <string name="enable_compact_tabs">Enable compact tabs</string>
