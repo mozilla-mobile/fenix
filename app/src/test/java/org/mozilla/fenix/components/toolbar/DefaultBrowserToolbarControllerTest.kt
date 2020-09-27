@@ -21,7 +21,6 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSitesUseCases
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -39,23 +38,39 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.home.HomeScreenViewModel
 
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
 
-    @RelaxedMockK private lateinit var activity: HomeActivity
-    @MockK(relaxUnitFun = true) private lateinit var navController: NavController
-    @RelaxedMockK private lateinit var onTabCounterClicked: () -> Unit
-    @RelaxedMockK private lateinit var onCloseTab: (Session) -> Unit
-    @RelaxedMockK private lateinit var sessionManager: SessionManager
-    @MockK(relaxUnitFun = true) private lateinit var engineView: EngineView
-    @MockK private lateinit var currentSession: Session
-    @RelaxedMockK private lateinit var metrics: MetricController
-    @RelaxedMockK private lateinit var searchUseCases: SearchUseCases
-    @RelaxedMockK private lateinit var sessionUseCases: SessionUseCases
-    @RelaxedMockK private lateinit var browserAnimator: BrowserAnimator
-    @RelaxedMockK private lateinit var topSitesUseCase: TopSitesUseCases
-    @RelaxedMockK private lateinit var readerModeController: ReaderModeController
+    @RelaxedMockK
+    private lateinit var activity: HomeActivity
+    @MockK(relaxUnitFun = true)
+    private lateinit var navController: NavController
+    @RelaxedMockK
+    private lateinit var onTabCounterClicked: () -> Unit
+    @RelaxedMockK
+    private lateinit var onCloseTab: (Session) -> Unit
+    @RelaxedMockK
+    private lateinit var sessionManager: SessionManager
+    @MockK(relaxUnitFun = true)
+    private lateinit var engineView: EngineView
+    @MockK
+    private lateinit var currentSession: Session
+    @RelaxedMockK
+    private lateinit var metrics: MetricController
+    @RelaxedMockK
+    private lateinit var searchUseCases: SearchUseCases
+    @RelaxedMockK
+    private lateinit var sessionUseCases: SessionUseCases
+    @RelaxedMockK
+    private lateinit var browserAnimator: BrowserAnimator
+    @RelaxedMockK
+    private lateinit var topSitesUseCase: TopSitesUseCases
+    @RelaxedMockK
+    private lateinit var readerModeController: ReaderModeController
+    @RelaxedMockK
+    private lateinit var homeViewModel: HomeScreenViewModel
 
     @Before
     fun setUp() {
@@ -79,10 +94,10 @@ class DefaultBrowserToolbarControllerTest {
     @Test
     fun handleBrowserToolbarPaste() {
         val pastedText = "Mozilla"
-        val controller = createController(useNewSearchExperience = false)
+        val controller = createController()
         controller.handleToolbarPaste(pastedText)
 
-        val directions = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+        val directions = BrowserFragmentDirections.actionGlobalSearchDialog(
             sessionId = "1",
             pastedText = pastedText
         )
@@ -93,7 +108,7 @@ class DefaultBrowserToolbarControllerTest {
     @Test
     fun handleBrowserToolbarPaste_useNewSearchExperience() {
         val pastedText = "Mozilla"
-        val controller = createController(useNewSearchExperience = true)
+        val controller = createController()
         controller.handleToolbarPaste(pastedText)
 
         val directions = BrowserFragmentDirections.actionGlobalSearchDialog(
@@ -154,10 +169,10 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarClick() {
-        val controller = createController(useNewSearchExperience = false)
+        val controller = createController()
         controller.handleToolbarClick()
 
-        val expected = BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
+        val expected = BrowserFragmentDirections.actionGlobalSearchDialog(
             sessionId = "1"
         )
 
@@ -167,7 +182,7 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarClick_useNewSearchExperience() {
-        val controller = createController(useNewSearchExperience = true)
+        val controller = createController()
         controller.handleToolbarClick()
 
         val expected = BrowserFragmentDirections.actionGlobalSearchDialog(
@@ -194,23 +209,22 @@ class DefaultBrowserToolbarControllerTest {
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(sessionToDelete = "1")) }
+        verify {
+            homeViewModel.sessionToDelete = "1"
+            navController.navigate(BrowserFragmentDirections.actionGlobalHome())
+        }
         assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
     }
 
     @Test
     fun handleToolbarCloseTabPress() {
-        val tabsUseCases: TabsUseCases = mockk(relaxed = true)
-        val removeTabUseCase: TabsUseCases.RemoveTabUseCase = mockk(relaxed = true)
         val item = TabCounterMenu.Item.CloseTab
 
         every { sessionManager.sessions } returns emptyList()
-        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
-        every { tabsUseCases.removeTab } returns removeTabUseCase
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        verify { removeTabUseCase.invoke(currentSession) }
+        verify { sessionManager.remove(currentSession, selectParentIfExists = true) }
     }
 
     @Test
@@ -261,18 +275,16 @@ class DefaultBrowserToolbarControllerTest {
 
     private fun createController(
         activity: HomeActivity = this.activity,
-        customTabSession: Session? = null,
-        useNewSearchExperience: Boolean = false
+        customTabSession: Session? = null
     ) = DefaultBrowserToolbarController(
         activity = activity,
         navController = navController,
         metrics = metrics,
         engineView = engineView,
-        browserAnimator = browserAnimator,
+        homeViewModel = homeViewModel,
         customTabSession = customTabSession,
         readerModeController = readerModeController,
         sessionManager = sessionManager,
-        useNewSearchExperience = useNewSearchExperience,
         onTabCounterClicked = onTabCounterClicked,
         onCloseTab = onCloseTab
     )

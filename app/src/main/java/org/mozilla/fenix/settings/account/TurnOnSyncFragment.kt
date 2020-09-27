@@ -6,7 +6,6 @@ package org.mozilla.fenix.settings.account
 
 import android.Manifest
 import android.os.Bundle
-import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.addUnderline
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -72,6 +70,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireComponents.backgroundServices.accountManager.register(this, owner = this)
         requireComponents.analytics.metrics.track(Event.SyncAuthOpened)
 
         // App can be installed on devices with no camera modules. Like Android TV boxes.
@@ -125,17 +124,10 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             DefaultSyncController(activity = activity as HomeActivity)
         )
 
-        val createAccountActionText = getString(R.string.sign_in_create_account_link)
-        val fullText = getString(R.string.sign_in_create_account_text, createAccountActionText)
-        val spanStart = fullText.indexOf(createAccountActionText, 0, false)
-        val spanEnd = spanStart + createAccountActionText.length
-
         view.createAccount.apply {
-            text = fullText
-            addUnderline(
-                spanStart,
-                spanEnd,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            text = HtmlCompat.fromHtml(
+                getString(R.string.sign_in_create_account_text),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             setOnClickListener(createAccountClickListener)
         }
@@ -143,28 +135,23 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
     }
 
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        // If we're in a `shouldLoginJustWithEmail = true` state, we won't have a view available,
+        // and can't display a snackbar.
+        if (view == null) {
+            return
+        }
         val snackbarText = requireContext().getString(R.string.sync_syncing_in_progress)
         val snackbarLength = FenixSnackbar.LENGTH_SHORT
 
         // Since the snackbar can be presented in BrowserFragment or in SettingsFragment we must
         // base our display method on the padSnackbar argument
-        if (args.padSnackbar) {
-            FenixSnackbar.make(
-                view = requireView(),
-                duration = snackbarLength,
-                isDisplayedWithBrowserToolbar = true
-            )
-                .setText(snackbarText)
-                .show()
-        } else {
-            FenixSnackbar.make(
-                view = requireView(),
-                duration = snackbarLength,
-                isDisplayedWithBrowserToolbar = false
-            )
-                .setText(snackbarText)
-                .show()
-        }
+        FenixSnackbar.make(
+            view = requireView(),
+            duration = snackbarLength,
+            isDisplayedWithBrowserToolbar = args.padSnackbar
+        )
+            .setText(snackbarText)
+            .show()
     }
 
     private fun navigateToPairWithEmail() {

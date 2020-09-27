@@ -42,7 +42,7 @@ class OpenInAppOnboardingObserver(
 
         if (!loading &&
             !settings.openLinksInExternalApp &&
-            settings.shouldShowOpenInAppBanner &&
+            settings.shouldShowOpenInAppCfr &&
             appLink(session.url).hasExternalApp()
         ) {
             infoBanner = InfoBanner(

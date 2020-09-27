@@ -23,6 +23,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintWidth_percent="0.1" />
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/infoBanner"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/foundation_normal_theme"
+        app:layout_constraintBottom_toTopOf="@id/topBar"/>
+
     <TextView
         android:id="@+id/tab_tray_empty_view"
         android:layout_width="0dp"
@@ -36,7 +45,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/divider" />
+        app:layout_constraintBottom_toTopOf="@id/infoBanner" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
@@ -53,9 +62,9 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/tab_tray_close_multiselect_content_description"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/multiselect_title"
+            app:layout_constraintBottom_toBottomOf="@id/multiselect_title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/multiselect_title"
+            app:layout_constraintTop_toTopOf="@id/multiselect_title"
             app:srcCompat="@drawable/ic_close"
             app:tint="@color/contrast_text_normal_theme" />
 
@@ -70,7 +79,7 @@
             app:layout_constraintEnd_toStartOf="@id/collect_multi_select"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/exit_multi_select"
+            app:layout_constraintStart_toEndOf="@id/exit_multi_select"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="3 selected" />
 
@@ -104,9 +113,9 @@
             android:layout_marginStart="0dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/tabs_screen_close_screen_description"
-            app:layout_constraintBottom_toBottomOf="@+id/tab_layout"
+            app:layout_constraintBottom_toBottomOf="@id/tab_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tab_layout"
+            app:layout_constraintTop_toTopOf="@id/tab_layout"
             app:srcCompat="@drawable/mozac_ic_back"
             app:tint="@color/primary_text_normal_theme" />
 
@@ -176,7 +185,7 @@
         android:background="@color/tab_tray_item_divider_normal_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/topBar" />
+        app:layout_constraintBottom_toTopOf="@id/infoBanner" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabsTray"
@@ -187,6 +196,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/divider" />
+        app:layout_constraintBottom_toTopOf="@id/divider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

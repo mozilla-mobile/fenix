@@ -33,7 +33,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -72,7 +71,6 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -119,8 +117,8 @@ class HomeFragment : Fragment() {
     private val args by navArgs<HomeFragmentArgs>()
     private lateinit var bundleArgs: Bundle
 
-    private val homeViewModel: HomeScreenViewModel by viewModels {
-        ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+    private val homeViewModel: HomeScreenViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
     }
 
     private val snackbarAnchorView: View?
@@ -320,7 +318,8 @@ class HomeFragment : Fragment() {
                 )
 
                 view.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    topMargin = resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
+                    topMargin =
+                        resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
                 }
             }
             ToolbarPosition.BOTTOM -> {
@@ -430,8 +429,7 @@ class HomeFragment : Fragment() {
         // We call this onLayout so that the bottom bar width is correctly set for us to center
         // the CFR in.
         view.toolbar_wrapper.doOnLayout {
-            val willNavigateToSearch =
-                !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience
+            val willNavigateToSearch = !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)
             if (!browsingModeManager.mode.isPrivate && !willNavigateToSearch) {
                 SearchWidgetCFR(
                     context = view.context,
@@ -453,7 +451,7 @@ class HomeFragment : Fragment() {
             updateTabCounter(it)
         }
 
-        bundleArgs.getString(SESSION_TO_DELETE)?.also {
+        homeViewModel.sessionToDelete?.also {
             if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
                 removeAllTabsAndShowSnackbar(it)
             } else {
@@ -461,9 +459,11 @@ class HomeFragment : Fragment() {
             }
         }
 
+        homeViewModel.sessionToDelete = null
+
         updateTabCounter(requireComponents.core.store.state)
 
-        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) && FeatureFlags.newSearchExperience) {
+        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
             navigateToSearch()
         }
     }
@@ -471,7 +471,8 @@ class HomeFragment : Fragment() {
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         val tabs = sessionManager.sessionsOfType(private = sessionCode == ALL_PRIVATE_TABS).toList()
         val selectedIndex = sessionManager
-            .selectedSession?.let { sessionManager.sessions.indexOf(it) } ?: SessionManager.NO_SELECTION
+            .selectedSession?.let { sessionManager.sessions.indexOf(it) }
+            ?: SessionManager.NO_SELECTION
 
         val snapshot = tabs
             .map(sessionManager::createSessionSnapshot)
@@ -597,8 +598,8 @@ class HomeFragment : Fragment() {
             }, owner = this@HomeFragment.viewLifecycleOwner)
         }
 
-        if (context.settings().showPrivateModeContextualFeatureRecommender &&
-            browsingModeManager.mode.isPrivate
+        if (browsingModeManager.mode.isPrivate &&
+            context.settings().showPrivateModeCfr
         ) {
             recommendPrivateBrowsingShortcut()
         }
@@ -683,8 +684,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun recommendPrivateBrowsingShortcut() {
-        context?.let {
-            val layout = LayoutInflater.from(it)
+        context?.let { context ->
+            val layout = LayoutInflater.from(context)
                 .inflate(R.layout.pbm_shortcut_popup, null)
             val privateBrowsingRecommend =
                 PopupWindow(
@@ -712,6 +713,7 @@ class HomeFragment : Fragment() {
             // We want to show the popup only after privateBrowsingButton is available.
             // Otherwise, we will encounter an activity token error.
             privateBrowsingButton.post {
+                context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
                 privateBrowsingRecommend.showAsDropDown(
                     privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
                 )
@@ -736,15 +738,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToSearch() {
-        val directions = if (FeatureFlags.newSearchExperience) {
+        val directions =
             HomeFragmentDirections.actionGlobalSearchDialog(
                 sessionId = null
             )
-        } else {
-            HomeFragmentDirections.actionGlobalSearch(
-                sessionId = null
-            )
-        }
 
         nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
     }
@@ -993,7 +990,6 @@ class HomeFragment : Fragment() {
         const val ALL_PRIVATE_TABS = "all_private"
 
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
-        private const val SESSION_TO_DELETE = "session_to_delete"
         private const val ANIMATION_DELAY = 100L
 
         private const val NON_TAB_ITEM_NUM = 3
