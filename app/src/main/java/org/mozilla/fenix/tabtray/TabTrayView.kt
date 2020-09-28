@@ -88,7 +88,8 @@ class TabTrayView(
     private var tabsTouchHelper: TabsTouchHelper
     private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
 
-    private val syncedTabsController = SyncedTabsController(lifecycleOwner, view, store, concatAdapter)
+    private val syncedTabsController =
+        SyncedTabsController(lifecycleOwner, view, store, concatAdapter)
     private val syncedTabsFeature = ViewBoundFeatureWrapper<SyncedTabsFeature>()
 
     private var hasLoaded = false
@@ -210,7 +211,10 @@ class TabTrayView(
         }
 
         tabTrayItemMenu =
-            TabTrayItemMenu(view.context, { view.tab_layout.selectedTabPosition == 0 }) {
+            TabTrayItemMenu(
+                view.context,
+                { tabs.isNotEmpty() && view.tab_layout.selectedTabPosition == 0 },
+                { tabs.isNotEmpty() }) {
                 when (it) {
                     is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
                         isPrivateModeSelected
@@ -408,7 +412,6 @@ class TabTrayView(
         } else {
             View.VISIBLE
         }
-        view.tab_tray_overflow.isVisible = !hasNoTabs
 
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
@@ -569,9 +572,9 @@ class TabTrayView(
             // We add the offset, because the layoutManager is initialized with `reverseLayout`.
             // We also add 1 to display the tab item above the selected browser tab.
             val recyclerViewIndex = selectedBrowserTabIndex +
-                collectionsButtonAdapter.itemCount +
-                syncedTabsController.adapter.itemCount +
-                1
+                    collectionsButtonAdapter.itemCount +
+                    syncedTabsController.adapter.itemCount +
+                    1
 
             layoutManager?.scrollToPosition(recyclerViewIndex)
         }
@@ -590,6 +593,7 @@ class TabTrayView(
 class TabTrayItemMenu(
     private val context: Context,
     private val shouldShowSaveToCollection: () -> Boolean,
+    private val hasOpenTabs: () -> Boolean,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
 
@@ -619,7 +623,7 @@ class TabTrayItemMenu(
             ) {
                 context.components.analytics.metrics.track(Event.TabsTrayShareAllTabsPressed)
                 onItemTapped.invoke(Item.ShareAllTabs)
-            },
+            }.apply { visible = hasOpenTabs },
 
             SimpleBrowserMenuItem(
                 context.getString(R.string.tab_tray_menu_tab_settings),
@@ -641,7 +645,7 @@ class TabTrayItemMenu(
             ) {
                 context.components.analytics.metrics.track(Event.TabsTrayCloseAllTabsPressed)
                 onItemTapped.invoke(Item.CloseAllTabs)
-            }
+            }.apply { visible = hasOpenTabs }
         )
     }
 }
