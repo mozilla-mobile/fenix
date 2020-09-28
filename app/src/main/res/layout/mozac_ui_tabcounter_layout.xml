@@ -22,16 +22,16 @@
             android:importantForAccessibility="no"
             app:srcCompat="@drawable/ic_tabs"/>
 
-        <!-- This text size auto adjusts based on num digits in `TabCounter` -->
         <TextView
             android:id="@+id/counter_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/inter_bold"
             android:textAlignment="center"
             android:textColor="?primaryText"
-            android:textSize="12sp"
-            android:textStyle="bold"
+            android:textSize="10sp"
+            tools:ignore="SmallSp"
             tools:text="16" />
     </FrameLayout>
 </merge>

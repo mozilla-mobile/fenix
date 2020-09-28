@@ -495,7 +495,7 @@ class TabTrayView(
             View.VISIBLE
         }
 
-        counter_text.text = updateTabCounter(browserState.normalTabs.size)
+        counter_text.text = formatForDisplay(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
 
         adjustNewTabButtonsForNormalMode()
@@ -601,12 +601,14 @@ class TabTrayView(
         }
     }
 
-    private fun updateTabCounter(count: Int): String {
-        if (count > MAX_VISIBLE_TABS) {
+    private fun formatForDisplay(count: Int): String {
+        return if (count > MAX_VISIBLE_TABS) {
             counter_text.updatePadding(bottom = INFINITE_CHAR_PADDING_BOTTOM)
-            return SO_MANY_TABS_OPEN
+            SO_MANY_TABS_OPEN
+        } else {
+            counter_text.updatePadding(bottom = 0)
+            NumberFormat.getInstance().format(count.toLong())
         }
-        return NumberFormat.getInstance().format(count.toLong())
     }
 
     fun setTopOffset(landscape: Boolean) {

@@ -7,9 +7,7 @@ package org.mozilla.fenix.components.toolbar
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import androidx.core.view.updatePadding
@@ -63,7 +61,6 @@ class TabCounter @JvmOverloads constructor(
 
     fun setCount(count: Int) {
         updateContentDescription(count)
-        adjustTextSize(count)
         counter_text.text = formatForDisplay(count)
         INTERNAL_COUNT = count
     }
@@ -181,22 +178,10 @@ class TabCounter @JvmOverloads constructor(
         return if (count > MAX_VISIBLE_TABS) {
             counter_text.updatePadding(bottom = INFINITE_CHAR_PADDING_BOTTOM)
             SO_MANY_TABS_OPEN
-        } else NumberFormat.getInstance().format(count.toLong())
-    }
-
-    private fun adjustTextSize(newCount: Int) {
-        val newRatio = if (newCount in TWO_DIGITS_TAB_COUNT_THRESHOLD..MAX_VISIBLE_TABS) {
-            TWO_DIGITS_SIZE_RATIO
         } else {
-            ONE_DIGIT_SIZE_RATIO
+            counter_text.updatePadding(bottom = 0)
+            NumberFormat.getInstance().format(count.toLong())
         }
-
-        val counterBoxWidth =
-            context.resources.getDimensionPixelSize(R.dimen.tab_counter_box_width_height)
-        val textSize = newRatio * counterBoxWidth
-        counter_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
-        counter_text.setTypeface(null, Typeface.BOLD)
-        counter_text.setPadding(0, 0, 0, 0)
     }
 
     companion object {
@@ -207,10 +192,6 @@ class TabCounter @JvmOverloads constructor(
         internal const val SO_MANY_TABS_OPEN = "∞"
 
         internal const val INFINITE_CHAR_PADDING_BOTTOM = 6
-
-        internal const val ONE_DIGIT_SIZE_RATIO = 0.5f
-        internal const val TWO_DIGITS_SIZE_RATIO = 0.4f
-        internal const val TWO_DIGITS_TAB_COUNT_THRESHOLD = 10
 
         // createBoxAnimatorSet
         private const val ANIM_BOX_FADEOUT_FROM = 1.0f
