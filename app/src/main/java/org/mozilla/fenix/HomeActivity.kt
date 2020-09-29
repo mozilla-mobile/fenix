@@ -73,7 +73,6 @@ import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
@@ -150,9 +149,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private lateinit var navigationToolbar: Toolbar
 
     final override fun onCreate(savedInstanceState: Bundle?) {
-        StrictModeManager.changeStrictModePolicies(supportFragmentManager)
+        components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.onCreate(savedInstanceState)
         }
 
@@ -757,7 +756,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun attachBaseContext(base: Context) {
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)
         }
     }

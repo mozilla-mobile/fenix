@@ -261,9 +261,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                     )
                 },
                 onCloseTab = { closedSession ->
-                    val tab = store.state.findTab(closedSession.id)
-                        ?: return@DefaultBrowserToolbarController
-                    val isSelected = tab.id == context.components.core.store.state.selectedTabId
+                    val tab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
 
                     val snackbarMessage = if (tab.content.private) {
                         requireContext().getString(R.string.snackbar_private_tab_closed)
@@ -276,12 +274,9 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Session
                         snackbarMessage,
                         requireContext().getString(R.string.snackbar_deleted_undo),
                         {
-                            sessionManager.add(
-                                closedSession,
-                                isSelected,
-                                engineSessionState = tab.engineState.engineSessionState
-                            )
+                            requireComponents.useCases.tabsUseCases.undo.invoke()
                         },
+                        paddedForBottomToolbar = true,
                         operation = { }
                     )
                 }

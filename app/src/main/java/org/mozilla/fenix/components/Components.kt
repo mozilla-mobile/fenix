@@ -16,7 +16,9 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import io.github.forkmaintainers.iceraven.components.PagedAddonCollectionProvider
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.ClipboardHandler
@@ -40,11 +42,12 @@ class Components(private val context: Context) {
             core.lazyHistoryStorage,
             core.lazyBookmarksStorage,
             core.lazyPasswordsStorage,
-            core.lazyRemoteTabsStorage
+            core.lazyRemoteTabsStorage,
+            strictMode
         )
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
-    val core by lazy { Core(context, analytics.crashReporter) }
+    val core by lazy { Core(context, analytics.crashReporter, strictMode) }
     val search by lazy { Search(context) }
     val useCases by lazy {
         UseCases(
@@ -113,13 +116,14 @@ class Components(private val context: Context) {
         addonCollectionProvider.setCollectionName(addonsCollection)
     }
 
-    val analytics by lazy { Analytics(context) }
+    val analytics by lazy { Analytics(context, strictMode) }
     val publicSuffixList by lazy { PublicSuffixList(context) }
     val clipboardHandler by lazy { ClipboardHandler(context) }
     val migrationStore by lazy { MigrationStore() }
     val performance by lazy { PerformanceComponent() }
     val push by lazy { Push(context, analytics.crashReporter) }
     val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context as Application) }
+    val strictMode by lazy { StrictModeManager(Config) }
 
     val settings by lazy { Settings(context) }
 
