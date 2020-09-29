@@ -6,23 +6,23 @@ This page documents the types of crash reporting, how the various parts interact
 
 Documentation for the specific libraries is included in the [https://github.com/mozilla-mobile/android-components/blob/master/components/lib/crash/README.md](Android Components Crash Reporting README).
 
-## Glean crash ping
+## Reporting via Glean SDK
 
-[Glean SDK](https://mozilla.github.io/glean/book/index.html) is a Mozilla open source telemetry library, which Firefox Preview uses to collect app telemetry. It can also collect crash counts as a labeled counter with each label corresponding to a specific type of crash (such as `native_code_crash`, `unhandled_exception`).
+[lib-crash](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/crash/README.md) records crash counts in the [Glean SDK](https://mozilla.github.io/glean/book/index.html) metrics ping. Glean is a Mozilla open source telemetry library, which Firefox Preview uses to collect app telemetry. It can also collect crash counts as a labeled counter with each label corresponding to a specific type of crash (such as `native_code_crash`, `unhandled_exception`). This high level crash data is collected for all users with telemetry enabled.
 
-The Glean crash ping format is documented [here](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/crash/docs/metrics.md).
+The lib-crash metrics ping crash count format is documented [here](https://github.com/mozilla-mobile/android-components/blob/master/components/lib/crash/docs/metrics.md).
 
 ## Socorro
 
-[Socorro](https://wiki.mozilla.org/Socorro) is a Mozilla open source project for [crash statistics](https://crash-stats.mozilla.org/). Firefox Preview uses Socorro to track native GeckoView crashes. Crash reports contain a signature, classifications, and a number of improved fields (e.g. OS, product, version) - you can read more about what is sent in these fields in the [Socorro report documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Crash_reporting/Understanding_crash_reports).
+[Socorro](https://wiki.mozilla.org/Socorro) is a Mozilla open source project for [crash statistics](https://crash-stats.mozilla.org/). Firefox Preview uses Socorro to track native GeckoView crashes. Crash reports contain a signature, classifications, and a number of improved fields (e.g. OS, product, version) - you can read more about what is sent in these fields in the [Socorro report documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Crash_reporting/Understanding_crash_reports). Crash reports are only sent to Mozilla with explicit user action.
 
 These crashes contain hardware information and some app metadata, but no personally identifiable information is visible in the report. A few privacy-sensitive parts are only available to users who have "minidump access", which is a relatively small number of users with specific rules they must follow.
 
-A sample Firefox Preview crash report can be found [here](https://crash-stats.mozilla.org/report/index/bbbcc019-f30c-4fbb-8cbd-543940190923).
+A sample Firefox Preview crash report can be found [here](https://crash-stats.mozilla.org/report/index/58c5a7ec-ac07-452c-a675-8dcf90200924).
 
 ## Sentry
 
-[Sentry](https://sentry.io) is an open source crash reporting and aggregation platform. Both the client SDK, [github.com/getsentry/sentry-java](https://github.com/getsentry/sentry-java), and the server, [github.com/getsentry/sentry](https://github.com/getsentry/sentry), are open source.
+[Sentry](https://sentry.io) is an open source crash reporting and aggregation platform. Both the client SDK, [github.com/getsentry/sentry-java](https://github.com/getsentry/sentry-java), and the server, [github.com/getsentry/sentry](https://github.com/getsentry/sentry), are open source. Crash reports are only sent to Mozilla with explicit user action.
 
 ### High-Level Summary
 
