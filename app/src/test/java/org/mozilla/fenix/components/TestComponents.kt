@@ -11,7 +11,7 @@ import org.mozilla.fenix.utils.Settings
 
 class TestComponents(private val context: Context) : Components(context) {
     override val backgroundServices by lazy {
-        mockk<BackgroundServices>(relaxed = true)
+        TestBackgroundServices(context)
     }
     override val services by lazy { Services(context, backgroundServices.accountManager) }
     override val core by lazy { TestCore(context, analytics.crashReporter) }
