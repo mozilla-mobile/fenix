@@ -5,11 +5,14 @@
 package org.mozilla.fenix.settings.search
 
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import kotlinx.coroutines.launch
+import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -21,10 +24,16 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.search_preferences, rootKey)
+        view?.hideKeyboard()
     }
 
     override fun onResume() {
         super.onResume()
+        view?.hideKeyboard()
+        setUpPreferences()
+    }
+
+    private fun setUpPreferences() {
         showToolbar(getString(R.string.preferences_search))
 
         val searchSuggestionsPreference =
@@ -75,16 +84,21 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 isChecked = context.settings().shouldShowVoiceSearch
             }
 
-        searchEngineListPreference.reload(requireContext())
-        searchSuggestionsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showSearchShortcuts.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showHistorySuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showBookmarkSuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showSyncedTabsSuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showClipboardSuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
-        searchSuggestionsInPrivatePreference.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showVoiceSearchPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
-        autocompleteURLsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
+        lifecycleScope.launch { searchEngineListPreference.reload(requireContext()) }
+
+        setPreferenceListeners(
+            listOf(
+                searchSuggestionsPreference,
+                showSearchShortcuts,
+                showHistorySuggestions,
+                showBookmarkSuggestions,
+                showSyncedTabsSuggestions,
+                showClipboardSuggestions,
+                searchSuggestionsInPrivatePreference,
+                showVoiceSearchPreference,
+                autocompleteURLsPreference
+            )
+        )
 
         searchSuggestionsPreference.setOnPreferenceClickListener {
             if (!searchSuggestionsPreference.isChecked) {
@@ -92,6 +106,12 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 searchSuggestionsInPrivatePreference.callChangeListener(false)
             }
             true
+        }
+    }
+
+    private fun setPreferenceListeners(preferences: List<Preference>) {
+        for (pref in preferences) {
+            pref.onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }
 

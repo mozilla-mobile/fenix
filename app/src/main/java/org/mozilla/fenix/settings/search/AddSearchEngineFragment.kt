@@ -194,6 +194,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
                         searchQuery = searchString
                     )
                     requireComponents.search.provider.reload()
+
                     val successMessage = resources
                         .getString(R.string.search_add_custom_engine_success_message, name)
 
@@ -212,6 +213,20 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
             }
         }
     }
+
+//    private fun createCustomEngineItem(engineName: String) {
+//
+//        val engineItem = makeButtonFromSearchEngine(
+//            engine = engine,
+//            layoutInflater = layoutInflater,
+//            res = requireContext().resources
+//        )
+//        engineItem.id = index
+//        engineItem.tag = engineId
+//        engineItem.radio_button.isChecked = selectedIndex == index
+//        engineViews.add(engineItem)
+//        search_engine_group.addView(engineItem, layoutParams)
+//    }
 
     private fun installEngine(engine: SearchEngine) {
         viewLifecycleOwner.lifecycleScope.launch(Main) {

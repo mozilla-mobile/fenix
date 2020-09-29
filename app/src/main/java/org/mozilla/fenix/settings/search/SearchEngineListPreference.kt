@@ -18,11 +18,9 @@ import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import kotlinx.android.synthetic.main.search_engine_radio_button.view.engine_icon
-import kotlinx.android.synthetic.main.search_engine_radio_button.view.engine_text
-import kotlinx.android.synthetic.main.search_engine_radio_button.view.overflow_menu
-import kotlinx.android.synthetic.main.search_engine_radio_button.view.radio_button
+import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import org.mozilla.fenix.R
@@ -52,11 +50,16 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
         searchEngineGroup = holder!!.itemView.findViewById(R.id.search_engine_group)
-        reload(searchEngineGroup!!.context)
+        MainScope().launch { reload(searchEngineGroup!!.context) }
     }
 
-    fun reload(context: Context) {
-        searchEngineList = context.components.search.provider.installedSearchEngines(context)
+    suspend fun reload(context: Context) {
+        val installedEngines = context.components.search.provider.installedSearchEngines(context).list
+        val customEngines = context.components.search.provider.customSearchEngines.await().list
+
+        val fullList = installedEngines + customEngines
+        searchEngineList = SearchEngineList(list = fullList, default = fullList[0])
+
         refreshSearchEngineViews(context)
     }
 
