@@ -4,13 +4,16 @@
     package="org.mozilla.fenix">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <!-- Needed to prompt the user to give permission to install a downloaded apk -->
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -20,76 +23,128 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NormalTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute">
-        <activity
-            android:name=".HomeActivity"
-            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize">
+
+        <!--
+          We inherited this entry (${applicationId}.App) from Fennec. We need to keep this as our
+          main launcher to avoid launcher icons on the home screen disappearing for all our users.
+
+          Note that `fennec*` build types override the targetActivity property in the Manifest
+          inside their source set.
+        -->
+        <activity-alias
+            android:name="${applicationId}.App"
+            android:targetActivity=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <!--
+          Fennec declared entry for homescreen pinned shortcuts.
+        -->
+        <activity-alias
+            android:name="org.mozilla.gecko.BrowserApp"
+            android:targetActivity=".IntentReceiverActivity"
+            android:exported="true">
+        </activity-alias>
+
+        <!-- Activity alias from Fennec used by PWA launchers on the home screen -->
+        <activity-alias
+            android:name="org.mozilla.gecko.LauncherActivity"
+            android:targetActivity=".IntentReceiverActivity">
+            <intent-filter>
+                <action android:name="org.mozilla.gecko.WEBAPP" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity
+            android:name=".HomeActivity"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="fenix"
-                    android:host="home"/>
-                <data android:scheme="fenix"
-                      android:host="settings"/>
-                <data android:scheme="fenix"
-                    android:host="turn_on_sync"/>
-                <data android:scheme="fenix"
-                    android:host="settings_search_engine"/>
-                <data android:scheme="fenix"
-                    android:host="settings_accessibility"/>
-                <data android:scheme="fenix"
-                    android:host="settings_delete_browsing_data"/>
-                <data android:scheme="fenix"
+                <data android:scheme="${deepLinkScheme}"
                     android:host="enable_private_browsing"/>
-                <data android:scheme="fenix"
-                    android:host="open"/>
-                <data android:scheme="fenix"
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="home"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="home_collections"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="install_search_widget"/>
+                <data android:scheme="${deepLinkScheme}"
                     android:host="make_default_browser"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="open"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_accessibility"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_addon_manager"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_delete_browsing_data"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_logins"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_notifications"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_privacy"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_search_engine"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_tracking_protection"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="turn_on_sync"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="urls_bookmarks"/>
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="urls_history"/>
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
         </activity>
 
         <activity
             android:name=".customtabs.ExternalAppBrowserActivity"
             android:autoRemoveFromRecents="false"
-            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"
             android:exported="false"
             android:label="@string/app_name"
             android:persistableMode="persistNever"
             android:taskAffinity=""
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name=".customtabs.AuthCustomTabActivity"
-            android:autoRemoveFromRecents="false"
-            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
-            android:exported="false"
+            android:name=".IntentReceiverActivity"
+            android:theme="@style/Theme.Transparent"
+            android:relinquishTaskIdentity="true"
             android:taskAffinity=""
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+            android:exported="true"
+            android:excludeFromRecents="true" >
 
-        <activity android:name=".IntentReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <category android:name="mozilla.components.pwa.category.SHORTCUT" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
@@ -114,27 +169,71 @@
             </intent-filter>
 
             <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.WEB_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="mozilla.components.feature.pwa.VIEW_PWA" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="https" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.ASSIST" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
             </intent-filter>
 
             <meta-data
                 android:name="com.android.systemui.action_assist_icon"
                 android:resource="@mipmap/ic_launcher" />
+
         </activity>
 
-        <activity android:name=".widget.VoiceSearchActivity" />
+        <activity
+                android:name=".migration.MigrationProgressActivity"
+                android:noHistory="true"
+                android:launchMode="singleInstance"
+                android:exported="false">
+        </activity>
 
         <activity
-            android:name=".browser.BrowserPerformanceTestActivity"
-            android:enabled="${isRaptorEnabled}"
-            android:exported="${isRaptorEnabled}" />
+            android:name=".crashes.CrashListActivity"
+            android:exported="false" />
 
-        <activity android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+        <activity android:name=".widget.VoiceSearchActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
 
-        <activity android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+        <activity
+            android:name=".settings.account.AuthCustomTabActivity"
+            android:autoRemoveFromRecents="false"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"
+            android:exported="false"
+            android:taskAffinity=""
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity android:name=".settings.account.AuthIntentReceiverActivity"
+            android:exported="false" />
+
+        <activity android:name=".settings.about.AboutLibrariesActivity"
+            android:exported="false" />
+
+        <service android:name=".media.MediaService"
+            android:exported="false" />
 
         <service
             android:name=".customtabs.CustomTabsService"
@@ -142,12 +241,13 @@
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.support.customtabs.action.CustomTabsService" />
+                <category android:name="androidx.browser.trusted.category.TrustedWebActivities" />
             </intent-filter>
         </service>
 
         <service android:name=".downloads.DownloadService" />
         <receiver
-            android:name=".widget.SearchWidgetProvider">
+            android:name="org.mozilla.gecko.search.SearchWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -156,11 +256,11 @@
                 android:resource="@xml/search_widget_info" />
         </receiver>
 
-        <service android:name=".session.SessionNotificationService"
+        <service android:name=".session.PrivateNotificationService"
                 android:exported="false" />
 
         <service
-            android:name=".components.FirebasePush"
+            android:name=".push.FirebasePushService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -169,10 +269,18 @@
 
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
-            android:value="false" />
+            android:value="true" />
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
+        <!-- Removes the default Workmanager  initialization so that we can use on-demand initializer. -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
     </application>
 
 </manifest>

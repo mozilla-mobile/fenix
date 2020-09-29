@@ -13,8 +13,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.library_site_item.view.*
-import mozilla.components.browser.menu.BrowserMenu
-import mozilla.components.browser.menu.BrowserMenuBuilder
+import mozilla.components.concept.menu.MenuController
+import mozilla.components.concept.menu.Orientation
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
@@ -48,10 +48,6 @@ interface SelectionHolder<T> {
     val selectedItems: Set<T>
 }
 
-interface LibraryItemMenu {
-    val menuBuilder: BrowserMenuBuilder
-}
-
 class LibrarySiteItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -77,13 +73,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
      * Change visibility of parts of this view based on what type of item is being represented.
      */
     fun displayAs(mode: ItemType) {
-        favicon.isVisible = mode != ItemType.SEPARATOR
-        title.isVisible = mode != ItemType.SEPARATOR
         url.isVisible = mode == ItemType.SITE
-        overflow_menu.isVisible = mode != ItemType.SEPARATOR
-        separator.isVisible = mode == ItemType.SEPARATOR
-        isClickable = mode != ItemType.SEPARATOR
-        isFocusable = mode != ItemType.SEPARATOR
     }
 
     /**
@@ -97,11 +87,11 @@ class LibrarySiteItemView @JvmOverloads constructor(
         context.components.core.icons.loadIntoView(favicon, url)
     }
 
-    fun attachMenu(menu: LibraryItemMenu) {
+    fun attachMenu(menuController: MenuController) {
         overflow_menu.setOnClickListener {
-            menu.menuBuilder.build(context).show(
+            menuController.show(
                 anchor = it,
-                orientation = BrowserMenu.Orientation.DOWN
+                orientation = Orientation.DOWN
             )
         }
     }
@@ -135,7 +125,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
     }
 
     enum class ItemType {
-        SITE, FOLDER, SEPARATOR;
+        SITE, FOLDER;
     }
 
     companion object {

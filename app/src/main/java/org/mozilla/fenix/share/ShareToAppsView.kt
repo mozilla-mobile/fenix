@@ -8,10 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
-import org.mozilla.fenix.R
-import org.mozilla.fenix.share.listadapters.AppShareOption
 import kotlinx.android.synthetic.main.share_to_apps.*
+import org.mozilla.fenix.R
 import org.mozilla.fenix.share.listadapters.AppShareAdapter
+import org.mozilla.fenix.share.listadapters.AppShareOption
 
 /**
  * Callbacks for possible user interactions on the [ShareCloseView]
@@ -24,19 +24,33 @@ class ShareToAppsView(
     override val containerView: ViewGroup,
     interactor: ShareToAppsInteractor
 ) : LayoutContainer {
+
+    private val adapter = AppShareAdapter(interactor)
+    private val recentAdapter = AppShareAdapter(interactor)
+
     init {
         LayoutInflater.from(containerView.context)
             .inflate(R.layout.share_to_apps, containerView, true)
 
-        appsList.adapter = AppShareAdapter(interactor)
+        appsList.adapter = adapter
+        recentAppsList.adapter = recentAdapter
     }
 
-    fun setSharetargets(targets: List<AppShareOption>) {
+    fun setShareTargets(targets: List<AppShareOption>) {
         progressBar.visibility = View.GONE
-        appsList.visibility = View.VISIBLE
 
-        with(appsList.adapter as AppShareAdapter) {
-            updateData(targets)
+        appsList.visibility = View.VISIBLE
+        adapter.submitList(targets)
+    }
+
+    fun setRecentShareTargets(recentTargets: List<AppShareOption>) {
+        if (recentTargets.isEmpty()) {
+            recentAppsContainer.visibility = View.GONE
+            return
         }
+        progressBar.visibility = View.GONE
+
+        recentAppsContainer.visibility = View.VISIBLE
+        recentAdapter.submitList(recentTargets)
     }
 }

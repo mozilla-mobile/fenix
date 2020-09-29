@@ -9,27 +9,44 @@ import android.content.Intent
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import mozilla.components.support.ktx.android.content.appVersionName
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.customtabs.AuthCustomTabActivity.Companion.EXTRA_AUTH_CUSTOM_TAB
-import org.mozilla.fenix.ext.getColorFromAttr
+import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.Locale
 
 object SupportUtils {
     const val RATE_APP_URL = "market://details?id=" + BuildConfig.APPLICATION_ID
-    const val MOZILLA_MANIFESTO_URL = "https://www.mozilla.org/en-GB/about/manifesto/"
+    const val POCKET_TRENDING_URL = "https://getpocket.com/fenix-top-articles"
+    const val WIKIPEDIA_URL = "https://www.wikipedia.org/"
     const val FENIX_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+    const val FIREFOX_BETA_PLAY_STORE_URL = "market://details?id=org.mozilla.firefox_beta"
+    const val FIREFOX_NIGHTLY_PLAY_STORE_URL = "market://details?id=org.mozilla.fenix"
+    const val GOOGLE_URL = "https://www.google.com/"
 
     enum class SumoTopic(internal val topicStr: String) {
+        FENIX_MOVING("sync-delist"),
         HELP("faq-android"),
         PRIVATE_BROWSING_MYTHS("common-myths-about-private-browsing"),
         YOUR_RIGHTS("your-rights"),
         TRACKING_PROTECTION("tracking-protection-firefox-preview"),
         WHATS_NEW("whats-new-firefox-preview"),
-        SEND_TABS("send-tab-firefox-preview-another-device")
+        SEND_TABS("send-tab-preview"),
+        SET_AS_DEFAULT_BROWSER("set-firefox-preview-default"),
+        SEARCH_SUGGESTION("how-search-firefox-preview"),
+        CUSTOM_SEARCH_ENGINES("custom-search-engines"),
+        UPGRADE_FAQ("firefox-preview-upgrade-faqs"),
+        SYNC_SETUP("how-set-firefox-sync-firefox-preview"),
+        QR_CAMERA_ACCESS("qr-camera-access")
+    }
+
+    enum class MozillaPage(internal val path: String) {
+        PRIVATE_NOTICE("privacy/firefox/"),
+        MANIFESTO("about/manifesto/")
     }
 
     /**
@@ -58,8 +75,21 @@ object SupportUtils {
         return "https://support.mozilla.org/$langTag/kb/$escapedTopic"
     }
 
-    fun getPrivacyNoticeUrl(locale: Locale = Locale.getDefault()) =
-        "https://www.mozilla.org/${getLanguageTag(locale)}/privacy/firefox/"
+    fun getFirefoxAccountSumoUrl(): String {
+        return "https://support.mozilla.org/kb/access-mozilla-services-firefox-account"
+    }
+
+    fun getMozillaPageUrl(page: MozillaPage, locale: Locale = Locale.getDefault()): String {
+        val path = page.path
+        val langTag = getLanguageTag(locale)
+        return "https://www.mozilla.org/$langTag/$path"
+    }
+
+    fun getWhatsNewUrl(context: Context) = if (Config.channel.isFennec) {
+        getGenericSumoURLForTopic(SumoTopic.UPGRADE_FAQ)
+    } else {
+        getSumoURLForTopic(context, SumoTopic.WHATS_NEW)
+    }
 
     fun createCustomTabIntent(context: Context, url: String): Intent = CustomTabsIntent.Builder()
         .setInstantAppsEnabled(false)
@@ -67,11 +97,11 @@ object SupportUtils {
         .build()
         .intent
         .setData(url.toUri())
-        .setClassName(context.applicationContext, IntentReceiverActivity::class.java.name)
+        .setClassName(context, IntentReceiverActivity::class.java.name)
         .setPackage(context.packageName)
 
     fun createAuthCustomTabIntent(context: Context, url: String): Intent =
-        createCustomTabIntent(context, url).putExtra(EXTRA_AUTH_CUSTOM_TAB, true)
+        createCustomTabIntent(context, url).setClassName(context, AuthIntentReceiverActivity::class.java.name)
 
     private fun getEncodedTopicUTF8(topic: String): String {
         try {

@@ -9,6 +9,7 @@
     <attr name="contrastText" format="reference" />
     <attr name="accent" format="reference" />
     <attr name="accentBright" format="reference" />
+    <attr name="aboutLink" format="reference" />
     <attr name="accentHighContrast" format="reference" />
     <attr name="accentUsedOnDarkBackground" format="reference" />
     <attr name="tabRing" format="reference" />
@@ -24,10 +25,12 @@
     <attr name="scrimStart" format="reference"/>
     <attr name="scrimEnd" format="reference"/>
     <attr name="toolbarDivider" format="reference"/>
+    <attr name="menuCategoryText" format="reference"/>
 
     <!-- Misc -->
     <attr name="homeBackground" format="reference"/>
     <attr name="bottomBarBackground" format="reference"/>
+    <attr name="bottomBarBackgroundTop" format="reference"/>
     <attr name="privateBrowsingButtonBackground" format="reference" />
     <attr name="privateBrowsingButtonAccent" format="reference" />
     <attr name="fenixLogo" format="reference" />
@@ -36,16 +39,39 @@
     <attr name="toolbarCenterGradient" format="reference"/>
     <attr name="toolbarEndGradient" format="reference"/>
     <attr name="shieldLottieFile" format="reference" />
+    <attr name="fillLinkFromClipboard" format="reference"/>
+    <attr name="syncDisconnected" format="reference" />
+    <attr name="syncDisconnectedBackground" format="reference" />
+    <attr name="swipeDeleteBackground" format="reference" />
+    <attr name="onboardingDarkGradientStartBackground" format="reference" />
+    <attr name="onboardingDarkGradientEndBackground" format="reference" />
+    <attr name="onboardingSelected" format="reference"/>
+    <attr name="onboardingDeselected" format="reference"/>
+    <attr name="addOnPrivateBrowsingExteriorCircleBackground" format="reference"/>
+    <attr name="addOnPrivateBrowsingInteriorIconBackground" format="reference"/>
+    <attr name="readerModeStartGradient" format="reference"/>
+    <attr name="readerModeEndGradient" format="reference"/>
+    <attr name="syncedTabsSeparator" format="reference"/>
+    <attr name="awesomeBarIndicatorColor" format="reference|color"/>
+    <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
-    <declare-styleable name="LibraryListItem">
-        <attr name="listItemTitle" format="reference" />
-        <attr name="listItemIcon" format="reference" />
-    </declare-styleable>
+    <!-- Tab tray -->
+    <attr name="tabTrayItemMediaBackground" format="reference" />
+    <attr name="tabTrayHeadingIcon" format="reference" />
+    <attr name="tabTrayHeadingIconInactive" format="reference" />
+    <attr name="tabTrayThumbnailItemBackground" format="reference" />
+    <attr name="tabTrayThumbnailIcon" format="reference" />
+    <!-- Note - these are currently unused, but they are for if/when we add private UI to tabs tray -->
+    <attr name="tabTrayItemBackground" format="reference" />
+    <attr name="tabTrayItemSelectedBackground" format="reference" />
+    <attr name="tabTrayToolbarBackground" format="reference" />
+
+    <!-- Tab History -->
+    <attr name="tabHistoryItemSelectedBackground" format="reference" />
 
     <declare-styleable name="TrackingProtectionCategory">
         <attr name="categoryItemTitle" format="reference" />
         <attr name="categoryItemDescription" format="reference" />
-        <attr name="categoryItemIcon" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="SwitchWithDescription">
@@ -62,57 +88,9 @@
 
     <declare-styleable name="OnboardingRadioButton">
         <attr name="onboardingKey" format="reference" />
+        <attr name="onboardingKeyTitle" format="reference" />
+        <attr name="onboardingKeyDescription" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="QuickActionSheetBehavior_Layout">
-        <!-- The height of the bottom sheet when it is collapsed. -->
-        <attr format="dimension" name="mozac_behavior_peekHeight">
-            <!-- Peek at the 16:9 ratio keyline of its parent -->
-            <enum name="auto" value="-1"/>
-        </attr>
-        <!-- Whether this bottom sheet can be hidden by dragging it further downwards -->
-        <attr format="boolean" name="mozac_behavior_hideable"/>
-        <!-- Skip the collapsed state once expanded; no effect unless it is hideable -->
-        <attr format="boolean" name="mozac_behavior_skipCollapsed"/>
-        <!-- Whether height of expanded sheet wraps content or not -->
-        <attr format="boolean" name="mozac_behavior_fitToContents"/>
-        <!-- The ratio to be used to set the height of half-expanded state in proportion to parent, when
-             fitToContents is false. Defaults to true half, 0.5, if not explicitly set. Ratio must be a
-             float value between 0 and 1 and produce a half-expanded state height larger than the
-             peek height for the half-expanded state to be operational -->
-        <attr format="reference|float" name="mozac_behavior_halfExpandedRatio"/>
-        <!-- The top offset of the BottomSheet in the expanded-state when fitsToContent is false.
-             The default value is 0, which results in the sheet matching the parent's top. -->
-        <attr format="reference|integer" name="mozac_behavior_expandedOffset"/>
-        <!-- Shape appearance style reference for BottomSheet. Attribute declaration is in the shape
-             package. -->
-        <attr name="shapeAppearance"/>
-        <!-- Shape appearance overlay style reference for BottomSheet. To be used to augment attributes
-             declared in the shapeAppearance. Attribute declaration is in the shape package. -->
-        <attr name="shapeAppearanceOverlay"/>
-        <!-- Background color used by the BottomSheetBehavior background drawable when shape theming is
-             enabled. Accepts a ColorStateList or ColorInt. If shape theming is not enabled,
-             android:background should instead be utilized to set the background resource. -->
-        <attr name="backgroundTint"/>
-        <!-- Behavior properties will be saved and restored by evaluating each flag.
-              usage: app:behavior_saveFlags=”hideable|skipCollapsed” -->
-        <attr name="mozac_behavior_saveFlags">
-            <!-- This flag will preserve the peekHeight on configuration change. -->
-            <flag name="peekHeight" value="0x1"/>
-            <!-- This flag will preserve the fitToContents boolean value on configuration change. -->
-            <flag name="fitToContents" value="0x2"/>
-            <!-- This flag will preserve the hideable boolean value on configuration change. -->
-            <flag name="hideable" value="0x4"/>
-            <!-- This flag will preserve the skipCollapsed boolean value on configuration change. -->
-            <flag name="skipCollapsed" value="0x8"/>
-            <!-- This flag will preserve the all the aforementioned values on configuration change. -->
-            <flag name="all" value="-1"/>
-            <!-- This flag will not preserve the aforementioned values on configuration change. The only
-                 value preserved will be the positional state, e.g. collapsed, hidden, expanded, etc.
-                 This is the default behavior. -->
-            <flag name="none" value="0"/>
-        </attr>
-        <attr name="android:elevation"/>
-
-    </declare-styleable>
+    <attr name="selectLoginHeaderTextColor" format="reference"/>
 </resources>

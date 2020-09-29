@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components.metrics
 
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
@@ -14,16 +13,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EngineSource
 import org.mozilla.fenix.components.metrics.Event.PerformedSearch.EventSource
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@ObsoleteCoroutinesApi
-@RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class PerformedSearchTest {
     private lateinit var searchEngines: List<SearchEngine>
 
@@ -40,7 +35,7 @@ class PerformedSearchTest {
     @Test
     fun testThatCountLabelIsValid() {
         val labels = searchEngines.map {
-            PerformedSearch(EventSource.Action(EngineSource.Shortcut(it))).eventSource.countLabel
+            PerformedSearch(EventSource.Action(EngineSource.Shortcut(it, false))).eventSource.countLabel
         }
 
         labels.forEach {

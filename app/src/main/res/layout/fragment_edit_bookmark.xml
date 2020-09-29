@@ -3,27 +3,40 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="16dp">
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/progress_bar_bookmark"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:indeterminate="true"
+        android:translationY="-3dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bookmark_name_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
+        android:labelFor="@id/bookmarkNameEdit"
         android:text="@string/bookmark_name_label"
-        android:textColor="?primaryText"
-        android:textSize="12sp"
         android:textAllCaps="true"
-        android:labelFor="@id/bookmarkNameEdit" />
+        android:textColor="?primaryText"
+        android:textSize="12sp" />
 
     <org.mozilla.fenix.utils.ClearableEditText
         android:id="@+id/bookmarkNameEdit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/bookmark_edit_text_height"
         android:layout_marginBottom="8dp"
         android:drawablePadding="8dp"
         android:ellipsize="none"
@@ -38,17 +51,18 @@
         android:id="@+id/bookmarkUrlLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
+        android:labelFor="@id/bookmarkUrlEdit"
         android:text="@string/bookmark_url_label"
-        android:textColor="?primaryText"
-        android:textSize="12sp"
         android:textAllCaps="true"
-        android:labelFor="@id/bookmarkUrlEdit" />
+        android:textColor="?primaryText"
+        android:textSize="12sp" />
 
     <org.mozilla.fenix.utils.ClearableEditText
         android:id="@+id/bookmarkUrlEdit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/bookmark_edit_text_height"
         android:layout_marginBottom="8dp"
         android:drawablePadding="8dp"
         android:ellipsize="none"
@@ -63,24 +77,26 @@
         android:id="@+id/bookmark_folder_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
+        android:labelFor="@id/bookmarkParentFolderSelector"
         android:text="@string/bookmark_folder_label"
-        android:textColor="?primaryText"
-        android:textSize="12sp"
         android:textAllCaps="true"
-        android:labelFor="@id/bookmarkFolderSelector" />
+        android:textColor="?primaryText"
+        android:textSize="12sp" />
 
     <TextView
-        android:id="@+id/bookmarkFolderSelector"
+        android:id="@+id/bookmarkParentFolderSelector"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"
-        android:textColor="?secondaryText"
-        android:drawableStart="@drawable/ic_folder_icon"
         android:drawablePadding="10dp"
-        android:drawableTint="?primaryText"
-        tools:text="Mobile Bookmarks"
-        tools:targetApi="m" />
+        android:gravity="center_vertical"
+        android:textColor="?secondaryText"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/ic_folder_icon"
+        app:drawableTint="?primaryText"
+        tools:text="Mobile Bookmarks" />
 
 </LinearLayout>

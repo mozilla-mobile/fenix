@@ -7,20 +7,34 @@ package org.mozilla.fenix.components
 import android.content.Context
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.customtabs.CustomTabIntentProcessor
+import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.intent.processing.TabIntentProcessor
+import mozilla.components.feature.pwa.ManifestStorage
+import mozilla.components.feature.pwa.intent.TrustedWebActivityIntentProcessor
+import mozilla.components.feature.pwa.intent.WebAppIntentProcessor
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
-import org.mozilla.fenix.test.Mockable
+import mozilla.components.service.digitalassetlinks.RelationChecker
+import mozilla.components.support.migration.MigrationIntentProcessor
+import mozilla.components.support.migration.state.MigrationStore
+import org.mozilla.fenix.customtabs.FennecWebAppIntentProcessor
+import org.mozilla.fenix.home.intent.FennecBookmarkShortcutsIntentProcessor
+import org.mozilla.fenix.utils.Mockable
 
 /**
  * Component group for miscellaneous components.
  */
 @Mockable
+@Suppress("LongParameterList")
 class IntentProcessors(
     private val context: Context,
     private val sessionManager: SessionManager,
     private val sessionUseCases: SessionUseCases,
-    private val searchUseCases: SearchUseCases
+    private val searchUseCases: SearchUseCases,
+    private val relationChecker: RelationChecker,
+    private val customTabsStore: CustomTabsServiceStore,
+    private val migrationStore: MigrationStore,
+    private val manifestStorage: ManifestStorage
 ) {
     /**
      * Provides intent processing functionality for ACTION_VIEW and ACTION_SEND intents.
@@ -36,9 +50,33 @@ class IntentProcessors(
         TabIntentProcessor(sessionManager, sessionUseCases.loadUrl, searchUseCases.newTabSearch, isPrivate = true)
     }
 
+    val customTabIntentProcessor by lazy {
+        CustomTabIntentProcessor(sessionManager, sessionUseCases.loadUrl, context.resources, isPrivate = false)
+    }
+
+    val privateCustomTabIntentProcessor by lazy {
+        CustomTabIntentProcessor(sessionManager, sessionUseCases.loadUrl, context.resources, isPrivate = true)
+    }
+
     val externalAppIntentProcessors by lazy {
         listOf(
-            CustomTabIntentProcessor(sessionManager, sessionUseCases.loadUrl, context.resources)
+            TrustedWebActivityIntentProcessor(
+                sessionManager = sessionManager,
+                loadUrlUseCase = sessionUseCases.loadUrl,
+                packageManager = context.packageManager,
+                relationChecker = relationChecker,
+                store = customTabsStore
+            ),
+            WebAppIntentProcessor(sessionManager, sessionUseCases.loadUrl, manifestStorage),
+            FennecWebAppIntentProcessor(context, sessionManager, sessionUseCases.loadUrl, manifestStorage)
         )
+    }
+
+    val fennecPageShortcutIntentProcessor by lazy {
+        FennecBookmarkShortcutsIntentProcessor(sessionManager, sessionUseCases.loadUrl)
+    }
+
+    val migrationIntentProcessor by lazy {
+        MigrationIntentProcessor(migrationStore)
     }
 }

@@ -1,33 +1,27 @@
-package org.mozilla.fenix.whatsnew
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+package org.mozilla.fenix.whatsnew
+
+import androidx.preference.PreferenceManager
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.ext.clearAndCommit
-import org.mozilla.fenix.utils.Settings
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@ObsoleteCoroutinesApi
-@RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class WhatsNewStorageTest {
+
     private lateinit var storage: SharedPreferenceWhatsNewStorage
-    private lateinit var settings: Settings
 
     @Before
     fun setUp() {
         storage = SharedPreferenceWhatsNewStorage(testContext)
-        settings = Settings.getInstance(testContext)
-            .apply(Settings::clear)
+        PreferenceManager.getDefaultSharedPreferences(testContext).clearAndCommit()
     }
 
     @Test
@@ -61,8 +55,4 @@ class WhatsNewStorageTest {
     companion object {
         const val DAY_IN_MILLIS = 3600 * 1000 * 24
     }
-}
-
-fun Settings.clear() {
-    preferences.clearAndCommit()
 }

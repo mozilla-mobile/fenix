@@ -2,39 +2,45 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ---
-loader: fenix_taskgraph.loader.single_dep:loader
+loader: fenix_taskgraph.loader.multi_dep:loader
 
 transforms:
-    - fenix_taskgraph.transforms.single_dep:transforms
+    - fenix_taskgraph.transforms.multi_dep:transforms
     - fenix_taskgraph.transforms.push_apk:transforms
     - taskgraph.transforms.task:transforms
 
 kind-dependencies:
     - signing
 
+primary-dependency: signing
+
+group-by: build-type
+
 only-for-build-types:
+    - beta
+    - release
     - nightly
-    - nightly-legacy
-    - production
 
 job-template:
     description: Publish Fenix
     worker-type: push-apk
     worker:
+        certificate-alias:
+            # TODO rename these values to use non-legacy terms.
+            by-build-type:
+                nightly: fenix-production
+                beta: fennec-beta
+                release: fennec-production
         commit: true
         channel:
             by-build-type:
-                nightly: nightly
-                nightly-legacy: production
-                production: production
+                beta: fennec-beta
+                release: fennec-production
+                nightly: production
         dep:
             by-level:
                 '3': false
                 default: true
-        google-play-track:
-            by-build-type:
-                nightly-legacy: nightly
-                default: ''
         product: fenix
 
     treeherder:

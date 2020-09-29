@@ -2,35 +2,50 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.preference.Preference
-            android:key="@string/pref_key_sync_now"
-            android:title="@string/preferences_sync_now" />
+    <Preference
+        android:key="@string/pref_key_sync_now"
+        android:title="@string/preferences_sync_now"
+        app:icon="@drawable/mozac_ic_sync" />
 
-    <androidx.preference.PreferenceCategory
-            android:key="@string/preferences_sync_category"
-            android:title="@string/preferences_sync_category">
+    <EditTextPreference
+        android:key="@string/pref_key_sync_device_name"
+        android:title="@string/preferences_sync_device_name" />
 
-        <androidx.preference.CheckBoxPreference
-                android:key="@string/pref_key_sync_bookmarks"
-                android:defaultValue="true"
-                android:enabled="false"
-                android:title="@string/preferences_sync_bookmarks" />
+    <Preference
+        android:key="@string/pref_key_sign_out"
+        android:title="@string/preferences_sign_out" />
 
-        <androidx.preference.CheckBoxPreference
-                android:key="@string/pref_key_sync_history"
-                android:defaultValue="true"
-                android:enabled="false"
-                android:title="@string/preferences_sync_history" />
+    <PreferenceCategory
+        android:key="@string/preferences_sync_category"
+        android:title="@string/preferences_sync_category"
+        android:layout="@layout/preference_cat_style">
 
-        <androidx.preference.EditTextPreference
-                android:key="@string/pref_key_sync_device_name"
-                android:title="@string/preferences_sync_device_name" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_sync_bookmarks"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_bookmarks" />
 
-    </androidx.preference.PreferenceCategory>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_sync_history"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_history" />
 
-    <androidx.preference.Preference
-            android:key="@string/pref_key_sign_out"
-            android:title="@string/preferences_sign_out" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_sync_logins"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_logins" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_sync_tabs"
+            android:layout="@layout/checkbox_left_preference"
+            android:title="@string/preferences_sync_tabs_2"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

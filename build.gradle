@@ -1,20 +1,70 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import org.mozilla.fenix.gradle.tasks.GithubDetailsTask
+
 buildscript {
+    // This logic is duplicated in the allprojects block: I don't know how to fix that.
     repositories {
-        // remove next line after Android Gradle Plugin 3.6.0+ is stable
-        maven { url "http://storage.googleapis.com/r8-releases/raw/master"}
-        google()
-        jcenter()
+        maven {
+            name "Mozilla Nightly"
+            url "https://nightly.maven.mozilla.org/maven2"
+            content {
+                // Improve performance: only check moz maven for mozilla deps.
+                includeGroupByRegex RepoMatching.mozilla
+            }
+        }
+        maven {
+            name "Mozilla"
+            url "https://maven.mozilla.org/maven2"
+            content {
+                // Improve performance: only check moz maven for mozilla deps.
+                includeGroupByRegex RepoMatching.mozilla
+            }
+        }
+        if (project.hasProperty("googleRepo")) {
+            maven {
+                name "Google"
+                url project.property("googleRepo")
+            }
+        } else {
+            google() {
+                content {
+                    // Improve performance: only check google maven for mozilla deps.
+                    includeGroupByRegex RepoMatching.androidx
+                    includeGroupByRegex RepoMatching.comGoogleAndroid
+                    includeGroupByRegex RepoMatching.comGoogleFirebase
+                    includeGroupByRegex RepoMatching.comAndroid
+                }
+            }
+        }
+
+        if (project.hasProperty("jcenterRepo")) {
+            maven {
+                name "BintrayJCenter"
+                url project.property("jcenterRepo")
+            }
+        } else {
+            jcenter() {
+                content {
+                    // Improve security: don't search deps with known repos.
+                    excludeGroupByRegex RepoMatching.mozilla
+                    excludeGroupByRegex RepoMatching.androidx
+                    excludeGroupByRegex RepoMatching.comGoogleAndroid
+                    excludeGroupByRegex RepoMatching.comGoogleFirebase
+                    excludeGroupByRegex RepoMatching.comAndroid
+                }
+            }
+        }
     }
+
     dependencies {
-        // remove next line after Android Gradle Plugin 3.6.0+ is stable
-        classpath Deps.tools_newestR8
         classpath Deps.tools_androidgradle
         classpath Deps.tools_kotlingradle
         classpath Deps.androidx_safeargs
         classpath Deps.allopen
         classpath Deps.osslicenses_plugin
+
+        classpath "org.mozilla.components:tooling-glean-gradle:${Versions.mozilla_android_components}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,40 +72,81 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.0.0-RC16")
+    id("io.gitlab.arturbosch.detekt").version("1.9.1")
 }
 
 allprojects {
+    // This logic is duplicated in the buildscript block: I don't know how to fix that.
     repositories {
-        google()
         maven {
-            url "https://snapshots.maven.mozilla.org/maven2"
+            name "Mozilla Nightly"
+            url "https://nightly.maven.mozilla.org/maven2"
+            content {
+                // Improve performance: only check moz maven for mozilla deps.
+                includeGroupByRegex RepoMatching.mozilla
+            }
         }
         maven {
+            name "Mozilla"
             url "https://maven.mozilla.org/maven2"
+            content {
+                // Improve performance: only check moz maven for mozilla deps.
+                includeGroupByRegex RepoMatching.mozilla
+            }
         }
-        maven {
-            url "https://repo.leanplum.com/"
+        if (project.hasProperty("googleRepo")) {
+            maven {
+                name "Google"
+                url project.property("googleRepo")
+            }
+        } else {
+            google() {
+                content {
+                    // Improve performance: only check google maven for mozilla deps.
+                    includeGroupByRegex RepoMatching.androidx
+                    includeGroupByRegex RepoMatching.comGoogleAndroid
+                    includeGroupByRegex RepoMatching.comGoogleFirebase
+                    includeGroupByRegex RepoMatching.comAndroid
+                }
+            }
         }
-        jcenter()
+        if (project.hasProperty("jcenterRepo")) {
+            maven {
+                name "BintrayJCenter"
+                url project.property("jcenterRepo")
+            }
+        } else {
+            jcenter() {
+                content {
+                    // Improve security: don't search deps with known repos.
+                    excludeGroupByRegex RepoMatching.mozilla
+                    excludeGroupByRegex RepoMatching.androidx
+                    excludeGroupByRegex RepoMatching.comGoogleAndroid
+                    excludeGroupByRegex RepoMatching.comGoogleFirebase
+                    excludeGroupByRegex RepoMatching.comAndroid
+                }
+            }
+        }
     }
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.allWarningsAsErrors = true
-        kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental", "-Xskip-runtime-version-check"]
+        kotlinOptions.freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.Experimental"
+        ]
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
 
 detekt {
     // The version number is duplicated, please refer to plugins block for more details
-    version = "1.0.0-RC16"
-    input = files("$projectDir/app/src", "$projectDir/architecture/src")
+    version = "1.9.1"
+    input = files("$projectDir/app/src")
     config = files("$projectDir/config/detekt.yml")
-    filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
 
     reports {
         html {
@@ -74,11 +165,39 @@ configurations {
 
 dependencies {
     ktlint "com.pinterest:ktlint:0.34.2"
+    detekt project(":mozilla-detekt-rules")
+    detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 }
 
-task ktlint(type: JavaExec, group: "verification") {
+tasks.register('ktlint', JavaExec) {
+    group = "verification"
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
-    args "app/src/**/*.kt", "architecture/src/**/*.kt"
+    args "app/src/**/*.kt"
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class).configureEach {
+    exclude("**/resources/**")
+    exclude("**/test/**")
+    exclude("**/tmp/**")
+}
+
+tasks.register("listRepositories") {
+    doLast {
+        println "Repositories:"
+        project.repositories.each { println "Name: " + it.name + "; url: " + it.url }
+    }
+}
+
+tasks.register("githubTestDetails", GithubDetailsTask) {
+    text = "### [Unit Test Results]({reportsUrl}/test/testDebugUnitTest/index.html)"
+}
+
+tasks.register("githubLintDetektDetails", GithubDetailsTask) {
+    text = "### [Detekt Results]({reportsUrl}/detekt.html)"
+}
+
+tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
+    text = "### [Android Lint Results]({reportsUrl}/lint-results-debug.html)"
 }

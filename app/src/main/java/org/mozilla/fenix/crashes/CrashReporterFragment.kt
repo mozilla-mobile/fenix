@@ -5,29 +5,22 @@
 package org.mozilla.fenix.crashes
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_crash_reporter.*
 import mozilla.components.lib.crash.Crash
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 
 /**
  * Fragment shown when a tab crashes.
  */
-class CrashReporterFragment : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_crash_reporter, container, false)
+class CrashReporterFragment : Fragment(R.layout.fragment_crash_reporter) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,16 +38,27 @@ class CrashReporterFragment : Fragment() {
             settings = requireContext().settings()
         )
 
-        restoreTabButton.setOnClickListener {
-            controller.handleCloseAndRestore(sendCrashCheckbox.isChecked)
+        restoreTabButton.apply {
+            increaseTapArea(TAP_INCREASE_DP)
+            setOnClickListener {
+                controller.handleCloseAndRestore(sendCrashCheckbox.isChecked)
+            }
         }
-        closeTabButton.setOnClickListener {
-            controller.handleCloseAndRemove(sendCrashCheckbox.isChecked)
+
+        closeTabButton.apply {
+            increaseTapArea(TAP_INCREASE_DP)
+            setOnClickListener {
+                controller.handleCloseAndRemove(sendCrashCheckbox.isChecked)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).supportActionBar?.hide()
+        hideToolbar()
+    }
+
+    companion object {
+        private const val TAP_INCREASE_DP = 12
     }
 }

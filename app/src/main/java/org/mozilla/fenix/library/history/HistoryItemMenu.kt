@@ -5,27 +5,61 @@
 package org.mozilla.fenix.library.history
 
 import android.content.Context
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
+import androidx.annotation.VisibleForTesting
+import mozilla.components.browser.menu2.BrowserMenuController
+import mozilla.components.concept.menu.MenuController
+import mozilla.components.concept.menu.candidate.TextMenuCandidate
+import mozilla.components.concept.menu.candidate.TextStyle
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.library.LibraryItemMenu
 
 class HistoryItemMenu(
     private val context: Context,
-    private val onItemTapped: (Item) -> Unit = {}
-) : LibraryItemMenu {
-    sealed class Item {
-        object Delete : Item()
+    private val onItemTapped: (Item) -> Unit
+) {
+
+    enum class Item {
+        Copy,
+        Share,
+        OpenInNewTab,
+        OpenInPrivateTab,
+        Delete;
     }
 
-    override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
+    val menuController: MenuController by lazy {
+        BrowserMenuController().apply {
+            submitList(menuItems())
+        }
+    }
 
-    private val menuItems by lazy {
-        listOf(
-            SimpleBrowserMenuItem(
-                context.getString(R.string.history_delete_item),
-                textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
+    @VisibleForTesting
+    internal fun menuItems(): List<TextMenuCandidate> {
+        return listOf(
+            TextMenuCandidate(
+                text = context.getString(R.string.history_menu_copy_button)
+            ) {
+                onItemTapped.invoke(Item.Copy)
+            },
+            TextMenuCandidate(
+                text = context.getString(R.string.history_menu_share_button)
+            ) {
+                onItemTapped.invoke(Item.Share)
+            },
+            TextMenuCandidate(
+                text = context.getString(R.string.history_menu_open_in_new_tab_button)
+            ) {
+                onItemTapped.invoke(Item.OpenInNewTab)
+            },
+            TextMenuCandidate(
+                text = context.getString(R.string.history_menu_open_in_private_tab_button)
+            ) {
+                onItemTapped.invoke(Item.OpenInPrivateTab)
+            },
+            TextMenuCandidate(
+                text = context.getString(R.string.history_delete_item),
+                textStyle = TextStyle(
+                    color = context.getColorFromAttr(R.attr.destructive)
+                )
             ) {
                 onItemTapped.invoke(Item.Delete)
             }

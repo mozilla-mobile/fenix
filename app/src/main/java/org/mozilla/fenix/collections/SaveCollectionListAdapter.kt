@@ -4,21 +4,22 @@
 
 package org.mozilla.fenix.collections
 
-import android.graphics.PorterDuff.Mode.SRC_IN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
-import kotlinx.android.synthetic.main.collections_list_item.view.*
+import kotlinx.android.synthetic.main.collections_list_item.*
+import mozilla.components.feature.tab.collections.TabCollection
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.description
 import org.mozilla.fenix.ext.getIconColor
-import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
+import org.mozilla.fenix.home.Tab
+import org.mozilla.fenix.utils.view.ViewHolder
 
 class SaveCollectionListAdapter(
-    val actionEmitter: Observer<CollectionCreationAction>
+    private val interactor: CollectionCreationInteractor
 ) : RecyclerView.Adapter<CollectionViewHolder>() {
 
     private var tabCollections = listOf<TabCollection>()
@@ -35,8 +36,7 @@ class SaveCollectionListAdapter(
         val collection = tabCollections[position]
         holder.bind(collection)
         holder.itemView.setOnClickListener {
-            val action = CollectionCreationAction.SelectCollection(collection, selectedTabs.toList())
-            actionEmitter.onNext(action)
+            interactor.selectCollection(collection, selectedTabs.toList())
         }
     }
 
@@ -49,16 +49,13 @@ class SaveCollectionListAdapter(
     }
 }
 
-class CollectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class CollectionViewHolder(view: View) : ViewHolder(view) {
 
     fun bind(collection: TabCollection) {
-        itemView.collection_item.text = collection.title
-        itemView.collection_description.text = collection.description(itemView.context)
-
-        itemView.collection_icon.setColorFilter(
-            collection.getIconColor(itemView.context),
-            SRC_IN
-        )
+        collection_item.text = collection.title
+        collection_description.text = collection.description(itemView.context)
+        collection_icon.colorFilter =
+            createBlendModeColorFilterCompat(collection.getIconColor(itemView.context), SRC_IN)
     }
 
     companion object {

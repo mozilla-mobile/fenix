@@ -16,10 +16,10 @@
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:drawableStart="@drawable/mozac_ic_back"
+        app:drawableStartCompat="@drawable/mozac_ic_back"
         android:drawablePadding="8dp"
         android:gravity="start|center_vertical"
-        android:drawableTint="@color/neutral_text"
+        app:drawableTint="@color/neutral_text"
         android:text="@string/create_collection_select_collection"
         android:textAppearance="@style/HeaderTextStyle"
         android:textColor="@color/neutral_text"
@@ -52,7 +52,8 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button" />
+        app:layout_constraintTop_toBottomOf="@id/back_button"
+        tools:listitem="@layout/collections_list_item" />
 
     <EditText
         android:id="@+id/name_collection_edittext"
@@ -87,10 +88,11 @@
         android:fadingEdgeLength="30dp"
         android:requiresFadingEdge="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_button_bar_layout"
+        app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button" />
+        app:layout_constraintTop_toBottomOf="@id/back_button"
+        tools:listitem="@layout/collection_tab_list_row" />
 
     <View
         android:id="@+id/tab_list_dim"
@@ -122,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_new"
+            app:srcCompat="@drawable/ic_new"
             android:tint="?neutral"
             android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -138,6 +140,7 @@
             android:gravity="center_vertical"
             android:singleLine="true"
             android:text="@string/create_collection_add_new_collection"
+            android:fontFamily="@font/metropolis"
             android:textColor="?neutral"
             android:textSize="16sp"
             android:textStyle="bold"

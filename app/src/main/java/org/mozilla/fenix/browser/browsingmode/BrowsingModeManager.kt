@@ -31,20 +31,20 @@ interface BrowsingModeManager {
     var mode: BrowsingMode
 }
 
+/**
+ * Wraps a [BrowsingMode] and executes a callback whenever [mode] is updated.
+ */
 class DefaultBrowsingModeManager(
+    private var _mode: BrowsingMode,
     private val settings: Settings,
     private val modeDidChange: (BrowsingMode) -> Unit
 ) : BrowsingModeManager {
-    override var mode: BrowsingMode
-        get() = BrowsingMode.fromBoolean(settings.usePrivateMode)
-        set(value) {
-            settings.usePrivateMode = value.isPrivate
-            modeDidChange(value)
-        }
-}
 
-class CustomTabBrowsingModeManager : BrowsingModeManager {
-    override var mode
-        get() = BrowsingMode.Normal
-        set(_) { /* no-op */ }
+    override var mode: BrowsingMode
+        get() = _mode
+        set(value) {
+            _mode = value
+            modeDidChange(value)
+            settings.lastKnownMode = value
+        }
 }

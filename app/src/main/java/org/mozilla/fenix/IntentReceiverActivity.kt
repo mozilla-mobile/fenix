@@ -7,16 +7,17 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.StrictMode
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import mozilla.components.feature.intent.processing.TabIntentProcessor
-import org.mozilla.fenix.customtabs.AuthCustomTabActivity
-import org.mozilla.fenix.customtabs.AuthCustomTabActivity.Companion.EXTRA_AUTH_CUSTOM_TAB
-import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
+import mozilla.components.feature.intent.processing.IntentProcessor
+import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
+import org.mozilla.fenix.components.IntentProcessorType
+import org.mozilla.fenix.components.getType
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
+import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor
 
 /**
  * Processes incoming intents and sends them to the corresponding activity.
@@ -25,87 +26,82 @@ class IntentReceiverActivity : Activity() {
 
     @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        MainScope().launch {
-            // The intent property is nullable, but the rest of the code below
-            // assumes it is not. If it's null, then we make a new one and open
-            // the HomeActivity.
-            val intent = intent?.let { Intent(intent) } ?: Intent()
-            processIntent(intent)
+        // StrictMode violation on certain devices such as Samsung
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            super.onCreate(savedInstanceState)
         }
+
+        // The intent property is nullable, but the rest of the code below
+        // assumes it is not. If it's null, then we make a new one and open
+        // the HomeActivity.
+        val intent = intent?.let { Intent(it) } ?: Intent()
+        intent.stripUnwantedFlags()
+        processIntent(intent)
+
+        StartupTimeline.onActivityCreateEndIntentReceiver() // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    suspend fun processIntent(intent: Intent) {
-        val tabIntentProcessor = if (settings().alwaysOpenInPrivateMode) {
-            components.intentProcessors.privateIntentProcessor
+    fun processIntent(intent: Intent) {
+        // Call process for side effects, short on the first that returns true
+        val private = settings().openLinksInAPrivateTab
+        intent.putExtra(PRIVATE_BROWSING_MODE, private)
+        if (private) {
+            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
         } else {
-            components.intentProcessors.intentProcessor
+            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
         }
 
-        val intentProcessors =
-            components.intentProcessors.externalAppIntentProcessors + tabIntentProcessor
+        val processor = getIntentProcessors(private).firstOrNull { it.process(intent) }
+        val intentProcessorType = components.intentProcessors.getType(processor)
 
-        intentProcessors.any { it.process(intent) }
-        setIntentActivity(intent, tabIntentProcessor)
-
-        startActivity(intent)
-
-        finish()
+        launch(intent, intentProcessorType)
     }
 
-    /**
-     * Sets the activity that this [intent] will launch.
-     */
-    private fun setIntentActivity(intent: Intent, tabIntentProcessor: TabIntentProcessor) {
-        val openToBrowser = when {
-            components.intentProcessors.externalAppIntentProcessors.any { it.matches(intent) } -> {
-                // TODO this needs to change: https://github.com/mozilla-mobile/fenix/issues/5225
-                val activityClass = if (intent.hasExtra(EXTRA_AUTH_CUSTOM_TAB)) {
-                    AuthCustomTabActivity::class
-                } else {
-                    ExternalAppBrowserActivity::class
-                }
-                intent.setClassName(applicationContext, activityClass.java.name)
-                true
-            }
-            tabIntentProcessor.matches(intent) -> {
-                intent.setClassName(applicationContext, HomeActivity::class.java.name)
-                // This Intent was launched from history (recent apps). Android will redeliver the
-                // original Intent (which might be a VIEW intent). However if there's no active browsing
-                // session then we do not want to re-process the Intent and potentially re-open a website
-                // from a session that the user already "erased".
-                intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
-            }
-            intent.action == ACTION_OPEN_TAB || intent.action == ACTION_OPEN_PRIVATE_TAB -> {
-                intent.setClassName(applicationContext, HomeActivity::class.java.name)
-                val startPrivateMode = (intent.action == ACTION_OPEN_PRIVATE_TAB)
-                if (startPrivateMode) {
-                    intent.putExtra(
-                        HomeActivity.OPEN_TO_SEARCH,
-                        StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_PRIVATE_TAB
-                    )
-                } else {
-                    intent.putExtra(
-                        HomeActivity.OPEN_TO_SEARCH,
-                        StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_TAB
-                    )
-                }
-                intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, startPrivateMode)
-                intent.flags = intent.flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                true
-            }
-            else -> {
-                intent.setClassName(applicationContext, HomeActivity::class.java.name)
-                false
-            }
+    private fun launch(intent: Intent, intentProcessorType: IntentProcessorType) {
+        intent.setClassName(applicationContext, intentProcessorType.activityClassName)
+
+        if (!intent.hasExtra(HomeActivity.OPEN_TO_BROWSER)) {
+            intent.putExtra(
+                HomeActivity.OPEN_TO_BROWSER,
+                intentProcessorType.shouldOpenToBrowser(intent)
+            )
+        }
+        // StrictMode violation on certain devices such as Samsung
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            startActivity(intent)
+        }
+        finish() // must finish() after starting the other activity
+    }
+
+    private fun getIntentProcessors(private: Boolean): List<IntentProcessor> {
+        val modeDependentProcessors = if (private) {
+            listOf(
+                components.intentProcessors.privateCustomTabIntentProcessor,
+                components.intentProcessors.privateIntentProcessor
+            )
+        } else {
+            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
+            listOf(
+                components.intentProcessors.customTabIntentProcessor,
+                components.intentProcessors.intentProcessor
+            )
         }
 
-        intent.putExtra(HomeActivity.OPEN_TO_BROWSER, openToBrowser)
+        return listOf(components.intentProcessors.migrationIntentProcessor) +
+            components.intentProcessors.externalAppIntentProcessors +
+            components.intentProcessors.fennecPageShortcutIntentProcessor +
+            modeDependentProcessors +
+            NewTabShortcutIntentProcessor()
     }
+}
 
-    companion object {
-        const val ACTION_OPEN_TAB = "org.mozilla.fenix.OPEN_TAB"
-        const val ACTION_OPEN_PRIVATE_TAB = "org.mozilla.fenix.OPEN_PRIVATE_TAB"
-    }
+private fun Intent.stripUnwantedFlags() {
+    // Explicitly remove the new task and clear task flags (Our browser activity is a single
+    // task activity and we never want to start a second task here).
+    flags = flags and Intent.FLAG_ACTIVITY_NEW_TASK.inv()
+    flags = flags and Intent.FLAG_ACTIVITY_CLEAR_TASK.inv()
+
+    // IntentReceiverActivity is started with the "excludeFromRecents" flag (set in manifest). We
+    // do not want to propagate this flag from the intent receiver activity to the browser.
+    flags = flags and Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS.inv()
 }

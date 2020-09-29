@@ -11,14 +11,22 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.view.View
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_private_browsing.view.*
+import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.components.support.ktx.android.content.getDrawableWithTint
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.setBounds
+import org.mozilla.fenix.home.sessioncontrol.OnboardingInteractor
 
-class OnboardingPrivateBrowsingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class OnboardingPrivateBrowsingViewHolder(
+    view: View,
+    private val interactor: OnboardingInteractor
+) : RecyclerView.ViewHolder(view) {
 
     init {
         view.header_text.setOnboardingIcon(R.drawable.ic_onboarding_private_browsing)
@@ -27,10 +35,11 @@ class OnboardingPrivateBrowsingViewHolder(view: View) : RecyclerView.ViewHolder(
         val inlineIcon = PrivateBrowsingImageSpan(
             view.context,
             R.drawable.ic_private_browsing,
-            view.description_text.lineHeight
+            tint = view.context.getColorFromAttr(R.attr.primaryText),
+            size = view.description_text_once.lineHeight
         )
 
-        val text = SpannableString(view.context.getString(R.string.onboarding_private_browsing_description)).apply {
+        val text = SpannableString(view.context.getString(R.string.onboarding_private_browsing_description1)).apply {
             val spanStartIndex = indexOf(IMAGE_PLACEHOLDER)
             setSpan(
                     inlineIcon,
@@ -40,16 +49,21 @@ class OnboardingPrivateBrowsingViewHolder(view: View) : RecyclerView.ViewHolder(
             )
         }
 
-        view.description_text.text = text
-        view.contentDescription = String.format(text.toString(), view.header_text.text)
+        view.description_text_once.text = text
+        view.description_text_once.contentDescription = String.format(text.toString(), view.header_text.text)
+        view.open_settings_button.setOnClickListener {
+            it.context.components.analytics.metrics.track(Event.OnboardingPrivateBrowsing)
+            interactor.onOpenSettingsClicked()
+        }
     }
 
     class PrivateBrowsingImageSpan(
         context: Context,
         @DrawableRes drawableId: Int,
+        @ColorInt tint: Int,
         size: Int
     ) : ImageSpan(
-        AppCompatResources.getDrawable(context, drawableId)!!.apply { setBounds(size) }
+        context.getDrawableWithTint(drawableId, tint)!!.apply { setBounds(size) }
     ) {
         override fun draw(
             canvas: Canvas,

@@ -4,38 +4,30 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
-import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observer
 import kotlinx.android.synthetic.main.private_browsing_description.view.*
 import org.mozilla.fenix.R
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
-import org.mozilla.fenix.home.sessioncontrol.TabAction
-import org.mozilla.fenix.home.sessioncontrol.onNext
+import org.mozilla.fenix.ext.addUnderline
+import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 
 class PrivateBrowsingDescriptionViewHolder(
     view: View,
-    private val actionEmitter: Observer<SessionControlAction>
+    private val interactor: TabSessionInteractor
 ) : RecyclerView.ViewHolder(view) {
 
     init {
-        val resources = view.context.resources
+        val resources = view.resources
         val appName = resources.getString(R.string.app_name)
         view.private_session_description.text = resources.getString(
-            R.string.private_browsing_placeholder_description, appName
+            R.string.private_browsing_placeholder_description_2, appName
         )
-        val commonMythsText = view.private_session_common_myths.text.toString()
-        val textWithLink = SpannableString(commonMythsText).apply {
-            setSpan(UnderlineSpan(), 0, commonMythsText.length, 0)
-        }
         with(view.private_session_common_myths) {
             movementMethod = LinkMovementMethod.getInstance()
-            text = textWithLink
+            addUnderline()
             setOnClickListener {
-                actionEmitter.onNext(TabAction.PrivateBrowsingLearnMore)
+                interactor.onPrivateBrowsingLearnMoreClicked()
             }
         }
     }

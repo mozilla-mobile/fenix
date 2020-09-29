@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="6dp"
+            android:paddingStart="0dp"
             android:paddingEnd="0dp"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
@@ -42,10 +43,10 @@
 
             <TextView
                 android:id="@+id/errorSummary"
-                android:drawableStart="@drawable/ic_info"
+                app:drawableStartCompat="@drawable/ic_info"
                 android:text="@string/sync_add_new_device_message"
                 android:drawablePadding="8dp"
-                android:drawableTint="@color/sync_error_text_color"
+                app:drawableTint="@color/sync_error_text_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/sync_error_text_color"
@@ -64,9 +65,10 @@
             android:orientation="vertical"/>
 
     </LinearLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/learn_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
+        style="@style/NeutralButton"
         android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +79,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/connect_button"
-        style="@style/ThemeIndependentMaterialGreyButton"
+        style="@style/NeutralButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"

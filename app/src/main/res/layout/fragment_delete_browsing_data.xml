@@ -26,48 +26,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
             <org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataItem
                 android:id="@+id/open_tabs_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                app:deleteBrowsingDataItemTitle="@string/preferences_delete_browsing_data_tabs_title"
+                app:deleteBrowsingDataItemTitle="@string/preferences_delete_browsing_data_tabs_title_2"
                 app:deleteBrowsingDataItemSubtitle="@string/preferences_delete_browsing_data_tabs_subtitle" />
             <org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataItem
                 android:id="@+id/browsing_data_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
                 app:deleteBrowsingDataItemTitle="@string/preferences_delete_browsing_data_browsing_data_title"
                 app:deleteBrowsingDataItemSubtitle="@string/preferences_delete_browsing_data_browsing_data_subtitle" />
             <org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataItem
-                android:id="@+id/collections_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                app:deleteBrowsingDataItemTitle="@string/preferences_delete_browsing_data_collections_title"
-                app:deleteBrowsingDataItemSubtitle="@string/preferences_delete_browsing_data_collections_subtitle" />
-            <org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataItem
                 android:id="@+id/cookies_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
@@ -78,8 +61,6 @@
                 android:id="@+id/cached_files_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
@@ -90,8 +71,6 @@
                 android:id="@+id/site_permissions_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
@@ -99,10 +78,8 @@
                 app:deleteBrowsingDataItemTitle="@string/preferences_delete_browsing_data_site_permissions" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_data"
-                style="@style/ThemeIndependentMaterialGreyButtonDestructive"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
+                style="@style/DestructiveButton"
+                android:layout_marginHorizontal="16dp"
                 android:text="@string/preferences_delete_browsing_data_button" />
         </LinearLayout>
     </ScrollView>

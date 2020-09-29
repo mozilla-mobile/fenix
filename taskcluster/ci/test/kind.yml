@@ -5,11 +5,26 @@
 loader: taskgraph.loader.transform:loader
 
 transforms:
+    - fenix_taskgraph.transforms.test:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
+kind-dependencies:
+    - toolchain
+
+
 job-defaults:
-    description: Test Reference Browser
+    attributes:
+        retrigger: true
+    description: Test Fenix
+    fetches:
+        toolchain:
+            - android-sdk-linux
+            - android-gradle-dependencies
+    include-pull-request-number: false
+    run:
+        using: gradlew
+        use-caches: false
     treeherder:
         kind: test
         tier: 2
@@ -17,52 +32,36 @@ job-defaults:
     worker:
         docker-image: {in-tree: base}
         max-run-time: 7200
-    run:
-        using: gradlew
-        use-caches: false
 
 jobs:
     debug:
         attributes:
             build-type: debug
-            geckoview-engine: geckoNightly
             code-review: true
-        treeherder:
-            platform: 'android-all/opt'
-            symbol: debug(T)
-            tier: 1
         run:
-            gradlew: ['clean', '-Pcoverage', 'jacocoGeckoNightlyDebugTestReport']
+            gradlew:
+                - 'clean'
+                - '-Pcoverage'
+                - 'jacocoDebugTestReport'
+                - 'githubTestDetails'
             post-gradlew:
                 - ['automation/taskcluster/upload_coverage_report.sh']
             secrets:
                 - name: project/mobile/fenix/public-tokens
                   key: codecov
                   path: .cc_token
-    ui:
-        attributes:
-            build-type: debug
-            code-review: true
         treeherder:
-            symbol: ui
-            platform: 'ui-test/opt'
-        run-on-tasks-for: [github-pull-request, github-push]
-        run:
-            # TODO Generate APKs in a build task instead
-            gradlew: ['clean', 'assembleDebug', 'assembleAndroidTest']
-            post-gradlew:
-                - ['automation/taskcluster/androidTest/ui-test.sh', 'x86', '-1']
-            secrets:
-                - name: project/mobile/fenix/firebase
-                  key: firebaseToken
-                  path: .firebase_token.json
-                  json: true
+            platform: 'android-all/opt'
+            symbol: debug(T)
+            tier: 1
         worker:
-            docker-image: {in-tree: ui-tests}
-            env:
-                GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
-                GOOGLE_PROJECT: moz-fenix
             artifacts:
-                - name: public
-                  path: /build/fenix/results
+                - name: public/reports/index.html
+                  path: /builds/worker/checkouts/src/app/build/reports/tests/testDebugUnitTest/index.html
+                  type: file
+                - name: public/reports/test
+                  path: /builds/worker/checkouts/src/app/build/reports/tests
+                  type: directory
+                - name: public/github
+                  path: /builds/worker/github
                   type: directory

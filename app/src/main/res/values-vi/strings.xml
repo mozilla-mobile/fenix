@@ -1,0 +1,1593 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">%s riêng tư</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (Riêng tư)</string>
+    <!-- Home Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
+    <string name="content_description_menu">Tùy chọn khác</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_private_browsing_button">Bật duyệt web riêng tư</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_disable_private_browsing_button">Tắt duyệt web riêng tư</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="search_hint">Tìm kiếm hoặc nhập địa chỉ</string>
+    <!-- No Open Tabs Message Description -->
+    <string name="no_open_tabs_description">Các thẻ đang mở của bạn sẽ được hiển thị ở đây.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Các thẻ riêng tư của bạn sẽ được hiển thị ở đây.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 thẻ đang mở. Chạm để chuyển thẻ.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s thẻ đang mở. Chạm để chuyển thẻ.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d đã chọn</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Thêm bộ sưu tập mới</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Tên</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Chọn bộ sưu tập</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Thoát chế độ nhiều lựa chọn</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Lưu các thẻ đã chọn vào bộ sưu tập</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">Đã chọn %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">Đã bỏ chọn %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Đã thoát chế độ nhiều lựa chọn</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Đã vào chế độ nhiều lựa chọn, chọn các thẻ để lưu vào bộ sưu tập</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Đã chọn</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s được sản xuất bởi Mozilla.</string>
+
+    <!-- Private Browsing -->
+    <!-- Title for private session option -->
+    <string name="private_browsing_title">Bạn đang ở trong chế độ riêng tư</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">%1$s xóa lịch sử tìm kiếm và duyệt web của bạn khỏi các thẻ riêng tư khi bạn đóng chúng hoặc thoát khỏi ứng dụng. Mặc dù điều này không làm cho bạn ẩn danh với các trang web hoặc nhà cung cấp dịch vụ internet của bạn, nhưng nó giúp bạn dễ dàng giữ những gì bạn làm trực tuyến riêng tư với bất kỳ ai khác sử dụng thiết bị này.</string>
+    <string name="private_browsing_common_myths">
+       Những lầm tưởng phổ biến về duyệt web riêng tư
+    </string>
+    <!-- Delete session button to erase your history in a private session -->
+    <string name="private_browsing_delete_session">Xóa phiên</string>
+
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message -->
+    <string name="cfr_message">Thêm lối tắt để mở các thẻ riêng tư từ màn hình chính của bạn.</string>
+    <!-- Text for the positive button -->
+    <string name="cfr_pos_button_text">Thêm lối tắt</string>
+    <!-- Text for the negative button -->
+    <string name="cfr_neg_button_text">Không, cảm ơn</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Truy cập Firefox nhanh hơn. Thêm widget vào màn hình chính của bạn.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Thêm widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Không phải bây giờ</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Bạn có thể đặt Firefox để tự động mở các liên kết trong ứng dụng.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Đi đến cài đặt</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Bỏ qua</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Cần có quyền truy cập máy ảnh. Đi tới cài đặt Android, chạm vào quyền và chạm cho phép.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Đi đến cài đặt</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Bỏ qua</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Đặt các thẻ đang mở để tự động đóng mà bạn chưa xem trong ngày, tuần hoặc tháng trước.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Xem tùy chọn</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Bỏ qua</string>
+
+    <!-- Home screen icons - Long press shortcuts -->
+    <!-- Shortcut action to open new tab -->
+    <string name="home_screen_shortcut_open_new_tab_2">Thẻ mới</string>
+    <!-- Shortcut action to open new private tab -->
+    <string name="home_screen_shortcut_open_new_private_tab_2">Thẻ riêng tư mới</string>
+
+    <!-- Heading for the Top Sites block -->
+    <string name="home_screen_top_sites_heading">Trang web hàng đầu</string>
+
+    <!-- Browser Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
+    <string name="browser_tabs_button">Các thẻ đang mở</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
+    <string name="browser_menu_back">Quay lại</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
+    <string name="browser_menu_forward">Tiến</string>
+    <!-- Content description (not visible, for screen readers etc.): Refresh current website -->
+    <string name="browser_menu_refresh">Làm mới</string>
+    <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
+    <string name="browser_menu_stop">Dừng</string>
+    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
+    <string name="browser_menu_bookmark">Đánh dấu</string>
+    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
+    <string name="browser_menu_edit_bookmark">Chỉnh sửa dấu trang</string>
+    <!-- Browser menu button that opens the addon manager -->
+    <string name="browser_menu_add_ons">Tiện ích</string>
+    <!-- Text displayed when there are no add-ons to be shown -->
+    <string name="no_add_ons">Không có tiện ích nào ở đây</string>
+    <!-- Browser menu button that sends a user to help articles -->
+    <string name="browser_menu_help">Trợ giúp</string>
+    <!-- Browser menu button that sends a to a the what's new article -->
+    <string name="browser_menu_whats_new">Có gì mới</string>
+    <!-- Browser menu button that opens the settings menu -->
+    <string name="browser_menu_settings">Cài đặt</string>
+    <!-- Browser menu button that opens a user's library -->
+    <string name="browser_menu_library">Thư viện</string>
+    <!-- Browser menu toggle that requests a desktop site -->
+    <string name="browser_menu_desktop_site">Trang web cho máy tính</string>
+    <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
+    <string name="browser_menu_add_to_homescreen">Thêm vào màn hình chính</string>
+    <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
+    <string name="browser_menu_install_on_homescreen">Cài đặt</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Các thẻ đã đồng bộ</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Đồng bộ hóa lại</string>
+    <!-- Browser menu button that opens the find in page menu -->
+    <string name="browser_menu_find_in_page">Tìm trong trang</string>
+    <!-- Browser menu button that creates a private tab -->
+    <string name="browser_menu_private_tab">Thẻ riêng tư</string>
+    <!-- Browser menu button that creates a new tab -->
+    <string name="browser_menu_new_tab">Thẻ mới</string>
+    <!-- Browser menu button that saves the current tab to a collection -->
+    <string name="browser_menu_save_to_collection_2">Lưu vào bộ sưu tập</string>
+    <!-- Browser menu button that open a share menu to share the current site -->
+    <string name="browser_menu_share">Chia sẻ</string>
+    <!-- Share menu title, displayed when a user is sharing their current site -->
+    <string name="menu_share_with">Chia sẻ với…</string>
+    <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_open_in_fenix">Mở bằng %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by">ĐƯỢC HỖ TRỢ BỞI %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by2">Được hỗ trợ bởi %1$s</string>
+    <!-- Browser menu button to put the current page in reader mode -->
+    <string name="browser_menu_read">Chế độ đọc sách</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Đóng chế độ đọc sách</string>
+    <!-- Browser menu button to open the current page in an external app -->
+    <string name="browser_menu_open_app_link">Mở trong ứng dụng</string>
+    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
+    <string name="browser_menu_read_appearance">Giao diện</string>
+
+    <!-- Error message to show when the user tries to access a scheme not
+        handled by the app (Ex: blob, tel etc) -->
+    <string name="unknown_scheme_error_message">Không thể kết nối. Không thể nhận dạng URL.</string>
+
+    <!-- Locale Settings Fragment -->
+    <!-- Content description for tick mark on selected language -->
+    <string name="a11y_selected_locale_content_description">Ngôn ngữ được chọn</string>
+    <!-- Content description for search icon -->
+    <string name="a11y_search_icon_content_description">Tìm kiếm</string>
+    <!-- Text for default locale item -->
+    <string name="default_locale_text">Theo ngôn ngữ thiết bị</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="locale_search_hint">Tìm kiếm ngôn ngữ</string>
+
+    <!-- Search Fragment -->
+    <!-- Button in the search view that lets a user search by scanning a QR code -->
+    <string name="search_scan_button">Quét</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Công cụ tìm kiếm</string>
+    <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
+    <string name="search_shortcuts_engine_settings">Cài đặt công cụ tìm kiếm</string>
+    <!-- Header displayed when selecting a shortcut search engine -->
+    <string name="search_engines_search_with">Lần này, tìm kiếm với:</string>
+    <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
+    <string name="awesomebar_clipboard_title">Điền liên kết từ bộ nhớ tạm</string>
+    <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_allow_button">Cho phép</string>
+    <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_do_not_allow_button">Không cho phép</string>
+    <!-- Search suggestion onboarding hint title text -->
+    <string name="search_suggestions_onboarding_title">Cho phép đề xuất tìm kiếm trong phiên riêng tư?</string>
+    <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="search_suggestions_onboarding_text">%s sẽ chia sẻ mọi thứ bạn nhập vào thanh địa chỉ với công cụ tìm kiếm mặc định của bạn.</string>
+    <!-- Search suggestion onboarding hint Learn more link text -->
+    <string name="search_suggestions_onboarding_learn_more_link">Tìm hiểu thêm</string>
+
+    <!-- Search Widget -->
+    <!-- Text preview for smaller sized widgets -->
+    <string name="search_widget_text_short">Tìm kiếm</string>
+    <!-- Text preview for larger sized widgets -->
+    <string name="search_widget_text_long">Tìm kiếm trên mạng</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Tìm kiếm bằng giọng nói</string>
+
+    <!-- Preferences -->
+    <!-- Title for the settings page-->
+    <string name="settings">Cài đặt</string>
+    <!-- Preference category for basic settings -->
+    <string name="preferences_category_basics">Cơ bản</string>
+    <!-- Preference category for general settings -->
+    <string name="preferences_category_general">Tổng quát</string>
+    <!-- Preference category for all links about Fenix -->
+    <string name="preferences_category_about">Giới thiệu</string>
+    <!-- Preference for settings related to changing the default search engine -->
+    <string name="preferences_default_search_engine">Công cụ tìm kiếm mặc định</string>
+    <!-- Preference for settings related to Search -->
+    <string name="preferences_search">Tìm kiếm</string>
+    <!-- Preference for settings related to Search address bar -->
+    <string name="preferences_search_address_bar">Thanh địa chỉ</string>
+    <!-- Preference linking to help about Fenix -->
+    <string name="preferences_help">Trợ giúp</string>
+    <!-- Preference link to rating Fenix on the Play Store -->
+    <string name="preferences_rate">Đánh giá trên Google Play</string>
+    <!-- Preference for giving feedback about Fenix -->
+    <string name="preferences_feedback">Gửi phản hồi</string>
+    <!-- Preference linking to about page for Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="preferences_about">Về %1$s</string>
+    <!-- Preference linking to the your rights SUMO page -->
+    <string name="preferences_your_rights">Quyền lợi của bạn</string>
+    <!-- Preference for settings related to saved passwords -->
+    <string name="preferences_passwords">Mật khẩu</string>
+    <!-- Preference for settings related to saved credit cards and addresses -->
+    <string name="preferences_credit_cards_addresses">Thẻ tín dụng và địa chỉ</string>
+    <!-- Preference for settings related to changing the default browser -->
+    <string name="preferences_set_as_default_browser">Đặt làm trình duyệt mặc định</string>
+    <!-- Preference category for advanced settings -->
+    <string name="preferences_category_advanced">Nâng cao</string>
+    <!-- Preference category for privacy settings -->
+    <string name="preferences_category_privacy">Riêng tư</string>
+    <!-- Preference category for privacy and security settings -->
+    <string name="preferences_category_privacy_security">Riêng tư và bảo mật</string>
+    <!-- Preference for advanced site permissions -->
+    <string name="preferences_site_permissions">Quyền hạn trang web</string>
+    <!-- Preference for private browsing options -->
+    <string name="preferences_private_browsing_options">Duyệt web riêng tư</string>
+    <!-- Preference for opening links in a private tab-->
+    <string name="preferences_open_links_in_a_private_tab">Mở liên kết trong thẻ riêng tư</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">Cho phép chụp ảnh màn hình trong trình duyệt riêng tư</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Nếu được phép, các thẻ riêng tư cũng sẽ hiển thị khi nhiều ứng dụng đang mở</string>
+    <!-- Preference for adding private browsing shortcut -->
+    <string name="preferences_add_private_browsing_shortcut">Thêm lối tắt duyệt web riêng tư</string>
+    <!-- Preference for accessibility -->
+    <string name="preferences_accessibility">Khả năng truy cập</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Tùy chỉnh máy chủ tài khoản Firefox</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Tùy chỉnh máy chủ đồng bộ hóa</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Tài khoản máy chủ Firefox/đồng bộ hóa đã thay đổi. Thoát ứng dụng để áp dụng thay đổi…</string>
+    <!-- Preference category for account information -->
+    <string name="preferences_category_account">Tài khoản</string>
+    <!-- Preference shown on banner to sign into account -->
+    <string name="preferences_sign_in">Đăng nhập</string>
+    <!-- Preference for changing where the toolbar is positioned -->
+    <string name="preferences_toolbar">Thanh công cụ</string>
+    <!-- Preference for changing default theme to dark or light mode -->
+    <string name="preferences_theme">Chủ đề</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Trang chủ</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Cử chỉ</string>
+    <!-- Preference for settings related to visual options -->
+    <string name="preferences_customize">Tùy biến</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description">Đồng bộ hóa dấu trang, lịch sử và hơn thế nữa với tài khoản Firefox của bạn</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name">Tài khoản Firefox</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">Kết nối lại để tiếp tục đồng bộ hóa</string>
+    <!-- Preference for language -->
+    <string name="preferences_language">Ngôn ngữ</string>
+    <!-- Preference for data choices -->
+    <string name="preferences_data_choices">Lựa chọn dữ liệu</string>
+    <!-- Preference for data collection -->
+    <string name="preferences_data_collection">Thu thập dữ liệu</string>
+    <!-- Preference linking to the privacy notice -->
+    <string name="preferences_privacy_link">Thông báo bảo mật</string>
+    <!-- Preference category for developer tools -->
+    <string name="developer_tools_category">Công cụ dành cho nhà phát triển</string>
+    <!-- Preference for developers -->
+    <string name="preferences_remote_debugging">Gỡ lỗi từ xa qua USB</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Hiển thị công cụ tìm kiếm</string>
+    <!-- Preference title for switch preference to show search suggestions -->
+    <string name="preferences_show_search_suggestions">Hiển thị gợi ý tìm kiếm</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Hiển thị tìm kiếm bằng giọng nói</string>
+    <!-- Preference title for switch preference to show search suggestions also in private mode -->
+    <string name="preferences_show_search_suggestions_in_private">Hiển thị trong phiên riêng tư</string>
+    <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
+    <string name="preferences_show_clipboard_suggestions">Hiển thị đề xuất bộ nhớ tạm</string>
+    <!-- Preference title for switch preference to suggest browsing history when searching -->
+    <string name="preferences_search_browsing_history">Tìm kiếm lịch sử duyệt web</string>
+    <!-- Preference title for switch preference to suggest bookmarks when searching -->
+    <string name="preferences_search_bookmarks">Tìm kiếm dấu trang</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Tìm kiếm các thẻ đã đồng bộ hóa</string>
+    <!-- Preference for account settings -->
+    <string name="preferences_account_settings">Cài đặt tài khoản</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Tự động điền URL</string>
+    <!-- Preference for open links in third party apps -->
+    <string name="preferences_open_links_in_apps">Mở liên kết trong ứng dụng</string>
+
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Trình quản lý tải xuống bên ngoài</string>
+    <!-- Preference for add_ons -->
+    <string name="preferences_addons">Tiện ích</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Thông báo</string>
+
+    <!-- Account Preferences -->
+    <!-- Preference for triggering sync -->
+    <string name="preferences_sync_now">Đồng bộ ngay</string>
+    <!-- Preference category for sync -->
+    <string name="preferences_sync_category">Chọn những gì để đồng bộ hóa</string>
+    <!-- Preference for syncing history -->
+    <string name="preferences_sync_history">Lịch sử</string>
+    <!-- Preference for syncing bookmarks -->
+    <string name="preferences_sync_bookmarks">Dấu trang</string>
+    <!-- Preference for syncing logins -->
+    <string name="preferences_sync_logins">Đăng nhập</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Các thẻ đang mở</string>
+    <!-- Preference for signing out -->
+    <string name="preferences_sign_out">Đăng xuất</string>
+    <!-- Preference displays and allows changing current FxA device name -->
+    <string name="preferences_sync_device_name">Tên thiết bị</string>
+    <!-- Text shown when user enters empty device name -->
+    <string name="empty_device_name_error">Tên thiết bị không được để trống.</string>
+    <!-- Label indicating that sync is in progress -->
+    <string name="sync_syncing_in_progress">Đang đồng bộ hóa…</string>
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">Đồng bộ hóa thất bại. Thành công lần cuối: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_failed_never_synced_summary">Đồng bộ hóa thất bại. Đồng bộ hóa lần cuối: không rõ</string>
+    <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
+    <string name="sync_last_synced_summary">Đồng bộ hóa lần cuối: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_never_synced_summary">Đồng bộ hóa lần cuối: không rõ</string>
+
+    <!-- Text for displaying the default device name.
+        The first parameter is the application name, the second is the device manufacturer name
+        and the third is the device model. -->
+    <string name="default_device_name_2">%1$s trên %2$s %3$s</string>
+
+    <!-- Send Tab -->
+    <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_name">Các thẻ đã nhận</string>
+    <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_description">Thông báo các thẻ nhận được từ các thiết bị Firefox khác.</string>
+    <!--  The body for these is the URL of the tab received  -->
+    <string name="fxa_tab_received_notification_name">Thẻ đã nhận</string>
+    <!-- When multiple tabs have been received -->
+    <string name="fxa_tabs_received_notification_name">Các thẻ đã nhận</string>
+
+    <!-- %s is the device name -->
+    <string name="fxa_tab_received_from_notification_name">Thẻ từ %s</string>
+
+    <!-- Advanced Preferences -->
+    <!-- Preference for tracking protection settings -->
+    <string name="preferences_tracking_protection_settings">Trình chống theo dõi</string>
+    <!-- Preference switch for tracking protection -->
+    <string name="preferences_tracking_protection">Trình chống theo dõi</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">Chặn nội dung và tập lệnh theo dõi bạn trực tuyến</string>
+    <!-- Preference for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions">Ngoại trừ</string>
+    <!-- Preference description for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions_description">Trình chống theo dõi đã bị tắt cho các trang web này</string>
+    <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
+    <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Bật cho tất cả các trang web</string>
+    <!-- Text displayed when there are no exceptions -->
+    <string name="exceptions_empty_message_description">Các ngoại lệ cho phép bạn vô hiệu hóa bảo vệ theo dõi cho các trang web được chọn.</string>
+    <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
+    <string name="exceptions_empty_message_learn_more_link">Tìm hiểu thêm</string>
+
+    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
+    <string name="preferences_tracking_protection_turned_off_globally">Đã tắt toàn bộ, đi tới cài đặt để bật nó.</string>
+
+    <!-- Preference switch for Telemetry -->
+    <string name="preferences_telemetry">Telemetry</string>
+    <!-- Preference switch for usage and technical data collection -->
+    <string name="preference_usage_data">Sử dụng và dữ liệu kỹ thuật</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">Chia sẻ hiệu năng, cách sử dụng, phần cứng và dữ liệu tùy biến liên quan đến trình duyệt của bạn với Mozilla để giúp chúng tôi tạo ra %1$s tốt hơn</string>
+    <!-- Preference switch for marketing data collection -->
+    <string name="preferences_marketing_data">Dữ liệu tiếp thị</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">Chia sẻ dữ liệu về những tính năng bạn sử dụng trong %1$s với Leanplum, nhà cung cấp tiếp thị di động của chúng tôi.</string>
+    <!-- Title for experiments preferences -->
+    <string name="preference_experiments">Thử nghiệm</string>
+    <!-- Summary for experiments preferences -->
+    <string name="preference_experiments_summary">Cho phép Mozilla cài đặt và thu thập dữ liệu cho các tính năng thử nghiệm</string>
+    <!-- Preference switch for crash reporter -->
+    <string name="preferences_crash_reporter">Trình báo cáo lỗi</string>
+    <!-- Preference switch for Mozilla location service -->
+    <string name="preferences_mozilla_location_service">Dịch vụ định vị Mozilla</string>
+    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preferences_fenix_health_report">Báo cáo sức khỏe %s</string>
+
+    <!-- Turn On Sync Preferences -->
+    <!-- Header of the Turn on Sync preference view -->
+    <string name="preferences_sync">Bật đồng bộ hóa</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">Quét mã ghép nối trong máy tính để bàn Firefox</string>
+    <!-- Preference for account login -->
+    <string name="preferences_sync_sign_in">Đăng nhập</string>
+    <!-- Preference for reconnecting to FxA sync -->
+    <string name="preferences_sync_sign_in_to_reconnect">Đăng nhập để kết nối lại</string>
+    <!-- Preference for removing FxA account -->
+    <string name="preferences_sync_remove_account">Gỡ bỏ tài khoản</string>
+
+    <!-- Pairing Feature strings -->
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions_2"><![CDATA[Quét mã QR được hiển thị tại <b>firefox.com/pair</b>]]></string>
+    <!-- Button to open camera for pairing -->
+    <string name="pair_open_camera">Mở Camera</string>
+    <!-- Button to cancel pairing -->
+    <string name="pair_cancel">Hủy bỏ</string>
+
+    <!-- Toolbar Preferences -->
+    <!-- Preference for using top toolbar -->
+    <string name="preference_top_toolbar">Trên cùng</string>
+    <!-- Preference for using bottom toolbar -->
+    <string name="preference_bottom_toolbar">Dưới cùng</string>
+
+    <!-- Theme Preferences -->
+    <!-- Preference for using light theme -->
+    <string name="preference_light_theme">Sáng</string>
+    <!-- Preference for using dark theme -->
+    <string name="preference_dark_theme">Tối</string>
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">Đặt theo trình tiết kiệm pin</string>
+    <!-- Preference for using following device theme -->
+    <string name="preference_follow_device_theme">Đặt theo chủ đề thiết bị</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Kéo để làm mới</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Cuộn để ẩn thanh công cụ</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Vuốt thanh công cụ sang hai bên để chuyển đổi các thẻ</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Vuốt thanh công cụ lên để mở các thẻ</string>
+
+    <!-- Library -->
+    <!-- Option in Library to open Sessions page -->
+    <string name="library_sessions">Phiên</string>
+    <!-- Option in Library to open Screenshots page -->
+    <string name="library_screenshots">Ảnh chụp màn hình</string>
+    <!-- Option in Library to open Downloads page -->
+    <string name="library_downloads">Tải xuống</string>
+    <!-- Option in library to open Bookmarks page -->
+    <string name="library_bookmarks">Dấu trang</string>
+    <!-- Option in library to open Desktop Bookmarks root page -->
+    <string name="library_desktop_bookmarks_root">Dấu trang Desktop</string>
+    <!-- Option in library to open Desktop Bookmarks "menu" page -->
+    <string name="library_desktop_bookmarks_menu">Trình đơn dấu trang</string>
+    <!-- Option in library to open Desktop Bookmarks "toolbar" page -->
+    <string name="library_desktop_bookmarks_toolbar">Thanh dấu trang</string>
+    <!-- Option in library to open Desktop Bookmarks "unfiled" page -->
+    <string name="library_desktop_bookmarks_unfiled">Dấu trang khác</string>
+    <!-- Option in Library to open History page -->
+    <string name="library_history">Lịch sử</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Các thẻ đã đồng bộ</string>
+    <!-- Option in Library to open Reading List -->
+    <string name="library_reading_list">Danh sách đọc</string>
+    <!-- Menu Item Label for Search in Library -->
+    <string name="library_search">Tìm kiếm</string>
+    <!-- Settings Page Title -->
+    <string name="settings_title">Cài đặt</string>
+    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
+    <string name="content_description_history_menu">Menu mục lịch sử</string>
+    <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
+    <string name="content_description_close_button">Đóng</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Các thẻ đã đóng gần đây</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Hiển thị toàn bộ lịch sử</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d thẻ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d thẻ</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Không có thẻ nào đã đóng gần đây ở đây</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Đóng thẻ</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Thủ công</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Sau một ngày</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Sau một tuần</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Sau một tháng</string>
+
+    <!-- Sessions -->
+    <!-- Title for the list of tabs -->
+    <string name="tab_header_label">Các thẻ đang mở</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_title">Phiên riêng tư</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_tabs_title">Các thẻ riêng tư</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_tab">Thêm thẻ</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Thêm thẻ riêng tư</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Riêng tư</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Các thẻ đang mở</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Lưu vào bộ sưu tập</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Chia sẻ tất cả các thẻ</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Các thẻ đã đóng gần đây</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Cài đặt thẻ</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Đóng tất cả các thẻ</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Thẻ mới</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Đi đến trang chủ</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Chuyển đổi chế độ thẻ</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Xóa thẻ khỏi bộ sưu tập</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
+    <string name="close_tab">Đóng thẻ</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
+    <string name="close_tab_title">Đóng thẻ %s</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
+    <string name="open_tabs_menu">Menu các thẻ đang mở</string>
+    <!-- Open tabs menu item to close all tabs -->
+    <string name="tabs_menu_close_all_tabs">Đóng tất cả các thẻ</string>
+    <!-- Open tabs menu item to share all tabs -->
+    <string name="tabs_menu_share_tabs">Chia sẻ các thẻ</string>
+    <!-- Open tabs menu item to save tabs to collection -->
+    <string name="tabs_menu_save_to_collection1">Lưu các thẻ vào bộ sưu tập</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
+    <string name="tab_menu">Menu thẻ</string>
+    <!-- Tab menu item to share the tab -->
+    <string name="tab_share">Chia sẻ thẻ</string>
+    <!-- Button in the current session menu. Deletes the session when pressed -->
+    <string name="current_session_delete">Xóa</string>
+    <!-- Button in the current session menu. Saves the session when pressed -->
+    <string name="current_session_save">Lưu</string>
+    <!-- Button in the current session menu. Opens the share menu when pressed -->
+    <string name="current_session_share">Chia sẻ</string>
+    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
+    <string name="current_session_image">Hình ảnh phiên hiện tại</string>
+    <!-- Button to save the current set of tabs into a collection -->
+    <string name="save_to_collection">Lưu vào bộ sưu tập</string>
+    <!-- Text for the menu button to delete a collection -->
+    <string name="collection_delete">Xóa bộ sưu tập</string>
+    <!-- Text for the menu button to rename a collection -->
+    <string name="collection_rename">Đổi tên bộ sưu tập</string>
+    <!-- Text for the button to open tabs of the selected collection -->
+    <string name="collection_open_tabs">Các thẻ đang mở</string>
+
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">Xóa</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Xóa khỏi lịch sử</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Chế độ riêng tư)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Lưu</string>
+
+    <!-- History -->
+    <!-- Text for the button to clear all history -->
+    <string name="history_delete_all">Xóa lịch sử</string>
+    <!-- Text for the dialog to confirm clearing all history -->
+    <string name="history_delete_all_dialog">Bạn có chắc muốn xóa lịch sử của bạn không?</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">Đã xóa lịch sử</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">Đã xóa %1$s</string>
+    <!-- Text for positive action to delete history in deleting history dialog -->
+    <string name="history_clear_dialog">Xóa</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">Sao chép</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">Chia sẻ</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">Mở trong thẻ mới</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">Mở trong thẻ riêng tư</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="history_delete_item">Xóa</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of bookmarks selected -->
+    <string name="history_multi_select_title">%1$d đã chọn</string>
+    <!-- Text for the button to clear selected history items. The first parameter
+        is a digit showing the number of items you have selected -->
+    <string name="history_delete_some">Xóa %1$d mục</string>
+    <!-- Text for the header that groups the history for last 24 hours -->
+    <string name="history_24_hours">24 giờ qua</string>
+    <!-- Text for the header that groups the history the past 7 days -->
+    <string name="history_7_days">7 ngày qua</string>
+    <!-- Text for the header that groups the history the past 30 days -->
+    <string name="history_30_days">30 ngày qua</string>
+    <!-- Text for the header that groups the history older than the last month -->
+    <string name="history_older">Cũ hơn</string>
+    <!-- Text shown when no history exists -->
+    <string name="history_empty_message">Không có lịch sử ở đây</string>
+
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Không có tải xuống ở đây</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d đã chọn</string>
+
+    <!-- Crashes -->
+    <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
+    <string name="tab_crash_title_2">Xin lỗi. %1$s không thể tải trang đó.</string>
+    <!-- Description text displayed on the tab crash page -->
+    <string name="tab_crash_description">Bạn có thể cố gắng khôi phục hoặc đóng thẻ này bên dưới.</string>
+    <!-- Send crash report checkbox text on the tab crash page -->
+    <string name="tab_crash_send_report">Gửi báo cáo lỗi đến Mozilla</string>
+    <!-- Close tab button text on the tab crash page -->
+    <string name="tab_crash_close">Đóng thẻ</string>
+    <!-- Restore tab button text on the tab crash page -->
+    <string name="tab_crash_restore">Khôi phục thẻ</string>
+
+    <!-- Content Description for session item menu button -->
+    <string name="content_description_session_menu">Tùy chọn phiên</string>
+
+    <!-- Content Description for session item share button -->
+    <string name="content_description_session_share">Chia sẻ phiên</string>
+
+    <!-- Bookmarks -->
+    <!-- Content description for bookmarks library menu -->
+    <string name="bookmark_menu_content_description">Menu dấu trang</string>
+    <!-- Screen title for editing bookmarks -->
+    <string name="bookmark_edit">Chỉnh sửa dấu trang</string>
+    <!-- Screen title for selecting a bookmarks folder -->
+    <string name="bookmark_select_folder">Chọn thư mục</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">Bạn có chắc chắn muốn xóa thư mục này?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s sẽ xóa các mục đã chọn.</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">Đã xóa %1$s</string>
+    <!-- Screen title for adding a bookmarks folder -->
+    <string name="bookmark_add_folder">Thêm thư mục</string>
+    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_created_snackbar">Đã tạo dấu trang.</string>
+    <!-- Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_saved_snackbar">Đã lưu dấu trang!</string>
+    <!-- Snackbar edit button shown after a bookmark has been created. -->
+    <string name="edit_bookmark_snackbar_action">CHỈNH SỬA</string>
+    <!-- Bookmark overflow menu edit button -->
+    <string name="bookmark_menu_edit_button">Chỉnh sửa</string>
+    <!-- Bookmark overflow menu select button -->
+    <string name="bookmark_menu_select_button">Chọn</string>
+    <!-- Bookmark overflow menu copy button -->
+    <string name="bookmark_menu_copy_button">Sao chép</string>
+    <!-- Bookmark overflow menu share button -->
+    <string name="bookmark_menu_share_button">Chia sẻ</string>
+    <!-- Bookmark overflow menu open in new tab button -->
+    <string name="bookmark_menu_open_in_new_tab_button">Mở trong thẻ mới</string>
+    <!-- Bookmark overflow menu open in private tab button -->
+    <string name="bookmark_menu_open_in_private_tab_button">Mở trong thẻ riêng tư</string>
+    <!-- Bookmark overflow menu delete button -->
+    <string name="bookmark_menu_delete_button">Xóa</string>
+    <!--Bookmark overflow menu save button -->
+    <string name="bookmark_menu_save_button">Lưu</string>
+    <!-- Bookmark multi select title in app bar
+     The first parameter is the number of bookmarks selected -->
+    <string name="bookmarks_multi_select_title">%1$d đã chọn</string>
+    <!-- Bookmark editing screen title -->
+    <string name="edit_bookmark_fragment_title">Chỉnh sửa dấu trang</string>
+    <!-- Bookmark folder editing screen title -->
+    <string name="edit_bookmark_folder_fragment_title">Chỉnh sửa thư mục</string>
+    <!-- Bookmark sign in button message -->
+    <string name="bookmark_sign_in_button">Đăng nhập để xem dấu trang được đồng bộ hóa</string>
+    <!-- Bookmark URL editing field label -->
+    <string name="bookmark_url_label">URL</string>
+    <!-- Bookmark FOLDER editing field label -->
+    <string name="bookmark_folder_label">THƯ MỤC</string>
+    <!-- Bookmark NAME editing field label -->
+    <string name="bookmark_name_label">TÊN</string>
+    <!-- Bookmark add folder screen title -->
+    <string name="bookmark_add_folder_fragment_label">Thêm thư mục</string>
+    <!-- Bookmark select folder screen title -->
+    <string name="bookmark_select_folder_fragment_label">Chọn thư mục</string>
+    <!-- Bookmark editing error missing title -->
+    <string name="bookmark_empty_title_error">Phải có tiêu đề</string>
+    <!-- Bookmark editing error missing or improper URL -->
+    <string name="bookmark_invalid_url_error">URL không hợp lệ</string>
+    <!-- Bookmark screen message for empty bookmarks folder -->
+    <string name="bookmarks_empty_message">Không có dấu trang ở đây</string>
+    <!-- Bookmark snackbar message on deletion
+     The first parameter is the host part of the URL of the bookmark deleted, if any -->
+    <string name="bookmark_deletion_snackbar_message">Đã xóa %1$s</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">Đã xóa dấu trang</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Đang xóa các thư mục đã chọn</string>
+    <!-- Bookmark undo button for deletion snackbar action -->
+    <string name="bookmark_undo_deletion">HOÀN TÁC</string>
+
+    <!-- Site Permissions -->
+    <!-- Site permissions preferences header -->
+    <string name="permissions_header">Quyền hạn</string>
+    <!-- Button label that take the user to the Android App setting -->
+    <string name="phone_feature_go_to_settings">Đi đến Cài đặt</string>
+    <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
+        to give users access to site specific information / settings. For example:
+        Secure settings status and a button to modify site permissions -->
+    <string name="quick_settings_sheet">Bảng cài đặt nhanh</string>
+    <!-- Label that indicates that this option it the recommended one -->
+    <string name="phone_feature_recommended">Được đề xuất</string>
+    <!-- button that allows editing site permissions settings -->
+    <string name="quick_settings_sheet_manage_site_permissions">Quản lý quyền hạn trang web</string>
+    <!-- Button label for clearing all the information of site permissions-->
+    <string name="clear_permissions">Xóa các quyền</string>
+    <!-- Button label for clearing a site permission-->
+    <string name="clear_permission">Xóa quyền</string>
+    <!-- Button label for clearing all the information on all sites-->
+    <string name="clear_permissions_on_all_sites">Xóa quyền trên tất cả các trang web</string>
+    <!-- Preference for altering video and audio autoplay for all websites -->
+    <string name="preference_browser_feature_autoplay">Tự động phát</string>
+    <!-- Preference for altering the camera access for all websites -->
+    <string name="preference_phone_feature_camera">Máy ảnh</string>
+    <!-- Preference for altering the microphone access for all websites -->
+    <string name="preference_phone_feature_microphone">Micrô</string>
+    <!-- Preference for altering the location access for all websites -->
+    <string name="preference_phone_feature_location">Vị trí</string>
+
+    <!-- Preference for altering the notification access for all websites -->
+    <string name="preference_phone_feature_notification">Thông báo</string>
+    <!-- Label that indicates that a permission must be asked always -->
+    <string name="preference_option_phone_feature_ask_to_allow">Hỏi để cho phép</string>
+    <!-- Label that indicates that a permission must be blocked -->
+    <string name="preference_option_phone_feature_blocked">Đã chặn</string>
+    <!-- Label that indicates that a permission must be allowed -->
+    <string name="preference_option_phone_feature_allowed">Đã cho phép</string>
+    <!--Label that indicates a permission is by the Android OS-->
+    <string name="phone_feature_blocked_by_android">Bị chặn bởi Android</string>
+    <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
+    <string name="preference_exceptions">Ngoại trừ</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="tracking_protection_on">Bật</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="tracking_protection_off">Tắt</string>
+    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <string name="preference_option_autoplay_allowed2">Cho phép âm thanh và video</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Chỉ chặn âm thanh và video trên dữ liệu di động</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Âm thanh và video sẽ phát trên Wi-Fi</string>
+    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="preference_option_autoplay_block_audio2">Chỉ chặn âm thanh</string>
+    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <string name="preference_option_autoplay_blocked3">Chặn âm thanh và video</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to on -->
+    <string name="delete_browsing_data_quit_on">Bật</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to off -->
+    <string name="delete_browsing_data_quit_off">Tắt</string>
+
+    <!-- Collections -->
+    <!-- Collections header on home fragment -->
+    <string name="collections_header">Bộ sưu tập</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
+    <string name="collection_menu_button_content_description">Menu bộ sưu tập</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Thu thập những thứ quan trọng đối với bạn.\nNhóm các tìm kiếm, trang web và thẻ tương tự lại với nhau để truy cập nhanh sau này.</string>
+    <!-- Title for the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_tabs">Chọn các thẻ</string>
+    <!-- Title for the "select collection" step of the collection creator -->
+    <string name="create_collection_select_collection">Chọn bộ sưu tập</string>
+    <!-- Title for the "name collection" step of the collection creator -->
+    <string name="create_collection_name_collection">Tên bộ sưu tập</string>
+    <!-- Button to add new collection for the "select collection" step of the collection creator -->
+    <string name="create_collection_add_new_collection">Thêm bộ sưu tập mới</string>
+    <!-- Button to select all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_all">Chọn tất cả</string>
+    <!-- Button to deselect all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_deselect_all">Bỏ chọn tất cả</string>
+    <!-- Text to prompt users to select the tabs to save in the "select tabs" step of the collection creator -->
+    <string name="create_collection_save_to_collection_empty">Chọn các thẻ để lưu</string>
+    <!-- Text to show users how many tabs they have selected in the "select tabs" step of the collection creator.
+     %d is a placeholder for the number of tabs selected. -->
+    <string name="create_collection_save_to_collection_tabs_selected">%d thẻ được chọn</string>
+    <!-- Text to show users they have one tab selected in the "select tabs" step of the collection creator.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="create_collection_save_to_collection_tab_selected">%d thẻ được chọn</string>
+    <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
+    <string name="create_collection_tabs_saved">Đã lưu các thẻ!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Đã lưu bộ sưu tập!</string>
+    <!-- Text shown in snackbar when one tab has been saved in a collection -->
+    <string name="create_collection_tab_saved">Đã lưu thẻ!</string>
+    <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
+    <string name="create_collection_close">Đóng</string>
+    <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
+    <string name="create_collection_save">Lưu</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Xem</string>
+
+    <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
+    <string name="create_collection_default_name">Bộ sưu tập %d</string>
+
+    <!-- Share -->
+    <!-- Share screen header -->
+    <string name="share_header">Gửi và chia sẻ</string>
+    <!-- Share screen header -->
+    <string name="share_header_2">Chia sẻ</string>
+    <!-- Content description (not visible, for screen readers etc.):
+        "Share" button. Opens the share menu when pressed. -->
+    <string name="share_button_content_description">Chia sẻ</string>
+    <!-- Sub-header in the dialog to share a link to another app -->
+    <string name="share_link_subheader">Chia sẻ liên kết</string>
+    <!-- Sub-header in the dialog to share a link to another sync device -->
+    <string name="share_device_subheader">Gửi đến thiết bị</string>
+    <!-- Sub-header in the dialog to share a link to an app from the full list -->
+    <string name="share_link_all_apps_subheader">Mọi hành động</string>
+    <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
+    <string name="share_link_recent_apps_subheader">Được sử dụng gần đây</string>
+    <!-- An option from the share dialog to sign into sync -->
+    <string name="sync_sign_in">Đăng nhập vào đồng bộ hóa</string>
+    <!-- An option from the share dialog to send link to all other sync devices -->
+    <string name="sync_send_to_all">Gửi đến tất cả các thiết bị</string>
+    <!-- An option from the share dialog to reconnect to sync -->
+    <string name="sync_reconnect">Kết nối lại với Sync</string>
+    <!-- Text displayed when sync is offline and cannot be accessed -->
+    <string name="sync_offline">Ngoại tuyến</string>
+    <!-- An option to connect additional devices -->
+    <string name="sync_connect_device">Kết nối thiết bị khác</string>
+    <!-- The dialog text shown when additional devices are not available -->
+    <string name="sync_connect_device_dialog">Để gửi một thẻ, đăng nhập vào Firefox trên ít nhất một thiết bị khác.</string>
+    <!-- Confirmation dialog button -->
+    <string name="sync_confirmation_button">Đã hiểu</string>
+    <!-- Share error message -->
+    <string name="share_error_snackbar">Không thể chia sẻ với ứng dụng này</string>
+    <!-- Add new device screen title -->
+    <string name="sync_add_new_device_title">Gửi đến thiết bị</string>
+    <!-- Text for the warning message on the Add new device screen -->
+    <string name="sync_add_new_device_message">Không có thiết bị nào được kết nối</string>
+    <!-- Text for the button to learn about sending tabs -->
+    <string name="sync_add_new_device_learn_button">Tìm hiểu thêm về việc gửi các thẻ…</string>
+    <!-- Text for the button to connect another device -->
+    <string name="sync_add_new_device_connect_button">Kết nối thiết bị khác…</string>
+
+    <!-- Notifications -->
+    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
+    <string name="notification_pbm_channel_name">Phiên duyệt web riêng tư</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text">Xóa các thẻ riêng tư</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text_2">Đóng các thẻ riêng tư</string>
+    <!-- Notification action to open Fenix and resume the current browsing session. -->
+    <string name="notification_pbm_action_open">Mở</string>
+    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
+    <string name="notification_pbm_action_delete_and_open">Xóa và mở</string>
+    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_powered_by_channel_name">Được hỗ trợ bởi</string>
+    <!-- Text shown in snackbar when user deletes a collection -->
+    <string name="snackbar_collection_deleted">Đã xóa bộ sưu tập</string>
+    <!-- Text shown in snackbar when user renames a collection -->
+    <string name="snackbar_collection_renamed">Đã đổi tên bộ sưu tập</string>
+    <!-- Text shown in snackbar when user deletes a tab -->
+    <string name="snackbar_tab_deleted">Đã xóa thẻ</string>
+    <!-- Text shown in snackbar when user deletes all tabs -->
+    <string name="snackbar_tabs_deleted">Đã xóa các thẻ</string>
+    <!-- Text shown in snackbar when user closes a tab -->
+    <string name="snackbar_tab_closed">Đã đóng thẻ</string>
+    <!-- Text shown in snackbar when user closes all tabs -->
+    <string name="snackbar_tabs_closed">Đã đóng các thẻ</string>
+    <!-- Text shown in snackbar when user adds a site to top sites -->
+    <string name="snackbar_added_to_top_sites">Đã thêm vào trang web hàng đầu!</string>
+    <!-- Text shown in snackbar when user closes a private tab -->
+    <string name="snackbar_private_tab_closed">Đã đóng thẻ riêng tư</string>
+    <!-- Text shown in snackbar when user closes all private tabs -->
+    <string name="snackbar_private_tabs_closed">Đã đóng các thẻ riêng tư</string>
+    <!-- Text shown in snackbar when user deletes all private tabs -->
+    <string name="snackbar_private_tabs_deleted">Đã xóa các thẻ riêng tư</string>
+    <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
+    <string name="snackbar_deleted_undo">HOÀN TÁC</string>
+    <!-- Text shown in snackbar when user removes a top site -->
+    <string name="snackbar_top_site_removed">Đã xóa trang</string>
+    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_undo">Hoàn tác</string>
+    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_confirm">Xác nhận</string>
+    <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
+        First parameter is the name of the app, second parameter is the URL or text scanned-->
+    <string name="qr_scanner_confirmation_dialog_message">Cho phép %1$s để mở %2$s</string>
+    <!-- QR code scanner prompt dialog positive option to allow navigation to scanned link -->
+    <string name="qr_scanner_dialog_positive">CHO PHÉP</string>
+    <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
+    <string name="qr_scanner_dialog_negative">TỪ CHỐI</string>
+    <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
+    <string name="tab_collection_dialog_message">Bạn có chắc chắn muốn xóa %1$s không?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Xóa thẻ này sẽ xóa bộ sưu tập này. Bạn có thể tạo bộ sưu tập mới bất cứ lúc nào.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Xóa %1$s?</string>
+    <!-- Tab collection deletion prompt dialog option to delete the collection -->
+    <string name="tab_collection_dialog_positive">Xóa</string>
+    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
+    <string name="tab_collection_dialog_negative">Hủy bỏ</string>
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Đã vào chế độ toàn màn hình</string>
+    <!-- Message for copying the URL via long press on the toolbar -->
+    <string name="url_copied">Đã sao chép URL</string>
+    <!-- Sample text for accessibility font size -->
+    <string name="accessibility_text_size_sample_text_1">Đây là văn bản mẫu. Ở đây sẽ hiển thị cách văn bản sẽ xuất hiện khi bạn tăng hoặc giảm kích thước với cài đặt này.</string>
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_text_size_summary">Làm cho văn bản trên các trang web lớn hơn hoặc nhỏ hơn</string>
+    <!-- Title for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_font_size_title">Cỡ chữ</string>
+
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_2">Định cỡ phông chữ tự động</string>
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">Cỡ chữ sẽ phù hợp với cài đặt Android của bạn. Vô hiệu hóa để quản lý kích thước phông chữ ở đây.</string>
+
+    <!-- Title for the Delete browsing data preference -->
+    <string name="preferences_delete_browsing_data">Xóa dữ liệu duyệt web</string>
+    <!-- Title for the tabs item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_tabs_title_2">Các thẻ đang mở</string>
+    <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
+    <string name="preferences_delete_browsing_data_tabs_subtitle">%d thẻ</string>
+    <!-- Title for the data and history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_data_title">Lịch sử duyệt web và dữ liệu trang web</string>
+    <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
+        number of history items the user has -->
+    <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d địa chỉ</string>
+    <!-- Title for history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Lịch sử</string>
+    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
+        number of history pages the user has -->
+    <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d trang</string>
+    <!-- Title for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies">Cookie</string>
+    <!-- Subtitle for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_subtitle">Bạn sẽ bị đăng xuất khỏi hầu hết các trang web</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">Hình ảnh và tập tin đã lưu trong bộ nhớ đệm</string>
+    <!-- Subtitle for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files_subtitle">Giải phóng không gian lưu trữ</string>
+    <!-- Title for the site permissions item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_site_permissions">Quyền hạn trang web</string>
+    <!-- Text for the button to delete browsing data -->
+    <string name="preferences_delete_browsing_data_button">Xóa dữ liệu duyệt web</string>
+    <!-- Title for the Delete browsing data on quit preference -->
+    <string name="preferences_delete_browsing_data_on_quit">Xóa dữ liệu duyệt web khi thoát</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit">Tự động xóa dữ liệu duyệt khi bạn chọn &quot;Thoát&quot; từ menu chính</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Tự động xóa dữ liệu duyệt khi bạn chọn \&quot;Thoát\&quot; từ menu chính</string>
+    <!-- Action item in menu for the Delete browsing data on quit feature -->
+    <string name="delete_browsing_data_on_quit_action">Thoát</string>
+
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">Điều này sẽ xóa tất cả dữ liệu duyệt web của bạn.</string>
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">%s sẽ xóa dữ liệu duyệt đã chọn.</string>
+    <!-- Text for the cancel button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_cancel">Hủy bỏ</string>
+    <!-- Text for the allow button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_allow">Xóa</string>
+    <!-- Text for the snackbar confirmation that the data was deleted -->
+    <string name="preferences_delete_browsing_data_snackbar">Đã xóa dữ liệu duyệt web</string>
+    <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
+    <string name="deleting_browsing_data_in_progress">Đang xóa dữ liệu duyệt web…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">Firefox Preview hiện là Firefox Nightly</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">Firefox Nightly được cập nhật mỗi đêm và có các tính năng mới thử nghiệm.
+        Tuy nhiên, nó có thể kém ổn định hơn. Tải xuống trình duyệt beta của chúng tôi để có trải nghiệm ổn định hơn.</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Tải Firefox Beta dành cho Android</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly đã di chuyển</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">Ứng dụng này sẽ không còn nhận được cập nhật bảo mật. Ngừng sử dụng ứng dụng này và chuyển sang Nightly mới.
+        \n\nĐể chuyển dấu trang, thông tin đăng nhập và lịch sử của bạn sang một ứng dụng khác, hãy tạo một tài khoản Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">Chuyển sang Nightly mới</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly đã di chuyển</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">Ứng dụng này sẽ không còn nhận được cập nhật bảo mật. Tải Nightly mới và ngừng sử dụng ứng dụng này.
+        \n\nĐể chuyển dấu trang, thông tin đăng nhập và lịch sử của bạn sang một ứng dụng khác, hãy tạo một tài khoản Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">Tải Nightly mới</string>
+
+    <!-- Onboarding -->
+    <!-- Text for onboarding welcome message
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_header">Chào mừng đến với %s!</string>
+    <!-- text for the Firefox Accounts section header -->
+    <string name="onboarding_fxa_section_header">Đã có một tài khoản?</string>
+    <!-- text for the Firefox Preview feature section header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_feature_section_header">Tìm hiểu qua %s</string>
+    <!-- text for the "What's New" onboarding card header -->
+    <string name="onboarding_whats_new_header1">Xem có gì mới</string>
+    <!-- text for the "what's new" onboarding card description
+    The first parameter is the short name of the app (e.g. Firefox) -->
+    <string name="onboarding_whats_new_description">Có câu hỏi nào về %s được thiết kế lại không? Bạn muốn biết những gì đã thay đổi?</string>
+    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
+    <string name="onboarding_whats_new_description_linktext">Nhận câu trả lời tại đây</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Bắt đầu đồng bộ hóa dấu trang, mật khẩu và nhiều hơn nữa với tài khoản Firefox của bạn.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Tìm hiểu thêm</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Bạn đã đăng nhập dưới dạng %s trên trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
+    <!-- text for the button to confirm automatic sign-in -->
+    <string name="onboarding_firefox_account_auto_signin_confirm">Có, đăng nhập cho tôi</string>
+    <!-- text for the automatic sign-in button while signing in is in process -->
+    <string name="onboarding_firefox_account_signing_in">Đang đăng nhập…</string>
+    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
+    <string name="onboarding_firefox_account_sign_in">Đăng nhập vào Firefox</string>
+    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
+    <string name="onboarding_firefox_account_stay_signed_out">Vẫn đăng xuất</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">Đồng bộ hóa được bật</string>
+    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
+    <string name="onboarding_firefox_account_automatic_signin_failed">Không thể đăng nhập</string>
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header_2">Bảo mật tự động</string>
+    <!-- text for the tracking protection card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_tracking_protection_description_2">Cài đặt riêng tư và bảo mật chặn trình theo dõi, phần mềm độc hại và các công ty theo dõi bạn.</string>
+    <!-- text for tracking protection radio button option for standard level of blocking -->
+    <string name="onboarding_tracking_protection_standard_button_2">Tiêu chuẩn (mặc định)</string>
+    <!-- text for standard blocking option button description -->
+    <string name="onboarding_tracking_protection_standard_button_description_2">Chặn trình theo dõi ít hơn. Các trang sẽ tải bình thường.</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_button">Nghiêm ngặt (được khuyến nghị)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Nghiêm ngặt</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_2">Chặn nhiều trình theo dõi, quảng cáo và cửa sổ bật lên. Các trang tải nhanh hơn, nhưng một số chức năng có thể không hoạt động.</string>
+    <!-- text for the toolbar position card header
+        In English this is an idiom for "choose a side as in an argument or fight"
+        but it is ok to make this more literally about "choosing a position in a physical space -->
+    <string name="onboarding_toolbar_position_header">Thể hiện vị trí của bạn</string>
+    <!-- text for the toolbar position card description -->
+    <string name="onboarding_toolbar_position_description">Hãy thử duyệt bằng một tay với thanh công cụ dưới cùng hoặc di chuyển nó lên trên cùng.</string>
+    <!-- text for the private browsing onboarding card header -->
+    <string name="onboarding_private_browsing_header">Duyệt web riêng tư hơn</string>
+    <!-- text for the private browsing onboarding card description
+    The first parameter is an icon that represents private browsing -->
+    <string name="onboarding_private_browsing_description1">Mở thẻ riêng tư chỉ một lần nhấp: Chạm vào biểu tượng %s.</string>
+    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
+    <string name="onboarding_private_browsing_always_description">Mở các thẻ riêng tư mỗi lần: Cập nhật cài đặt duyệt web riêng tư của bạn.</string>
+    <!-- text for the private browsing onbording card button, that launches settings -->
+    <string name="onboarding_private_browsing_button">Mở cài đặt</string>
+    <!-- text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header">Quyền riêng tư của bạn</string>
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_privacy_notice_description">Chúng tôi đã thiết kế %s để cung cấp cho bạn quyền kiểm soát những gì bạn chia sẻ
+        trực tuyến và những gì bạn chia sẻ với chúng tôi.
+    </string>
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Đọc thông báo bảo mật của chúng tôi</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">Đóng</string>
+
+    <!-- text for the button to finish onboarding -->
+    <string name="onboarding_finish">Bắt đầu duyệt web</string>
+
+    <!-- Onboarding theme -->
+    <!-- text for the theme picker onboarding card header -->
+    <string name="onboarding_theme_picker_header">Chọn chủ đề của bạn</string>
+    <!-- text for the theme picker onboarding card description -->
+    <string name="onboarding_theme_picker_description1">Tiết kiệm pin và bảo vệ thị lực của bạn bằng cách bật chế độ tối.</string>
+    <!-- Automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_title">Tự động</string>
+
+    <!-- Summary of automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_summary">Áp dụng theo cài đặt thiết bị của bạn</string>
+    <!-- Theme setting for dark mode -->
+    <string name="onboarding_theme_dark_title">Chủ đề tối</string>
+    <!-- Theme setting for light mode -->
+    <string name="onboarding_theme_light_title">Chủ đề sáng</string>
+
+    <!-- Text shown in snackbar when multiple tabs have been sent to device -->
+    <string name="sync_sent_tabs_snackbar">Đã gửi các thẻ!</string>
+    <!-- Text shown in snackbar when one tab has been sent to device  -->
+    <string name="sync_sent_tab_snackbar">Đã gửi thẻ!</string>
+    <!-- Text shown in snackbar when sharing tabs failed  -->
+    <string name="sync_sent_tab_error_snackbar">Không thể gửi</string>
+    <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
+    <string name="sync_sent_tab_error_snackbar_action">THỬ LẠI</string>
+    <!-- Title of QR Pairing Fragment -->
+    <string name="sync_scan_code">Quét mã</string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions"><![CDATA[Trên máy tính của bạn, hãy mở Firefox và truy cập <b>https://firefox.com/pair</b>]]></string>
+    <!-- Text shown for sign in pairing when ready -->
+    <string name="sign_in_ready_for_scan">Sẵn sàng để quét</string>
+    <!-- Text shown for settings option for sign with pairing -->
+    <string name="sign_in_with_camera">Đăng nhập bằng máy ảnh của bạn</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">Sử dụng email thay thế</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Không có tài khoản? <u>Tạo một cái</u> để đồng bộ hóa Firefox giữa các thiết bị.]]></string>
+    <!-- Text shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_confirmation_message">Firefox sẽ ngừng đồng bộ hóa với tài khoản của bạn, nhưng sẽ không xóa mọi dữ liệu duyệt web của bạn trên thiết bị này.</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">%s sẽ ngừng đồng bộ hóa với tài khoản của bạn, nhưng sẽ không xóa bất kỳ dữ liệu duyệt web nào của bạn trên thiết bị này.</string>
+    <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_disconnect">Ngắt kết nối</string>
+    <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_cancel">Hủy bỏ</string>
+    <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
+    <string name="bookmark_cannot_edit_root">Không thể chỉnh sửa các thư mục mặc định</string>
+
+    <!-- Enhanced Tracking Protection -->
+    <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
+    <string name="etp_settings">Cài đặt bảo vệ</string>
+    <!-- Preference title for enhanced tracking protection settings -->
+    <string name="preference_enhanced_tracking_protection">Trình chống theo dõi nâng cao</string>
+    <!-- Title for the description of enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_title">Duyệt mà không bị theo dõi</string>
+    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation">Giữ dữ liệu của bạn cho chính mình. %s bảo vệ bạn khỏi nhiều trình theo dõi phổ biến nhất theo dõi những gì bạn làm trực tuyến.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_learn_more">Tìm hiểu thêm</string>
+    <!-- Preference for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Tiêu chuẩn (mặc định)</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Chặn trình theo dõi ít hơn. Các trang sẽ tải bình thường.</string>
+    <!--  Accessibility text for the Standard protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_standard_info_button">Những gì bị chặn bởi trình chống theo dõi tiêu chuẩn</string>
+    <!-- Preference for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict">Nghiêm ngặt</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Chặn nhiều trình theo dõi, quảng cáo và cửa sổ bật lên. Các trang tải nhanh hơn, nhưng một số chức năng có thể không hoạt động.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_strict_info_button">Những gì bị chặn bởi trình chống theo dõi nghiêm ngặt</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom">Tùy chỉnh</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Chọn trình theo dõi và tập lệnh để chặn.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_custom_info_button">Những gì bị chặn bởi trình chống theo dõi tùy chỉnh</string>
+    <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
+    <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies">Cookie</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Trình theo dõi chéo và truyền thông xã hội</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_2">Cookie từ các trang không mong muốn</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Tất cả cookie của bên thứ ba (có thể khiến các trang web bị hỏng)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_4">Tất cả các cookie (có thể khiến các trang web bị hỏng)</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content">Trình theo dõi nội dung</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">Trong tất cả các thẻ</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Chỉ trong thẻ riêng tư</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Chỉ trong thẻ tùy chỉnh</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_cryptominers">Tiền điện tử</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Vân tay</string>
+    <string name="enhanced_tracking_protection_blocked">Đã chặn</string>
+    <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
+    <string name="enhanced_tracking_protection_allowed">Đã cho phép</string>
+    <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_title">Trình theo dõi truyền thông xã hội</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Hạn chế khả năng của các mạng xã hội mà nó theo dõi hoạt động duyệt web của bạn trên web.</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title">Cookie theo dõi chéo trang web</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">Chặn cookie mà các mạng quảng cáo và công ty phân tích sử dụng mà nó biên dịch dữ liệu duyệt web của bạn trên nhiều trang web.</string>
+    <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_title">Tiền điện tử</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">Ngăn chặn các tập lệnh độc hại có quyền truy cập vào thiết bị của bạn mà nó khai thác tiền kỹ thuật số.</string>
+    <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_title">Vân tay</string>
+    <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_description">Dừng dữ liệu nhận dạng duy nhất khỏi bị thu thập về thiết bị của bạn có thể được sử dụng cho mục đích theo dõi.</string>
+    <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_title">Trình theo dõi nội dung</string>
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">Dừng quảng cáo bên ngoài, video và nội dung khác từ tải có chứa mã theo dõi. Có thể ảnh hưởng đến một số chức năng trang web.</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">Mỗi khi tấm khiên có màu tím, %s đã chặn trình theo dõi trên một trang web. Chạm để biết thêm.</string>
+    <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
+    <string name="etp_panel_on">Bảo vệ đã BẬT cho trang web này</string>
+    <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
+    <string name="etp_panel_off">Bảo vệ đã TẮT cho trang web này</string>
+    <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
+    <string name="enhanced_tracking_protection_exceptions">Trình chống theo dõi nâng cao đã bị tắt cho các trang web này</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Điều hướng quay lại</string>
+    <!-- About page Your rights link text -->
+    <string name="about_your_rights">Quyền lợi của bạn</string>
+    <!-- About page link text to open open source licenses screen -->
+    <string name="about_open_source_licenses">Các thư viện mã nguồn mở chúng tôi sử dụng</string>
+    <!-- About page link text to open what's new link -->
+    <string name="about_whats_new">Có gì mới trong %s</string>
+    <!-- Open source licenses page title
+    The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Thư viện OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Trình theo dõi chuyển hướng</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Xóa cookie được đặt bởi chuyển hướng đến các trang web theo dõi đã biết.</string>
+
+    <!-- About page link text to open support link -->
+    <string name="about_support">Hỗ trợ</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Sự cố</string>
+    <!-- About page link text to open privacy notice link -->
+    <string name="about_privacy_notice">Thông báo bảo mật</string>
+    <!-- About page link text to open know your rights link -->
+    <string name="about_know_your_rights">Biết về quyền lợi của bạn</string>
+    <!-- About page link text to open licensing information link -->
+    <string name="about_licensing_information">Thông tin giấy phép</string>
+    <!-- About page link text to open a screen with libraries that are used -->
+    <string name="about_other_open_source_libraries">Thư viện mà chúng tôi sử dụng</string>
+
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Menu gỡ lỗi: chạm %1$d lần nữa để bật</string>
+    <string name="about_debug_menu_toast_done">Menu gỡ lỗi đã được kích hoạt</string>
+
+    <!-- Content description of the tab counter toolbar button when one tab is open -->
+    <string name="tab_counter_content_description_one_tab">1 thẻ</string>
+    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
+    <string name="tab_counter_content_description_multi_tab">%d thẻ</string>
+
+    <!-- Browser long press popup menu -->
+    <!-- Copy the current url -->
+    <string name="browser_toolbar_long_press_popup_copy">Sao chép</string>
+    <!-- Paste & go the text in the clipboard. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="browser_toolbar_long_press_popup_paste_and_go">Dán &amp; mở đường dẫn</string>
+    <!-- Paste the text in the clipboard -->
+    <string name="browser_toolbar_long_press_popup_paste">Dán</string>
+    <!-- Snackbar message shown after an URL has been copied to clipboard. -->
+    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">Đã sao chép URL vào bộ nhớ tạm</string>
+
+    <!-- Title text for the Add To Homescreen dialog -->
+    <string name="add_to_homescreen_title">Thêm vào màn hình chính</string>
+    <!-- Cancel button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_cancel">Hủy bỏ</string>
+    <!-- Add button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_add">Thêm</string>
+    <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
+    <string name="add_to_homescreen_continue">Tiếp tục với trang web</string>
+    <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_text_placeholder">Tên lối tắt</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Bạn có thể dễ dàng thêm trang web vào màn hình chính thiết bị của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
+
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords">Đăng nhập và mật khẩu</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins">Lưu thông tin đăng nhập và mật khẩu</string>
+    <!-- Preference option for asking to save passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_ask_to_save">Yêu cầu để lưu</string>
+    <!-- Preference option for never saving passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_never_save">Không bao giờ lưu</string>
+    <!-- Preference for autofilling saved logins in Fenix -->
+    <string name="preferences_passwords_autofill">Tự động điền</string>
+    <!-- Preference for syncing saved logins in Fenix -->
+    <string name="preferences_passwords_sync_logins">Đồng bộ hóa đăng nhập</string>
+    <!-- Syncing saved logins in Fenix is on -->
+    <string name="preferences_passwords_sync_logins_on">Bật</string>
+    <!-- Syncing saved logins in Fenix is off -->
+    <string name="preferences_passwords_sync_logins_off">Tắt</string>
+    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
+    <string name="preferences_passwords_sync_logins_reconnect">Kết nối lại</string>
+    <!-- Syncing saved logins in Fenix needs login -->
+    <string name="preferences_passwords_sync_logins_sign_in">Đăng nhập vào đồng bộ hóa</string>
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins">Đăng nhập đã lưu</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text">Thông tin đăng nhập bạn lưu hoặc đồng bộ hóa với %s sẽ hiển thị tại đây.</string>
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Tìm hiểu thêm về đồng bộ hóa.</string>
+    <!-- Preference to access list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions">Ngoại trừ</string>
+    <!-- Empty description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description_empty">Đăng nhập và mật khẩu không được lưu sẽ được hiển thị ở đây.</string>
+    <!-- Description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description">Đăng nhập và mật khẩu sẽ không được lưu cho các trang web này.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Xóa tất cả các ngoại lệ</string>
+    <!-- Hint for search box in logins list -->
+    <string name="preferences_passwords_saved_logins_search">Tìm thông tin đăng nhập</string>
+    <!-- Option to sort logins list A-Z, alphabetically -->
+    <string name="preferences_passwords_saved_logins_alphabetically">Theo thứ tự chữ cái</string>
+    <!-- Option to sort logins list by most recently used -->
+    <string name="preferences_passwords_saved_logins_recently_used">Được sử dụng gần đây</string>
+    <!-- The header for the site that a login is for -->
+    <string name="preferences_passwords_saved_logins_site">Trang</string>
+    <!-- The header for the username for a login -->
+    <string name="preferences_passwords_saved_logins_username">Tên đăng nhập</string>
+    <!-- The header for the password for a login -->
+    <string name="preferences_passwords_saved_logins_password">Mật khẩu</string>
+    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin">Nhập lại mã PIN của bạn</string>
+    <!-- Message displayed in security prompt to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin_description">Mở khóa để xem thông tin đăng nhập đã lưu của bạn</string>
+    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning">Đây là kết nối không an toàn. Đăng nhập vào đây có thể gây tổn hại cho bạn.</string>
+    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning_learn_more">Tìm hiểu thêm</string>
+    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
+    <string name="logins_doorhanger_save">Bạn có muốn %s lưu thông tin đăng nhập này không?</string>
+    <!-- Positive confirmation that Fenix should save the new or updated login -->
+    <string name="logins_doorhanger_save_confirmation">Lưu</string>
+    <!-- Negative confirmation that Fenix should not save the new or updated login -->
+    <string name="logins_doorhanger_save_dont_save">Không lưu</string>
+    <!-- Shown in snackbar to tell user that the password has been copied -->
+    <string name="logins_password_copied">Đã sao chép mật khẩu vào bộ nhớ tạm</string>
+    <!-- Shown in snackbar to tell user that the username has been copied -->
+    <string name="logins_username_copied">Đã sao chép tên người dùng vào bộ nhớ tạm</string>
+    <!-- Shown in snackbar to tell user that the site has been copied -->
+    <string name="logins_site_copied">Đã sao chép trang web vào bộ nhớ tạm</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
+    <string name="saved_logins_copy_password">Sao chép mật khẩu</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Xóa mật khẩu</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
+    <string name="saved_login_copy_username">Sao chép tên người dùng</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Xóa tên người dùng</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
+    <string name="saved_login_copy_site">Sao chép URL trang web</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Mở trang web trong trình duyệt</string>
+    <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
+    <string name="saved_login_reveal_password">Hiện mật khẩu</string>
+    <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
+    <string name="saved_login_hide_password">Ẩn mật khẩu</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
+    <string name="logins_biometric_prompt_message">Mở khóa để xem thông tin đăng nhập đã lưu của bạn</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title">Bảo mật thông tin đăng nhập và mật khẩu của bạn</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message">Thiết lập mẫu khóa thiết bị, mã PIN hoặc mật khẩu để bảo vệ thông tin đăng nhập và mật khẩu đã lưu của bạn khỏi bị truy cập nếu người khác lấy được thiết bị của bạn.</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_later">Để sau</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_set_up_now">Thiết lập ngay</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
+    <string name="logins_biometric_prompt_message_pin">Mở khóa thiết bị của bạn</string>
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">Phóng to tất cả các trang web</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">Cho phép để chụm và thu phóng, ngay cả trên các trang web ngăn chặn cử chỉ này.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Tên (A-Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Sử dụng lần cuối</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sắp xếp menu đăng nhập</string>
+
+    <!-- Title of the Add search engine screen -->
+    <string name="search_engine_add_custom_search_engine_title">Thêm công cụ tìm kiếm</string>
+    <!-- Title of the Edit search engine screen -->
+    <string name="search_engine_edit_custom_search_engine_title">Chỉnh sửa công cụ tìm kiếm</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
+    <string name="search_engine_add_button_content_description">Thêm</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Lưu</string>
+    <!-- Text for the menu button to edit a search engine -->
+    <string name="search_engine_edit">Chỉnh sửa</string>
+    <!-- Text for the menu button to delete a search engine -->
+    <string name="search_engine_delete">Xóa</string>
+
+    <!-- Text for the button to create a custom search engine on the Add search engine screen -->
+    <string name="search_add_custom_engine_label_other">Khác</string>
+    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
+    <string name="search_add_custom_engine_name_hint">Tên</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint">Chuỗi tìm kiếm để sử dụng</string>
+    <!-- Description text for the Search String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_search_string_example">Thay thế chuỗi truy vấn thành “%s”. Ví dụ:\nhttps://www.google.com/search?q=%s</string>
+    <!-- Text for the button to learn more about adding a custom search engine -->
+    <string name="search_add_custom_engine_learn_more_label">Tìm hiểu thêm</string>
+
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">Chi tiết công cụ tìm kiếm tùy chỉnh</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">Tìm hiểu thêm về liên kết</string>
+
+    <!-- Text shown when a user leaves the name field empty -->
+    <string name="search_add_custom_engine_error_empty_name">Nhập tên công cụ tìm kiếm</string>
+    <!-- Text shown when a user tries to add a search engine that already exists -->
+    <string name="search_add_custom_engine_error_existing_name">Công cụ tìm kiếm với tên “%s” đã tồn tại.</string>
+    <!-- Text shown when a user leaves the search string field empty -->
+    <string name="search_add_custom_engine_error_empty_search_string">Nhập chuỗi tìm kiếm</string>
+    <!-- Text shown when a user leaves out the required template string -->
+    <string name="search_add_custom_engine_error_missing_template">Kiểm tra xem chuỗi tìm kiếm có đúng với định dạng như ở ví dụ không</string>
+    <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
+    <string name="search_add_custom_engine_error_cannot_reach">Lỗi khi kết nối với “%s”</string>
+    <!-- Text shown when a user creates a new search engine -->
+    <string name="search_add_custom_engine_success_message">Đã tạo %s</string>
+    <!-- Text shown when a user successfully edits a custom search engine -->
+    <string name="search_edit_custom_engine_success_message">Đã lưu %s</string>
+    <!-- Text shown when a user successfully deletes a custom search engine -->
+    <string name="search_delete_search_engine_success_message">Đã xóa %s</string>
+
+    <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
+    <string name="migration_title">Chào mừng bạn đến với %s hoàn toàn mới</string>
+    <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
+    <string name="migration_description">Một trình duyệt được thiết kế lại hoàn toàn mới, với hiệu suất và tính năng được cải thiện để giúp bạn làm việc trực tuyến nhiều hơn.\n\nHãy đợi trong khi chúng tôi cập nhật %s cho bạn</string>
+    <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
+    <string name="migration_updating_app_button_text">Đang cập nhật %s…</string>
+    <!-- Text on the enabled button. Placeholder replaced with app name-->
+    <string name="migration_update_app_button">Bắt đầu %s</string>
+    <!-- Accessibility description text for a completed migration item -->
+    <string name="migration_icon_description">Đã hoàn thành di chuyển dữ liệu</string>
+    <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
+    <string name="migration_text_passwords">Mật khẩu</string>
+
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">Để cho phép nó:</string>
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. Chuyển đến Cài đặt Android</string>
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Chạm <b>Quyền</b>]]></string>
+    <!-- Third step for the allowing a permission (Fore example: Camera) -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Gạt công tắc <b>%1$s</b> sang BẬT]]></string>
+
+    <!-- Label that indicates a site is using a secure connection -->
+    <string name="quick_settings_sheet_secure_connection">Kết nối an toàn</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string name="quick_settings_sheet_insecure_connection">Kết nối không an toàn</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
+    <string name="confirm_clear_permissions_on_all_sites">Bạn có chắc chắn rằng bạn muốn xóa tất cả các quyền hạn trên tất cả các trang web?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
+    <string name="confirm_clear_permissions_site">Bạn có chắc chắn rằng bạn muốn xóa tất cả các quyền hạn cho trang web này?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
+    <string name="confirm_clear_permission_site">Bạn có chắc chắn rằng bạn muốn xóa quyền hạn này cho trang web này?</string>
+    <!-- label shown when there are not site exceptions to show in the site exception settings -->
+    <string name="no_site_exceptions">Không có ngoại lệ trang web</string>
+    <!-- Label for the Pocket default top site -->
+    <string name="pocket_top_articles">Bài viết hàng đầu</string>
+    <!-- Bookmark deletion confirmation -->
+    <string name="bookmark_deletion_confirmation">Bạn có chắc chắn muốn xóa dấu trang này?</string>
+    <!-- Browser menu button that adds a top site to the home fragment -->
+    <string name="browser_menu_add_to_top_sites">Thêm vào trang web hàng đầu</string>
+    <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
+     the certificate authority that verified the ticket-->
+    <string name="certificate_info_verified_by">Được xác minh bởi: %1$s </string>
+    <!-- Login overflow menu delete button -->
+    <string name="login_menu_delete_button">Xóa</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Chỉnh sửa</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">Bạn có chắc chắn muốn xóa thông tin đăng nhập này không?</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">Xóa</string>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Tùy chọn thông tin đăng nhập</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Trường văn bản có thể chỉnh sửa cho địa chỉ web của thông tin đăng nhập.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Trường văn bản có thể chỉnh sửa cho tên người dùng của thông tin đăng nhập.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Trường văn bản có thể chỉnh sửa cho mật khẩu của thông tin đăng nhập.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Lưu các thay đổi vào thông tin đăng nhập.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Loại bỏ những thay đổi</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Chỉnh sửa</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Yêu cầu mật khẩu</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Tìm kiếm bằng giọng nói</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Nói bây giờ</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Một thông tin đăng nhập với tên người dùng đó đã tồn tại</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Kết nối thiết bị khác.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Vui lòng xác thực lại.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Vui lòng kích hoạt đồng bộ hóa thẻ.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Bạn không có bất kỳ thẻ nào mở trong Firefox trên các thiết bị khác của bạn.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Xem danh sách các thẻ từ các thiết bị khác của bạn.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Đăng nhập vào đồng bộ hóa</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Không có thẻ đang mở</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Đã đạt đến giới hạn trang web hàng đầu</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Để thêm một trang web hàng đầu mới, loại bỏ một cái cũ trước. Chạm và giữ trang web và chọn xóa.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">OK, đã hiểu</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Hiển thị các trang web được truy cập nhiều nhất</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Xóa</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Tận dụng tối đa %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Thu thập những thứ quan trọng với bạn</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Nhóm các tìm kiếm, trang web và thẻ tương tự để truy cập nhanh sau này.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Bạn đã đăng nhập dưới dạng %s trên một trình duyệt Firefox khác trên điện thoại này. Bạn có muốn đăng nhập bằng tài khoản này không?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Bạn có thể dễ dàng thêm trang web vào màn hình chính của điện thoại của bạn để có thể truy cập và duyệt web nhanh hơn với trải nghiệm giống như trên ứng dụng.</string>
+
+    </resources>

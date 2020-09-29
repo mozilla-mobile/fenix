@@ -14,12 +14,42 @@
 # to their GitHub account, for example user@example.com.
 # https://help.github.com/articles/about-codeowners/
 
+# WARNING: if there is a single syntax error in this file, CODEOWNERS
+# WILL NOT WORK AT ALL. Please be careful when editing this file.
+#
+# You can use the technique described in this blog post to validate
+# the paths you specify in .gitignore:
+# http://www.benjaminoakes.com/git/2018/08/10/Testing-changes-to-GitHub-CODEOWNERS/
 
 # By default the Android Components team will be the owner for everything in
 # the repo. Unless a later match takes precedence.
 * @mozilla-mobile/ACT @mozilla-mobile/fenix
-/.cron.yml /@mozilla-mobile/releng @mozilla-mobile/fenix
-/.taskcluster.yml /@mozilla-mobile/releng @mozilla-mobile/fenix
+/.cron.yml @mozilla-mobile/releng @mozilla-mobile/fenix
+/.taskcluster.yml @mozilla-mobile/releng @mozilla-mobile/fenix
 /automation/ @mozilla-mobile/releng @mozilla-mobile/fenix
-/taskcluster/ /@mozilla-mobile/releng @mozilla-mobile/fenix
+/taskcluster/ @mozilla-mobile/releng @mozilla-mobile/fenix
 /.github/ @mozilla-mobile/releng @mozilla-mobile/fenix
+
+# --- PERFORMANCE START --- #
+# The performance team would like to monitor some files to understand
+# when performance-impacting changes occur. Our intent is not to block
+# these changes (for now) but to be aware of them. Please let us know
+# if the CODEOWNERS system makes this impractical. We're available at
+# #perf-android-frontend on Matrix.
+
+# The perf team is relying on CODEOWNERS to catch regressions. If
+# there is a single syntax error in the file, no rules will work.
+# Therefore, we make the Perfomance team code owners of this file.
+/.github/CODEOWNERS @mozilla-mobile/Performance
+
+/app/src/*/java/org/mozilla/fenix/perf/** @mozilla-mobile/Performance
+*.pro @mozilla-mobile/Performance
+*proguard* @mozilla-mobile/Performance
+
+# Possible startup regressions
+*Application.kt @mozilla-mobile/Performance
+
+# We want to be aware of new features behind flags as well as features
+# about to be enabled.
+FeatureFlags.kt @mozilla-mobile/Performance
+# --- PERFORMANCE END --- #

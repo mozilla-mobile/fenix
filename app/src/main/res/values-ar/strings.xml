@@ -1,0 +1,1390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">متصفّح %s خاص</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (خاص)</string>
+    <!-- Home Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
+    <string name="content_description_menu">خيارات أكثر</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_private_browsing_button">فعّل التصفّح الخاص</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_disable_private_browsing_button">عطّل التصفّح الخاص</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="search_hint">ابحث أو أدخِل عنوانا</string>
+
+    <!-- No Open Tabs Message Description -->
+    <string name="no_open_tabs_description">ستظهر الألسنة المفتوحة هنا.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">ستظهر الألسنة الخاصة هنا.</string>
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">لسان واحد مفتوح. انقر لتبديل الألسنة.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s من الألسنة مفتوح. انقر لتبديل الألسنة.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">حدّدتَ %1$d</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">أضِف تجميعة جديدة</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">الاسم</string>
+
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">اختر تجميعة</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">اخرج من وضع التحديد المتعدد</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">احفظ الألسنة المحدّدة في التجميعة</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">حدّدت %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">ألغيت تحديد %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">خرجت من وضع التحديد المتعدد</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">دخلت وضع التحديد المتعدد، حدّد الألسنة لحفظها في تجميعة</string>
+
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">محدد</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">‏%1$s من Mozilla.</string>
+
+    <!-- Private Browsing -->
+    <!-- Title for private session option -->
+    <string name="private_browsing_title">أنت في جلسة خاصة</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">يمسح %1$s تأريخ البحث والتصفح لديك عندما تُغلق الألسنة بوضع التصفح الخاص أو تُنهي التطبيق. على الرغم من أن هذا لا يجعلك مجهول الهوية إلى المواقع أو مقدّم خدمة الإنترنت لديك، إلا أنه يسهّل عليك إخفاء ما تفعله في الشبكة على أي شخص آخر يستخدم هذا الجهاز.</string>
+    <string name="private_browsing_common_myths">الخرافات الشائعة بخصوص التصفح الخاص</string>
+
+    <!-- Delete session button to erase your history in a private session -->
+    <string name="private_browsing_delete_session">احذف الجلسة</string>
+
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message -->
+    <string name="cfr_message">أضِف اختصارًا لفتح الألسنة الخاصة من الشاشة الرئيسية.</string>
+    <!-- Text for the positive button -->
+    <string name="cfr_pos_button_text">أضِف اختصارًا</string>
+    <!-- Text for the negative button -->
+    <string name="cfr_neg_button_text">لا، شكرًا</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">افتح Firefox بسرعة أكبر. أضف أداة Firefox إلى الشاشة الرئيسية.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">أضف الأداة</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">ليس الآن</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">يمكنك ضبط Firefox ليفتح الروابط في التطبيقات تلقائيا.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">انتقل إلى الإعدادات</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">أهمِل</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">الوصول إلى الكمرة مطلوب. افتح إعدادات أندرويد، وانقر ”الأذونات“ ثم انقر ”سماح“.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">انتقل إلى الإعدادات</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">أهمِل</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">اضبط الألسنة المفتوحة لتُغلق من تلقاء نفسها إن لم تُعرض منذ اليوم أو الأسبوع أو الشهر الماضي.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">خيارات المنظور</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">أهمِل</string>
+
+    <!-- Home screen icons - Long press shortcuts -->
+    <!-- Shortcut action to open new tab -->
+    <string name="home_screen_shortcut_open_new_tab_2">لسان جديد</string>
+    <!-- Shortcut action to open new private tab -->
+    <string name="home_screen_shortcut_open_new_private_tab_2">لسان خاص جديد</string>
+
+    <!-- Heading for the Top Sites block -->
+    <string name="home_screen_top_sites_heading">المواقع الأكثر زيارة</string>
+
+    <!-- Browser Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
+    <string name="browser_tabs_button">الألسنة المفتوحة</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
+    <string name="browser_menu_back">السابق</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
+    <string name="browser_menu_forward">التالي</string>
+    <!-- Content description (not visible, for screen readers etc.): Refresh current website -->
+    <string name="browser_menu_refresh">أعِد التحميل</string>
+    <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
+    <string name="browser_menu_stop">أوقف</string>
+    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
+    <string name="browser_menu_bookmark">علّم</string>
+    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
+    <string name="browser_menu_edit_bookmark">حرّر العلامة</string>
+    <!-- Browser menu button that opens the addon manager -->
+    <string name="browser_menu_add_ons">الإضافات</string>
+    <!-- Text displayed when there are no add-ons to be shown -->
+    <string name="no_add_ons">ما من إضافات هنا</string>
+    <!-- Browser menu button that sends a user to help articles -->
+    <string name="browser_menu_help">مساعدة</string>
+    <!-- Browser menu button that sends a to a the what's new article -->
+    <string name="browser_menu_whats_new">ما الجديد</string>
+    <!-- Browser menu button that opens the settings menu -->
+    <string name="browser_menu_settings">الإعدادات</string>
+    <!-- Browser menu button that opens a user's library -->
+    <string name="browser_menu_library">المكتبة</string>
+    <!-- Browser menu toggle that requests a desktop site -->
+    <string name="browser_menu_desktop_site">نسخة سطح مكتب</string>
+    <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
+    <string name="browser_menu_add_to_homescreen">أضِف إلى شاشة البداية</string>
+    <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
+    <string name="browser_menu_install_on_homescreen">ثبّت</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">الألسنة المُزامنة</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">أعِد المزامنة</string>
+    <!-- Browser menu button that opens the find in page menu -->
+    <string name="browser_menu_find_in_page">ابحث في الصفحة</string>
+    <!-- Browser menu button that creates a private tab -->
+    <string name="browser_menu_private_tab">لسان خاص</string>
+    <!-- Browser menu button that creates a new tab -->
+    <string name="browser_menu_new_tab">لسان جديد</string>
+    <!-- Browser menu button that saves the current tab to a collection -->
+    <string name="browser_menu_save_to_collection_2">احفظ في التجميعة</string>
+    <!-- Browser menu button that open a share menu to share the current site -->
+    <string name="browser_menu_share">شارِك</string>
+    <!-- Share menu title, displayed when a user is sharing their current site -->
+    <string name="menu_share_with">شارِك مع…</string>
+    <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_open_in_fenix">افتح في %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by">تدعمه %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by2">تدعمه %1$s</string>
+    <!-- Browser menu button to put the current page in reader mode -->
+    <string name="browser_menu_read">منظور القارئ</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">أغلِق منظور القارئ</string>
+    <!-- Browser menu button to open the current page in an external app -->
+    <string name="browser_menu_open_app_link">افتح في التطبيق</string>
+    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
+    <string name="browser_menu_read_appearance">المظهر</string>
+
+    <!-- Error message to show when the user tries to access a scheme not
+        handled by the app (Ex: blob, tel etc) -->
+    <string name="unknown_scheme_error_message">تعذّر الاتصال، لم أتعرّف على مخطّط المسار.</string>
+
+    <!-- Locale Settings Fragment -->
+    <!-- Content description for tick mark on selected language -->
+    <string name="a11y_selected_locale_content_description">اللغة المحددة</string>
+    <!-- Content description for search icon -->
+    <string name="a11y_search_icon_content_description">ابحث</string>
+
+    <!-- Text for default locale item -->
+    <string name="default_locale_text">اتبع لغة الجهاز</string>
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="locale_search_hint">لغة البحث</string>
+
+    <!-- Search Fragment -->
+    <!-- Button in the search view that lets a user search by scanning a QR code -->
+    <string name="search_scan_button">امسح ضوئيًا</string>
+
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">محرّك البحث</string>
+    <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
+    <string name="search_shortcuts_engine_settings">إعدادات محرّك البحث</string>
+    <!-- Header displayed when selecting a shortcut search engine -->
+    <string name="search_engines_search_with">الآن فقط ابحث باستعمال:</string>
+    <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
+    <string name="awesomebar_clipboard_title">املأ الرابط من الحافظة</string>
+    <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_allow_button">اسمح</string>
+    <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_do_not_allow_button">لا تسمح</string>
+    <!-- Search suggestion onboarding hint title text -->
+    <string name="search_suggestions_onboarding_title">أتسمح بعرض اقتراحات البحث في الجلسات الخاصة؟</string>
+    <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="search_suggestions_onboarding_text">سيُشارك %s كل ما تكتب في شريط العنوان مع محرك البحث المبدئي.</string>
+    <!-- Search suggestion onboarding hint Learn more link text -->
+    <string name="search_suggestions_onboarding_learn_more_link">اطّلع على المزيد</string>
+
+    <!-- Search Widget -->
+    <!-- Text preview for smaller sized widgets -->
+    <string name="search_widget_text_short">ابحث</string>
+    <!-- Text preview for larger sized widgets -->
+    <string name="search_widget_text_long">ابحث في الوِب</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">البحث الصوتي</string>
+
+    <!-- Preferences -->
+    <!-- Title for the settings page-->
+    <string name="settings">الإعدادات</string>
+    <!-- Preference category for basic settings -->
+    <string name="preferences_category_basics">الأساسيات</string>
+    <!-- Preference category for general settings -->
+    <string name="preferences_category_general">عام</string>
+    <!-- Preference category for all links about Fenix -->
+    <string name="preferences_category_about">عن</string>
+    <!-- Preference for settings related to changing the default search engine -->
+    <string name="preferences_default_search_engine">محرّك البحث المبدئي</string>
+    <!-- Preference for settings related to Search -->
+    <string name="preferences_search">البحث</string>
+    <!-- Preference for settings related to Search address bar -->
+    <string name="preferences_search_address_bar">شريط العناوين</string>
+    <!-- Preference linking to help about Fenix -->
+    <string name="preferences_help">مساعدة</string>
+    <!-- Preference link to rating Fenix on the Play Store -->
+    <string name="preferences_rate">قيّمه في متجر غوغل</string>
+    <!-- Preference for giving feedback about Fenix -->
+    <string name="preferences_feedback">أعطِنا رأيك</string>
+    <!-- Preference linking to about page for Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="preferences_about">عن %1$s</string>
+    <!-- Preference linking to the your rights SUMO page -->
+    <string name="preferences_your_rights">حقوقك</string>
+    <!-- Preference for settings related to saved passwords -->
+    <string name="preferences_passwords">كلمات السر</string>
+    <!-- Preference for settings related to saved credit cards and addresses -->
+    <string name="preferences_credit_cards_addresses">بطاقات الائتمان والعناوين</string>
+    <!-- Preference for settings related to changing the default browser -->
+    <string name="preferences_set_as_default_browser">اضبطه ليكون المتصفّح المبدئي</string>
+    <!-- Preference category for advanced settings -->
+    <string name="preferences_category_advanced">متقدّم</string>
+    <!-- Preference category for privacy settings -->
+    <string name="preferences_category_privacy">الخصوصية</string>
+    <!-- Preference category for privacy and security settings -->
+    <string name="preferences_category_privacy_security">الخصوصية والأمان</string>
+    <!-- Preference for advanced site permissions -->
+    <string name="preferences_site_permissions">تصاريح المواقع</string>
+    <!-- Preference for private browsing options -->
+    <string name="preferences_private_browsing_options">التصفّح الخاص</string>
+    <!-- Preference for opening links in a private tab-->
+    <string name="preferences_open_links_in_a_private_tab">افتح الروابط في ألسنة خاصة</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">اسمح بلقطات الشاشة في التصفّح الخاص</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">إن سمحت فستظهر الألسنة الخاصة حين فتح أكثر من تطبيق</string>
+    <!-- Preference for adding private browsing shortcut -->
+    <string name="preferences_add_private_browsing_shortcut">أضِف اختصارًا للتصفح الخاص</string>
+    <!-- Preference for accessibility -->
+    <string name="preferences_accessibility">الإتاحة</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">خادوم حسابات Firefox مخصص</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">خادوم مزامنة مخصص</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">تعدّل خادوم حسابات Firefox/Sync. يُنهي التطبيق لإجراء التغييرات…</string>
+    <!-- Preference category for account information -->
+    <string name="preferences_category_account">الحساب</string>
+    <!-- Preference shown on banner to sign into account -->
+    <string name="preferences_sign_in">لِج</string>
+    <!-- Preference for changing where the toolbar is positioned -->
+    <string name="preferences_toolbar">شريط الأدوات</string>
+    <!-- Preference for changing default theme to dark or light mode -->
+    <string name="preferences_theme">السمة</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">صفحة البداية</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">الإيماءات</string>
+    <!-- Preference for settings related to visual options -->
+    <string name="preferences_customize">خصّص</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description">زامِن العلامات والتأريخ وأكثر باستعمال حساب Firefox</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name">حساب Firefox</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">أعِد الاتصال لمواصلة المزامنة</string>
+    <!-- Preference for language -->
+    <string name="preferences_language">اللغة</string>
+    <!-- Preference for data choices -->
+    <string name="preferences_data_choices">اختيارات البيانات</string>
+    <!-- Preference for data collection -->
+    <string name="preferences_data_collection">جمع البيانات</string>
+    <!-- Preference linking to the privacy notice -->
+    <string name="preferences_privacy_link">تنويه الخصوصية</string>
+    <!-- Preference category for developer tools -->
+    <string name="developer_tools_category">أدوات المطوّرين</string>
+    <!-- Preference for developers -->
+    <string name="preferences_remote_debugging">التنقيح عن بعد عبر USB</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">اعرض محركات البحث</string>
+    <!-- Preference title for switch preference to show search suggestions -->
+    <string name="preferences_show_search_suggestions">اعرض اقتراحات البحث</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">اعرض البحث الصوتي</string>
+    <!-- Preference title for switch preference to show search suggestions also in private mode -->
+    <string name="preferences_show_search_suggestions_in_private">اعرض في الجلسات الخاصة</string>
+    <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
+    <string name="preferences_show_clipboard_suggestions">اعرض اقتراحات الحافظة</string>
+    <!-- Preference title for switch preference to suggest browsing history when searching -->
+    <string name="preferences_search_browsing_history">البحث في تأريخ التصفح</string>
+    <!-- Preference title for switch preference to suggest bookmarks when searching -->
+    <string name="preferences_search_bookmarks">البحث في العلامات</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">ابحث في الألسنة المُزامنة</string>
+    <!-- Preference for account settings -->
+    <string name="preferences_account_settings">إعدادات الحساب</string>
+    <!-- Preference for open links in third party apps -->
+    <string name="preferences_open_links_in_apps">افتح الروابط في التطبيقات</string>
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">مدير التنزيل الخارجي</string>
+    <!-- Preference for add_ons -->
+    <string name="preferences_addons">الإضافات</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">التنبيهات</string>
+
+    <!-- Account Preferences -->
+    <!-- Preference for triggering sync -->
+    <string name="preferences_sync_now">زامِن الآن</string>
+    <!-- Preference category for sync -->
+    <string name="preferences_sync_category">اختر ما تريد مزامنته</string>
+    <!-- Preference for syncing history -->
+    <string name="preferences_sync_history">التأريخ</string>
+    <!-- Preference for syncing bookmarks -->
+    <string name="preferences_sync_bookmarks">العلامات</string>
+    <!-- Preference for syncing logins -->
+    <string name="preferences_sync_logins">جلسات الولوج</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">الألسنة المفتوحة</string>
+    <!-- Preference for signing out -->
+    <string name="preferences_sign_out">اخرج</string>
+    <!-- Preference displays and allows changing current FxA device name -->
+    <string name="preferences_sync_device_name">اسم الجهاز</string>
+    <!-- Text shown when user enters empty device name -->
+    <string name="empty_device_name_error">لا يمكن أن يكون اسم الجهاز فارغًا.</string>
+    <!-- Label indicating that sync is in progress -->
+    <string name="sync_syncing_in_progress">يُزامن…</string>
+
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">فشلت المزامنة. آخر نجاح: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_failed_never_synced_summary">فشلت المزامنة. تاريخ آخر مزامنة: لم تحدث</string>
+    <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
+    <string name="sync_last_synced_summary">تاريخ آخر مزامنة: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_never_synced_summary">تاريخ آخر مزامنة: أبدًا</string>
+
+    <!-- Text for displaying the default device name.
+        The first parameter is the application name, the second is the device manufacturer name
+        and the third is the device model. -->
+    <string name="default_device_name_2">‏%1$s على %2$s %3$s</string>
+
+    <!-- Send Tab -->
+    <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_name">الألسنة المستلمة</string>
+    <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_description">تنبيهات الألسنة المستلمة من أجهزة Firefox الأخرى.</string>
+    <!--  The body for these is the URL of the tab received  -->
+    <string name="fxa_tab_received_notification_name">وصل لسان</string>
+    <!-- When multiple tabs have been received -->
+    <string name="fxa_tabs_received_notification_name">وصلت ألسنة</string>
+    <!-- %s is the device name -->
+    <string name="fxa_tab_received_from_notification_name">لسان من %s</string>
+
+    <!-- Advanced Preferences -->
+    <!-- Preference for tracking protection settings -->
+    <string name="preferences_tracking_protection_settings">الحماية من التعقّب</string>
+    <!-- Preference switch for tracking protection -->
+    <string name="preferences_tracking_protection">الحماية من التعقّب</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">احجب المحتوى والنصوص البرمجية التي تتعقّبك على الإنترنت</string>
+    <!-- Preference for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions">الاستثناءات</string>
+    <!-- Preference description for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions_description">عُطّلت الحماية من التعقّب في هذه المواقع</string>
+    <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
+    <string name="preferences_tracking_protection_exceptions_turn_on_for_all">شغّلها في كل المواقع</string>
+    <!-- Text displayed when there are no exceptions -->
+    <string name="exceptions_empty_message_description">تتيح لك الاستثناءات تعطيل الحماية من التعقّب لمواقع تختارها.</string>
+    <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
+    <string name="exceptions_empty_message_learn_more_link">اطّلع على المزيد</string>
+
+    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
+    <string name="preferences_tracking_protection_turned_off_globally">مُعطّلة على مستوى المتصفّح، افتح الإعدادات لتفعيلها.</string>
+
+    <!-- Preference switch for Telemetry -->
+    <string name="preferences_telemetry">تليمتري</string>
+
+    <!-- Preference switch for usage and technical data collection -->
+    <string name="preference_usage_data">الاستخدام والبيانات التقنية</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">شارك بيانات المتصفح فيما يتعلق بالأداء و الاستخدام و العتاد و التخصيصات مع Mozilla لمساعدتنا في جعل %1$s أفضل</string>
+    <!-- Preference switch for marketing data collection -->
+    <string name="preferences_marketing_data">بيانات التسويق</string>
+    <!-- Title for experiments preferences -->
+    <string name="preference_experiments">التجارب</string>
+    <!-- Summary for experiments preferences -->
+    <string name="preference_experiments_summary">يسمح بأن تثبّت Mozilla بيانات المزايا التجريبية وتجمعها</string>
+    <!-- Preference switch for crash reporter -->
+    <string name="preferences_crash_reporter">مُبلّغ الانهيار</string>
+    <!-- Preference switch for Mozilla location service -->
+    <string name="preferences_mozilla_location_service">خدمة التموضع من Mozilla</string>
+
+    <!-- Turn On Sync Preferences -->
+    <!-- Header of the Turn on Sync preference view -->
+    <string name="preferences_sync">فعّل «تزامُن»</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">امسح رمز الاقتران رقميًا في Firefox على سطح المكتب</string>
+    <!-- Preference for account login -->
+    <string name="preferences_sync_sign_in">لِج</string>
+    <!-- Preference for reconnecting to FxA sync -->
+    <string name="preferences_sync_sign_in_to_reconnect">لِج لإعادة الاتصال</string>
+    <!-- Preference for removing FxA account -->
+    <string name="preferences_sync_remove_account">أزِل الحساب</string>
+
+    <!-- Button to open camera for pairing -->
+    <string name="pair_open_camera">افتح الكمرة</string>
+    <!-- Button to cancel pairing -->
+    <string name="pair_cancel">ألغِ</string>
+
+    <!-- Toolbar Preferences -->
+    <!-- Preference for using top toolbar -->
+    <string name="preference_top_toolbar">بالأعلى</string>
+    <!-- Preference for using bottom toolbar -->
+    <string name="preference_bottom_toolbar">بالأسفل</string>
+
+    <!-- Theme Preferences -->
+    <!-- Preference for using light theme -->
+    <string name="preference_light_theme">فاتحة</string>
+    <!-- Preference for using dark theme -->
+    <string name="preference_dark_theme">داكنة</string>
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">حسب وضع توفير الطاقة</string>
+    <!-- Preference for using following device theme -->
+    <string name="preference_follow_device_theme">اتبع سمة الجهاز</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">اسحب للإنعاش</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">مرّر لإخفاء شريط الأدوات</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">مرّر شريط الأدوات إلى اليمين واليسار للتبديل بين الألسنة</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">مرّر شريط الأدوات إلى أعلى لفتح الألسنة</string>
+
+    <!-- Library -->
+    <!-- Option in Library to open Sessions page -->
+    <string name="library_sessions">الجلسات</string>
+    <!-- Option in Library to open Screenshots page -->
+    <string name="library_screenshots">لقطات الشاشة</string>
+    <!-- Option in Library to open Downloads page -->
+    <string name="library_downloads">التنزيلات</string>
+    <!-- Option in library to open Bookmarks page -->
+    <string name="library_bookmarks">العلامات</string>
+
+    <!-- Option in library to open Desktop Bookmarks root page -->
+    <string name="library_desktop_bookmarks_root">علامات سطح المكتب</string>
+    <!-- Option in library to open Desktop Bookmarks "menu" page -->
+    <string name="library_desktop_bookmarks_menu">قائمة العلامات</string>
+    <!-- Option in library to open Desktop Bookmarks "toolbar" page -->
+    <string name="library_desktop_bookmarks_toolbar">شريط العلامات</string>
+    <!-- Option in library to open Desktop Bookmarks "unfiled" page -->
+    <string name="library_desktop_bookmarks_unfiled">العلامات الأخرى</string>
+    <!-- Option in Library to open History page -->
+    <string name="library_history">التأريخ</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">الألسنة المُزامنة</string>
+    <!-- Option in Library to open Reading List -->
+    <string name="library_reading_list">قائمة القراءة</string>
+    <!-- Menu Item Label for Search in Library -->
+    <string name="library_search">ابحث</string>
+    <!-- Settings Page Title -->
+    <string name="settings_title">الإعدادات</string>
+    <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
+    <string name="content_description_close_button">أغلِق</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">الألسنة المُغلقة حديثًا</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">اعرض التأريخ كاملا</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">ما من ألسنة أُغلقت حديثًا</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">إغلاق الألسنة</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">يدويًا</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">بعد يوم واحد</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">بعد أسبوع واحد</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">بعد شهر واحد</string>
+
+    <!-- Sessions -->
+    <!-- Title for the list of tabs -->
+    <string name="tab_header_label">الألسنة المفتوحة</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_title">جلسة خاصة</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_tabs_title">الألسنة الخاصة</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_tab">أضِف لسانًا</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">أضِف لسانًا خاصًا</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">خاص</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">الألسنة المفتوحة</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">احفظ في التجميعة</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">شارِك كل الألسنة</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">الألسنة المُغلقة حديثًا</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">إعدادات اللسان</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">أغلِق كل الألسنة</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">لسان جديد</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">انتقل إلى الصفحة الرئيسية</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">أزِل اللسان من المجموعة</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
+    <string name="close_tab">أغلِق اللسان</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
+    <string name="close_tab_title">أغلِق اللسان ”%s“</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
+    <string name="open_tabs_menu">افتح قائمة الألسنة</string>
+    <!-- Open tabs menu item to close all tabs -->
+    <string name="tabs_menu_close_all_tabs">أغلِق كل الألسنة</string>
+    <!-- Open tabs menu item to share all tabs -->
+    <string name="tabs_menu_share_tabs">شارِك الألسنة</string>
+    <!-- Open tabs menu item to save tabs to collection -->
+    <string name="tabs_menu_save_to_collection1">احفظ الألسنة في التجميعة</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
+    <string name="tab_menu">قائمة الألسنة</string>
+    <!-- Tab menu item to share the tab -->
+    <string name="tab_share">شارِك اللسان</string>
+    <!-- Button in the current session menu. Deletes the session when pressed -->
+    <string name="current_session_delete">احذف</string>
+    <!-- Button in the current session menu. Saves the session when pressed -->
+    <string name="current_session_save">احفظ</string>
+    <!-- Button in the current session menu. Opens the share menu when pressed -->
+    <string name="current_session_share">شارِك</string>
+    <!-- Button to save the current set of tabs into a collection -->
+    <string name="save_to_collection">احفظ في التجميعة</string>
+    <!-- Text for the menu button to delete a collection -->
+    <string name="collection_delete">حذف المجموعة</string>
+    <!-- Text for the menu button to rename a collection -->
+    <string name="collection_rename">إعادة تسمية المجموعة</string>
+    <!-- Text for the button to open tabs of the selected collection -->
+    <string name="collection_open_tabs">افتح الألسنة</string>
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">أزِل</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">احذف من التأريخ</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">‏%1$s (الوضع الخاص)</string>
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">احفظ</string>
+
+    <!-- History -->
+    <!-- Text for the button to clear all history -->
+    <string name="history_delete_all">احذف التأريخ</string>
+    <!-- Text for the dialog to confirm clearing all history -->
+    <string name="history_delete_all_dialog">أمتأكّد من مسح التأريخ؟</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">حُذف التأريخ</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">حُذف %1$s</string>
+    <!-- Text for positive action to delete history in deleting history dialog -->
+    <string name="history_clear_dialog">امسح</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">انسخ</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">شارِك</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">افتح في لسان جديد</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">افتح في لسان خاص</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="history_delete_item">احذف</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of bookmarks selected -->
+    <string name="history_multi_select_title">حدّدتَ %1$d</string>
+    <!-- Text for the header that groups the history for last 24 hours -->
+    <string name="history_24_hours">آخر 24 ساعة</string>
+    <!-- Text for the header that groups the history the past 7 days -->
+    <string name="history_7_days">آخر 7 أيام</string>
+    <!-- Text for the header that groups the history the past 30 days -->
+    <string name="history_30_days">آخر 30 يومًا</string>
+
+    <!-- Text for the header that groups the history older than the last month -->
+    <string name="history_older">أقدم</string>
+    <!-- Text shown when no history exists -->
+    <string name="history_empty_message">ما من تأريخ هنا</string>
+
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">لا تنزيلات هنا</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">حدّدتَ %1$d</string>
+
+    <!-- Crashes -->
+    <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
+    <string name="tab_crash_title_2">نأسف. يتعذر على %1$s تحميل هذه الصفحة.</string>
+    <!-- Description text displayed on the tab crash page -->
+    <string name="tab_crash_description">يمكنك محاولة استعادة اللسان أو إغلاقه أسفله.</string>
+    <!-- Send crash report checkbox text on the tab crash page -->
+    <string name="tab_crash_send_report">أرسِل تقرير الانهيار إلى Mozilla</string>
+    <!-- Close tab button text on the tab crash page -->
+    <string name="tab_crash_close">أغلِق اللسان</string>
+    <!-- Restore tab button text on the tab crash page -->
+    <string name="tab_crash_restore">استعِد اللسان</string>
+
+    <!-- Content Description for session item menu button -->
+    <string name="content_description_session_menu">خيارات الجلسات</string>
+
+    <!-- Content Description for session item share button -->
+    <string name="content_description_session_share">شارِك الجلسة</string>
+
+    <!-- Bookmarks -->
+    <!-- Content description for bookmarks library menu -->
+    <string name="bookmark_menu_content_description">قائمة العلامات</string>
+    <!-- Screen title for editing bookmarks -->
+    <string name="bookmark_edit">حرّر العلامة</string>
+    <!-- Screen title for selecting a bookmarks folder -->
+    <string name="bookmark_select_folder">اختر مجلدًا</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">أمتأكّد من حذف هذا المجلد؟</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">سيحذف %s العناصر المحدّدة.</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">حُذف %1$s</string>
+    <!-- Screen title for adding a bookmarks folder -->
+    <string name="bookmark_add_folder">أضِف مجلدًا</string>
+    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_created_snackbar">أُنشئت العلامة.</string>
+
+    <!-- Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_saved_snackbar">حُفظت العلامة.</string>
+    <!-- Snackbar edit button shown after a bookmark has been created. -->
+    <string name="edit_bookmark_snackbar_action">حرّر</string>
+    <!-- Bookmark overflow menu edit button -->
+    <string name="bookmark_menu_edit_button">حرّر</string>
+    <!-- Bookmark overflow menu select button -->
+    <string name="bookmark_menu_select_button">اختر</string>
+    <!-- Bookmark overflow menu copy button -->
+    <string name="bookmark_menu_copy_button">انسخ</string>
+    <!-- Bookmark overflow menu share button -->
+    <string name="bookmark_menu_share_button">شارِك</string>
+    <!-- Bookmark overflow menu open in new tab button -->
+    <string name="bookmark_menu_open_in_new_tab_button">افتح في لسان جديد</string>
+    <!-- Bookmark overflow menu open in private tab button -->
+    <string name="bookmark_menu_open_in_private_tab_button">افتح في لسان خاص</string>
+    <!-- Bookmark overflow menu delete button -->
+    <string name="bookmark_menu_delete_button">احذف</string>
+    <!--Bookmark overflow menu save button -->
+    <string name="bookmark_menu_save_button">احفظ</string>
+    <!-- Bookmark multi select title in app bar
+     The first parameter is the number of bookmarks selected -->
+    <string name="bookmarks_multi_select_title">حدّدتَ %1$d</string>
+    <!-- Bookmark editing screen title -->
+    <string name="edit_bookmark_fragment_title">حرّر العلامة</string>
+    <!-- Bookmark folder editing screen title -->
+    <string name="edit_bookmark_folder_fragment_title">حرّر المجلد</string>
+
+    <!-- Bookmark sign in button message -->
+    <string name="bookmark_sign_in_button">لِج لترى العلامات المُزامنة</string>
+    <!-- Bookmark URL editing field label -->
+    <string name="bookmark_url_label">المسار</string>
+    <!-- Bookmark FOLDER editing field label -->
+    <string name="bookmark_folder_label">المجلد</string>
+    <!-- Bookmark NAME editing field label -->
+    <string name="bookmark_name_label">الاسم</string>
+    <!-- Bookmark add folder screen title -->
+    <string name="bookmark_add_folder_fragment_label">أضِف مجلدًا</string>
+    <!-- Bookmark select folder screen title -->
+    <string name="bookmark_select_folder_fragment_label">اختر مجلدًا</string>
+    <!-- Bookmark editing error missing title -->
+    <string name="bookmark_empty_title_error">يجب أن يكون للعلامة عنوان</string>
+    <!-- Bookmark editing error missing or improper URL -->
+    <string name="bookmark_invalid_url_error">مسار غير صحيح</string>
+    <!-- Bookmark screen message for empty bookmarks folder -->
+    <string name="bookmarks_empty_message">ما من علامات هنا</string>
+    <!-- Bookmark snackbar message on deletion
+     The first parameter is the host part of the URL of the bookmark deleted, if any -->
+    <string name="bookmark_deletion_snackbar_message">حُذف %1$s</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">حُذفت العلامات</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">يحذف المجلدات المحددة</string>
+    <!-- Bookmark undo button for deletion snackbar action -->
+    <string name="bookmark_undo_deletion">تراجَع</string>
+
+    <!-- Site Permissions -->
+    <!-- Site permissions preferences header -->
+    <string name="permissions_header">الصلاحيات</string>
+    <!-- Button label that take the user to the Android App setting -->
+    <string name="phone_feature_go_to_settings">انتقل إلى الإعدادات</string>
+    <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
+        to give users access to site specific information / settings. For example:
+        Secure settings status and a button to modify site permissions -->
+    <string name="quick_settings_sheet">صفحة الإعدادات السريعة</string>
+    <!-- Label that indicates that this option it the recommended one -->
+    <string name="phone_feature_recommended">موصى به</string>
+    <!-- button that allows editing site permissions settings -->
+    <string name="quick_settings_sheet_manage_site_permissions">أدِر تصاريح الموقع</string>
+    <!-- Button label for clearing all the information of site permissions-->
+    <string name="clear_permissions">امسح التصاريح</string>
+    <!-- Button label for clearing a site permission-->
+    <string name="clear_permission">امسح التصريح</string>
+    <!-- Button label for clearing all the information on all sites-->
+    <string name="clear_permissions_on_all_sites">امسح التصاريح عن كل المواقع</string>
+    <!-- Preference for altering video and audio autoplay for all websites -->
+    <string name="preference_browser_feature_autoplay">التشغيل التلقائي</string>
+    <!-- Preference for altering the camera access for all websites -->
+    <string name="preference_phone_feature_camera">الكمرة</string>
+    <!-- Preference for altering the microphone access for all websites -->
+    <string name="preference_phone_feature_microphone">الميكروفون</string>
+    <!-- Preference for altering the location access for all websites -->
+    <string name="preference_phone_feature_location">المكان</string>
+    <!-- Preference for altering the notification access for all websites -->
+    <string name="preference_phone_feature_notification">التنبيهات</string>
+    <!-- Label that indicates that a permission must be asked always -->
+    <string name="preference_option_phone_feature_ask_to_allow">اطلب السماح</string>
+    <!-- Label that indicates that a permission must be blocked -->
+    <string name="preference_option_phone_feature_blocked">محجوبة</string>
+    <!-- Label that indicates that a permission must be allowed -->
+    <string name="preference_option_phone_feature_allowed">مسموح بها</string>
+    <!--Label that indicates a permission is by the Android OS-->
+    <string name="phone_feature_blocked_by_android">حجبه أندرويد</string>
+    <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
+    <string name="preference_exceptions">الاستثناءات</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="tracking_protection_on">مفعّل</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="tracking_protection_off">معطّل</string>
+    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <string name="preference_option_autoplay_allowed2">اسمح بالصوت والڤِديو</string>
+
+    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="preference_option_autoplay_block_audio2">احجب الصوت فقط</string>
+    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <string name="preference_option_autoplay_blocked3">احجب الصوت والڤِديو</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to on -->
+    <string name="delete_browsing_data_quit_on">مفعّل</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to off -->
+    <string name="delete_browsing_data_quit_off">معطّل</string>
+
+    <!-- Collections -->
+    <!-- Collections header on home fragment -->
+    <string name="collections_header">التجميعات</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
+    <string name="collection_menu_button_content_description">قائمة التجميعات</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">اجمع ما يهمّك.\nضَع عمليات البحث والمواقع والألسنة المتشابهة مع بعضها لتصل إليها لاحقا بسهولة.</string>
+    <!-- Title for the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_tabs">اختر الألسنة</string>
+    <!-- Title for the "select collection" step of the collection creator -->
+    <string name="create_collection_select_collection">اختر التجميعة</string>
+    <!-- Title for the "name collection" step of the collection creator -->
+    <string name="create_collection_name_collection">ضَع اسما للتجميعة</string>
+    <!-- Button to add new collection for the "select collection" step of the collection creator -->
+    <string name="create_collection_add_new_collection">أضِف تجميعة جديدة</string>
+    <!-- Button to select all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_all">اختر الكل</string>
+    <!-- Button to deselect all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_deselect_all">ألغِ تحديد الكل</string>
+    <!-- Text to prompt users to select the tabs to save in the "select tabs" step of the collection creator -->
+    <string name="create_collection_save_to_collection_empty">حدّد الألسنة لحفظها</string>
+    <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
+    <string name="create_collection_tabs_saved">حُفظت الألسنة!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">حُفظت التجميعة!</string>
+    <!-- Text shown in snackbar when one tab has been saved in a collection -->
+    <string name="create_collection_tab_saved">حُفظ اللسان!</string>
+    <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
+    <string name="create_collection_close">أغلِق</string>
+    <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
+    <string name="create_collection_save">احفظ</string>
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">اعرض</string>
+
+    <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
+    <string name="create_collection_default_name">تجميعة %d</string>
+
+    <!-- Share -->
+    <!-- Share screen header -->
+    <string name="share_header">أرسِل وشارِك</string>
+    <!-- Share screen header -->
+    <string name="share_header_2">شارِك</string>
+    <!-- Content description (not visible, for screen readers etc.):
+        "Share" button. Opens the share menu when pressed. -->
+    <string name="share_button_content_description">شارِك</string>
+    <!-- Sub-header in the dialog to share a link to another app -->
+    <string name="share_link_subheader">شارك الرابط</string>
+    <!-- Sub-header in the dialog to share a link to another sync device -->
+    <string name="share_device_subheader">أرسل إلى جهاز</string>
+    <!-- Sub-header in the dialog to share a link to an app from the full list -->
+    <string name="share_link_all_apps_subheader">كل الإجراءات</string>
+    <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
+    <string name="share_link_recent_apps_subheader">المستخدمة حديثًا</string>
+    <!-- An option from the share dialog to sign into sync -->
+    <string name="sync_sign_in">لِج إلى «المزامنة»</string>
+    <!-- An option from the share dialog to send link to all other sync devices -->
+    <string name="sync_send_to_all">أرسله إلى كل الأجهزة</string>
+    <!-- An option from the share dialog to reconnect to sync -->
+    <string name="sync_reconnect">أعِد الاتصال بالتزامن</string>
+    <!-- Text displayed when sync is offline and cannot be accessed -->
+    <string name="sync_offline">غير متصل</string>
+    <!-- An option to connect additional devices -->
+    <string name="sync_connect_device">صِلْ جهازًا آخر</string>
+    <!-- The dialog text shown when additional devices are not available -->
+    <string name="sync_connect_device_dialog">لِج إلى Firefox على جهاز واحد آخر على الأقل لإرسال لسان إليه.</string>
+    <!-- Confirmation dialog button -->
+    <string name="sync_confirmation_button">فهمت</string>
+    <!-- Share error message -->
+    <string name="share_error_snackbar">تعذرت المشاركة مع هذا التطبيق</string>
+    <!-- Add new device screen title -->
+    <string name="sync_add_new_device_title">أرسِل إلى جهاز</string>
+    <!-- Text for the warning message on the Add new device screen -->
+    <string name="sync_add_new_device_message">لا أجهزة متصلة</string>
+
+    <!-- Text for the button to learn about sending tabs -->
+    <string name="sync_add_new_device_learn_button">اطلع على المزيد عن إرسال الألسنة…</string>
+    <!-- Text for the button to connect another device -->
+    <string name="sync_add_new_device_connect_button">صِلْ جهازًا آخر…</string>
+
+    <!-- Notifications -->
+    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
+    <string name="notification_pbm_channel_name">جلسة تصفح خاصة</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text">حذف الألسنة الخاصة</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text_2">أغلِق الألسنة الخاصة</string>
+    <!-- Notification action to open Fenix and resume the current browsing session. -->
+    <string name="notification_pbm_action_open">افتح</string>
+    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_powered_by_channel_name">تدعمه</string>
+    <!-- Text shown in snackbar when user deletes a collection -->
+    <string name="snackbar_collection_deleted">حُذفت التجميعة</string>
+    <!-- Text shown in snackbar when user renames a collection -->
+    <string name="snackbar_collection_renamed">تغيّر اسم التجميعة</string>
+    <!-- Text shown in snackbar when user deletes a tab -->
+    <string name="snackbar_tab_deleted">حُذف اللسان</string>
+    <!-- Text shown in snackbar when user deletes all tabs -->
+    <string name="snackbar_tabs_deleted">حُذفت الألسنة</string>
+    <!-- Text shown in snackbar when user closes a tab -->
+    <string name="snackbar_tab_closed">أُغلق اللسان</string>
+    <!-- Text shown in snackbar when user closes all tabs -->
+    <string name="snackbar_tabs_closed">أُغلقت الألسنة</string>
+    <!-- Text shown in snackbar when user closes a private tab -->
+    <string name="snackbar_private_tab_closed">أُغلق اللسان الخاص</string>
+    <!-- Text shown in snackbar when user closes all private tabs -->
+    <string name="snackbar_private_tabs_closed">أُغلقت الألسنة الخاصة</string>
+    <!-- Text shown in snackbar when user deletes all private tabs -->
+    <string name="snackbar_private_tabs_deleted">حُذفت الألسنة الخاصة</string>
+    <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
+    <string name="snackbar_deleted_undo">تراجَع</string>
+    <!-- Text shown in snackbar when user removes a top site -->
+    <string name="snackbar_top_site_removed">أُزيلت الصفحة</string>
+    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_undo">تراجَع</string>
+    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_confirm">أكّد</string>
+    <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
+        First parameter is the name of the app, second parameter is the URL or text scanned-->
+    <string name="qr_scanner_confirmation_dialog_message">اسمح بأن يفتح %1$s ‏%2$s</string>
+    <!-- QR code scanner prompt dialog positive option to allow navigation to scanned link -->
+    <string name="qr_scanner_dialog_positive">اسمح</string>
+    <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
+    <string name="qr_scanner_dialog_negative">ارفض</string>
+    <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
+    <string name="tab_collection_dialog_message">أمتأكّد من حذف %1$s؟</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">بحذف هذا اللسان تحذف التجميعة كاملة. يمكنك إنشاء تجميعات أخرى جديدة متى أردت.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">أنحذف %1$s؟</string>
+    <!-- Tab collection deletion prompt dialog option to delete the collection -->
+    <string name="tab_collection_dialog_positive">احذف</string>
+    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
+    <string name="tab_collection_dialog_negative">ألغِ</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">تدخل وضع ملء الشاشة</string>
+    <!-- Message for copying the URL via long press on the toolbar -->
+    <string name="url_copied">نُسخ المسار</string>
+    <!-- Sample text for accessibility font size -->
+    <string name="accessibility_text_size_sample_text_1">هذه عينة من نص، وتعرض لك شكل النص حين تزيد مقاسه باستعمال هذا الإعداد، أو تقلّله.</string>
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_text_size_summary">كبرّ أو صغّر مقاس النص على المواقع</string>
+    <!-- Title for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_font_size_title">حجم الخط</string>
+
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_2">غيّر مقاس النص تلقائيا</string>
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">سيتطابق مقاس الخط مع إعدادات أندرويد. عطّل الإعداد لإدارة المقاس هنا.</string>
+
+    <!-- Title for the Delete browsing data preference -->
+    <string name="preferences_delete_browsing_data">حذف بيانات التصفح</string>
+    <!-- Title for the tabs item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_tabs_title_2">الألسنة المفتوحة</string>
+    <!-- Title for the data and history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_data_title">تأريخ التصفح وبيانات الموقع</string>
+    <!-- Title for history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">التأريخ</string>
+    <!-- Title for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies">الكعكات</string>
+    <!-- Subtitle for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_subtitle">ستخرج من معظم المواقع</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">الصور والملفات المخبّأة</string>
+    <!-- Title for the site permissions item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_site_permissions">تصاريح المواقع</string>
+    <!-- Text for the button to delete browsing data -->
+    <string name="preferences_delete_browsing_data_button">احذف بيانات التصفح</string>
+    <!-- Title for the Delete browsing data on quit preference -->
+    <string name="preferences_delete_browsing_data_on_quit">احذف بيانات التصفح عند المغادرة</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit">يحذف بيانات التصفح تلقائيا حين تنقر ”غادِر“ من القائمة الرئيسية</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">يحذف بيانات التصفح تلقائيا حين تنقر ”غادِر“ من القائمة الرئيسية</string>
+    <!-- Action item in menu for the Delete browsing data on quit feature -->
+    <string name="delete_browsing_data_on_quit_action">غادِر</string>
+
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">سيحذف هذا كل بيانات تصفحك.</string>
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">سيحذف %s بيانات التصفح المحددّة.</string>
+    <!-- Text for the cancel button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_cancel">ألغِ</string>
+    <!-- Text for the allow button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_allow">احذف</string>
+    <!-- Text for the snackbar confirmation that the data was deleted -->
+    <string name="preferences_delete_browsing_data_snackbar">حُذفت بيانات التصفح</string>
+    <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
+    <string name="deleting_browsing_data_in_progress">يحذف بيانات التصفح…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">صار Firefox Preview الآن Firefox Nightly</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">تُحدّث النسخة الليلية من Firefox في كل ليلة وتُضاف إليها مزايا تجريبية جديدة.
+ولكن قد يكون استقرارها أقل من العادية. نزّل متصفّح بيتا لتجربة أكثر استقرارًا.</string>
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">نزّل نسخة Firefox لأندرويد التجريبية</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">انتقلت النسخة الليلية من Firefox من هنا</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">لن يتلقى هذا التطبيق تحديثات الأمان بعد الآن. يُنصح بالتوقف عن استخدام هذا التطبيق والانتقال إلى النسخة الليلية الجديدة.
+لنقل علاماتك وجلسات الولوج والتأريخ إلى تطبيق آخر، افتح حساب Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">انتقل إلى النسخة الليلية الجديدة</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">انتقلت النسخة الليلية من Firefox من هنا</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">لن يتلقى هذا التطبيق تحديثات الأمان بعد الآن. ننصح بتنزيل النسخة الليلية الجديدة والتوقف عن استخدام هذا التطبيق.
+لنقل علاماتك وجلسات الولوج والتأريخ إلى تطبيق آخر، افتح حساب Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">نزّل النسخة الليلية الجديدة</string>
+
+    <!-- Onboarding -->
+    <!-- Text for onboarding welcome message
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_header">مرحبًا بك في %s!</string>
+    <!-- text for the Firefox Accounts section header -->
+    <string name="onboarding_fxa_section_header">ألديك حساب؟</string>
+    <!-- text for the Firefox Preview feature section header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_feature_section_header">تعرف على %s</string>
+    <!-- text for the "What's New" onboarding card header -->
+    <string name="onboarding_whats_new_header1">اعرف ما الجديد</string>
+    <!-- text for the "what's new" onboarding card description
+    The first parameter is the short name of the app (e.g. Firefox) -->
+    <string name="onboarding_whats_new_description">ألديك أسئلة عن متصفّح %s الذي أعدنا تصميمه؟ أتريد معرفة ما تغيّر؟</string>
+    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
+    <string name="onboarding_whats_new_description_linktext">ستجد هنا إجابات أسئلتك</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">اشرع الآن بمزامنة العلامات وكلمات السر وغيرها الكثير عبر حساب Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">اطّلع على المزيد</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">ولجت ببريد %s على متصفّح Firefox آخر على هذا الجهاز. أتريد الولوج بنفس الحساب؟</string>
+    <!-- text for the button to confirm automatic sign-in -->
+    <string name="onboarding_firefox_account_auto_signin_confirm">نعم، سألج بنفس الحساب</string>
+    <!-- text for the automatic sign-in button while signing in is in process -->
+    <string name="onboarding_firefox_account_signing_in">تَلج الآن…</string>
+    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
+    <string name="onboarding_firefox_account_sign_in">لِج إلى Firefox</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">التزامن يعمل</string>
+    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
+    <string name="onboarding_firefox_account_automatic_signin_failed">فشل الولوج</string>
+    <!-- text for tracking protection radio button option for standard level of blocking -->
+    <string name="onboarding_tracking_protection_standard_button_2">القياسي (المبدئي)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_button">صارم (مستحسن)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">صارم</string>
+    <!-- text for the toolbar position card header
+        In English this is an idiom for "choose a side as in an argument or fight"
+        but it is ok to make this more literally about "choosing a position in a physical space -->
+    <string name="onboarding_toolbar_position_header">اختر جهةً</string>
+    <!-- text for the private browsing onboarding card header -->
+    <string name="onboarding_private_browsing_header">تصفّح بخصوصية</string>
+    <!-- text for the private browsing onbording card button, that launches settings -->
+    <string name="onboarding_private_browsing_button">افتح الإعدادات</string>
+    <!-- text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header">خصوصيتك</string>
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">أغلِق</string>
+
+    <!-- text for the button to finish onboarding -->
+    <string name="onboarding_finish">ابدأ التصفح</string>
+
+    <!-- Onboarding theme -->
+    <!-- text for the theme picker onboarding card header -->
+    <string name="onboarding_theme_picker_header">اختر السمة</string>
+
+    <!-- Automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_title">آلي</string>
+    <!-- Theme setting for dark mode -->
+    <string name="onboarding_theme_dark_title">سمة داكنة</string>
+    <!-- Theme setting for light mode -->
+    <string name="onboarding_theme_light_title">سمة فاتحة</string>
+
+    <!-- Text shown in snackbar when multiple tabs have been sent to device -->
+    <string name="sync_sent_tabs_snackbar">أُرسلت الألسنة!</string>
+    <!-- Text shown in snackbar when one tab has been sent to device  -->
+    <string name="sync_sent_tab_snackbar">أُرسل اللسان!</string>
+    <!-- Text shown in snackbar when sharing tabs failed  -->
+    <string name="sync_sent_tab_error_snackbar">تعذر الإرسال</string>
+    <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
+    <string name="sync_sent_tab_error_snackbar_action">أعِد المحاولة</string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions"><![CDATA[افتح Firefox على حاسوبك وانتقل إلى <b>https://firefox.com/pair</b>]]></string>
+    <!-- Text shown for sign in pairing when ready -->
+    <string name="sign_in_ready_for_scan">جاهز للمسح</string>
+    <!-- Text shown for settings option for sign with pairing -->
+    <string name="sign_in_with_camera">لِج باستخدام كمرتك</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">استعمل البريد بدل المسح</string>
+    <!-- Text shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_confirmation_message">سيتوقف Firefox عن مزامنة حسابك، لكن لن يحذف أيًا من بيانات تصفحك على هذا الجهاز.</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">سيتوقف %s عن مزامنة حسابك، لكن لن يحذف أيًا من بيانات تصفحك على هذا الجهاز.</string>
+    <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_disconnect">اقطع الاتصال</string>
+    <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_cancel">ألغِ</string>
+
+    <!-- Enhanced Tracking Protection -->
+    <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
+    <string name="etp_settings">إعدادات الحماية</string>
+    <!-- Preference title for enhanced tracking protection settings -->
+    <string name="preference_enhanced_tracking_protection">الحماية الموسّعة من التعقب</string>
+    <!-- Title for the description of enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_title">تصفّح ولا أحد ورائك</string>
+
+    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation">لتعبّر الكاف في ”بياناتك“ عنك أنت. يحميك %s من عديد من المتعقّبات المعروفة والتي تريد معرفة ما تفعله في المواقع.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_learn_more">اطّلع على المزيد</string>
+    <!-- Preference for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_default_1">القياسي (المبدئي)</string>
+    <!-- Preference for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict">صارم</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom">مخصّص</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_description_2">اختر المتعقّبات والسكربتات التي تريد حجبها.</string>
+    <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
+    <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies">الكعكات</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_1">المتعقّبات الاجتماعية ومتعقّبات بين المواقع</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_2">الكعكات من المواقع غير المُزارة</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">كل كعكات الأطراف الثالثة (يمكن أن تعطب المواقع هكذا)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_4">كل الكعكات (يمكن أن تعطب المواقع هكذا)</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content">محتوى التعقّب</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">في كل الألسنة</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">في الألسنة الخاصة فقط</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">في الألسنة المخصصة فقط</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_cryptominers">المُعدّنات المعمّاة</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">مسجّلات البصمات</string>
+    <string name="enhanced_tracking_protection_blocked">حُجبت</string>
+    <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
+    <string name="enhanced_tracking_protection_allowed">مسموح بها</string>
+    <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_title">متعقبات مواقع التواصل الاجتماعي</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">يحدّ من قدرة الشبكات الاجتماعية على تعقب نشاط تصفحك على الإنترنت.</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title">كعكات تتعقّبك بين المواقع</string>
+    <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_title">المُعدّنات المعمّاة</string>
+    <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_title">مسجّلات البصمات</string>
+    <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_title">المحتوى الذي يتعقّبك</string>
+    <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
+    <string name="etp_panel_on">فُعّلت الحماية في هذا الموقع</string>
+    <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
+    <string name="etp_panel_off">عُطّلت الحماية في هذا الموقع</string>
+    <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
+    <string name="enhanced_tracking_protection_exceptions">عُطّلت الحماية الموسّعة من التعقب لهذه المواقع</string>
+    <!-- About page Your rights link text -->
+    <string name="about_your_rights">حقوقك</string>
+    <!-- About page link text to open what's new link -->
+    <string name="about_whats_new">ما جديد %s</string>
+
+    <!-- About page link text to open support link -->
+    <string name="about_support">الدعم</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">الانهيارات</string>
+    <!-- About page link text to open privacy notice link -->
+    <string name="about_privacy_notice">تنويه الخصوصية</string>
+    <!-- About page link text to open know your rights link -->
+    <string name="about_know_your_rights">اعرف حقوقك</string>
+    <!-- About page link text to open licensing information link -->
+    <string name="about_licensing_information">معلومات الترخيص</string>
+
+    <!-- Browser long press popup menu -->
+    <!-- Copy the current url -->
+    <string name="browser_toolbar_long_press_popup_copy">انسخ</string>
+    <!-- Paste & go the text in the clipboard. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="browser_toolbar_long_press_popup_paste_and_go">ألصِق وانتقل</string>
+    <!-- Paste the text in the clipboard -->
+    <string name="browser_toolbar_long_press_popup_paste">ألصِق</string>
+    <!-- Snackbar message shown after an URL has been copied to clipboard. -->
+    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">نُسخ المسار إلى الحافظة</string>
+
+    <!-- Title text for the Add To Homescreen dialog -->
+    <string name="add_to_homescreen_title">أضِف إلى شاشة البداية</string>
+    <!-- Cancel button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_cancel">ألغِ</string>
+    <!-- Add button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_add">أضِف</string>
+    <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
+    <string name="add_to_homescreen_continue">تابِع نحو الموقع</string>
+    <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_text_placeholder">اسم الاختصار</string>
+
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords">جلسات الولوج وكلمات السر</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins">احفظ جلسات الولوج وكلمات السر</string>
+    <!-- Preference option for asking to save passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_ask_to_save">اسألني قبل الحفظ</string>
+    <!-- Preference option for never saving passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_never_save">لا تحفظ أبدًا</string>
+    <!-- Preference for autofilling saved logins in Fenix -->
+    <string name="preferences_passwords_autofill">الملء التلقائي</string>
+    <!-- Preference for syncing saved logins in Fenix -->
+    <string name="preferences_passwords_sync_logins">زامِن جلسات الولوج</string>
+    <!-- Syncing saved logins in Fenix is on -->
+    <string name="preferences_passwords_sync_logins_on">مفعّلة</string>
+    <!-- Syncing saved logins in Fenix is off -->
+    <string name="preferences_passwords_sync_logins_off">معطّلة</string>
+    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
+    <string name="preferences_passwords_sync_logins_reconnect">أعِد الاتصال</string>
+    <!-- Syncing saved logins in Fenix needs login -->
+    <string name="preferences_passwords_sync_logins_sign_in">لِج إلى «المزامنة»</string>
+
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins">جلسات الولوج المحفوظة</string>
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">اعرف المزيد عن المزامنة.</string>
+    <!-- Preference to access list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions">الاستثناءات</string>
+    <!-- Empty description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description_empty">ستظهر جلسات الولوج وكلمات السر غير المحفوظة هنا.</string>
+    <!-- Description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description">لن تُحفظ جلسات الولوج وكلمات السر لهذه المواقع.</string>
+    <!-- Hint for search box in logins list -->
+    <string name="preferences_passwords_saved_logins_search">ابحث في جلسات الولوج</string>
+    <!-- Option to sort logins list A-Z, alphabetically -->
+    <string name="preferences_passwords_saved_logins_alphabetically">أبجديًا</string>
+    <!-- Option to sort logins list by most recently used -->
+    <string name="preferences_passwords_saved_logins_recently_used">المستخدمة حديثًا</string>
+    <!-- The header for the site that a login is for -->
+    <string name="preferences_passwords_saved_logins_site">الموقع</string>
+    <!-- The header for the username for a login -->
+    <string name="preferences_passwords_saved_logins_username">اسم المستخدم</string>
+    <!-- The header for the password for a login -->
+    <string name="preferences_passwords_saved_logins_password">كلمة السر</string>
+    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning">هذا الاتصال ليس آمنا. بيانات الولوج المدخلة هنا عرضة للخطر.</string>
+    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning_learn_more">اطّلع على المزيد</string>
+    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
+    <string name="logins_doorhanger_save">أتريد أن يحفظ %s جلسة الولوج هذه؟</string>
+    <!-- Positive confirmation that Fenix should save the new or updated login -->
+    <string name="logins_doorhanger_save_confirmation">احفظ</string>
+    <!-- Negative confirmation that Fenix should not save the new or updated login -->
+    <string name="logins_doorhanger_save_dont_save">لا تحفظ</string>
+    <!-- Shown in snackbar to tell user that the password has been copied -->
+    <string name="logins_password_copied">نُسخت كلمة السر إلى الحافظة</string>
+    <!-- Shown in snackbar to tell user that the username has been copied -->
+    <string name="logins_username_copied">نُسخ اسم المستخدم إلى الحافظة</string>
+    <!-- Shown in snackbar to tell user that the site has been copied -->
+    <string name="logins_site_copied">نُسخ الموقع إلى الحافظة</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
+    <string name="saved_logins_copy_password">انسخ كلمة السر</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
+    <string name="saved_login_copy_username">اسنخ اسم المستخدم</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
+    <string name="saved_login_copy_site">انسخ الموقع</string>
+    <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
+    <string name="saved_login_reveal_password">أظهِر كلمة السر</string>
+    <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
+    <string name="saved_login_hide_password">أخفِ كلمة السر</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_later">لاحقًا</string>
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">الاسم (ا-ي)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">آخر استخدام</string>
+
+    <!-- Title of the Add search engine screen -->
+    <string name="search_engine_add_custom_search_engine_title">أضِف محرك بحث</string>
+    <!-- Title of the Edit search engine screen -->
+    <string name="search_engine_edit_custom_search_engine_title">حرّر محرك بحث</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
+    <string name="search_engine_add_button_content_description">أضِف</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description">احفظ</string>
+    <!-- Text for the menu button to edit a search engine -->
+    <string name="search_engine_edit">حرّر</string>
+    <!-- Text for the menu button to delete a search engine -->
+    <string name="search_engine_delete">احذف</string>
+
+    <!-- Text for the button to create a custom search engine on the Add search engine screen -->
+    <string name="search_add_custom_engine_label_other">أخرى</string>
+    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
+    <string name="search_add_custom_engine_name_hint">الاسم</string>
+    <!-- Text for the button to learn more about adding a custom search engine -->
+    <string name="search_add_custom_engine_learn_more_label">اطّلع على المزيد</string>
+
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">رابط ”اطّلع على المزيد“</string>
+
+    <!-- Text shown when a user leaves the name field empty -->
+    <string name="search_add_custom_engine_error_empty_name">أدخِل اسم محرك البحث</string>
+    <!-- Text shown when a user leaves the search string field empty -->
+    <string name="search_add_custom_engine_error_empty_search_string">أدخِل نص البحث</string>
+
+    <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
+    <string name="search_add_custom_engine_error_cannot_reach">عُطل أثناء الاتصال بِ‍ ”%s“</string>
+    <!-- Text shown when a user creates a new search engine -->
+    <string name="search_add_custom_engine_success_message">أُنشئ %s</string>
+    <!-- Text shown when a user successfully edits a custom search engine -->
+    <string name="search_edit_custom_engine_success_message">حُفظ %s</string>
+    <!-- Text shown when a user successfully deletes a custom search engine -->
+    <string name="search_delete_search_engine_success_message">حُذف %s</string>
+
+    <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
+    <string name="migration_updating_app_button_text">يحدّث %s…</string>
+    <!-- Text on the enabled button. Placeholder replaced with app name-->
+    <string name="migration_update_app_button">ابدأ %s</string>
+    <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
+    <string name="migration_text_passwords">كلمات السر</string>
+
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">لتسمح بالتصريح:</string>
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. انتقل إلى إعدادات أندرويد</string>
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. انقر <b>الأذونات</b>]]></string>
+
+    <!-- Label that indicates a site is using a secure connection -->
+    <string name="quick_settings_sheet_secure_connection">اتصال آمن</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string name="quick_settings_sheet_insecure_connection">اتصال غير آمن</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
+    <string name="confirm_clear_permissions_on_all_sites">أمتأكد من مسح كل الصلاحيات لكل المواقع؟</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
+    <string name="confirm_clear_permissions_site">أمتأكد من مسح كل الصلاحيات لهذا الموقع؟</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
+    <string name="confirm_clear_permission_site">أمتأكد من مسح التصريح لهذا الموقع؟</string>
+    <!-- label shown when there are not site exceptions to show in the site exception settings -->
+    <string name="no_site_exceptions">ما من مواقع مستثناة</string>
+    <!-- Bookmark deletion confirmation -->
+    <string name="bookmark_deletion_confirmation">أمتأكد من حذف هذه العلامة؟</string>
+    <!-- Browser menu button that adds a top site to the home fragment -->
+    <string name="browser_menu_add_to_top_sites">أضِف للمواقع الشائعة</string>
+    <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
+     the certificate authority that verified the ticket-->
+    <string name="certificate_info_verified_by">تثبّت منها: %1$s</string>
+    <!-- Login overflow menu delete button -->
+    <string name="login_menu_delete_button">احذف</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">حرّر</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">أمتأكد من حذف جلسة الولوج هذه؟</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">احذف</string>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">خيارات الولوج</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">احفظ التغييرات على الولوج.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">أهمِل التعديلات</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">حرّر</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">كلمة السر مطلوبة</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">البحث الصوتي</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">تكلّم الآن</string>
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">يوجد بالفعل جلسة ولوج باسم المستخدم هذا</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">صِلْ جهازا آخر.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">من فضلك أعِد الاستيثاق.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">من فضلك فعّل مزامنة الألسنة.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">لا ألسنة مفتوحة في Firefox على أجهزتك الأخرى.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">اعرض قائمة بالألسنة من أجهزتك الأخرى.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">لِج إلى «المزامنة»</string>
+
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">حسنًا، فهمت</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">استغلّ %s إلى أقصى حد.</string>
+
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">يمكنك إضافة هذا الموقع إلى شاشة البداية لتصل إليه بسرعة وتتصفحه كأي تطبيق آخر.</string>
+</resources>

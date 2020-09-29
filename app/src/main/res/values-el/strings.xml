@@ -1,0 +1,1617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">Ιδιωτικό %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (Ιδιωτικό)</string>
+    <!-- Home Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
+    <string name="content_description_menu">Περισσότερες επιλογές</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_private_browsing_button">Ενεργοποίηση ιδιωτικής περιήγησης</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_disable_private_browsing_button">Απενεργοποίηση ιδιωτικής περιήγησης</string>
+
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="search_hint">Αναζήτηση ή εισαγωγή διεύθυνσης</string>
+
+    <!-- No Open Tabs Message Description -->
+    <string name="no_open_tabs_description">Οι ανοικτές καρτέλες σας θα εμφανίζονται εδώ.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Οι ιδιωτικές καρτέλες σας θα εμφανίζονται εδώ.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 ανοικτή καρτέλα. Πατήστε για εναλλαγή καρτελών.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s ανοικτές καρτέλες. Πατήστε για εναλλαγή καρτελών.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d επιλογή(ές)</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Προσθήκη νέας συλλογής</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Όνομα</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Επιλογή συλλογής</string>
+
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Τέλος λειτουργίας πολλαπλής επιλογής</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Αποθήκευση επιλεγμένων καρτελών στη συλλογή</string>
+
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Τέλος λειτουργίας πολλαπλής επιλογής</string>
+
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Σε λειτουργία πολλαπλών επιλογών, επιλέξτε καρτέλες για αποθήκευση σε συλλογή</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">Το %1$s αναπτύσσεται από τη Mozilla.</string>
+
+    <!-- Private Browsing -->
+    <!-- Title for private session option -->
+    <string name="private_browsing_title">Είστε σε ιδιωτική συνεδρία</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">
+        Το %1$s διαγράφει το ιστορικό αναζήτησης και περιήγησης των ιδιωτικών καρτελών όταν τις κλείνετε ή αποχωρείτε από την εφαρμογή. Αυτό δεν σας παρέχει ανωνυμία στις ιστοσελίδες ή τον πάροχο διαδικτύου σας, αλλά σας βοηθά να προστατέψετε το απόρρητό σας από τους άλλους χρήστες αυτής της συσκευής.</string>
+    <string name="private_browsing_common_myths">Κοινοί μύθοι σχετικά με την ιδιωτική περιήγηση</string>
+    <!-- Delete session button to erase your history in a private session -->
+    <string name="private_browsing_delete_session">Διαγραφή συνεδρίας</string>
+
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message -->
+    <string name="cfr_message">Προσθέστε συντόμευση για άνοιγμα ιδιωτικών καρτελών από την αρχική οθόνη.</string>
+    <!-- Text for the positive button -->
+    <string name="cfr_pos_button_text">Προσθήκη συντόμευσης</string>
+    <!-- Text for the negative button -->
+    <string name="cfr_neg_button_text">Όχι, ευχαριστώ</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Ταχύτερη μετάβαση στο Firefox. Προσθέστε ένα γραφικό στοιχείο στην αρχική σας οθόνη.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Προσθήκη widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Όχι τώρα</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Μπορείτε να ρυθμίσετε το Firefox να ανοίγει αυτόματα συνδέσμους σε εφαρμογές.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Μετάβαση στις ρυθμίσεις</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Απόρριψη</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Απαιτείται πρόσβαση στην κάμερα. Μεταβείτε στις Ρυθμίσεις Android, πατήστε &quot;Δικαιώματα&quot; και πατήστε &quot;Να επιτρέπεται&quot;.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Μετάβαση στις ρυθμίσεις</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Απόρριψη</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Ρυθμίστε τις ανοιχτές καρτέλες ώστε να κλείνουν αυτόματα αυτές που δεν έχουν προβληθεί την προηγούμενη ημέρα, εβδομάδα ή μήνα.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Εμφάνιση επιλογών</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Απόρριψη</string>
+
+    <!-- Home screen icons - Long press shortcuts -->
+    <!-- Shortcut action to open new tab -->
+    <string name="home_screen_shortcut_open_new_tab_2">Νέα καρτέλα</string>
+    <!-- Shortcut action to open new private tab -->
+    <string name="home_screen_shortcut_open_new_private_tab_2">Νέα ιδιωτική καρτέλα</string>
+
+    <!-- Heading for the Top Sites block -->
+    <string name="home_screen_top_sites_heading">Κορυφαίες σελίδες</string>
+
+    <!-- Browser Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
+    <string name="browser_tabs_button">Ανοικτές καρτέλες</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
+    <string name="browser_menu_back">Πίσω</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
+    <string name="browser_menu_forward">Εμπρός</string>
+    <!-- Content description (not visible, for screen readers etc.): Refresh current website -->
+    <string name="browser_menu_refresh">Ανανέωση</string>
+    <!-- Content description (not visible, for screen readers etc.): Stop loading current website -->
+    <string name="browser_menu_stop">Διακοπή</string>
+    <!-- Content description (not visible, for screen readers etc.): Bookmark the current page -->
+    <string name="browser_menu_bookmark">Αποθήκευση σελιδοδείκτη</string>
+    <!-- Content description (not visible, for screen readers etc.): Un-bookmark the current page -->
+    <string name="browser_menu_edit_bookmark">Επεξεργασία σελιδοδείκτη</string>
+    <!-- Browser menu button that opens the addon manager -->
+    <string name="browser_menu_add_ons">Πρόσθετα</string>
+    <!-- Text displayed when there are no add-ons to be shown -->
+    <string name="no_add_ons">Δεν βρέθηκαν πρόσθετα</string>
+    <!-- Browser menu button that sends a user to help articles -->
+    <string name="browser_menu_help">Βοήθεια</string>
+    <!-- Browser menu button that sends a to a the what's new article -->
+    <string name="browser_menu_whats_new">Τι νέο υπάρχει</string>
+    <!-- Browser menu button that opens the settings menu -->
+    <string name="browser_menu_settings">Ρυθμίσεις</string>
+    <!-- Browser menu button that opens a user's library -->
+    <string name="browser_menu_library">Βιβλιοθήκη</string>
+    <!-- Browser menu toggle that requests a desktop site -->
+    <string name="browser_menu_desktop_site">Έκδοση υπολογιστή</string>
+    <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
+    <string name="browser_menu_add_to_homescreen">Προσθήκη στην αρχική οθόνη</string>
+    <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
+    <string name="browser_menu_install_on_homescreen">Εγκατάσταση</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Συγχρονισμένες καρτέλες</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Επανασυγχρονισμός</string>
+    <!-- Browser menu button that opens the find in page menu -->
+    <string name="browser_menu_find_in_page">Εύρεση στη σελίδα</string>
+    <!-- Browser menu button that creates a private tab -->
+    <string name="browser_menu_private_tab">Ιδιωτική καρτέλα</string>
+    <!-- Browser menu button that creates a new tab -->
+    <string name="browser_menu_new_tab">Νέα καρτέλα</string>
+
+    <!-- Browser menu button that saves the current tab to a collection -->
+    <string name="browser_menu_save_to_collection_2">Αποθήκευση στη συλλογή</string>
+    <!-- Browser menu button that open a share menu to share the current site -->
+    <string name="browser_menu_share">Κοινή χρήση</string>
+    <!-- Share menu title, displayed when a user is sharing their current site -->
+    <string name="menu_share_with">Κοινή χρήση με…</string>
+    <!-- Browser menu button shown in custom tabs that opens the current tab in Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_open_in_fenix">Άνοιγμα σε %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by">ΜΕ ΤΗΝ ΥΠΟΣΤΗΡΙΞΗ ΤΟΥ %1$s</string>
+    <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="browser_menu_powered_by2">Με την υποστήριξη του %1$s</string>
+    <!-- Browser menu button to put the current page in reader mode -->
+    <string name="browser_menu_read">Προβολή ανάγνωσης</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Κλείσιμο προβολής ανάγνωσης</string>
+    <!-- Browser menu button to open the current page in an external app -->
+    <string name="browser_menu_open_app_link">Άνοιγμα σε εφαρμογή</string>
+    <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
+    <string name="browser_menu_read_appearance">Εμφάνιση</string>
+
+    <!-- Error message to show when the user tries to access a scheme not
+        handled by the app (Ex: blob, tel etc) -->
+    <string name="unknown_scheme_error_message">Αδυναμία σύνδεσης. Μη αναγνωρίσιμο σχήμα URL.</string>
+
+    <!-- Locale Settings Fragment -->
+    <!-- Content description for tick mark on selected language -->
+    <string name="a11y_selected_locale_content_description">Επιλεγμένη γλώσσα</string>
+    <!-- Content description for search icon -->
+    <string name="a11y_search_icon_content_description">Αναζήτηση</string>
+    <!-- Text for default locale item -->
+    <string name="default_locale_text">Χρήση γλώσσας συσκευής</string>
+
+    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <string name="locale_search_hint">Αναζήτηση γλώσσας</string>
+
+    <!-- Search Fragment -->
+    <!-- Button in the search view that lets a user search by scanning a QR code -->
+    <string name="search_scan_button">Σάρωση</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Μηχανή αναζήτησης</string>
+    <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
+    <string name="search_shortcuts_engine_settings">Ρυθμίσεις μηχανής αναζήτησης</string>
+    <!-- Header displayed when selecting a shortcut search engine -->
+    <string name="search_engines_search_with">Αυτή τη φορά, αναζήτηση με:</string>
+    <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
+    <string name="awesomebar_clipboard_title">Συμπλήρωση συνδέσμου από το πρόχειρο</string>
+    <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_allow_button">Αποδοχή</string>
+    <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
+    <string name="search_suggestions_onboarding_do_not_allow_button">Απόρριψη</string>
+    <!-- Search suggestion onboarding hint title text -->
+    <string name="search_suggestions_onboarding_title">Αποδοχή εμφάνισης προτάσεων αναζήτησης σε ιδιωτικές συνεδρίες;</string>
+    <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="search_suggestions_onboarding_text">Το %s θα μοιραστεί ό,τι πληκτρολογείτε στη γραμμή διευθύνσεων με την προεπιλεγμένη μηχανή αναζήτησής σας.</string>
+    <!-- Search suggestion onboarding hint Learn more link text -->
+    <string name="search_suggestions_onboarding_learn_more_link">Μάθετε περισσότερα</string>
+
+    <!-- Search Widget -->
+    <!-- Text preview for smaller sized widgets -->
+    <string name="search_widget_text_short">Αναζήτηση</string>
+
+    <!-- Text preview for larger sized widgets -->
+    <string name="search_widget_text_long">Αναζήτηση στο διαδίκτυο</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Voice search -->
+    <string name="search_widget_voice">Φωνητική αναζήτηση</string>
+
+    <!-- Preferences -->
+    <!-- Title for the settings page-->
+    <string name="settings">Ρυθμίσεις</string>
+    <!-- Preference category for basic settings -->
+    <string name="preferences_category_basics">Βασικά</string>
+    <!-- Preference category for general settings -->
+    <string name="preferences_category_general">Γενικά</string>
+    <!-- Preference category for all links about Fenix -->
+    <string name="preferences_category_about">Πληροφορίες</string>
+    <!-- Preference for settings related to changing the default search engine -->
+    <string name="preferences_default_search_engine">Προεπιλεγμένη μηχανή αναζήτησης</string>
+    <!-- Preference for settings related to Search -->
+    <string name="preferences_search">Αναζήτηση</string>
+    <!-- Preference for settings related to Search address bar -->
+    <string name="preferences_search_address_bar">Γραμμή διευθύνσεων</string>
+    <!-- Preference linking to help about Fenix -->
+    <string name="preferences_help">Βοήθεια</string>
+    <!-- Preference link to rating Fenix on the Play Store -->
+    <string name="preferences_rate">Αξιολόγηση στο Google Play</string>
+    <!-- Preference for giving feedback about Fenix -->
+    <string name="preferences_feedback">Αποστολή σχολίων</string>
+    <!-- Preference linking to about page for Fenix
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="preferences_about">Σχετικά με το %1$s</string>
+    <!-- Preference linking to the your rights SUMO page -->
+    <string name="preferences_your_rights">Τα δικαιώματά σας</string>
+    <!-- Preference for settings related to saved passwords -->
+    <string name="preferences_passwords">Κωδικοί πρόσβασης</string>
+    <!-- Preference for settings related to saved credit cards and addresses -->
+    <string name="preferences_credit_cards_addresses">Πιστωτικές κάρτες και διευθύνσεις</string>
+    <!-- Preference for settings related to changing the default browser -->
+    <string name="preferences_set_as_default_browser">Ορισμός ως προεπιλεγμένο πρόγραμμα περιήγησης</string>
+    <!-- Preference category for advanced settings -->
+    <string name="preferences_category_advanced">Για προχωρημένους</string>
+    <!-- Preference category for privacy settings -->
+    <string name="preferences_category_privacy">Απόρρητο</string>
+    <!-- Preference category for privacy and security settings -->
+    <string name="preferences_category_privacy_security">Απόρρητο και ασφάλεια</string>
+    <!-- Preference for advanced site permissions -->
+    <string name="preferences_site_permissions">Δικαιώματα ιστοσελίδων</string>
+    <!-- Preference for private browsing options -->
+    <string name="preferences_private_browsing_options">Ιδιωτική περιήγηση</string>
+    <!-- Preference for opening links in a private tab-->
+    <string name="preferences_open_links_in_a_private_tab">Άνοιγμα συνδέσμων σε ιδιωτική καρτέλα</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">Να επιτρέπονται στιγμιότυπα στην ιδιωτική περιήγηση</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Αν επιτρέπεται, οι ιδιωτικές καρτέλες θα είναι επίσης ορατές όταν είναι ανοιχτές πολλές εφαρμογές</string>
+    <!-- Preference for adding private browsing shortcut -->
+    <string name="preferences_add_private_browsing_shortcut">Προσθήκη συντόμευσης ιδιωτικής περιήγησης</string>
+    <!-- Preference for accessibility -->
+    <string name="preferences_accessibility">Προσβασιμότητα</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">Προσαρμοσμένος διακομιστής λογαριασμού Firefox</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">Προσαρμοσμένος διακομιστής Sync</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Ο διακομιστής λογαριασμού Firefox/Sync τροποποιήθηκε. Τερματισμός εφαρμογής για εφαρμογή αλλαγών…</string>
+    <!-- Preference category for account information -->
+    <string name="preferences_category_account">Λογαριασμός</string>
+    <!-- Preference shown on banner to sign into account -->
+    <string name="preferences_sign_in">Σύνδεση</string>
+    <!-- Preference for changing where the toolbar is positioned -->
+    <string name="preferences_toolbar">Γραμμή εργαλείων</string>
+
+    <!-- Preference for changing default theme to dark or light mode -->
+    <string name="preferences_theme">Θέμα</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Αρχική σελίδα</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Χειρονομίες</string>
+    <!-- Preference for settings related to visual options -->
+    <string name="preferences_customize">Προσαρμογή</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description">Συγχρονισμός σελιδοδεικτών, ιστορικού και άλλων δεδομένων με ένα λογαριασμό Firefox</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name">Λογαριασμός Firefox</string>
+    <!-- Preference text for account title when there was an error syncing FxA -->
+    <string name="preferences_account_sync_error">Συνδεθείτε ξανά για συνέχεια συγχρονισμού</string>
+    <!-- Preference for language -->
+    <string name="preferences_language">Γλώσσα</string>
+    <!-- Preference for data choices -->
+    <string name="preferences_data_choices">Επιλογές δεδομένων</string>
+    <!-- Preference for data collection -->
+    <string name="preferences_data_collection">Συλλογή δεδομένων</string>
+    <!-- Preference linking to the privacy notice -->
+    <string name="preferences_privacy_link">Σημείωση απορρήτου</string>
+    <!-- Preference category for developer tools -->
+    <string name="developer_tools_category">Εργαλεία προγραμματιστή</string>
+    <!-- Preference for developers -->
+    <string name="preferences_remote_debugging">Απομακρυσμένος εντοπισμός σφαλμάτων μέσω USB</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Εμφάνιση μηχανών αναζήτησης</string>
+    <!-- Preference title for switch preference to show search suggestions -->
+    <string name="preferences_show_search_suggestions">Εμφάνιση προτάσεων αναζήτησης</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Εμφάνιση φωνητικής αναζήτησης</string>
+    <!-- Preference title for switch preference to show search suggestions also in private mode -->
+    <string name="preferences_show_search_suggestions_in_private">Εμφάνιση σε ιδιωτικές συνεδρίες</string>
+    <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
+    <string name="preferences_show_clipboard_suggestions">Εμφάνιση προτάσεων προχείρου</string>
+    <!-- Preference title for switch preference to suggest browsing history when searching -->
+    <string name="preferences_search_browsing_history">Αναζήτηση ιστορικού περιήγησης</string>
+    <!-- Preference title for switch preference to suggest bookmarks when searching -->
+    <string name="preferences_search_bookmarks">Αναζήτηση σελιδοδεικτών</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Αναζήτηση συγχρονισμένων καρτελών</string>
+    <!-- Preference for account settings -->
+    <string name="preferences_account_settings">Ρυθμίσεις λογαριασμού</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Αυτόματη συμπλήρωση URLs</string>
+    <!-- Preference for open links in third party apps -->
+    <string name="preferences_open_links_in_apps">Άνοιγμα συνδέσμων σε εφαρμογές</string>
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Εξωτερική διαχείριση λήψεων</string>
+    <!-- Preference for add_ons -->
+    <string name="preferences_addons">Πρόσθετα</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Ειδοποιήσεις</string>
+
+    <!-- Account Preferences -->
+    <!-- Preference for triggering sync -->
+    <string name="preferences_sync_now">Συγχρονισμός τώρα</string>
+    <!-- Preference category for sync -->
+    <string name="preferences_sync_category">Επιλέξτε τι θα συγχρονίζεται</string>
+    <!-- Preference for syncing history -->
+    <string name="preferences_sync_history">Ιστορικό</string>
+    <!-- Preference for syncing bookmarks -->
+    <string name="preferences_sync_bookmarks">Σελιδοδείκτες</string>
+    <!-- Preference for syncing logins -->
+    <string name="preferences_sync_logins">Συνδέσεις</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Ανοικτές καρτέλες</string>
+    <!-- Preference for signing out -->
+    <string name="preferences_sign_out">Αποσύνδεση</string>
+    <!-- Preference displays and allows changing current FxA device name -->
+    <string name="preferences_sync_device_name">Όνομα συσκευής</string>
+    <!-- Text shown when user enters empty device name -->
+    <string name="empty_device_name_error">Το όνομα συσκευής δεν μπορεί να είναι κενό.</string>
+    <!-- Label indicating that sync is in progress -->
+    <string name="sync_syncing_in_progress">Συγχρονισμός…</string>
+
+    <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
+    <string name="sync_failed_summary">Αποτυχία συγχρονισμού. Τελευταία επιτυχία: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_failed_never_synced_summary">Αποτυχία συγχρονισμού. Τελευταίος συγχρονισμός: ποτέ</string>
+    <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
+    <string name="sync_last_synced_summary">Τελευταίος συγχρονισμός: %s</string>
+    <!-- Label summary showing never synced -->
+    <string name="sync_never_synced_summary">Τελευταίος συγχρονισμός: ποτέ</string>
+    <!-- Text for displaying the default device name.
+        The first parameter is the application name, the second is the device manufacturer name
+        and the third is the device model. -->
+    <string name="default_device_name_2">%1$s στο %2$s %3$s</string>
+
+    <!-- Send Tab -->
+    <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_name">Ληφθείσες καρτέλες</string>
+    <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="fxa_received_tab_channel_description">Ειδοποιήσεις για καρτέλες που λαμβάνονται από άλλες συσκευές Firefox.</string>
+    <!--  The body for these is the URL of the tab received  -->
+    <string name="fxa_tab_received_notification_name">Ελήφθη καρτέλα</string>
+    <!-- When multiple tabs have been received -->
+    <string name="fxa_tabs_received_notification_name">Ελήφθησαν καρτέλες</string>
+    <!-- %s is the device name -->
+    <string name="fxa_tab_received_from_notification_name">Καρτέλα από %s</string>
+
+    <!-- Advanced Preferences -->
+    <!-- Preference for tracking protection settings -->
+    <string name="preferences_tracking_protection_settings">Προστασία από καταγραφή</string>
+    <!-- Preference switch for tracking protection -->
+    <string name="preferences_tracking_protection">Προστασία από καταγραφή</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">Φραγή περιεχομένου και σεναρίων που σας παρακολουθούν στο διαδίκτυο</string>
+    <!-- Preference for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions">Εξαιρέσεις</string>
+    <!-- Preference description for tracking protection exceptions -->
+    <string name="preferences_tracking_protection_exceptions_description">Η προστασία από καταγραφή είναι ανενεργή για αυτές τις ιστοσελίδες</string>
+    <!-- Button in Exceptions Preference to turn on tracking protection for all sites (remove all exceptions) -->
+    <string name="preferences_tracking_protection_exceptions_turn_on_for_all">Ενεργοποίηση για όλες τις σελίδες</string>
+    <!-- Text displayed when there are no exceptions -->
+    <string name="exceptions_empty_message_description">Οι εξαιρέσεις σας επιτρέπουν να απενεργοποιήσετε την προστασία από καταγραφή σε συγκεκριμένες σελίδες.</string>
+    <!-- Text displayed when there are no exceptions, with learn more link that brings users to a tracking protection SUMO page -->
+    <string name="exceptions_empty_message_learn_more_link">Μάθετε περισσότερα</string>
+
+    <!-- Description in Quick Settings that tells user tracking protection is off globally for all sites, and links to Settings to turn it on -->
+    <string name="preferences_tracking_protection_turned_off_globally">Γενικά ανενεργή, μεταβείτε στις Ρυθμίσεις για ενεργοποίηση.</string>
+
+    <!-- Preference switch for Telemetry -->
+    <string name="preferences_telemetry">Τηλεμετρία</string>
+
+    <!-- Preference switch for usage and technical data collection -->
+    <string name="preference_usage_data">Δεδομένα χρήσης και τεχνικά δεδομένα</string>
+    <!-- Preference description for usage and technical data collection -->
+    <string name="preferences_usage_data_description">Αποστέλλει πληροφορίες επιδόσεων, χρήσης, υλικού συσκευής και εξατομίκευσης του προγράμματος περιήγησης στη Mozilla για βελτίωση του %1$s</string>
+    <!-- Preference switch for marketing data collection -->
+    <string name="preferences_marketing_data">Δεδομένα μάρκετινγκ</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">Αποστέλλει δεδομένα σχετικά με τις λειτουργίες που χρησιμοποιείτε στο %1$s με το Leanplum, την εταιρεία μάρκετινγκ για κινητές συσκευές.</string>
+    <!-- Title for experiments preferences -->
+    <string name="preference_experiments">Πειράματα</string>
+
+    <!-- Summary for experiments preferences -->
+    <string name="preference_experiments_summary">Επιτρέπει στη Mozilla την εγκατάσταση και συλλογή δεδομένων για πειραματικές λειτουργίες</string>
+    <!-- Preference switch for crash reporter -->
+    <string name="preferences_crash_reporter">Αναφορά καταρρεύσεων</string>
+    <!-- Preference switch for Mozilla location service -->
+    <string name="preferences_mozilla_location_service">Υπηρεσία τοποθεσίας Mozilla</string>
+    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preferences_fenix_health_report">Αναφορά υγείας %s</string>
+
+    <!-- Turn On Sync Preferences -->
+    <!-- Header of the Turn on Sync preference view -->
+    <string name="preferences_sync">Ενεργοποίηση Sync</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">Σάρωση κωδικού σύζευξης στο Firefox για υπολογιστή</string>
+    <!-- Preference for account login -->
+    <string name="preferences_sync_sign_in">Σύνδεση</string>
+
+    <!-- Preference for reconnecting to FxA sync -->
+    <string name="preferences_sync_sign_in_to_reconnect">Συνδεθείτε για επανασύνδεση</string>
+    <!-- Preference for removing FxA account -->
+    <string name="preferences_sync_remove_account">Αφαίρεση λογαριασμού</string>
+
+    <!-- Pairing Feature strings -->
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions_2"><![CDATA[Σαρώστε τον κωδικό QR που εμφανίζεται στο <b>firefox.com/pair</b>]]></string>
+    <!-- Button to open camera for pairing -->
+    <string name="pair_open_camera">Άνοιγμα κάμερας</string>
+    <!-- Button to cancel pairing -->
+    <string name="pair_cancel">Ακύρωση</string>
+
+    <!-- Toolbar Preferences -->
+    <!-- Preference for using top toolbar -->
+    <string name="preference_top_toolbar">Πάνω</string>
+    <!-- Preference for using bottom toolbar -->
+    <string name="preference_bottom_toolbar">Κάτω</string>
+
+    <!-- Theme Preferences -->
+    <!-- Preference for using light theme -->
+    <string name="preference_light_theme">Φωτεινό</string>
+    <!-- Preference for using dark theme -->
+    <string name="preference_dark_theme">Σκοτεινό</string>
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">Ορισμός από εξοικονόμηση μπαταρίας</string>
+    <!-- Preference for using following device theme -->
+    <string name="preference_follow_device_theme">Χρήση θέματος συσκευής</string>
+
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Τράβηγμα για ανανέωση</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Κύλιση για απόκρυψη γραμμής εργαλείων</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Ολίσθηση γραμμής εργαλείων προς τα πλάγια για εναλλαγή καρτελών</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Ολίσθηση γραμμής εργαλείων προς τα πάνω για άνοιγμα καρτελών</string>
+
+    <!-- Library -->
+    <!-- Option in Library to open Sessions page -->
+    <string name="library_sessions">Συνεδρίες</string>
+    <!-- Option in Library to open Screenshots page -->
+    <string name="library_screenshots">Στιγμιότυπα</string>
+    <!-- Option in Library to open Downloads page -->
+    <string name="library_downloads">Λήψεις</string>
+    <!-- Option in library to open Bookmarks page -->
+    <string name="library_bookmarks">Σελιδοδείκτες</string>
+    <!-- Option in library to open Desktop Bookmarks root page -->
+    <string name="library_desktop_bookmarks_root">Σελιδοδείκτες υπολογιστή</string>
+    <!-- Option in library to open Desktop Bookmarks "menu" page -->
+    <string name="library_desktop_bookmarks_menu">Μενού σελιδοδεικτών</string>
+    <!-- Option in library to open Desktop Bookmarks "toolbar" page -->
+    <string name="library_desktop_bookmarks_toolbar">Γραμμή σελιδοδεικτών</string>
+    <!-- Option in library to open Desktop Bookmarks "unfiled" page -->
+    <string name="library_desktop_bookmarks_unfiled">Άλλοι σελιδοδείκτες</string>
+    <!-- Option in Library to open History page -->
+    <string name="library_history">Ιστορικό</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Συγχρονισμένες καρτέλες</string>
+    <!-- Option in Library to open Reading List -->
+    <string name="library_reading_list">Λίστα ανάγνωσης</string>
+    <!-- Menu Item Label for Search in Library -->
+    <string name="library_search">Αναζήτηση</string>
+    <!-- Settings Page Title -->
+    <string name="settings_title">Ρυθμίσεις</string>
+    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
+    <string name="content_description_history_menu">Μενού στοιχείων ιστορικού</string>
+    <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
+    <string name="content_description_close_button">Κλείσιμο</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Πρόσφατα κλεισμένες καρτέλες</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Εμφάνιση πλήρους ιστορικού</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d καρτέλες</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d καρτέλα</string>
+
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Καμία πρόσφατα κλεισμένη καρτέλα</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Κλείσιμο καρτελών</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Χειροκίνητα</string>
+
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Μετά από μια μέρα</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Μετά από μια εβδομάδα</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Μετά από ένα μήνα</string>
+
+    <!-- Sessions -->
+    <!-- Title for the list of tabs -->
+    <string name="tab_header_label">Ανοικτές καρτέλες</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_title">Ιδιωτική συνεδρία</string>
+    <!-- Title for the list of tabs in the current private session -->
+    <string name="tabs_header_private_tabs_title">Ιδιωτικές καρτέλες</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_tab">Προσθήκη καρτέλας</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Προσθήκη ιδιωτικής καρτέλας</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Ιδιωτική</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Ανοικτές καρτέλες</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Αποθήκευση στη συλλογή</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Κοινή χρήση όλων των καρτελών</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Πρόσφατα κλεισμένες καρτέλες</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Ρυθμίσεις καρτελών</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Κλείσιμο όλων των καρτελών</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Νέα καρτέλα</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Μετάβαση στην αρχική</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Εναλλαγή λειτουργίας καρτελών</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Αφαίρεση καρτέλας από τη συλλογή</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
+    <string name="close_tab">Κλείσιμο καρτέλας</string>
+    <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
+    <string name="close_tab_title">Κλείσιμο καρτέλας %s</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the open tabs menu when pressed -->
+    <string name="open_tabs_menu">Άνοιγμα μενού καρτελών</string>
+    <!-- Open tabs menu item to close all tabs -->
+    <string name="tabs_menu_close_all_tabs">Κλείσιμο όλων των καρτελών</string>
+    <!-- Open tabs menu item to share all tabs -->
+    <string name="tabs_menu_share_tabs">Κοινή χρήση καρτελών</string>
+    <!-- Open tabs menu item to save tabs to collection -->
+    <string name="tabs_menu_save_to_collection1">Αποθήκευση καρτελών στη συλλογή</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
+    <string name="tab_menu">Μενού καρτελών</string>
+    <!-- Tab menu item to share the tab -->
+    <string name="tab_share">Κοινή χρήση καρτέλας</string>
+    <!-- Button in the current session menu. Deletes the session when pressed -->
+    <string name="current_session_delete">Διαγραφή</string>
+    <!-- Button in the current session menu. Saves the session when pressed -->
+    <string name="current_session_save">Αποθήκευση</string>
+    <!-- Button in the current session menu. Opens the share menu when pressed -->
+    <string name="current_session_share">Κοινή χρήση</string>
+    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
+    <string name="current_session_image">Εικόνα τρέχουσας συνεδρίας</string>
+    <!-- Button to save the current set of tabs into a collection -->
+    <string name="save_to_collection">Αποθήκευση στη συλλογή</string>
+    <!-- Text for the menu button to delete a collection -->
+    <string name="collection_delete">Διαγραφή συλλογής</string>
+    <!-- Text for the menu button to rename a collection -->
+    <string name="collection_rename">Μετονομασία συλλογής</string>
+    <!-- Text for the button to open tabs of the selected collection -->
+    <string name="collection_open_tabs">Άνοιγμα καρτελών</string>
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">Αφαίρεση</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Διαγραφή από ιστορικό</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Ιδιωτική λειτουργία)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Αποθήκευση</string>
+
+    <!-- History -->
+    <!-- Text for the button to clear all history -->
+    <string name="history_delete_all">Διαγραφή ιστορικού</string>
+    <!-- Text for the dialog to confirm clearing all history -->
+    <string name="history_delete_all_dialog">Θέλετε σίγουρα να διαγράψετε το ιστορικό σας;</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">Το ιστορικό διαγράφηκε</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">Το &quot;%1$s&quot; διαγράφηκε</string>
+    <!-- Text for positive action to delete history in deleting history dialog -->
+    <string name="history_clear_dialog">Απαλοιφή</string>
+    <!-- History overflow menu copy button -->
+    <string name="history_menu_copy_button">Αντιγραφή</string>
+    <!-- History overflow menu share button -->
+    <string name="history_menu_share_button">Κοινή χρήση</string>
+    <!-- History overflow menu open in new tab button -->
+    <string name="history_menu_open_in_new_tab_button">Άνοιγμα σε νέα καρτέλα</string>
+    <!-- History overflow menu open in private tab button -->
+    <string name="history_menu_open_in_private_tab_button">Άνοιγμα σε ιδιωτική καρτέλα</string>
+    <!-- Text for the button to delete a single history item -->
+    <string name="history_delete_item">Διαγραφή</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of bookmarks selected -->
+    <string name="history_multi_select_title">%1$d επιλογή(ές)</string>
+    <!-- Text for the button to clear selected history items. The first parameter
+        is a digit showing the number of items you have selected -->
+    <string name="history_delete_some">Διαγραφή %1$d στοιχείων</string>
+    <!-- Text for the header that groups the history for last 24 hours -->
+    <string name="history_24_hours">Τελευταίες 24 ώρες</string>
+    <!-- Text for the header that groups the history the past 7 days -->
+    <string name="history_7_days">Τελευταίες 7 ημέρες</string>
+    <!-- Text for the header that groups the history the past 30 days -->
+    <string name="history_30_days">Τελευταίες 30 ημέρες</string>
+    <!-- Text for the header that groups the history older than the last month -->
+    <string name="history_older">Παλαιότερα</string>
+
+    <!-- Text shown when no history exists -->
+    <string name="history_empty_message">Δεν υπάρχει ιστορικό</string>
+
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Καμία λήψη</string>
+
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d επιλογή(ές)</string>
+
+    <!-- Crashes -->
+    <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
+    <string name="tab_crash_title_2">Συγγνώμη. Το %1$s δεν μπορεί να φορτώσει αυτή τη σελίδα.</string>
+    <!-- Description text displayed on the tab crash page -->
+    <string name="tab_crash_description">Μπορείτε να προσπαθήσετε να επαναφέρετε ή να κλείσετε αυτή την καρτέλα παρακάτω.</string>
+    <!-- Send crash report checkbox text on the tab crash page -->
+    <string name="tab_crash_send_report">Αποστολή αναφοράς κατάρρευσης στη Mozilla</string>
+    <!-- Close tab button text on the tab crash page -->
+    <string name="tab_crash_close">Κλείσιμο καρτέλας</string>
+
+    <!-- Restore tab button text on the tab crash page -->
+    <string name="tab_crash_restore">Επαναφορά καρτελών</string>
+
+    <!-- Content Description for session item menu button -->
+    <string name="content_description_session_menu">Επιλογές συνεδρίας</string>
+
+    <!-- Content Description for session item share button -->
+    <string name="content_description_session_share">Κοινή χρήση συνεδρίας</string>
+
+    <!-- Bookmarks -->
+    <!-- Content description for bookmarks library menu -->
+    <string name="bookmark_menu_content_description">Μενού σελιδοδεικτών</string>
+    <!-- Screen title for editing bookmarks -->
+    <string name="bookmark_edit">Επεξεργασία σελιδοδείκτη</string>
+    <!-- Screen title for selecting a bookmarks folder -->
+    <string name="bookmark_select_folder">Επιλογή φακέλου</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">Θέλετε σίγουρα να διαγράψετε αυτό το φάκελο;</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">Το %s θα διαγράψει τα επιλεγμένα στοιχεία.</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">Ο φάκελος &quot;%1$s&quot; διαγράφηκε</string>
+    <!-- Screen title for adding a bookmarks folder -->
+    <string name="bookmark_add_folder">Προσθήκη φακέλου</string>
+    <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_created_snackbar">Ο σελιδοδείκτης δημιουργήθηκε.</string>
+    <!-- Snackbar title shown after a bookmark has been created. -->
+    <string name="bookmark_saved_snackbar">Ο σελιδοδείκτης αποθηκεύτηκε!</string>
+    <!-- Snackbar edit button shown after a bookmark has been created. -->
+    <string name="edit_bookmark_snackbar_action">ΕΠΕΞΕΡΓΑΣΙΑ</string>
+    <!-- Bookmark overflow menu edit button -->
+    <string name="bookmark_menu_edit_button">Επεξεργασία</string>
+    <!-- Bookmark overflow menu select button -->
+    <string name="bookmark_menu_select_button">Επιλογή</string>
+    <!-- Bookmark overflow menu copy button -->
+    <string name="bookmark_menu_copy_button">Αντιγραφή</string>
+    <!-- Bookmark overflow menu share button -->
+    <string name="bookmark_menu_share_button">Κοινή χρήση</string>
+    <!-- Bookmark overflow menu open in new tab button -->
+    <string name="bookmark_menu_open_in_new_tab_button">Άνοιγμα σε νέα καρτέλα</string>
+    <!-- Bookmark overflow menu open in private tab button -->
+    <string name="bookmark_menu_open_in_private_tab_button">Άνοιγμα σε ιδιωτική καρτέλα</string>
+    <!-- Bookmark overflow menu delete button -->
+    <string name="bookmark_menu_delete_button">Διαγραφή</string>
+    <!--Bookmark overflow menu save button -->
+    <string name="bookmark_menu_save_button">Αποθήκευση</string>
+    <!-- Bookmark multi select title in app bar
+     The first parameter is the number of bookmarks selected -->
+    <string name="bookmarks_multi_select_title">%1$d επιλογή(ές)</string>
+    <!-- Bookmark editing screen title -->
+    <string name="edit_bookmark_fragment_title">Επεξεργασία σελιδοδείκτη</string>
+    <!-- Bookmark folder editing screen title -->
+    <string name="edit_bookmark_folder_fragment_title">Επεξεργασία φακέλου</string>
+    <!-- Bookmark sign in button message -->
+    <string name="bookmark_sign_in_button">Συνδεθείτε για προβολή συγχρονισμένων σελιδοδεικτών</string>
+    <!-- Bookmark URL editing field label -->
+    <string name="bookmark_url_label">URL</string>
+    <!-- Bookmark FOLDER editing field label -->
+    <string name="bookmark_folder_label">ΦΑΚΕΛΟΣ</string>
+    <!-- Bookmark NAME editing field label -->
+    <string name="bookmark_name_label">ΟΝΟΜΑ</string>
+    <!-- Bookmark add folder screen title -->
+    <string name="bookmark_add_folder_fragment_label">Προσθήκη φακέλου</string>
+    <!-- Bookmark select folder screen title -->
+    <string name="bookmark_select_folder_fragment_label">Επιλογή φακέλου</string>
+    <!-- Bookmark editing error missing title -->
+    <string name="bookmark_empty_title_error">Πρέπει να έχει τίτλο</string>
+    <!-- Bookmark editing error missing or improper URL -->
+    <string name="bookmark_invalid_url_error">Άκυρο URL</string>
+    <!-- Bookmark screen message for empty bookmarks folder -->
+    <string name="bookmarks_empty_message">Κανένας σελιδοδείκτης εδώ</string>
+    <!-- Bookmark snackbar message on deletion
+     The first parameter is the host part of the URL of the bookmark deleted, if any -->
+    <string name="bookmark_deletion_snackbar_message">Το %1$s διαγράφηκε</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">Οι σελιδοδείκτες διαγράφηκαν</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Διαγραφή επιλεγμένων φακέλων</string>
+    <!-- Bookmark undo button for deletion snackbar action -->
+    <string name="bookmark_undo_deletion">ΑΝΑΙΡΕΣΗ</string>
+
+    <!-- Site Permissions -->
+    <!-- Site permissions preferences header -->
+    <string name="permissions_header">Δικαιώματα</string>
+    <!-- Button label that take the user to the Android App setting -->
+    <string name="phone_feature_go_to_settings">Μεταβείτε στις ρυθμίσεις</string>
+    <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
+        to give users access to site specific information / settings. For example:
+        Secure settings status and a button to modify site permissions -->
+    <string name="quick_settings_sheet">Σελίδα γρήγορων ρυθμίσεων</string>
+    <!-- Label that indicates that this option it the recommended one -->
+    <string name="phone_feature_recommended">Προτείνεται</string>
+    <!-- button that allows editing site permissions settings -->
+    <string name="quick_settings_sheet_manage_site_permissions">Διαχείριση δικαιωμάτων ιστοσελίδας</string>
+    <!-- Button label for clearing all the information of site permissions-->
+    <string name="clear_permissions">Απαλοιφή δικαιωμάτων</string>
+    <!-- Button label for clearing a site permission-->
+    <string name="clear_permission">Απαλοιφή δικαιώματος</string>
+    <!-- Button label for clearing all the information on all sites-->
+    <string name="clear_permissions_on_all_sites">Απαλοιφή δικαιωμάτων σε όλες τις ιστοσελίδες</string>
+    <!-- Preference for altering video and audio autoplay for all websites -->
+    <string name="preference_browser_feature_autoplay">Αυτόματη αναπαραγωγή</string>
+    <!-- Preference for altering the camera access for all websites -->
+    <string name="preference_phone_feature_camera">Κάμερα</string>
+    <!-- Preference for altering the microphone access for all websites -->
+    <string name="preference_phone_feature_microphone">Μικρόφωνο</string>
+    <!-- Preference for altering the location access for all websites -->
+    <string name="preference_phone_feature_location">Τοποθεσία</string>
+    <!-- Preference for altering the notification access for all websites -->
+    <string name="preference_phone_feature_notification">Ειδοποιήσεις</string>
+    <!-- Label that indicates that a permission must be asked always -->
+    <string name="preference_option_phone_feature_ask_to_allow">Ερώτηση για αποδοχή</string>
+    <!-- Label that indicates that a permission must be blocked -->
+    <string name="preference_option_phone_feature_blocked">Φραγή</string>
+    <!-- Label that indicates that a permission must be allowed -->
+    <string name="preference_option_phone_feature_allowed">Επιτρέπεται</string>
+    <!--Label that indicates a permission is by the Android OS-->
+    <string name="phone_feature_blocked_by_android">Αποκλείστηκε από Android</string>
+    <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
+    <string name="preference_exceptions">Εξαιρέσεις</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="tracking_protection_on">Ενεργό</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="tracking_protection_off">Ανενεργό</string>
+    <!-- Label that indicates that all video and audio autoplay is allowed -->
+    <string name="preference_option_autoplay_allowed2">Αποδοχή ήχου και βίντεο</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Φραγή ήχου και βίντεο μόνο σε σύνδεση δεδομένων κινητής</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Η αναπαραγωγή ήχων/βίντεο θα γίνεται σε Wi-Fi</string>
+    <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="preference_option_autoplay_block_audio2">Φραγή ήχου μόνο</string>
+    <!-- Label that indicates that all video and audio autoplay is blocked -->
+    <string name="preference_option_autoplay_blocked3">Φραγή ήχου και βίντεο</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to on -->
+    <string name="delete_browsing_data_quit_on">Ενεργό</string>
+    <!-- Summary of delete browsing data on quit preference if it is set to off -->
+    <string name="delete_browsing_data_quit_off">Ανενεργό</string>
+
+    <!-- Collections -->
+    <!-- Collections header on home fragment -->
+    <string name="collections_header">Συλλογές</string>
+    <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
+    <string name="collection_menu_button_content_description">Μενού συλλογής</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Συλλέξτε αυτά που σας ενδιαφέρουν.\nΟμαδοποιήστε παρόμοιες αναζητήσεις, σελίδες και καρτέλες για γρήγορη πρόσβαση αργότερα.</string>
+    <!-- Title for the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_tabs">Επιλογή καρτελών</string>
+    <!-- Title for the "select collection" step of the collection creator -->
+    <string name="create_collection_select_collection">Επιλογή συλλογής</string>
+    <!-- Title for the "name collection" step of the collection creator -->
+    <string name="create_collection_name_collection">Ονομασία συλλογής</string>
+    <!-- Button to add new collection for the "select collection" step of the collection creator -->
+    <string name="create_collection_add_new_collection">Προσθήκη νέας συλλογής</string>
+    <!-- Button to select all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_select_all">Επιλογή όλων</string>
+    <!-- Button to deselect all tabs in the "select tabs" step of the collection creator -->
+    <string name="create_collection_deselect_all">Από-επιλογή όλων</string>
+    <!-- Text to prompt users to select the tabs to save in the "select tabs" step of the collection creator -->
+    <string name="create_collection_save_to_collection_empty">Επιλέξτε καρτέλες για αποθήκευση</string>
+    <!-- Text to show users how many tabs they have selected in the "select tabs" step of the collection creator.
+     %d is a placeholder for the number of tabs selected. -->
+    <string name="create_collection_save_to_collection_tabs_selected">Επιλέχθηκαν %d καρτέλες</string>
+    <!-- Text to show users they have one tab selected in the "select tabs" step of the collection creator.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="create_collection_save_to_collection_tab_selected">Επιλέχθηκε %d καρτέλα</string>
+    <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
+    <string name="create_collection_tabs_saved">Οι καρτέλες αποθηκεύτηκαν!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Η συλλογή αποθηκεύτηκε!</string>
+    <!-- Text shown in snackbar when one tab has been saved in a collection -->
+    <string name="create_collection_tab_saved">Η καρτέλα αποθηκεύτηκε!</string>
+    <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
+    <string name="create_collection_close">Κλείσιμο</string>
+    <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
+    <string name="create_collection_save">Αποθήκευση</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Προβολή</string>
+
+    <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
+    <string name="create_collection_default_name">Συλλογή %d</string>
+
+    <!-- Share -->
+    <!-- Share screen header -->
+    <string name="share_header">Αποστολή και κοινή χρήση</string>
+    <!-- Share screen header -->
+    <string name="share_header_2">Κοινή χρήση</string>
+    <!-- Content description (not visible, for screen readers etc.):
+        "Share" button. Opens the share menu when pressed. -->
+    <string name="share_button_content_description">Κοινή χρήση</string>
+    <!-- Sub-header in the dialog to share a link to another app -->
+    <string name="share_link_subheader">Κοινή χρήση συνδέσμου</string>
+    <!-- Sub-header in the dialog to share a link to another sync device -->
+    <string name="share_device_subheader">Αποστολή σε συσκευή</string>
+    <!-- Sub-header in the dialog to share a link to an app from the full list -->
+    <string name="share_link_all_apps_subheader">Όλες οι ενέργειες</string>
+    <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
+    <string name="share_link_recent_apps_subheader">Πρόσφατη χρήση</string>
+    <!-- An option from the share dialog to sign into sync -->
+    <string name="sync_sign_in">Σύνδεση στο Sync</string>
+    <!-- An option from the share dialog to send link to all other sync devices -->
+    <string name="sync_send_to_all">Αποστολή σε όλες τις συσκευές</string>
+    <!-- An option from the share dialog to reconnect to sync -->
+    <string name="sync_reconnect">Εκ νέου σύνδεση στο Sync</string>
+    <!-- Text displayed when sync is offline and cannot be accessed -->
+    <string name="sync_offline">Εκτός σύνδεσης</string>
+    <!-- An option to connect additional devices -->
+    <string name="sync_connect_device">Σύνδεση άλλης συσκευής</string>
+    <!-- The dialog text shown when additional devices are not available -->
+    <string name="sync_connect_device_dialog">Για να στείλετε μια καρτέλα, συνδεθείτε στο Firefox σε άλλη μία τουλάχιστον συσκευή.</string>
+    <!-- Confirmation dialog button -->
+    <string name="sync_confirmation_button">Το κατάλαβα</string>
+    <!-- Share error message -->
+    <string name="share_error_snackbar">Αδυναμία κοινοποίησης σε αυτή την εφαρμογή</string>
+    <!-- Add new device screen title -->
+    <string name="sync_add_new_device_title">Αποστολή σε συσκευή</string>
+
+    <!-- Text for the warning message on the Add new device screen -->
+    <string name="sync_add_new_device_message">Καμία συνδεδεμένη συσκευή</string>
+    <!-- Text for the button to learn about sending tabs -->
+    <string name="sync_add_new_device_learn_button">Μάθετε για την αποστολή καρτελών…</string>
+    <!-- Text for the button to connect another device -->
+    <string name="sync_add_new_device_connect_button">Σύνδεση άλλης συσκευής…</string>
+
+    <!-- Notifications -->
+    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
+    <string name="notification_pbm_channel_name">Συνεδρία ιδιωτικής περιήγησης</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text">Διαγραφή ιδιωτικών καρτελών</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text_2">Κλείσιμο ιδιωτικών καρτελών</string>
+    <!-- Notification action to open Fenix and resume the current browsing session. -->
+    <string name="notification_pbm_action_open">Άνοιγμα</string>
+    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
+    <string name="notification_pbm_action_delete_and_open">Διαγραφή και άνοιγμα</string>
+
+    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_powered_by_channel_name">Με την υποστήριξη του</string>
+    <!-- Text shown in snackbar when user deletes a collection -->
+    <string name="snackbar_collection_deleted">Η συλλογή διαγράφηκε</string>
+    <!-- Text shown in snackbar when user renames a collection -->
+    <string name="snackbar_collection_renamed">Η συλλογή μετονομάστηκε</string>
+    <!-- Text shown in snackbar when user deletes a tab -->
+    <string name="snackbar_tab_deleted">Η καρτέλα διαγράφηκε</string>
+    <!-- Text shown in snackbar when user deletes all tabs -->
+    <string name="snackbar_tabs_deleted">Οι καρτέλες διαγράφηκαν</string>
+    <!-- Text shown in snackbar when user closes a tab -->
+    <string name="snackbar_tab_closed">Η καρτέλα έκλεισε</string>
+    <!-- Text shown in snackbar when user closes all tabs -->
+    <string name="snackbar_tabs_closed">Οι καρτέλες έκλεισαν</string>
+    <!-- Text shown in snackbar when user adds a site to top sites -->
+    <string name="snackbar_added_to_top_sites">Προστέθηκε στις κορυφαίες σελίδες!</string>
+    <!-- Text shown in snackbar when user closes a private tab -->
+    <string name="snackbar_private_tab_closed">Η ιδιωτική καρτέλα έκλεισε</string>
+    <!-- Text shown in snackbar when user closes all private tabs -->
+    <string name="snackbar_private_tabs_closed">Οι ιδιωτικές καρτέλες έκλεισαν</string>
+    <!-- Text shown in snackbar when user deletes all private tabs -->
+    <string name="snackbar_private_tabs_deleted">Οι ιδιωτικές καρτέλες διαγράφηκαν</string>
+    <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
+    <string name="snackbar_deleted_undo">ΑΝΑΙΡΕΣΗ</string>
+    <!-- Text shown in snackbar when user removes a top site -->
+    <string name="snackbar_top_site_removed">Η ιστοσελίδα αφαιρέθηκε</string>
+    <!-- Text for action to undo deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_undo">Αναίρεση</string>
+    <!-- Text for action to confirm deleting a tab or collection shown in a11y dialog -->
+    <string name="a11y_dialog_deleted_confirm">Επιβεβαίωση</string>
+    <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
+        First parameter is the name of the app, second parameter is the URL or text scanned-->
+    <string name="qr_scanner_confirmation_dialog_message">Να επιτρέπεται στο %1$s το άνοιγμα του %2$s</string>
+    <!-- QR code scanner prompt dialog positive option to allow navigation to scanned link -->
+    <string name="qr_scanner_dialog_positive">ΑΠΟΔΟΧΗ</string>
+    <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
+    <string name="qr_scanner_dialog_negative">ΑΡΝΗΣΗ</string>
+    <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
+    <string name="tab_collection_dialog_message">Θέλετε σίγουρα να διαγράψετε το %1$s;</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Η αφαίρεση της καρτέλας θα διαγράψει ολόκληρη τη συλλογή. Μπορείτε να δημιουργήσετε νέες συλλογές ανά πάσα στιγμή.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Διαγραφή του %1$s;</string>
+    <!-- Tab collection deletion prompt dialog option to delete the collection -->
+    <string name="tab_collection_dialog_positive">Διαγραφή</string>
+    <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
+    <string name="tab_collection_dialog_negative">Ακύρωση</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Είσοδος σε λειτουργία πλήρους οθόνης</string>
+    <!-- Message for copying the URL via long press on the toolbar -->
+    <string name="url_copied">Το URL αντιγράφτηκε</string>
+    <!-- Sample text for accessibility font size -->
+    <string name="accessibility_text_size_sample_text_1">Δοκιμαστικό κείμενο. Σας δείχνει πώς εμφανίζεται το κείμενο για κάθε αυξομείωση μεγέθους που κάνετε με αυτή τη ρύθμιση.</string>
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_text_size_summary">Αύξηση ή μείωση μεγέθους κειμένου των ιστοσελίδων</string>
+    <!-- Title for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_font_size_title">Μέγεθος γραμματοσειράς</string>
+
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_2">Αυτόματο μέγεθος γραμματοσειράς</string>
+
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">Θα χρησιμοποιούνται οι ρυθμίσεις γραμματοσειράς Android σας. Κάντε απενεργοποίηση για διαχείριση μεγέθους από εδώ.</string>
+
+    <!-- Title for the Delete browsing data preference -->
+    <string name="preferences_delete_browsing_data">Διαγραφή δεδομένων περιήγησης</string>
+    <!-- Title for the tabs item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_tabs_title_2">Ανοικτές καρτέλες</string>
+    <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
+    <string name="preferences_delete_browsing_data_tabs_subtitle">%d καρτέλες</string>
+    <!-- Title for the data and history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_data_title">Ιστορικό περιήγησης και δεδομένα ιστοσελίδων</string>
+    <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
+        number of history items the user has -->
+    <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d διευθύνσεις</string>
+    <!-- Title for history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Ιστορικό</string>
+    <!-- Subtitle for the history items in delete browsing data, parameter will be replaced with the
+        number of history pages the user has -->
+    <string name="preferences_delete_browsing_data_browsing_history_subtitle">%d σελίδες</string>
+    <!-- Title for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies">Cookies</string>
+    <!-- Subtitle for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_subtitle">Θα αποσυνδεθείτε από τις περισσότερες ιστοσελίδες</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">Προσωρινές εικόνες και αρχεία</string>
+    <!-- Subtitle for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files_subtitle">Απελευθερώνει χώρο αποθήκευσης</string>
+    <!-- Title for the site permissions item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_site_permissions">Δικαιώματα ιστοσελίδων</string>
+    <!-- Text for the button to delete browsing data -->
+    <string name="preferences_delete_browsing_data_button">Διαγραφή δεδομένων περιήγησης</string>
+    <!-- Title for the Delete browsing data on quit preference -->
+    <string name="preferences_delete_browsing_data_on_quit">Διαγραφή δεδομένων περιήγησης στην έξοδο</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit">Αυτόματη διαγραφή δεδομένων περιήγησης όταν επιλέγετε &quot;Έξοδος&quot; από το κύριο μενού</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Αυτόματη διαγραφή δεδομένων περιήγησης όταν επιλέγετε \&quot;Έξοδος\&quot; από το κύριο μενού</string>
+    <!-- Action item in menu for the Delete browsing data on quit feature -->
+    <string name="delete_browsing_data_on_quit_action">Έξοδος</string>
+
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">Αυτό θα διαγράψει όλα τα δεδομένα περιήγησής σας.</string>
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">Το %s θα διαγράψει τα επιλεγμένα δεδομένα περιήγησης.</string>
+    <!-- Text for the cancel button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_cancel">Ακύρωση</string>
+    <!-- Text for the allow button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_allow">Διαγραφή</string>
+
+    <!-- Text for the snackbar confirmation that the data was deleted -->
+    <string name="preferences_delete_browsing_data_snackbar">Τα δεδομένα περιήγησης διαγράφηκαν</string>
+    <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
+    <string name="deleting_browsing_data_in_progress">Διαγραφή δεδομένων περιήγησης…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">Το Firefox Preview είναι πλέον το Firefox Nightly</string>
+
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">
+        Το Firefox Nightly ενημερώνεται κάθε βράδυ και διαθέτει νέες, πειραματικές λειτουργίες.
+        Ωστόσο, ενδέχεται να είναι λιγότερο σταθερό. Κάντε λήψη του beta προγράμματος περιήγησής μας για μια πιο σταθερή εμπειρία.</string>
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Λήψη του Firefox για Android Beta</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Το Firefox Nightly έχει μετακινηθεί</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">
+        Αυτή η εφαρμογή δεν θα λαμβάνει πλέον ενημερώσεις ασφαλείας. Σταματήστε τη χρήση αυτής της εφαρμογής και μεταβείτε στο νέο Nightly.
+        \n\nΓια να μεταφέρετε τους σελιδοδείκτες, τις συνδέσεις και το ιστορικό σας σε άλλη εφαρμογή, δημιουργήστε ένα λογαριασμό Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">Εναλλαγή στο νέο Nightly</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">Το Firefox Nightly έχει μετακινηθεί</string>
+
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">
+        Αυτή η εφαρμογή δεν θα λαμβάνει πλέον ενημερώσεις ασφαλείας. Αποκτήστε το νέο Nightly και σταματήστε τη χρήση αυτής της εφαρμογής.
+        \n\nΓια να μεταφέρετε τους σελιδοδείκτες, τις συνδέσεις και το ιστορικό σας σε άλλη εφαρμογή, δημιουργήστε ένα λογαριασμό Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">Αποκτήστε το νέο Nightly</string>
+
+    <!-- Onboarding -->
+    <!-- Text for onboarding welcome message
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_header">Καλώς ορίσατε στο %s!</string>
+    <!-- text for the Firefox Accounts section header -->
+    <string name="onboarding_fxa_section_header">Έχετε ήδη λογαριασμό;</string>
+    <!-- text for the Firefox Preview feature section header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_feature_section_header">Γνωρίστε το %s</string>
+    <!-- text for the "What's New" onboarding card header -->
+    <string name="onboarding_whats_new_header1">Δείτε τι νέο υπάρχει</string>
+    <!-- text for the "what's new" onboarding card description
+    The first parameter is the short name of the app (e.g. Firefox) -->
+    <string name="onboarding_whats_new_description">Έχετε ερωτήσεις σχετικά με το επανασχεδιασμένο %s; Θέλετε να μάθετε τι έχει αλλάξει;</string>
+    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
+    <string name="onboarding_whats_new_description_linktext">Λάβετε απαντήσεις εδώ</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Ξεκινήστε το συγχρονισμό σελιδοδεικτών, κωδικών πρόσβασης και άλλων δεδομένων με το λογαριασμό Firefox σας.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Μάθετε περισσότερα</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Έχετε συνδεθεί ως %s από άλλο πρόγραμμα περιήγησης Firefox σε αυτή τη συσκευή. Θέλετε να συνδεθείτε με αυτό το λογαριασμό;</string>
+    <!-- text for the button to confirm automatic sign-in -->
+    <string name="onboarding_firefox_account_auto_signin_confirm">Ναι, σύνδεση</string>
+    <!-- text for the automatic sign-in button while signing in is in process -->
+    <string name="onboarding_firefox_account_signing_in">Σύνδεση…</string>
+    <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
+    <string name="onboarding_firefox_account_sign_in">Σύνδεση στο Firefox</string>
+    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
+    <string name="onboarding_firefox_account_stay_signed_out">Παραμονή εκτός σύνδεσης</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">Το Sync είναι ενεργό</string>
+    <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
+    <string name="onboarding_firefox_account_automatic_signin_failed">Αποτυχία σύνδεσης</string>
+
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header_2">Αυτόματο απόρρητο</string>
+    <!-- text for the tracking protection card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_tracking_protection_description_2">Οι ρυθμίσεις απορρήτου και ασφάλειας αποκλείουν ιχνηλάτες, κακόβουλο λογισμικό και εταιρείες που σας ακολουθούν.</string>
+    <!-- text for tracking protection radio button option for standard level of blocking -->
+    <string name="onboarding_tracking_protection_standard_button_2">Τυπική (προεπιλογή)</string>
+    <!-- text for standard blocking option button description -->
+    <string name="onboarding_tracking_protection_standard_button_description_2">Φραγή λιγότερων ιχνηλατών. Οι σελίδες θα φορτώνονται κανονικά.</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_button">Αυστηρή (προτείνεται)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Αυστηρή</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_2">Φραγή περισσότερων ιχνηλατών, διαφημίσεων και αναδυόμενων παραθύρων. Οι σελίδες φορτώνονται ταχύτερα, αλλά ορισμένα χαρακτηριστικά ενδέχεται να μην λειτουργούν.</string>
+    <!-- text for the toolbar position card header
+        In English this is an idiom for "choose a side as in an argument or fight"
+        but it is ok to make this more literally about "choosing a position in a physical space -->
+    <string name="onboarding_toolbar_position_header">Πάρτε θέση</string>
+    <!-- text for the toolbar position card description -->
+    <string name="onboarding_toolbar_position_description">Δοκιμάστε την περιήγηση με ένα χέρι με την κάτω γραμμή εργαλείων ή μετακινήστε την στο πάνω μέρος.</string>
+    <!-- text for the private browsing onboarding card header -->
+    <string name="onboarding_private_browsing_header">Ιδιωτική περιήγηση</string>
+    <!-- text for the private browsing onboarding card description
+    The first parameter is an icon that represents private browsing -->
+    <string name="onboarding_private_browsing_description1">Άνοιγμα ιδιωτικής καρτέλας μία φορά: Αγγίξτε το εικονίδιο %s.</string>
+    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
+    <string name="onboarding_private_browsing_always_description">Άνοιγμα ιδιωτικών καρτελών κάθε φορά: Ενημερώστε τις ρυθμίσεις ιδιωτικής περιήγησης.</string>
+    <!-- text for the private browsing onbording card button, that launches settings -->
+    <string name="onboarding_private_browsing_button">Άνοιγμα ρυθμίσεων</string>
+    <!-- text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header">Το απόρρητό σας</string>
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_privacy_notice_description">Έχουμε σχεδιάσει το %s ώστε να έχετε τον έλεγχο του τι θα κοινοποιείτε
+        στο διαδίκτυο και σε εμάς.
+    </string>
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Διαβάστε τη σημείωση απορρήτου μας</string>
+    <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
+    <string name="onboarding_close">Κλείσιμο</string>
+
+    <!-- text for the button to finish onboarding -->
+    <string name="onboarding_finish">Έναρξη περιήγησης</string>
+
+    <!-- Onboarding theme -->
+    <!-- text for the theme picker onboarding card header -->
+    <string name="onboarding_theme_picker_header">Επιλογή θέματος</string>
+    <!-- text for the theme picker onboarding card description -->
+    <string name="onboarding_theme_picker_description1">Εξοικονόμηση μπαταρίας και προστασία ματιών με τη σκοτεινή λειτουργία.</string>
+    <!-- Automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_title">Αυτόματο</string>
+    <!-- Summary of automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_summary">Προσαρμόζεται στις ρυθμίσεις της συσκευής σας</string>
+    <!-- Theme setting for dark mode -->
+    <string name="onboarding_theme_dark_title">Σκούρο θέμα</string>
+    <!-- Theme setting for light mode -->
+    <string name="onboarding_theme_light_title">Φωτεινό θέμα</string>
+
+    <!-- Text shown in snackbar when multiple tabs have been sent to device -->
+    <string name="sync_sent_tabs_snackbar">Οι καρτέλες απεστάλησαν!</string>
+    <!-- Text shown in snackbar when one tab has been sent to device  -->
+    <string name="sync_sent_tab_snackbar">Η καρτέλα απεστάλη!</string>
+    <!-- Text shown in snackbar when sharing tabs failed  -->
+    <string name="sync_sent_tab_error_snackbar">Δεν ήταν δυνατή η αποστολή</string>
+    <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
+    <string name="sync_sent_tab_error_snackbar_action">ΕΠΑΝΑΛΗΨΗ</string>
+    <!-- Title of QR Pairing Fragment -->
+    <string name="sync_scan_code">Σάρωση κωδικού</string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions"><![CDATA[Στον υπολογιστή σας, ανοίξτε το Firefox και μεταβείτε στο <b>https://firefox.com/pair</b>]]></string>
+    <!-- Text shown for sign in pairing when ready -->
+    <string name="sign_in_ready_for_scan">Σάρωση</string>
+    <!-- Text shown for settings option for sign with pairing -->
+    <string name="sign_in_with_camera">Σύνδεση με την κάμερά σας</string>
+
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">Χρήση email</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Δεν έχετε λογαριασμό; <u>Δημιουργήστε έναν</u> για συγχρονισμό του Firefox μεταξύ συσκευών.]]></string>
+    <!-- Text shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_confirmation_message">Το Firefox θα σταματήσει να συγχρονίζεται με το λογαριασμό σας, αλλά δεν θα διαγράψει τα δεδομένα περιήγησης από αυτή τη συσκευή.</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">Το %s θα σταματήσει να συγχρονίζεται με το λογαριασμό σας, αλλά δεν θα διαγράψει τα δεδομένα περιήγησης από αυτή τη συσκευή.</string>
+    <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_disconnect">Αποσύνδεση</string>
+    <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
+    <string name="sign_out_cancel">Ακύρωση</string>
+
+    <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
+    <string name="bookmark_cannot_edit_root">Δεν είναι δυνατή η επεξεργασία προεπιλεγμένων φακέλων</string>
+
+    <!-- Enhanced Tracking Protection -->
+    <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
+    <string name="etp_settings">Ρυθμίσεις προστασίας</string>
+    <!-- Preference title for enhanced tracking protection settings -->
+    <string name="preference_enhanced_tracking_protection">Ενισχυμένη προστασία από καταγραφή</string>
+    <!-- Title for the description of enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_title">Περιήγηση χωρίς παρακολούθηση</string>
+    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation">Κρατήστε τα δεδομένα σας για τον εαυτό σας. Το %s σας προστατεύει από πολλούς από τους πιο συνηθισμένους ιχνηλάτες που ακολουθούν ό,τι κάνετε στο διαδίκτυο.</string>
+    <!-- Text displayed that links to website about enhanced tracking protection -->
+    <string name="preference_enhanced_tracking_protection_explanation_learn_more">Μάθετε περισσότερα</string>
+    <!-- Preference for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Τυπική (προεπιλογή)</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Φραγή λιγότερων ιχνηλατών. Οι σελίδες θα φορτώνονται κανονικά.</string>
+    <!--  Accessibility text for the Standard protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_standard_info_button">Τι αποκλείει η τυπική προστασία από καταγραφή</string>
+    <!-- Preference for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict">Αυστηρή</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Φραγή περισσότερων ιχνηλατών, διαφημίσεων και αναδυόμενων παραθύρων. Οι σελίδες φορτώνονται ταχύτερα, αλλά ορισμένα μέρη ενδέχεται να μην λειτουργούν.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_strict_info_button">Τι αποκλείει η αυστηρή προστασία από καταγραφή</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom">Προσαρμοσμένη</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Επιλέξτε ιχνηλάτες και σενάρια για αποκλεισμό.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_custom_info_button">Τι αποκλείει η προσαρμοσμένη προστασία από καταγραφή</string>
+    <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
+    <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies">Cookies</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Ιχνηλάτες μεταξύ ιστοσελίδων και κοινωνικών μέσων</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_2">Cookies από ιστοσελίδες που δεν έχετε επισκεφθεί</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_3">Όλα τα cookies τρίτων (ενδέχεται να προκαλέσει δυσλειτουργία σε ιστοσελίδες)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_4">Όλα τα cookies (θα προκαλέσει δυσλειτουργία σε ιστοσελίδες)</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content">Περιεχόμενο καταγραφής</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">Σε όλες τις καρτέλες</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">Μόνο σε ιδιωτικές καρτέλες</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
+    <string name="preference_enhanced_tracking_protection_custom_tracking_content_3">Μόνο σε προσαρμοσμένες καρτέλες</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_cryptominers">Cryptominers</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Fingerprinters</string>
+    <string name="enhanced_tracking_protection_blocked">Αποκλείονται</string>
+    <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
+    <string name="enhanced_tracking_protection_allowed">Επιτρέπεται</string>
+    <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_title">Ιχνηλάτες κοινωνικών δικτύων</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Περιορίζει την ικανότητα των κοινωνικών δικτύων να παρακολουθούν τη δραστηριότητά σας στο διαδίκτυο.</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title">Cookies ιχνηλάτησης μεταξύ ιστοσελίδων</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">Αποκλείει τα cookies που χρησιμοποιούν τα δίκτυα διαφημίσεων και οι εταιρείες ανάλυσης δεδομένων για τη συλλογή δεδομένων περιήγησής σας από πολλαπλές ιστοσελίδες.</string>
+    <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_title">Cryptominers</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">Εμποδίζει τα κακόβουλα σενάρια από το να προσπελάσουν τη συσκευή σας για εξόρυξη ψηφιακού νομίσματος.</string>
+    <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_title">Fingerprinters</string>
+    <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_description">Διακόπτει τη συλλογή μοναδικών, αναγνωριστικών δεδομένων της συσκευής σας που μπορούν να χρησιμοποιηθούν για σκοπούς καταγραφής.</string>
+    <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_title">Περιεχόμενο καταγραφής</string>
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">Διακόπτει τη φόρτωση εξωτερικών διαφημίσεων, βίντεο και άλλου περιεχομένου που περιέχει κώδικα καταγραφής. Ίσως επηρεάσει τη λειτουργικότητα μερικών ιστοσελίδων.</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">Κάθε φορά που η ασπίδα είναι μωβ, το %s έχει αποκλείσει ιχνηλάτες σε μια σελίδα. Πατήστε για περισσότερες πληροφορίες.</string>
+    <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
+    <string name="etp_panel_on">Η προστασία είναι ΕΝΕΡΓΗ για αυτή τη σελίδα</string>
+    <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
+    <string name="etp_panel_off">Η προστασία είναι ΑΝΕΝΕΡΓΗ για αυτή τη σελίδα</string>
+    <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
+    <string name="enhanced_tracking_protection_exceptions">Η ενισχυμένη προστασία από καταγραφή είναι ανενεργή για αυτή τη σελίδα</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">Πλοήγηση προς τα πίσω</string>
+    <!-- About page Your rights link text -->
+    <string name="about_your_rights">Τα δικαιώματά σας</string>
+
+    <!-- About page link text to open open source licenses screen -->
+    <string name="about_open_source_licenses">Βιβλιοθήκες ανοιχτού κώδικα που χρησιμοποιούμε</string>
+    <!-- About page link text to open what's new link -->
+    <string name="about_whats_new">Τι νέο υπάρχει στο %s</string>
+    <!-- Open source licenses page title
+    The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Βιβλιοθήκες OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Ανακατεύθυνση ιχνηλατών</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Διαγράφει τα cookies που τοποθετούνται από ανακατευθύνσεις σε γνωστές ιστοσελίδες καταγραφής.</string>
+
+    <!-- About page link text to open support link -->
+    <string name="about_support">Υποστήριξη</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Καταρρεύσεις</string>
+    <!-- About page link text to open privacy notice link -->
+    <string name="about_privacy_notice">Πολιτική απορρήτου</string>
+
+    <!-- About page link text to open know your rights link -->
+    <string name="about_know_your_rights">Μάθετε τα δικαιώματά σας</string>
+    <!-- About page link text to open licensing information link -->
+    <string name="about_licensing_information">Πληροφορίες άδειας</string>
+    <!-- About page link text to open a screen with libraries that are used -->
+    <string name="about_other_open_source_libraries">Βιβλιοθήκες που χρησιμοποιούμε</string>
+
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">Μενού εντοπισμού σφαλμάτων: απομένουν %1$d κλικ για ενεργοποίηση</string>
+    <string name="about_debug_menu_toast_done">Το μενού εντοπισμού σφαλμάτων ενεργοποιήθηκε</string>
+
+    <!-- Content description of the tab counter toolbar button when one tab is open -->
+    <string name="tab_counter_content_description_one_tab">1 καρτέλα</string>
+    <!-- Content description of the tab counter toolbar button when multiple tabs are open. First parameter will be replaced with the number of tabs (always more than one) -->
+    <string name="tab_counter_content_description_multi_tab">%d καρτέλες</string>
+
+    <!-- Browser long press popup menu -->
+    <!-- Copy the current url -->
+    <string name="browser_toolbar_long_press_popup_copy">Αντιγραφή</string>
+    <!-- Paste & go the text in the clipboard. '&amp;' is replaced with the ampersand symbol: & -->
+    <string name="browser_toolbar_long_press_popup_paste_and_go">Επικόλληση &amp; μετάβαση</string>
+    <!-- Paste the text in the clipboard -->
+    <string name="browser_toolbar_long_press_popup_paste">Επικόλληση</string>
+
+    <!-- Snackbar message shown after an URL has been copied to clipboard. -->
+    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">Το URL αντιγράφτηκε στο πρόχειρο</string>
+
+    <!-- Title text for the Add To Homescreen dialog -->
+    <string name="add_to_homescreen_title">Προσθήκη στην αρχική οθόνη</string>
+    <!-- Cancel button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_cancel">Ακύρωση</string>
+    <!-- Add button text for the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_add">Προσθήκη</string>
+    <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
+    <string name="add_to_homescreen_continue">Συνέχεια στην ιστοσελίδα</string>
+
+    <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
+    <string name="add_to_homescreen_text_placeholder">Όνομα συντόμευσης</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Μπορείτε εύκολα να προσθέσετε αυτή την ιστοσελίδα στην αρχική οθόνη για άμεση πρόσβαση και ταχύτερη περιήγηση, σαν να ήταν εφαρμογή.</string>
+
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords">Συνδέσεις και κωδικοί πρόσβασης</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins">Αποθήκευση συνδέσεων και κωδικών πρόσβασης</string>
+    <!-- Preference option for asking to save passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_ask_to_save">Ερώτηση για αποθήκευση</string>
+    <!-- Preference option for never saving passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_never_save">Ποτέ αποθήκευση</string>
+    <!-- Preference for autofilling saved logins in Fenix -->
+    <string name="preferences_passwords_autofill">Αυτόματη συμπλήρωση</string>
+    <!-- Preference for syncing saved logins in Fenix -->
+    <string name="preferences_passwords_sync_logins">Συγχρονισμός συνδέσεων</string>
+    <!-- Syncing saved logins in Fenix is on -->
+    <string name="preferences_passwords_sync_logins_on">Ενεργό</string>
+    <!-- Syncing saved logins in Fenix is off -->
+    <string name="preferences_passwords_sync_logins_off">Ανενεργό</string>
+    <!-- Syncing saved logins in Fenix needs reconnect to sync -->
+    <string name="preferences_passwords_sync_logins_reconnect">Επανασύνδεση</string>
+    <!-- Syncing saved logins in Fenix needs login -->
+    <string name="preferences_passwords_sync_logins_sign_in">Σύνδεση στο Sync</string>
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins">Αποθηκευμένες συνδέσεις</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text">Οι συνδέσεις που αποθηκεύετε ή συγχρονίζετε στο %s θα εμφανίζονται εδώ.</string>
+    <!-- Preference to access list of saved logins -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Μάθετε περισσότερα σχετικά με το Sync.</string>
+    <!-- Preference to access list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions">Εξαιρέσεις</string>
+    <!-- Empty description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description_empty">Εδώ εμφανίζονται οι συνδέσεις και οι κωδικοί πρόσβασης που δεν αποθηκεύονται.</string>
+    <!-- Description of list of login exceptions that we never save logins for -->
+    <string name="preferences_passwords_exceptions_description">Οι συνδέσεις και οι κωδικοί πρόσβασης δεν θα αποθηκευτούν για αυτές τις ιστοσελίδες.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Διαγραφή όλων των εξαιρέσεων</string>
+    <!-- Hint for search box in logins list -->
+    <string name="preferences_passwords_saved_logins_search">Αναζήτηση συνδέσεων</string>
+    <!-- Option to sort logins list A-Z, alphabetically -->
+    <string name="preferences_passwords_saved_logins_alphabetically">Αλφαβητικά</string>
+    <!-- Option to sort logins list by most recently used -->
+    <string name="preferences_passwords_saved_logins_recently_used">Πρόσφατη χρήση</string>
+    <!-- The header for the site that a login is for -->
+    <string name="preferences_passwords_saved_logins_site">Ιστοσελίδα</string>
+    <!-- The header for the username for a login -->
+    <string name="preferences_passwords_saved_logins_username">Όνομα χρήστη</string>
+    <!-- The header for the password for a login -->
+    <string name="preferences_passwords_saved_logins_password">Κωδικός πρόσβασης</string>
+    <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin">Εισάγετε ξανά το PIN σας</string>
+    <!-- Message displayed in security prompt to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin_description">Ξεκλειδώστε για να δείτε τις αποθηκευμένες συνδέσεις σας</string>
+    <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning">Αυτή η σύνδεση δεν είναι ασφαλής. Οι λογαριασμοί που εισάγονται εδώ ενδέχεται να παραβιαστούν.</string>
+    <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
+    <string name="logins_insecure_connection_warning_learn_more">Μάθετε περισσότερα</string>
+    <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
+    <string name="logins_doorhanger_save">Θέλετε το %s να αποθηκεύσει αυτή τη σύνδεση;</string>
+    <!-- Positive confirmation that Fenix should save the new or updated login -->
+    <string name="logins_doorhanger_save_confirmation">Αποθήκευση</string>
+    <!-- Negative confirmation that Fenix should not save the new or updated login -->
+    <string name="logins_doorhanger_save_dont_save">Χωρίς αποθήκευση</string>
+    <!-- Shown in snackbar to tell user that the password has been copied -->
+    <string name="logins_password_copied">Ο κωδικός πρόσβασης έχει αντιγραφεί στο πρόχειρο</string>
+    <!-- Shown in snackbar to tell user that the username has been copied -->
+    <string name="logins_username_copied">Το όνομα χρήστη αντιγράφτηκε στο πρόχειρο</string>
+    <!-- Shown in snackbar to tell user that the site has been copied -->
+    <string name="logins_site_copied">Η ιστοσελίδα αντιγράφτηκε στο πρόχειρο</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
+    <string name="saved_logins_copy_password">Αντιγραφή κωδικού πρόσβασης</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Εκκαθάριση κωδικού πρόσβασης</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
+    <string name="saved_login_copy_username">Αντιγραφή ονόματος χρήστη</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Εκκαθάριση ονόματος χρήστη</string>
+    <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
+    <string name="saved_login_copy_site">Αντιγραφή ιστοσελίδας</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Άνοιγμα σελίδας στο πρόγραμμα περιήγησης</string>
+    <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
+    <string name="saved_login_reveal_password">Εμφάνιση κωδικού πρόσβασης</string>
+    <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
+    <string name="saved_login_hide_password">Απόκρυψη κωδικού πρόσβασης</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
+    <string name="logins_biometric_prompt_message">Ξεκλειδώστε για να δείτε τις αποθηκευμένες συνδέσεις σας</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title">Προστασία στοιχείων σύνδεσης</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message">Ορίστε ένα μοτίβο κλειδώματος συσκευής, ένα ΡΙΝ ή έναν κωδικό πρόσβασης για προστασία των αποθηκευμένων στοιχείων σύνδεσης, σε περίπτωση που κάποιος τρίτος αποκτήσει πρόσβαση στη συσκευή σας.</string>
+    <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_later">Αργότερα</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_set_up_now">Ρύθμιση τώρα</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
+    <string name="logins_biometric_prompt_message_pin">Ξεκλειδώστε τη συσκευή σας</string>
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">Ζουμ σε όλες τις ιστοσελίδες</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">Ενεργοποιήστε το για χρήση χειρονομιών ζουμ, ακόμη και σε ιστοσελίδες που δεν τις επιτρέπουν.</string>
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Όνομα (Α-Ω)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Τελευταία χρήση</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Ταξινόμηση μενού σύνδεσης</string>
+
+    <!-- Title of the Add search engine screen -->
+    <string name="search_engine_add_custom_search_engine_title">Προσθήκη μηχανής αναζήτησης</string>
+    <!-- Title of the Edit search engine screen -->
+    <string name="search_engine_edit_custom_search_engine_title">Επεξεργασία μηχανής αναζήτησης</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
+    <string name="search_engine_add_button_content_description">Προσθήκη</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Αποθήκευση</string>
+    <!-- Text for the menu button to edit a search engine -->
+    <string name="search_engine_edit">Επεξεργασία</string>
+    <!-- Text for the menu button to delete a search engine -->
+    <string name="search_engine_delete">Διαγραφή</string>
+
+    <!-- Text for the button to create a custom search engine on the Add search engine screen -->
+    <string name="search_add_custom_engine_label_other">Άλλο</string>
+    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
+    <string name="search_add_custom_engine_name_hint">Όνομα</string>
+
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint">Νήμα αναζήτησης προς χρήση</string>
+    <!-- Description text for the Search String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_search_string_example">Αντικαταστήστε το ερώτημα με “%s”. Παράδειγμα:\nhttps://www.google.com/search?q=%s</string>
+    <!-- Text for the button to learn more about adding a custom search engine -->
+    <string name="search_add_custom_engine_learn_more_label">Μάθετε περισσότερα</string>
+
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">Λεπτομέρειες προσαρμοσμένης μηχανής αναζήτησης</string>
+    <!-- Accessibility description for the 'Learn more' link -->
+    <string name="search_add_custom_engine_learn_more_description">Σύνδεσμος &quot;Μάθετε περισσότερα&quot;</string>
+
+    <!-- Text shown when a user leaves the name field empty -->
+    <string name="search_add_custom_engine_error_empty_name">Εισάγετε όνομα μηχανής αναζήτησης</string>
+    <!-- Text shown when a user tries to add a search engine that already exists -->
+    <string name="search_add_custom_engine_error_existing_name">Η μηχανή αναζήτησης με το όνομα “%s” υπάρχει ήδη.</string>
+    <!-- Text shown when a user leaves the search string field empty -->
+    <string name="search_add_custom_engine_error_empty_search_string">Εισάγετε νήμα αναζήτησης</string>
+    <!-- Text shown when a user leaves out the required template string -->
+    <string name="search_add_custom_engine_error_missing_template">Βεβαιωθείτε ότι το νήμα αναζήτησης συμφωνεί με την μορφή του παραδείγματος</string>
+    <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
+    <string name="search_add_custom_engine_error_cannot_reach">Σφάλμα σύνδεσης στο “%s”</string>
+
+    <!-- Text shown when a user creates a new search engine -->
+    <string name="search_add_custom_engine_success_message">Δημιουργήθηκε to %s</string>
+
+    <!-- Text shown when a user successfully edits a custom search engine -->
+    <string name="search_edit_custom_engine_success_message">Το %s αποθηκεύτηκε</string>
+    <!-- Text shown when a user successfully deletes a custom search engine -->
+    <string name="search_delete_search_engine_success_message">Το %s διαγράφηκε</string>
+
+    <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
+    <string name="migration_title">Καλώς ορίσατε στο νέο %s</string>
+    <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
+    <string name="migration_description">Σας περιμένει ένα πλήρως ανασχεδιασμένο πρόγραμμα περιήγησης, με βελτιωμένη απόδοση και λειτουργίες που θα σας βοηθήσουν να κάνετε περισσότερα στο διαδίκτυο.\n\nΠαρακαλούμε περιμένετε ενώ ενημερώνουμε το %s με το</string>
+    <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
+    <string name="migration_updating_app_button_text">Ενημέρωση του %s…</string>
+    <!-- Text on the enabled button. Placeholder replaced with app name-->
+    <string name="migration_update_app_button">Έναρξη του %s</string>
+    <!-- Accessibility description text for a completed migration item -->
+    <string name="migration_icon_description">Η μεταφορά ολοκληρώθηκε</string>
+    <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
+    <string name="migration_text_passwords">Κωδικοί πρόσβασης</string>
+
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">Για να το επιτρέψετε:</string>
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. Μεταβείτε στις Ρυθμίσεις Android</string>
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Πατήστε το <b>Δικαιώματα</b>]]></string>
+    <!-- Third step for the allowing a permission (Fore example: Camera) -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Ενεργοποιήστε το <b>%1$s</b>]]></string>
+
+    <!-- Label that indicates a site is using a secure connection -->
+    <string name="quick_settings_sheet_secure_connection">Ασφαλής σύνδεση</string>
+    <!-- Label that indicates a site is using a insecure connection -->
+    <string name="quick_settings_sheet_insecure_connection">Μη ασφαλής σύνδεση</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
+    <string name="confirm_clear_permissions_on_all_sites">Θέλετε σίγουρα να διαγράψετε όλα τα δικαιώματα σε όλες τις ιστοσελίδες;</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
+    <string name="confirm_clear_permissions_site">Θέλετε σίγουρα να διαγράψετε όλα τα δικαιώματα για αυτή την ιστοσελίδα;</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
+    <string name="confirm_clear_permission_site">Θέλετε σίγουρα να διαγράψετε αυτό το δικαίωμα για αυτή την ιστοσελίδα;</string>
+    <!-- label shown when there are not site exceptions to show in the site exception settings -->
+    <string name="no_site_exceptions">Καμία εξαίρεση ιστοσελίδων</string>
+    <!-- Label for the Pocket default top site -->
+    <string name="pocket_top_articles">Κορυφαία άρθρα</string>
+    <!-- Bookmark deletion confirmation -->
+    <string name="bookmark_deletion_confirmation">Θέλετε σίγουρα να διαγράψετε αυτό το σελιδοδείκτη;</string>
+    <!-- Browser menu button that adds a top site to the home fragment -->
+    <string name="browser_menu_add_to_top_sites">Προσθήκη στις κορυφαίες σελίδες</string>
+    <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
+     the certificate authority that verified the ticket-->
+    <string name="certificate_info_verified_by">Επαλήθευση από: %1$s</string>
+    <!-- Login overflow menu delete button -->
+    <string name="login_menu_delete_button">Διαγραφή</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Επεξεργασία</string>
+    <!-- Message in delete confirmation dialog for logins -->
+    <string name="login_deletion_confirmation">Θέλετε σίγουρα να διαγράψετε αυτή τη σύνδεση;</string>
+    <!-- Positive action of a dialog asking to delete  -->
+    <string name="dialog_delete_positive">Διαγραφή</string>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Επιλογές σύνδεσης</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Το επεξεργάσιμο πεδίο κειμένου της διεύθυνσης ιστού της σύνδεσης.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Το επεξεργάσιμο πεδίο κειμένου για το όνομα χρήστη της σύνδεσης.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Το επεξεργάσιμο πεδίο κειμένου για τον κωδικό πρόσβασης της σύνδεσης.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Αποθήκευση αλλαγών στη σύνδεση.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Απόρριψη αλλαγών</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Επεξεργασία</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Απαιτείται κωδικός πρόσβασης</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Φωνητική αναζήτηση</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Μιλήστε τώρα</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Υπάρχει ήδη σύνδεση με αυτό το όνομα χρήστη</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Συνδέστε μια άλλη συσκευή.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Παρακαλούμε επαληθεύστε ξανά την ταυτότητά σας.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Παρακαλούμε ενεργοποιήστε το συγχρονισμό καρτελών.</string>
+
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Δεν έχετε καμία άλλη καρτέλα ανοικτή στο Firefox σε άλλες σας συσκευές.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Δείτε μια λίστα καρτελών από τις άλλες συσκευές σας.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Σύνδεση στο Sync</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Καμία ανοικτή καρτέλα</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Έχετε φτάσει το ανώτατο όριο κορυφαίων ιστοσελίδων</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Για να προσθέσετε μια νέα κορυφαία σελίδα, αφαιρέστε μια υπάρχουσα. Πατήστε παρατεταμένα τη σελίδα και επιλέξτε &quot;Αφαίρεση&quot;.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">OK, το κατάλαβα</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Εμφάνιση ιστοσελίδων με τις περισσότερες επισκέψεις</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Αφαίρεση</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Αξιοποιήστε στο έπακρο το %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Συλλέξτε όλα όσα έχουν σημασία για εσάς</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Ομαδοποιήστε παρόμοιες αναζητήσεις, σελίδες και καρτέλες για γρήγορη πρόσβαση αργότερα.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Έχετε συνδεθεί ως %s σε άλλο πρόγραμμα περιήγησης Firefox σε αυτό το τηλέφωνο. Θέλετε να συνδεθείτε με αυτό το λογαριασμό;</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Μπορείτε εύκολα να προσθέσετε αυτή την ιστοσελίδα στην αρχική οθόνη για άμεση πρόσβαση και ταχύτερη περιήγηση, σαν να ήταν εφαρμογή.</string>
+
+    </resources>

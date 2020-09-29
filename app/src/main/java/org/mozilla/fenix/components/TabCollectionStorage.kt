@@ -5,8 +5,13 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import android.os.StrictMode
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.paging.DataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.tab.collections.Tab
@@ -14,14 +19,17 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.TabCollectionStorage
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import org.mozilla.fenix.ext.urlToTrimmedHost
+import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
-import org.mozilla.fenix.test.Mockable
+import org.mozilla.fenix.utils.Mockable
 
 @Mockable
 class TabCollectionStorage(
     private val context: Context,
     private val sessionManager: SessionManager,
+    strictMode: StrictModeManager,
     private val delegate: Observable<Observer> = ObserverRegistry()
 ) : Observable<org.mozilla.fenix.components.TabCollectionStorage.Observer> by delegate {
 
@@ -45,55 +53,54 @@ class TabCollectionStorage(
         fun onCollectionRenamed(tabCollection: TabCollection, title: String) = Unit
     }
 
+    private val ioScope = CoroutineScope(Dispatchers.IO)
     var cachedTabCollections = listOf<TabCollection>()
 
     private val collectionStorage by lazy {
-        TabCollectionStorage(context, sessionManager)
+        strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            TabCollectionStorage(context, sessionManager)
+        }
     }
 
-    fun createCollection(title: String, sessions: List<Session>) {
+    suspend fun createCollection(title: String, sessions: List<Session>) = ioScope.launch {
         collectionStorage.createCollection(title, sessions)
         notifyObservers { onCollectionCreated(title, sessions) }
-    }
+    }.join()
 
-    fun addTabsToCollection(tabCollection: TabCollection, sessions: List<Session>) {
+    suspend fun addTabsToCollection(tabCollection: TabCollection, sessions: List<Session>) = ioScope.launch {
         collectionStorage.addTabsToCollection(tabCollection, sessions)
         notifyObservers { onTabsAdded(tabCollection, sessions) }
-    }
+    }.join()
 
     fun getTabCollectionsCount(): Int {
         return collectionStorage.getTabCollectionsCount()
     }
 
-    fun getCollections(limit: Int = 20): LiveData<List<TabCollection>> {
-        return collectionStorage.getCollections(limit)
+    fun getCollections(): LiveData<List<TabCollection>> {
+        return collectionStorage.getCollections().asLiveData()
     }
 
     fun getCollectionsPaged(): DataSource.Factory<Int, TabCollection> {
         return collectionStorage.getCollectionsPaged()
     }
 
-    fun removeCollection(tabCollection: TabCollection) {
+    suspend fun removeCollection(tabCollection: TabCollection) = ioScope.launch {
         collectionStorage.removeCollection(tabCollection)
-    }
+    }.join()
 
-    fun removeTabFromCollection(tabCollection: TabCollection, tab: Tab) {
-        if (tabCollection.tabs.size == 1) {
-            removeCollection(tabCollection)
-        } else {
-            collectionStorage.removeTabFromCollection(tabCollection, tab)
-        }
-    }
+    suspend fun removeTabFromCollection(tabCollection: TabCollection, tab: Tab) = ioScope.launch {
+        collectionStorage.removeTabFromCollection(tabCollection, tab)
+    }.join()
 
-    fun renameCollection(tabCollection: TabCollection, title: String) {
+    suspend fun renameCollection(tabCollection: TabCollection, title: String) = ioScope.launch {
         collectionStorage.renameCollection(tabCollection, title)
         notifyObservers { onCollectionRenamed(tabCollection, title) }
-    }
+    }.join()
 }
 
 fun TabCollection.description(context: Context): String {
     return this.tabs
-        .map { it.url.urlToTrimmedHost(context) }
+        .map { it.url.toShortUrl(context.components.publicSuffixList) }
         .map {
             if (it.length > CollectionViewHolder.maxTitleLength) {
                 it.substring(
@@ -103,5 +110,7 @@ fun TabCollection.description(context: Context): String {
             } else {
                 it
             }
-        }.joinToString(", ")
+        }
+        .distinct()
+        .joinToString(", ")
 }

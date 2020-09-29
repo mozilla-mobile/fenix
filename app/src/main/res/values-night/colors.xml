@@ -2,17 +2,19 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Normal theme colors for dark mode -->
     <color name="primary_text_normal_theme">@color/primary_text_dark_theme</color>
     <color name="secondary_text_normal_theme">@color/secondary_text_dark_theme</color>
     <color name="contrast_text_normal_theme">@color/contrast_text_dark_theme</color>
+    <color name="caption_text_normal_theme">@color/caption_text_dark_theme</color>
     <color name="foundation_normal_theme">@color/foundation_dark_theme</color>
     <color name="above_normal_theme">@color/above_dark_theme</color>
     <color name="inset_normal_theme">@color/inset_dark_theme</color>
     <color name="accent_normal_theme">@color/accent_dark_theme</color>
     <color name="accent_bright_normal_theme">@color/accent_bright_dark_theme</color>
     <color name="accent_high_contrast_normal_theme">@color/accent_high_contrast_dark_theme</color>
+    <color name="about_link_normal_theme">@color/about_link_dark_theme</color>
     <color name="tab_ring_normal_theme">@color/tab_ring_dark_theme</color>
     <color name="neutral_normal_theme">@color/neutral_dark_theme</color>
     <color name="neutral_faded_normal_theme">@color/neutral_faded_dark_theme</color>
@@ -29,6 +31,55 @@
     <color name="toolbar_center_gradient_normal_theme">@color/toolbar_center_gradient_dark_theme</color>
     <color name="toolbar_end_gradient_normal_theme">@color/toolbar_end_gradient_dark_theme</color>
     <color name="toolbar_divider_color_normal_theme">@color/toolbar_divider_color_dark_theme</color>
+    <color name="fill_link_from_clipboard_normal_theme">@color/accent_on_dark_background_normal_theme</color>
+    <color name="menu_category_normal_theme">@color/primary_text_normal_theme</color>
+    <color name="sync_disconnected_icon_fill_normal_theme">@color/sync_disconnected_icon_fill_dark_theme</color>
+    <color name="sync_disconnected_background_normal_theme">@color/sync_disconnected_background_dark_theme</color>
+    <color name="swipe_delete_background_normal_theme">@color/swipe_delete_background_dark_theme</color>
+    <color name="onboarding_card_background_start_gradient_normal_theme">@color/onboarding_card_background_start_gradient_dark_theme</color>
+    <color name="onboarding_card_background_end_gradient_normal_theme">@color/onboarding_card_background_end_gradient_dark_theme</color>
+    <color name="onboarding_card_button_normal_theme">@color/onboarding_card_button_dark_theme</color>
+    <color name="onboarding_card_finish_button_normal_theme">@color/onboarding_card_finish_button_dark_theme</color>
+    <color name="onboarding_finish_button_text_normal_theme">@color/primary_text_dark_theme</color>
+    <color name="onboarding_illustration_selected_normal_theme">@color/onboarding_illustration_selected_dark_theme</color>
+    <color name="onboarding_illustration_deselected_normal_theme">@color/onboarding_illustration_deselected_dark_theme</color>
+    <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/add_on_private_browsing_exterior_circle_background_dark_theme</color>
+    <color name="add_on_private_browsing_interior_icon_background_normal_theme">@color/add_on_private_browsing_interior_icon_background_dark_theme</color>
+    <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/prompt_login_edit_text_cursor_color_dark_theme</color>
+    <color name="readermode_start_gradient_normal_theme">#C689FF</color>
+    <color name="readermode_end_gradient_normal_theme">#00B3F4</color>
+    <color name="search_suggestion_indicator_icon_color_normal_theme">@color/search_suggestion_indicator_icon_color_dark_theme</color>
+    <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</color>
+    <color name="select_login_header_normal_theme">@color/accent_high_contrast_dark_theme</color>
+
+    <color name="mozac_widget_favicon_background_normal_theme">@color/mozac_widget_favicon_background_dark_theme</color>
+    <color name="mozac_widget_favicon_border_normal_theme">@color/mozac_widget_favicon_border_dark_theme</color>
+
+    <!-- Tab tray -->
+    <color name="tab_tray_item_text_normal_theme">@color/tab_tray_item_text_dark_theme</color>
+    <color name="tab_tray_item_url_normal_theme">@color/tab_tray_item_url_dark_theme</color>
+    <color name="tab_tray_item_background_normal_theme">@color/tab_tray_item_background_dark_theme</color>
+    <color name="tab_tray_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
+    <color name="tab_tray_toolbar_background_normal_theme">@color/tab_tray_toolbar_background_dark_theme</color>
+    <color name="tab_tray_item_divider_normal_theme">@color/tab_tray_item_divider_dark_theme</color>
+    <color name="tab_tray_item_media_background_normal_theme">@color/tab_tray_item_media_background_dark_theme</color>
+    <color name="tab_tray_heading_icon_normal_theme">@color/tab_tray_heading_icon_dark_theme</color>
+    <color name="tab_tray_heading_icon_inactive_normal_theme">@color/tab_tray_heading_icon_inactive_dark_theme</color>
+    <color name="tab_tray_heading_icon_menu_normal_theme">@color/tab_tray_heading_icon_menu_dark_theme</color>
+    <color name="tab_tray_item_thumbnail_background_normal_theme">@color/tab_tray_item_thumbnail_background_dark_theme</color>
+    <color name="tab_tray_item_thumbnail_icon_normal_theme">@color/tab_tray_item_thumbnail_icon_dark_theme</color>
+    <color name="tab_tray_selected_mask_normal_theme">@color/tab_tray_selected_mask_dark_theme</color>
+
+    <!-- Tab History -->
+    <color name="tab_history_item_selected_background_normal_theme">@color/tab_tray_item_selected_background_dark_theme</color>
+
+    <!--Top site colors -->
+    <color name="top_site_title_text">@color/top_site_title_text_dark_theme</color>
+    <color name="top_site_pager_dot">#3A3944</color>
+    <color name="top_site_pager_dot_selected">#5B5B66</color>
+
+    <!-- Synced tabs colors-->
+    <color name="synced_tabs_separator">@color/synced_tabs_separator_dark_theme</color>
 
     <!-- Collection icons-->
     <color name="collection_icon_color_violet">@color/collection_icon_color_violet_dark_theme</color>
@@ -37,6 +88,14 @@
     <color name="collection_icon_color_green">@color/collection_icon_color_green_dark_theme</color>
     <color name="collection_icon_color_yellow">@color/collection_icon_color_yellow_dark_theme</color>
 
+    <!-- Search Widget -->
+    <color name="search_widget_background">@color/inset_dark_theme</color>
+    <color name="search_widget_mic_fill_color">@color/primary_text_dark_theme</color>
+    <color name="search_widget_text">@color/primary_text_dark_theme</color>
+
     <!-- Reader View colors -->
     <color name="mozac_feature_readerview_text_color">@color/primary_text_dark_theme</color>
+
+    <!-- TextInputLayout default Error Color -->
+    <color name="design_error" tools:override="true">@color/destructive_dark_theme</color>
 </resources>

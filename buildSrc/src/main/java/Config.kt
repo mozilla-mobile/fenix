@@ -13,9 +13,9 @@ import java.util.Locale
 
 object Config {
     // Synchronized build configuration for all modules
-    const val compileSdkVersion = 28
+    const val compileSdkVersion = 29
     const val minSdkVersion = 21
-    const val targetSdkVersion = 28
+    const val targetSdkVersion = 29
 
     @JvmStatic
     private fun generateDebugVersionName(): String {
@@ -29,9 +29,10 @@ object Config {
 
     @JvmStatic
     fun releaseVersionName(project: Project): String {
-        // This function is called in the configuration phase, before gradle knows which variants we'll use.
-        // So, validation that "versionName" has been set happens elsewhere (at time of writing, we staple
-        // validation to tasks of type "AppPreBuildTask"
+        // Note: release builds must have the `versionName` set. However, the gradle ecosystem makes this hard to
+        // ergonomically validate (sometimes IDEs default to a release variant and mysteriously fail due to the
+        // validation, sometimes devs just need a release build and specifying project properties is annoying in IDEs),
+        // so instead we'll allow the `versionName` to silently default to an empty string.
         return if (project.hasProperty("versionName")) project.property("versionName") as String else ""
     }
 
@@ -44,8 +45,8 @@ object Config {
     }
 
     private val fennecBaseVersionCode by lazy {
-        val format = SimpleDateFormat("YYYYMMDDHHMMSS", Locale.US)
-        val cutoff = format.parse("20150801000000")
+        val format = SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
+        val cutoff = format.parse("20141228000000")
         val build = Date()
 
         Math.floor((build.time - cutoff.time) / (1000.0 * 60.0 * 60.0)).toInt()
@@ -55,6 +56,12 @@ object Config {
      * Generates a versionCode that follows the same rules like legacy Fennec builds.
      * Adapted from:
      * https://searchfox.org/mozilla-central/rev/34cb8d0a2a324043bcfc2c56f37b31abe7fb23a8/python/mozbuild/mozbuild/android_version_code.py
+     *
+     * There is a discrepancy between the epoch date used here (20141228)
+     * and the epoch used in Fennec (20150801) for historical reasons. We keep
+     * this discrepancy to avoid having Fenix version codes decrease.
+     * Note that the original Fennec implementation also had an inconsistency in
+     * the documented epoch date (20150901) and the effective epoch date (20150801).
      */
     @JvmStatic
     fun generateFennecVersionCode(abi: String): Int {
@@ -68,7 +75,7 @@ object Config {
         // 0111 1000 0010 tttt tttt tttt tttt txpg
         //
         // The 17 bits labelled 't' represent the number of hours since midnight on
-        // September 1, 2015.  (2015090100 in YYYYMMMDDHH format.)  This yields a
+        // December 28, 2014.  (2014122800 in yyyyMMddHH format.)  This yields a
         // little under 15 years worth of hourly build identifiers, since 2**17 / (366
         //         * 24) =~ 14.92.
         //

@@ -4,29 +4,29 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
+import android.content.DialogInterface
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.feature.sitepermissions.SitePermissions
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.PhoneFeature.CAMERA
 import org.mozilla.fenix.settings.PhoneFeature.LOCATION
 import org.mozilla.fenix.settings.PhoneFeature.MICROPHONE
 import org.mozilla.fenix.settings.PhoneFeature.NOTIFICATION
+import org.mozilla.fenix.settings.requirePreference
 
-@SuppressWarnings("TooManyFunctions")
 class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     private lateinit var sitePermissions: SitePermissions
 
@@ -44,38 +44,25 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).apply {
-            title = sitePermissions.origin
-            supportActionBar?.show()
-        }
-        lifecycleScope.launch(IO) {
-            val context = requireContext()
+        showToolbar(sitePermissions.origin)
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             sitePermissions =
-                requireNotNull(context.components.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
-            launch(Main) {
-                bindCategoryPhoneFeatures()
-            }
+                requireNotNull(requireComponents.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
+            bindCategoryPhoneFeatures()
         }
     }
 
     private fun bindCategoryPhoneFeatures() {
-        val context = requireContext()
-
-        val cameraAction = CAMERA.getActionLabel(context, sitePermissions)
-        val locationAction = LOCATION.getActionLabel(context, sitePermissions)
-        val microphoneAction = MICROPHONE.getActionLabel(context, sitePermissions)
-        val notificationAction = NOTIFICATION.getActionLabel(context, sitePermissions)
-
-        initPhoneFeature(CAMERA, cameraAction)
-        initPhoneFeature(LOCATION, locationAction)
-        initPhoneFeature(MICROPHONE, microphoneAction)
-        initPhoneFeature(NOTIFICATION, notificationAction)
+        initPhoneFeature(CAMERA)
+        initPhoneFeature(LOCATION)
+        initPhoneFeature(MICROPHONE)
+        initPhoneFeature(NOTIFICATION)
         bindClearPermissionsButton()
     }
 
-    private fun initPhoneFeature(phoneFeature: PhoneFeature, summary: String) {
-        val keyPreference = phoneFeature.getPreferenceKey(requireContext())
-        val cameraPhoneFeatures: Preference = requireNotNull(findPreference(keyPreference))
+    private fun initPhoneFeature(phoneFeature: PhoneFeature) {
+        val summary = phoneFeature.getActionLabel(requireContext(), sitePermissions)
+        val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
         cameraPhoneFeatures.summary = summary
 
         cameraPhoneFeatures.onPreferenceClickListener = Preference.OnPreferenceClickListener {
@@ -85,18 +72,19 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindClearPermissionsButton() {
-        val keyPreference = getPreferenceKey(R.string.pref_key_exceptions_clear_site_permissions)
-        val button: Preference = requireNotNull(findPreference(keyPreference))
+        val button: Preference = requirePreference(R.string.pref_key_exceptions_clear_site_permissions)
 
         button.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            requireContext().alert(
-                R.string.confirm_clear_permissions_site,
-                R.string.clear_permissions
-            ) {
-                yesButton {
+            AlertDialog.Builder(requireContext()).apply {
+                setMessage(R.string.confirm_clear_permissions_site)
+                setTitle(R.string.clear_permissions)
+                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
                     clearSitePermissions()
+                    dialog.dismiss()
                 }
-                noButton { }
+                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
             }.show()
 
             true
@@ -104,10 +92,11 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     }
 
     private fun clearSitePermissions() {
-        lifecycleScope.launch(IO) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
             requireContext().components.core.permissionStorage.deleteSitePermissions(sitePermissions)
-            launch(Main) {
-                Navigation.findNavController(requireNotNull(view)).popBackStack()
+            withContext(Main) {
+                requireView().findNavController().popBackStack()
+                requireContext().components.tryReloadTabBy(sitePermissions.origin)
             }
         }
     }
@@ -115,9 +104,9 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     private fun navigateToPhoneFeature(phoneFeature: PhoneFeature) {
         val directions =
             SitePermissionsDetailsExceptionsFragmentDirections.actionSitePermissionsToExceptionsToManagePhoneFeature(
-                phoneFeatureId = phoneFeature.id,
+                phoneFeature = phoneFeature,
                 sitePermissions = sitePermissions
             )
-        Navigation.findNavController(view!!).navigate(directions)
+        requireView().findNavController().navigate(directions)
     }
 }

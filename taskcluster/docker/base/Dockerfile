@@ -19,12 +19,10 @@ WORKDIR /builds/worker/
 #-- Configuration -----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 
-ENV ANDROID_SDK_VERSION='3859397' \
-    ANDROID_SDK_ROOT='/builds/worker/android-sdk-linux' \
+ENV CURL='curl --location --retry 5' \
     GRADLE_OPTS='-Xmx4096m -Dorg.gradle.daemon=false' \
     LANG='en_US.UTF-8' \
-    TERM='dumb' \
-    SDK_ZIP_LOCATION="$HOME/sdk-tools-linux.zip"
+    TERM='dumb'
 
 #----------------------------------------------------------------------------------------------------------------------
 #-- System ------------------------------------------------------------------------------------------------------------
@@ -42,6 +40,7 @@ RUN apt-get update -qq \
                           python \
                           python-pip \
                           python3 \
+                          python3-yaml \
                           locales \
                           unzip \
 			  mercurial \
@@ -52,18 +51,11 @@ RUN pip install taskcluster
 
 RUN locale-gen "$LANG"
 
-RUN curl -o "$SDK_ZIP_LOCATION" "https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_VERSION}.zip" \
-    && unzip -d "$ANDROID_SDK_ROOT" "$SDK_ZIP_LOCATION" \
-    && rm "$SDK_ZIP_LOCATION" \
-    && yes | "${ANDROID_SDK_ROOT}/tools/bin/sdkmanager" --licenses \
-    && chown -R worker:worker "$ANDROID_SDK_ROOT"
-
-
 # %include-run-task
 
 ENV SHELL=/bin/bash \
     HOME=/builds/worker \
-    PATH=/builds/worker/.local/bin:$PATH
+    PATH="/builds/worker/.local/bin:$PATH"
 
 
 VOLUME /builds/worker/checkouts

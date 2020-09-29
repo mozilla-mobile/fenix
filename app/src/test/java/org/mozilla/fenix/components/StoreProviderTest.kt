@@ -5,29 +5,23 @@
 package org.mozilla.fenix.components
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import mozilla.components.support.test.robolectric.createAddedTestFragment
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@ObsoleteCoroutinesApi
-@RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class StoreProviderTest {
 
     private class BasicState : State
 
-    private val basicStore = Store(BasicState()) { state, _: Action -> state }
+    private val basicStore = Store(BasicState(), { state, _: Action -> state })
 
     @Test
     fun `factory returns store provider`() {
@@ -46,18 +40,7 @@ class StoreProviderTest {
 
     @Test
     fun `get returns store`() {
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java)
-            .create()
-            .start()
-            .resume()
-            .get()
-
-        val fragment = Fragment()
-
-        activity.supportFragmentManager.beginTransaction().apply {
-            add(fragment, "test")
-            commitNow()
-        }
+        val fragment = createAddedTestFragment { Fragment() }
 
         val store = StoreProvider.get(fragment) { basicStore }
         assertEquals(basicStore, store)
@@ -65,18 +48,7 @@ class StoreProviderTest {
 
     @Test
     fun `get only calls createStore if needed`() {
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java)
-            .create()
-            .start()
-            .resume()
-            .get()
-
-        val fragment = Fragment()
-
-        activity.supportFragmentManager.beginTransaction().apply {
-            add(fragment, "test")
-            commitNow()
-        }
+        val fragment = createAddedTestFragment { Fragment() }
 
         var createCalled = false
         val createStore = {

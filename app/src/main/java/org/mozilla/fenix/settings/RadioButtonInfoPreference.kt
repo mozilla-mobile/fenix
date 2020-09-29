@@ -11,7 +11,6 @@ import androidx.core.content.res.TypedArrayUtils
 import androidx.core.content.withStyledAttributes
 import androidx.preference.PreferenceViewHolder
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.increaseTapArea
 
 class RadioButtonInfoPreference @JvmOverloads constructor(
     context: Context,
@@ -19,6 +18,7 @@ class RadioButtonInfoPreference @JvmOverloads constructor(
 ) : RadioButtonPreference(context, attrs) {
     private var infoClickListener: (() -> Unit)? = null
     private var infoView: ImageView? = null
+    var contentDescription: String? = null
 
     fun onInfoClickListener(listener: (() -> Unit)) {
         infoClickListener = listener
@@ -60,14 +60,10 @@ class RadioButtonInfoPreference @JvmOverloads constructor(
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         infoView = holder.findViewById(R.id.info_button) as ImageView
-        infoView?.increaseTapArea(EXTRA_TAP_AREA)
         infoView?.setOnClickListener {
             infoClickListener?.invoke()
         }
         infoView?.alpha = if (isEnabled) FULL_ALPHA else HALF_ALPHA
-    }
-
-    companion object {
-        const val EXTRA_TAP_AREA = 22
+        contentDescription?.let { infoView?.contentDescription = it }
     }
 }

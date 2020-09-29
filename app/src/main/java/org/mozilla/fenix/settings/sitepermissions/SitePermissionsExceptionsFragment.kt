@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -23,13 +24,10 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import mozilla.components.feature.sitepermissions.SitePermissions
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
@@ -37,19 +35,15 @@ import org.mozilla.fenix.ext.nav
 
 private const val MAX_ITEMS_PER_PAGE = 50
 
-@SuppressWarnings("TooManyFunctions")
-class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener {
+class SitePermissionsExceptionsFragment :
+    Fragment(R.layout.fragment_site_permissions_exceptions), View.OnClickListener {
     private lateinit var emptyContainerMessage: View
     private lateinit var recyclerView: RecyclerView
     private lateinit var clearButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_site_permissions_exceptions, container, false)
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
     }
 
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
@@ -68,7 +62,7 @@ class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener {
         val adapter = ExceptionsAdapter(this)
         val liveData = LivePagedListBuilder(sitePermissionsPaged, MAX_ITEMS_PER_PAGE).build()
 
-        liveData.observe(this, Observer<PagedList<SitePermissions>> {
+        liveData.observe(viewLifecycleOwner, Observer<PagedList<SitePermissions>> {
             if (it.isEmpty()) {
                 showEmptyListMessage()
             } else {
@@ -98,29 +92,32 @@ class SitePermissionsExceptionsFragment : Fragment(), View.OnClickListener {
     private fun bindClearButton(rootView: View) {
         clearButton = rootView.findViewById(R.id.delete_all_site_permissions_button)
         clearButton.setOnClickListener {
-            requireContext().alert(
-                R.string.confirm_clear_permissions_on_all_sites,
-                R.string.clear_permissions
-            ) {
-                yesButton {
+            AlertDialog.Builder(requireContext()).apply {
+                setMessage(R.string.confirm_clear_permissions_on_all_sites)
+                setTitle(R.string.clear_permissions)
+                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
                     deleteAllSitePermissions()
+                    dialog.dismiss()
                 }
-                noButton { }
+                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
             }.show()
         }
     }
 
     private fun deleteAllSitePermissions() {
-        lifecycleScope.launch(IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             requireContext().components.core.permissionStorage.deleteAllSitePermissions()
-            launch(Main) {
-                showEmptyListMessage()
-            }
+
+            showEmptyListMessage()
+            // Reload the selected session.
+            requireContext().components.useCases.sessionUseCases.reload()
         }
     }
 
-    override fun onClick(view: View?) {
-        val sitePermissions = view?.tag as SitePermissions
+    override fun onClick(view: View) {
+        val sitePermissions = view.tag as SitePermissions
         val directions = SitePermissionsExceptionsFragmentDirections
             .actionSitePermissionsToExceptionsToSitePermissionsDetails(sitePermissions)
         nav(R.id.sitePermissionsExceptionsFragment, directions)

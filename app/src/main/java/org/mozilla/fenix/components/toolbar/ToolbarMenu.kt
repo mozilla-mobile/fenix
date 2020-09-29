@@ -9,29 +9,30 @@ import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 
 interface ToolbarMenu {
     sealed class Item {
-        object Help : Item()
         object Settings : Item()
-        object Library : Item()
         data class RequestDesktop(val isChecked: Boolean) : Item()
         object FindInPage : Item()
-        object NewPrivateTab : Item()
-        object NewTab : Item()
         object Share : Item()
-        object Back : Item()
-        object Forward : Item()
-        object Reload : Item()
+        data class Back(val viewHistory: Boolean) : Item()
+        data class Forward(val viewHistory: Boolean) : Item()
+        data class Reload(val bypassCache: Boolean) : Item()
         object Stop : Item()
-        object ReportIssue : Item()
         object OpenInFenix : Item()
         object SaveToCollection : Item()
+        object AddToTopSites : Item()
+        object InstallToHomeScreen : Item()
         object AddToHomeScreen : Item()
+        object SyncedTabs : Item()
+        object AddonsManager : Item()
         object Quit : Item()
+        object OpenInApp : Item()
+        object Bookmark : Item()
+        object ReaderModeAppearance : Item()
+        object Bookmarks : Item()
+        object History : Item()
+        object Downloads : Item()
     }
 
     val menuBuilder: BrowserMenuBuilder
     val menuToolbar: BrowserMenuItemToolbar
-
-    companion object {
-        const val CAPTION_TEXT_SIZE = 12f
-    }
 }

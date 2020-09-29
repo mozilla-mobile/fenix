@@ -11,157 +11,195 @@
     android:background="?foundation"
     tools:context=".search.SearchFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/toolbar_wrapper"
+    <mozilla.components.browser.toolbar.BrowserToolbar
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/search_url_background"
-        android:outlineProvider="paddedBounds"
-        android:transitionName="toolbar_wrapper_transition"
+        android:layout_height="@dimen/browser_toolbar_height"
+        android:background="@drawable/toolbar_background_top"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed"
+        app:browserToolbarClearColor="?primaryText"
+        app:browserToolbarInsecureColor="?primaryText"
+        app:browserToolbarMenuColor="?primaryText"
+        app:browserToolbarProgressBarGravity="bottom"
+        app:browserToolbarSecureColor="?primaryText"
+        app:browserToolbarTrackingProtectionAndSecurityIndicatorSeparatorColor="?toolbarDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/searchEngineIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/scrollView"
+        app:layout_constraintBottom_toBottomOf="@id/search_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:scrollbars="vertical">
 
-        <FrameLayout
-            android:id="@+id/toolbar_component_wrapper"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/searchEngineIcon"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/scrollable_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <mozilla.components.browser.awesomebar.BrowserAwesomeBar
+                xmlns:mozac="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/awesomeBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fadingEdge="horizontal"
+                android:fadingEdgeLength="40dp"
+                android:nestedScrollingEnabled="false"
+                android:requiresFadingEdge="vertical"
+                app:layout_constraintTop_toBottomOf="@id/search_engine_shortcut"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                mozac:awesomeBarDescriptionTextColor="?secondaryText"
+                mozac:awesomeBarTitleTextColor="?primaryText" />
+            <ViewStub
+                android:id="@+id/search_suggestions_onboarding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inflatedId="@id/search_suggestions_onboarding"
+                android:layout="@layout/search_suggestions_hint"
+                app:layout_constraintBottom_toTopOf="@id/awesomeBar_barrier"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:id="@+id/search_suggestions_onboarding_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?neutralFaded"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/search_suggestions_onboarding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fill_link_from_clipboard"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="8dp"
-        android:focusable="true"
-        android:clickable="true"
-        android:background="?selectableItemBackground"
-        android:paddingStart="20dp"
-        android:paddingEnd="8dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/toolbar_wrapper"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_wrapper"
-        app:layout_constraintStart_toStartOf="@id/toolbar_wrapper">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/fill_link_from_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/search_fragment_clipboard_item_height"
+                android:layout_marginStart="@dimen/search_fragment_clipboard_item_horizontal_margin"
+                android:layout_marginTop="@dimen/search_fragment_clipboard_item_vertical_margin"
+                android:layout_marginEnd="@dimen/search_fragment_clipboard_item_horizontal_margin"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/scrollable_area"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/scrollable_area">
 
-        <ImageView
-            android:id="@+id/link_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="?primaryText"
-            android:src="@drawable/ic_link"
-            android:importantForAccessibility="no"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+                <ImageView
+                    android:id="@+id/link_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    app:tint="?primaryText"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_link" />
 
-        <TextView
-            android:id="@+id/clipboard_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="15sp"
-            android:textColor="?primaryText"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/clipboard_url"
-            app:layout_constraintStart_toEndOf="@id/link_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            android:text="@string/awesomebar_clipboard_title"/>
+                <TextView
+                    android:id="@+id/clipboard_title"
+                    style="@style/SearchClipboardTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/search_fragment_clipboard_item_title_margin_start"
+                    android:text="@string/awesomebar_clipboard_title"
+                    app:layout_constraintBottom_toTopOf="@id/clipboard_url"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/link_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
-            android:id="@+id/clipboard_url"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="?accent"
-            android:textAppearance="@style/Subtitle12TextStyle"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintTop_toBottomOf="@id/clipboard_title"
-            app:layout_constraintStart_toStartOf="@id/clipboard_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/clipboard_url"
+                    style="@style/SearchClipboardUrlStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/clipboard_title"
+                    app:layout_constraintTop_toBottomOf="@id/clipboard_title"
+                    app:layout_constraintVertical_chainStyle="packed" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/divider_line"
-        android:layout_width="match_parent"
-        android:layout_height="1.5dp"
-        android:background="?neutralFaded"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toStartOf="@id/fill_link_from_clipboard"
-        app:layout_constraintEnd_toEndOf="@id/fill_link_from_clipboard"
-        app:layout_constraintTop_toBottomOf="@id/fill_link_from_clipboard" />
+            <View
+                android:id="@+id/divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="?neutralFaded"
+                app:layout_constraintEnd_toEndOf="@id/fill_link_from_clipboard"
+                app:layout_constraintStart_toStartOf="@id/fill_link_from_clipboard"
+                app:layout_constraintTop_toBottomOf="@id/fill_link_from_clipboard" />
 
-    <TextView
-        android:id="@+id/search_with_shortcuts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:fontFamily="Inter UI"
-        android:letterSpacing="0.15"
-        android:text="@string/search_shortcuts_search_with"
-        android:textAllCaps="true"
-        android:textColor="?secondaryText"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/toolbar_wrapper"
-        app:layout_constraintTop_toBottomOf="@id/fill_link_from_clipboard" />
+            <TextView
+                android:id="@+id/search_engine_shortcut"
+                style="@style/SearchEngineShortcutsLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/search_fragment_shortcuts_label_margin_horizontal"
+                android:layout_marginTop="@dimen/search_fragment_shortcuts_label_margin_vertical"
+                android:layout_marginEnd="@dimen/search_fragment_shortcuts_label_margin_horizontal"
+                android:visibility="gone"
+                android:text="@string/search_engines_search_with"
+                app:layout_constraintStart_toStartOf="@id/scrollable_area"
+                app:layout_constraintTop_toBottomOf="@id/awesomeBar_barrier"
+                tools:text="@string/search_engines_search_with" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/awesomeBar_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="fill_link_from_clipboard,search_engine_shortcut,search_suggestions_onboarding" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <View
         android:id="@+id/search_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?neutralFaded"
-        app:layout_constraintBottom_toTopOf="@id/pillWrapper"
+        app:layout_constraintBottom_toTopOf="@id/pill_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/pillWrapper"
+        android:id="@+id/pill_wrapper"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/search_fragment_pill_height"
         android:background="?foundation"
         android:orientation="horizontal"
-        android:paddingStart="20dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
+        android:paddingStart="@dimen/search_fragment_pill_padding_start"
+        android:paddingTop="@dimen/search_fragment_pill_padding_vertical"
+        android:paddingEnd="@dimen/search_fragment_pill_padding_end"
+        android:paddingBottom="@dimen/search_fragment_pill_padding_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ToggleButton
-            android:id="@+id/searchScanButton"
+            android:id="@+id/search_scan_button"
             style="@style/search_pill"
-            android:layout_marginEnd="8dp"
-            android:drawableStart="@drawable/ic_qr"
+            android:layout_marginEnd="@dimen/search_fragment_scan_button_margin_end"
             android:textOff="@string/search_scan_button"
-            android:textOn="@string/search_scan_button" />
+            android:textOn="@string/search_scan_button"
+            app:drawableStartCompat="@drawable/ic_qr" />
 
         <ToggleButton
-            android:id="@+id/searchShortcutsButton"
+            android:id="@+id/search_engines_shortcut_button"
             style="@style/search_pill"
-            android:drawableStart="@drawable/ic_search"
-            android:textOff="@string/search_shortcuts_button"
-            android:textOn="@string/search_shortcuts_button" />
+            android:textOff="@string/search_engine_button"
+            android:textOn="@string/search_engine_button"
+            app:drawableStartCompat="@drawable/ic_search" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,8 +16,10 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.settings
 
 class AdjustMetricsService(private val application: Application) : MetricsService {
+    override val type = MetricServiceType.Marketing
+
     override fun start() {
-        if ((BuildConfig.ADJUST_TOKEN.isNullOrEmpty())) {
+        if ((BuildConfig.ADJUST_TOKEN.isNullOrBlank())) {
             Log.i(LOGTAG, "No adjust token defined")
 
             if (Config.channel.isReleased) {
@@ -34,14 +36,30 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
             true
         )
 
+        val installationPing = FirstSessionPing(application)
+
         config.setOnAttributionChangedListener {
-            it.campaign?.let { campaign ->
-                application.settings().adjustCampaignId = campaign
+            if (!it.network.isNullOrEmpty()) {
+                application.applicationContext.settings().adjustNetwork =
+                    it.network
             }
+            if (!it.adgroup.isNullOrEmpty()) {
+                application.applicationContext.settings().adjustAdGroup =
+                    it.adgroup
+            }
+            if (!it.creative.isNullOrEmpty()) {
+                application.applicationContext.settings().adjustCreative =
+                    it.creative
+            }
+            if (!it.campaign.isNullOrEmpty()) {
+                application.applicationContext.settings().adjustCampaignId =
+                    it.campaign
+            }
+
+            installationPing.checkAndSend()
         }
 
         config.setLogLevel(LogLevel.SUPRESS)
-
         Adjust.onCreate(config)
         Adjust.setEnabled(true)
         application.registerActivityLifecycleCallbacks(AdjustLifecycleCallbacks())

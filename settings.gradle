@@ -1,18 +1,39 @@
-include ':app', ':architecture'
+include ':app'
+
+include ':mozilla-detekt-rules'
+include ':mozilla-lint-rules'
+def log(message) {
+    logger.lifecycle("[settings] ${message}")
+}
+
+def runCmd(cmd, workingDir, successMessage, captureStdout=true) {
+    def proc = cmd.execute(null, new File(workingDir))
+    def standardOutput = captureStdout ? new ByteArrayOutputStream() : System.out
+    proc.consumeProcessOutput(standardOutput, System.err)
+    proc.waitFor()
+
+    if (proc.exitValue() != 0) {
+        throw new GradleException("Process '${cmd}' finished with non-zero exit value ${proc.exitValue()}");
+    } else {
+        log(successMessage)
+    }
+    return captureStdout ? standardOutput : null
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Local Development overrides
 //////////////////////////////////////////////////////////////////////////
 
-Properties localProperties = null;
-String settingAppServicesPath = "substitutions.application-services.dir";
+Properties localProperties = null
+String settingAppServicesPath = "autoPublish.application-services.dir"
+String settingAndroidComponentsPath = "autoPublish.android-components.dir"
 
 if (file('local.properties').canRead()) {
     localProperties = new Properties()
     localProperties.load(file('local.properties').newDataInputStream())
-    logger.lifecycle('Local configuration: loaded local.properties')
+    log('Loaded local.properties')
 } else {
-    logger.lifecycle('Local configuration: absent local.properties; proceeding as normal.')
+    log('Missing local.properties; see https://github.com/mozilla-mobile/fenix/blob/master/README.md#local-properties-helpers for instructions.')
 }
 
 if (localProperties != null) {
@@ -20,12 +41,34 @@ if (localProperties != null) {
         gradle.ext.set("localProperties.${prop.key}", prop.value)
     }
 
-    String appServicesLocalPath = localProperties.getProperty(settingAppServicesPath);
+    String appServicesLocalPath = localProperties.getProperty(settingAppServicesPath)
 
     if (appServicesLocalPath != null) {
-        logger.lifecycle("Local configuration: substituting application-services modules from path: $appServicesLocalPath")
-        includeBuild(appServicesLocalPath)
+        log("Enabling automatic publication of application-services from: $appServicesLocalPath")
+        // Windows can't execute .py files directly, so we assume a "manually installed" python,
+        // which comes with a "py" launcher and respects the shebang line to specify the version.
+        def publishAppServicesCmd = [];
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            publishAppServicesCmd << "py";
+        }
+        publishAppServicesCmd << "./automation/publish_to_maven_local_if_modified.py";
+        runCmd(publishAppServicesCmd, appServicesLocalPath, "Published application-services for local development.", false)
     } else {
-        logger.lifecycle("Local configuration: application-services substitution path missing. Specify it via '$settingAppServicesPath' setting.")
+        log("Disabled auto-publication of application-services. Enable it by settings '$settingAppServicesPath' in local.properties")
+    }
+
+    String androidComponentsLocalPath = localProperties.getProperty(settingAndroidComponentsPath)
+
+    if (androidComponentsLocalPath != null) {
+        log("Enabling automatic publication of android-components from: $androidComponentsLocalPath")
+        // As above, hacks to execute .py files on Windows.
+        def publishAcCmd = [];
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            publishAcCmd << "py";
+        }
+        publishAcCmd << "./automation/publish_to_maven_local_if_modified.py";
+        runCmd(publishAcCmd, androidComponentsLocalPath, "Published android-components for local development.", false)
+    } else {
+        log("Disabled auto-publication of android-components. Enable it by settings '$settingAndroidComponentsPath' in local.properties")
     }
 }

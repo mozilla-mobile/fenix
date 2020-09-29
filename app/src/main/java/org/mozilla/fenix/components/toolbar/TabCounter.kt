@@ -11,56 +11,47 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.ViewTreeObserver
 import android.widget.RelativeLayout
+import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.mozac_ui_tabcounter_layout.view.*
-import mozilla.components.ui.tabcounter.R
+import org.mozilla.fenix.R
 import java.text.NumberFormat
 
-open class TabCounter @JvmOverloads constructor(
+class TabCounter @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : RelativeLayout(context, attrs, defStyle) {
 
     private val animationSet: AnimatorSet
-    private var count: Int = 0
-    private var currentTextRatio: Float = 0.toFloat()
 
     init {
         val inflater = LayoutInflater.from(context)
         inflater.inflate(R.layout.mozac_ui_tabcounter_layout, this)
 
-        counter_text.text = DEFAULT_TABS_COUNTER_TEXT
-        val shiftThreeDp = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, TWO_DIGIT_PADDING, context.resources.displayMetrics
-        ).toInt()
-        counter_text.setPadding(0, shiftThreeDp, shiftThreeDp, 0)
+        // This is needed because without this counter box will be empty.
+        setCount(INTERNAL_COUNT)
 
         animationSet = createAnimatorSet()
     }
 
+    private fun updateContentDescription(count: Int) {
+        counter_root.contentDescription = if (count == 1) {
+            context?.getString(R.string.open_tab_tray_single)
+        } else {
+            context?.getString(R.string.open_tab_tray_plural, count.toString())
+        }
+    }
+
     fun setCountWithAnimation(count: Int) {
-        // Don't animate from initial state.
-        if (this.count == 0) {
-            setCount(count)
-            return
+        setCount(count)
+
+        // No need to animate on these cases.
+        when {
+            INTERNAL_COUNT == 0 -> return // Initial state.
+            INTERNAL_COUNT == count -> return // There isn't any tab added or removed.
+            INTERNAL_COUNT > MAX_VISIBLE_TABS -> return // There are still over MAX_VISIBLE_TABS tabs open.
         }
-
-        if (this.count == count) {
-            return
-        }
-
-        // Don't animate if there are still over MAX_VISIBLE_TABS tabs open.
-        if (this.count > MAX_VISIBLE_TABS && count > MAX_VISIBLE_TABS) {
-            this.count = count
-            return
-        }
-
-        adjustTextSize(count)
-
-        counter_text.text = formatForDisplay(count)
-        this.count = count
 
         // Cancel previous animations if necessary.
         if (animationSet.isRunning) {
@@ -71,10 +62,10 @@ open class TabCounter @JvmOverloads constructor(
     }
 
     fun setCount(count: Int) {
+        updateContentDescription(count)
         adjustTextSize(count)
-
         counter_text.text = formatForDisplay(count)
-        this.count = count
+        INTERNAL_COUNT = count
     }
 
     private fun createAnimatorSet(): AnimatorSet {
@@ -165,7 +156,7 @@ open class TabCounter @JvmOverloads constructor(
             counter_text, "alpha",
             ANIM_TEXT_FADEIN_FROM, ANIM_TEXT_FADEIN_TO
         ).setDuration(ANIM_TEXT_FADEIN_DURATION)
-        fadeIn.startDelay = (ANIM_TEXT_FADEIN_DELAY).toLong() // delay 6 frames after fadeOut
+        fadeIn.startDelay = (ANIM_TEXT_FADEIN_DELAY) // delay 6 frames after fadeOut
 
         // Move down on y-axis, from 0 to 4.4 in 66ms, with fadeIn (57~61, 4 frames).
         val moveDown = ObjectAnimator.ofFloat(
@@ -188,6 +179,7 @@ open class TabCounter @JvmOverloads constructor(
 
     private fun formatForDisplay(count: Int): String {
         return if (count > MAX_VISIBLE_TABS) {
+            counter_text.updatePadding(bottom = INFINITE_CHAR_PADDING_BOTTOM)
             SO_MANY_TABS_OPEN
         } else NumberFormat.getInstance().format(count.toLong())
     }
@@ -199,40 +191,24 @@ open class TabCounter @JvmOverloads constructor(
             ONE_DIGIT_SIZE_RATIO
         }
 
-        if (newRatio != currentTextRatio) {
-            currentTextRatio = newRatio
-            counter_text.viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    counter_text.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    val sizeInPixel = (counter_box.width * newRatio).toInt()
-                    if (sizeInPixel > 0) {
-                        // Only apply the size when we calculate a valid value.
-                        counter_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeInPixel.toFloat())
-                        counter_text.setTypeface(null, Typeface.BOLD)
-                        val shiftDp = TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            if (newRatio == TWO_DIGITS_SIZE_RATIO) TWO_DIGIT_PADDING else ONE_DIGIT_PADDING,
-                            context.resources.displayMetrics
-                        ).toInt()
-                        counter_text.setPadding(0, shiftDp, shiftDp, 0)
-                    }
-                }
-            })
-        }
+        val counterBoxWidth = context.resources.getDimensionPixelSize(R.dimen.tab_counter_box_width_height)
+        val textSize = newRatio * counterBoxWidth
+        counter_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
+        counter_text.setTypeface(null, Typeface.BOLD)
+        counter_text.setPadding(0, 0, 0, 0)
     }
 
     companion object {
+        internal var INTERNAL_COUNT = 0
 
         internal const val MAX_VISIBLE_TABS = 99
 
         internal const val SO_MANY_TABS_OPEN = "∞"
-        internal const val DEFAULT_TABS_COUNTER_TEXT = ":)"
+
+        internal const val INFINITE_CHAR_PADDING_BOTTOM = 6
 
         internal const val ONE_DIGIT_SIZE_RATIO = 0.5f
         internal const val TWO_DIGITS_SIZE_RATIO = 0.4f
-        internal const val ONE_DIGIT_PADDING = 2F
-        internal const val TWO_DIGIT_PADDING = 3F
         internal const val TWO_DIGITS_TAB_COUNT_THRESHOLD = 10
 
         // createBoxAnimatorSet

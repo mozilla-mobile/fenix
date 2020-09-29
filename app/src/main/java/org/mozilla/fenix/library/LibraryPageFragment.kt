@@ -4,19 +4,25 @@
 
 package org.mozilla.fenix.library
 
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import androidx.navigation.fragment.findNavController
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.setToolbarColors
 
 abstract class LibraryPageFragment<T> : Fragment() {
 
     abstract val selectedItems: Set<T>
 
     protected fun close() {
-        findNavController().popBackStack(R.id.libraryFragment, true)
+        if (!findNavController().popBackStack(R.id.browserFragment, false)) {
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
     }
 
     protected fun openItemsInNewTab(private: Boolean = false, toUrl: (T) -> String?) {
@@ -30,6 +36,16 @@ abstract class LibraryPageFragment<T> : Fragment() {
         }
 
         (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
-        (activity as HomeActivity).supportActionBar?.hide()
+        hideToolbar()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        context?.let {
+            activity?.findViewById<Toolbar>(R.id.navigationToolbar)?.setToolbarColors(
+                it.getColorFromAttr(R.attr.primaryText),
+                it.getColorFromAttr(R.attr.foundation)
+            )
+        }
     }
 }

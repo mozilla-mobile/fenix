@@ -6,11 +6,15 @@ package org.mozilla.fenix.ext
 
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
-import androidx.navigation.Navigator
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
+import mozilla.components.concept.base.crash.Breadcrumb
+import org.mozilla.fenix.NavHostActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 
 /**
@@ -19,16 +23,58 @@ import org.mozilla.fenix.components.Components
 val Fragment.requireComponents: Components
     get() = requireContext().components
 
-fun Fragment.nav(@IdRes id: Int?, directions: NavDirections) {
-    findNavController(this).nav(id, directions)
-}
-
-fun Fragment.nav(@IdRes id: Int?, directions: NavDirections, extras: Navigator.Extras) {
-    findNavController(this).nav(id, directions, extras)
-}
-
-fun Fragment.nav(@IdRes id: Int?, directions: NavDirections, options: NavOptions) {
+fun Fragment.nav(@IdRes id: Int?, directions: NavDirections, options: NavOptions? = null) {
     findNavController(this).nav(id, directions, options)
 }
 
 fun Fragment.getPreferenceKey(@StringRes resourceId: Int): String = getString(resourceId)
+
+/**
+ * Displays the activity toolbar with the given [title].
+ * Throws if the fragment is not attached to an [AppCompatActivity].
+ */
+fun Fragment.showToolbar(title: String) {
+    (requireActivity() as AppCompatActivity).title = title
+    (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
+}
+
+/**
+ * Hides the activity toolbar.
+ * Throws if the fragment is not attached to an [AppCompatActivity].
+ */
+fun Fragment.hideToolbar() {
+    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+}
+
+/**
+ * Pops the backstack to force users to re-auth if they put the app in the background and return to it
+ * while being inside the saved logins flow
+ *
+ * Does nothing if the user is currently navigating to any of the [destinations] given as a parameter
+ *
+ */
+fun Fragment.redirectToReAuth(destinations: List<Int>, currentDestination: Int?) {
+    if (currentDestination !in destinations) {
+        findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
+    }
+}
+
+fun Fragment.breadcrumb(
+    message: String,
+    data: Map<String, String> = emptyMap()
+) {
+    val activityName = activity?.let { it::class.java.simpleName } ?: "null"
+
+    requireComponents.analytics.crashReporter.recordCrashBreadcrumb(
+        Breadcrumb(
+            category = this::class.java.simpleName,
+            message = message,
+            data = data + mapOf(
+                "instance" to hashCode().toString(),
+                "activityInstance" to activity?.hashCode().toString(),
+                "activityName" to activityName
+            ),
+            level = Breadcrumb.Level.INFO
+        )
+    )
+}

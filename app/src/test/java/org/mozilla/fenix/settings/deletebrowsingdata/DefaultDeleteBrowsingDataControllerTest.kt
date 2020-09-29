@@ -4,101 +4,82 @@
 
 package org.mozilla.fenix.settings.deletebrowsingdata
 
-import android.content.Context
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
+import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.GlobalScope.coroutineContext
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.state.action.RecentlyClosedAction
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
-import mozilla.components.feature.tab.collections.TabCollection
-import org.junit.After
+import mozilla.components.concept.storage.HistoryStorage
+import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
-import org.mozilla.fenix.ext.components
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.components.PermissionStorage
 
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
-@RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class DefaultDeleteBrowsingDataControllerTest {
 
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
 
-    private val context: Context = mockk(relaxed = true)
+    private var removeAllTabs: TabsUseCases.RemoveAllTabsUseCase = mockk(relaxed = true)
+    private var historyStorage: HistoryStorage = mockk(relaxed = true)
+    private var permissionStorage: PermissionStorage = mockk(relaxed = true)
+    private var store: BrowserStore = mockk(relaxed = true)
+    private var iconsStorage: BrowserIcons = mockk(relaxed = true)
+    private val engine: Engine = mockk(relaxed = true)
     private lateinit var controller: DefaultDeleteBrowsingDataController
 
     @Before
     fun setup() {
-        Dispatchers.setMain(mainThreadSurrogate)
-
-        every { context.components.core.engine.clearData(any()) } just Runs
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        controller = DefaultDeleteBrowsingDataController(
+            removeAllTabs = removeAllTabs,
+            historyStorage = historyStorage,
+            store = store,
+            permissionStorage = permissionStorage,
+            iconsStorage = iconsStorage,
+            engine = engine,
+            coroutineContext = coroutineContext
+        )
     }
 
     @Test
     fun deleteTabs() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
-        every { context.components.useCases.tabsUseCases.removeAllTabs.invoke() } just Runs
 
         controller.deleteTabs()
 
         verify {
-            context.components.useCases.tabsUseCases.removeAllTabs.invoke()
+            removeAllTabs.invoke()
         }
     }
 
     @Test
     fun deleteBrowsingData() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
-        every { context.components.core.historyStorage } returns mockk(relaxed = true)
-
+        controller = spyk(controller)
         controller.deleteBrowsingData()
 
-        verify {
-            context.components.core.engine.clearData(any())
-            context.components.core.historyStorage
-        }
-    }
-
-    @Test
-    fun deleteCollections() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
-
-        val collections: List<TabCollection> = listOf(mockk(relaxed = true))
-        every { context.components.core.tabCollectionStorage.getTabCollectionsCount() } returns 1
-
-        controller.deleteCollections(collections)
-
-        verify {
-            context.components.core.tabCollectionStorage.removeCollection(collections[0])
+        coVerify {
+            engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.DOM_STORAGES))
+            historyStorage.deleteEverything()
+            store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+            iconsStorage.clear()
         }
     }
 
     @Test
     fun deleteCookies() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
-
         controller.deleteCookies()
 
         verify {
-            context.components.core.engine.clearData(
+            engine.clearData(
                 Engine.BrowsingData.select(
                     Engine.BrowsingData.COOKIES,
                     Engine.BrowsingData.AUTH_SESSIONS
@@ -109,25 +90,21 @@ class DefaultDeleteBrowsingDataControllerTest {
 
     @Test
     fun deleteCachedFiles() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
 
         controller.deleteCachedFiles()
 
         verify {
-            context.components.core.engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.ALL_CACHES))
+            engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.ALL_CACHES))
         }
     }
 
     @Test
     fun deleteSitePermissions() = runBlockingTest {
-        controller = DefaultDeleteBrowsingDataController(context, coroutineContext)
-        every { context.components.core.permissionStorage.deleteAllSitePermissions() } just Runs
-
         controller.deleteSitePermissions()
 
-        verify {
-            context.components.core.engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.ALL_SITE_SETTINGS))
-            context.components.core.permissionStorage.deleteAllSitePermissions()
+        coVerify {
+            engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.ALL_SITE_SETTINGS))
+            permissionStorage.deleteAllSitePermissions()
         }
     }
 }

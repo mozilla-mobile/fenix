@@ -5,61 +5,29 @@
 package org.mozilla.fenix.share.listadapters
 
 import android.view.ViewGroup
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import io.mockk.verifyOrder
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
 import org.mozilla.fenix.share.ShareInteractor
 import org.mozilla.fenix.share.viewholders.AccountDeviceViewHolder
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@UseExperimental(ObsoleteCoroutinesApi::class)
-@RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class AccountDevicesShareAdapterTest {
-    private val syncOptions = mutableListOf(SyncShareOption.AddNewDevice, SyncShareOption.SignIn)
-    private val syncOptionsEmpty = mutableListOf<SyncShareOption>()
     private val interactor: ShareInteractor = mockk(relaxed = true)
-
-    @Test
-    fun `updateData should replace all previous data with argument and call notifyDataSetChanged()`() {
-        // Used AccountDevicesShareAdapter as a spy to ease testing of notifyDataSetChanged()
-        // and syncOptionsEmpty to be able to record them being called
-        val adapter = spyk(AccountDevicesShareAdapter(mockk(), syncOptionsEmpty))
-        every { adapter.notifyDataSetChanged() } just Runs
-
-        adapter.updateData(syncOptions)
-
-        verifyOrder {
-            syncOptionsEmpty.clear()
-            syncOptionsEmpty.addAll(syncOptions)
-            adapter.notifyDataSetChanged()
-        }
-    }
 
     @Test
     fun `getItemCount on a default instantiated Adapter should return 0`() {
         val adapter = AccountDevicesShareAdapter(mockk())
 
-        assertThat(adapter.itemCount).isEqualTo(0)
-    }
-
-    @Test
-    fun `getItemCount after updateData() call should return the the passed in list's size`() {
-        val adapter = AccountDevicesShareAdapter(mockk(), syncOptions)
-
-        assertThat(adapter.itemCount).isEqualTo(2)
+        assertEquals(0, adapter.itemCount)
     }
 
     @Test
@@ -70,7 +38,7 @@ class AccountDevicesShareAdapterTest {
 
         val viewHolder = adapter.onCreateViewHolder(parentView, 0)
 
-        assertThat(viewHolder::class).isEqualTo(AccountDeviceViewHolder::class)
+        assertEquals(AccountDeviceViewHolder::class, viewHolder::class)
     }
 
     @Test
@@ -81,12 +49,14 @@ class AccountDevicesShareAdapterTest {
 
         val viewHolder = adapter.onCreateViewHolder(parentView, 0)
 
-        assertThat(viewHolder.interactor).isEqualTo(interactor)
+        assertEquals(interactor, viewHolder.interactor)
     }
 
     @Test
     fun `the adapter binds the right item to a ViewHolder`() {
-        val adapter = AccountDevicesShareAdapter(interactor, syncOptions)
+        val syncOptions = listOf(SyncShareOption.AddNewDevice, SyncShareOption.SignIn)
+        val adapter = AccountDevicesShareAdapter(interactor)
+        adapter.submitList(syncOptions)
         val parentView: ViewGroup = mockk(relaxed = true)
         val itemView: ViewGroup = mockk(relaxed = true)
         every { parentView.context } returns testContext

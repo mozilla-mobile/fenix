@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.ContentFrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.ContentViewCallback
@@ -18,7 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fenix_snackbar.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.increaseTapArea
-import org.mozilla.fenix.test.Mockable
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.utils.Mockable
 
 @Mockable
 class FenixSnackbar private constructor(
@@ -31,11 +34,7 @@ class FenixSnackbar private constructor(
     init {
         view.background = null
 
-        view.snackbar_layout.background = if (isError) {
-            ContextCompat.getDrawable(context, R.drawable.fenix_snackbar_error_background)
-        } else {
-            ContextCompat.getDrawable(context, R.drawable.fenix_snackbar_background)
-        }
+        setAppropriateBackground(isError)
 
         content.snackbar_btn.increaseTapArea(actionButtonIncreaseDps)
 
@@ -48,8 +47,20 @@ class FenixSnackbar private constructor(
         )
     }
 
+    fun setAppropriateBackground(isError: Boolean) {
+        view.snackbar_layout.background = if (isError) {
+            AppCompatResources.getDrawable(context, R.drawable.fenix_snackbar_error_background)
+        } else {
+            AppCompatResources.getDrawable(context, R.drawable.fenix_snackbar_background)
+        }
+    }
+
     fun setText(text: String) = this.apply {
         view.snackbar_text.text = text
+    }
+
+    fun setLength(duration: Int) = this.apply {
+        this.duration = duration
     }
 
     fun setAction(text: String, action: () -> Unit) = this.apply {
@@ -66,6 +77,7 @@ class FenixSnackbar private constructor(
     companion object {
         const val LENGTH_LONG = Snackbar.LENGTH_LONG
         const val LENGTH_SHORT = Snackbar.LENGTH_SHORT
+        const val LENGTH_ACCESSIBLE = 15000 /* 15 seconds in ms */
         const val LENGTH_INDEFINITE = Snackbar.LENGTH_INDEFINITE
 
         private const val minTextSize = 12
@@ -73,7 +85,23 @@ class FenixSnackbar private constructor(
         private const val actionButtonIncreaseDps = 16
         private const val stepGranularity = 1
 
-        fun make(view: View, duration: Int, isError: Boolean = false): FenixSnackbar {
+        /**
+         * Display a snackbar in the given view with duration and proper normal/error styling.
+         * Note: Duration is overriden for users with accessibility settings enabled
+         * displayedOnFragmentWithToolbar should be true for all snackbars that will end up
+         * being displayed on a BrowserFragment and must be true in cases where the fragment is
+         * going to pop TO BrowserFragment (e.g. EditBookmarkFragment, ShareFragment)
+         *
+         * Suppressing ComplexCondition. Yes it's unfortunately complex but that's the nature
+         * of the snackbar handling by Android. It will be simpler once dynamic toolbar is always on.
+         */
+        @Suppress("ComplexCondition")
+        fun make(
+            view: View,
+            duration: Int = LENGTH_LONG,
+            isError: Boolean = false,
+            isDisplayedWithBrowserToolbar: Boolean
+        ): FenixSnackbar {
             val parent = findSuitableParent(view) ?: run {
                 throw IllegalArgumentException(
                     "No suitable parent found from the given view. Please provide a valid view."
@@ -83,9 +111,36 @@ class FenixSnackbar private constructor(
             val inflater = LayoutInflater.from(parent.context)
             val content = inflater.inflate(R.layout.fenix_snackbar, parent, false)
 
+            val durationOrAccessibleDuration = if (parent.context.settings().accessibilityServicesEnabled) {
+                LENGTH_ACCESSIBLE
+            } else {
+                duration
+            }
+
             val callback = FenixSnackbarCallback(content)
+            val shouldUseBottomToolbar = view.context.settings().shouldUseBottomToolbar
+            val toolbarHeight = view.resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
+            val dynamicToolbarEnabled = view.context.settings().isDynamicToolbarEnabled
+
             return FenixSnackbar(parent, content, callback, isError).also {
-                it.duration = duration
+                it.duration = durationOrAccessibleDuration
+
+                it.view.updatePadding(
+                    bottom = if (
+                        isDisplayedWithBrowserToolbar &&
+                        shouldUseBottomToolbar &&
+                        // If the view passed in is a ContentFrameLayout, it does not matter
+                        // if the user has a dynamicBottomToolbar or not, as the Android system
+                        // can't intelligently position the snackbar on the upper most view.
+                        // Ideally we should not pass ContentFrameLayout in, but it's the only
+                        // way to display snackbars through a fragment transition.
+                        (view is ContentFrameLayout || !dynamicToolbarEnabled)
+                    ) {
+                        toolbarHeight
+                    } else {
+                        0
+                    }
+                )
             }
         }
 
@@ -144,21 +199,5 @@ private class FenixSnackbarCallback(
         private const val defaultYTranslation = 0f
         private const val animateInDuration = 200L
         private const val animateOutDuration = 150L
-    }
-}
-
-class FenixSnackbarPresenter(
-    private val view: View
-) {
-    fun present(
-        text: String,
-        length: Int = FenixSnackbar.LENGTH_LONG,
-        action: (() -> Unit)? = null,
-        actionName: String? = null,
-        isError: Boolean = false
-    ) {
-        FenixSnackbar.make(view, length, isError).setText(text).let {
-            if (action != null && actionName != null) it.setAction(actionName, action) else it
-        }.show()
     }
 }

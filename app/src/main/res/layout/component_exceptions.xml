@@ -21,17 +21,19 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:text="@string/exceptions_empty_message_description"
+            android:textAlignment="viewStart"
             android:textColor="?secondaryText"
             android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <org.mozilla.fenix.utils.LinkTextView
             android:id="@+id/exceptions_learn_more"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:text="@string/exceptions_empty_message_learn_more_link"
+            android:textAlignment="viewStart"
             android:textColor="?secondaryText"
             android:textSize="16sp"
             android:visibility="visible"
@@ -43,5 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        tools:listitem="@layout/exception_item" />
+        tools:listheader="@layout/exceptions_description"
+        tools:listitem="@layout/exception_item"
+        tools:listfooter="@layout/delete_exceptions_button" />
 </FrameLayout>

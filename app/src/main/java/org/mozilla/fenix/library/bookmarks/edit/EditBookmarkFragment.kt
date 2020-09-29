@@ -5,30 +5,23 @@
 package org.mozilla.fenix.library.bookmarks.edit
 
 import android.content.DialogInterface
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import com.jakewharton.rxbinding3.widget.textChanges
-import com.uber.autodispose.AutoDispose
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_edit_bookmark.*
+import kotlinx.android.synthetic.main.fragment_edit_bookmark.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -37,55 +30,65 @@ import mozilla.appservices.places.UrlParseFailed
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.android.view.showKeyboard
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getColorFromAttr
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.placeCursorAtEnd
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.urlToTrimmedHost
+import org.mozilla.fenix.ext.setToolbarColors
+import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
-import org.mozilla.fenix.library.bookmarks.DesktopFolders
-import java.util.concurrent.TimeUnit
+import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
 
-class EditBookmarkFragment : Fragment() {
+/**
+ * Menu to edit the name, URL, and location of a bookmark item.
+ */
+class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
-    private lateinit var guidToEdit: String
+    private val args by navArgs<EditBookmarkFragmentArgs>()
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels {
         ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
     }
     private var bookmarkNode: BookmarkNode? = null
     private var bookmarkParent: BookmarkNode? = null
+    private var initialParentGuid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_edit_bookmark, container, false)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initToolbar()
 
-    override fun onResume() {
-        super.onResume()
-
-        val activity = activity as? AppCompatActivity
-        activity?.supportActionBar?.show()
-
-        guidToEdit = EditBookmarkFragmentArgs.fromBundle(arguments!!).guidToEdit
-        lifecycleScope.launch(Main) {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             val context = requireContext()
+            val bookmarkNodeBeforeReload = bookmarkNode
+            val bookmarksStorage = context.components.core.bookmarksStorage
 
-            withContext(IO) {
-                val bookmarksStorage = context.components.core.bookmarksStorage
-                bookmarkNode = bookmarksStorage.getTree(guidToEdit)
-                bookmarkParent = sharedViewModel.selectedFolder
-                    ?: bookmarkNode?.parentGuid
-                        ?.let { bookmarksStorage.getTree(it) }
-                        ?.let { DesktopFolders(context, showMobileRoot = true).withRootTitle(it) }
+            bookmarkNode = withContext(IO) {
+                bookmarksStorage.getBookmark(args.guidToEdit)
+            }
+
+            if (initialParentGuid == null) {
+                initialParentGuid = bookmarkNode?.parentGuid
+            }
+
+            bookmarkParent = withContext(IO) {
+                // Use user-selected parent folder if it's set, or node's current parent otherwise.
+                if (sharedViewModel.selectedFolder != null) {
+                    sharedViewModel.selectedFolder
+                } else {
+                    bookmarkNode?.parentGuid?.let { bookmarksStorage.getBookmark(it) }
+                }
             }
 
             when (bookmarkNode?.type) {
@@ -100,59 +103,60 @@ class EditBookmarkFragment : Fragment() {
                 else -> throw IllegalArgumentException()
             }
 
-            bookmarkNode?.let { bookmarkNode ->
-                bookmarkNameEdit.setText(bookmarkNode.title)
-                bookmarkUrlEdit.setText(bookmarkNode.url)
-
-                if (sharedViewModel.selectedFolder != null && bookmarkNode.title != null) {
-                    updateBookmarkNode(bookmarkNode.title to bookmarkNode.url)
-                }
+            val currentBookmarkNode = bookmarkNode
+            if (currentBookmarkNode != null && currentBookmarkNode != bookmarkNodeBeforeReload) {
+                bookmarkNameEdit.setText(currentBookmarkNode.title)
+                bookmarkUrlEdit.setText(currentBookmarkNode.url)
             }
 
             bookmarkParent?.let { node ->
-                    bookmarkFolderSelector.text = node.title
-                    bookmarkFolderSelector.setOnClickListener {
-                        sharedViewModel.selectedFolder = null
-                        nav(
-                            R.id.bookmarkEditFragment,
-                            EditBookmarkFragmentDirections
-                                .actionBookmarkEditFragmentToBookmarkSelectFolderFragment(null)
-                        )
-                    }
-                }
+                bookmarkParentFolderSelector.text = friendlyRootTitle(context, node)
             }
 
-        updateBookmarkFromObservableInput()
+            bookmarkParentFolderSelector.setOnClickListener {
+                sharedViewModel.selectedFolder = null
+                nav(
+                    R.id.bookmarkEditFragment,
+                    EditBookmarkFragmentDirections
+                        .actionBookmarkEditFragmentToBookmarkSelectFolderFragment(
+                            allowCreatingNewFolder = false,
+                            // Don't allow moving folders into themselves.
+                            hideFolderGuid = when (bookmarkNode!!.type) {
+                                BookmarkNodeType.FOLDER -> bookmarkNode!!.guid
+                                else -> null
+                            }
+                        )
+                )
+            }
+
+            view.bookmarkNameEdit.apply {
+                requestFocus()
+                placeCursorAtEnd()
+                showKeyboard()
+            }
+        }
+    }
+
+    private fun initToolbar() {
+        val activity = activity as AppCompatActivity
+        val actionBar = (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary()
+        val toolbar = activity.findViewById<Toolbar>(R.id.navigationToolbar)
+        toolbar?.setToolbarColors(
+            foreground = activity.getColorFromAttr(R.attr.primaryText),
+            background = activity.getColorFromAttr(R.attr.foundation)
+        )
+        actionBar.show()
     }
 
     override fun onPause() {
         super.onPause()
         bookmarkNameEdit.hideKeyboard()
         bookmarkUrlEdit.hideKeyboard()
-    }
-
-    private fun updateBookmarkFromObservableInput() {
-        Observable.combineLatest(
-            bookmarkNameEdit.textChanges().skipInitialValue(),
-            bookmarkUrlEdit.textChanges().skipInitialValue(),
-            BiFunction { name: CharSequence, url: CharSequence ->
-                Pair(name.toString(), url.toString())
-            })
-            .filter { it.first.isNotBlank() }
-            .debounce(debouncePeriodInMs, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .`as`(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this@EditBookmarkFragment)))
-            .subscribe {
-                updateBookmarkNode(it)
-            }
+        progress_bar_bookmark.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_edit, menu)
-        val textColor = requireContext().getColorFromAttr(R.attr.primaryText)
-        menu.findItem(R.id.delete_bookmark_button).icon.colorFilter =
-            PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -161,6 +165,11 @@ class EditBookmarkFragment : Fragment() {
                 displayDeleteBookmarkDialog()
                 true
             }
+            R.id.save_bookmark_button -> {
+                updateBookmarkFromTextChanges()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -173,22 +182,27 @@ class EditBookmarkFragment : Fragment() {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                    lifecycleScope.launch(IO) {
-                        requireComponents.core.bookmarksStorage.deleteNode(guidToEdit)
+                    viewLifecycleOwner.lifecycleScope.launch(IO) {
+                        requireComponents.core.bookmarksStorage.deleteNode(args.guidToEdit)
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
 
                         launch(Main) {
-                            Navigation.findNavController(requireActivity(), R.id.container).popBackStack()
-                            activity.getRootView()?.let { rootView ->
-                                bookmarkNode?.let {
-                                    FenixSnackbar.make(rootView, FenixSnackbar.LENGTH_SHORT)
-                                        .setText(
-                                            getString(R.string.bookmark_deletion_snackbar_message,
-                                                it.url?.urlToTrimmedHost(activity) ?: it.title
-                                            )
+                            Navigation.findNavController(requireActivity(), R.id.container)
+                                .popBackStack()
+
+                            bookmarkNode?.let { bookmark ->
+                                FenixSnackbar.make(
+                                    view = activity.getRootView()!!,
+                                    isDisplayedWithBrowserToolbar = args.requiresSnackbarPaddingForToolbar
+                                )
+                                    .setText(
+                                        getString(
+                                            R.string.bookmark_deletion_snackbar_message,
+                                            bookmark.url?.toShortUrl(context.components.publicSuffixList)
+                                                ?: bookmark.title
                                         )
-                                        .show()
-                                }
+                                    )
+                                    .show()
                             }
                         }
                     }
@@ -199,35 +213,44 @@ class EditBookmarkFragment : Fragment() {
         }
     }
 
-    private fun updateBookmarkNode(pair: Pair<String?, String?>) {
-        lifecycleScope.launch(IO) {
+    private fun updateBookmarkFromTextChanges() {
+        progress_bar_bookmark.visibility = View.VISIBLE
+        val nameText = bookmarkNameEdit.text.toString()
+        val urlText = bookmarkUrlEdit.text.toString()
+        updateBookmarkNode(nameText, urlText)
+    }
+
+    private fun updateBookmarkNode(title: String?, url: String?) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
             try {
-                requireComponents.let {
-                    if (pair != Pair(bookmarkNode?.title, bookmarkNode?.url)) {
-                        it.analytics.metrics.track(Event.EditedBookmark)
+                requireComponents.let { components ->
+                    if (title != bookmarkNode?.title || url != bookmarkNode?.url) {
+                        components.analytics.metrics.track(Event.EditedBookmark)
                     }
-                    if (sharedViewModel.selectedFolder != null) {
-                        it.analytics.metrics.track(Event.MovedBookmark)
+                    val parentGuid = sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid
+                    val parentChanged = initialParentGuid != parentGuid
+                    // Only track the 'moved' event if new parent was selected.
+                    if (parentChanged) {
+                        components.analytics.metrics.track(Event.MovedBookmark)
                     }
-                    it.core.bookmarksStorage.updateNode(
-                        guidToEdit,
+                    components.core.bookmarksStorage.updateNode(
+                        args.guidToEdit,
                         BookmarkInfo(
-                            sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid,
-                            bookmarkNode?.position,
-                            pair.first,
-                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) pair.second else null
+                            parentGuid,
+                            // Setting position to 'null' is treated as a 'move to the end' by the storage API.
+                            if (parentChanged) null else bookmarkNode?.position,
+                            title,
+                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) url else null
                         )
                     )
                 }
             } catch (e: UrlParseFailed) {
-                launch(Main) {
+                withContext(Main) {
                     bookmarkUrlEdit.error = getString(R.string.bookmark_invalid_url_error)
                 }
             }
         }
-    }
-
-    companion object {
-        private const val debouncePeriodInMs = 500L
+        progress_bar_bookmark.visibility = View.INVISIBLE
+        findNavController().popBackStack()
     }
 }

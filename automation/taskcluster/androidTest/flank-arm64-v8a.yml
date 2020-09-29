@@ -19,7 +19,7 @@ gcloud:
   # by default, set to app name
   # declare results-history-name to create a separate dropdown menu in Firebase 
   # see: https://github.com/TestArmada/flank/issues/341
-  #results-history-name: tmp_parallel 
+  #results-history-name: tmp_parallel
 
   # test and app are the only required args
   app: /APP/PATH
@@ -34,9 +34,7 @@ gcloud:
   performance-metrics: true
 
   device:
-   - model: walleye 
-     version: 26
-   - model: walleye 
+   - model: Pixel2
      version: 28
 
 flank:
@@ -44,10 +42,6 @@ flank:
   # test shards - the amount of groups to split the test suite into
   # set to -1 to use one shard per test.
   max-test-shards: -1 
-  # repeat tests - the amount of times to run the tests.
+  # num-test-runs- the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
-  repeat-tests: 1
-
-  # The number of times a TestExecution should be re-attempted if one or more\nof its test cases fail for any reason.
-  # The maximum number of reruns allowed is 10. Default is 0, which implies no reruns.
-  num-flaky-test-attempts: 3
+  num-test-runs: 1

@@ -1,25 +1,13 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix
 
 /**
  * A single source for setting feature flags that are mostly based on build type.
  */
 object FeatureFlags {
-    // lazy is used to suppress "Condition is always 'true'" warnings when using the flags.
-    // https://github.com/mozilla-mobile/fenix/pull/4077#issuecomment-511964072
-
-    // A convenience flag for production builds.
-    private val production by lazy { BuildConfig.BUILD_TYPE == "fenixProduction" }
-    // A convenience flag for beta builds.
-    private val beta by lazy { BuildConfig.BUILD_TYPE == "fenixBeta" }
-    // A convenience flag for the nightly build and (legacy) nightly channel in Google Play.
-    private val nightly by lazy {
-        BuildConfig.BUILD_TYPE == "fenixNightly" || BuildConfig.BUILD_TYPE == "fenixNightlyLegacy"
-    }
-    // A convenience flag for debug builds.
-    private val debug by lazy { BuildConfig.BUILD_TYPE == "debug" }
-    // A convenience flag for enabling in all builds (a feature that can still be toggled off).
-    private val all = production or beta or nightly or debug
-
     /**
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
@@ -27,32 +15,34 @@ object FeatureFlags {
     const val pullToRefreshEnabled = false
 
     /**
-     * Integration of media features provided by `feature-media` component:
-     * - Background playback without the app getting killed
-     * - Media notification with play/pause controls
-     * - Audio Focus handling (pausing/resuming in agreement with other media apps)
-     * - Support for hardware controls to toggle play/pause (e.g. buttons on a headset)
+     * Shows Synced Tabs in the tabs tray.
      *
-     * Behind nightly flag until all related Android Components issues are fixed and QA has signed
-     * off.
-     *
-     * https://github.com/mozilla-mobile/fenix/issues/4431
+     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
      */
-    const val mediaIntegration = true
+    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Displays the categories blocked by ETP in a panel in the toolbar
+     * Enables showing the top frequently visited sites
      */
-    val etpCategories = nightly or debug
+    const val topFrecentSite = true
 
     /**
-     * Granular data deletion provides additional choices on the Delete Browsing Data
-     * setting screen for cookies, cached images and files, and site permissions.
+     * Enables wait til first contentful paint
      */
-    val granularDataDeletion = nightly or debug
+    val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
 
     /**
-     * Gives option in Settings to Delete Browsing Data on new menu option Quit
+     * Enables downloads with external download managers.
      */
-    val deleteDataOnQuit = nightly or debug
+    const val externalDownloadManager = true
+
+    /**
+     * Enables swipe to delete in bookmarks
+     */
+    val bookmarkSwipeToDelete = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables ETP cookie purging
+     */
+    val etpCookiePurging = Config.channel.isNightlyOrDebug
 }

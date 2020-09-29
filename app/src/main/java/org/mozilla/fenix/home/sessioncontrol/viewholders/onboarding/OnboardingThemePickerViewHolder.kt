@@ -11,8 +11,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_theme_picker.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.Event.OnboardingThemePicker.Theme
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.onboarding.OnboardingRadioButton
+import org.mozilla.fenix.utils.view.addToRadioGroup
 
 class OnboardingThemePickerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -27,20 +31,21 @@ class OnboardingThemePickerViewHolder(view: View) : RecyclerView.ViewHolder(view
             R.string.pref_key_auto_battery_theme
         }
 
-        radioLightTheme.addToRadioGroup(radioDarkTheme)
-        radioDarkTheme.addToRadioGroup(radioLightTheme)
-
-        radioLightTheme.addToRadioGroup(radioFollowDeviceTheme)
-        radioDarkTheme.addToRadioGroup(radioFollowDeviceTheme)
-
-        radioFollowDeviceTheme.addToRadioGroup(radioDarkTheme)
-        radioFollowDeviceTheme.addToRadioGroup(radioLightTheme)
+        addToRadioGroup(
+            radioLightTheme,
+            radioDarkTheme,
+            radioFollowDeviceTheme
+        )
+        radioLightTheme.addIllustration(view.theme_light_image)
+        radioDarkTheme.addIllustration(view.theme_dark_image)
 
         view.theme_dark_image.setOnClickListener {
+            it.context.components.analytics.metrics.track(Event.OnboardingThemePicker(Theme.DARK))
             radioDarkTheme.performClick()
         }
 
         view.theme_light_image.setOnClickListener {
+            it.context.components.analytics.metrics.track(Event.OnboardingThemePicker(Theme.LIGHT))
             radioLightTheme.performClick()
         }
 
@@ -49,18 +54,26 @@ class OnboardingThemePickerViewHolder(view: View) : RecyclerView.ViewHolder(view
         view.clickable_region_automatic.contentDescription = "$automaticTitle $automaticSummary"
 
         view.clickable_region_automatic.setOnClickListener {
+            it.context.components.analytics.metrics
+                .track(Event.OnboardingThemePicker(Theme.FOLLOW_DEVICE))
             radioFollowDeviceTheme.performClick()
         }
 
         radioLightTheme.onClickListener {
+            view.context.components.analytics.metrics
+                .track(Event.OnboardingThemePicker(Theme.LIGHT))
             setNewTheme(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         radioDarkTheme.onClickListener {
+            view.context.components.analytics.metrics
+                .track(Event.OnboardingThemePicker(Theme.DARK))
             setNewTheme(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
         radioFollowDeviceTheme.onClickListener {
+            view.context.components.analytics.metrics
+                .track(Event.OnboardingThemePicker(Theme.FOLLOW_DEVICE))
             if (SDK_INT >= Build.VERSION_CODES.P) {
                 setNewTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             } else {
@@ -69,12 +82,18 @@ class OnboardingThemePickerViewHolder(view: View) : RecyclerView.ViewHolder(view
         }
 
         with(view.context.settings()) {
-            val radio = when {
-                this.shouldUseLightTheme -> radioLightTheme
-                this.shouldUseDarkTheme -> radioDarkTheme
-                else -> radioFollowDeviceTheme
+            val radio: OnboardingRadioButton = when {
+                shouldUseLightTheme -> {
+                    radioLightTheme
+                }
+                shouldUseDarkTheme -> {
+                    radioDarkTheme
+                }
+                else -> {
+                    radioFollowDeviceTheme
+                }
             }
-            radio.isChecked = true
+            radio.updateRadioValue(true)
         }
     }
 

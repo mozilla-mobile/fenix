@@ -13,12 +13,15 @@
     <Button
         android:id="@+id/back_button"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:drawableStart="@drawable/mozac_ic_back"
+        app:drawableStartCompat="@drawable/mozac_ic_back"
         android:drawablePadding="8dp"
-        android:drawableTint="@color/neutral_text"
+        app:drawableTint="@color/neutral_text"
         android:gravity="start|center_vertical"
         android:text="@string/create_collection_select_tabs"
         android:textAppearance="@style/HeaderTextStyle"
@@ -28,24 +31,29 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constraintWidth_default="wrap"/>
 
     <Button
         android:id="@+id/select_all_button"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:paddingStart="8dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:gravity="start|center_vertical"
         android:text="@string/create_collection_select_all"
         android:textAllCaps="false"
         android:textColor="@color/neutral_text"
         android:textSize="16sp"
+        android:fontFamily="@font/metropolis_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constraintBottom_toBottomOf="@id/back_button"
+        app:layout_constraintWidth_default="wrap"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -65,7 +73,41 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button" />
+        app:layout_constraintTop_toBottomOf="@id/back_button"
+        tools:listitem="@layout/collections_list_item" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tab_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/component_collection_creation_list_margin"
+        android:layout_marginTop="@dimen/component_collection_creation_list_margin"
+        android:layout_marginEnd="@dimen/component_collection_creation_list_margin"
+        app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_button"
+        tools:listitem="@layout/collection_tab_list_row" />
+
+    <View
+        android:id="@+id/tab_list_dim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:background="@drawable/scrim_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tab_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/bottom_gradient"
+        android:layout_width="match_parent"
+        android:layout_height="102dp"
+        android:background="@drawable/simple_dark_grey_gradient"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:focusable="false"/>
 
     <EditText
         android:id="@+id/name_collection_edittext"
@@ -89,30 +131,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:targetApi="o" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tab_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/component_collection_creation_list_margin"
-        android:layout_marginTop="@dimen/component_collection_creation_list_margin"
-        android:layout_marginEnd="@dimen/component_collection_creation_list_margin"
-        app:layout_constraintBottom_toTopOf="@id/bottom_button_bar_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button" />
-
-    <View
-        android:id="@+id/tab_list_dim"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:alpha="0"
-        android:background="@drawable/scrim_background"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/tab_list"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_button_bar_layout"
         android:layout_width="match_parent"
@@ -129,10 +147,10 @@
             android:id="@+id/bottom_bar_icon_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:padding="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/create_collection_close"
-            android:src="@drawable/mozac_ic_close"
+            app:srcCompat="@drawable/mozac_ic_close"
             android:tint="?neutral"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -142,13 +160,11 @@
             android:id="@+id/bottom_bar_text"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="@string/create_collection_save_to_collection_empty"
             android:textColor="?neutral"
             android:textSize="16sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/metropolis_semibold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/save_button"
             app:layout_constraintStart_toEndOf="@id/bottom_bar_icon_button"
@@ -161,7 +177,8 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:text="@string/create_collection_save"
-            android:textColor="?neutral"
+            android:textColor="@color/photonWhite"
+            app:fontFamily="@font/metropolis_medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

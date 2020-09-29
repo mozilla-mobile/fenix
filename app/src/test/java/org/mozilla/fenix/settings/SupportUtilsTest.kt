@@ -9,18 +9,10 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.TestApplication
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import java.util.Locale
 
-@ObsoleteCoroutinesApi
-@RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
 class SupportUtilsTest {
 
     @Test
@@ -52,14 +44,14 @@ class SupportUtilsTest {
     }
 
     @Test
-    fun getPrivacyNoticeUrl() {
+    fun getMozillaPageUrl() {
         assertEquals(
-            "https://www.mozilla.org/en-CA/privacy/firefox/",
-            SupportUtils.getPrivacyNoticeUrl(Locale("en", "CA"))
+            "https://www.mozilla.org/en-US/about/manifesto/",
+            SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO, Locale("en", "US"))
         )
         assertEquals(
             "https://www.mozilla.org/zh/privacy/firefox/",
-            SupportUtils.getPrivacyNoticeUrl(Locale("zh"))
+            SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE, Locale("zh"))
         )
     }
 

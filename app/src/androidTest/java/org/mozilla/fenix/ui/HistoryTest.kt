@@ -4,30 +4,36 @@
 
 package org.mozilla.fenix.ui
 
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
+import android.content.Context
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.IdlingRegistry
+import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.mDevice
+import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
  *  Tests for verifying basic functionality of history
  *
  */
-
 class HistoryTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private var historyListIdlingResource: RecyclerViewIdlingResource? = null
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -43,52 +49,305 @@ class HistoryTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        // Clearing all history data after each test to avoid overlapping data
+        val applicationContext: Context = activityTestRule.activity.applicationContext
+        val historyStorage = PlacesHistoryStorage(applicationContext)
+
+        runBlocking {
+            historyStorage.deleteEverything()
+        }
+
+        if (historyListIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+        }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
     fun noHistoryItemsInCacheTest() {
-        homeScreen { }.dismissOnboarding()
-
-        // Verify "Your Library" in 3-dot menu is visible
-        // Verify "History" line-item in library is visible
-        // Verify "No history here" is visible
-        // Verify "History" UI elements
+        homeScreen {
+        }.openThreeDotMenu {
+            verifyHistoryButton()
+        }.openHistory {
+            verifyHistoryMenuView()
+            verifyEmptyHistoryView()
+        }
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
-    fun historyTest() {
-        // Setup:
-        //  - Visit a URL
-        //  - Visit a second URL
-        // Verify browser view exists for each visit
-        // Verify "Your Library" in 3-dot menu is visible
-        // Click "Your Library"
-        // Verify "History" line-item in Library is visible
-        // Click "History"
-        // Verify "History" UI elements (view is visible)
-        // Verify history is added, URLs match history added in Library
-
-        // Verify history 3-dot menu functions:
-        // 1. Delete
-
-        // Verify history visibility in new URL search
-
-        // Verify "Delete history"
-        // Verify "This will delete all your browsing data."
-        // Verify "No history here" UI element
-
-        // Verify return to "Your Library"
-    }
-
-    @Ignore("This is a sample test, ignore")
-    @Test
-    fun sampleTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    fun visitedUrlHistoryTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            verifyHistoryMenuView()
+            verifyVisitedTimeTitle()
+            verifyFirstTestPageTitle("Test_Page_1")
+            verifyTestPageUrl(firstWebPage.url)
+        }
+    }
+
+    @Test
+    fun copyHistoryItemURLTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+        }.openThreeDotMenu {
+        }.clickCopy {
+            verifyCopySnackBarText()
+        }
+    }
+
+    @Test
+    fun shareHistoryItemTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+        }.openThreeDotMenu {
+        }.clickShare {
+            verifyShareOverlay()
+            verifyShareTabFavicon()
+            verifyShareTabTitle()
+            verifyShareTabUrl()
+        }
+    }
+
+    @Test
+    fun openHistoryItemInNewTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+        }.openThreeDotMenu {
+        }.clickOpenInNormalTab {
+            verifyUrl(firstWebPage.url.toString())
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+        }
+    }
+
+    @Test
+    fun openHistoryItemInNewPrivateTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+        }.openThreeDotMenu {
+        }.clickOpenInPrivateTab {
+            verifyUrl(firstWebPage.url.toString())
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+        }
+    }
+
+    @Test
+    fun deleteHistoryItemTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+        }.openThreeDotMenu {
+            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+        }.clickDelete {
+            verifyDeleteSnackbarText("Deleted")
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    fun deleteAllHistoryTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            clickDeleteHistoryButton()
+            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            verifyDeleteConfirmationMessage()
+            confirmDeleteAllHistory()
+            verifyDeleteSnackbarText("Browsing data deleted")
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    fun multiSelectionToolbarItemsTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            longTapSelectItem(firstWebPage.url)
+        }
+
+        multipleSelectionToolbar {
+            verifyMultiSelectionCheckmark()
+            verifyMultiSelectionCounter()
+            verifyShareHistoryButton()
+            verifyCloseToolbarButton()
+        }.closeToolbarReturnToHistory {
+            verifyHistoryMenuView()
+        }
+    }
+
+    @Test
+    fun openHistoryInNewTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        homeScreen { }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            longTapSelectItem(firstWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+        }
+
+        multipleSelectionToolbar {
+        }.clickOpenNewTab {
+            verifyExistingTabList()
+            verifyNormalModeSelected()
+        }
+    }
+
+    @Test
+    fun openHistoryInPrivateTabTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            longTapSelectItem(firstWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+        }
+
+        multipleSelectionToolbar {
+        }.clickOpenPrivateTab {
+            verifyPrivateModeSelected()
+            verifyExistingTabList()
+        }
+    }
+
+    @Test
+    fun deleteMultipleSelectionTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.openTabDrawer {
+        }.openNewTab {
+        }.submitQuery(secondWebPage.url.toString()) {
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            longTapSelectItem(firstWebPage.url)
+            longTapSelectItem(secondWebPage.url)
+            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+        }
+
+        multipleSelectionToolbar {
+            clickMultiSelectionDelete()
+        }
+
+        historyMenu {
+            verifyEmptyHistoryView()
+        }
+    }
+
+    @Test
+    fun shareButtonTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            historyListIdlingResource =
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list))
+            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
+            longTapSelectItem(firstWebPage.url)
+        }
+
+        multipleSelectionToolbar {
+            clickShareHistoryButton()
+            verifyShareOverlay()
+            verifyShareTabFavicon()
+            verifyShareTabTitle()
+            verifyShareTabUrl()
+        }
+    }
+
+    @Test
+    fun verifyCloseMenu() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+        }.closeMenu {
+            verifyHomeScreen()
         }
     }
 }

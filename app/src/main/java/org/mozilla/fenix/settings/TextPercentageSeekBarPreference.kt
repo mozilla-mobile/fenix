@@ -29,14 +29,18 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat.RANGE_TYPE_PERCENT
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import org.mozilla.fenix.R
 
 import java.text.NumberFormat
+import kotlin.math.PI
+import kotlin.math.roundToInt
 
 /**
  * Preference based on android.preference.SeekBarPreference but uses support preference as a base.
@@ -54,6 +58,7 @@ import java.text.NumberFormat
  * Other [SeekBar] specific attributes (e.g. `title, summary, defaultValue, min, max`)
  * can be set directly on the preference widget layout.
  */
+@SuppressWarnings("LargeClass")
 class TextPercentageSeekBarPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -268,6 +273,9 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         updateExampleTextValue(mSeekBarValue)
         updateLabelValue(mSeekBarValue)
         mSeekBar?.isEnabled = isEnabled
+        mSeekBar?.let {
+            it.thumbOffset = it.thumb.intrinsicWidth.div(2 * PI).roundToInt()
+        }
     }
 
     override fun onSetInitialValue(initialValue: Any?) {
@@ -334,6 +342,25 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
             val percentage = NumberFormat.getPercentInstance().format(decimalValue)
             mSeekBarValueTextView?.text = percentage
         }
+
+        mSeekBar?.setAccessibilityDelegate(object :
+            View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View?,
+                info: AccessibilityNodeInfo?
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                val initialInfo = info?.rangeInfo
+                info?.rangeInfo = initialInfo?.let {
+                    AccessibilityNodeInfo.RangeInfo.obtain(
+                        RANGE_TYPE_PERCENT,
+                        MIN_VALUE.toFloat(),
+                        SEEK_BAR_MAX.toFloat(),
+                        convertCurrentValue(it.current)
+                    )
+                }
+            }
+        })
     }
 
     /**
@@ -425,6 +452,10 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
                 }
             }
         }
+    }
+
+    private fun convertCurrentValue(current: Float): Float {
+        return current * STEP_SIZE + MIN_VALUE.toFloat()
     }
 
     companion object {

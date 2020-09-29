@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.sitepermissions
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,46 +14,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers.IO
+import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.ALLOWED
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.BLOCKED
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.settings.initBlockedByAndroidView
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.setStartCheckedIndicator
+import org.mozilla.fenix.settings.update
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
-    private lateinit var phoneFeature: PhoneFeature
-    private lateinit var sitePermissions: SitePermissions
+
     private lateinit var radioAllow: RadioButton
     private lateinit var radioBlock: RadioButton
     private lateinit var blockedByAndroidView: View
+    private val args by navArgs<SitePermissionsManageExceptionsPhoneFeatureFragmentArgs>()
     val settings by lazy { requireContext().settings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        phoneFeature = SitePermissionsManageExceptionsPhoneFeatureFragmentArgs
-            .fromBundle(requireArguments())
-            .phoneFeatureId.toPhoneFeature()
-
-        sitePermissions = SitePermissionsManageExceptionsPhoneFeatureFragmentArgs
-            .fromBundle(requireArguments())
-            .sitePermissions
-
-        (activity as AppCompatActivity).title = phoneFeature.getLabel(requireContext())
-        (activity as AppCompatActivity).supportActionBar?.show()
+        showToolbar(args.phoneFeature.getLabel(requireContext()))
     }
 
     override fun onCreateView(
@@ -73,7 +63,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        initBlockedByAndroidView(phoneFeature, blockedByAndroidView)
+        initBlockedByAndroidView(args.phoneFeature, blockedByAndroidView)
     }
 
     private fun initAskToAllowRadio(rootView: View) {
@@ -89,7 +79,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
     }
 
     private fun RadioButton.restoreState(status: SitePermissions.Status) {
-        if (phoneFeature.getStatus(sitePermissions) == status) {
+        if (args.phoneFeature.getStatus(args.sitePermissions) == status) {
             this.isChecked = true
             this.setStartCheckedIndicator()
         }
@@ -107,17 +97,18 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
         val button = rootView.findViewById<Button>(R.id.reset_permission)
         button.setText(R.string.clear_permission)
         button.setOnClickListener {
-
-            requireContext().alert(
-                R.string.confirm_clear_permission_site,
-                R.string.clear_permission
-            ) {
-                yesButton {
-                    val defaultStatus = phoneFeature.getStatus(settings = settings)
+            AlertDialog.Builder(requireContext()).apply {
+                setMessage(R.string.confirm_clear_permission_site)
+                setTitle(R.string.clear_permission)
+                setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _ ->
+                    val defaultStatus = args.phoneFeature.getStatus(settings = settings)
                     updatedSitePermissions(defaultStatus)
                     resetRadioButtonsStatus(defaultStatus)
+                    dialog.dismiss()
                 }
-                noButton { }
+                setNegativeButton(android.R.string.no) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
             }.show()
         }
     }
@@ -148,24 +139,11 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun Int.toPhoneFeature(): PhoneFeature {
-        return requireNotNull(PhoneFeature.values().find { feature ->
-            this == feature.id
-        }) {
-            "$this is a invalid PhoneFeature"
-        }
-    }
-
     private fun updatedSitePermissions(status: SitePermissions.Status) {
-        val updatedSitePermissions = when (phoneFeature) {
-            PhoneFeature.CAMERA -> sitePermissions.copy(camera = status)
-            PhoneFeature.LOCATION -> sitePermissions.copy(location = status)
-            PhoneFeature.MICROPHONE -> sitePermissions.copy(microphone = status)
-            PhoneFeature.NOTIFICATION -> sitePermissions.copy(notification = status)
-            PhoneFeature.AUTOPLAY -> sitePermissions.copy() // not supported by GV or A-C yet
-        }
-        lifecycleScope.launch(IO) {
+        val updatedSitePermissions = args.sitePermissions.update(args.phoneFeature, status)
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             requireComponents.core.permissionStorage.updateSitePermissions(updatedSitePermissions)
+            requireComponents.tryReloadTabBy(updatedSitePermissions.origin)
         }
     }
 }

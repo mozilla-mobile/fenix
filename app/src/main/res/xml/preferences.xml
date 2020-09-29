@@ -3,7 +3,8 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.preference.Preference
@@ -17,7 +18,8 @@
         android:key="@string/pref_key_account_category"
         android:title="@string/preferences_category_account"
         app:iconSpaceReserved="false"
-        app:isPreferenceVisible="false">
+        app:isPreferenceVisible="false"
+        android:layout="@layout/preference_category_main_style" >
 
         <org.mozilla.fenix.settings.account.AccountPreference
             android:icon="@drawable/ic_account"
@@ -28,9 +30,24 @@
             android:key="@string/pref_key_account_auth_error"/>
     </androidx.preference.PreferenceCategory>
 
+    <androidx.preference.EditTextPreference
+        android:key="@string/pref_key_override_fxa_server"
+        android:title="@string/preferences_override_fxa_server"
+        android:inputType="textUri"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false"/>
+
+    <androidx.preference.EditTextPreference
+        android:key="@string/pref_key_override_sync_tokenserver"
+        android:title="@string/preferences_override_sync_tokenserver"
+        android:inputType="textUri"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false"/>
+
     <androidx.preference.PreferenceCategory
-        android:title="@string/preferences_category_basics"
-        app:iconSpaceReserved="false">
+        android:title="@string/preferences_category_general"
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_category_main_style" >
         <androidx.preference.Preference
             android:icon="@drawable/ic_search"
             android:key="@string/pref_key_search_settings"
@@ -38,65 +55,112 @@
 
         <androidx.preference.Preference
             android:icon="@drawable/ic_customize"
-            android:key="@string/pref_key_theme"
-            android:title="@string/preferences_theme" />
+            android:key="@string/pref_key_customize"
+            android:title="@string/preferences_customize" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_login"
+            android:key="@string/pref_key_passwords"
+            android:title="@string/preferences_passwords_logins_and_passwords" />
 
         <androidx.preference.Preference
             android:icon="@drawable/ic_accessibility"
             android:key="@string/pref_key_accessibility"
             android:title="@string/preferences_accessibility" />
 
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_language"
+            android:key="@string/pref_key_language"
+            android:title="@string/preferences_language" />
+
         <org.mozilla.fenix.settings.DefaultBrowserPreference
+            android:icon="@drawable/ic_internet"
             android:key="@string/pref_key_make_default_browser"
             android:title="@string/preferences_set_as_default_browser" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_multiple_tabs"
+            android:key="@string/pref_key_close_tabs"
+            android:title="@string/preferences_close_tabs" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:title="@string/preferences_category_privacy"
-        app:iconSpaceReserved="false">
+        android:title="@string/preferences_category_privacy_security"
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_category_main_style">
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_private_browsing"
+            android:key="@string/pref_key_private_browsing"
+            android:title="@string/preferences_private_browsing_options"/>
+
         <androidx.preference.Preference
             android:icon="@drawable/ic_tracking_protection_enabled"
             android:key="@string/pref_key_tracking_protection_settings"
             android:title="@string/preference_enhanced_tracking_protection" />
-        <androidx.preference.SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_launch_links_in_private_mode"
-            android:title="@string/preferences_launch_links_in_private_mode" />
-        <androidx.preference.Preference
-            android:icon="@drawable/ic_private_browsing"
-            android:key="@string/pref_key_add_private_browsing_shortcut"
-            android:title="@string/preferences_add_private_browsing_shortcut"/>
+
         <androidx.preference.Preference
             android:icon="@drawable/ic_permission"
             android:key="@string/pref_key_site_permissions"
             android:title="@string/preferences_site_permissions" />
+
         <androidx.preference.Preference
             android:icon="@drawable/ic_delete"
             android:key="@string/pref_key_delete_browsing_data"
             android:title="@string/preferences_delete_browsing_data" />
+
         <androidx.preference.Preference
-            app:isPreferenceVisible="false"
             android:icon="@drawable/ic_exit"
             android:key="@string/pref_key_delete_browsing_data_on_quit_preference"
             android:title="@string/preferences_delete_browsing_data_on_quit" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_notifications"
+            android:key="@string/pref_key_notifications"
+            android:title="@string/preferences_notifications" />
+
         <androidx.preference.Preference
             android:icon="@drawable/ic_data_collection"
             android:key="@string/pref_key_data_choices"
             android:title="@string/preferences_data_collection" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preferences_category_advanced"
+        app:iconSpaceReserved="false"
+        android:key="@string/pref_key_advanced"
+        android:layout="@layout/preference_category_main_style">
         <androidx.preference.Preference
-            android:key="@string/pref_key_privacy_link"
-            android:title="@string/preferences_privacy_link" />
+            android:icon="@drawable/ic_addons_extensions"
+            android:key="@string/pref_key_addons"
+            android:title="@string/preferences_addons" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_addons_extensions"
+            android:key="@string/pref_key_override_amo_collection"
+            android:title="@string/preferences_customize_amo_collection"/>
+
         <androidx.preference.SwitchPreference
             android:defaultValue="false"
+            android:icon="@drawable/ic_open_in_app"
+            android:key="@string/pref_key_open_links_in_external_app"
+            android:title="@string/preferences_open_links_in_apps" />
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_download"
+            android:key="@string/pref_key_external_download_manager"
+            android:title="@string/preferences_external_download_manager"
+            app:isPreferenceVisible="false"/>
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="true"
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key_leakcanary"
             android:title="@string/preference_leakcanary"
             app:isPreferenceVisible="@bool/IS_DEBUG" />
-    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/developer_tools_category"
-        app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:icon="@drawable/ic_energy"
             android:key="@string/pref_key_remote_debugging"
@@ -106,18 +170,22 @@
 
     <androidx.preference.PreferenceCategory
         android:title="@string/preferences_category_about"
-        app:iconSpaceReserved="false">
-        <androidx.preference.Preference
-            android:icon="@drawable/ic_help"
-            android:key="@string/pref_key_help"
-            android:title="@string/preferences_help" />
+        app:iconSpaceReserved="false"
+        android:layout="@layout/preference_category_main_style">
         <androidx.preference.Preference
             android:icon="@drawable/ic_bookmark_outline"
             android:key="@string/pref_key_rate"
             android:title="@string/preferences_rate" />
+
         <androidx.preference.Preference
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key_about"
             android:title="@string/preferences_about" />
+
+        <androidx.preference.Preference
+            android:icon="@drawable/ic_info"
+            android:key="@string/pref_key_debug_settings"
+            android:title="@string/preferences_debug_settings"
+            app:isPreferenceVisible="false" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

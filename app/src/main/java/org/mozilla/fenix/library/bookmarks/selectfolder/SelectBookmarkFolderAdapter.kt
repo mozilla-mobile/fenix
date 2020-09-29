@@ -6,25 +6,31 @@ package org.mozilla.fenix.library.bookmarks.selectfolder
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePaddingRelative
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.ktx.android.util.dpToPx
-import org.jetbrains.anko.image
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.bookmarks.BookmarkNodeWithDepth
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
+import org.mozilla.fenix.library.bookmarks.flatNodeList
+import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderAdapter.BookmarkFolderViewHolder
 
 class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedViewModel) :
-    RecyclerView.Adapter<SelectBookmarkFolderAdapter.BookmarkFolderViewHolder>() {
+    ListAdapter<BookmarkNodeWithDepth, BookmarkFolderViewHolder>(DiffCallback) {
 
-    private var tree: List<BookmarkNodeWithDepth> = listOf()
+    fun updateData(tree: BookmarkNode?, hideFolderGuid: String?) {
+        val updatedData = tree
+            ?.flatNodeList(hideFolderGuid)
+            ?.drop(1)
+            .orEmpty()
 
-    fun updateData(tree: BookmarkNode?) {
-        this.tree = tree!!.convertToFolderDepthTree().drop(1)
-        notifyDataSetChanged()
+        submitList(updatedData)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkFolderViewHolder {
@@ -38,27 +44,24 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         return BookmarkFolderViewHolder(view)
     }
 
-    override fun getItemCount(): Int = tree.size
-
     override fun onBindViewHolder(holder: BookmarkFolderViewHolder, position: Int) {
-        holder.bind(
-            tree[position],
-            tree[position].node == sharedViewModel.selectedFolder
-        ) { node ->
-            sharedViewModel.apply {
-                when (selectedFolder) {
-                    node -> selectedFolder = null
-                    else -> selectedFolder = node
-                }
-            }
-            notifyDataSetChanged()
+        val item = getItem(position)
+
+        holder.bind(item, selected = item.node.isSelected()) { node ->
+            val lastSelectedItemPosition = getSelectedItemIndex()
+
+            sharedViewModel.toggleSelection(node)
+
+            notifyItemChanged(position)
+            lastSelectedItemPosition
+                ?.takeIf { it != position }
+                ?.let { notifyItemChanged(it) }
         }
     }
 
     class BookmarkFolderViewHolder(
         val view: LibrarySiteItemView
-    ) :
-        RecyclerView.ViewHolder(view), LayoutContainer {
+    ) : RecyclerView.ViewHolder(view), LayoutContainer {
 
         override val containerView get() = view
 
@@ -69,16 +72,22 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
 
         fun bind(folder: BookmarkNodeWithDepth, selected: Boolean, onSelect: (BookmarkNode) -> Unit) {
             view.changeSelected(selected)
-            view.iconView.image = containerView.context.getDrawable(R.drawable.ic_folder_icon)?.apply {
-                setTint(ContextCompat.getColor(containerView.context, R.color.primary_text_light_theme))
-            }
+            view.iconView.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    containerView.context,
+                    R.drawable.ic_folder_icon
+                )?.apply {
+                    setTint(ContextCompat.getColor(containerView.context,
+                        R.color.primary_text_light_theme))
+                }
+            )
             view.titleView.text = folder.node.title
             view.setOnClickListener {
                 onSelect(folder.node)
             }
-            val pxToIndent = dpsToIndent.dpToPx(view.context.resources.displayMetrics)
-            val padding = pxToIndent * if (folder.depth > maxDepth) maxDepth else folder.depth
-            view.setPadding(padding, 0, 0, 0)
+            val pxToIndent = view.resources.getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
+            val padding = pxToIndent * minOf(MAX_DEPTH, folder.depth)
+            view.updatePaddingRelative(start = padding)
         }
 
         companion object {
@@ -86,18 +95,35 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         }
     }
 
-    data class BookmarkNodeWithDepth(val depth: Int, val node: BookmarkNode, val parent: String?)
+    private fun getSelectedItemIndex(): Int? {
+        val selectedNode = sharedViewModel.selectedFolder
+        val selectedNodeIndex = currentList.indexOfFirst { it.node == selectedNode }
 
-    private fun BookmarkNode.convertToFolderDepthTree(depth: Int = 0): List<BookmarkNodeWithDepth> {
-        val newList = listOf(BookmarkNodeWithDepth(depth, this, this.parentGuid))
-        return newList + children
-            ?.filter { it.type == BookmarkNodeType.FOLDER }
-            ?.flatMap { it.convertToFolderDepthTree(depth = depth + 1) }
-            .orEmpty()
+        return selectedNodeIndex.takeIf { it != -1 }
     }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun BookmarkNode.isSelected(): Boolean =
+        this == sharedViewModel.selectedFolder
 
     companion object {
-        private const val maxDepth = 10
-        private const val dpsToIndent = 10
+        private const val MAX_DEPTH = 10
     }
+}
+
+private object DiffCallback : DiffUtil.ItemCallback<BookmarkNodeWithDepth>() {
+
+    override fun areItemsTheSame(
+        oldItem: BookmarkNodeWithDepth,
+        newItem: BookmarkNodeWithDepth
+    ) = oldItem.node.guid == newItem.node.guid
+
+    override fun areContentsTheSame(
+        oldItem: BookmarkNodeWithDepth,
+        newItem: BookmarkNodeWithDepth
+    ) = oldItem == newItem
+}
+
+private fun BookmarksSharedViewModel.toggleSelection(node: BookmarkNode?) {
+    selectedFolder = if (selectedFolder == node) null else node
 }

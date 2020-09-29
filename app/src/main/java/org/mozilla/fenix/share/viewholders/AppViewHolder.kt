@@ -14,22 +14,22 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
 
 class AppViewHolder(
     itemView: View,
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val interactor: ShareToAppsInteractor
+    @VisibleForTesting val interactor: ShareToAppsInteractor
 ) : RecyclerView.ViewHolder(itemView) {
 
     private var application: AppShareOption? = null
 
     init {
         itemView.setOnClickListener {
-            application?.let { application ->
-                interactor.onShareToApp(application)
+            application?.let { app ->
+                interactor.onShareToApp(app)
             }
         }
     }
 
     fun bind(item: AppShareOption) {
         application = item
+
         itemView.appName.text = item.name
         itemView.appIcon.setImageDrawable(item.icon)
     }

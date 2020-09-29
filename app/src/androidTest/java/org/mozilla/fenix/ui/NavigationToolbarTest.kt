@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -54,22 +55,18 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(nextWebPage.url) {
-            verifyPageContent(nextWebPage.content)
-        }
-
-        // Re-open the three-dot menu for verification
-        navigationToolbar {
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-            verifyBackButton()
-        }.goBack {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
+            verifyUrl(nextWebPage.url.toString())
+            mDevice.pressBack()
+            mDevice.waitForIdle()
+            verifyUrl(defaultWebPage.url.toString())
         }
     }
 
+    @Ignore("Flaky test: https://github.com/mozilla-mobile/fenix/issues/12894")
     @Test
     fun goForwardTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -77,12 +74,14 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(nextWebPage.url) {
-            verifyPageContent(nextWebPage.content)
+            mDevice.waitForIdle()
+            verifyUrl(nextWebPage.url.toString())
             mDevice.pressBack()
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
+            verifyUrl(defaultWebPage.url.toString())
         }
 
         // Re-open the three-dot menu for verification
@@ -91,7 +90,7 @@ class NavigationToolbarTest {
             verifyThreeDotMenuExists()
             verifyForwardButton()
         }.goForward {
-            verifyPageContent(nextWebPage.content)
+            verifyUrl(nextWebPage.url.toString())
         }
     }
 
@@ -101,7 +100,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(refreshWebPage.url) {
-            verifyPageContent("DEFAULT")
+            mDevice.waitForIdle()
         }
 
         // Use refresh from the three-dot menu
@@ -120,17 +119,18 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            verifyUrl(defaultWebPage.url.toString())
         }
     }
 
+    @Ignore("Temp disable broken test - see:  https://github.com/mozilla-mobile/fenix/issues/5534")
     @Test
     fun findInPageTest() {
         val loremIpsumWebPage = TestAssetHelper.getLoremIpsumAsset(mockWebServer)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loremIpsumWebPage.url) {
-            verifyPageContent(loremIpsumWebPage.content)
+            mDevice.waitForIdle()
         }
 
         navigationToolbar {

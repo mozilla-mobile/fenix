@@ -44,15 +44,14 @@ class SettingsSyncTest {
 
     @Ignore("This is a stub test, ignore for now")
     @Test
-    // Walks through settings menu and sub-menus to ensure all items are present
-    fun settingsSyncMenusItemsTest() {
+    // Walks through settings sync menu and sub-menus to ensure all items are present
+    fun settingsSyncItemsTest() {
         // SYNC
 
         // Open 3dot (main) menu
         // Select settings
         // Verify header: "Turn on Sync"
         // Verify description: "Sync bookmarks, history, and more with your Firefox Account"
-
     }
 
     // SYNC

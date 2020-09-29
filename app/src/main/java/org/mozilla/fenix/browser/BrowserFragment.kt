@@ -4,85 +4,56 @@
 
 package org.mozilla.fenix.browser
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
+import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.PopupWindow
-import android.widget.RadioButton
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
-import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.thumbnails.BrowserThumbnails
+import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.feature.app.links.AppLinksUseCases
+import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.support.base.feature.BackHandler
+import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.tabs.WindowFeature
+import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import org.jetbrains.anko.dimen
-import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
+import org.mozilla.fenix.addons.runIfFragmentIsAttached
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.toolbar.BrowserInteractor
-import org.mozilla.fenix.components.toolbar.BrowserToolbarController
-import org.mozilla.fenix.components.toolbar.BrowserToolbarViewInteractor
-import org.mozilla.fenix.components.toolbar.QuickActionSheetAction
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.mvi.getManagedEmitter
-import org.mozilla.fenix.quickactionsheet.DefaultQuickActionSheetController
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetSessionObserver
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetView
+import org.mozilla.fenix.shortcut.PwaOnboardingObserver
+import org.mozilla.fenix.trackingprotection.TrackingProtectionOverlay
 
 /**
  * Fragment used for browsing the web within the main app.
  */
-@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions", "LargeClass")
-class BrowserFragment : BaseBrowserFragment(), BackHandler {
-    private lateinit var quickActionSheetView: QuickActionSheetView
-    private var quickActionSheetSessionObserver: QuickActionSheetSessionObserver? = null
+class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
-    private val readerViewFeature = ViewBoundFeatureWrapper<ReaderViewFeature>()
+    private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        postponeEnterTransition()
-        sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                .setDuration(
-                    SHARED_TRANSITION_MS
-                )
-    }
+    private var readerModeAvailable = false
+    private var openInAppOnboardingObserver: OpenInAppOnboardingObserver? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,89 +61,155 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view.browserLayout.transitionName = "$TAB_ITEM_TRANSITION_NAME${getSessionById()?.id}"
 
         startPostponedEnterTransition()
-
         return view
     }
 
+    @Suppress("LongMethod")
     override fun initializeUI(view: View): Session? {
         val context = requireContext()
-        val sessionManager = context.components.core.sessionManager
+        val components = context.components
 
         return super.initializeUI(view)?.also {
-            readerViewFeature.set(
-                feature = ReaderViewFeature(
-                    context,
-                    context.components.core.engine,
-                    sessionManager,
-                    view.readerViewControlsBar
-                ) { available ->
-                    if (available) {
-                        context.components.analytics.metrics.track(Event.ReaderModeAvailable)
-                    }
+            if (context.settings().isSwipeToolbarToSwitchTabsEnabled) {
+                gestureLayout.addGestureListener(
+                    ToolbarGestureHandler(
+                        activity = requireActivity(),
+                        contentLayout = browserLayout,
+                        tabPreview = tabPreview,
+                        toolbarLayout = browserToolbarView.view,
+                        sessionManager = components.core.sessionManager
+                    )
+                )
+            }
 
-                    browserStore.apply {
-                        dispatch(QuickActionSheetAction.ReadableStateChange(available))
-                        dispatch(
-                            QuickActionSheetAction.ReaderActiveStateChange(
-                                sessionManager.selectedSession?.readerMode ?: false
-                            )
-                        )
+            val readerModeAction =
+                BrowserToolbar.ToggleButton(
+                    image = ContextCompat.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
+                    imageSelected =
+                        AppCompatResources.getDrawable(requireContext(), R.drawable.ic_readermode_selected)!!,
+                    contentDescription = requireContext().getString(R.string.browser_menu_read),
+                    contentDescriptionSelected = requireContext().getString(R.string.browser_menu_read_close),
+                    visible = {
+                        readerModeAvailable
+                    },
+                    selected = getSessionById()?.let {
+                            activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
+                        } ?: false,
+                    listener = browserInteractor::onReaderModePressed
+                )
+
+            browserToolbarView.view.addPageAction(readerModeAction)
+
+            thumbnailsFeature.set(
+                feature = BrowserThumbnails(context, view.engineView, components.core.store),
+                owner = this,
+                view = view
+            )
+
+            readerViewFeature.set(
+                feature = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                    ReaderViewFeature(
+                        context,
+                        components.core.engine,
+                        components.core.store,
+                        view.readerViewControlsBar
+                    ) { available, active ->
+                        if (available) {
+                            components.analytics.metrics.track(Event.ReaderModeAvailable)
+                        }
+
+                        readerModeAvailable = available
+                        readerModeAction.setSelected(active)
+
+                        runIfFragmentIsAttached {
+                            browserToolbarView.view.invalidateActions()
+                            browserToolbarView.toolbarIntegration.invalidateMenu()
+                        }
                     }
                 },
                 owner = this,
                 view = view
             )
 
-            if ((activity as HomeActivity).browsingModeManager.mode.isPrivate) {
-                // We need to update styles for private mode programmatically for now:
-                // https://github.com/mozilla-mobile/android-components/issues/3400
-                themeReaderViewControlsForPrivateMode(view.readerViewControlsBar)
-            }
-
-            consumeFrom(browserStore) {
-                quickActionSheetView.update(it)
-                browserToolbarView.update(it)
-            }
+            windowFeature.set(
+                feature = WindowFeature(
+                    store = components.core.store,
+                    tabsUseCases = components.useCases.tabsUseCases
+                ),
+                owner = this,
+                view = view
+            )
         }
     }
 
     override fun onStart() {
         super.onStart()
-        subscribeToTabCollections()
-        quickActionSheetSessionObserver = QuickActionSheetSessionObserver(
-            lifecycleScope,
-            requireComponents,
-            dispatch = { action -> browserStore.dispatch(action) }
-        ).also { observer ->
-            getSessionById()?.register(observer, this, autoPause = true)
+        val context = requireContext()
+        val settings = context.settings()
+        val session = getSessionById()
+
+        val toolbarSessionObserver = TrackingProtectionOverlay(
+            context = context,
+            settings = settings,
+            metrics = context.components.analytics.metrics
+        ) {
+            browserToolbarView.view
         }
-        getSessionById()?.register(toolbarSessionObserver, this, autoPause = true)
+        session?.register(toolbarSessionObserver, viewLifecycleOwner, autoPause = true)
+
+        if (settings.shouldShowOpenInAppCfr && session != null) {
+            openInAppOnboardingObserver = OpenInAppOnboardingObserver(
+                context = context,
+                navController = findNavController(),
+                settings = settings,
+                appLinksUseCases = context.components.useCases.appLinksUseCases,
+                container = browserToolbarView.view.parent as ViewGroup
+            )
+            session.register(
+                openInAppOnboardingObserver!!,
+                owner = this,
+                autoPause = true
+            )
+        }
+
+        if (!settings.userKnowsAboutPwas) {
+            session?.register(
+                PwaOnboardingObserver(
+                    navController = findNavController(),
+                    settings = settings,
+                    webAppUseCases = context.components.useCases.webAppUseCases
+                ),
+                owner = this,
+                autoPause = true
+            )
+        }
+
+        subscribeToTabCollections()
     }
 
-    private val toolbarSessionObserver = object : Session.Observer {
-        override fun onLoadingStateChanged(session: Session, loading: Boolean) {
-            if (!loading &&
-                shouldShowTrackingProtectionOnboarding(session)
-            ) {
-                showTrackingProtectionOnboarding()
-            }
+    override fun onStop() {
+        super.onStop()
+        // This observer initialized in onStart has a reference to fragment's view.
+        // Prevent it leaking the view after the latter onDestroyView.
+        if (openInAppOnboardingObserver != null) {
+            getSessionById()?.unregister(openInAppOnboardingObserver!!)
+            openInAppOnboardingObserver = null
+        }
+    }
+
+    private fun subscribeToTabCollections() {
+        Observer<List<TabCollection>> {
+            requireComponents.core.tabCollectionStorage.cachedTabCollections = it
+        }.also { observer ->
+            requireComponents.core.tabCollectionStorage.getCollections()
+                .observe(viewLifecycleOwner, observer)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        getSessionById()?.let {
-            /**
-             * The session mode may be changed if the user is originally in Normal Mode and then
-             * opens a 3rd party link in Private Browsing Mode. Hence, we update the theme here.
-             * This fixes issue #5254.
-             */
-            (activity as HomeActivity).updateThemeForSession(it)
-            quickActionSheetSessionObserver?.updateBookmarkState(it)
-        }
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
@@ -180,234 +217,90 @@ class BrowserFragment : BaseBrowserFragment(), BackHandler {
         return readerViewFeature.onBackPressed() || super.onBackPressed()
     }
 
-    override fun createBrowserToolbarViewInteractor(
-        browserToolbarController: BrowserToolbarController,
-        session: Session?
-    ): BrowserToolbarViewInteractor {
-        val context = requireContext()
-
-        val interactor = BrowserInteractor(
-            context = context,
-            store = browserStore,
-            browserToolbarController = browserToolbarController,
-            quickActionSheetController = DefaultQuickActionSheetController(
-                context = context,
-                navController = findNavController(),
-                sessionManager = context.components.core.sessionManager,
-                appLinksUseCases = context.components.useCases.appLinksUseCases,
-                bookmarkTapped = {
-                    lifecycleScope.launch { bookmarkTapped(it) }
-                }
-            ),
-            readerModeController = DefaultReaderModeController(readerViewFeature),
-            currentSession = session
-        )
-
-        quickActionSheetView = QuickActionSheetView(view!!.nestedScrollQuickAction, interactor)
-
-        return interactor
-    }
-
     override fun navToQuickSettingsSheet(session: Session, sitePermissions: SitePermissions?) {
         val directions =
             BrowserFragmentDirections.actionBrowserFragmentToQuickSettingsSheetDialogFragment(
                 sessionId = session.id,
                 url = session.url,
+                title = session.title,
                 isSecured = session.securityInfo.secure,
-                isTrackingProtectionOn = session.trackerBlockingEnabled,
                 sitePermissions = sitePermissions,
-                gravity = getAppropriateLayoutGravity()
+                gravity = getAppropriateLayoutGravity(),
+                certificateName = session.securityInfo.issuer
             )
         nav(R.id.browserFragment, directions)
     }
 
     override fun navToTrackingProtectionPanel(session: Session) {
-        val directions =
-            BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
-                sessionId = session.id,
-                url = session.url,
-                trackingProtectionEnabled = session.trackerBlockingEnabled,
-                gravity = getAppropriateLayoutGravity()
-            )
-        nav(R.id.browserFragment, directions)
-    }
+        val navController = findNavController()
 
-    override fun getEngineMargins(): Pair<Int, Int> {
-        val toolbarAndQASSize = resources.getDimensionPixelSize(R.dimen.toolbar_and_qab_height)
-        return 0 to toolbarAndQASSize
-    }
-
-    override fun getAppropriateLayoutGravity() = Gravity.BOTTOM
-
-    private fun themeReaderViewControlsForPrivateMode(view: View) = with(view) {
-        listOf(
-            R.id.mozac_feature_readerview_font_size_decrease,
-            R.id.mozac_feature_readerview_font_size_increase
-        ).map {
-            findViewById<Button>(it)
-        }.forEach {
-            it.setTextColor(
-                ContextCompat.getColorStateList(
-                    context,
-                    R.color.readerview_private_button_color
+        requireComponents.useCases.trackingProtectionUseCases.containsException(session.id) { contains ->
+            val isEnabled = session.trackerBlockingEnabled && !contains
+            val directions =
+                BrowserFragmentDirections.actionBrowserFragmentToTrackingProtectionPanelDialogFragment(
+                    sessionId = session.id,
+                    url = session.url,
+                    trackingProtectionEnabled = isEnabled,
+                    gravity = getAppropriateLayoutGravity()
                 )
-            )
+            navController.navigateSafe(R.id.browserFragment, directions)
         }
-
-        listOf(
-            R.id.mozac_feature_readerview_font_serif,
-            R.id.mozac_feature_readerview_font_sans_serif
-        ).map {
-            findViewById<RadioButton>(it)
-        }.forEach {
-            it.setTextColor(
-                ContextCompat.getColorStateList(
-                    context,
-                    R.color.readerview_private_radio_color
-                )
-            )
-        }
-    }
-
-    private suspend fun bookmarkTapped(session: Session) = withContext(IO) {
-        val bookmarksStorage = requireComponents.core.bookmarksStorage
-        val existing =
-            bookmarksStorage.getBookmarksWithUrl(session.url).firstOrNull { it.url == session.url }
-        if (existing != null) {
-            // Bookmark exists, go to edit fragment
-            withContext(Main) {
-                nav(
-                    R.id.browserFragment,
-                    BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(existing.guid)
-                )
-            }
-        } else {
-            // Save bookmark, then go to edit fragment
-            val guid = bookmarksStorage.addItem(
-                BookmarkRoot.Mobile.id,
-                url = session.url,
-                title = session.title,
-                position = null
-            )
-
-            withContext(Main) {
-                browserStore.dispatch(
-                    QuickActionSheetAction.BookmarkedStateChange(bookmarked = true)
-                )
-                requireComponents.analytics.metrics.track(Event.AddBookmark)
-
-                view?.let {
-                    FenixSnackbar.make(it.rootView, Snackbar.LENGTH_LONG)
-                        .setAnchorView(browserToolbarView.view)
-                        .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
-                            nav(
-                                R.id.browserFragment,
-                                BrowserFragmentDirections.actionBrowserFragmentToBookmarkEditFragment(
-                                    guid
-                                )
-                            )
-                        }
-                        .setText(getString(R.string.bookmark_saved_snackbar))
-                        .show()
-                }
-            }
-        }
-    }
-
-    private fun subscribeToTabCollections() {
-        requireComponents.core.tabCollectionStorage.getCollections().observe(this, Observer {
-            requireComponents.core.tabCollectionStorage.cachedTabCollections = it
-            getManagedEmitter<SessionControlChange>().onNext(
-                SessionControlChange.CollectionsChange(
-                    it
-                )
-            )
-        })
-    }
-
-    override fun onSessionSelected(session: Session) {
-        super.onSessionSelected(session)
-        quickActionSheetSessionObserver?.updateBookmarkState(session)
     }
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            showTabSavedToCollectionSnackbar()
+            showTabSavedToCollectionSnackbar(sessions.size, true)
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
-            showTabSavedToCollectionSnackbar()
+            showTabSavedToCollectionSnackbar(sessions.size)
         }
 
-        private fun showTabSavedToCollectionSnackbar() {
+        private fun showTabSavedToCollectionSnackbar(tabSize: Int, isNewCollection: Boolean = false) {
             view?.let { view ->
-                FenixSnackbar.make(view, Snackbar.LENGTH_SHORT)
-                    .setText(view.context.getString(R.string.create_collection_tab_saved))
-                    .setAnchorView(browserToolbarView.view)
+                val messageStringRes = when {
+                    isNewCollection -> {
+                        R.string.create_collection_tabs_saved_new_collection
+                    }
+                    tabSize > 1 -> {
+                        R.string.create_collection_tabs_saved
+                    }
+                    else -> {
+                        R.string.create_collection_tab_saved
+                    }
+                }
+                FenixSnackbar.make(
+                    view = view.browserLayout,
+                    duration = Snackbar.LENGTH_SHORT,
+                    isDisplayedWithBrowserToolbar = true
+                )
+                    .setText(view.context.getString(messageStringRes))
+                    .setAction(requireContext().getString(R.string.create_collection_view)) {
+                        findNavController().navigate(
+                            BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = false)
+                        )
+                    }
                     .show()
             }
         }
     }
 
-    private fun showTrackingProtectionOnboarding() {
-        if (!FeatureFlags.etpCategories) {
-            return
-        }
-        context?.let {
-            val layout = LayoutInflater.from(it)
-                .inflate(R.layout.tracking_protection_onboarding_popup, null)
-            layout.onboarding_message.text =
-                it.getString(R.string.etp_onboarding_message, getString(R.string.app_name))
+    override fun getContextMenuCandidates(
+        context: Context,
+        view: View
+    ): List<ContextMenuCandidate> {
+        val contextMenuCandidateAppLinksUseCases = AppLinksUseCases(
+            requireContext(),
+            { true }
+        )
 
-            val trackingOnboarding = PopupWindow(
-                layout,
-                it.dimen(R.dimen.tp_onboarding_width),
-                WindowManager.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                isOutsideTouchable = true
-                isFocusable = true
-                elevation = view!!.resources.getDimension(R.dimen.mozac_browser_menu_elevation)
-                animationStyle = R.style.Mozac_Browser_Menu_Animation_OverflowMenuBottom
-            }
-
-            val closeButton = layout.findViewById<ImageView>(R.id.close_onboarding)
-            closeButton.increaseTapArea(BUTTON_INCREASE_DPS)
-            closeButton.setOnClickListener {
-                trackingOnboarding.dismiss()
-            }
-
-            val tpIcon =
-                browserToolbarView
-                    .view
-                    .findViewById<AppCompatImageView>(R.id.mozac_browser_toolbar_tracking_protection_icon_view)
-
-            // Measure layout view
-            val spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            layout.measure(spec, spec)
-
-            val containerHeight = layout.measuredHeight
-
-            val xOffset = it.dimen(R.dimen.tp_onboarding_x_offset)
-
-            // Positioning the popup above the tp anchor.
-            val yOffset = -containerHeight - (browserToolbarView.view.height / THREE * 2)
-
-            trackingOnboarding.showAsDropDown(tpIcon, xOffset, yOffset)
-            it.settings().incrementTrackingProtectionOnboardingCount()
-        }
-    }
-
-    private fun shouldShowTrackingProtectionOnboarding(session: Session) =
-        context?.settings()?.shouldShowTrackingProtectionOnboarding ?: false &&
-                session.trackerBlockingEnabled && session.trackersBlocked.isNotEmpty()
-
-    companion object {
-        private const val THREE = 3
-        private const val BUTTON_INCREASE_DPS = 12
-        private const val SHARED_TRANSITION_MS = 200L
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
-        const val REPORT_SITE_ISSUE_URL =
-            "https://webcompat.com/issues/new?url=%s&label=browser-fenix"
+        return ContextMenuCandidate.defaultCandidates(
+            context,
+            context.components.useCases.tabsUseCases,
+            context.components.useCases.contextMenuUseCases,
+            view,
+            FenixSnackbarDelegate(view)
+        ) + ContextMenuCandidate.createOpenInExternalAppCandidate(requireContext(),
+            contextMenuCandidateAppLinksUseCases)
     }
 }

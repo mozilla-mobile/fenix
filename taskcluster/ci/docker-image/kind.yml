@@ -11,11 +11,17 @@ transforms:
     - taskgraph.transforms.task:transforms
 
 jobs:
+    android-build:
+        symbol: I(agb)
+        parent: base
     base:
         symbol: I(base)
-    nimbledroid:
+    bump:
         parent: base
-        symbol: I(nimbledroid)
+        symbol: I(bump)
     ui-tests:
         parent: base
         symbol: I(ui-tests)
+    visual-metrics:
+        parent: base
+        symbol: I(visual-metrics)

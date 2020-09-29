@@ -5,9 +5,13 @@
 package org.mozilla.fenix.home
 
 import android.animation.Animator
+import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.StrictMode
+import android.view.Display.FLAG_SECURE
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,109 +19,121 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintSet.BOTTOM
+import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.constraintlayout.widget.ConstraintSet.TOP
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.android.synthetic.main.no_collections_message.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.components.browser.menu.BrowserMenu
+import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
-import mozilla.components.feature.media.ext.getSession
-import mozilla.components.feature.media.ext.pauseIfPlaying
-import mozilla.components.feature.media.ext.playIfPaused
-import mozilla.components.feature.media.state.MediaState
-import mozilla.components.feature.media.state.MediaStateMachine
 import mozilla.components.feature.tab.collections.TabCollection
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.START
-import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.TOP
-import org.jetbrains.anko.constraint.layout.applyConstraintSet
+import mozilla.components.feature.top.sites.TopSitesConfig
+import mozilla.components.feature.top.sites.TopSitesFeature
+import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FenixViewModelProvider
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.cfr.SearchWidgetCFR
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
+import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.tips.FenixTipManager
+import org.mozilla.fenix.components.tips.Tip
+import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
+import org.mozilla.fenix.components.toolbar.TabCounterMenu
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.toTab
-import org.mozilla.fenix.home.sessioncontrol.CollectionAction
-import org.mozilla.fenix.home.sessioncontrol.OnboardingAction
-import org.mozilla.fenix.home.sessioncontrol.SessionControlAction
-import org.mozilla.fenix.home.sessioncontrol.SessionControlChange
-import org.mozilla.fenix.home.sessioncontrol.SessionControlComponent
-import org.mozilla.fenix.home.sessioncontrol.SessionControlState
-import org.mozilla.fenix.home.sessioncontrol.SessionControlViewModel
-import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.TabAction
+import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
+import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionViewHolder
-import org.mozilla.fenix.lib.Do
-import org.mozilla.fenix.mvi.ActionBusFactory
-import org.mozilla.fenix.mvi.getAutoDisposeObservable
-import org.mozilla.fenix.mvi.getManagedEmitter
+import org.mozilla.fenix.home.sessioncontrol.viewholders.topsites.DefaultTopSitesView
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.share.ShareTab
+import org.mozilla.fenix.settings.SupportUtils.SumoTopic.HELP
+import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.FragmentPreDrawManager
+import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.whatsnew.WhatsNew
+import java.lang.ref.WeakReference
+import kotlin.math.min
 
-@SuppressWarnings("TooManyFunctions", "LargeClass")
+@ExperimentalCoroutinesApi
+@Suppress("TooManyFunctions", "LargeClass")
 class HomeFragment : Fragment() {
+    private val args by navArgs<HomeFragmentArgs>()
+    private lateinit var bundleArgs: Bundle
 
-    private val bus = ActionBusFactory.get(this)
+    private val homeViewModel: HomeScreenViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+    }
+
+    private val snackbarAnchorView: View?
+        get() = when (requireContext().settings().toolbarPosition) {
+            ToolbarPosition.BOTTOM -> toolbarLayout
+            ToolbarPosition.TOP -> null
+        }
 
     private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
 
-    private val singleSessionObserver = object : Session.Observer {
-        override fun onTitleChanged(session: Session, title: String) {
-            if (deleteAllSessionsJob == null) emitSessionChanges()
-        }
-    }
-
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         override fun onCollectionCreated(title: String, sessions: List<Session>) {
-            scrollAndAnimateCollection(sessions.size)
+            scrollAndAnimateCollection()
         }
 
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<Session>) {
-            scrollAndAnimateCollection(sessions.size, tabCollection)
+            scrollAndAnimateCollection(tabCollection)
         }
 
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
@@ -125,89 +141,191 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private var homeMenu: HomeMenu? = null
-
     private val sessionManager: SessionManager
         get() = requireComponents.core.sessionManager
+    private val store: BrowserStore
+        get() = requireComponents.core.store
 
-    var deleteAllSessionsJob: (suspend () -> Unit)? = null
-    private var pendingSessionDeletion: PendingSessionDeletion? = null
+    private val onboarding by lazy {
+        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            FenixOnboarding(requireContext())
+        }
+    }
 
-    data class PendingSessionDeletion(val deletionJob: (suspend () -> Unit), val sessionId: String)
+    private lateinit var homeFragmentStore: HomeFragmentStore
+    private var _sessionControlInteractor: SessionControlInteractor? = null
+    protected val sessionControlInteractor: SessionControlInteractor
+        get() = _sessionControlInteractor!!
 
-    private val onboarding by lazy { FenixOnboarding(requireContext()) }
-    private lateinit var sessionControlComponent: SessionControlComponent
+    private var sessionControlView: SessionControlView? = null
     private lateinit var currentMode: CurrentMode
+
+    private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
-        sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                .setDuration(SHARED_TRANSITION_MS)
-
-        val sessionObserver = BrowserSessionsObserver(sessionManager, singleSessionObserver) {
-            emitSessionChanges()
-        }
-
-        lifecycle.addObserver(sessionObserver)
-
-        if (!onboarding.userHasBeenOnboarded()) {
-            requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
+        bundleArgs = args.toBundle()
+        lifecycleScope.launch(IO) {
+            if (!onboarding.userHasBeenOnboarded()) {
+                requireComponents.analytics.metrics.track(Event.OpenedAppFirstRun)
+            }
         }
     }
 
+    @Suppress("LongMethod")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val activity = activity as HomeActivity
+        val components = requireComponents
 
         currentMode = CurrentMode(
             view.context,
             onboarding,
             browsingModeManager,
-            getManagedEmitter()
+            ::dispatchModeChanges
         )
 
-        sessionControlComponent = SessionControlComponent(
-            view.homeLayout,
-            bus,
-            FenixViewModelProvider.create(
-                this,
-                SessionControlViewModel::class.java
-            ) {
-                SessionControlViewModel(
-                    SessionControlState(
-                        emptyList(),
-                        emptySet(),
-                        requireComponents.core.tabCollectionStorage.cachedTabCollections,
-                        currentMode.getCurrentMode()
-                    )
+        homeFragmentStore = StoreProvider.get(this) {
+            HomeFragmentStore(
+                HomeFragmentState(
+                    collections = components.core.tabCollectionStorage.cachedTabCollections,
+                    expandedCollections = emptySet(),
+                    mode = currentMode.getCurrentMode(),
+                    topSites = components.core.topSitesStorage.cachedTopSites,
+                    tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                        FenixTipManager(
+                            listOf(
+                                MasterPasswordTipProvider(
+                                    requireContext(),
+                                    ::navToSavedLogins,
+                                    ::dismissTip
+                                )
+                            )
+                        ).getTip()
+                    },
+                    showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
                 )
-            }
-        )
-
-        view.homeLayout.applyConstraintSet {
-            sessionControlComponent.view {
-                connect(
-                    TOP to BOTTOM of view.wordmark_spacer,
-                    START to START of PARENT_ID,
-                    END to END of PARENT_ID,
-                    BOTTOM to TOP of view.bottom_bar
-                )
-            }
+            )
         }
 
-        ActionBusFactory.get(this).logMergedObservables()
-        val activity = activity as HomeActivity
-        activity.themeManager.applyStatusBarTheme(activity)
+        topSitesFeature.set(
+            feature = TopSitesFeature(
+                view = DefaultTopSitesView(homeFragmentStore),
+                storage = components.core.topSitesStorage,
+                config = ::getTopSitesConfig
+            ),
+            owner = this,
+            view = view
+        )
 
+        _sessionControlInteractor = SessionControlInteractor(
+            DefaultSessionControlController(
+                activity = activity,
+                settings = components.settings,
+                engine = components.core.engine,
+                metrics = components.analytics.metrics,
+                sessionManager = sessionManager,
+                tabCollectionStorage = components.core.tabCollectionStorage,
+                addTabUseCase = components.useCases.tabsUseCases.addTab,
+                fragmentStore = homeFragmentStore,
+                navController = findNavController(),
+                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
+                hideOnboarding = ::hideOnboardingAndOpenSearch,
+                registerCollectionStorageObserver = ::registerCollectionStorageObserver,
+                showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
+                showTabTray = ::openTabTray,
+                handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
+            )
+        )
+
+        updateLayout(view)
+        sessionControlView = SessionControlView(
+            view.sessionControlRecyclerView,
+            viewLifecycleOwner,
+            sessionControlInteractor,
+            homeViewModel
+        )
+
+        updateSessionControlView(view)
+
+        activity.themeManager.applyStatusBarTheme(activity)
         return view
     }
 
-    @SuppressWarnings("LongMethod")
+    private fun dismissTip(tip: Tip) {
+        sessionControlInteractor.onCloseTip(tip)
+    }
+
+    /**
+     * Returns a [TopSitesConfig] which specifies how many top sites to display and whether or
+     * not frequently visited sites should be displayed.
+     */
+    private fun getTopSitesConfig(): TopSitesConfig {
+        val settings = requireContext().settings()
+        return TopSitesConfig(settings.topSitesMaxLimit, settings.showTopFrecentSites)
+    }
+
+    /**
+     * The [SessionControlView] is forced to update with our current state when we call
+     * [HomeFragment.onCreateView] in order to be able to draw everything at once with the current
+     * data in our store. The [View.consumeFrom] coroutine dispatch
+     * doesn't get run right away which means that we won't draw on the first layout pass.
+     */
+    private fun updateSessionControlView(view: View) {
+        if (browsingModeManager.mode == BrowsingMode.Private) {
+            view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+                sessionControlView?.update(it)
+            }
+        } else {
+            sessionControlView?.update(homeFragmentStore.state)
+
+            view.consumeFrom(homeFragmentStore, viewLifecycleOwner) {
+                sessionControlView?.update(it)
+            }
+        }
+    }
+
+    private fun updateLayout(view: View) {
+        when (view.context.settings().toolbarPosition) {
+            ToolbarPosition.TOP -> {
+                view.toolbarLayout.layoutParams = CoordinatorLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.TOP
+                }
+
+                ConstraintSet().apply {
+                    clone(view.toolbarLayout)
+                    clear(view.bottom_bar.id, BOTTOM)
+                    clear(view.bottomBarShadow.id, BOTTOM)
+                    connect(view.bottom_bar.id, TOP, PARENT_ID, TOP)
+                    connect(view.bottomBarShadow.id, TOP, view.bottom_bar.id, BOTTOM)
+                    connect(view.bottomBarShadow.id, BOTTOM, PARENT_ID, BOTTOM)
+                    applyTo(view.toolbarLayout)
+                }
+
+                view.bottom_bar.background = AppCompatResources.getDrawable(
+                    view.context,
+                    view.context.theme.resolveAttribute(R.attr.bottomBarBackgroundTop)
+                )
+
+                view.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin =
+                        resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
+                }
+            }
+            ToolbarPosition.BOTTOM -> {
+            }
+        }
+    }
+
+    @Suppress("LongMethod", "ComplexMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -216,261 +334,291 @@ class HomeFragment : Fragment() {
                 ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
             }
             homeViewModel.layoutManagerState?.also { parcelable ->
-                sessionControlComponent.view.layoutManager?.onRestoreInstanceState(parcelable)
+                sessionControlView!!.view.layoutManager?.onRestoreInstanceState(parcelable)
             }
-            homeLayout?.progress = homeViewModel.motionLayoutProgress
             homeViewModel.layoutManagerState = null
+
+            // We have to delay so that the keyboard collapses and the view is resized before the
+            // animation from SearchFragment happens
+            delay(ANIMATION_DELAY)
         }
 
-        setupHomeMenu()
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
+            // This is necessary due to a bug in viewLifecycleOwner. See:
+            // https://github.com/mozilla-mobile/android-components/blob/master/components/lib/state/src/main/java/mozilla/components/lib/state/ext/Fragment.kt#L32-L56
+            // TODO remove when viewLifecycleOwner is fixed
+            val context = context ?: return@launch
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val iconSize = resources.getDimension(R.dimen.preference_icon_drawable_size).toInt()
+            val iconSize =
+                context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
 
-            val searchEngine = requireComponents.search.searchEngineManager.getDefaultSearchEngineAsync(
-                requireContext(),
-                requireContext().settings().defaultSearchEngineName
-            )
-            val searchIcon = BitmapDrawable(resources, searchEngine.icon)
+            val searchEngine = context.components.search.provider.getDefaultEngine(context)
+            val searchIcon = BitmapDrawable(context.resources, searchEngine.icon)
             searchIcon.setBounds(0, 0, iconSize, iconSize)
 
-            withContext(Dispatchers.Main) {
+            withContext(Main) {
                 search_engine_icon?.setImageDrawable(searchIcon)
             }
         }
 
-        view.menuButton.setOnClickListener {
-            homeMenu?.menuBuilder?.build(requireContext())?.show(
-                anchor = it,
-                orientation = BrowserMenu.Orientation.DOWN
-            )
+        createHomeMenu(requireContext(), WeakReference(view.menuButton))
+        val tabCounterMenu = TabCounterMenu(
+            view.context,
+            metrics = view.context.components.analytics.metrics
+        ) {
+            if (it is TabCounterMenu.Item.NewTab) {
+                (activity as HomeActivity).browsingModeManager.mode = it.mode
+            }
         }
+        val inverseBrowsingMode = when ((activity as HomeActivity).browsingModeManager.mode) {
+            BrowsingMode.Normal -> BrowsingMode.Private
+            BrowsingMode.Private -> BrowsingMode.Normal
+        }
+        tabCounterMenu.updateMenu(showOnly = inverseBrowsingMode)
+        view.tab_button.setOnLongClickListener {
+            tabCounterMenu.menuController.show(anchor = it)
+            true
+        }
+
+        view.menuButton.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                ThemeManager.resolveAttribute(R.attr.primaryText, requireContext())
+            )
+        )
+
         view.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
         view.toolbar_wrapper.setOnClickListener {
-            invokePendingDeleteJobs()
-            onboarding.finish()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null,
-                showShortcutEnginePicker = true
-            )
-            val extras =
-                FragmentNavigator.Extras.Builder()
-                    .addSharedElement(toolbar_wrapper, "toolbar_wrapper_transition")
-                    .build()
-            nav(R.id.homeFragment, directions, extras)
+            hideOnboardingIfNeeded()
+            navigateToSearch()
             requireComponents.analytics.metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.HOME))
         }
 
-        view.add_tab_button.setOnClickListener {
-            invokePendingDeleteJobs()
-            val directions = HomeFragmentDirections.actionHomeFragmentToSearchFragment(
-                sessionId = null,
-                showShortcutEnginePicker = true
+        view.toolbar_wrapper.setOnLongClickListener {
+            ToolbarPopupWindow.show(
+                WeakReference(it),
+                handlePasteAndGo = sessionControlInteractor::onPasteAndGo,
+                handlePaste = sessionControlInteractor::onPaste,
+                copyVisible = false
             )
-            nav(R.id.homeFragment, directions)
+            true
+        }
+
+        view.tab_button.setOnClickListener {
+            openTabTray()
         }
 
         PrivateBrowsingButtonView(
             privateBrowsingButton,
             browsingModeManager
         ) { newMode ->
-            invokePendingDeleteJobs()
-
             if (newMode == BrowsingMode.Private) {
                 requireContext().settings().incrementNumTimesPrivateModeOpened()
             }
 
             if (onboarding.userHasBeenOnboarded()) {
-                getManagedEmitter<SessionControlChange>().onNext(
-                    SessionControlChange.ModeChange(Mode.fromBrowsingMode(newMode))
+                homeFragmentStore.dispatch(
+                    HomeFragmentAction.ModeChange(Mode.fromBrowsingMode(newMode))
                 )
             }
         }
 
-        // We need the shadow to be above the components.
-        bottomBarShadow.bringToFront()
+        // We call this onLayout so that the bottom bar width is correctly set for us to center
+        // the CFR in.
+        view.toolbar_wrapper.doOnLayout {
+            val willNavigateToSearch = !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)
+            if (!browsingModeManager.mode.isPrivate && !willNavigateToSearch) {
+                SearchWidgetCFR(
+                    context = view.context,
+                    settings = view.context.settings(),
+                    metrics = view.context.components.analytics.metrics
+                ) {
+                    view.toolbar_wrapper
+                }.displayIfNecessary()
+            }
+        }
+
+        if (browsingModeManager.mode.isPrivate) {
+            requireActivity().window.addFlags(FLAG_SECURE)
+        } else {
+            requireActivity().window.clearFlags(FLAG_SECURE)
+        }
+
+        consumeFrom(requireComponents.core.store) {
+            updateTabCounter(it)
+        }
+
+        homeViewModel.sessionToDelete?.also {
+            if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
+                removeAllTabsAndShowSnackbar(it)
+            } else {
+                removeTabAndShowSnackbar(it)
+            }
+        }
+
+        homeViewModel.sessionToDelete = null
+
+        updateTabCounter(requireComponents.core.store.state)
+
+        if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
+            navigateToSearch()
+        }
+    }
+
+    private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
+        if (sessionCode == ALL_PRIVATE_TABS) {
+            sessionManager.removePrivateSessions()
+        } else {
+            sessionManager.removeNormalSessions()
+        }
+
+        val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
+            getString(R.string.snackbar_private_tabs_closed)
+        } else {
+            getString(R.string.snackbar_tabs_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            requireContext().getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+            },
+            operation = { },
+            anchorView = snackbarAnchorView
+        )
+    }
+
+    private fun removeTabAndShowSnackbar(sessionId: String) {
+        val tab = store.state.findTab(sessionId) ?: return
+
+        requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+
+        val snackbarMessage = if (tab.content.private) {
+            requireContext().getString(R.string.snackbar_private_tab_closed)
+        } else {
+            requireContext().getString(R.string.snackbar_tab_closed)
+        }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            requireContext().getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+                findNavController().navigate(
+                    HomeFragmentDirections.actionGlobalBrowser(null)
+                )
+            },
+            operation = { },
+            anchorView = snackbarAnchorView
+        )
     }
 
     override fun onDestroyView() {
-        homeMenu = null
         super.onDestroyView()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        getAutoDisposeObservable<SessionControlAction>()
-            .subscribe {
-                when (it) {
-                    is SessionControlAction.Tab -> handleTabAction(it.action)
-                    is SessionControlAction.Collection -> handleCollectionAction(it.action)
-                    is SessionControlAction.Onboarding -> handleOnboardingAction(it.action)
-                }
-            }
-
-        val context = requireContext()
-        val components = context.components
-
-        getManagedEmitter<SessionControlChange>().onNext(
-            SessionControlChange.Change(
-                tabs = getListOfSessions().toTabs(),
-                mode = currentMode.getCurrentMode(),
-                collections = components.core.tabCollectionStorage.cachedTabCollections
-            )
-        )
-
-        (activity as AppCompatActivity).supportActionBar?.hide()
-
-        requireComponents.backgroundServices.accountManager.register(currentMode, owner = this)
-        requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
-            override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                if (authType != AuthType.Existing) {
-                    view?.let {
-                        FenixSnackbar.make(it, Snackbar.LENGTH_SHORT)
-                            .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
-                            .setAnchorView(bottom_bar)
-                            .show()
-                    }
-                }
-            }
-        }, owner = this)
-        if (context.settings().showPrivateModeContextualFeatureRecommender &&
-            browsingModeManager.mode.isPrivate) {
-            recommendPrivateBrowsingShortcut()
-        }
+        _sessionControlInteractor = null
+        sessionControlView = null
+        bundleArgs.clear()
+        requireActivity().window.clearFlags(FLAG_SECURE)
     }
 
     override fun onStart() {
         super.onStart()
         subscribeToTabCollections()
 
+        val context = requireContext()
+        val components = context.components
+
+        homeFragmentStore.dispatch(
+            HomeFragmentAction.Change(
+                collections = components.core.tabCollectionStorage.cachedTabCollections,
+                mode = currentMode.getCurrentMode(),
+                topSites = components.core.topSitesStorage.cachedTopSites,
+                tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                    FenixTipManager(
+                        listOf(
+                            MasterPasswordTipProvider(
+                                requireContext(),
+                                ::navToSavedLogins,
+                                ::dismissTip
+                            )
+                        )
+                    ).getTip()
+                },
+                showCollectionPlaceholder = components.settings.showCollectionsPlaceholderOnHome
+            )
+        )
+
+        requireComponents.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
+            // By the time this code runs, we may not be attached to a context or have a view lifecycle owner.
+            if ((this@HomeFragment).view?.context == null) {
+                return@runIfReadyOrQueue
+            }
+
+            requireComponents.backgroundServices.accountManager.register(
+                currentMode,
+                owner = this@HomeFragment.viewLifecycleOwner
+            )
+            requireComponents.backgroundServices.accountManager.register(object : AccountObserver {
+                override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                    if (authType != AuthType.Existing) {
+                        view?.let {
+                            FenixSnackbar.make(
+                                view = it,
+                                duration = Snackbar.LENGTH_SHORT,
+                                isDisplayedWithBrowserToolbar = false
+                            )
+                                .setText(it.context.getString(R.string.onboarding_firefox_account_sync_is_on))
+                                .setAnchorView(toolbarLayout)
+                                .show()
+                        }
+                    }
+                }
+            }, owner = this@HomeFragment.viewLifecycleOwner)
+        }
+
+        if (browsingModeManager.mode.isPrivate &&
+            context.settings().showPrivateModeCfr
+        ) {
+            recommendPrivateBrowsingShortcut()
+        }
+
         // We only want this observer live just before we navigate away to the collection creation screen
         requireComponents.core.tabCollectionStorage.unregister(collectionStorageObserver)
-    }
 
-    private fun handleOnboardingAction(action: OnboardingAction) {
-        Do exhaustive when (action) {
-            is OnboardingAction.Finish -> {
-                homeLayout?.progress = 0F
-                hideOnboarding()
-            }
+        lifecycleScope.launch(IO) {
+            requireComponents.reviewPromptController.promptReview(requireActivity())
         }
     }
 
-    @SuppressWarnings("ComplexMethod", "LongMethod")
-    private fun handleTabAction(action: TabAction) {
-        Do exhaustive when (action) {
-            is TabAction.SaveTabGroup -> {
-                if (browsingModeManager.mode.isPrivate) return
-                invokePendingDeleteJobs()
-                saveTabToCollection(action.selectedTabSessionId)
-            }
-            is TabAction.Select -> {
-                invokePendingDeleteJobs()
-                val session = sessionManager.findSessionById(action.sessionId)
-                sessionManager.select(session!!)
-                val directions = HomeFragmentDirections.actionHomeFragmentToBrowserFragment(null)
-                val extras =
-                    FragmentNavigator.Extras.Builder()
-                        .addSharedElement(
-                            action.tabView,
-                            "$TAB_ITEM_TRANSITION_NAME${action.sessionId}"
-                        )
-                        .build()
-                nav(R.id.homeFragment, directions, extras)
-            }
-            is TabAction.Close -> {
-                if (pendingSessionDeletion?.deletionJob == null) {
-                    removeTabWithUndo(action.sessionId)
-                } else {
-                    pendingSessionDeletion?.deletionJob?.let {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            it.invoke()
-                        }.invokeOnCompletion {
-                            pendingSessionDeletion = null
-                            removeTabWithUndo(action.sessionId)
-                        }
-                    }
-                }
-            }
-            is TabAction.Share -> {
-                invokePendingDeleteJobs()
-                sessionManager.findSessionById(action.sessionId)?.let { session ->
-                    share(session.url)
-                }
-            }
-            is TabAction.PauseMedia -> {
-                MediaStateMachine.state.pauseIfPlaying()
-            }
-            is TabAction.PlayMedia -> {
-                MediaStateMachine.state.playIfPaused()
-            }
-            is TabAction.CloseAll -> {
-                if (pendingSessionDeletion?.deletionJob == null) {
-                    removeAllTabsWithUndo(
-                        sessionManager.sessionsOfType(private = action.private),
-                        action.private
-                    )
-                } else {
-                    pendingSessionDeletion?.deletionJob?.let {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            it.invoke()
-                        }.invokeOnCompletion {
-                            pendingSessionDeletion = null
-                            removeAllTabsWithUndo(
-                                sessionManager.sessionsOfType(private = action.private),
-                                action.private
-                            )
-                        }
-                    }
-                }
-            }
-            is TabAction.PrivateBrowsingLearnMore -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                        (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
-                    newTab = true,
-                    from = BrowserDirection.FromHome
-                )
-            }
+    private fun navToSavedLogins() {
+        findNavController().navigate(HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment())
+    }
 
-            is TabAction.ShareTabs -> {
-                invokePendingDeleteJobs()
-                val shareTabs = sessionManager
-                    .sessionsOfType(private = browsingModeManager.mode.isPrivate)
-                    .map { ShareTab(it.url, it.title) }
-                    .toList()
-                share(tabs = shareTabs)
-            }
+    private fun dispatchModeChanges(mode: Mode) {
+        if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
+            homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(mode))
         }
     }
 
-    private fun invokePendingDeleteJobs() {
-        pendingSessionDeletion?.deletionJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                pendingSessionDeletion = null
-            }
-        }
-
-        deleteAllSessionsJob?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                it.invoke()
-            }.invokeOnCompletion {
-                deleteAllSessionsJob = null
-            }
-        }
-    }
-
-    private fun createDeleteCollectionPrompt(tabCollection: TabCollection) {
+    private fun showDeleteCollectionPrompt(
+        tabCollection: TabCollection,
+        title: String?,
+        message: String,
+        wasSwiped: Boolean,
+        handleSwipedItemDeletionCancel: () -> Unit
+    ) {
         val context = context ?: return
         AlertDialog.Builder(context).apply {
-            val message =
-                context.getString(R.string.tab_collection_dialog_message, tabCollection.title)
+            setTitle(title)
             setMessage(message)
             setNegativeButton(R.string.tab_collection_dialog_negative) { dialog: DialogInterface, _ ->
+                if (wasSwiped) {
+                    handleSwipedItemDeletionCancel()
+                }
                 dialog.cancel()
             }
             setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
@@ -485,121 +633,49 @@ class HomeFragment : Fragment() {
         }.show()
     }
 
-    @SuppressWarnings("LongMethod")
-    private fun handleCollectionAction(action: CollectionAction) {
-        when (action) {
-            is CollectionAction.Expand -> {
-                getManagedEmitter<SessionControlChange>()
-                    .onNext(SessionControlChange.ExpansionChange(action.collection, true))
-            }
-            is CollectionAction.Collapse -> {
-                getManagedEmitter<SessionControlChange>()
-                    .onNext(SessionControlChange.ExpansionChange(action.collection, false))
-            }
-            is CollectionAction.Delete -> {
-                createDeleteCollectionPrompt(action.collection)
-            }
-            is CollectionAction.AddTab -> {
-                requireComponents.analytics.metrics.track(Event.CollectionAddTabPressed)
-                updateCollection(action.collection, SaveCollectionStep.SelectTabs)
-            }
-            is CollectionAction.Rename -> {
-                updateCollection(action.collection, SaveCollectionStep.RenameCollection)
-                requireComponents.analytics.metrics.track(Event.CollectionRenamePressed)
-            }
-            is CollectionAction.OpenTab -> {
-                invokePendingDeleteJobs()
-
-                val context = requireContext()
-                val components = context.components
-
-                val session = action.tab.restore(
-                    context = context,
-                    engine = components.core.engine,
-                    tab = action.tab,
-                    restoreSessionId = false
-                )
-                if (session == null) {
-                    // We were unable to create a snapshot, so just load the tab instead
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = action.tab.url,
-                        newTab = true,
-                        from = BrowserDirection.FromHome
-                    )
-                } else {
-                    components.core.sessionManager.add(
-                        session,
-                        true
-                    )
-                    (activity as HomeActivity).openToBrowser(BrowserDirection.FromHome)
-                }
-                components.analytics.metrics.track(Event.CollectionTabRestored)
-            }
-            is CollectionAction.OpenTabs -> {
-                invokePendingDeleteJobs()
-
-                val context = requireContext()
-                val components = context.components
-
-                action.collection.tabs.reversed().forEach {
-                    val session = it.restore(
-                        context = context,
-                        engine = components.core.engine,
-                        tab = it,
-                        restoreSessionId = false
-                    )
-                    if (session == null) {
-                        // We were unable to create a snapshot, so just load the tab instead
-                        components.useCases.tabsUseCases.addTab.invoke(it.url)
-                    } else {
-                        components.core.sessionManager.add(
-                            session,
-                            context.components.core.sessionManager.selectedSession == null
-                        )
-                    }
-                }
-                viewLifecycleOwner.lifecycleScope.launch(Main) {
-                    delay(ANIM_SCROLL_DELAY)
-                    sessionControlComponent.view.smoothScrollToPosition(0)
-                }
-                components.analytics.metrics.track(Event.CollectionAllTabsRestored)
-            }
-            is CollectionAction.ShareTabs -> {
-                val shareTabs = action.collection.tabs.map { ShareTab(it.url, it.title) }
-                share(tabs = shareTabs)
-                requireComponents.analytics.metrics.track(Event.CollectionShared)
-            }
-            is CollectionAction.RemoveTab -> {
-                viewLifecycleOwner.lifecycleScope.launch(IO) {
-                    requireComponents.core.tabCollectionStorage.removeTabFromCollection(
-                        action.collection,
-                        action.tab
-                    )
-                }
-                requireComponents.analytics.metrics.track(Event.CollectionTabRemoved)
-            }
-        }
-    }
-
-    override fun onPause() {
-        invokePendingDeleteJobs()
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         val homeViewModel: HomeScreenViewModel by activityViewModels {
             ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
         }
         homeViewModel.layoutManagerState =
-            sessionControlComponent.view.layoutManager?.onSaveInstanceState()
-        homeViewModel.motionLayoutProgress = homeLayout?.progress ?: 0F
+            sessionControlView!!.view.layoutManager?.onSaveInstanceState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (browsingModeManager.mode == BrowsingMode.Private) {
+            activity?.window?.setBackgroundDrawableResource(R.drawable.private_home_background_gradient)
+        }
+
+        hideToolbar()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (browsingModeManager.mode == BrowsingMode.Private) {
+            activity?.window?.setBackgroundDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.foundation_private_theme
+                    )
+                )
+            )
+        }
     }
 
     private fun recommendPrivateBrowsingShortcut() {
-        context?.let {
-            val layout = LayoutInflater.from(it)
+        context?.let { context ->
+            val layout = LayoutInflater.from(context)
                 .inflate(R.layout.pbm_shortcut_popup, null)
-            val trackingOnboarding =
+            val privateBrowsingRecommend =
                 PopupWindow(
                     layout,
-                    (resources.displayMetrics.widthPixels / CFR_WIDTH_DIVIDER).toInt(),
+                    min(
+                        (resources.displayMetrics.widthPixels / CFR_WIDTH_DIVIDER).toInt(),
+                        (resources.displayMetrics.heightPixels / CFR_WIDTH_DIVIDER).toInt()
+                    ),
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     true
                 )
@@ -607,232 +683,170 @@ class HomeFragment : Fragment() {
                 setOnClickListener {
                     context.metrics.track(Event.PrivateBrowsingAddShortcutCFR)
                     PrivateShortcutCreateManager.createPrivateShortcut(context)
-                    trackingOnboarding.dismiss()
+                    privateBrowsingRecommend.dismiss()
                 }
             }
             layout.findViewById<Button>(R.id.cfr_neg_button).apply {
                 setOnClickListener {
                     context.metrics.track(Event.PrivateBrowsingCancelCFR)
-                    trackingOnboarding.dismiss()
+                    privateBrowsingRecommend.dismiss()
                 }
             }
             // We want to show the popup only after privateBrowsingButton is available.
             // Otherwise, we will encounter an activity token error.
             privateBrowsingButton.post {
-                trackingOnboarding.showAsDropDown(privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END)
+                context.settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
+                privateBrowsingRecommend.showAsDropDown(
+                    privateBrowsingButton, 0, CFR_Y_OFFSET, Gravity.TOP or Gravity.END
+                )
             }
         }
     }
 
     private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) hideOnboarding()
-    }
-
-    private fun hideOnboarding() {
-        onboarding.finish()
-        currentMode.emitModeChanges()
-    }
-
-    private fun setupHomeMenu() {
-        val context = requireContext()
-        homeMenu = HomeMenu(context) {
-            when (it) {
-                HomeMenu.Item.Settings -> {
-                    invokePendingDeleteJobs()
-                    hideOnboardingIfNeeded()
-                    nav(
-                        R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
-                    )
-                }
-                HomeMenu.Item.Library -> {
-                    invokePendingDeleteJobs()
-                    hideOnboardingIfNeeded()
-                    nav(
-                        R.id.homeFragment,
-                        HomeFragmentDirections.actionHomeFragmentToLibraryFragment()
-                    )
-                }
-                HomeMenu.Item.Help -> {
-                    invokePendingDeleteJobs()
-                    hideOnboardingIfNeeded()
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                            context,
-                            SupportUtils.SumoTopic.HELP
-                        ),
-                        newTab = true,
-                        from = BrowserDirection.FromHome
-                    )
-                }
-                HomeMenu.Item.WhatsNew -> {
-                    invokePendingDeleteJobs()
-                    hideOnboardingIfNeeded()
-                    WhatsNew.userViewedWhatsNew(context)
-                    context.metrics.track(Event.WhatsNewTapped(Event.WhatsNewTapped.Source.HOME))
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                            context,
-                            SupportUtils.SumoTopic.WHATS_NEW
-                        ),
-                        newTab = true,
-                        from = BrowserDirection.FromHome
-                    )
-                }
-            }
+        if (!onboarding.userHasBeenOnboarded()) {
+            onboarding.finish()
+            homeFragmentStore.dispatch(
+                HomeFragmentAction.ModeChange(
+                    mode = currentMode.getCurrentMode()
+                )
+            )
         }
     }
+
+    private fun hideOnboardingAndOpenSearch() {
+        hideOnboardingIfNeeded()
+        navigateToSearch()
+    }
+
+    private fun navigateToSearch() {
+        val directions =
+            HomeFragmentDirections.actionGlobalSearchDialog(
+                sessionId = null
+            )
+
+        nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
+    }
+
+    @SuppressWarnings("ComplexMethod", "LongMethod")
+    private fun createHomeMenu(context: Context, menuButtonView: WeakReference<MenuButton>) =
+        HomeMenu(
+            this.viewLifecycleOwner,
+            context,
+            onItemTapped = {
+                when (it) {
+                    HomeMenu.Item.Settings -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalSettingsFragment()
+                        )
+                    }
+                    HomeMenu.Item.SyncedTabs -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalSyncedTabsFragment()
+                        )
+                    }
+                    HomeMenu.Item.Bookmarks -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
+                        )
+                    }
+                    HomeMenu.Item.History -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalHistoryFragment()
+                        )
+                    }
+
+                    HomeMenu.Item.Downloads -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalDownloadsFragment()
+                        )
+                    }
+
+                    HomeMenu.Item.Help -> {
+                        hideOnboardingIfNeeded()
+                        (activity as HomeActivity).openToBrowserAndLoad(
+                            searchTermOrURL = SupportUtils.getSumoURLForTopic(context, HELP),
+                            newTab = true,
+                            from = BrowserDirection.FromHome
+                        )
+                    }
+                    HomeMenu.Item.WhatsNew -> {
+                        hideOnboardingIfNeeded()
+                        WhatsNew.userViewedWhatsNew(context)
+                        context.metrics.track(Event.WhatsNewTapped)
+                        (activity as HomeActivity).openToBrowserAndLoad(
+                            searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
+                            newTab = true,
+                            from = BrowserDirection.FromHome
+                        )
+                    }
+                    // We need to show the snackbar while the browsing data is deleting(if "Delete
+                    // browsing data on quit" is activated). After the deletion is over, the snackbar
+                    // is dismissed.
+                    HomeMenu.Item.Quit -> activity?.let { activity ->
+                        deleteAndQuit(
+                            activity,
+                            viewLifecycleOwner.lifecycleScope,
+                            view?.let { view ->
+                                FenixSnackbar.make(
+                                    view = view,
+                                    isDisplayedWithBrowserToolbar = false
+                                )
+                            }
+                        )
+                    }
+                    HomeMenu.Item.Sync -> {
+                        hideOnboardingIfNeeded()
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalAccountProblemFragment()
+                        )
+                    }
+                    HomeMenu.Item.AddonsManager -> {
+                        nav(
+                            R.id.homeFragment,
+                            HomeFragmentDirections.actionGlobalAddonsManagementFragment()
+                        )
+                    }
+                }
+            },
+            onHighlightPresent = { menuButtonView.get()?.setHighlight(it) },
+            onMenuBuilderChanged = { menuButtonView.get()?.menuBuilder = it }
+        )
 
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {
         return Observer<List<TabCollection>> {
             requireComponents.core.tabCollectionStorage.cachedTabCollections = it
-            getManagedEmitter<SessionControlChange>().onNext(
-                SessionControlChange.CollectionsChange(
-                    it
-                )
-            )
+            homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(it))
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections().observe(this, observer)
         }
     }
 
-    private fun removeAllTabsWithUndo(listOfSessionsToDelete: Sequence<Session>, private: Boolean) {
-        val sessionManager = requireComponents.core.sessionManager
-
-        getManagedEmitter<SessionControlChange>().onNext(SessionControlChange.TabsChange(listOf()))
-
-        val deleteOperation: (suspend () -> Unit) = {
-            listOfSessionsToDelete.forEach {
-                sessionManager.remove(it)
-            }
-        }
-        deleteAllSessionsJob = deleteOperation
-
-        val snackbarMessage = if (private) {
-            getString(R.string.snackbar_private_tabs_deleted)
-        } else {
-            getString(R.string.snackbar_tab_deleted)
-        }
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo), {
-                if (private) {
-                    requireComponents.analytics.metrics.track(Event.PrivateBrowsingSnackbarUndoTapped)
-                }
-                deleteAllSessionsJob = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-    }
-
-    private fun removeTabWithUndo(sessionId: String) {
-        val sessionManager = requireComponents.core.sessionManager
-        val deleteOperation: (suspend () -> Unit) = {
-            sessionManager.findSessionById(sessionId)
-                ?.let { session ->
-                    pendingSessionDeletion = null
-                    sessionManager.remove(session)
-                }
-        }
-
-        pendingSessionDeletion = PendingSessionDeletion(deleteOperation, sessionId)
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            view!!,
-            getString(R.string.snackbar_tab_deleted),
-            getString(R.string.snackbar_deleted_undo), {
-                pendingSessionDeletion = null
-                emitSessionChanges()
-            },
-            operation = deleteOperation,
-            anchorView = bottom_bar
-        )
-
-        // Update the UI with the tab removed, but don't remove it from storage yet
-        emitSessionChanges()
-    }
-
-    private fun emitSessionChanges() {
-        getManagedEmitter<SessionControlChange>().onNext(
-            SessionControlChange.TabsChange(
-                getListOfSessions().toTabs()
-            )
-        )
-    }
-
-    private fun getListOfSessions(): List<Session> {
-        return sessionManager.sessionsOfType(private = browsingModeManager.mode.isPrivate)
-            .filter { session: Session -> session.id != pendingSessionDeletion?.sessionId }
-            .toList()
-    }
-
-    private fun showCollectionCreationFragment(
-        setupViewModel: (CreateCollectionViewModel, tabs: List<Tab>, cachedTabCollections: List<TabCollection>) -> Unit
-    ) {
-        if (findNavController().currentDestination?.id == R.id.createCollectionFragment) return
-
-        val viewModel: CreateCollectionViewModel by activityViewModels {
-            ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
-        }
-
-        val tabs = getListOfSessions().toTabs()
-        val storage = requireComponents.core.tabCollectionStorage
-        setupViewModel(viewModel, tabs, storage.cachedTabCollections)
-
-        viewModel.previousFragmentId = R.id.homeFragment
-
-        // Only register the observer right before moving to collection creation
-        storage.register(collectionStorageObserver, this)
-
-        view?.let {
-            val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment()
-            nav(R.id.homeFragment, directions)
-        }
-    }
-
-    private fun saveTabToCollection(selectedTabId: String?) {
-        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
-            viewModel.saveTabToCollection(
-                tabs = tabs,
-                selectedTab = tabs.find { it.sessionId == selectedTabId } ?: if (tabs.size == 1) tabs[0] else null,
-                cachedTabCollections = cachedTabCollections
-            )
-        }
-    }
-
-    private fun updateCollection(selectedTabCollection: TabCollection, step: SaveCollectionStep) {
-        showCollectionCreationFragment { viewModel, tabs, cachedTabCollections ->
-            viewModel.updateCollection(
-                tabs = tabs,
-                saveCollectionStep = step,
-                selectedTabCollection = selectedTabCollection,
-                cachedTabCollections = cachedTabCollections
-            )
-        }
-    }
-
-    private fun share(url: String? = null, tabs: List<ShareTab>? = null) {
-        val directions =
-            HomeFragmentDirections.actionHomeFragmentToShareFragment(
-                url = url,
-                tabs = tabs?.toTypedArray()
-            )
-        nav(R.id.homeFragment, directions)
+    private fun registerCollectionStorageObserver() {
+        requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
     }
 
     private fun scrollAndAnimateCollection(
-        tabsAddedToCollectionSize: Int,
         changedCollection: TabCollection? = null
     ) {
         if (view != null) {
             viewLifecycleOwner.lifecycleScope.launch {
-                val recyclerView = sessionControlComponent.view
+                val recyclerView = sessionControlView!!.view
                 delay(ANIM_SCROLL_DELAY)
-                val tabsSize = getListOfSessions().size
+                val tabsSize = store.state
+                    .getNormalOrPrivateTabs(browsingModeManager.mode.isPrivate)
+                    .size
 
                 var indexOfCollection = tabsSize + NON_TAB_ITEM_NUM
                 changedCollection?.let { changedCollection ->
@@ -856,7 +870,7 @@ class HomeFragment : Fragment() {
                         ) {
                             super.onScrollStateChanged(recyclerView, newState)
                             if (newState == SCROLL_STATE_IDLE) {
-                                animateCollection(tabsAddedToCollectionSize, indexOfCollection)
+                                animateCollection(indexOfCollection)
                                 recyclerView.removeOnScrollListener(this)
                             }
                         }
@@ -864,25 +878,29 @@ class HomeFragment : Fragment() {
                     recyclerView.addOnScrollListener(onScrollListener)
                     recyclerView.smoothScrollToPosition(indexOfCollection)
                 } else {
-                    animateCollection(tabsAddedToCollectionSize, indexOfCollection)
+                    animateCollection(indexOfCollection)
                 }
             }
         }
     }
 
-    private fun animateCollection(addedTabsSize: Int, indexOfCollection: Int) {
+    private fun animateCollection(indexOfCollection: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val viewHolder =
-                sessionControlComponent.view.findViewHolderForAdapterPosition(indexOfCollection)
+                sessionControlView!!.view.findViewHolderForAdapterPosition(indexOfCollection)
             val border =
-                (viewHolder as? CollectionViewHolder)?.view?.findViewById<View>(R.id.selected_border)
+                (viewHolder as? CollectionViewHolder)?.itemView?.findViewById<View>(R.id.selected_border)
             val listener = object : Animator.AnimatorListener {
                 override fun onAnimationCancel(animation: Animator?) {
                     border?.visibility = View.GONE
                 }
 
-                override fun onAnimationStart(animation: Animator?) { /* noop */ }
-                override fun onAnimationRepeat(animation: Animator?) { /* noop */ }
+                override fun onAnimationStart(animation: Animator?) { /* noop */
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) { /* noop */
+                }
+
                 override fun onAnimationEnd(animation: Animator?) {
                     border?.animate()?.alpha(0.0F)?.setStartDelay(ANIM_ON_SCREEN_DELAY)
                         ?.setDuration(FADE_ANIM_DURATION)
@@ -893,23 +911,21 @@ class HomeFragment : Fragment() {
                 ?.setDuration(FADE_ANIM_DURATION)
                 ?.setListener(listener)?.start()
         }.invokeOnCompletion {
-            showSavedSnackbar(addedTabsSize)
+            showSavedSnackbar()
         }
     }
 
-    private fun showSavedSnackbar(tabSize: Int) {
+    private fun showSavedSnackbar() {
         viewLifecycleOwner.lifecycleScope.launch {
             delay(ANIM_SNACKBAR_DELAY)
             view?.let { view ->
-                @StringRes
-                val stringRes = if (tabSize > 1) {
-                    R.string.create_collection_tabs_saved
-                } else {
-                    R.string.create_collection_tab_saved
-                }
-                FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
-                    .setText(view.context.getString(stringRes))
-                    .setAnchorView(bottom_bar)
+                FenixSnackbar.make(
+                    view = view,
+                    duration = Snackbar.LENGTH_LONG,
+                    isDisplayedWithBrowserToolbar = false
+                )
+                    .setText(view.context.getString(R.string.create_collection_tabs_saved_new_collection))
+                    .setAnchorView(snackbarAnchorView)
                     .show()
             }
         }
@@ -918,121 +934,52 @@ class HomeFragment : Fragment() {
     private fun showRenamedSnackbar() {
         view?.let { view ->
             val string = view.context.getString(R.string.snackbar_collection_renamed)
-            FenixSnackbar.make(view, Snackbar.LENGTH_LONG)
+            FenixSnackbar.make(
+                view = view,
+                duration = Snackbar.LENGTH_LONG,
+                isDisplayedWithBrowserToolbar = false
+            )
                 .setText(string)
-                .setAnchorView(bottom_bar)
+                .setAnchorView(snackbarAnchorView)
                 .show()
         }
     }
 
-    private fun List<Session>.toTabs(): List<Tab> {
-        val selected = sessionManager.selectedSession
-        val mediaStateSession = MediaStateMachine.state.getSession()
+    private fun openTabTray() {
+        findNavController().nav(
+            R.id.homeFragment,
+            HomeFragmentDirections.actionGlobalTabTrayDialogFragment()
+        )
+    }
 
-        return this.map {
-            val mediaState = if (mediaStateSession?.id == it.id) {
-                MediaStateMachine.state
-            } else {
-                null
-            }
-
-            it.toTab(requireContext(), it == selected, mediaState)
+    private fun updateTabCounter(browserState: BrowserState) {
+        val tabCount = if (browsingModeManager.mode.isPrivate) {
+            browserState.privateTabs.size
+        } else {
+            browserState.normalTabs.size
         }
+
+        view?.tab_button?.setCountWithAnimation(tabCount)
+        view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
+    }
+
+    private fun handleSwipedItemDeletionCancel() {
+        view?.sessionControlRecyclerView?.adapter?.notifyDataSetChanged()
     }
 
     companion object {
+        const val ALL_NORMAL_TABS = "all_normal"
+        const val ALL_PRIVATE_TABS = "all_private"
+
+        private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
+        private const val ANIMATION_DELAY = 100L
+
         private const val NON_TAB_ITEM_NUM = 3
         private const val ANIM_SCROLL_DELAY = 100L
         private const val ANIM_ON_SCREEN_DELAY = 200L
         private const val FADE_ANIM_DURATION = 150L
         private const val ANIM_SNACKBAR_DELAY = 100L
-        private const val SHARED_TRANSITION_MS = 200L
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
         private const val CFR_WIDTH_DIVIDER = 1.7
         private const val CFR_Y_OFFSET = -20
-    }
-}
-
-/**
- * Wrapper around sessions manager to observe changes in sessions.
- * Similar to [mozilla.components.browser.session.utils.AllSessionsObserver] but ignores CustomTab sessions.
- *
- * Call [onStart] to start receiving updates into [onChanged] callback.
- * Call [onStop] to stop receiving updates.
- *
- * @param manager [SessionManager] instance to subscribe to.
- * @param observer [Session.Observer] instance that will recieve updates.
- * @param onChanged callback that will be called when any of [SessionManager.Observer]'s events are fired.
- */
-private class BrowserSessionsObserver(
-    private val manager: SessionManager,
-    private val observer: Session.Observer,
-    private val onChanged: () -> Unit
-) : LifecycleObserver {
-
-    /**
-     * Start observing
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart() {
-        MediaStateMachine.register(managerObserver)
-        manager.register(managerObserver)
-        subscribeToAll()
-    }
-
-    /**
-     * Stop observing (will not receive updates till next [onStop] call)
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop() {
-        MediaStateMachine.unregister(managerObserver)
-        manager.unregister(managerObserver)
-        unsubscribeFromAll()
-    }
-
-    private fun subscribeToAll() {
-        manager.sessions.forEach(::subscribeTo)
-    }
-
-    private fun unsubscribeFromAll() {
-        manager.sessions.forEach(::unsubscribeFrom)
-    }
-
-    private fun subscribeTo(session: Session) {
-        session.register(observer)
-    }
-
-    private fun unsubscribeFrom(session: Session) {
-        session.unregister(observer)
-    }
-
-    private val managerObserver = object : SessionManager.Observer, MediaStateMachine.Observer {
-        override fun onStateChanged(state: MediaState) {
-            onChanged()
-        }
-
-        override fun onSessionAdded(session: Session) {
-            subscribeTo(session)
-            onChanged()
-        }
-
-        override fun onSessionsRestored() {
-            subscribeToAll()
-            onChanged()
-        }
-
-        override fun onAllSessionsRemoved() {
-            unsubscribeFromAll()
-            onChanged()
-        }
-
-        override fun onSessionRemoved(session: Session) {
-            unsubscribeFrom(session)
-            onChanged()
-        }
-
-        override fun onSessionSelected(session: Session) {
-            onChanged()
-        }
     }
 }

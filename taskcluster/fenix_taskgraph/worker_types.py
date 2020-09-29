@@ -72,7 +72,6 @@ def build_scriptworker_signing_payload(config, task, task_def):
         Required("certificate-alias"): text_type,
         Required("channel"): text_type,
         Required("commit"): bool,
-        Optional("google-play-track"): text_type,
         Required("product"): text_type,
         Required("dep"): bool,
     },
@@ -89,12 +88,72 @@ def build_push_apk_payload(config, task, task_def):
         "upstreamArtifacts": worker["upstream-artifacts"],
     }
 
-    if worker.get("google-play-track"):
-        task_def["payload"]["google_play_track"] = worker["google-play-track"]
-
     scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
     task_def["scopes"].append(
         "{}:googleplay:product:{}{}".format(
             scope_prefix, worker["product"], ":dep" if worker["dep"] else ""
         )
     )
+
+
+@payload_builder(
+    "scriptworker-shipit",
+    schema={
+        Required("upstream-artifacts"): [
+            {
+                Required("taskId"): taskref_or_string,
+                Required("taskType"): text_type,
+                Required("paths"): [text_type],
+            }
+        ],
+        Required("release-name"): text_type,
+    },
+)
+def build_shipit_payload(config, task, task_def):
+    worker = task["worker"]
+
+    task_def["tags"]["worker-implementation"] = "scriptworker"
+
+    task_def['payload'] = {
+        'release_name': worker['release-name']
+    }
+
+
+@payload_builder(
+    "scriptworker-github",
+    schema={
+        Required("upstream-artifacts"): [
+            {
+                Required("taskId"): taskref_or_string,
+                Required("taskType"): text_type,
+                Required("paths"): [text_type],
+            }
+        ],
+        Required("artifact-map"): [object],
+        Required("action"): text_type,
+        Required("git-tag"): text_type,
+        Required("git-revision"): text_type,
+        Required("github-project"): text_type,
+        Required("is-prerelease"): bool,
+        Required("release-name"): text_type,
+    },
+)
+def build_github_release_payload(config, task, task_def):
+    worker = task["worker"]
+
+    task_def["tags"]["worker-implementation"] = "scriptworker"
+
+    task_def["payload"] = {
+        "artifactMap": worker["artifact-map"],
+        "gitTag": worker["git-tag"],
+        "gitRevision": worker["git-revision"],
+        "isPrerelease": worker["is-prerelease"],
+        "releaseName": worker["release-name"],
+        "upstreamArtifacts": worker["upstream-artifacts"],
+    }
+
+    scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
+    task_def["scopes"].extend([
+        "{}:github:project:{}".format(scope_prefix, worker["github-project"]),
+        "{}:github:action:{}".format(scope_prefix, worker["action"]),
+    ])

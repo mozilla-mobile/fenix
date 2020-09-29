@@ -9,13 +9,17 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.sendSingleTapToScreen
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  *  Tests for verifying basic functionality of tabbed browsing
@@ -25,8 +29,13 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  - Opening a private tab
  *  - Verifying tab list
  *  - Closing all tabs
- *
- *  TODO: Tab Collections
+ *  - Close tab
+ *  - Swipe to close tab (temporarily disabled)
+ *  - Undo close tab
+ *  - Close private tabs persistent notification
+ *  - Empty tab tray state
+ *  - Tab tray details
+ *  - Shortcut context menu navigation
  */
 
 class TabbedBrowsingTest {
@@ -45,6 +54,16 @@ class TabbedBrowsingTest {
         }
     }
 
+    // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun setDevicePreference() {
+            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
+        }
+    }
+
     @After
     fun tearDown() {
         mockWebServer.shutdown()
@@ -56,24 +75,12 @@ class TabbedBrowsingTest {
 
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        homeScreen {
-            verifyOpenTabsHeader()
-            verifyNoTabsOpenedText()
-            verifyNoTabsOpenedHeader()
-            verifyNoCollectionsText()
-            verifyNoCollectionsHeader()
-            verifyAddTabButton()
-        }
-
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
             verifyTabCounter("1")
-        }.openHomeScreen { }
-
-        homeScreen {
+        }.openTabDrawer {
             verifyExistingTabList()
-
         }.openTabsListThreeDotMenu {
             verifyCloseAllTabsButton()
             verifyShareTabButton()
@@ -90,29 +97,20 @@ class TabbedBrowsingTest {
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
-            verifyPrivateSessionHeader()
-            verifyPrivateSessionMessage(true)
-            verifyAddTabButton()
+            verifyPrivateSessionMessage()
+            verifyTabButton()
         }
 
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
             verifyTabCounter("1")
-        }.openHomeScreen {
+        }.openTabDrawer {
             verifyExistingTabList()
-            verifyShareTabsButton(true)
-            verifyCloseTabsButton(true)
-        }.togglePrivateBrowsingMode()
-
-        // Verify private tabs remain in private browsing mode
-
-        homeScreen {
-            verifyNoTabsOpenedHeader()
-            verifyNoTabsOpenedText()
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
+            verifyCloseTabsButton("Test_Page_1")
+        }.toggleToNormalTabs {
+            verifyNoTabsOpened()
+        }.toggleToPrivateTabs {
             verifyExistingTabList()
         }
     }
@@ -123,20 +121,218 @@ class TabbedBrowsingTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
-        }.openHomeScreen { }
-
-        homeScreen {
+        }.openTabDrawer {
             verifyExistingTabList()
         }.openTabsListThreeDotMenu {
             verifyCloseAllTabsButton()
             verifyShareTabButton()
             verifySaveCollection()
         }.closeAllTabs {
-            verifyNoCollectionsHeader()
-            verifyNoCollectionsText()
-            verifyNoTabsOpenedHeader()
-            verifyNoTabsOpenedText()
+            verifyNoTabsOpened()
+        }
+
+        // Repeat for Private Tabs
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+            verifyExistingTabList()
+        }.openTabsListThreeDotMenu {
+            verifyCloseAllTabsButton()
+        }.closeAllTabs {
+            verifyNoTabsOpened()
+        }
+    }
+
+    @Test
+    fun closeTabTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.openNewTabAndEnterToBrowser(genericURL.url) {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyCloseTabsButton("Test_Page_1")
+            closeTabViaXButton("Test_Page_1")
+            verifySnackBarText("Tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            swipeTabRight("Test_Page_1")
+            verifySnackBarText("Tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            swipeTabLeft("Test_Page_1")
+            verifySnackBarText("Tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+        }.openNewTab {
+        }.dismiss { }
+    }
+
+    @Test
+    fun closePrivateTabTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen { }.togglePrivateBrowsingMode()
+        navigationToolbar {
+        }.openNewTabAndEnterToBrowser(genericURL.url) {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyCloseTabsButton("Test_Page_1")
+            closeTabViaXButton("Test_Page_1")
+            verifySnackBarText("Private tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            swipeTabRight("Test_Page_1")
+            verifySnackBarText("Private tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+            swipeTabLeft("Test_Page_1")
+            verifySnackBarText("Private tab closed")
+            snackBarButtonClick("UNDO")
+        }
+
+        mDevice.waitForIdle()
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyExistingOpenTabs("Test_Page_1")
+        }
+    }
+
+    @Test
+    fun closePrivateTabsNotificationTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.openNotification()
+        }
+
+        notificationShade {
+            verifyPrivateTabsNotification()
+        }.clickClosePrivateTabsNotification {
+            // Tap an empty spot on the app homescreen to make sure it's into focus
+            sendSingleTapToScreen(20, 20)
+            verifyHomeScreen()
+        }
+    }
+
+    @Test
+    fun verifyEmptyTabTray() {
+        homeScreen { }.dismissOnboarding()
+
+        navigationToolbar {
+        }.openTabTray {
+            verifyNoTabsOpened()
+            verifyNewTabButton()
+            verifyTabTrayOverflowMenu(true)
+        }.toggleToPrivateTabs {
+            verifyNoTabsOpened()
+            verifyNewTabButton()
+            verifyTabTrayOverflowMenu(true)
+        }
+    }
+
+    @Test
+    fun verifyOpenTabDetails() {
+        homeScreen { }.dismissOnboarding()
+
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            // verifyPageContent(defaultWebPage.content)
+        }.openTabDrawer {
+            verifyExistingTabList()
+            verifyNewTabButton()
+            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs(defaultWebPage.title)
+            verifyCloseTabsButton(defaultWebPage.title)
+        }.openNewTab {
+        }.dismiss { }
+    }
+
+    @Test
+    fun verifyContextMenuShortcuts() {
+        homeScreen { }.dismissOnboarding()
+
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            // verifyPageContent(defaultWebPage.content)
+        }.openTabDrawer {
+            verifyExistingTabList()
+            verifyNewTabButton()
+            verifyTabTrayOverflowMenu(true)
+            verifyExistingOpenTabs(defaultWebPage.title)
+            verifyCloseTabsButton(defaultWebPage.title)
+        }.closeTabDrawer {
+        }.openTabButtonShortcutsMenu {
+            verifyTabButtonShortcutMenuItems()
+        }.closeTabFromShortcutsMenu {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+        }.openNewPrivateTabFromShortcutsMenu {
+            verifyHomeScreen()
+            verifyNavigationToolbar()
+            verifyHomePrivateBrowsingButton()
+            verifyHomeMenu()
+            verifyHomeWordmark()
+            verifyTabButton()
+            verifyPrivateSessionMessage()
+            verifyHomeToolbar()
+            verifyHomeComponent()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+
+        }.openTabButtonShortcutsMenu {
+        }.openTabFromShortcutsMenu {
+            verifyHomeScreen()
+            verifyNavigationToolbar()
+            verifyHomeMenu()
+            verifyHomeWordmark()
+            verifyTabButton()
+            verifyHomeToolbar()
+            verifyHomeComponent()
         }
     }
 }

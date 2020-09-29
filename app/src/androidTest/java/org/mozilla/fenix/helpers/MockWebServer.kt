@@ -12,8 +12,11 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import okio.Buffer
+import okio.source
 import org.mozilla.fenix.helpers.ext.toUri
 import java.io.IOException
+import java.io.InputStream
 
 object MockWebServerHelper {
 
@@ -29,6 +32,20 @@ object MockWebServerHelper {
         }
         return uris
     }
+
+    /**
+     * Create a mock webserver that accepts all requests and replies with "OK".
+     * @return a [MockWebServer] instance
+     */
+    fun createAlwaysOkMockWebServer(): MockWebServer {
+        return MockWebServer().apply {
+            setDispatcher(object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    return MockResponse().setBody("OK")
+                }
+            })
+        }
+    }
 }
 
 /**
@@ -37,7 +54,7 @@ object MockWebServerHelper {
  * If the dispatcher is unable to read a requested asset, it will fail the test by throwing an
  * Exception on the main thread.
  *
- * @sample [org.mozilla.tv.firefox.ui.BasicNavigationTest.basicNavigationTest]
+ * @sample [org.mozilla.fenix.ui.NavigationToolbarTest.visitURLTest]
  */
 const val HTTP_OK = 200
 const val HTTP_NOT_FOUND = 404
@@ -45,18 +62,45 @@ const val HTTP_NOT_FOUND = 404
 class AndroidAssetDispatcher : Dispatcher() {
     private val mainThreadHandler = Handler(Looper.getMainLooper())
 
-    override fun dispatch(request: RecordedRequest): MockResponse {
+    override fun dispatch(request: RecordedRequest?): MockResponse {
         val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
-        val assetContents = try {
-            val pathNoLeadingSlash = request.path.drop(1)
-            assetManager.open(pathNoLeadingSlash).use { inputStream ->
-                inputStream.bufferedReader().use { it.readText() }
+        try {
+            val pathWithoutQueryParams = Uri.parse(request?.path?.drop(1)).path
+            assetManager.open(pathWithoutQueryParams!!).use { inputStream ->
+                return fileToResponse(pathWithoutQueryParams, inputStream)
             }
         } catch (e: IOException) { // e.g. file not found.
             // We're on a background thread so we need to forward the exception to the main thread.
             mainThreadHandler.postAtFrontOfQueue { throw e }
             return MockResponse().setResponseCode(HTTP_NOT_FOUND)
         }
-        return MockResponse().setResponseCode(HTTP_OK).setBody(assetContents)
+    }
+}
+
+@Throws(IOException::class)
+private fun fileToResponse(path: String, file: InputStream): MockResponse {
+    return MockResponse()
+        .setResponseCode(HTTP_OK)
+        .setBody(fileToBytes(file))
+        .addHeader("content-type: " + contentType(path))
+}
+
+@Throws(IOException::class)
+private fun fileToBytes(file: InputStream): Buffer? {
+    val result = Buffer()
+    result.writeAll(file.source())
+    return result
+}
+
+private fun contentType(path: String): String? {
+    return when {
+        path.endsWith(".png") -> "image/png"
+        path.endsWith(".jpg") -> "image/jpeg"
+        path.endsWith(".jpeg") -> "image/jpeg"
+        path.endsWith(".gif") -> "image/gif"
+        path.endsWith(".svg") -> "image/svg+xml"
+        path.endsWith(".html") -> "text/html; charset=utf-8"
+        path.endsWith(".txt") -> "text/plain; charset=utf-8"
+        else -> "application/octet-stream"
     }
 }

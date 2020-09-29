@@ -32,7 +32,6 @@ class SearchTest {
             verifySearchView()
             verifyBrowserToolbar()
             verifyScanButton()
-            verifyShortcutsButton()
         }
     }
 
@@ -51,20 +50,31 @@ class SearchTest {
     @Test
     fun shortcutButtonTest() {
         homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            enableShowSearchShortcuts()
+        }.goBack {
+        }.goBack {
         }.openSearch {
-            verifySearchWithText()
-            clickDuckDuckGoEngineButton()
+//            verifySearchWithText()
+            clickSearchEngineButton("DuckDuckGo")
             typeSearch("mozilla")
-            verifyDuckDuckGoResults()
-            clickDuckDuckGoResult()
-            verifyDuckDuckGoURL()
+            verifySearchEngineResults("DuckDuckGo")
+            clickSearchEngineResult("DuckDuckGo")
+            verifySearchEngineURL("DuckDuckGo")
         }
     }
 
     @Test
-    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
     fun shortcutSearchEngineSettingsTest() {
         homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            enableShowSearchShortcuts()
+        }.goBack {
+        }.goBack {
         }.openSearch {
             scrollToSearchEngineSettings()
             clickSearchEngineSettings()

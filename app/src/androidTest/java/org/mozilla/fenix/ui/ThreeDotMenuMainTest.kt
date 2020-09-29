@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -23,7 +24,6 @@ import org.mozilla.fenix.ui.robots.homeScreen
 class ThreeDotMenuMainTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
 
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -37,6 +37,16 @@ class ThreeDotMenuMainTest {
         }
     }
 
+    // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun setDevicePreference() {
+            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            mDevice.executeShellCommand("settings put secure long_press_timeout 3000")
+        }
+    }
+
     @After
     fun tearDown() {
         mockWebServer.shutdown()
@@ -47,23 +57,37 @@ class ThreeDotMenuMainTest {
         homeScreen {
         }.openThreeDotMenu {
             verifySettingsButton()
-            verifyLibraryButton()
+            verifyBookmarksButton()
+            verifyHistoryButton()
             verifyHelpButton()
             verifyWhatsNewButton()
         }.openSettings {
             verifySettingsView()
         }.goBack {
         }.openThreeDotMenu {
-        }.openLibrary {
-            verifyLibraryView()
-        }.goBack {
-        }.openThreeDotMenu {
         }.openHelp {
             verifyHelpUrl()
-        }.openHomeScreen {
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
         }.openThreeDotMenu {
         }.openWhatsNew {
             verifyWhatsNewURL()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss { }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            verifyBookmarksMenuView()
+        }.closeMenu {
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyHistoryMenuView()
         }
     }
 }

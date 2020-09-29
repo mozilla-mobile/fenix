@@ -2,16 +2,19 @@
 trust-domain: mobile
 treeherder:
     group-names:
-        'beta': 'Nightly-related tasks'
+        'beta': 'Beta-related tasks with same APK configuration as Fennec'
+        'Btime': 'Raptor-Browsertime tests'
+        'bump': 'Bump dependencies'
         'debug': 'Builds made for testing'
+        'Fetch': 'Fetch and store content'
         'forPerformanceTest': 'Builds made for Raptor and other performance tests'
         'I': 'Docker Image Builds'
         'nightly': 'Nightly-related tasks'
-        'nightlyFennec': 'Nightly-related tasks with same APK configuration as Fennec'
-        'nightlyLegacy': 'Nightly-related tasks that ship to https://play.google.com/store/apps/details?id=org.mozilla.fenix'
-        'production': 'Release-related tasks'
+        'nightlySim': 'Nightly-related tasks that run on each github push'
+        'release': 'Production-related tasks with same APK configuration as Fennec'
         'Rap': 'Raptor tests'
         'Rap-P': 'Raptor power tests'
+        'TL': 'Toolchain builds for Linux 64-bits'
 
 task-priority: highest
 
@@ -20,41 +23,60 @@ taskgraph:
     repositories:
         mobile:
             name: "Fenix"
-    cached-task-prefix: project.mobile.fenix
+    cached-task-prefix: mobile.v2.fenix
+    decision-parameters: 'fenix_taskgraph.parameters:get_decision_parameters'
 
 workers:
     aliases:
         b-android:
-            provisioner: aws-provisioner-v1
+            provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'mobile-{level}-b-fenix'
-        images:
-            provisioner: aws-provisioner-v1
+            worker-type: b-linux
+        b-android-large:
+            provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'mobile-{level}-images'
+            worker-type: b-linux-large
         dep-signing:
-            provisioner: scriptworker-prov-v1
+            provisioner: scriptworker-k8s
             implementation: scriptworker-signing
             os: scriptworker
-            worker-type: mobile-signing-dep-v1
-        signing:
-            provisioner: scriptworker-prov-v1
-            implementation: scriptworker-signing
+            worker-type: mobile-t-signing
+        github:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-github
             os: scriptworker
-            worker-type:
-                by-level:
-                    "3": mobile-signing-v1
-                    default: mobile-signing-dep-v1
+            worker-type: 'mobile-{level}-github'
+        images:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: 'images'
+        # misc is used by taskgraph to generate tasks with more than 10 routes
+        misc:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: 'b-linux'
         push-apk:
-            provisioner: scriptworker-prov-v1
+            provisioner: scriptworker-k8s
             implementation: scriptworker-pushapk
             os: scriptworker
+            worker-type: 'mobile-{level}-pushapk'
+        ship-it:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-shipit
+            os: scriptworker
+            worker-type: 'mobile-{level}-shipit'
+        signing:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-signing
+            os: scriptworker
             worker-type:
                 by-level:
-                    "3": mobile-pushapk-v1
-                    default: mobile-pushapk-dep-v1
+                    "3": mobile-3-signing
+                    default: mobile-t-signing
         t-bitbar.*:
             provisioner: proj-autophone
             implementation: generic-worker
@@ -63,3 +85,9 @@ workers:
 
 scriptworker:
     scope-prefix: project:mobile:fenix:releng
+
+
+release-promotion:
+    flavors:
+        ship:
+            target-tasks-method: release

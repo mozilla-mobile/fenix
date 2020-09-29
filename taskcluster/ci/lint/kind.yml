@@ -9,13 +9,18 @@ transforms:
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
+kind-dependencies:
+    - toolchain
+
+
 job-defaults:
     attributes:
         code-review: true
-    worker-type: b-android
-    worker:
-        docker-image: {in-tree: base}
-        max-run-time: 7200
+        retrigger: true
+    fetches:
+        toolchain:
+            - android-sdk-linux
+            - android-gradle-dependencies
     run:
         use-caches: false
     run-on-tasks-for: [github-pull-request, github-push]
@@ -23,6 +28,10 @@ job-defaults:
         kind: test
         platform: 'lint/opt'
         tier: 1
+    worker-type: b-android
+    worker:
+        docker-image: {in-tree: base}
+        max-run-time: 7200
 
 jobs:
     compare-locales:
@@ -38,9 +47,17 @@ jobs:
         description: 'Running detekt over all modules'
         run:
             using: gradlew
-            gradlew: [detekt]
+            gradlew: [detekt, githubLintDetektDetails]
         treeherder:
             symbol: detekt
+        worker:
+            artifacts:
+                - name: public/reports
+                  path: /builds/worker/checkouts/src/build/reports
+                  type: directory
+                - name: public/github
+                  path: /builds/worker/github
+                  type: directory
     ktlint:
         description: 'Running ktlint over all modules'
         run:
@@ -49,9 +66,17 @@ jobs:
         treeherder:
             symbol: ktlint
     lint:
-        description: 'Running tlint over all modules'
+        description: 'Running lint over all modules'
         run:
             using: gradlew
-            gradlew: [lintDebug]
+            gradlew: ['lintDebug', 'githubLintAndroidDetails']
         treeherder:
             symbol: lint
+        worker:
+            artifacts:
+                - name: public/reports
+                  path: /builds/worker/checkouts/src/app/build/reports
+                  type: directory
+                - name: public/github
+                  path: /builds/worker/github
+                  type: directory

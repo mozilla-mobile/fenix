@@ -6,24 +6,37 @@
 
     <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Android system styling -->
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
-        <item name="android:statusBarColor">@color/foundation_normal_theme</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/foundation_normal_theme</item>
         <item name="android:colorEdgeEffect">@color/accent_normal_theme</item>
         <item name="android:colorAccent">@color/primary_text_normal_theme</item>
-        <item name="android:textColorPrimary">@color/primary_text_normal_theme</item>
-        <item name="android:textColorSecondary">@color/secondary_text_normal_theme</item>
+        <item name="android:textColorPrimary">@color/state_list_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
         <item name="alertDialogStyle">@style/DialogStyleNormal</item>
         <item name="alertDialogTheme">@style/DialogStyleNormal</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheet</item>
+
+        <item name="mozacInputLayoutErrorTextColor"
+            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+        <item name="mozacInputLayoutErrorIconColor"
+            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
-        <item name="android:colorControlActivated">@color/accent_high_contrast_normal_theme</item>
+        <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_normal_theme</item>
         <!-- Inactive track color(30% transparency) -->
         <item name="android:colorForeground">@color/toggle_off_track_normal_theme</item>
+        <!-- sets the toolbar back button color, radio buttons / unselected checkboxes -->
+        <item name="colorControlNormal">@color/primary_text_normal_theme</item>
 
         <!-- Updated color attributes -->
         <item name="primaryText">@color/primary_text_normal_theme</item>
@@ -31,6 +44,7 @@
         <item name="contrastText">@color/contrast_text_normal_theme</item>
         <item name="accent">@color/accent_normal_theme</item>
         <item name="accentBright">@color/accent_bright_normal_theme</item>
+        <item name="aboutLink">@color/about_link_normal_theme</item>
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
         <item name="foundation">@color/foundation_normal_theme</item>
         <item name="above">@color/above_normal_theme</item>
@@ -49,11 +63,47 @@
         <item name="toolbarCenterGradient">@color/toolbar_center_gradient_normal_theme</item>
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_normal_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
+        <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
+        <item name="menuCategoryText">@color/menu_category_normal_theme</item>
+        <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
+        <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
+        <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
+        <item name="onboardingDarkGradientStartBackground">@color/onboarding_card_background_start_gradient_normal_theme</item>
+        <item name="onboardingDarkGradientEndBackground">@color/onboarding_card_background_end_gradient_normal_theme</item>
+        <item name="onboardingSelected">@color/onboarding_illustration_selected_normal_theme</item>
+        <item name="onboardingDeselected">@color/onboarding_illustration_deselected_normal_theme</item>
+        <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_normal_theme</item>
+        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_normal_theme</item>
+        <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_normal_theme</item>
+        <item name="readerModeStartGradient">@color/readermode_start_gradient_normal_theme</item>
+        <item name="readerModeEndGradient">@color/readermode_end_gradient_normal_theme</item>
+        <item name="syncedTabsSeparator">@color/synced_tabs_separator</item>
+        <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_normal_theme</item>
+        <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_normal_theme</item>
+        <item name="selectLoginHeaderTextColor">@color/select_login_header_normal_theme</item>
+        <!-- Shared widget colors -->
+        <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
+        <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
+        <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_normal_theme</item>
+        <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_normal_theme</item>
+
+        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
+        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_normal_theme</item>
+        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_normal_theme</item>
+        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_normal_theme</item>
+        <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_normal_theme</item>
+        <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_normal_theme</item>
+        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
+        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
+
+        <!-- Tab History -->
+        <item name="tabHistoryItemSelectedBackground">@color/tab_history_item_selected_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
         <item name="homeBackground">@color/foundation_normal_theme</item>
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
+        <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
         <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
         <item name="shieldLottieFile">@raw/shield_json</item>
@@ -62,6 +112,10 @@
     <style name="NormalTheme" parent="NormalThemeBase" />
 
     <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorControlNormal">?primaryText</item>
+        <item name="textColorAlertDialogListItem">?primaryText</item>
+        <item name="android:titleTextStyle">@style/HeaderTextStyle</item>
+        <item name="android:windowTitleStyle">@style/HeaderTextStyle</item>
         <item name="dialogCornerRadius">@dimen/tab_corner_radius</item>
         <item name="android:colorBackground">?above</item>
         <item name="colorAccent">?accent</item>
@@ -73,40 +127,67 @@
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleLight</item>
     </style>
 
+    <style name="SelectLoginHeaderTextStyle" parent="Header16TextStyle">
+        <item name="android:textColor">?selectLoginHeaderTextColor</item>
+        <item name="drawableTint">?accentHighContrast</item>
+    </style>
+
+    <style name="Checkable.Colored" parent="Theme.AppCompat">
+        <item name="colorControlActivated">?attr/onboardingSelected</item>
+        <item name="colorControlNormal">?attr/onboardingDeselected</item>
+    </style>
+
     <style name="DialogStyleDark" parent="BaseDialogStyle">
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyleDark</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyleDark</item>
     </style>
 
     <style name="DialogButtonStyleLight" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:textColor">?accentBright</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="DialogButtonStyleDark" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:textColor">?accentHighContrast</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="DialogStyleNormal" parent="DialogStyleLight"/>
 
     <style name="PrivateThemeBase" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <!-- Android system styling -->
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
-        <item name="android:statusBarColor">@color/foundation_private_theme</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/foundation_private_theme</item>
         <item name="android:colorEdgeEffect">@color/accent_private_theme</item>
         <item name="android:colorAccent">@color/primary_text_private_theme</item>
-        <item name="android:colorControlActivated">@color/accent_high_contrast_private_theme</item>
-        <item name="android:textColorPrimary">@color/primary_text_private_theme</item>
-        <item name="android:textColorSecondary">@color/secondary_text_private_theme</item>
+        <item name="colorControlActivated">@color/accent_high_contrast_private_theme</item>
+        <item name="android:textColorPrimary">@color/state_list_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
         <item name="alertDialogStyle">@style/DialogStyleDark</item>
         <item name="alertDialogTheme">@style/DialogStyleDark</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetPrivate</item>
+
+        <item name="mozacInputLayoutErrorTextColor"
+            tools:ignore="UnusedResources">@color/destructive_private_theme</item>
+        <item name="mozacInputLayoutErrorIconColor"
+            tools:ignore="UnusedResources">@color/destructive_private_theme</item>
+        <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectLoginHeaderTextStyle</item>
 
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_dark_theme</item>
         <!-- Inactive track color(30% transparency) -->
         <item name="android:colorForeground">@color/toggle_off_track_dark_theme</item>
+        <!-- sets the toolbar back button color, radio buttons/ unselected checkboxes -->
+        <item name="colorControlNormal">@color/primary_text_private_theme</item>
 
         <!-- Updated color attributes -->
         <item name="primaryText">@color/primary_text_private_theme</item>
@@ -114,6 +195,7 @@
         <item name="contrastText">@color/contrast_text_private_theme</item>
         <item name="accent">@color/accent_private_theme</item>
         <item name="accentBright">@color/accent_bright_private_theme</item>
+        <item name="aboutLink">@color/about_link_private_theme</item>
         <item name="accentHighContrast">@color/accent_high_contrast_private_theme</item>
         <item name="foundation">@color/foundation_private_theme</item>
         <item name="above">@color/above_private_theme</item>
@@ -132,17 +214,55 @@
         <item name="toolbarCenterGradient">@color/toolbar_center_gradient_private_theme</item>
         <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
         <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
+        <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_private_theme</item>
+        <item name="menuCategoryText">@color/menu_category_private_theme</item>
+        <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
+        <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
+        <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
+        <item name="onboardingDarkGradientStartBackground">@color/onboarding_card_background_start_gradient_private_theme</item>
+        <item name="onboardingDarkGradientEndBackground">@color/onboarding_card_background_end_gradient_private_theme</item>
+        <item name="onboardingSelected">@color/onboarding_illustration_selected_private_theme</item>
+        <item name="onboardingDeselected">@color/onboarding_illustration_deselected_private_theme</item>
+        <item name="addOnPrivateBrowsingExteriorCircleBackground">@color/add_on_private_browsing_exterior_circle_background_private_theme</item>
+        <item name="addOnPrivateBrowsingInteriorIconBackground">@color/add_on_private_browsing_interior_icon_background_private_theme</item>
+        <item name="mozacPromptLoginEditTextCursorColor">@color/prompt_login_edit_text_cursor_color_private_theme</item>
+        <item name="awesomeBarIndicatorColor">@color/search_suggestion_indicator_icon_color_dark_theme</item>
+        <item name="awesomeBarIndicatorBookmarkColor">@color/search_suggestion_indicator_icon_bookmark_color_dark_theme</item>
+        <item name="selectLoginHeaderTextColor">@color/accent_high_contrast_private_theme</item>
+
+        <!-- Shared widget colors -->
+        <item name="mozac_primary_text_color">@color/primary_text_private_theme</item>
+        <item name="mozac_caption_text_color">@color/caption_text_private_theme</item>
+        <item name="mozac_widget_favicon_background_color">@color/mozac_widget_favicon_background_private_theme</item>
+        <item name="mozac_widget_favicon_border_color">@color/mozac_widget_favicon_border_private_theme</item>
+
+        <!-- Tab Tray -->
+        <item name="tabTrayItemBackground">@color/tab_tray_item_background_normal_theme</item>
+        <item name="tabTrayItemSelectedBackground">@color/tab_tray_item_selected_background_private_theme</item>
+        <item name="tabTrayToolbarBackground">@color/tab_tray_toolbar_background_private_theme</item>
+        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
+        <item name="tabTrayHeadingIcon">@color/tab_tray_heading_icon_dark_theme</item>
+        <item name="tabTrayHeadingIconInactive">@color/tab_tray_heading_icon_inactive_dark_theme</item>
+        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
+        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
+
+        <!-- Tab History -->
+        <item name="tabHistoryItemSelectedBackground">@color/tab_history_item_selected_background_private_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
         <item name="homeBackground">@drawable/private_home_background_gradient</item>
         <item name="bottomBarBackground">@drawable/private_home_bottom_bar_background_gradient</item>
+        <item name="bottomBarBackgroundTop">@drawable/private_home_bottom_bar_background_gradient_top</item>
         <item name="privateBrowsingButtonBackground">@color/primary_text_private_theme</item>
         <item name="privateBrowsingButtonAccent">@color/above_private_theme</item>
         <item name="shieldLottieFile">@raw/shield_json_dark</item>
     </style>
 
     <style name="Mozac.Browser.Menu" parent="" tools:ignore="UnusedResources">
+        <item name="cardBackgroundColor">?above</item>
+    </style>
+    <style name="Mozac.Browser.Menu2" parent="" tools:ignore="UnusedResources">
         <item name="cardBackgroundColor">?above</item>
     </style>
 
@@ -154,26 +274,52 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
-    <style name="ThemeIndependentMaterialGreyButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:letterSpacing">0</item>
+    <!-- UI button styling -->
+    <style name="NeutralButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="iconTint">@color/button_text_color</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@drawable/rounded_button_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="backgroundTint">@color/grey_button_color</item>
         <item name="android:textColor">@color/button_text_color</item>
         <item name="rippleColor">?secondaryText</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
-    <style name="ThemeIndependentMaterialGreyButtonDestructive" parent="ThemeIndependentMaterialGreyButton">
+    <!-- Ideally we should consolidate this with NeutralButton in the future -->
+    <style name="NeutralOnboardingButton" parent="NeutralButton">
+        <item name="android:background">@drawable/onboarding_padded_background</item>
+        <item name="backgroundTint">?neutralFaded</item>
+        <item name="android:textColor">?primaryText</item>
+    </style>
+
+    <style name="DestructiveButton" parent="NeutralButton">
+        <item name="iconTint">@color/destructive_button_text_color</item>
         <item name="android:textColor">@color/destructive_button_text_color</item>
+    </style>
+
+    <style name="PositiveButton" parent="NeutralButton">
+        <item name="backgroundTint">?accent</item>
+        <item name="iconTint">?contrastText</item>
+        <item name="android:textColor">?contrastText</item>
     </style>
 
     <style name="search_pill" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/toggle_text_color</item>
-        <item name="android:drawableTint" tools:targetApi="m">@color/toggle_text_color</item>
+        <item name="drawableTint">@color/toggle_text_color</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
@@ -194,6 +340,7 @@
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
         <item name="android:elevation">0dp</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="SitePermissionCancelButton" parent="SitePermissionButton">
@@ -228,26 +375,26 @@
     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">?primaryText</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0.03</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header14TextStyle" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">?primaryText</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header12TextStyle" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Body14TextStyle" parent="TextAppearance.MaterialComponents.Body2">
@@ -255,18 +402,25 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="Body16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">?primaryText</item>
+    </style>
+
     <style name="SubtitleTextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Subtitle12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">?secondaryText</item>
         <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="ToolbarTitleTextStyle" parent="HeaderTextStyle">
         <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="ListItemTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
@@ -286,6 +440,27 @@
         <item name="android:layout_alignParentStart">true</item>
     </style>
 
+    <style name="QuickSettingsSmallText">
+        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:gravity">top</item>
+        <item name="android:layout_alignParentStart">true</item>
+    </style>
+
+    <style name="QuickSettingsLargeText">
+        <item name="android:textColor">@color/state_list_text_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentStart">true</item>
+    </style>
+
+    <style name="QuickSettingsLargeText.Icon">
+        <item name="android:drawablePadding">8dp</item>
+    </style>
+
     <style name="QuickSettingsText.Icon">
         <item name="android:drawablePadding">8dp</item>
     </style>
@@ -300,12 +475,45 @@
 
     <style name="OnboardingCardLight">
         <item name="android:background">@drawable/onboarding_card_background_light</item>
-        <item name="android:padding">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:elevation">5dp</item>
     </style>
 
-    <style name="OnboardingCardDark" parent="OnboardingCardLight">
+    <style name="OnboardingCardLightWithPadding" parent="OnboardingCardLight">
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="OnboardingCardDark" parent="OnboardingCardLightWithPadding">
         <item name="android:background">@drawable/onboarding_card_background_dark</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <style name="SearchEngineShortcutsLabelStyle">
+        <item name="android:fontFamily">@font/metropolis_semibold</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textSize">@dimen/search_fragment_shortcuts_label_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SearchClipboardStyle">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="SearchClipboardTitleStyle" parent="SearchClipboardStyle">
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:textSize">@dimen/search_fragment_clipboard_title_text_size</item>
+    </style>
+
+    <style name="MetropolisButton">
+        <item name="fontFamily">@font/metropolis_semibold</item>
+    </style>
+
+    <style name="SearchClipboardUrlStyle" parent="SearchClipboardStyle">
+        <item name="android:textAppearance">@style/Subtitle12TextStyle</item>
+        <item name="android:textColor">?fillLinkFromClipboard</item>
     </style>
 
     <style name="CreateCollectionDialogStyle" parent="DialogStyleBase"/>
@@ -313,11 +521,19 @@
     <style name="CreateShortcutDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:minHeight">40dp</item>
         <item name="android:layout_marginTop">32dp</item>
         <item name="android:textColor">?accentUsedOnDarkBackground</item>
+        <item name="android:fontFamily">@font/metropolis_semibold</item>
+    </style>
 
+    <style name="ShareHeaderTextStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textSize">@dimen/share_header_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="FirefoxAccountsDialogStyle" parent="DialogStyleBase">
@@ -326,4 +542,113 @@
     </style>
 
     <style name="ShareDialogStyle" parent="DialogStyleBase"/>
+
+    <style name="AboutItemText" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">?aboutLink</item>
+        <item name="android:textSize">@dimen/about_items_text_size</item>
+        <item name="android:paddingStart">@dimen/about_list_item_text_padding</item>
+        <item name="android:paddingEnd">@dimen/about_list_item_text_padding</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minLines">1</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AboutHeaderContentText" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColor">?primaryText</item>
+        <item name="android:lineSpacingExtra">@dimen/about_header_text_line_spacing_extra</item>
+    </style>
+
+    <style name="EngineTextField" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+    </style>
+
+    <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColorHint">@color/search_view_hint_color</item>
+    </style>
+
+    <style name="BottomSheetPrivate" parent="@style/BottomSheetBasePrivate" />
+
+    <style name="BottomSheet" parent="@style/BottomSheetBase" />
+
+    <style name="BottomSheetBasePrivate" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorBackground">?foundation</item>
+    </style>
+
+    <style name="BottomSheetBase" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorBackground">?foundation</item>
+    </style>
+
+    <!-- Tab Tray does not present a private theme, so it needs to be separate from other bottom sheet styles -->
+    <style name="TabTrayDialogStyleBase" parent="BottomSheetBase">
+        <item name="bottomSheetStyle">@style/BottomSheetModal</item>
+        <item name="android:colorBackground">@color/foundation_normal_theme</item>
+    </style>
+
+    <style name="TabTrayDialogStyle" parent="TabTrayDialogStyleBase" />
+
+    <!-- Stuff to make the bottom sheet with round top borders -->
+    <style name="BottomSheetShapeAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="colorSurface">@color/photonPurple50</item>
+        <item name="android:backgroundTint">@color/photonPurple50</item>
+        <item name="android:colorBackground">@color/photonPurple50</item>
+    </style>
+
+    <style name="BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/BottomSheetShapeAppearance</item>
+        <item name="behavior_fitToContents">false</item>
+        <item name="behavior_expandedOffset">80</item>
+        <item name="behavior_skipCollapsed">false</item>
+        <item name="behavior_halfExpandedRatio">0.4</item>
+    </style>
+
+    <style name="TopSite.Favicon" parent="Mozac.Widgets.Favicon">
+        <item name="android:layout_width">@dimen/top_sites_favicon_size</item>
+        <item name="android:layout_height">@dimen/top_sites_favicon_size</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:padding">@dimen/top_sites_favicon_padding</item>
+        <item name="android:background">@drawable/mozac_widget_favicon_background</item>
+    </style>
+
+    <style name="TabTrayFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="elevation">90dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="SearchDialogStyle">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:colorControlNormal">?accentHighContrast</item>
+        <item name="android:colorControlActivated">?accentHighContrast</item>
+        <item name="android:colorControlHighlight">?accentBright</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
 </resources>

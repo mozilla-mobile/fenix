@@ -6,90 +6,72 @@
 
 package org.mozilla.fenix.settings.deletebrowsingdata
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
+import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.support.test.robolectric.testContext
-import org.junit.After
+import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.TestApplication
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PermissionStorage
-import org.mozilla.fenix.ext.clearAndCommit
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
-import org.robolectric.annotation.Config
 
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
-@RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
+@OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class DeleteAndQuitTest {
 
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule(TestCoroutineDispatcher())
 
-    private var activity: HomeActivity = mockk(relaxed = true)
-    lateinit var settings: Settings
+    private val activity: HomeActivity = mockk(relaxed = true)
+    private val settings: Settings = mockk(relaxed = true)
     private val tabUseCases: TabsUseCases = mockk(relaxed = true)
     private val historyStorage: PlacesHistoryStorage = mockk(relaxed = true)
     private val permissionStorage: PermissionStorage = mockk(relaxed = true)
+    private val iconsStorage: BrowserIcons = mockk()
     private val engine: Engine = mockk(relaxed = true)
     private val removeAllTabsUseCases: TabsUseCases.RemoveAllTabsUseCase = mockk(relaxed = true)
+    private val snackbar = mockk<FenixSnackbar>(relaxed = true)
 
     @Before
     fun setUp() {
-        settings = Settings.getInstance(testContext).apply {
-            clear()
-        }
-
-        Dispatchers.setMain(mainThreadSurrogate)
-
         every { activity.components.core.historyStorage } returns historyStorage
         every { activity.components.core.permissionStorage } returns permissionStorage
         every { activity.components.useCases.tabsUseCases } returns tabUseCases
         every { tabUseCases.removeAllTabs } returns removeAllTabsUseCases
         every { activity.components.core.engine } returns engine
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
-    }
-
-    private fun Settings.clear() {
-        preferences.clearAndCommit()
+        every { activity.components.settings } returns settings
+        every { activity.components.core.icons } returns iconsStorage
     }
 
     @Test
     fun `delete only tabs and quit`() = runBlockingTest {
         // When
-        settings.setDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.TABS, true)
+        every { settings.getDeleteDataOnQuit(DeleteBrowsingDataOnQuitType.TABS) } returns true
 
-        deleteAndQuit(activity, this)
+        deleteAndQuit(activity, this, snackbar)
 
-        verify {
+        verifyOrder {
+            snackbar.show()
             removeAllTabsUseCases.invoke()
             activity.finish()
         }
 
-        verify(exactly = 0) {
-            historyStorage
-
+        coVerify(exactly = 0) {
             engine.clearData(
                 Engine.BrowsingData.select(
                     Engine.BrowsingData.COOKIES
@@ -100,6 +82,11 @@ class DeleteAndQuitTest {
 
             engine.clearData(Engine.BrowsingData.allCaches())
         }
+
+        coVerify(exactly = 0) {
+            historyStorage.deleteEverything()
+            iconsStorage.clear()
+        }
     }
 
     @Ignore("Intermittently failing; will be fixed with #5406.")
@@ -107,12 +94,14 @@ class DeleteAndQuitTest {
     fun `delete everything and quit`() = runBlockingTest {
         // When
         DeleteBrowsingDataOnQuitType.values().forEach {
-            settings.setDeleteDataOnQuit(it, true)
+            every { settings.getDeleteDataOnQuit(it) } returns true
         }
 
-        deleteAndQuit(activity, this)
+        deleteAndQuit(activity, this, snackbar)
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
+            snackbar.show()
+
             engine.clearData(Engine.BrowsingData.allCaches())
 
             removeAllTabsUseCases.invoke()
@@ -132,9 +121,12 @@ class DeleteAndQuitTest {
 
             engine.clearData(Engine.BrowsingData.select(Engine.BrowsingData.DOM_STORAGES))
 
-            historyStorage
-
             activity.finish()
+        }
+
+        coVerify {
+            historyStorage.deleteEverything()
+            iconsStorage.clear()
         }
     }
 }

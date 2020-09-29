@@ -9,55 +9,65 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
+import org.mozilla.fenix.utils.Settings
 
 class UriOpenedObserver(
+    private val settings: Settings,
     private val owner: LifecycleOwner,
     private val sessionManager: SessionManager,
-    private val metrics: MetricController
+    metrics: MetricController,
+    ads: AdsTelemetry
 ) : SessionManager.Observer {
 
     constructor(activity: FragmentActivity) : this(
+        activity.applicationContext.settings(),
         activity,
         activity.components.core.sessionManager,
-        activity.metrics
+        activity.metrics,
+        activity.components.core.adsTelemetry
     )
+
+    @VisibleForTesting
+    internal val singleSessionObserver = TelemetrySessionObserver(metrics, ads)
 
     init {
         sessionManager.register(this, owner)
+        sessionManager.selectedSession?.register(singleSessionObserver, owner)
     }
 
-    @VisibleForTesting
-    internal val singleSessionObserver = object : Session.Observer {
-        private var urlLoading: String? = null
+    override fun onSessionSelected(session: Session) {
+        session.register(singleSessionObserver, owner)
+    }
 
-        override fun onLoadingStateChanged(session: Session, loading: Boolean) {
-            if (loading) {
-                urlLoading = session.url
-            } else if (urlLoading != null && !session.private) {
-                metrics.track(Event.UriOpened)
-            }
-        }
+    private fun saveOpenTabsCount() {
+        settings.setOpenTabsCount(sessionManager.sessionsOfType(private = false).count())
     }
 
     override fun onAllSessionsRemoved() {
+        saveOpenTabsCount()
         sessionManager.sessions.forEach {
             it.unregister(singleSessionObserver)
         }
     }
 
     override fun onSessionAdded(session: Session) {
+        saveOpenTabsCount()
         session.register(singleSessionObserver, owner)
     }
 
     override fun onSessionRemoved(session: Session) {
+        saveOpenTabsCount()
         session.unregister(singleSessionObserver)
     }
 
     override fun onSessionsRestored() {
+        saveOpenTabsCount()
         sessionManager.sessions.forEach {
             it.register(singleSessionObserver, owner)
         }

@@ -4,14 +4,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import os
-import re
-
 from taskgraph.target_tasks import _target_task, filter_for_tasks_for
-
-
-BETA_SEMVER = re.compile(r'^v\d+\.\d+\.\d+-beta\.\d+$')
-PRODUCTION_SEMVER = re.compile(r'^v\d+\.\d+\.\d+(-rc\.\d+)?$')
 
 
 @_target_task('default')
@@ -20,20 +13,21 @@ def target_tasks_default(full_task_graph, parameters, graph_config):
     via the `run_on_projects` attributes."""
 
     filter = filter_for_tasks_for
-    if parameters["tasks_for"] == 'github-release':
-        # TODO Move GIT_TAG as to a parameter
-        git_tag = os.environ['GIT_TAG']
-        version = git_tag[1:]  # remove prefixed "v"
+    return [l for l, t in full_task_graph.tasks.iteritems() if filter_for_tasks_for(t, parameters)]
 
-        if BETA_SEMVER.match(git_tag):
-            def filter(task, params):
-                return task.attributes.get("release-type", "") == "beta"
-        elif PRODUCTION_SEMVER.match(git_tag):
-            def filter(task, params):
-                return task.attributes.get("release-type", "") == "production"
-        else:
-            raise ValueError('Github tag must be in semver format and prefixed with a "v", '
-                             'e.g.: "v1.0.0-beta.0" (beta), "v1.0.0-rc.0" (production) or "v1.0.0" (production)')
+
+@_target_task('release')
+def target_tasks_default(full_task_graph, parameters, graph_config):
+
+    # TODO Use shipping-phase once we retire github-releases
+    def filter(task, parameters):
+        # Mark-as-shipped is always red on github-release and it confuses people.
+        # This task cannot be green if we kick off a release through github-releases, so
+        # let's exlude that task there.
+        if task.kind == "mark-as-shipped" and parameters["tasks_for"] == "github-release":
+            return False
+
+        return task.attributes.get("release-type", "") == parameters["release_type"]
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
@@ -43,14 +37,55 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
     """Select the set of tasks required for a nightly build."""
 
     def filter(task, parameters):
-        return task.attributes.get("nightly", False)
+        # We don't want to ship nightly while Google Play is still behind manual review.
+        # See bug 1628413 for more context.
+        return task.attributes.get("nightly", False) and task.kind != "push-apk"
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
 
 
-@_target_task('raptor')
-def target_tasks_raptor(full_task_graph, parameters, graph_config):
-    def filter(task, params):
-        return task.kind == 'raptor'
+@_target_task("nightly-on-google-play")
+def target_tasks_nightly_on_google_play(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required for a nightly build that goes on Google Play."""
+
+    def filter(task, parameters):
+        return (
+            task.attributes.get("nightly", False) and
+            # This target_task is temporary while Google Play processes APKs slower than usually
+            # (bug 1628413). So we want this target task to be only about shipping APKs to GP and
+            # not doing any other miscellaneous tasks like performance testing
+            task.kind not in ("browsertime", "visual-metrics", "raptor")
+        )
+
+    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+
+
+def _filter_fennec(fennec_type, task, parameters):
+    return task.attributes.get("build-type", "") == "fennec-{}".format(fennec_type)
+
+
+@_target_task("fennec-production")
+def target_tasks_fennec_nightly(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required for a production build signed with the fennec key."""
+
+    return [l for l, t in full_task_graph.tasks.iteritems() if _filter_fennec("production", t, parameters)]
+
+
+@_target_task("bump_android_components")
+def target_tasks_bump_android_components(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required to update android components."""
+
+    def filter(task, parameters):
+        return task.attributes.get("bump-type", "") == "android-components"
+
+    return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]
+
+
+@_target_task("screenshots")
+def target_tasks_screnshots(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required to generate screenshots on a real device."""
+
+    def filter(task, parameters):
+        return task.attributes.get("screenshots", False)
 
     return [l for l, t in full_task_graph.tasks.iteritems() if filter(t, parameters)]

@@ -7,13 +7,21 @@ package org.mozilla.fenix.ui
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Rule
-import org.junit.Before
 import org.junit.After
+import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
+import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.ui.robots.addToHomeScreen
+import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
  *  Tests for verifying the main three dot menu options
@@ -25,6 +33,7 @@ class SettingsPrivacyTest {
 
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
+    private val pageShortcutName = "TestShortcut"
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -42,47 +51,307 @@ class SettingsPrivacyTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("This is a stub test, ignore for now")
     @Test
+    // Walks through settings privacy menu and sub-menus to ensure all items are present
     fun settingsPrivacyItemsTest() {
-        // Open 3dot (main) menu
-        // Select settings
-        // Verify header: "Privacy"
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // PRIVACY
+            verifyPrivacyHeading()
 
-        // Verify item: "Tracking Protection" and default value: "On"
-        // Verify item: "Tracking Protection" and default value: "On"
+            // PRIVATE BROWSING
+            verifyPrivateBrowsingButton()
+        }.openPrivateBrowsingSubMenu {
+            verifyNavigationToolBarHeader()
+        }.goBack {
 
-        // Verify item: "Site Permissions"
-        // Click on: "Site permissions"
-        // Verify sub-menu items...
-        // Verify item: Exceptions
-        // Verify item: header: "Permissions"
-        // Verify item: "Camera" and default value: "ask to allow"
-        // Verify item: "Location" and default value: "ask to allow"
-        // Verify item: "Microphone" and default value: "ask to allow"
-        // Verify item: "Notification" and default value: "ask to allow"
+            // ENHANCED TRACKING PROTECTION
+            verifyEnhancedTrackingProtectionButton()
+            verifyEnhancedTrackingProtectionValue("On")
+        }.openEnhancedTrackingProtectionSubMenu {
+            verifyNavigationToolBarHeader()
+            verifyEnhancedTrackingProtectionProtectionSubMenuItems()
 
-        // Verify item: "Delete browsing data"
-        // Click on: "Delete browsing data"
-        // Verify sub-menu items...
-        // Verify item: "Open tabs"
-        // Verify item" <tab count> tabs
-        // Verify item: "Browsing history and site data"
-        // Verify item" <address count> addresses
-        // Verify item:  "Collections
-        // Verify item" <collection count> collections
-        // Verify item button: "Delete browsing data"
+            // ENHANCED TRACKING PROTECTION EXCEPTION
+        }.openExceptions {
+            verifyNavigationToolBarHeader()
+            verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems()
+        }.goBack {
+        }.goBack {
 
-        // Verify item: "Data collection"
-        // Click on: "Data collection"
-        // Verify sub-menu items...
-        // Verify header: "Usage and technical data"
-        // Verify description: "Shares performance, usage, hardware and customization data about your browser with Mozilla to help us make Firefox Preview better"
-        // Verify item:  toggle default value: 'on'
+            // SITE PERMISSIONS
+            verifySitePermissionsButton()
+        }.openSettingsSubMenuSitePermissions {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsSubMenuItems()
 
-        // Verify item: "Privacy notice"
-        // Verify item: "Leak Canary" and default toggle value: "Off"
+            // SITE PERMISSIONS AUTOPLAY
+        }.openAutoPlay {
+            verifyNavigationToolBarHeader("Autoplay")
+            verifySitePermissionsAutoPlaySubMenuItems()
+        }.goBack {
 
+            // SITE PERMISSIONS CAMERA
+        }.openCamera {
+            verifyNavigationToolBarHeader("Camera")
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Camera to ON")
+        }.goBack {
+
+            // SITE PERMISSIONS LOCATION
+        }.openLocation {
+            verifyNavigationToolBarHeader("Location")
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Location to ON")
+        }.goBack {
+
+            // SITE PERMISSIONS MICROPHONE
+        }.openMicrophone {
+            verifyNavigationToolBarHeader("Microphone")
+            verifySitePermissionsCommonSubMenuItems()
+            verifyToggleNameToON("3. Toggle Microphone to ON")
+        }.goBack {
+
+            // SITE PERMISSIONS NOTIFICATION
+        }.openNotification {
+            verifyNavigationToolBarHeader("Notification")
+            verifySitePermissionsNotificationSubMenuItems()
+        }.goBack {
+
+            // SITE PERMISSIONS EXCEPTIONS
+        }.openExceptions {
+            verifyNavigationToolBarHeader()
+            verifySitePermissionsExceptionSubMenuItems()
+        }.goBack {
+        }.goBack {
+
+            // DELETE BROWSING DATA
+            verifyDeleteBrowsingDataButton()
+        }.openSettingsSubMenuDeleteBrowsingData {
+            verifyNavigationToolBarHeader()
+            verifyDeleteBrowsingDataSubMenuItems()
+        }.goBack {
+
+            // DELETE BROWSING DATA ON QUIT
+            verifyDeleteBrowsingDataOnQuitButton()
+            verifyDeleteBrowsingDataOnQuitValue("Off")
+        }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
+            verifyNavigationToolBarHeader()
+            verifyDeleteBrowsingDataOnQuitSubMenuItems()
+        }.goBack {
+
+            // DATA COLLECTION
+            verifyDataCollectionButton()
+        }.openSettingsSubMenuDataCollection {
+            verifyNavigationToolBarHeader()
+            verifyDataCollectionSubMenuItems()
+        }.goBack {
+        }.goBack {
+            verifyHomeComponent()
+        }
+    }
+
+    // Tests only for initial state without signing in.
+    // For tests after singing in, see SyncIntegration test suite
+
+    @Test
+    fun loginsAndPasswordsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            TestHelper.scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+            verifyDefaultValueSyncLogins()
+            verifyDefaultValueAutofillLogins()
+            verifyDefaultValueExceptions()
+        }.openSavedLogins {
+            verifySavedLoginsView()
+            tapSetupLater()
+            // Verify that logins list is empty
+            // Issue #7272 nothing is shown
+        }.goBack {
+        }.openSyncLogins {
+            verifyReadyToScanOption()
+            verifyUseEmailOption()
+        }
+    }
+
+    @Test
+    fun saveLoginFromPromptTest() {
+        val saveLoginTest =
+            TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+            verifySaveLoginPromptIsShown()
+            // Click save to save the login
+            saveLoginFromPrompt("Save")
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
+        }.openThreeDotMenu {
+        }.openSettings {
+            TestHelper.scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+            verifyDefaultValueSyncLogins()
+        }.openSavedLogins {
+            verifySavedLoginsView()
+            tapSetupLater()
+            // Verify that the login appears correctly
+            verifySavedLoginFromPrompt()
+        }
+    }
+
+    @Test
+    fun neverSaveLoginFromPromptTest() {
+        val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
+            verifySaveLoginPromptIsShown()
+            // Don't save the login, add to exceptions
+            saveLoginFromPrompt("Never save")
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+            verifyDefaultValueSyncLogins()
+        }.openSavedLogins {
+            verifySavedLoginsView()
+            tapSetupLater()
+            // Verify that the login list is empty
+            verifyNotSavedLoginFromPrompt()
+        }.goBack {
+        }.openLoginExceptions {
+            // Verify localhost was added to exceptions list
+            verifyLocalhostExceptionAdded()
+        }
+    }
+
+    @Test
+    fun saveLoginsAndPasswordsOptions() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.saveLoginsAndPasswordsOptions {
+            verifySaveLoginsOptionsView()
+        }
+    }
+
+    @Test
+    fun verifyPrivateBrowsingMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openPrivateBrowsingSubMenu {
+            verifyAddPrivateBrowsingShortcutButton()
+            verifyOpenLinksInPrivateTab()
+            verifyOpenLinksInPrivateTabOff()
+        }.goBack {
+            verifySettingsView()
+        }
+    }
+
+    @Test
+    @Ignore("See: https://github.com/mozilla-mobile/fenix/issues/10915")
+    fun openExternalLinksInPrivateTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        setOpenLinksInPrivateOn()
+
+        openAppFromExternalLink(defaultWebPage.url.toString())
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+        }.openNewTab { }.dismiss { }
+
+        setOpenLinksInPrivateOff()
+
+        openAppFromExternalLink(defaultWebPage.url.toString())
+
+        browserScreen {
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+        }
+    }
+
+    @Test
+    @Ignore("See: https://github.com/mozilla-mobile/fenix/issues/10915")
+    fun launchPageShortcutInPrivateModeTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        setOpenLinksInPrivateOn()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+        }.openAddToHomeScreen {
+            addShortcutName(pageShortcutName)
+            clickAddShortcutButton()
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(pageShortcutName) {
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+        }
+    }
+
+    @Test
+    fun launchLinksInPrivateToggleOffStateDoesntChangeTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        setOpenLinksInPrivateOn()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+        }.openAddToHomeScreen {
+            addShortcutName(pageShortcutName)
+            clickAddShortcutButton()
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(pageShortcutName) {
+        }.openTabDrawer {
+        }.openNewTab { }.dismiss { }
+
+        setOpenLinksInPrivateOff()
+        restartApp(activityTestRule)
+        mDevice.waitForIdle()
+
+        addToHomeScreen {
+        }.searchAndOpenHomeScreenShortcut(pageShortcutName) {
+        }.openTabDrawer {
+            verifyNormalModeSelected()
+        }.openNewTab {
+        }.dismiss {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openPrivateBrowsingSubMenu {
+            verifyOpenLinksInPrivateTabOff()
+        }
+    }
+
+    @Test
+    fun addPrivateBrowsingShortcut() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openPrivateBrowsingSubMenu {
+            addPrivateShortcutToHomescreen()
+            verifyPrivateBrowsingShortcutIcon()
+        }.openPrivateBrowsingShortcut {
+            verifySearchView()
+        }.openBrowser {
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
+        }
     }
 
     @Ignore("This is a stub test, ignore for now")
@@ -217,6 +486,11 @@ class SettingsPrivacyTest {
         // Return to home screen and verify that all tabs, history and collection are gone
         //
         // Verify xxx
+        //
+        // New: If coming from  tab -> settings -> delete browsing data
+        // then expect to return to home screen
+        // If coming from tab -> home -> settings -> delete browsing data
+        // then expect return to settings (after which you can return to home manually)
     }
 
     @Ignore("This is a stub test, ignore for now")
@@ -249,5 +523,31 @@ class SettingsPrivacyTest {
         // Select settings
         // Click on Leak Canary toggle
         // Verify 'dump' message
+    }
+}
+
+private fun setOpenLinksInPrivateOn() {
+    homeScreen {
+    }.openThreeDotMenu {
+    }.openSettings {
+    }.openPrivateBrowsingSubMenu {
+        verifyOpenLinksInPrivateTabEnabled()
+        clickOpenLinksInPrivateTabSwitch()
+    }.goBack {
+    }.goBack {
+        verifyHomeComponent()
+    }
+}
+
+private fun setOpenLinksInPrivateOff() {
+    homeScreen {
+    }.openThreeDotMenu {
+    }.openSettings {
+    }.openPrivateBrowsingSubMenu {
+        clickOpenLinksInPrivateTabSwitch()
+        verifyOpenLinksInPrivateTabOff()
+    }.goBack {
+    }.goBack {
+        verifyHomeComponent()
     }
 }

@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/domainView"
+        android:id="@+id/webAddressView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
@@ -53,7 +53,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_close"
+        app:srcCompat="@drawable/ic_close"
         android:contentDescription="@string/history_delete_item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

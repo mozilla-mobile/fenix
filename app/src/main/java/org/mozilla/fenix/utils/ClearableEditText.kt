@@ -6,15 +6,16 @@ package org.mozilla.fenix.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.PorterDuff.Mode.SRC_IN
-import android.graphics.PorterDuffColorFilter
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat.SRC_IN
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getColorFromAttr
 
 /**
  * An [AppCompatEditText] that shows a clear button to the user.
@@ -45,10 +46,11 @@ class ClearableEditText @JvmOverloads constructor(
      * Displays a clear icon if text has been entered.
      */
     override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter)
-        val drawable = if (shouldShowClearButton(lengthAfter)) {
-            context.getDrawable(R.drawable.ic_clear)?.apply {
-                colorFilter = PorterDuffColorFilter(context.getColorFromAttr(R.attr.primaryText), SRC_IN)
+        // lengthAfter has inconsistent behaviour when there are spaces in the entered text, so we'll use text.length.
+        val textLength = text?.length ?: 0
+        val drawable = if (shouldShowClearButton(textLength)) {
+            AppCompatResources.getDrawable(context, R.drawable.ic_clear)?.apply {
+                colorFilter = createBlendModeColorFilterCompat(context.getColorFromAttr(R.attr.primaryText), SRC_IN)
             }
         } else {
             null

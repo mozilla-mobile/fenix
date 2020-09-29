@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.share_close.*
+import mozilla.components.concept.engine.prompt.ShareData
 import org.mozilla.fenix.R
 import org.mozilla.fenix.share.listadapters.ShareTabsAdapter
 
@@ -23,6 +24,7 @@ class ShareCloseView(
     override val containerView: ViewGroup,
     private val interactor: ShareCloseInteractor
 ) : LayoutContainer {
+
     val adapter = ShareTabsAdapter()
 
     init {
@@ -35,7 +37,7 @@ class ShareCloseView(
         shared_site_list.adapter = adapter
     }
 
-    fun setTabs(tabs: List<ShareTab>) {
-        adapter.setTabs(tabs)
+    fun setTabs(tabs: List<ShareData>) {
+        adapter.submitList(tabs)
     }
 }

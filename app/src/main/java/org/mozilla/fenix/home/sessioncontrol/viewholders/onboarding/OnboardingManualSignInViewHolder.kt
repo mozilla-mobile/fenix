@@ -5,27 +5,40 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_manual_signin.view.*
-import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.addUnderline
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.onboarding.OnboardingController
+import org.mozilla.fenix.onboarding.OnboardingInteractor
 
-class OnboardingManualSignInViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+    private val headerText = view.header_text
+
     init {
-        view.turn_on_sync_button.setOnClickListener {
-            val directions = HomeFragmentDirections.actionHomeFragmentToTurnOnSyncFragment()
+        val interactor = OnboardingInteractor(OnboardingController(itemView.context))
+
+        view.fxa_sign_in_button.setOnClickListener {
+            it.context.components.analytics.metrics.track(Event.OnboardingManualSignIn)
+
+            val directions = HomeFragmentDirections.actionGlobalTurnOnSync()
             Navigation.findNavController(view).navigate(directions)
+        }
+
+        view.learn_more.addUnderline()
+        view.learn_more.setOnClickListener {
+            interactor.onLearnMoreClicked()
         }
     }
 
     fun bind() {
-        val appName = view.context.getString(R.string.app_name)
-        view.header_text.text = view.context.getString(R.string.onboarding_firefox_account_header, appName)
-        val icon = AppCompatResources.getDrawable(view.context, R.drawable.ic_onboarding_firefox_accounts)
-        view.header_text.putCompoundDrawablesRelativeWithIntrinsicBounds(start = icon)
+        val context = itemView.context
+        headerText.text = context.getString(R.string.onboarding_account_sign_in_header)
     }
 
     companion object {

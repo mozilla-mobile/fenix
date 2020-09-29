@@ -4,14 +4,20 @@
 
 package org.mozilla.fenix.utils
 
+import android.accessibilityservice.AccessibilityServiceInfo.CAPABILITY_CAN_PERFORM_GESTURES
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.content.pm.ShortcutManager
+import android.os.Build
+import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.lifecycle.LifecycleOwner
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
+import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
 import mozilla.components.support.ktx.android.content.PreferencesHolder
 import mozilla.components.support.ktx.android.content.booleanPreference
 import mozilla.components.support.ktx.android.content.floatPreference
@@ -20,88 +26,248 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
+import org.mozilla.fenix.components.settings.counterPreference
+import org.mozilla.fenix.components.settings.featureFlagPreference
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
+import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
+import org.mozilla.fenix.settings.logins.SortingStrategy
+import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import java.security.InvalidParameterException
+
+private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
+ * @param appContext Reference to application context.
  */
-@Suppress("LargeClass")
-class Settings private constructor(
-    context: Context,
-    private val isCrashReportEnabledInBuild: Boolean
-) : PreferencesHolder {
+@Suppress("LargeClass", "TooManyFunctions")
+class Settings(private val appContext: Context) : PreferencesHolder {
+
     companion object {
-        const val autoBounceMaximumCount = 2
-        const val trackingProtectionOnboardingMaximumCount = 2
+        const val topSitesMaxCount = 16
         const val FENIX_PREFERENCES = "fenix_preferences"
+
         private const val BLOCKED_INT = 0
         private const val ASK_TO_ALLOW_INT = 1
+        private const val ALLOWED_INT = 2
         private const val CFR_COUNT_CONDITION_FOCUS_INSTALLED = 1
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
 
-        private fun actionToInt(action: Action) = when (action) {
+        const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
+        const val THREE_DAYS_MS = 3 * ONE_DAY_MS
+        const val ONE_WEEK_MS = 60 * 60 * 24 * 7 * 1000L
+        const val ONE_MONTH_MS = (60 * 60 * 24 * 365 * 1000L) / 12
+
+        private fun Action.toInt() = when (this) {
             Action.BLOCKED -> BLOCKED_INT
             Action.ASK_TO_ALLOW -> ASK_TO_ALLOW_INT
+            Action.ALLOWED -> ALLOWED_INT
         }
 
-        private fun intToAction(action: Int) = when (action) {
+        private fun AutoplayAction.toInt() = when (this) {
+            AutoplayAction.BLOCKED -> BLOCKED_INT
+            AutoplayAction.ALLOWED -> ALLOWED_INT
+        }
+
+        private fun Int.toAction() = when (this) {
             BLOCKED_INT -> Action.BLOCKED
             ASK_TO_ALLOW_INT -> Action.ASK_TO_ALLOW
-            else -> throw InvalidParameterException("$action is not a valid SitePermissionsRules.Action")
+            ALLOWED_INT -> Action.ALLOWED
+            else -> throw InvalidParameterException("$this is not a valid SitePermissionsRules.Action")
         }
 
-        @VisibleForTesting
-        internal var instance: Settings? = null
-
-        @JvmStatic
-        @Synchronized
-        fun getInstance(
-            context: Context,
-            isCrashReportEnabledInBuild: Boolean = BuildConfig.CRASH_REPORTING && Config.channel.isReleased
-        ): Settings {
-            if (instance == null) {
-                instance = Settings(context.applicationContext, isCrashReportEnabledInBuild)
-            }
-            return instance ?: throw AssertionError("Instance cleared")
+        private fun Int.toAutoplayAction() = when (this) {
+            BLOCKED_INT -> AutoplayAction.BLOCKED
+            ALLOWED_INT -> AutoplayAction.ALLOWED
+            // Users from older versions may have saved invalid values. Migrate them to BLOCKED
+            ASK_TO_ALLOW_INT -> AutoplayAction.BLOCKED
+            else -> throw InvalidParameterException("$this is not a valid SitePermissionsRules.AutoplayAction")
         }
     }
 
-    private val appContext = context.applicationContext
+    @VisibleForTesting
+    internal val isCrashReportEnabledInBuild: Boolean =
+        BuildConfig.CRASH_REPORTING && Config.channel.isReleased
 
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
+
+    var showTopFrecentSites by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
+        default = true,
+        featureFlag = FeatureFlags.topFrecentSite
+    )
+
+    var numberOfAppLaunches by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_times_app_opened),
+        default = 0
+    )
+
+    var lastReviewPromptTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_review_prompt_shown_time),
+        default = 0L
+    )
+
+    var lastCfrShownTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_cfr_shown_time),
+        default = 0L
+    )
+
+    val canShowCfr: Boolean
+        get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
+
+    var waitToShowPageUntilFirstPaint by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
+        default = false,
+        featureFlag = FeatureFlags.waitUntilPaintToDraw
+    )
+
+    var syncedTabsInTabsTray by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_synced_tabs_tabs_tray),
+        default = false,
+        featureFlag = FeatureFlags.syncedTabsInTabsTray
+    )
+
+    var forceEnableZoom by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_force_enable_zoom),
+        default = false
+    )
 
     var adjustCampaignId by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_adjust_campaign),
         default = ""
     )
 
-    var usePrivateMode by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_private_mode),
+    var adjustNetwork by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_adjust_network),
+        default = ""
+    )
+
+    var adjustAdGroup by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_adjust_adgroup),
+        default = ""
+    )
+
+    var adjustCreative by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_adjust_creative),
+        default = ""
+    )
+
+    var openLinksInAPrivateTab by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_links_in_a_private_tab),
         default = false
     )
 
-    var alwaysOpenInPrivateMode by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_launch_links_in_private_mode),
+    var allowScreenshotsInPrivateMode by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_allow_screenshots_in_private_mode),
         default = false
     )
+
+    var shouldDisplayMasterPasswordMigrationTip by booleanPreference(
+        appContext.getString(R.string.pref_key_master_password_tip),
+        true
+    )
+
+    // If any of the prefs have been modified, quit displaying the fenix moved tip
+    fun shouldDisplayFenixMovingTip(): Boolean =
+        preferences.getBoolean(
+            appContext.getString(R.string.pref_key_migrating_from_fenix_nightly_tip),
+            true
+        ) &&
+                preferences.getBoolean(
+                    appContext.getString(R.string.pref_key_migrating_from_firefox_nightly_tip),
+                    true
+                ) &&
+                preferences.getBoolean(
+                    appContext.getString(R.string.pref_key_migrating_from_fenix_tip),
+                    true
+                )
+
+    private val activeSearchCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_count)
+    )
+
+    fun incrementActiveSearchCount() = activeSearchCount.increment()
+
+    private val isActiveSearcher: Boolean
+        get() = activeSearchCount.value > 2
+
+    fun shouldDisplaySearchWidgetCfr(): Boolean = canShowCfr && isActiveSearcher &&
+            searchWidgetCFRDismissCount.underMaxCount() &&
+            !searchWidgetInstalled &&
+            !searchWidgetCFRManuallyDismissed
+
+    private val searchWidgetCFRDisplayCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_display_count)
+    )
+
+    fun incrementSearchWidgetCFRDisplayed() = searchWidgetCFRDisplayCount.increment()
+
+    private val searchWidgetCFRManuallyDismissed by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
+        default = false
+    )
+
+    fun manuallyDismissSearchWidgetCFR() {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
+            true
+        ).apply()
+    }
+
+    private val searchWidgetCFRDismissCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_dismiss_count),
+        maxCount = 3
+    )
+
+    fun incrementSearchWidgetCFRDismissed() = searchWidgetCFRDismissCount.increment()
+
+    val isInSearchWidgetExperiment by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
+        default = false
+    )
+
+    fun setSearchWidgetExperiment(value: Boolean) {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
+            value
+        ).apply()
+    }
 
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
         default = ""
     )
 
+    var openInAppOpened by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_in_app_opened),
+        default = false
+    )
+
+    var installPwaOpened by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_install_pwa_opened),
+        default = false
+    )
+
+    var showCollectionsPlaceholderOnHome by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_collections_placeholder_home),
+        default = true
+    )
+
     val isCrashReportingEnabled: Boolean
         get() = isCrashReportEnabledInBuild &&
-            preferences.getBoolean(
-                appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
-                true
-            )
+                preferences.getBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_crash_reporter),
+                    true
+                )
 
     val isRemoteDebuggingEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_remote_debugging),
@@ -113,23 +279,31 @@ class Settings private constructor(
         default = true
     )
 
+    val isMarketingTelemetryEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_marketing_telemetry),
+        default = true
+    )
+
     val isExperimentationEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_experimentation),
         default = true
     )
 
-    val isAutoPlayEnabled = getSitePermissionsPhoneFeatureAction(
-        PhoneFeature.AUTOPLAY, Action.BLOCKED
-    ) != Action.BLOCKED
-
     private var trackingProtectionOnboardingShownThisSession = false
+    var isOverrideTPPopupsForPerformanceTest = false
 
-    val shouldShowTrackingProtectionOnboarding: Boolean
-        get() = trackingProtectionOnboardingCount < trackingProtectionOnboardingMaximumCount &&
-            !trackingProtectionOnboardingShownThisSession
+    val shouldShowTrackingProtectionCfr: Boolean
+        get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
+                (trackingProtectionOnboardingCount.underMaxCount() &&
+                        !trackingProtectionOnboardingShownThisSession)
 
-    val shouldAutoBounceQuickActionSheet: Boolean
-        get() = autoBounceQuickActionSheetCount < autoBounceMaximumCount
+    var showSecretDebugMenuThisSession = false
+
+    val shouldShowSecurityPinWarningSync: Boolean
+        get() = loginsSecureWarningSyncCount.underMaxCount()
+
+    val shouldShowSecurityPinWarning: Boolean
+        get() = loginsSecureWarningCount.underMaxCount()
 
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
@@ -156,10 +330,62 @@ class Settings private constructor(
         default = true
     )
 
+    val shouldShowSyncedTabsSuggestions by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_synced_tabs),
+        default = true
+    )
+
     val shouldShowClipboardSuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_clipboard_suggestions),
         default = true
     )
+
+    val shouldShowSearchShortcuts by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_search_engine_shortcuts),
+        default = false
+    )
+
+    var manuallyCloseTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_tabs_manually),
+        default = true
+    )
+
+    var closeTabsAfterOneDay by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_tabs_after_one_day),
+        default = false
+    )
+
+    var closeTabsAfterOneWeek by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_tabs_after_one_week),
+        default = false
+    )
+
+    var closeTabsAfterOneMonth by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_tabs_after_one_month),
+        default = false
+    )
+
+    fun getTabTimeout(): Long = when {
+        closeTabsAfterOneDay -> ONE_DAY_MS
+        closeTabsAfterOneWeek -> ONE_WEEK_MS
+        closeTabsAfterOneMonth -> ONE_MONTH_MS
+        else -> System.currentTimeMillis()
+    }
+
+    fun getTabTimeoutString(): String = when {
+        closeTabsAfterOneDay -> {
+            appContext.getString(R.string.close_tabs_after_one_day)
+        }
+        closeTabsAfterOneWeek -> {
+            appContext.getString(R.string.close_tabs_after_one_week)
+        }
+        closeTabsAfterOneMonth -> {
+            appContext.getString(R.string.close_tabs_after_one_month)
+        }
+        else -> {
+            appContext.getString(R.string.close_tabs_manually)
+        }
+    }
 
     val shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
@@ -176,20 +402,189 @@ class Settings private constructor(
         default = true
     )
 
+    /**
+     * Caches the last known "is default browser" state when the app was paused.
+     * For an up to do date state use `isDefaultBrowser` instead.
+     */
+    var wasDefaultBrowserOnLastResume by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_default_browser),
+        default = isDefaultBrowser()
+    )
+
+    fun isDefaultBrowser(): Boolean {
+        val browsers = BrowsersCache.all(appContext)
+        return browsers.isDefaultBrowser
+    }
+
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
         default = false
     )
 
-    val useStrictTrackingProtection by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict),
+    val useStandardTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_standard_option),
         true
     )
+
+    val useStrictTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
+        false
+    )
+
+    val useCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_option),
+        false
+    )
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun setStrictETP() {
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
+            true
+        ).apply()
+        preferences.edit().putBoolean(
+            appContext.getPreferenceKey(R.string.pref_key_tracking_protection_standard_option),
+            false
+        ).apply()
+        appContext.components.let {
+            val policy = it.core.trackingProtectionPolicyFactory
+                .createTrackingProtectionPolicy()
+            it.useCases.settingsUseCases.updateTrackingProtection.invoke(policy)
+            it.useCases.sessionUseCases.reload.invoke()
+        }
+    }
+
+    val blockCookiesInCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies),
+        true
+    )
+
+    val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
+        "social"
+    )
+
+    val blockTrackingContentInCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_tracking_content),
+        true
+    )
+
+    val blockTrackingContentSelectionInCustomTrackingProtection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_tracking_content_select),
+        "all"
+    )
+
+    val blockCryptominersInCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cryptominers),
+        true
+    )
+
+    val blockFingerprintersInCustomTrackingProtection by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_fingerprinters),
+        true
+    )
+
+    val shouldUseFixedTopToolbar: Boolean
+        get() {
+            return touchExplorationIsEnabled || switchServiceIsEnabled
+        }
+
+    var lastKnownMode: BrowsingMode = BrowsingMode.Normal
+        get() {
+            val lastKnownModeWasPrivate = preferences.getBoolean(
+                appContext.getPreferenceKey(R.string.pref_key_last_known_mode_private),
+                false
+            )
+
+            return if (lastKnownModeWasPrivate) {
+                BrowsingMode.Private
+            } else {
+                BrowsingMode.Normal
+            }
+        }
+        set(value) {
+            val lastKnownModeWasPrivate = (value == BrowsingMode.Private)
+
+            preferences.edit()
+                .putBoolean(
+                    appContext.getPreferenceKey(R.string.pref_key_last_known_mode_private),
+                    lastKnownModeWasPrivate
+                )
+                .apply()
+
+            field = value
+        }
 
     var shouldDeleteBrowsingDataOnQuit by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit),
         default = false
     )
+
+    var deleteOpenTabs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_open_tabs_now),
+        default = true
+    )
+
+    var deleteBrowsingHistory by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_browsing_history_now),
+        default = true
+    )
+
+    var deleteCookies by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_cookies_now),
+        default = true
+    )
+
+    var deleteCache by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_caches_now),
+        default = true
+    )
+
+    var deleteSitePermissions by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_delete_permissions_now),
+        default = true
+    )
+
+    var shouldUseBottomToolbar by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
+        // Default accessibility users to top toolbar
+        default = !touchExplorationIsEnabled && !switchServiceIsEnabled
+    )
+
+    val toolbarPosition: ToolbarPosition
+        get() = if (shouldUseBottomToolbar) ToolbarPosition.BOTTOM else ToolbarPosition.TOP
+
+    /**
+     * Check each active accessibility service to see if it can perform gestures, if any can,
+     * then it is *likely* a switch service is enabled. We are assuming this to be the case based on #7486
+     */
+    val switchServiceIsEnabled: Boolean
+        get() {
+            val accessibilityManager =
+                appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+
+            accessibilityManager?.getEnabledAccessibilityServiceList(0)?.let { activeServices ->
+                for (service in activeServices) {
+                    if (service.capabilities.and(CAPABILITY_CAN_PERFORM_GESTURES) == 1) {
+                        return true
+                    }
+                }
+            }
+
+            return false
+        }
+
+    val touchExplorationIsEnabled: Boolean
+        get() {
+            val accessibilityManager =
+                appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+            return accessibilityManager?.isTouchExplorationEnabled ?: false
+        }
+
+    val accessibilityServicesEnabled: Boolean
+        get() {
+            return touchExplorationIsEnabled || switchServiceIsEnabled
+        }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
@@ -201,58 +596,159 @@ class Settings private constructor(
     fun shouldDeleteAnyDataOnQuit() =
         DeleteBrowsingDataOnQuitType.values().any { getDeleteDataOnQuit(it) }
 
-    val themeSettingString: String
-        get() = when {
-            shouldFollowDeviceTheme -> appContext.getString(R.string.preference_follow_device_theme)
-            shouldUseAutoBatteryTheme -> appContext.getString(R.string.preference_auto_battery_theme)
-            shouldUseDarkTheme -> appContext.getString(R.string.preference_dark_theme)
-            shouldUseLightTheme -> appContext.getString(R.string.preference_light_theme)
-            else -> appContext.getString(R.string.preference_light_theme)
-        }
-
-    @VisibleForTesting(otherwise = PRIVATE)
-    internal val autoBounceQuickActionSheetCount by intPreference(
-        appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action),
-        default = 0
+    val passwordsEncryptionKeyGenerated by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_encryption_key_generated),
+        false
     )
 
-    fun incrementAutomaticBounceQuickActionSheetCount() {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_bounce_quick_action),
-            autoBounceQuickActionSheetCount + 1
-        ).apply()
-    }
+    fun recordPasswordsEncryptionKeyGenerated() = preferences.edit().putBoolean(
+        appContext.getPreferenceKey(R.string.pref_key_encryption_key_generated),
+        true
+    ).apply()
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val loginsSecureWarningSyncCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning_sync),
+        maxCount = 1
+    )
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val loginsSecureWarningCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_logins_secure_warning),
+        maxCount = 1
+    )
+
+    fun incrementShowLoginsSecureWarningCount() = loginsSecureWarningCount.increment()
+
+    fun incrementShowLoginsSecureWarningSyncCount() = loginsSecureWarningSyncCount.increment()
 
     val shouldShowSearchSuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions),
         default = true
     )
 
+    val shouldAutocompleteInAwesomebar by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_autocomplete_urls),
+        default = true
+    )
+
+    var defaultTopSitesAdded by booleanPreference(
+        appContext.getPreferenceKey(R.string.default_top_sites_added),
+        default = false
+    )
+
+    var shouldShowSearchSuggestionsInPrivate by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions_in_private),
+        default = false
+    )
+
+    var showSearchSuggestionsInPrivateOnboardingFinished by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions_in_private_onboarding),
+        default = false
+    )
+
+    fun incrementVisitedInstallableCount() = pwaInstallableVisitCount.increment()
+
     @VisibleForTesting(otherwise = PRIVATE)
-    internal val trackingProtectionOnboardingCount by intPreference(
+    internal val pwaInstallableVisitCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_install_pwa_visits),
+        maxCount = 3
+    )
+
+    private val userNeedsToVisitInstallableSites: Boolean
+        get() = pwaInstallableVisitCount.underMaxCount()
+
+    val shouldShowPwaCfr: Boolean
+        get() {
+            if (!canShowCfr) return false
+            // We only want to show this on the 3rd time a user visits a site
+            if (userNeedsToVisitInstallableSites) return false
+
+            // ShortcutManager::pinnedShortcuts is only available on Oreo+
+            if (!userKnowsAboutPwas && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val manager = appContext.getSystemService(ShortcutManager::class.java)
+                val alreadyHavePwaInstalled = manager != null && manager.pinnedShortcuts.size > 0
+
+                // Users know about PWAs onboarding if they already have PWAs installed.
+                userKnowsAboutPwas = alreadyHavePwaInstalled
+            }
+            // Show dialog only if user does not know abut PWAs
+            return !userKnowsAboutPwas
+        }
+
+    var userKnowsAboutPwas by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_user_knows_about_pwa),
+        default = false
+    )
+
+    var shouldShowOpenInAppBanner by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_open_in_app_banner),
+        default = true
+    )
+
+    val shouldShowOpenInAppCfr: Boolean
+        get() = canShowCfr && shouldShowOpenInAppBanner
+
+    var shouldShowAutoCloseTabsBanner by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_auto_close_tabs_banner),
+        default = true
+    )
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal val trackingProtectionOnboardingCount = counterPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
-        0
+        maxCount = 1
     )
 
     fun incrementTrackingProtectionOnboardingCount() {
         trackingProtectionOnboardingShownThisSession = true
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_tracking_protection_onboarding),
-            trackingProtectionOnboardingCount + 1
-        ).apply()
+        trackingProtectionOnboardingCount.increment()
     }
 
     fun getSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         default: Action = Action.ASK_TO_ALLOW
     ) =
-        intToAction(preferences.getInt(feature.getPreferenceKey(appContext), actionToInt(default)))
+        preferences.getInt(feature.getPreferenceKey(appContext), default.toInt()).toAction()
+
+    /**
+     * Saves the user selected autoplay setting.
+     *
+     * Under the hood, autoplay is represented by two settings, [AUTOPLAY_AUDIBLE] and
+     * [AUTOPLAY_INAUDIBLE]. The user selection cannot be inferred from the combination of these
+     * settings because, while on [AUTOPLAY_ALLOW_ON_WIFI], they will be indistinguishable from
+     * either [AUTOPLAY_ALLOW_ALL] or [AUTOPLAY_BLOCK_ALL]. Because of this, we are forced to save
+     * the user selected setting as well.
+     */
+    fun setAutoplayUserSetting(
+        autoplaySetting: Int
+    ) {
+        preferences.edit().putInt(AUTOPLAY_USER_SETTING, autoplaySetting).apply()
+    }
+
+    /**
+     * Gets the user selected autoplay setting.
+     *
+     * Under the hood, autoplay is represented by two settings, [AUTOPLAY_AUDIBLE] and
+     * [AUTOPLAY_INAUDIBLE]. The user selection cannot be inferred from the combination of these
+     * settings because, while on [AUTOPLAY_ALLOW_ON_WIFI], they will be indistinguishable from
+     * either [AUTOPLAY_ALLOW_ALL] or [AUTOPLAY_BLOCK_ALL]. Because of this, we are forced to save
+     * the user selected setting as well.
+     */
+    fun getAutoplayUserSetting(
+        default: Int
+    ) = preferences.getInt(AUTOPLAY_USER_SETTING, default)
+
+    private fun getSitePermissionsPhoneFeatureAutoplayAction(
+        feature: PhoneFeature,
+        default: AutoplayAction = AutoplayAction.BLOCKED
+    ) = preferences.getInt(feature.getPreferenceKey(appContext), default.toInt()).toAutoplayAction()
 
     fun setSitePermissionsPhoneFeatureAction(
         feature: PhoneFeature,
         value: Action
     ) {
-        preferences.edit().putInt(feature.getPreferenceKey(appContext), actionToInt(value)).apply()
+        preferences.edit().putInt(feature.getPreferenceKey(appContext), value.toInt()).apply()
     }
 
     fun getSitePermissionsCustomSettingsRules(): SitePermissionsRules {
@@ -260,18 +756,68 @@ class Settings private constructor(
             notification = getSitePermissionsPhoneFeatureAction(PhoneFeature.NOTIFICATION),
             microphone = getSitePermissionsPhoneFeatureAction(PhoneFeature.MICROPHONE),
             location = getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION),
-            camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA)
+            camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
+            autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
+            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE)
         )
     }
 
+    fun setSitePermissionSettingListener(lifecycleOwner: LifecycleOwner, listener: () -> Unit) {
+        val sitePermissionKeys = listOf(
+            PhoneFeature.NOTIFICATION,
+            PhoneFeature.MICROPHONE,
+            PhoneFeature.LOCATION,
+            PhoneFeature.CAMERA,
+            PhoneFeature.AUTOPLAY_AUDIBLE,
+            PhoneFeature.AUTOPLAY_INAUDIBLE
+        ).map { it.getPreferenceKey(appContext) }
+
+        preferences.registerOnSharedPreferenceChangeListener(lifecycleOwner) { _, key ->
+            if (key in sitePermissionKeys) listener.invoke()
+        }
+    }
+
+    var shouldShowVoiceSearch by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_voice_search),
+        default = true
+    )
+
+    /**
+     * Used in [SearchDialogFragment.kt], [SearchFragment.kt] (deprecated), and [PairFragment.kt]
+     * to see if we need to check for camera permissions before using the QR code scanner.
+     */
+    var shouldShowCameraPermissionPrompt by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
+        default = true
+    )
+
+    /**
+     * Sets the state of permissions that have been checked, where [false] denotes already checked
+     * and [true] denotes needing to check. See [shouldShowCameraPermissionPrompt].
+     */
+    var setCameraPermissionNeededState by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
+        default = true
+    )
+
+    var shouldPromptToSaveLogins by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_save_logins),
+        default = true
+    )
+
+    var shouldAutofillLogins by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_autofill_logins),
+        default = true
+    )
+
     var fxaSignedIn by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_fxa_signed_in),
-        default = true
+        default = false
     )
 
     var fxaHasSyncedItems by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items),
-        default = true
+        default = false
     )
 
     var lastPlacesStorageMaintenance by longPreference(
@@ -293,33 +839,29 @@ class Settings private constructor(
             0
         )
 
-    fun incrementNumTimesPrivateModeOpened() {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_private_mode_opened),
-            numTimesPrivateModeOpened + 1
-        ).apply()
-    }
+    fun incrementNumTimesPrivateModeOpened() = numTimesPrivateModeOpened.increment()
 
     private var showedPrivateModeContextualFeatureRecommender by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_showed_private_mode_cfr),
         default = false
     )
 
-    private val numTimesPrivateModeOpened: Int
-        get() = preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_private_mode_opened),
-            0
-        )
+    private val numTimesPrivateModeOpened = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_private_mode_opened)
+    )
 
-    val showPrivateModeContextualFeatureRecommender: Boolean
+    val showPrivateModeCfr: Boolean
         get() {
+            if (!canShowCfr) return false
             val focusInstalled = MozillaProductDetector
                 .getInstalledMozillaProducts(appContext as Application)
                 .contains(MozillaProductDetector.MozillaProducts.FOCUS.productName)
 
-            val showCondition =
-                (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_INSTALLED && focusInstalled) ||
-                    (numTimesPrivateModeOpened == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED && !focusInstalled)
+            val showCondition = if (focusInstalled) {
+                numTimesPrivateModeOpened.value == CFR_COUNT_CONDITION_FOCUS_INSTALLED
+            } else {
+                numTimesPrivateModeOpened.value == CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED
+            }
 
             if (showCondition && !showedPrivateModeContextualFeatureRecommender) {
                 showedPrivateModeContextualFeatureRecommender = true
@@ -328,4 +870,96 @@ class Settings private constructor(
 
             return false
         }
+
+    var openLinksInExternalApp by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app),
+        default = false
+    )
+
+    var overrideFxAServer by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_fxa_server),
+        default = ""
+    )
+
+    var overrideSyncTokenServer by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_sync_tokenserver),
+        default = ""
+    )
+
+    var overrideAmoUser by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_amo_user),
+        default = ""
+    )
+
+    var overrideAmoCollection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_amo_collection),
+        default = ""
+    )
+
+    fun amoCollectionOverrideConfigured(): Boolean {
+        return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
+    }
+
+    val topSitesSize by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
+        default = 0
+    )
+
+    val topSitesMaxLimit by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_top_sites_max_limit),
+        default = topSitesMaxCount
+    )
+
+    fun setOpenTabsCount(count: Int) {
+        preferences.edit().putInt(
+            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+            count
+        ).apply()
+    }
+
+    val openTabsCount: Int
+        get() = preferences.getInt(
+            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+            0
+        )
+
+    private var savedLoginsSortingStrategyString by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
+        default = SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString
+    )
+
+    val savedLoginsMenuHighlightedItem: SavedLoginsSortingStrategyMenu.Item
+        get() = SavedLoginsSortingStrategyMenu.Item.fromString(savedLoginsSortingStrategyString)
+
+    var savedLoginsSortingStrategy: SortingStrategy
+        get() {
+            return when (savedLoginsMenuHighlightedItem) {
+                SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort ->
+                    SortingStrategy.Alphabetically(appContext.components.publicSuffixList)
+                SavedLoginsSortingStrategyMenu.Item.LastUsedSort -> SortingStrategy.LastUsed
+            }
+        }
+        set(value) {
+            savedLoginsSortingStrategyString = when (value) {
+                is SortingStrategy.Alphabetically ->
+                    SavedLoginsSortingStrategyMenu.Item.AlphabeticallySort.strategyString
+                is SortingStrategy.LastUsed ->
+                    SavedLoginsSortingStrategyMenu.Item.LastUsedSort.strategyString
+            }
+        }
+
+    var isPullToRefreshEnabledInBrowser by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
+        default = true
+    )
+
+    var isDynamicToolbarEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_dynamic_toolbar),
+        default = true
+    )
+
+    var isSwipeToolbarToSwitchTabsEnabled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_swipe_toolbar_switch_tabs),
+        default = true
+    )
 }

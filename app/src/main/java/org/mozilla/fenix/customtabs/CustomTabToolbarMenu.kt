@@ -5,37 +5,53 @@
 package org.mozilla.fenix.customtabs
 
 import android.content.Context
+import android.graphics.Typeface
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat.getColor
 import mozilla.components.browser.menu.BrowserMenuBuilder
+import mozilla.components.browser.menu.BrowserMenuHighlight
+import mozilla.components.browser.menu.item.BrowserMenuCategory
 import mozilla.components.browser.menu.item.BrowserMenuDivider
+import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
+import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
-import mozilla.components.browser.menu.item.BrowserMenuSwitch
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getStringWithArgSafe
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.theme.ThemeManager
 
+/**
+ * Builds the toolbar object used with the 3-dot menu in the custom tab browser fragment.
+ * @param sessionManager Reference to the session manager that contains all tabs.
+ * @param sessionId ID of the open custom tab session.
+ * @param shouldReverseItems If true, reverse the menu items.
+ * @param onItemTapped Called when a menu item is tapped.
+ */
 class CustomTabToolbarMenu(
     private val context: Context,
     private val sessionManager: SessionManager,
     private val sessionId: String?,
+    private val shouldReverseItems: Boolean,
     private val onItemTapped: (ToolbarMenu.Item) -> Unit = {}
 ) : ToolbarMenu {
+
     override val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
-    private val session: Session?
-        get() = sessionId?.let { sessionManager.findSessionById(it) }
+    /** Gets the current custom tab session */
+    private val session: Session? get() = sessionId?.let { sessionManager.findSessionById(it) }
+    private val appName = context.getString(R.string.app_name)
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
-            primaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.primaryText,
-                context
-            ),
+            primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
                 session?.canGoBack ?: true
             },
@@ -43,18 +59,16 @@ class CustomTabToolbarMenu(
                 R.attr.disabled,
                 context
             ),
-            disableInSecondaryState = true
+            disableInSecondaryState = true,
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = true)) }
         ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Back)
+            onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = false))
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
-            primaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.primaryText,
-                context
-            ),
+            primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
                 session?.canGoForward ?: true
             },
@@ -62,97 +76,101 @@ class CustomTabToolbarMenu(
                 R.attr.disabled,
                 context
             ),
-            disableInSecondaryState = true
+            disableInSecondaryState = true,
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true)) }
         ) {
-            onItemTapped.invoke(ToolbarMenu.Item.Forward)
+            onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = false))
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
             primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
-            primaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.primaryText,
-                context
-            ),
+            primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
-                val loading = session?.loading
-                loading == false
+                session?.loading == false
             },
             secondaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_stop,
             secondaryContentDescription = context.getString(R.string.browser_menu_stop),
-            secondaryImageTintResource = ThemeManager.resolveAttribute(
-                R.attr.primaryText,
-                context
-            ),
-            disableInSecondaryState = false
+            secondaryImageTintResource = primaryTextColor(),
+            disableInSecondaryState = false,
+            longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = true)) }
         ) {
             if (session?.loading == true) {
                 onItemTapped.invoke(ToolbarMenu.Item.Stop)
             } else {
-                onItemTapped.invoke(ToolbarMenu.Item.Reload)
+                onItemTapped.invoke(ToolbarMenu.Item.Reload(bypassCache = false))
             }
         }
 
         BrowserMenuItemToolbar(listOf(back, forward, refresh))
     }
 
+    private fun shouldShowOpenInApp(): Boolean = session?.let { session ->
+        val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
+        appLink(session.url).hasExternalApp()
+    } ?: false
+
     private val menuItems by lazy {
-        listOf(
-            menuToolbar,
-
+        val menuItems = listOf(
+            poweredBy,
             BrowserMenuDivider(),
-
-            BrowserMenuImageText(
-                context.getString(R.string.browser_menu_share),
-                R.drawable.mozac_ic_share,
-                textColorResource = ThemeManager.resolveAttribute(
-                    R.attr.primaryText,
-                    context
-                ),
-                iconTintColorResource = ThemeManager.resolveAttribute(
-                    R.attr.primaryText,
-                    context
-                )
-            ) {
-                onItemTapped.invoke(ToolbarMenu.Item.Share)
-            },
-
-            BrowserMenuSwitch(context.getString(R.string.browser_menu_desktop_site),
-                { session?.desktopMode ?: false }, { checked ->
-                    onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
-                }),
-
-            BrowserMenuImageText(
-                context.getString(R.string.browser_menu_find_in_page),
-                R.drawable.mozac_ic_search,
-                ThemeManager.resolveAttribute(R.attr.primaryText, context)
-            ) {
-                onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
-            },
-
-            SimpleBrowserMenuItem(
-                {
-                    val appName = context.getString(R.string.app_name)
-                    context.getString(R.string.browser_menu_open_in_fenix, appName)
-                }(),
-                textColorResource = ThemeManager.resolveAttribute(
-                    R.attr.primaryText,
-                    context
-                )
-            ) {
-                onItemTapped.invoke(ToolbarMenu.Item.OpenInFenix)
-            },
-
+            desktopMode,
+            findInPage,
+            openInApp.apply { visible = ::shouldShowOpenInApp },
+            openInFenix,
             BrowserMenuDivider(),
-
-            SimpleBrowserMenuItem(
-                {
-                    val appName = context.getString(R.string.app_name)
-                    context.getString(R.string.browser_menu_powered_by, appName).toUpperCase()
-                }(),
-                ToolbarMenu.CAPTION_TEXT_SIZE,
-                ThemeManager.resolveAttribute(R.attr.primaryText, context)
-            )
+            menuToolbar
         )
+        if (shouldReverseItems) { menuItems.reversed() } else { menuItems }
+    }
+
+    private val desktopMode = BrowserMenuImageSwitch(
+        imageResource = R.drawable.ic_desktop,
+        label = context.getString(R.string.browser_menu_desktop_site),
+        initialState = { session?.desktopMode ?: false }
+    ) { checked ->
+        onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
+    }
+
+    private val findInPage = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_find_in_page),
+        imageResource = R.drawable.mozac_ic_search,
+        iconTintColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
+    }
+
+    private val openInApp = BrowserMenuHighlightableItem(
+        label = context.getString(R.string.browser_menu_open_app_link),
+        startImageResource = R.drawable.ic_open_in_app,
+        iconTintColorResource = primaryTextColor(),
+        highlight = BrowserMenuHighlight.LowPriority(
+            label = context.getString(R.string.browser_menu_open_app_link),
+            notificationTint = getColor(context, R.color.whats_new_notification_color)
+        ),
+        isHighlighted = { !context.settings().openInAppOpened }
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInApp)
+    }
+
+    private val openInFenix = SimpleBrowserMenuItem(
+        label = context.getString(R.string.browser_menu_open_in_fenix, appName),
+        textColorResource = primaryTextColor()
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInFenix)
+    }
+
+    private val poweredBy = BrowserMenuCategory(
+        label = context.getStringWithArgSafe(R.string.browser_menu_powered_by, appName).toUpperCase(),
+        textSize = CAPTION_TEXT_SIZE,
+        textColorResource = primaryTextColor(),
+        textStyle = Typeface.NORMAL
+    )
+
+    @ColorRes
+    private fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+
+    companion object {
+        private const val CAPTION_TEXT_SIZE = 12f
     }
 }

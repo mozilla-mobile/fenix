@@ -1,10 +1,12 @@
-package org.mozilla.fenix.whatsnew
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+package org.mozilla.fenix.whatsnew
+
 import android.content.Context
+import android.os.StrictMode
+import org.mozilla.fenix.ext.components
 
 // This file is a modified port from Focus Android
 
@@ -68,7 +70,9 @@ class WhatsNew private constructor(private val storage: WhatsNewStorage) {
         fun shouldHighlightWhatsNew(context: Context): Boolean {
             return shouldHighlightWhatsNew(
                 ContextWhatsNewVersion(context),
-                SharedPreferenceWhatsNewStorage(context)
+                context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                    SharedPreferenceWhatsNewStorage(context)
+                }
             )
         }
 

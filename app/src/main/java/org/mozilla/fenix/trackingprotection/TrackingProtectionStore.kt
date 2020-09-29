@@ -1,9 +1,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.trackingprotection
 
+import androidx.annotation.StringRes
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.content.blocking.TrackerLog
 import mozilla.components.lib.state.Action
@@ -50,13 +51,16 @@ sealed class TrackingProtectionAction : Action {
  * @property isTrackingProtectionEnabled Current status of tracking protection for this session (ie is an exception)
  * @property listTrackers Current Tracker Log list of blocked and loaded tracker categories
  * @property mode Current Mode of TrackingProtection
+ * @property lastAccessedCategory Remembers the last accessed details category, used to move
+ *           accessibly focus after returning from details_moode
  */
 data class TrackingProtectionState(
     val session: Session?,
     val url: String,
     val isTrackingProtectionEnabled: Boolean,
     val listTrackers: List<TrackerLog>,
-    val mode: Mode
+    val mode: Mode,
+    val lastAccessedCategory: String
 ) : State {
     sealed class Mode {
         object Normal : Mode()
@@ -70,7 +74,10 @@ data class TrackingProtectionState(
 /**
  * The 5 categories of Tracking Protection to display
  */
-enum class TrackingProtectionCategory(val title: Int, val description: Int) {
+enum class TrackingProtectionCategory(
+    @StringRes val title: Int,
+    @StringRes val description: Int
+) {
     SOCIAL_MEDIA_TRACKERS(
         R.string.etp_social_media_trackers_title,
         R.string.etp_social_media_trackers_description
@@ -112,7 +119,8 @@ fun trackingProtectionStateReducer(
             mode = TrackingProtectionState.Mode.Details(
                 action.category,
                 action.categoryBlocked
-            )
+            ),
+            lastAccessedCategory = action.category.name
         )
         is TrackingProtectionAction.TrackerBlockingChanged ->
             state.copy(isTrackingProtectionEnabled = action.isTrackingProtectionEnabled)

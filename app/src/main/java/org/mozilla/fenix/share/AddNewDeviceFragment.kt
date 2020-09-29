@@ -5,37 +5,37 @@
 package org.mozilla.fenix.share
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_add_new_device.*
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
 
-class AddNewDeviceFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_add_new_device, container, false)
+/**
+ * Fragment to add a new device. Tabs can be shared to devices after they are added.
+ */
+class AddNewDeviceFragment : Fragment(R.layout.fragment_add_new_device) {
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).title = getString(R.string.sync_add_new_device_title)
-        (activity as AppCompatActivity).supportActionBar?.show()
+        showToolbar(getString(R.string.sync_add_new_device_title))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         learn_button.setOnClickListener {
-            val intent = SupportUtils.createCustomTabIntent(
-                requireContext(),
-                SupportUtils.getSumoURLForTopic(requireContext(), SupportUtils.SumoTopic.SEND_TABS)
+            (activity as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                    requireContext(),
+                    SupportUtils.SumoTopic.SEND_TABS
+                ),
+                newTab = true,
+                from = BrowserDirection.FromAddNewDeviceFragment
             )
-            startActivity(intent)
         }
 
         connect_button.setOnClickListener {

@@ -5,24 +5,21 @@
 package org.mozilla.fenix.settings.sitepermissions
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.requirePreference
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsFragment : PreferenceFragmentCompat() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (activity as AppCompatActivity).title = getString(R.string.preferences_site_permissions)
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.site_permissions_preferences, rootKey)
@@ -30,6 +27,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
+        showToolbar(getString(R.string.preferences_site_permissions))
         setupPreferences()
     }
 
@@ -44,13 +42,17 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
         exceptionsCategory.onPreferenceClickListener = OnPreferenceClickListener {
             val directions = SitePermissionsFragmentDirections.actionSitePermissionsToExceptions()
-            Navigation.findNavController(view!!).navigate(directions)
+            Navigation.findNavController(requireView()).navigate(directions)
             true
         }
     }
 
     private fun bindCategoryPhoneFeatures() {
-        PhoneFeature.values().forEach(::initPhoneFeature)
+        PhoneFeature.values()
+            // Autoplay inaudible should be set in the same menu as autoplay audible, so it does
+            // not need to be bound
+            .filter { it != PhoneFeature.AUTOPLAY_INAUDIBLE }
+            .forEach(::initPhoneFeature)
     }
 
     private fun initPhoneFeature(phoneFeature: PhoneFeature) {
@@ -58,10 +60,16 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
         val settings = context.settings()
 
         val summary = phoneFeature.getActionLabel(context, settings = settings)
-        val preferenceKey = phoneFeature.getPreferenceKey(context)
+        // Remove autoplaySummary after https://bugzilla.mozilla.org/show_bug.cgi?id=1621825 is fixed
+        val autoplaySummary =
+            if (summary == context.getString(R.string.preference_option_autoplay_allowed2)) {
+                context.getString(R.string.preference_option_autoplay_allowed_wifi_only2)
+            } else {
+                null
+            }
 
-        val cameraPhoneFeatures: Preference = requireNotNull(findPreference(preferenceKey))
-        cameraPhoneFeatures.summary = summary
+        val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
+        cameraPhoneFeatures.summary = autoplaySummary ?: summary
 
         cameraPhoneFeatures.onPreferenceClickListener = OnPreferenceClickListener {
             navigateToPhoneFeature(phoneFeature)
@@ -71,7 +79,12 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
     private fun navigateToPhoneFeature(phoneFeature: PhoneFeature) {
         val directions = SitePermissionsFragmentDirections
-            .actionSitePermissionsToManagePhoneFeatures(phoneFeature.id)
-        Navigation.findNavController(view!!).navigate(directions)
+            .actionSitePermissionsToManagePhoneFeatures(phoneFeature)
+
+        if (phoneFeature == PhoneFeature.AUTOPLAY_AUDIBLE) {
+            requireComponents.analytics.metrics.track(Event.AutoPlaySettingVisited)
+        }
+
+        Navigation.findNavController(requireView()).navigate(directions)
     }
 }

@@ -7,14 +7,13 @@ package org.mozilla.fenix.components
 import android.view.View
 import android.view.ViewStub
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
-import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.findinpage.FindInPageFeature
 import mozilla.components.feature.findinpage.view.FindInPageView
 import mozilla.components.support.base.feature.LifecycleAwareFeature
-import org.mozilla.fenix.test.Mockable
+import org.mozilla.fenix.utils.Mockable
 
 @Mockable
 class FindInPageIntegration(
@@ -32,12 +31,11 @@ class FindInPageIntegration(
     }
 
     override fun onLaunch(view: View, feature: LifecycleAwareFeature) {
-        store.state.findCustomTabOrSelectedTab(sessionId)?.let { session ->
-            if (session !is CustomTabSessionState) {
-                toolbar.visibility = View.GONE
-            }
+        store.state.findCustomTabOrSelectedTab(sessionId)?.let { tab ->
+            // Always hide the toolbar and display find in page query
+            toolbar.visibility = View.GONE
             view.visibility = View.VISIBLE
-            (feature as FindInPageFeature).bind(session)
+            (feature as FindInPageFeature).bind(tab)
             view.layoutParams.height = toolbar.height
         }
     }

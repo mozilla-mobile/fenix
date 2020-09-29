@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:background="@drawable/mozac_ui_tabcounter_round_rectangle_ripple"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:layout_height="wrap_content"
     tools:layout_width="wrap_content">
 
@@ -17,10 +17,10 @@
 
         <ImageView
             android:id="@+id/counter_box"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/tab_counter_box_width_height"
+            android:layout_height="@dimen/tab_counter_box_width_height"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_tabs"/>
+            app:srcCompat="@drawable/ic_tabs"/>
 
         <!-- This text size auto adjusts based on num digits in `TabCounter` -->
         <TextView
@@ -28,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:textColor="?primaryText"
             android:textSize="12sp"
             android:textStyle="bold"

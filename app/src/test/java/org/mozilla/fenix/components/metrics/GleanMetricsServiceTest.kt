@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components.metrics
 
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -17,13 +16,9 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
-import org.mozilla.fenix.TestApplication
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@ObsoleteCoroutinesApi
-@RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class GleanMetricsServiceTest {
     @get:Rule
     val gleanRule = GleanTestRule(testContext)

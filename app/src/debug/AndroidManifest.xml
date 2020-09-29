@@ -13,9 +13,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- Allows changing locales -->
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"
+            tools:ignore="ProtectedPermissions" />
 
     <application
             tools:replace="android:name"
-            android:name="org.mozilla.fenix.DebugFenixApplication"/>
+            android:name="org.mozilla.fenix.DebugFenixApplication" />
+
 </manifest>

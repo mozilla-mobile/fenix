@@ -4,137 +4,130 @@
 
 package org.mozilla.fenix.components.toolbar
 
-import android.content.Intent
-import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.tabs.TabsUseCases
-import org.junit.After
+import mozilla.components.feature.top.sites.TopSitesUseCases
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragment
+import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.collections.CreateCollectionViewModel
-import org.mozilla.fenix.components.Analytics
+import org.mozilla.fenix.browser.browsingmode.SimpleBrowsingModeManager
+import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.toTab
-import org.mozilla.fenix.home.sessioncontrol.Tab
-import org.mozilla.fenix.home.sessioncontrol.TabCollection
-import org.mozilla.fenix.quickactionsheet.QuickActionSheetBehavior
-import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.home.HomeScreenViewModel
 
-@ExperimentalCoroutinesApi
-@ObsoleteCoroutinesApi
+@RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
 
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-
-    private var activity: HomeActivity = mockk(relaxed = true)
-    private var analytics: Analytics = mockk(relaxed = true)
-    private val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
-    private var navController: NavController = mockk(relaxed = true)
-    private var findInPageLauncher: () -> Unit = mockk(relaxed = true)
-    private val engineView: EngineView = mockk(relaxed = true)
-    private val currentSession: Session = mockk(relaxed = true)
-    private val viewModel: CreateCollectionViewModel = mockk(relaxed = true)
-    private val getSupportUrl: () -> String = { "https://supportUrl.org" }
-    private val openInFenixIntent: Intent = mockk(relaxed = true)
-    private val currentSessionAsTab: Tab = mockk(relaxed = true)
-    private val bottomSheetBehavior: QuickActionSheetBehavior<NestedScrollView> = mockk(relaxed = true)
-    private val metrics: MetricController = mockk(relaxed = true)
-    private val searchUseCases: SearchUseCases = mockk(relaxed = true)
-    private val sessionUseCases: SessionUseCases = mockk(relaxed = true)
-    private val scope: LifecycleCoroutineScope = mockk(relaxed = true)
-
-    private lateinit var controller: DefaultBrowserToolbarController
+    @RelaxedMockK
+    private lateinit var activity: HomeActivity
+    @MockK(relaxUnitFun = true)
+    private lateinit var navController: NavController
+    @RelaxedMockK
+    private lateinit var onTabCounterClicked: () -> Unit
+    @RelaxedMockK
+    private lateinit var onCloseTab: (Session) -> Unit
+    @RelaxedMockK
+    private lateinit var sessionManager: SessionManager
+    @MockK(relaxUnitFun = true)
+    private lateinit var engineView: EngineView
+    @MockK
+    private lateinit var currentSession: Session
+    @RelaxedMockK
+    private lateinit var metrics: MetricController
+    @RelaxedMockK
+    private lateinit var searchUseCases: SearchUseCases
+    @RelaxedMockK
+    private lateinit var sessionUseCases: SessionUseCases
+    @RelaxedMockK
+    private lateinit var browserAnimator: BrowserAnimator
+    @RelaxedMockK
+    private lateinit var topSitesUseCase: TopSitesUseCases
+    @RelaxedMockK
+    private lateinit var readerModeController: ReaderModeController
+    @RelaxedMockK
+    private lateinit var homeViewModel: HomeScreenViewModel
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(mainThreadSurrogate)
+        MockKAnnotations.init(this)
 
-        controller = DefaultBrowserToolbarController(
-            activity = activity,
-            navController = navController,
-            browsingModeManager = browsingModeManager,
-            findInPageLauncher = findInPageLauncher,
-            engineView = engineView,
-            customTabSession = null,
-            viewModel = viewModel,
-            getSupportUrl = getSupportUrl,
-            openInFenixIntent = openInFenixIntent,
-            bottomSheetBehavior = bottomSheetBehavior,
-            scope = scope
-        )
-
-        mockkStatic(
-            "org.mozilla.fenix.ext.SessionKt"
-        )
-        every { any<Session>().toTab(any()) } returns currentSessionAsTab
-
-        mockkStatic(
-            "org.mozilla.fenix.settings.deletebrowsingdata.DeleteAndQuitKt"
-        )
-        every { deleteAndQuit(any(), any()) } just Runs
-
-        every { activity.components.analytics } returns analytics
-        every { analytics.metrics } returns metrics
         every { activity.components.useCases.sessionUseCases } returns sessionUseCases
         every { activity.components.useCases.searchUseCases } returns searchUseCases
-        every { activity.components.core.sessionManager.selectedSession } returns currentSession
+        every { activity.components.useCases.topSitesUseCase } returns topSitesUseCase
+        every { sessionManager.selectedSession } returns currentSession
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.browserFragment
+        }
+        every { currentSession.id } returns "1"
+        every { currentSession.private } returns false
+        every { currentSession.searchTerms = any() } just Runs
+
+        val onComplete = slot<() -> Unit>()
+        every { browserAnimator.captureEngineViewAndDrawStatically(capture(onComplete)) } answers { onComplete.captured.invoke() }
     }
 
     @Test
     fun handleBrowserToolbarPaste() {
-        every { currentSession.id } returns "1"
-
         val pastedText = "Mozilla"
+        val controller = createController()
         controller.handleToolbarPaste(pastedText)
 
-        verify {
-            navController.nav(
-                R.id.browserFragment,
-                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                    sessionId = currentSession.id,
-                    pastedText = pastedText
-                )
-            )
-        }
+        val directions = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1",
+            pastedText = pastedText
+        )
+
+        verify { navController.navigate(directions, any<NavOptions>()) }
+    }
+
+    @Test
+    fun handleBrowserToolbarPaste_useNewSearchExperience() {
+        val pastedText = "Mozilla"
+        val controller = createController()
+        controller.handleToolbarPaste(pastedText)
+
+        val directions = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1",
+            pastedText = pastedText
+        )
+
+        verify { navController.navigate(directions, any<NavOptions>()) }
     }
 
     @Test
     fun handleBrowserToolbarPasteAndGoSearch() {
         val pastedText = "Mozilla"
 
+        val controller = createController()
         controller.handleToolbarPasteAndGo(pastedText)
         verifyOrder {
             currentSession.searchTerms = "Mozilla"
-            searchUseCases.defaultSearch.invoke(pastedText)
+            searchUseCases.defaultSearch.invoke(pastedText, currentSession)
         }
     }
 
@@ -142,6 +135,7 @@ class DefaultBrowserToolbarControllerTest {
     fun handleBrowserToolbarPasteAndGoUrl() {
         val pastedText = "https://mozilla.org"
 
+        val controller = createController()
         controller.handleToolbarPasteAndGo(pastedText)
         verifyOrder {
             currentSession.searchTerms = ""
@@ -149,314 +143,149 @@ class DefaultBrowserToolbarControllerTest {
         }
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+    @Test
+    fun handleTabCounterClick() {
+        val controller = createController()
+        controller.handleTabCounterClick()
+
+        verify { onTabCounterClicked() }
+    }
+
+    @Test
+    fun `handle reader mode enabled`() {
+        val controller = createController()
+        controller.handleReaderModePressed(enabled = true)
+
+        verify { readerModeController.showReaderView() }
+    }
+
+    @Test
+    fun `handle reader mode disabled`() {
+        val controller = createController()
+        controller.handleReaderModePressed(enabled = false)
+
+        verify { readerModeController.hideReaderView() }
     }
 
     @Test
     fun handleToolbarClick() {
-        every { currentSession.id } returns "1"
-
+        val controller = createController()
         controller.handleToolbarClick()
 
+        val expected = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1"
+        )
+
         verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
+        verify { navController.navigate(expected, any<NavOptions>()) }
+    }
+
+    @Test
+    fun handleToolbarClick_useNewSearchExperience() {
+        val controller = createController()
+        controller.handleToolbarClick()
+
+        val expected = BrowserFragmentDirections.actionGlobalSearchDialog(
+            sessionId = "1"
+        )
+
+        verify { metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER)) }
+        verify { navController.navigate(expected, any<NavOptions>()) }
+    }
+
+    @Test
+    fun handleToolbarCloseTabPressWithLastPrivateSession() {
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
+        val item = TabCounterMenu.Item.CloseTab
+        val sessions = listOf(
+            mockk<Session> {
+                every { private } returns true
+            }
+        )
+
+        every { currentSession.private } returns true
+        every { sessionManager.sessions } returns sessions
+        every { activity.browsingModeManager } returns browsingModeManager
+
+        val controller = createController()
+        controller.handleTabCounterItemInteraction(item)
         verify {
-            navController.nav(
-                R.id.browserFragment,
-                BrowserFragmentDirections.actionBrowserFragmentToSearchFragment(
-                    sessionId = "1"
-                )
-            )
+            homeViewModel.sessionToDelete = "1"
+            navController.navigate(BrowserFragmentDirections.actionGlobalHome())
         }
+        assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
     }
 
     @Test
-    fun handleToolbarBackPress() {
-        val item = ToolbarMenu.Item.Back
+    fun handleToolbarCloseTabPress() {
+        val item = TabCounterMenu.Item.CloseTab
 
-        controller.handleToolbarItemInteraction(item)
+        every { sessionManager.sessions } returns emptyList()
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
-        verify { sessionUseCases.goBack }
-    }
-
-    @Test
-    fun handleToolbarForwardPress() {
-        val item = ToolbarMenu.Item.Forward
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
-        verify { sessionUseCases.goForward }
-    }
-
-    @Test
-    fun handleToolbarReloadPress() {
-        val item = ToolbarMenu.Item.Reload
-
-        every { activity.components.useCases.sessionUseCases } returns sessionUseCases
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.RELOAD)) }
-        verify { sessionUseCases.reload }
-    }
-
-    @Test
-    fun handleToolbarStopPress() {
-        val item = ToolbarMenu.Item.Stop
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.STOP)) }
-        verify { sessionUseCases.stopLoading }
-    }
-
-    @Test
-    fun handleToolbarSettingsPress() {
-        val item = ToolbarMenu.Item.Settings
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
-        verify {
-            navController.nav(
-                R.id.settingsFragment,
-                BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
-            )
-        }
-    }
-
-    @Test
-    fun handleToolbarLibraryPress() {
-        val item = ToolbarMenu.Item.Library
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.LIBRARY)) }
-        verify {
-            navController.nav(
-                R.id.libraryFragment,
-                BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
-            )
-        }
-    }
-
-    @Test
-    fun handleToolbarRequestDesktopOnPress() {
-        val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
-            mockk(relaxed = true)
-        val item = ToolbarMenu.Item.RequestDesktop(true)
-
-        every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_ON)) }
-        verify {
-            requestDesktopSiteUseCase.invoke(
-                true,
-                currentSession
-            )
-        }
-    }
-
-    @Test
-    fun handleToolbarRequestDesktopOffPress() {
-        val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
-            mockk(relaxed = true)
-        val item = ToolbarMenu.Item.RequestDesktop(false)
-
-        every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_OFF)) }
-        verify {
-            requestDesktopSiteUseCase.invoke(
-                false,
-                currentSession
-            )
-        }
-    }
-
-    @Test
-    fun handleToolbarAddToHomeScreenPress() {
-        val item = ToolbarMenu.Item.AddToHomeScreen
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN)) }
-    }
-
-    @Test
-    fun handleToolbarSharePress() {
-        val item = ToolbarMenu.Item.Share
-
-        every { currentSession.url } returns "https://mozilla.org"
-        val directions = NavGraphDirections.actionGlobalShareFragment(currentSession.url)
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
-        verify { navController.navigate(directions) }
-    }
-
-    @Test
-    fun handleToolbarNewPrivateTabPress() {
-        val item = ToolbarMenu.Item.NewPrivateTab
-
-        every { browsingModeManager.mode } returns BrowsingMode.Normal
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.NEW_PRIVATE_TAB)) }
-        verify {
-            val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(sessionId = null)
-            navController.nav(R.id.browserFragment, directions)
-        }
-        verify { browsingModeManager.mode = BrowsingMode.Private }
-    }
-
-    @Test
-    fun handleToolbarFindInPagePress() {
-        val item = ToolbarMenu.Item.FindInPage
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { bottomSheetBehavior.state = QuickActionSheetBehavior.STATE_COLLAPSED }
-        verify { findInPageLauncher() }
-        verify { metrics.track(Event.FindInPageOpened) }
-    }
-
-    @Test
-    fun handleToolbarReportIssuePress() {
-        val tabsUseCases: TabsUseCases = mockk(relaxed = true)
-        val addTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
-
-        val item = ToolbarMenu.Item.ReportIssue
-
-        every { currentSession.id } returns "1"
-        every { currentSession.url } returns "https://mozilla.org"
-        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
-        every { tabsUseCases.addTab } returns addTabUseCase
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.REPORT_SITE_ISSUE)) }
-        verify {
-            // Hardcoded URL because this function modifies the URL with an apply
-            addTabUseCase.invoke(
-                String.format(
-                    BrowserFragment.REPORT_SITE_ISSUE_URL,
-                    "https://mozilla.org"
-                )
-            )
-        }
-    }
-
-    @Test
-    fun handleToolbarHelpPress() {
-        val tabsUseCases: TabsUseCases = mockk(relaxed = true)
-        val addTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
-
-        val item = ToolbarMenu.Item.Help
-
-        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
-        every { tabsUseCases.addTab } returns addTabUseCase
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.HELP)) }
-        verify {
-            addTabUseCase.invoke(getSupportUrl())
-        }
+        val controller = createController()
+        controller.handleTabCounterItemInteraction(item)
+        verify { sessionManager.remove(currentSession, selectParentIfExists = true) }
     }
 
     @Test
     fun handleToolbarNewTabPress() {
-        val item = ToolbarMenu.Item.NewTab
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
+        val item = TabCounterMenu.Item.NewTab(BrowsingMode.Normal)
 
-        every { browsingModeManager.mode } returns BrowsingMode.Private
+        every { activity.browsingModeManager } returns browsingModeManager
+        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
 
-        controller.handleToolbarItemInteraction(item)
-
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.NEW_TAB)) }
-        verify {
-            val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(sessionId = null)
-            navController.nav(R.id.browserFragment, directions)
-        }
-        verify { browsingModeManager.mode = BrowsingMode.Normal }
+        val controller = createController()
+        controller.handleTabCounterItemInteraction(item)
+        assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
+        verify { navController.popBackStack(R.id.homeFragment, false) }
     }
 
     @Test
-    fun handleToolbarSaveToCollectionPress() {
-        val item = ToolbarMenu.Item.SaveToCollection
-        val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
-        every { activity.components.useCases.sessionUseCases } returns sessionUseCases
-        every { activity.components.core.tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
+    fun handleToolbarNewPrivateTabPress() {
+        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Normal)
+        val item = TabCounterMenu.Item.NewTab(BrowsingMode.Private)
 
-        controller.handleToolbarItemInteraction(item)
+        every { activity.browsingModeManager } returns browsingModeManager
+        every { navController.popBackStack(R.id.homeFragment, any()) } returns true
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
-        verify { metrics.track(Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)) }
-        verify {
-            viewModel.saveTabToCollection(
-                listOf(currentSessionAsTab),
-                currentSessionAsTab,
-                cachedTabCollections
-            )
-        }
-        verify { viewModel.previousFragmentId = R.id.browserFragment }
-        verify {
-            val directions = BrowserFragmentDirections
-                .actionBrowserFragmentToSearchFragment(sessionId = null)
-            navController.nav(R.id.browserFragment, directions)
-        }
+        val controller = createController()
+        controller.handleTabCounterItemInteraction(item)
+        assertEquals(BrowsingMode.Private, browsingModeManager.mode)
+        verify { navController.popBackStack(R.id.homeFragment, false) }
     }
 
     @Test
-    fun handleToolbarOpenInFenixPress() {
-        controller = DefaultBrowserToolbarController(
-            activity = activity,
-            navController = navController,
-            browsingModeManager = browsingModeManager,
-            findInPageLauncher = findInPageLauncher,
-            engineView = engineView,
-            customTabSession = currentSession,
-            viewModel = viewModel,
-            getSupportUrl = getSupportUrl,
-            openInFenixIntent = openInFenixIntent,
-            bottomSheetBehavior = bottomSheetBehavior,
-            scope = scope
-        )
+    fun `handleScroll for dynamic toolbars`() {
+        val controller = createController()
+        every { activity.settings().isDynamicToolbarEnabled } returns true
 
-        val sessionManager: SessionManager = mockk(relaxed = true)
-        val item = ToolbarMenu.Item.OpenInFenix
-
-        every { activity.components.core.sessionManager } returns sessionManager
-        every { currentSession.customTabConfig } returns mockk()
-        every { activity.startActivity(any()) } just Runs
-
-        controller.handleToolbarItemInteraction(item)
-
-        verify { engineView.release() }
-        verify { currentSession.customTabConfig = null }
-        verify { sessionManager.select(currentSession) }
-        verify { activity.startActivity(openInFenixIntent) }
-        verify { activity.finish() }
+        controller.handleScroll(10)
+        verify { engineView.setVerticalClipping(10) }
     }
 
     @Test
-    fun handleToolbarQuitPress() {
-        val item = ToolbarMenu.Item.Quit
+    fun `handleScroll for static toolbars`() {
+        val controller = createController()
+        every { activity.settings().isDynamicToolbarEnabled } returns false
 
-        controller.handleToolbarItemInteraction(item)
-
-        verify { deleteAndQuit(activity, scope) }
+        controller.handleScroll(10)
+        verify(exactly = 0) { engineView.setVerticalClipping(10) }
     }
+
+    private fun createController(
+        activity: HomeActivity = this.activity,
+        customTabSession: Session? = null
+    ) = DefaultBrowserToolbarController(
+        activity = activity,
+        navController = navController,
+        metrics = metrics,
+        engineView = engineView,
+        homeViewModel = homeViewModel,
+        customTabSession = customTabSession,
+        readerModeController = readerModeController,
+        sessionManager = sessionManager,
+        onTabCounterClicked = onTabCounterClicked,
+        onCloseTab = onCloseTab
+    )
 }

@@ -23,7 +23,7 @@
             android:text="@string/sign_in_with_camera"
             android:textAppearance="@style/Header16TextStyle"
             android:textColor="?primaryText"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,34 +56,35 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signInScanButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:letterSpacing="0"
+            style="@style/PositiveButton"
             android:text="@string/sign_in_ready_for_scan"
-            android:textAllCaps="false"
-            android:textColor="?contrastText"
-            android:textStyle="bold"
-            app:backgroundTint="?accent"
+            android:layout_marginVertical="24dp"
             app:icon="@drawable/ic_qr"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconTint="?contrastText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/signInInstructions" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signInEmailButton"
-            style="@style/ThemeIndependentMaterialGreyButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            style="@style/NeutralButton"
             android:text="@string/sign_in_with_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/signInScanButton" />
+            android:layout_marginVertical="12dp"
+            app:layout_constraintTop_toBottomOf="@id/signInScanButton"
+            app:layout_constraintBottom_toTopOf="@id/createAccount"/>
+
+        <TextView
+            android:id="@+id/createAccount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/Body14TextStyle"
+            app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginVertical="24dp"
+            tools:text="@string/sign_in_create_account_text"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -9,7 +9,7 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.lib.Do
+import org.mozilla.fenix.utils.Do
 
 /**
  * Interactor for the Bookmarks screen.
@@ -22,14 +22,12 @@ import org.mozilla.fenix.lib.Do
  */
 @SuppressWarnings("TooManyFunctions")
 class BookmarkFragmentInteractor(
-    private val bookmarkStore: BookmarkFragmentStore,
-    private val viewModel: BookmarksSharedViewModel,
     private val bookmarksController: BookmarkController,
     private val metrics: MetricController
 ) : BookmarkViewInteractor {
 
     override fun onBookmarksChanged(node: BookmarkNode) {
-        bookmarkStore.dispatch(BookmarkFragmentAction.Change(node))
+        bookmarksController.handleBookmarkChanged(node)
     }
 
     override fun onSelectionModeSwitch(mode: BookmarkFragmentState.Mode) {
@@ -41,7 +39,7 @@ class BookmarkFragmentInteractor(
     }
 
     override fun onAllBookmarksDeselected() {
-        bookmarkStore.dispatch(BookmarkFragmentAction.DeselectAll)
+        bookmarksController.handleAllBookmarksDeselected()
     }
 
     /**
@@ -89,7 +87,11 @@ class BookmarkFragmentInteractor(
             BookmarkNodeType.FOLDER -> Event.RemoveBookmarkFolder
             null -> Event.RemoveBookmarks
         }
-        bookmarksController.handleBookmarkDeletion(nodes, eventType)
+        if (eventType == Event.RemoveBookmarkFolder) {
+            bookmarksController.handleBookmarkFolderDeletion(nodes)
+        } else {
+            bookmarksController.handleBookmarkDeletion(nodes, eventType)
+        }
     }
 
     override fun onBackPressed() {
@@ -108,13 +110,22 @@ class BookmarkFragmentInteractor(
     }
 
     override fun select(item: BookmarkNode) {
-        when (item.inRoots()) {
-            true -> bookmarksController.handleBookmarkSelected(item)
-            false -> bookmarkStore.dispatch(BookmarkFragmentAction.Select(item))
-        }
+        bookmarksController.handleBookmarkSelected(item)
     }
 
     override fun deselect(item: BookmarkNode) {
-        bookmarkStore.dispatch(BookmarkFragmentAction.Deselect(item))
+        bookmarksController.handleBookmarkDeselected(item)
+    }
+
+    override fun onRequestSync() {
+        bookmarksController.handleRequestSync()
+    }
+
+    override fun onStartSwipingItem() {
+        bookmarksController.handleStartSwipingItem()
+    }
+
+    override fun onStopSwipingItem() {
+        bookmarksController.handleStopSwipingItem()
     }
 }

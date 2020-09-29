@@ -4,174 +4,278 @@
 
 package org.mozilla.fenix.components.toolbar
 
-import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
+import androidx.annotation.LayoutRes
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.LifecycleOwner
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.browser_toolbar_popup_window.view.*
+import kotlinx.android.synthetic.main.component_browser_top_toolbar.*
+import kotlinx.android.synthetic.main.component_browser_top_toolbar.view.*
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.toolbar.BrowserToolbar
-import mozilla.components.support.ktx.android.util.dpToFloat
-import mozilla.components.support.ktx.android.util.dpToPx
-import org.jetbrains.anko.dimen
+import mozilla.components.browser.toolbar.behavior.BrowserToolbarBottomBehavior
+import mozilla.components.browser.toolbar.display.DisplayToolbar
+import mozilla.components.support.utils.URLStringUtils
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
+import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.ToolbarPopupWindow
+import java.lang.ref.WeakReference
 
 interface BrowserToolbarViewInteractor {
     fun onBrowserToolbarPaste(text: String)
     fun onBrowserToolbarPasteAndGo(text: String)
     fun onBrowserToolbarClicked()
     fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item)
+    fun onTabCounterClicked()
+    fun onTabCounterMenuItemTapped(item: TabCounterMenu.Item)
+    fun onScrolled(offset: Int)
+    fun onReaderModePressed(enabled: Boolean)
 }
 
+@SuppressWarnings("LargeClass")
 class BrowserToolbarView(
     private val container: ViewGroup,
+    private val toolbarPosition: ToolbarPosition,
     private val interactor: BrowserToolbarViewInteractor,
-    private val customTabSession: Session?
+    private val customTabSession: Session?,
+    private val lifecycleOwner: LifecycleOwner
 ) : LayoutContainer {
 
     override val containerView: View?
         get() = container
 
-    private val urlBackground = LayoutInflater.from(container.context)
-        .inflate(R.layout.layout_url_background, container, false)
+    private val settings = container.context.settings()
 
-    val view: BrowserToolbar = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_search, container, true)
+    @LayoutRes
+    private val toolbarLayout = when (settings.toolbarPosition) {
+        ToolbarPosition.BOTTOM -> R.layout.component_bottom_browser_toolbar
+        ToolbarPosition.TOP -> R.layout.component_browser_top_toolbar
+    }
+
+    private val layout = LayoutInflater.from(container.context)
+        .inflate(toolbarLayout, container, true)
+
+    val view: BrowserToolbar = layout
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
 
+    private val isPwaTabOrTwaTab: Boolean
+        get() = customTabSession?.customTabConfig?.externalAppType == ExternalAppType.PROGRESSIVE_WEB_APP ||
+                customTabSession?.customTabConfig?.externalAppType == ExternalAppType.TRUSTED_WEB_ACTIVITY
+
     init {
         val isCustomTabSession = customTabSession != null
 
-        view.setOnUrlLongClickListener {
-            val clipboard = view.context.components.clipboardHandler
-            val customView = LayoutInflater.from(view.context).inflate(R.layout.browser_toolbar_popup_window, null)
-            val popupWindow = PopupWindow(customView,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                view.context.dimen(R.dimen.context_menu_height),
-                true
+        view.display.setOnUrlLongClickListener {
+            ToolbarPopupWindow.show(
+                WeakReference(view),
+                customTabSession,
+                interactor::onBrowserToolbarPasteAndGo,
+                interactor::onBrowserToolbarPaste
             )
-
-            val selectedSession = container.context.components.core.sessionManager.selectedSession
-
-            popupWindow.elevation = view.context.dimen(R.dimen.mozac_browser_menu_elevation).toFloat()
-
-            customView.paste.isVisible = !clipboard.text.isNullOrEmpty() && !isCustomTabSession
-            customView.paste_and_go.isVisible = !clipboard.text.isNullOrEmpty() && !isCustomTabSession
-
-            customView.copy.setOnClickListener {
-                popupWindow.dismiss()
-                if (isCustomTabSession) {
-                    clipboard.text = customTabSession?.url
-                } else {
-                    clipboard.text = selectedSession?.url
-                }
-            }
-
-            customView.paste.setOnClickListener {
-                popupWindow.dismiss()
-                interactor.onBrowserToolbarPaste(clipboard.text!!)
-            }
-
-            customView.paste_and_go.setOnClickListener {
-                popupWindow.dismiss()
-                interactor.onBrowserToolbarPasteAndGo(clipboard.text!!)
-            }
-
-            popupWindow.showAsDropDown(view, view.context.dimen(R.dimen.context_menu_x_offset), 0, Gravity.START)
-
             true
         }
 
         with(container.context) {
             val sessionManager = components.core.sessionManager
+            val isPinningSupported = components.useCases.webAppUseCases.isPinningSupported()
+
+            if (toolbarPosition == ToolbarPosition.TOP) {
+                val offsetChangedListener =
+                    AppBarLayout.OnOffsetChangedListener { _: AppBarLayout?, verticalOffset: Int ->
+                        interactor.onScrolled(verticalOffset)
+                    }
+
+                app_bar.addOnOffsetChangedListener(offsetChangedListener)
+            }
 
             view.apply {
-                elevation = TOOLBAR_ELEVATION.dpToFloat(resources.displayMetrics)
+                setScrollFlags()
 
-                onUrlClicked = {
+                elevation = resources.getDimension(R.dimen.browser_fragment_toolbar_elevation)
+
+                if (!isCustomTabSession) {
+                    display.setUrlBackground(getDrawable(R.drawable.search_url_background))
+                }
+
+                display.onUrlClicked = {
                     interactor.onBrowserToolbarClicked()
                     false
                 }
 
-                browserActionMargin = browserActionMarginDp.dpToPx(resources.displayMetrics)
+                display.progressGravity = when (toolbarPosition) {
+                    ToolbarPosition.BOTTOM -> DisplayToolbar.Gravity.TOP
+                    ToolbarPosition.TOP -> DisplayToolbar.Gravity.BOTTOM
+                }
 
-                urlBoxView = if (isCustomTabSession) null else urlBackground
-                progressBarGravity = if (isCustomTabSession) PROGRESS_BOTTOM else PROGRESS_TOP
-
-                textColor = ContextCompat.getColor(context, R.color.photonGrey30)
-
-                hint = context.getString(R.string.search_hint)
-
-                suggestionBackgroundColor = ContextCompat.getColor(
-                    container.context,
-                    R.color.suggestion_highlight_color
-                )
-
-                textColor = ContextCompat.getColor(
+                val primaryTextColor = ContextCompat.getColor(
                     container.context,
                     ThemeManager.resolveAttribute(R.attr.primaryText, container.context)
                 )
-
-                hintColor = ContextCompat.getColor(
+                val secondaryTextColor = ContextCompat.getColor(
                     container.context,
                     ThemeManager.resolveAttribute(R.attr.secondaryText, container.context)
                 )
+                val separatorColor = ContextCompat.getColor(
+                    container.context,
+                    ThemeManager.resolveAttribute(R.attr.toolbarDivider, container.context)
+                )
+
+                display.urlFormatter = { url -> URLStringUtils.toDisplayUrl(url) }
+
+                display.colors = display.colors.copy(
+                    text = primaryTextColor,
+                    securityIconSecure = primaryTextColor,
+                    securityIconInsecure = primaryTextColor,
+                    menu = primaryTextColor,
+                    hint = secondaryTextColor,
+                    separator = separatorColor,
+                    trackingProtection = primaryTextColor
+                )
+
+                display.hint = context.getString(R.string.search_hint)
             }
 
-            val menuToolbar = if (isCustomTabSession) {
-                CustomTabToolbarMenu(
+            val menuToolbar: ToolbarMenu
+            if (isCustomTabSession) {
+                menuToolbar = CustomTabToolbarMenu(
                     this,
                     sessionManager,
                     customTabSession?.id,
+                    shouldReverseItems = toolbarPosition == ToolbarPosition.TOP,
                     onItemTapped = {
+                        it.performHapticIfNeeded(view)
                         interactor.onBrowserToolbarMenuItemTapped(it)
                     }
                 )
             } else {
-                DefaultToolbarMenu(
-                    this,
+                menuToolbar = DefaultToolbarMenu(
+                    context = this,
                     hasAccountProblem = components.backgroundServices.accountManager.accountNeedsReauth(),
-                    requestDesktopStateProvider = {
-                        sessionManager.selectedSession?.desktopMode ?: false
+                    shouldReverseItems = toolbarPosition == ToolbarPosition.TOP,
+                    onItemTapped = {
+                        it.performHapticIfNeeded(view)
+                        interactor.onBrowserToolbarMenuItemTapped(it)
                     },
-                    onItemTapped = { interactor.onBrowserToolbarMenuItemTapped(it) }
+                    lifecycleOwner = lifecycleOwner,
+                    sessionManager = sessionManager,
+                    store = components.core.store,
+                    bookmarksStorage = bookmarkStorage,
+                    isPinningSupported = isPinningSupported
                 )
+                view.display.setMenuDismissAction {
+                    view.invalidateActions()
+                }
             }
 
-            toolbarIntegration = ToolbarIntegration(
-                this,
-                view,
-                container,
-                menuToolbar,
-                ShippedDomainsProvider().also { it.initialize(this) },
-                components.core.historyStorage,
-                components.core.sessionManager,
-                customTabSession?.id,
-                customTabSession?.private ?: sessionManager.selectedSession?.private ?: false
-            )
+            toolbarIntegration = if (customTabSession != null) {
+                CustomTabToolbarIntegration(
+                    this,
+                    view,
+                    menuToolbar,
+                    customTabSession.id,
+                    isPrivate = customTabSession.private
+                )
+            } else {
+                DefaultToolbarIntegration(
+                    this,
+                    view,
+                    menuToolbar,
+                    ShippedDomainsProvider().also { it.initialize(this) },
+                    components.core.historyStorage,
+                    lifecycleOwner,
+                    sessionId = null,
+                    isPrivate = sessionManager.selectedSession?.private ?: false,
+                    interactor = interactor,
+                    engine = components.core.engine
+                )
+            }
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun update(state: BrowserFragmentState) {
-        // Intentionally leaving this as a stub for now since we don't actually want to update currently
+    fun expand() {
+        // expand only for normal tabs and custom tabs not for PWA or TWA
+        if (isPwaTabOrTwaTab) {
+            return
+        }
+        when (settings.toolbarPosition) {
+            ToolbarPosition.BOTTOM -> {
+                (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
+                    // behavior can be null if the "Scroll to hide toolbar" setting is toggled off.
+                    (behavior as? BrowserToolbarBottomBehavior)?.forceExpand(view)
+                }
+            }
+            ToolbarPosition.TOP -> {
+                layout.app_bar?.setExpanded(true)
+            }
+        }
+    }
+
+    /**
+     * Dynamically sets scroll flags for the toolbar when the user does not have a screen reader enabled
+     * Note that the toolbar will have the flags set and be able to be hidden
+     * only if the user didn't disabled this behavior in app's settings.
+     */
+    fun setScrollFlags(shouldDisableScroll: Boolean = false) {
+        when (settings.toolbarPosition) {
+            ToolbarPosition.BOTTOM -> {
+                if (settings.isDynamicToolbarEnabled && !isPwaTabOrTwaTab) {
+                    (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
+                        behavior = BrowserToolbarBottomBehavior(view.context, null)
+                    }
+                } else {
+                    expand()
+                }
+            }
+            ToolbarPosition.TOP -> {
+                view.updateLayoutParams<AppBarLayout.LayoutParams> {
+                    scrollFlags =
+                        if (settings.shouldUseFixedTopToolbar ||
+                            !settings.isDynamicToolbarEnabled ||
+                            shouldDisableScroll) {
+                        // Force expand the toolbar so the user is not stuck with a hidden toolbar
+                        expand()
+                        0
+                    } else {
+                        SCROLL_FLAG_SCROLL or
+                                SCROLL_FLAG_ENTER_ALWAYS or
+                                SCROLL_FLAG_SNAP or
+                                SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                    }
+                }
+            }
+        }
     }
 
     companion object {
         private const val TOOLBAR_ELEVATION = 16
-        private const val PROGRESS_BOTTOM = 0
-        private const val PROGRESS_TOP = 1
-        const val browserActionMarginDp = 8
+    }
+
+    @Suppress("ComplexCondition")
+    private fun ToolbarMenu.Item.performHapticIfNeeded(view: View) {
+        if (this is ToolbarMenu.Item.Reload && this.bypassCache ||
+            this is ToolbarMenu.Item.Back && this.viewHistory ||
+            this is ToolbarMenu.Item.Forward && this.viewHistory
+        ) {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+        }
     }
 }

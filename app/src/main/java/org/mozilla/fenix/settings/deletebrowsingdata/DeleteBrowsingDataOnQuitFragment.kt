@@ -5,15 +5,15 @@
 package org.mozilla.fenix.settings.deletebrowsingdata
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
+import org.mozilla.fenix.settings.requirePreference
 
 class DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat() {
 
@@ -36,14 +36,13 @@ class DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat() {
     @Suppress("ComplexMethod")
     override fun onResume() {
         super.onResume()
-        activity?.title = getString(R.string.preferences_delete_browsing_data_on_quit)
-        (activity as AppCompatActivity).supportActionBar?.show()
+        showToolbar(getString(R.string.preferences_delete_browsing_data_on_quit))
 
         // Delete Browsing Data on Quit Switch
-        val deleteOnQuitPref = findPreference<SwitchPreference>(
-            getPreferenceKey(R.string.pref_key_delete_browsing_data_on_quit)
+        val deleteOnQuitPref = requirePreference<SwitchPreference>(
+            R.string.pref_key_delete_browsing_data_on_quit
         )
-        deleteOnQuitPref?.apply {
+        deleteOnQuitPref.apply {
             onPreferenceChangeListener = object : SharedPreferenceUpdater() {
                 override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
                     setAllCheckboxes(newValue as Boolean)
@@ -59,7 +58,7 @@ class DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat() {
                 val settings = preference.context.settings()
 
                 if (!settings.shouldDeleteAnyDataOnQuit()) {
-                    deleteOnQuitPref?.isChecked = false
+                    deleteOnQuitPref.isChecked = false
                     settings.shouldDeleteBrowsingDataOnQuit = false
                 }
                 return true

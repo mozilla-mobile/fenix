@@ -82,7 +82,8 @@ gen-external-apklibs
 # Token files
 .leanplum_token
 .adjust_token
-.digital_asset_links_token
+.sentry_token
+.mls_token
 
 
 # Python Byte-compiled / optimized / DLL files
@@ -98,3 +99,7 @@ test_artifacts/
 /build/test-tools/google-cloud-sdk/
 /build/test-tools/*.jar
 /build/test-tools/*.gz
+
+
+# Web extensions: manifest.json files are generated
+manifest.json

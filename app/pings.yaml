@@ -1,15 +1,15 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+---
 $schema: moz://mozilla.org/schemas/glean/pings/1-0-0
 
 activation:
-  description: >
-    This ping is intended to provide a measure of the activation of mobile products.
-    It's generated when Fenix starts, right after Glean is initialized. It doesn't
-    include the client_id, since it might be reporting an hashed version of the
-    Google Advertising ID.
+  description: |
+    This ping is intended to provide a measure of the activation of mobile
+    products. It's generated when Fenix starts, right after Glean is
+    initialized. It doesn't include the client_id, since it might be reporting
+    an hashed version of the Google Advertising ID.
   include_client_id: false
   bugs:
     - 1538011
@@ -18,3 +18,31 @@ activation:
     - https://github.com/mozilla-mobile/fenix/pull/1707#issuecomment-486972209
   notification_emails:
     - fenix-core@mozilla.com
+
+first-session:
+  description: |
+    This ping is intended to capture the source of the app install
+    on the first session.
+  include_client_id: true
+  bugs:
+    - https://github.com/mozilla-mobile/fenix/issues/7295
+  data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/8074#issuecomment-586512202
+  notification_emails:
+    - fenix-core@mozilla.com
+
+startup-timeline:
+  description: |
+    This ping is intended to provide an understanding of startup performance.
+
+    The ping is intended to be captured by performance testing automation to
+    report results there, in addition to user telemetry. We place these metrics
+    into their own ping in order to isolate them and make this process easier.
+  include_client_id: false
+  bugs:
+    - https://github.com/mozilla-mobile/fenix/issues/8803
+  data_reviews:
+    - https://github.com/mozilla-mobile/fenix/pull/9788#pullrequestreview-394228626
+  notification_emails:
+    - perf-android-fe@mozilla.com
+    - esmyth@mozilla.com

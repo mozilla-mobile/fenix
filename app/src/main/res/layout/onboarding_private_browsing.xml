@@ -7,7 +7,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/onboarding_card"
-        style="@style/OnboardingCardLight"
+        style="@style/OnboardingCardLightWithPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <TextView
@@ -24,14 +24,35 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     <TextView
-            android:id="@+id/description_text"
+            android:id="@+id/description_text_once"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/Body14TextStyle"
             android:layout_marginTop="14dp"
-            tools:text="@string/onboarding_private_browsing_description"
+            tools:text="@string/onboarding_private_browsing_description1"
             app:layout_constraintTop_toBottomOf="@id/header_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toTopOf="@id/description_text_always" />
+    <TextView
+            android:id="@+id/description_text_always"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Body14TextStyle"
+            android:layout_marginTop="14dp"
+            android:text="@string/onboarding_private_browsing_always_description"
+            app:layout_constraintTop_toBottomOf="@id/description_text_once"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/open_settings_button" />
+
+    <Button
+        android:id="@+id/open_settings_button"
+        style="@style/NeutralOnboardingButton"
+        android:layout_marginTop="16dp"
+        android:text="@string/onboarding_private_browsing_button"
+        app:layout_constraintTop_toBottomOf="@id/description_text_always"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
