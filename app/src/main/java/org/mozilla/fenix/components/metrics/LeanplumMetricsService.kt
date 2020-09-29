@@ -173,7 +173,6 @@ class LeanplumMetricsService(
                 LeanplumInternal.setCalledStart(true)
                 LeanplumInternal.setHasStarted(true)
                 LeanplumInternal.setStartedInBackground(true)
-
                 Log.i(LOGTAG, "Started Leanplum with deviceId ${Leanplum.getDeviceId()} and userId ${Leanplum.getUserId()}")
             }
         }
