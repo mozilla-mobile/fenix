@@ -103,7 +103,10 @@ class LeanplumMetricsService(
     @Suppress("ComplexMethod")
     override fun start() {
 
-        if (!application.settings().isMarketingTelemetryEnabled) return
+        if (!application.settings().isMarketingTelemetryEnabled) {
+            Log.i(LOGTAG, "Not starting Leanplum because marketing telemetry is disabled")
+            return
+        }
 
         Log.i(LOGTAG, "Starting Leanplum with device id: $deviceId")
 
@@ -173,8 +176,8 @@ class LeanplumMetricsService(
                 LeanplumInternal.setCalledStart(true)
                 LeanplumInternal.setHasStarted(true)
                 LeanplumInternal.setStartedInBackground(true)
-                Log.i(LOGTAG, "Started Leanplum with deviceId ${Leanplum.getDeviceId()}"
-                        + " and userId ${Leanplum.getUserId()}")
+                Log.i(LOGTAG, "Started Leanplum with deviceId ${Leanplum.getDeviceId()}" +
+                        " and userId ${Leanplum.getUserId()}")
             }
         }
     }
