@@ -10,13 +10,16 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.custom_search_engine.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
@@ -33,7 +36,10 @@ import java.util.Locale
 /**
  * Fragment to enter a custom search engine name and URL template.
  */
-class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine) {
+class EditCustomSearchEngineFragment
+    : Fragment(R.layout.fragment_add_search_engine),
+      CoroutineScope by CoroutineScope(Job() + IO)
+{
 
     private val args by navArgs<EditCustomSearchEngineFragmentArgs>()
 
@@ -92,42 +98,10 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         val name = edit_engine_name.text?.toString()?.trim() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
-        var hasError = false
-        if (name.isEmpty()) {
-            custom_search_engine_name_field.error = resources
-                .getString(R.string.search_add_custom_engine_error_empty_name)
-            hasError = true
-        }
-
-        val existingIdentifiers = requireComponents
-            .search
-            .provider
-            .allSearchEngineIdentifiers()
-            .map { it.toLowerCase(Locale.ROOT) }
-
-        val nameHasChanged = name != args.searchEngineIdentifier
-
-        if (existingIdentifiers.contains(name.toLowerCase(Locale.ROOT)) && nameHasChanged) {
-            custom_search_engine_name_field.error = resources
-                .getString(R.string.search_add_custom_engine_error_existing_name, name)
-            hasError = true
-        }
-
-        if (searchString.isEmpty()) {
-            custom_search_engine_search_string_field
-                .error = resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
-            hasError = true
-        }
-
-        if (!searchString.contains("%s")) {
-            custom_search_engine_search_string_field
-                .error = resources.getString(R.string.search_add_custom_engine_error_missing_template)
-            hasError = true
-        }
-
+        val hasError = checkErrors(name, searchString)
         if (hasError) { return }
 
-        viewLifecycleOwner.lifecycleScope.launch(Main) {
+        lifecycleScope.launch(Main) {
             val result = withContext(IO) {
                 SearchStringValidator.isSearchStringValid(
                     requireComponents.core.client,
@@ -167,7 +141,47 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         }
     }
 
-    companion object {
-        private const val DPS_TO_INCREASE = 20
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun checkErrors(name: String, searchString: String): Boolean {
+        var existingIdentifiers: List<String> = listOf()
+        lifecycleScope.launch {
+            existingIdentifiers = requireComponents
+                .search
+                .provider
+                .allSearchEngineIdentifiers()
+                .map { it.toLowerCase(Locale.ROOT) }
+        }
+
+        val nameHasChanged = name != args.searchEngineIdentifier
+
+        val hasError = when {
+            name.isEmpty() -> {
+                custom_search_engine_name_field.error = resources
+                    .getString(R.string.search_add_custom_engine_error_empty_name)
+                true
+            }
+            existingIdentifiers.contains(name.toLowerCase(Locale.ROOT)) && nameHasChanged -> {
+                custom_search_engine_name_field.error =
+                    String.format(
+                        resources.getString(
+                            R.string.search_add_custom_engine_error_existing_name
+                        ), name
+                    )
+                true
+            }
+            searchString.isEmpty() -> {
+                custom_search_engine_search_string_field.error =
+                    resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
+                true
+            }
+            !searchString.contains("%s") -> {
+                custom_search_engine_search_string_field.error =
+                    resources.getString(R.string.search_add_custom_engine_error_missing_template)
+                true
+            }
+            else -> false
+        }
+
+        return hasError
     }
 }

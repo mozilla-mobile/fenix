@@ -54,11 +54,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     }
 
     suspend fun reload(context: Context) {
-        val installedEngines = context.components.search.provider.installedSearchEngines(context).list
-        val customEngines = context.components.search.provider.customSearchEngines.await().list
-
-        val fullList = installedEngines + customEngines
-        searchEngineList = SearchEngineList(list = fullList, default = fullList[0])
+        searchEngineList = context.components.search.provider.installedSearchEngines(context)
+//        val installedEngines = context.components.search.provider.installedSearchEngines(context).list
+//        val customEngines = context.components.search.provider.customSearchEngines.await().list
+//        val fullList = installedEngines + customEngines
+//        searchEngineList = SearchEngineList(list = fullList, default = null)
 
         refreshSearchEngineViews(context)
     }
