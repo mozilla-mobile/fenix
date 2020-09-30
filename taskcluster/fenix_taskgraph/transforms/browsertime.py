@@ -124,3 +124,18 @@ def fill_email_data(config, tasks):
             email["subject"] = email["subject"].format(**format_kwargs)
 
         yield task
+
+
+@transforms.add
+def filter_ytp_tests(config, tasks):
+    """Youtube-playback AV1, H264 and VP9 tests should run on P2 only"""
+    for task in tasks:
+        test_platform = task['treeherder']['platform']
+        test_name = task['name']
+        if "AV1" in test_name or "VP9" in test_name:
+            if 'android-hw-p2' in test_platform:
+                yield task
+            else:
+                continue
+
+        yield task
