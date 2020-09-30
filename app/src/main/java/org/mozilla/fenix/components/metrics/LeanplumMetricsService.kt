@@ -103,7 +103,7 @@ class LeanplumMetricsService(
     @Suppress("ComplexMethod")
     override fun start() {
 
-        if (!application.settings().isMarketingTelemetryEnabled) { return }
+        if (!application.settings().isMarketingTelemetryEnabled) return
 
         Log.i(LOGTAG, "Starting Leanplum with device id: $deviceId")
 
