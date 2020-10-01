@@ -43,6 +43,8 @@ class SearchFragmentStoreTest {
         MockKAnnotations.init(this)
         every { activity.browsingModeManager } returns object : BrowsingModeManager {
             override var mode: BrowsingMode = BrowsingMode.Normal
+            var listener: (BrowsingMode) -> Unit = {}
+            override fun addListener(action: (BrowsingMode) -> Unit) { listener = action }
         }
         every { components.settings } returns settings
         every { components.search.provider } returns searchProvider

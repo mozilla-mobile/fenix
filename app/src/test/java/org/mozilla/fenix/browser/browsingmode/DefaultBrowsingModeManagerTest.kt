@@ -27,7 +27,8 @@ class DefaultBrowsingModeManagerTest {
     fun before() {
         MockKAnnotations.init(this)
 
-        manager = DefaultBrowsingModeManager(initMode, settings, callback)
+        manager = DefaultBrowsingModeManager(initMode, settings)
+        manager.addListener(callback)
         every { settings.lastKnownMode = any() } just Runs
     }
 

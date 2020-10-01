@@ -23,6 +23,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.perf.StartupManager
 
 @RunWith(FenixRobolectricTestRunner::class)
 class HomeActivityTest {
@@ -70,12 +71,12 @@ class HomeActivityTest {
 
     @Test
     fun `isActivityColdStarted returns true for null savedInstanceState and not launched from history`() {
-        assertTrue(activity.isActivityColdStarted(Intent(), null))
+        assertTrue(StartupManager.isActivityColdStarted(Intent(), null))
     }
 
     @Test
     fun `isActivityColdStarted returns false for valid savedInstanceState and not launched from history`() {
-        assertFalse(activity.isActivityColdStarted(Intent(), Bundle()))
+        assertFalse(StartupManager.isActivityColdStarted(Intent(), Bundle()))
     }
 
     @Test
@@ -84,7 +85,7 @@ class HomeActivityTest {
             flags = flags or Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
         }
 
-        assertFalse(activity.isActivityColdStarted(startingIntent, null))
+        assertFalse(StartupManager.isActivityColdStarted(startingIntent, null))
     }
 
     @Test
@@ -93,6 +94,6 @@ class HomeActivityTest {
             flags = flags or Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
         }
 
-        assertFalse(activity.isActivityColdStarted(startingIntent, Bundle()))
+        assertFalse(StartupManager.isActivityColdStarted(startingIntent, Bundle()))
     }
 }

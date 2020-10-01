@@ -6,4 +6,8 @@ package org.mozilla.fenix.browser.browsingmode
 
 data class SimpleBrowsingModeManager(
     override var mode: BrowsingMode
-) : BrowsingModeManager
+) : BrowsingModeManager {
+
+    var listener: (BrowsingMode) -> Unit = {}
+    override fun addListener(action: (BrowsingMode) -> Unit) { listener = action }
+}
