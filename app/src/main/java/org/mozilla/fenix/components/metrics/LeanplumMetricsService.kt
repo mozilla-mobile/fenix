@@ -88,10 +88,35 @@ class LeanplumMetricsService(
         application.getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
     }
 
+    private val preferencesFennec = strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+        application.getSharedPreferences(FENNEC_PREFERENCE_NAME, MODE_PRIVATE)
+    }
+
     @VisibleForTesting
     internal val deviceId by lazy {
+        // Check if this is a migrated build with a Leanplum deviceId left over from Fennec.
+        // In that case, we must use Fennec's Leanplum deviceId for Leanplum to work.
+        // As per Leanplum's documentation, once set once, deviceId can not change while application
+        // is installed. See https://github.com/mozilla-mobile/fenix/issues/15586
+        val fennecDeviceIdMigrated = preferences.getBoolean(MIGRATED_FENNEC_DEVICE_ID, false)
+        if (!fennecDeviceIdMigrated) {
+            val fennecDeviceId = preferencesFennec.getString(FENNEC_DEVICE_ID_KEY, null)
+            val editor = preferences
+                .edit()
+                .putBoolean(MIGRATED_FENNEC_DEVICE_ID, true)
+            if (fennecDeviceId == null) {
+                Log.i(LOGTAG, "No Fennec Leanplum deviceId to migrate.")
+            } else {
+                Log.i(LOGTAG, "Migrating Fennec's Leanplum deviceId: $fennecDeviceId")
+                editor.putString(DEVICE_ID_KEY, fennecDeviceId)
+            }
+            editor.apply()
+        }
+
         var deviceId = preferences.getString(DEVICE_ID_KEY, null)
 
+        // If this is a fresh install (not a migrated one) that's being launched for the first time,
+        // generate and store new device ID.
         if (deviceId == null) {
             deviceId = deviceIdGenerator.invoke()
             preferences.edit().putString(DEVICE_ID_KEY, deviceId).apply()
@@ -268,7 +293,10 @@ class LeanplumMetricsService(
             "jpn" // Japanese
         )
 
+        private const val FENNEC_PREFERENCE_NAME = "org.mozilla.gecko.BrowserApp"
+        private const val FENNEC_DEVICE_ID_KEY = "android.not_a_preference.leanplum.device_id"
         private const val PREFERENCE_NAME = "LEANPLUM_PREFERENCES"
         private const val DEVICE_ID_KEY = "LP_DEVICE_ID"
+        private const val MIGRATED_FENNEC_DEVICE_ID = "FENNEC_LP_DEVICE_ID_MIGRATED"
     }
 }
