@@ -29,6 +29,8 @@ enum class BrowsingMode {
 
 interface BrowsingModeManager {
     var mode: BrowsingMode
+
+    fun addListener(action: (BrowsingMode) -> Unit)
 }
 
 /**
@@ -36,15 +38,17 @@ interface BrowsingModeManager {
  */
 class DefaultBrowsingModeManager(
     private var _mode: BrowsingMode,
-    private val settings: Settings,
-    private val modeDidChange: (BrowsingMode) -> Unit
+    private val settings: Settings
 ) : BrowsingModeManager {
 
+    var listener: (BrowsingMode) -> Unit = {}
     override var mode: BrowsingMode
         get() = _mode
         set(value) {
             _mode = value
-            modeDidChange(value)
+            listener(value)
             settings.lastKnownMode = value
         }
+
+    override fun addListener(action: (BrowsingMode) -> Unit) { listener = action }
 }

@@ -35,10 +35,6 @@ open class ExternalAppBrowserActivity : HomeActivity() {
 
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
 
-    override fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onExternalAppBrowserOnCreate(safeIntent, hasSavedInstanceState)
-    }
-
     override fun getNavDirections(
         from: BrowserDirection,
         customTabSessionId: String?

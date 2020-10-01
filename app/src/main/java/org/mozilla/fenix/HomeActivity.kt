@@ -30,7 +30,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,7 +47,6 @@ import mozilla.components.feature.privatemode.notification.PrivateNotificationFe
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
-import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.call
 import mozilla.components.support.ktx.android.content.email
 import mozilla.components.support.ktx.android.content.share
@@ -58,14 +56,10 @@ import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
-import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
-import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
@@ -84,8 +78,7 @@ import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
-import org.mozilla.fenix.perf.Performance
-import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.StartupManager
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -99,10 +92,8 @@ import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
 import org.mozilla.fenix.sync.SyncedTabsFragmentDirections
 import org.mozilla.fenix.tabtray.TabTrayDialogFragment
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentDirections
-import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.BrowsersCache
-import java.lang.ref.WeakReference
 
 /**
  * The main activity of the application. The application is primarily a single Activity (this one)
@@ -149,94 +140,23 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private lateinit var navigationToolbar: Toolbar
 
     final override fun onCreate(savedInstanceState: Bundle?) {
-        components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
-        // There is disk read violations on some devices such as samsung and pixel for android 9/10
-        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            super.onCreate(savedInstanceState)
-        }
 
-        // Diagnostic breadcrumb for "Display already aquired" crash:
-        // https://github.com/mozilla-mobile/android-components/issues/7960
-        breadcrumb(
-            message = "onCreate()",
-            data = mapOf(
-                "recreated" to (savedInstanceState != null).toString(),
-                "intent" to (intent?.action ?: "null")
-            )
-        )
-
-        components.publicSuffixList.prefetch()
-
-        setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
-        setContentView(R.layout.activity_home)
-
-        // Must be after we set the content view
-        if (isVisuallyComplete) {
-            components.performance.visualCompletenessQueue
-                .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
-        }
-
-        sessionObserver = UriOpenedObserver(this)
-
-        checkPrivateShortcutEntryPoint(intent)
-        privateNotificationObserver = PrivateNotificationFeature(
-            applicationContext,
-            components.core.store,
-            PrivateNotificationService::class
-        ).also {
-            it.start()
-        }
-
-        if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any {
-                it.process(
-                    intent,
-                    navHost.navController,
-                    this.intent
-                )
+        val startupData = StartupManager.activityOnCreate(this,
+                                            savedInstanceState,
+                                            isVisuallyComplete,
+                                            webExtensionPopupFeature,
+                                            ::getBreadcrumbMessage,
+                                            this::externalSourceIntentProcessors) {
+            // There is disk read violations on some devices such as samsung and pixel for android 9/10
+            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                super.onCreate(savedInstanceState)
             }
         }
 
-        Performance.processIntentIfPerformanceTest(intent, this)
-
-        if (settings().isTelemetryEnabled) {
-            lifecycle.addObserver(
-                BreadcrumbsRecorder(
-                    components.analytics.crashReporter,
-                    navHost.navController, ::getBreadcrumbMessage
-                )
-            )
-
-            val safeIntent = intent?.toSafeIntent()
-            safeIntent
-                ?.let(::getIntentSource)
-                ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
-            // record on cold startup
-            safeIntent
-                ?.let(::getIntentAllSource)
-                ?.also { components.analytics.metrics.track(Event.AppReceivedIntent(it)) }
-        }
-        supportActionBar?.hide()
-
-        lifecycle.addObservers(
-            webExtensionPopupFeature,
-            StartupTimeline.homeActivityLifecycleObserver
-        )
-
-        if (shouldAddToRecentsScreen(intent)) {
-            intent.removeExtra(START_IN_RECENTS_SCREEN)
-            moveTaskToBack(true)
-        }
-
-        captureSnapshotTelemetryMetrics()
-
-        startupTelemetryOnCreateCalled(intent.toSafeIntent(), savedInstanceState != null)
-
-        StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
-    }
-
-    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+        themeManager = startupData.themeManager
+        browsingModeManager = startupData.browsingModeManager
+        sessionObserver = startupData.sessionObserve
+        privateNotificationObserver = startupData.privateNotificationService
     }
 
     override fun onRestart() {
@@ -571,38 +491,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     /**
-     * Determines whether the activity should be pushed to be backstack (i.e., 'minimized' to the recents
-     * screen) upon starting.
-     * @param intent - The intent that started this activity. Is checked for having the 'START_IN_RECENTS_SCREEN'-extra.
-     * @return true if the activity should be started and pushed to the recents screen, false otherwise.
-     */
-    private fun shouldAddToRecentsScreen(intent: Intent?): Boolean {
-        intent?.toSafeIntent()?.let {
-            return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
-        }
-        return false
-    }
-
-    private fun checkPrivateShortcutEntryPoint(intent: Intent) {
-        if (intent.hasExtra(OPEN_TO_SEARCH) &&
-            (intent.getStringExtra(OPEN_TO_SEARCH) ==
-                    StartSearchIntentProcessor.STATIC_SHORTCUT_NEW_PRIVATE_TAB ||
-                    intent.getStringExtra(OPEN_TO_SEARCH) ==
-                    StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT)
-        ) {
-            PrivateNotificationService.isStartedFromPrivateShortcut = true
-        }
-    }
-
-    private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
-        settings().lastKnownMode = mode
-        browsingModeManager = createBrowsingModeManager(mode)
-        themeManager = createThemeManager()
-        themeManager.setActivityTheme(this)
-        themeManager.applyStatusBarTheme(this)
-    }
-
-    /**
      * Returns the [supportActionBar], inflating it if necessary.
      * Everyone should call this instead of supportActionBar.
      */
@@ -761,16 +649,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
-        return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
-            themeManager.currentTheme = newMode
-        }
-    }
-
-    protected open fun createThemeManager(): ThemeManager {
-        return DefaultThemeManager(browsingModeManager.mode, this)
-    }
-
     private fun openPopup(webExtensionState: WebExtensionState) {
         val action = NavGraphDirections.actionGlobalWebExtensionActionPopupFragment(
             webExtensionId = webExtensionState.id,
@@ -785,33 +663,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      */
     fun setVisualCompletenessQueueReady() {
         isVisuallyComplete = true
-    }
-
-    private fun captureSnapshotTelemetryMetrics() = CoroutineScope(Dispatchers.IO).launch {
-        // PWA
-        val recentlyUsedPwaCount = components.core.webAppShortcutManager.recentlyUsedWebAppsCount(
-            activeThresholdMs = PWA_RECENTLY_USED_THRESHOLD
-        )
-        if (recentlyUsedPwaCount == 0) {
-            Metrics.hasRecentPwas.set(false)
-        } else {
-            Metrics.hasRecentPwas.set(true)
-            // This metric's lifecycle is set to 'application', meaning that it gets reset upon
-            // application restart. Combined with the behaviour of the metric type itself (a growing counter),
-            // it's important that this metric is only set once per application's lifetime.
-            // Otherwise, we're going to over-count.
-            Metrics.recentlyUsedPwaCount.add(recentlyUsedPwaCount)
-        }
-    }
-
-    @VisibleForTesting
-    internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
-        // First time opening this activity in the task.
-        // Cold start / start from Recents after back press.
-        return activityIcicle == null &&
-                // Activity was restarted from Recents after it was destroyed by Android while in background
-                // in cases of memory pressure / "Don't keep activities".
-                startingIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
     }
 
     companion object {
