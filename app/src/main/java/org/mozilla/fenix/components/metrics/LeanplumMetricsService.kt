@@ -104,6 +104,8 @@ class LeanplumMetricsService(
 
         if (!application.settings().isMarketingTelemetryEnabled) return
 
+        Log.i(LOGTAG, "Starting Leanplum with device id: $deviceId")
+
         Leanplum.setIsTestModeEnabled(false)
         Leanplum.setApplicationContext(application)
         Leanplum.setDeviceId(deviceId)
@@ -170,6 +172,8 @@ class LeanplumMetricsService(
                 LeanplumInternal.setCalledStart(true)
                 LeanplumInternal.setHasStarted(true)
                 LeanplumInternal.setStartedInBackground(true)
+                Log.i(LOGTAG, "Started Leanplum with deviceId ${Leanplum.getDeviceId()}" +
+                        " and userId ${Leanplum.getUserId()}")
             }
         }
     }
@@ -184,6 +188,9 @@ class LeanplumMetricsService(
         // We compare the local Leanplum device ID against the "uid" query parameter and only
         // accept deep links where both values match.
         val uid = deepLink.getQueryParameter("uid")
+        if (uid != deviceId) {
+            Log.i(LOGTAG, "Rejecting Leanplum deep link because uid $uid does not match $deviceId")
+        }
         return uid == deviceId
     }
 
