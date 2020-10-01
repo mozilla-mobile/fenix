@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -292,6 +293,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 }
             }
         }
+
+        val startTime = SystemClock.elapsedRealtimeNanos()
+        components.core.engine.profiler?.addMarker("TestMarkerTime")
+        val endTime = SystemClock.elapsedRealtimeNanos()
+        android.util.Log.e("lol", "average ${endTime - startTime}")
     }
 
     override fun onStart() {
