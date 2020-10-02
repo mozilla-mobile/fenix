@@ -145,9 +145,29 @@ User Attributes
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/4694#issuecomment-520591275">#4694</a></td>
   </tr>
   <tr>
+    <td>`tracking_protection_enabled`</td>
+    <td>A boolean indicating that the user has enabled tracking protection</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/11965#issuecomment-649731798">#11965</a></td>
+  </tr>
+  <tr>
+    <td>`tracking_protection_setting`</td>
+    <td>A string indicating the level at which the user has set tracking protection. Possible values are `none`, `standard`, `strict` and `custom`</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/11965#issuecomment-649731798">#11965</a></td>
+  </tr>
+  <tr>
     <td>`fenix`</td>
     <td>A boolean indicating that this is a Fenix installation</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/8208">#8208</a></td>
+  </tr>
+  <tr>
+      <td>`installed_addons`</td>
+      <td>A boolean indicating that there are addons installed</td>
+      <td><a href="https://github.com/mozilla-mobile/fenix/pull/13233">#13233</a></td>
+  </tr>
+  <tr>
+      <td>`enabled_addons`</td>
+      <td>A boolean indicating that there are addons enabled</td>
+      <td><a href="https://github.com/mozilla-mobile/fenix/pull/13233">#13233</a></td>
   </tr>
 </table>
 
@@ -205,12 +225,22 @@ Here is the list of current Events sent, which can be found here in the code bas
     <td>`E_Collection_Tab_Opened`</td>
     <td>The user opened a tab from a previously created collection</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
-  </tr> 
+  </tr>
+  <tr>
+    <td>`E_FxA_New_Signup`</td>
+    <td>The user completed the signup process to new FxA account</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr>
   <tr>
     <td>`E_Sign_In_FxA`</td>
     <td>The user successfully signed in to FxA</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
-  </tr> 
+  </tr>
+  <tr>
+    <td>`E_Sign_In_FxA_Fennec_to_Fenix`</td>
+    <td>The user successfully signed in to FxA using previously signed in Fennec account</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/4626#issuecomment-519691332">#4626</a></td>
+  </tr>
   <tr>
     <td>`E_Sign_Out_FxA`</td>
     <td>The user successfully signed out of FxA</td>
@@ -231,6 +261,26 @@ Here is the list of current Events sent, which can be found here in the code bas
     <td>The user has just migrated from Fennec to Fenix.</td>
     <td><a href="https://github.com/mozilla-mobile/fenix/pull/8208#issuecomment-584040440">#8208</a></td>
   </tr>
+  <tr>
+    <td>`E_Addon_Installed`</td>
+    <td>The user has installed an addon from the addon management page.</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/12136#issuecomment-651922547">#12136</a></td>
+  </tr>
+  <tr>
+    <td>`E_Search_Widget_Added`</td>
+    <td>The user has installed the search widget to their homescreen.</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/13003">#13003</a></td>
+  </tr>
+  <tr>
+    <td>`E_Changed_Default_To_Fenix`</td>
+    <td>The user has changed their default browser to Fenix while Fenix was in the background and then resumed the app.</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/13003">#13003</a></td>
+  </tr>
+  <tr>
+    <td>`E_Changed_ETP`</td>
+    <td>The user has changed their enhanched tracking protection setting.</td>
+    <td><a href="https://github.com/mozilla-mobile/fenix/pull/13003">#13003</a></td>
+  </tr>
 </table>
 
 Deep links
@@ -248,6 +298,18 @@ Here is the list of current deep links available, which can be found here in the
   <tr>
     <td>`fenix://home`</td>
     <td>Opens to the Fenix home screen</td>
+  </tr>
+  <tr>
+    <td>`fenix://urls_bookmarks`</td>
+    <td>Opens to the list of the user's bookmarks at its root</td>
+  </tr>
+  <tr>
+    <td>`fenix://urls_history`</td>
+    <td>Opens to the list of pages the user has visited</td>
+  </tr>
+  <tr>
+    <td>`fenix://home_collections`</td>
+    <td>Opens to the list of collections the user has saved. It is implemented as `fenix://home`</td>
   </tr>
   <tr>
     <td>`fenix://settings`</td>
@@ -270,6 +332,22 @@ Here is the list of current deep links available, which can be found here in the
     <td>Opens to the delete browsing data settings screen</td>
   </tr>
   <tr>
+    <td>`fenix://settings_addon_manager`</td>
+    <td>Opens to the settings page to install and manage addons</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_logins`</td>
+    <td>Opens to the Logins and passwords settings page configure how logins are treated. This is *not* the list of actual logins</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_tracking_protection`</td>
+    <td>Opens to the Enhanced Tracking Protection settings page</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_privacy`</td>
+    <td>Opens to the settings page which contains the privacy settings. Currently, this is the same as `fenix://settings`</td>
+  </tr>
+  <tr>
     <td>`fenix://enable_private_browsing`</td>
     <td>Opens to the Fenix home screen and enables private browsing</td>
   </tr>
@@ -280,6 +358,14 @@ Here is the list of current deep links available, which can be found here in the
   <tr>
     <td>`fenix://make_default_browser`</td>
     <td>Opens to the Android default apps settings screen. **Only works on Android API >=24**</td>
+  </tr>
+  <tr>
+    <td>`fenix://settings_notifications`</td>
+    <td>Opens to the Android notification settings screen for Fenix. **Only works on Android API >=24**</td>
+  </tr>
+  <tr>
+    <td>`fenix://install_search_widget`</td>
+    <td>Adds the search widget to the users launcher homescreen. **Only works on Android API >=26**</td>
   </tr>
 </table>
 

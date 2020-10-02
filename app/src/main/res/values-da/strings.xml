@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_2">Privat Firefox Preview</string>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_3">Firefox Preview (privat)</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">Privat %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (Privat)</string>
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Flere indstillinger</string>
@@ -13,29 +13,92 @@
     <string name="content_description_disable_private_browsing_button">Deaktiver privat browsing</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Søg eller indtast adresse</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Ingen åbne faneblade</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Dine åbne faneblade vil blive vist her.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Dine private faneblade vil blive vist her.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 åbent faneblad. Tryk for at skifte faneblade.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s åbne faneblade. Tryk for at skifte faneblade.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d valgt</string>
+
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Tilføj ny samling</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Navn</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Vælg samling</string>
+
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Afslut flervalgs-tilstand</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Gem valgte faneblade til samling</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">%1$s valgt</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s ikke valgt</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Afsluttede flervalgs-tilstand</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Åbnede flervalgs-tilstand - vælg faneblade at gemme til en samling</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Valgt</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s er lavet af Mozilla.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
     <string name="private_browsing_title">Du befinder dig i en privat session</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description">%1$s rydder din søge- og browserhistorik, når du afslutter programmet, eller når du lukker alle private faneblade. Det gør det nemmere at holde din færden på nettet for dig selv, hvis andre 
-        bruger den samme computer. Websteder og din internetudbyder kan dog stadig finde ud af, hvad du foretager dig.</string>
+    <string name="private_browsing_placeholder_description_2">%1$s rydder din søge- og browserhistorik fra private faneblade, når du lukker dem, eller når du afslutter programmet. Det gør det nemmere at holde din færden på nettet for dig selv, hvis andre bruger den samme computer. Websteder og din internetudbyder kan dog stadig finde ud af, hvad du foretager dig.</string>
     <string name="private_browsing_common_myths">Almindelige myter om privat browsing</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Slet session</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Tilføj en genvej til at åbne private faneblade fra din startskærm.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Tilføj genvej</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Nej tak</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Åbn Firefox hurtigere. Tilføj en widget til din startskærm.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Tilføj widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Ikke nu</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Du kan sætte Firefox til automatisk at åbne links i apps.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Gå til indstillinger</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Afvis</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Adgang til kamera er nødvendig. Gå til Indstillinger i Android, tryk på Tilladelser, og tryk så på Tillad.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Gå til indstillinger</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Afvis</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Luk automatisk åbne faneblade, hvis de ikke har været vist den seneste dag, uge eller måned.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Vis indstillinger</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Afvis</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -79,6 +142,10 @@
     <string name="browser_menu_add_to_homescreen">Føj til startskærm</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Installer</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Synkroniserede faneblade</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Synkroniser igen</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Find på siden</string>
     <!-- Browser menu button that creates a private tab -->
@@ -87,8 +154,6 @@
     <string name="browser_menu_new_tab">Nyt faneblad</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Gem til samling</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Anmeld problem med webstedet</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Del</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -102,8 +167,10 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Leveret af %1$s</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Læsevisning</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Luk læsevisning</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Åbn i app</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -126,14 +193,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Skan</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Genveje</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Søgetjeneste</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Indstillinger for søgetjenester</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Søg med</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Søg denne gang med:</string>
+    <string name="search_engines_search_with">Søg denne gang med:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Udfyld link fra udklipsholderen</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -168,7 +233,7 @@
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Standard-søgetjeneste</string>
     <!-- Preference for settings related to Search -->
-    <string name="preferences_search">Søg</string>
+    <string name="preferences_search">Søgning</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Adressefelt</string>
     <!-- Preference linking to help about Fenix -->
@@ -187,7 +252,7 @@
     <!-- Preference for settings related to saved credit cards and addresses -->
     <string name="preferences_credit_cards_addresses">Betalingskort og adresser</string>
     <!-- Preference for settings related to changing the default browser -->
-    <string name="preferences_set_as_default_browser">Angiv som standard-browser</string>
+    <string name="preferences_set_as_default_browser">Angiv som standardbrowser</string>
     <!-- Preference category for advanced settings -->
     <string name="preferences_category_advanced">Avanceret</string>
     <!-- Preference category for privacy settings -->
@@ -200,6 +265,10 @@
     <string name="preferences_private_browsing_options">Privat browsing</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Åbn links i et privat faneblad</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">Tillad skærmbilleder i privat browsing</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Hvis du tillader det, vil private faneblade også være synlige, når flere apps er åbne</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Tilføj genvej til privat browsing</string>
     <!-- Preference for accessibility -->
@@ -218,6 +287,10 @@
     <string name="preferences_toolbar">Værktøjslinje</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Startside</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Bevægelser</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Tilpas</string>
     <!-- Preference description for banner about signing in -->
@@ -237,25 +310,36 @@
     <!-- Preference category for developer tools -->
     <string name="developer_tools_category">Udviklerværktøj</string>
     <!-- Preference for developers -->
-    <string name="preferences_remote_debugging">Fjern-debugging vis USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Vis søge-genveje</string>
+    <string name="preferences_remote_debugging">Fjern-debugging via USB</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Vis søgetjenester</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Vis søgeforslag</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Vis stemme-søgning</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Vis i private sessioner</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
     <string name="preferences_show_clipboard_suggestions">Vis forslag fra udklipsholder</string>
     <!-- Preference title for switch preference to suggest browsing history when searching -->
-    <string name="preferences_search_browsing_history">Søg i søgehistorik</string>
+    <string name="preferences_search_browsing_history">Søg i browserhistorik</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Søg i bogmærker</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Søg i synkroniserede faneblade</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Kontoindstillinger</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Autofuldfør adresser</string>
     <!-- Preference for open links in third party apps -->
-    <string name="preferences_open_links_in_apps">Åbn links i app</string>
+    <string name="preferences_open_links_in_apps">Åbn links i apps</string>
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Ekstern håndtering af filhentning</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Tilføjelser</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Meddelelser</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -268,6 +352,8 @@
     <string name="preferences_sync_bookmarks">Bogmærker</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Logins</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Åbne faneblade</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Log ud</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -284,16 +370,17 @@
     <string name="sync_last_synced_summary">Sidst synkroniseret: %s</string>
     <!-- Label summary showing never synced -->
     <string name="sync_never_synced_summary">Sidst synkroniseret: aldrig</string>
+
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
-    <string name="default_device_name">%s på %s %s</string>
+    <string name="default_device_name_2">%1$s på %2$s %3$s</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">Modtagne faneblade</string>
     <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="fxa_received_tab_channel_description">Notifikationer for faneblade modtaget fra andre Firefox-enheder.</string>
+    <string name="fxa_received_tab_channel_description">Meddelelser for faneblade modtaget fra andre Firefox-enheder.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">Modtaget faneblad</string>
     <!-- When multiple tabs have been received -->
@@ -357,7 +444,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Besøg <b>firefox.com/pair</b> med Firefox på din computer for at få din QR-kode.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Skan OR-koden vist på <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Åbn kamera</string>
     <!-- Button to cancel pairing -->
@@ -379,6 +466,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Samme som enhedens tema</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Træk for at genindlæse</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Scroll for at skjule værktøjslinje</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Stryg værktøjslinje sidelæns for at skifte faneblade</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Stryg værktøjslinje op for at åbne faneblade</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessioner</string>
@@ -398,19 +495,44 @@
     <string name="library_desktop_bookmarks_unfiled">Andre bogmærker</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Historik</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Synkroniserede faneblade</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Læseliste</string>
 
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Søg</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Arkiv</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Indstillinger</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Menu for historik-elementer</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Luk</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Nyligt lukkede faneblade</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Vis hele historikken</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d faneblade</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d faneblad</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Ingen nyligt lukkede faneblade her</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Luk faneblade</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Manuelt</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Efter en dag</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Efter en uge</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Efter en måned</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -421,6 +543,30 @@
     <string name="tabs_header_private_tabs_title">Private faneblade</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Tilføj faneblad</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Tilføj privat faneblad</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Privat</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Åbne faneblade</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Gem til samling</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Del alle faneblade</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Nyligt lukkede faneblade</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Fanebladsindstillinger</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Luk alle faneblade</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Nyt faneblad</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Gå til startsiden</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Skift tilstand for faneblade</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Fjern faneblad fra samling</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Luk faneblad</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -432,7 +578,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Del faneblade</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Gem til samling</string>
+    <string name="tabs_menu_save_to_collection1">Gem faneblade til samling</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Faneblads-menu</string>
     <!-- Tab menu item to share the tab -->
@@ -456,11 +602,23 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Fjern</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Slet fra historik</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Privat tilstand)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Gem</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Slet historik</string>
     <!-- Text for the dialog to confirm clearing all history -->
     <string name="history_delete_all_dialog">Er du sikker på, at du vil slette din historik?</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">Historikken er ryddet</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">%1$s slettet</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Ryd</string>
     <!-- History overflow menu copy button -->
@@ -490,6 +648,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Ingen historik</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Ingen filhentninger her</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d valgt</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">%1$s kan ikke indlæse siden.</string>
@@ -515,6 +680,12 @@
     <string name="bookmark_edit">Rediger bogmærke</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Vælg mappe</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">Er du sikker på, at du vil slette denne mappe?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s vil slette de valgte elementer.</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">%1$s slettet</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Tilføj mappe</string>
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
@@ -567,8 +738,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s blev slettet</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">Sletter valgte bogmærker</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">Bogmærker slettet</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Sletter valgte mapper</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">FORTRYD</string>
 
@@ -600,7 +773,7 @@
     <!-- Preference for altering the location access for all websites -->
     <string name="preference_phone_feature_location">Position</string>
     <!-- Preference for altering the notification access for all websites -->
-    <string name="preference_phone_feature_notification">Notifikation</string>
+    <string name="preference_phone_feature_notification">Meddelelser</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Spørg om tilladelse</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -631,16 +804,12 @@
     <string name="delete_browsing_data_quit_off">Fra</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Saml de ting, der er vigtige for dig. Gem åbne faneblade i en ny samling for at komme i gang.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Samlinger</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Samlings-menu</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Ingen samlinger</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Dine samlinger vil blive vist her.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Saml de ting, der betyder noget for dig.\nSaml relaterede søgninger, websteder og faneblade i grupper. Så kan du hurtigt finde dem igen.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Vælg faneblade</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -663,12 +832,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d faneblad valgt</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Faneblade gemt!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Samling gemt!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Faneblad gemt!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Luk</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Gem</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Vis</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Samling %d</string>
@@ -764,6 +938,10 @@
     <string name="qr_scanner_dialog_negative">AFVIS</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Er du sikker på, at du vil slette %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Hele samlingen bliver slettet, hvis du sletter dette faneblad. Du kan oprette nye samlinger når som helst.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Slet %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Slet</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -780,14 +958,14 @@
     <string name="preference_accessibility_font_size_title">Skriftstørrelse</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Automatisk skriftstørrelse</string>
+    <string name="preference_accessibility_auto_size_2">Automatisk skriftstørrelse</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Skriftstørrelsen vil være den samme som i dine Android-indstillinger. Deaktiver for selv at indstille skriftstørrelse her.</string>
 
     <!-- Title for the Delete browsing data preference -->
-    <string name="preferences_delete_browsing_data">Slet browser-data</string>
+    <string name="preferences_delete_browsing_data">Slet browserdata</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Åbn faneblade</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Åbne faneblade</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d faneblade</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -818,8 +996,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Sletter automatisk browserdata, når du vælger &quot;Afslut&quot; i hovedmenuen</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Sletter automatisk browserdata, når du vælger  \&quot;Afslut\&quot; i hovedmenuen</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Browserhistorik</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Afslut</string>
 
@@ -836,6 +1012,32 @@
     <string name="preferences_delete_browsing_data_snackbar">Browserdata slettet</string>
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Sletter browserdata…</string>
+
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">Firefox Preview er nu Firefox Nightly</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">Firefox Nightly bliver opdateret hver nat og har nye, eksperimentelle funktioner.
+        Nightly kan dog være ustabil nogle gange. Hent vores beta-version, hvis du vil have en mere stabil browser.</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Hent Firefox Beta til Android</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly er flyttet</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">Denne app modtager ikke længere sikkerhedsopdateringer. Stop med at bruge appen og skift til den nye Nightly.
+        \n\nOpret en Firefox-konto for at overføre dine bogmærker, logins og historik til en anden app.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">Skift til den nye Nightly</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly er flyttet</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">Denne app modtager ikke længere sikkerhedsopdateringer. Hent den nye Nightly og stop med at bruge denne app.
+        \n\nOpret en Firefox-konto for at overføre dine bogmærker, logins og historik til en anden app.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">Hent den nye Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -854,13 +1056,14 @@
     <string name="onboarding_whats_new_description">Har du spørgsmål om den nye version af %s? Vil du vide, hvad der er ændret?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Få svar her</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Få det meste ud af %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Begynd at synkronisere bogmærker, adgangskoder m.m. med din Firefox-konto.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Læs mere</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Du er logget ind som %s i en anden version af Firefox på denne telefon. Vil du logge ind med denne konto?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Du er logget ind som %s i en anden version af Firefox på denne enhed. Vil du logge ind med denne konto?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Ja, log mig ind</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -874,18 +1077,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Kunne ikke logge ind</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Beskyt dig selv</string>
+    <string name="onboarding_tracking_protection_header_2">Automatisk privatlivsbeskyttelse</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s hjælper dig med at forhindre websteder i at spore dig på nettet.</string>
+    <string name="onboarding_tracking_protection_description_2">Indstillinger for privatlivsbeskyttelse og sikkerhed blokerer sporings-mekanismer, skadelig software og virksomheder, der følger dig på nettet.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Standard</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Standard</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Blokerer færre sporings-teknologier, men gør det muligt for sider at indlæses normalt</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Blokerer færre sporings-mekanismer. Sider indlæses som normalt.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Striks (anbefalet)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Striks</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Blokerer flere sporings-teknologier for at opnå bedre beskyttelse og ydelse, men kan forhindre nogle websteder fra at fungere optimalt</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Blokerer flere sporings-mekanismer, reklamer og pop ups. Sider indlæses hurtigere, men noget funktionalitet virker måske ikke.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -948,8 +1153,12 @@
     <string name="sign_in_with_camera">Log in med dit kamera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Brug mail i stedet</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Ingen konto? <u>Opret en</u> for at synkronisere Firefox mellem enheder.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox vil ikke længere synkronisere med din konto, men sletter ikke dine browserdata på denne enhed.</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">%s vil ikke længere synkronisere med din konto, men sletter ikke dine data på denne enhed.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">Afbryd forbindelse</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -969,31 +1178,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Læs mere</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Standard</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Standard (anbefalet)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Standard</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Balanceret mellem beskyttelse og ydelse.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Sider indlæses normalt, men færre sporings-teknologier blokeres.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Blokerer færre sporings-mekanismer. Sider indlæses som normalt.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Hvad der bliver blokeret af standard-opsætningen af beskyttelse mod sporing</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Striks</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Striks (standard)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Stærkere beskyttelse mod sporing og hurtigere ydelse, men nogle websteder virker måske ikke ordentligt.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Striks (anbefalet)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Stærkere beskyttelse, men nogle websteder eller noget indhold indlæses måske ikke korrekt.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Blokerer flere sporings-mekanismer, reklamer og pop ups. Sider indlæses hurtigere, men noget funktionalitet virker måske ikke.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Hvad der bliver blokeret af striks beskyttelse mod sporing</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Tilpasset</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Vælg selv, hvilke sporings-teknologier og scripts der skal blokeres</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Vælg selv, hvilke sporings-teknologier og scripts der skal blokeres.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Hvad der bliver blokeret af tilpasset beskyttelse mod sporing</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1043,7 +1242,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Stopper indlæsning af eksterne reklamer, videoer og andet indhold, der indeholder sporings-kode. Kan påvirke nogle websteders funktionalitet.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s blokerer sporings-teknologier på dette websted, når skjoldet er lilla. Tryk på ikonet for at se, hvad der er blokeret.</string>
+    <string name="etp_onboarding_cfr_message">Når skjoldet er lilla, betyder det at %s har blokeret sporings-mekanismer på et websted. Tryk for mere info.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Beskyttelse er slået TIL for dette websted</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1063,8 +1262,16 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-biblioteker</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Sporing via omdirigeringer</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Rydder cookies, der sættes af omdirigeringer til websteder, der er kendt for at spore deres brugere.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Hjælp</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Nedbrud</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Privatlivspolitik</string>
     <!-- About page link text to open know your rights link -->
@@ -1106,7 +1313,7 @@
     <string name="add_to_homescreen_text_placeholder">Genvejsnavn</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Du kan nemt føje dette websted til din telefons startskærm for at have hurtig adgang til det og browse hurtigere med en app-lignende oplevelse.</string>
+    <string name="add_to_homescreen_description_2">Du kan nemt føje dette websted til din enheds startskærm for at have hurtig adgang til det og browse hurtigere med en app-lignende oplevelse.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Logins og adgangskoder</string>
@@ -1137,9 +1344,11 @@
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Undtagelser</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
-    <string name="preferences_passwords_exceptions_description_empty">Login og adgangskoder, der ikke er gemt, vises her.</string>
+    <string name="preferences_passwords_exceptions_description_empty">Logins og adgangskoder, der ikke er gemt, vises her.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Logins og adgangskoder vil ikke blive gemt for disse websteder.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Slet alle undtagelser</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Søg efter logins</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1174,10 +1383,16 @@
     <string name="logins_site_copied">Websted er kopieret til udklipsholder</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Kopier adgangskode</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Ryd adgangskode</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Kopier brugernavn</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Ryd brugernavn</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Kopier websted</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Åbn websted i browser</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Vis adgangskode</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1199,6 +1414,14 @@
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Aktiver for at tillade knibning og zoom, selv på websteder, der forhindrer denne gestus.</string>
 
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Navn (A-Å)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Senest brugt</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sortér menuen logins</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Tilføj søgetjeneste</string>
     <!-- Title of the Edit search engine screen -->
@@ -1219,7 +1442,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Søgestreng der skal anvendes</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_search_string_example">Erstat forespørgslen med “%s”, Eksempel: \n https://www.google.com/search?q= %s</string>
+    <string name="search_add_custom_engine_search_string_example">Erstat forespørgslen med “%s”, Eksempel: \n https://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Læs mere</string>
 
@@ -1290,8 +1513,77 @@
     <string name="certificate_info_verified_by">Bekræftet af: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Slet</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Rediger</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Er du sikker på, at du vil slette dette login?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Slet</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Login-indstillinger</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Det redigerbare tekstfelt for login’ets webadresse.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Det redigerbare tekstfelt for login’ets brugernavn.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Det redigerbare tekstfelt for login’ets adgangskode.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Gem ændringer til login.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Fortryd ændringer</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Rediger</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Adgangskode påkrævet</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Stemme-søgning</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Tal nu</string>
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Et login med dette brugernavn findes allerede</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Opret forbindelse til en ny enhed.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Godkend igen.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Aktiver synkronisering af faneblade.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Du har ikke nogen faneblade åbne i Firefox på dine andre enheder.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Se en liste med faneblade fra dine andre enheder.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Log ind på Sync</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Ingen åbne faneblade</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Grænsen for Mest besøgte websider er nået</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Fjern en webside for at erstatte den med en ny. Tryk og hold på websiden, og vælg så Fjern.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Ok, forstået</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Vis mest besøgte websteder</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Fjern</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Få det meste ud af %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Saml de ting, der betyder noget for dig</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Saml relaterede søgninger, websteder og faneblade i grupper. Så kan du hurtigt finde dem igen.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Du er logget ind som %s i en anden version af Firefox på denne telefon. Vil du logge ind med denne konto?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Du kan nemt føje dette websted til din telefons startskærm for at have hurtig adgang til det og browse hurtigere med en app-lignende oplevelse.</string>
+
+    </resources>

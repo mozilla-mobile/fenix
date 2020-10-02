@@ -21,6 +21,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 import java.io.File
 
 /**
@@ -55,6 +56,7 @@ class DownloadTest {
         }
     }
 
+    @Suppress("Deprecation")
     @After
     fun tearDown() {
         mockWebServer.shutdown()
@@ -73,7 +75,7 @@ class DownloadTest {
     }
 
     @Test
-    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/7303")
+    @Ignore("Temp disable flaky test - see: https://github.com/mozilla-mobile/fenix/issues/10798")
     fun testDownloadPrompt() {
         homeScreen { }.dismissOnboarding()
 
@@ -81,7 +83,7 @@ class DownloadTest {
 
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
             clickLinkMatchingText(defaultWebPage.content)
         }
 
@@ -91,15 +93,12 @@ class DownloadTest {
     }
 
     @Test
-    @Ignore("Temp disable flakey test - see: https://github.com/mozilla-mobile/fenix/issues/5462")
     fun testDownloadNotification() {
-        homeScreen { }.dismissOnboarding()
-
         val defaultWebPage = TestAssetHelper.getDownloadAsset(mockWebServer)
 
         navigationToolbar {
         }.openNewTabAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
+            mDevice.waitForIdle()
             clickLinkMatchingText(defaultWebPage.content)
         }
 
@@ -107,7 +106,13 @@ class DownloadTest {
             verifyDownloadPrompt()
         }.clickDownload {
             verifyDownloadNotificationPopup()
-            verifyDownloadNotificationShade()
         }
+
+        mDevice.openNotification()
+        notificationShade {
+            verifySystemNotificationExists("Download completed")
+        }
+        // close notification shade before the next test
+        mDevice.pressBack()
     }
 }

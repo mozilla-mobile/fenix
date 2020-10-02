@@ -10,6 +10,7 @@ import android.net.Uri
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -34,6 +35,7 @@ import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -51,10 +53,7 @@ class BookmarksRobot {
     fun verifyBookmarkedURL(url: String) = assertBookmarkURL(url)
 
     fun verifyFolderTitle(title: String) {
-        mDevice.waitNotNull(
-            Until.findObject(text(title)),
-            TestAssetHelper.waitingTime
-        )
+        mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime)
         assertFolderTitle(title)
     }
 
@@ -112,7 +111,8 @@ class BookmarksRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun verifySignInToSyncButton() = signInToSyncButton().check(matches(isDisplayed()))
+    fun verifySignInToSyncButton() =
+        signInToSyncButton().check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
     fun verifyDeleteFolderConfirmationMessage() = assertDeleteFolderConfirmationMessage()
 
@@ -130,11 +130,12 @@ class BookmarksRobot {
         addFolderButton().click()
     }
 
+    fun clickdeleteBookmarkButton() = deleteBookmarkButton().click()
+
     fun addNewFolderName(name: String) {
         addFolderTitleField()
             .click()
-            .perform(clearText())
-            .perform(typeText(name))
+            .perform(replaceText(name))
     }
 
     fun saveNewFolder() {
@@ -180,11 +181,28 @@ class BookmarksRobot {
     }
 
     class Transition {
-        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            goBackButton().click()
+        fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
+            closeButton().click()
 
             HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            return Transition()
+        }
+
+        fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            closeButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun confirmBookmarkFolderDeletionAndGoBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            onView(withText(R.string.delete_browsing_data_prompt_allow))
+                .inRoot(RootMatchers.isDialog())
+                .check(matches(isDisplayed()))
+                .click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
@@ -224,6 +242,8 @@ fun bookmarksMenu(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transitio
     return BookmarksRobot.Transition()
 }
 
+private fun closeButton() = onView(withId(R.id.close_bookmarks))
+
 private fun goBackButton() = onView(withContentDescription("Navigate up"))
 
 private fun bookmarkFavicon(url: String) = onView(
@@ -244,6 +264,8 @@ private fun addFolderButton() = onView(withId(R.id.add_bookmark_folder))
 private fun addFolderTitleField() = onView(withId(R.id.bookmarkNameEdit))
 
 private fun saveFolderButton() = onView(withId(R.id.confirm_add_folder_button))
+
+private fun deleteBookmarkButton() = onView(withId(R.id.delete_bookmark_button))
 
 private fun threeDotMenu(bookmarkUrl: Uri) = onView(
     allOf(

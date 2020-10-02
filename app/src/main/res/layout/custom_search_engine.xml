@@ -29,6 +29,7 @@
             android:id="@+id/edit_engine_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/accessibility_min_height"
             android:hint="@string/search_add_custom_engine_name_hint"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -46,6 +47,7 @@
             android:id="@+id/edit_search_string"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/accessibility_min_height"
             android:hint="@string/search_add_custom_engine_search_string_hint"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -55,17 +57,17 @@
         android:layout_height="wrap_content"
         android:text="@string/search_add_custom_engine_search_string_example"
         android:lineHeight="18sp"
-        android:labelFor="@+id/edit_search_string"
+        android:labelFor="@id/edit_search_string"
         android:textColor="@android:color/tertiary_text_dark" />
 
-    <TextView
+    <org.mozilla.fenix.utils.LinkTextView
         android:id="@+id/custom_search_engines_learn_more"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/exceptions_empty_message_learn_more_link"
+        android:minHeight="@dimen/accessibility_min_height"
         android:textColor="?accent"
         android:visibility="visible"
-        android:contentDescription="@string/search_add_custom_engine_learn_more_description"
         app:layout_constraintTop_toBottomOf="@id/exceptions_empty_message" />
 
     <ProgressBar

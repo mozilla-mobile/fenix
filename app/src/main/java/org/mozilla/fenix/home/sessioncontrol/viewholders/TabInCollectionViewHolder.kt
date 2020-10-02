@@ -8,29 +8,23 @@ import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.list_element.list_element_title
-import kotlinx.android.synthetic.main.list_element.list_item_action_button
-import kotlinx.android.synthetic.main.list_element.list_item_favicon
-import kotlinx.android.synthetic.main.list_element.list_item_url
+import kotlinx.android.synthetic.main.list_element.*
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.util.dpToFloat
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.home.sessioncontrol.CollectionInteractor
+import org.mozilla.fenix.utils.view.ViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 class TabInCollectionViewHolder(
-    val view: View,
+    view: View,
     val interactor: CollectionInteractor,
-    private val differentLastItem: Boolean = false,
-    override val containerView: View? = view
-) : RecyclerView.ViewHolder(view), LayoutContainer {
+    private val differentLastItem: Boolean = false
+) : ViewHolder(view) {
 
     lateinit var collection: TabCollection
         private set
@@ -47,18 +41,18 @@ class TabInCollectionViewHolder(
                     0,
                     view.width,
                     view.height,
-                    TabViewHolder.favIconBorderRadiusInPx.dpToFloat(view.context.resources.displayMetrics)
+                    view.resources.getDimension(R.dimen.tab_tray_favicon_border_radius)
                 )
             }
         }
 
-        view.setOnClickListener {
+        itemView.setOnClickListener {
             interactor.onCollectionOpenTabClicked(tab)
         }
 
         list_item_action_button.increaseTapArea(buttonIncreaseDps)
         list_item_action_button.setOnClickListener {
-            interactor.onCollectionRemoveTab(collection, tab)
+            interactor.onCollectionRemoveTab(collection, tab, wasSwiped = false)
         }
     }
 
@@ -70,21 +64,23 @@ class TabInCollectionViewHolder(
     }
 
     private fun updateTabUI() {
-        list_item_url.text = tab.url.toShortUrl(view.context.components.publicSuffixList)
+        val context = itemView.context
+        list_item_url.text = tab.url.toShortUrl(context.components.publicSuffixList)
 
         list_element_title.text = tab.title
         list_item_favicon.context.components.core.icons.loadIntoView(list_item_favicon, tab.url)
 
         // If last item and we want to change UI for it
         if (isLastItem && differentLastItem) {
-            view.background = AppCompatResources.getDrawable(view.context, R.drawable.rounded_bottom_corners)
+            itemView.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_corners)
         } else {
-            view.setBackgroundColor(view.context.getColorFromAttr(R.attr.above))
+            itemView.setBackgroundColor(context.getColorFromAttr(R.attr.above))
         }
     }
 
     companion object {
         const val buttonIncreaseDps = 12
         const val LAYOUT_ID = R.layout.list_element
+        const val FAV_ICON_BORDER_RADIUS_IN_DP = 4
     }
 }

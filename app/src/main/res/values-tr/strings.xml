@@ -13,11 +13,40 @@
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">Gizli gezintiyi kapat</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
-    <string name="search_hint">Arama yapın veya adres yazın</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Açık sekme yok</string>
+    <string name="search_hint">Arama yap veya adres yaz</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Açık sekmeleriniz burada gösterilecek.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Gizli sekmeleriniz burada gösterilecek.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 açık sekme. Sekme değiştirmek için dokunun.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s açık sekme. Sekme değiştirmek için dokunun.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d sekme seçildi</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Yeni koleksiyon ekle</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Adı</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Koleksiyon seç</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Çoklu seçim modundan çık</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Seçilen sekmeleri koleksiyona kaydet</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">%1$s seçildi</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s seçimi kaldırıldı</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Çoklu seçim modundan çıkıldı</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Çoklu seçim moduna girdiniz. Koleksiyona kaydedilecek sekmeleri seçin</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Seçildi</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s bir Mozilla ürünüdür.</string>
@@ -34,13 +63,43 @@
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Oturumu sil</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Ana ekranınızdan gizli sekme açmak için bir kısayol ekleyin.</string>
+    <string name="cfr_message">Ana ekranınızdan gizli sekme açmak için kısayol ekleyebilirsiniz.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Kısayol ekle</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Gerek yok</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Firefox’a daha hızlı ulaşın. Ana ekranınıza bir widget ekleyin.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Widget ekle</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Daha sonra</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Firefox’u, bağlantıları otomatik olarak uygulamalarda açacak şekilde ayarlayabilirsiniz.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Ayarlara git</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Kapat</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Kamera erişimi gerekiyor. Android ayarlarına gidin, izinlere girin ve izin verin.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Ayarlara git</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Kapat</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Bir gün, hafta veya ay boyunca bakmadığınız açık sekmelerin otomatik kapanmasını sağlayabilirsiniz.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Seçeneklere git</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Kapat</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -84,6 +143,10 @@
     <string name="browser_menu_add_to_homescreen">Ana ekrana ekle</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Yükle</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Eşitlenmiş sekmeler</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Yeniden eşitle</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Sayfada bul</string>
     <!-- Browser menu button that creates a private tab -->
@@ -92,8 +155,6 @@
     <string name="browser_menu_new_tab">Yeni sekme</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Koleksiyona kaydet</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Site sorununu bildir</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Paylaş</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -103,13 +164,15 @@
     <string name="browser_menu_open_in_fenix">%1$s ile aç</string>
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="browser_menu_powered_by">%1$s TARAFINDAN GELİŞTİRİLDİ</string>
+    <string name="browser_menu_powered_by">%1$s SEKMESİ</string>
 
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">%1$s desteğiyle</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Okuyucu görünümü</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Okuyucu görünümünü kapat</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Uygulamada aç</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -132,14 +195,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Tara</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Kısayollar</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Arama motoru</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Arama motoru ayarları</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Bununla ara:</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Bir de bununla aramayı deneyin:</string>
+    <string name="search_engines_search_with">Bir de bununla aramayı deneyin:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Bağlantıyı panodan al</string>
 
@@ -209,6 +270,8 @@
     <string name="preferences_open_links_in_a_private_tab">Bağlantıları gizli sekmede aç</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Gizli gezintide ekran görüntüsü almaya izin ver</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">İzin verirseniz gizli sekmeler birden fazla uygulama açıkken de görünür olacak</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Gizli gezinti kısayolu ekle</string>
     <!-- Preference for accessibility -->
@@ -227,6 +290,10 @@
     <string name="preferences_toolbar">Araç çubuğu</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Giriş sayfası</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Parmak hareketleri</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Özelleştir</string>
     <!-- Preference description for banner about signing in -->
@@ -247,10 +314,12 @@
     <string name="developer_tools_category">Geliştirici araçları</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">USB ile uzaktan hata ayıklama</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Arama kısayollarını göster</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Arama motorlarını göster</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Arama önerilerini göster</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Sesle aramayı göster</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Gizli oturumlarda göster</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -259,14 +328,23 @@
     <string name="preferences_search_browsing_history">Gezinti geçmişinde ara</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Yer imlerinde ara</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Eşitlenmiş sekmelerde ara</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Hesap ayarları</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Adresleri otomatik tamamla</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Bağlantıları uygulamalarda aç</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Harici indirme yöneticisi</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Eklentiler</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Bildirimler</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -279,6 +357,8 @@
     <string name="preferences_sync_bookmarks">Yer imleri</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Hesaplar</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Açık sekmeler</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Çıkış yap</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -370,7 +450,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[QR kodunuzu almak için bilgisayarınızdaki Firefox’tan <b>firefox.com/pair</b> adresine girin.]]></string>
+    <string name="pair_instructions_2"><![CDATA[<b>firefox.com/pair</b> adresinde görünen QR kodunu tarayın]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Kamerayı aç</string>
     <!-- Button to cancel pairing -->
@@ -392,6 +472,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Cihaz temasına uy</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Tazelemek için çek</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Araç çubuğunu gizlemek için kaydır</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Sekme değiştirmek için araç çubuğunu yana kaydır</string>
+
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Sekmeleri açmak için araç çubuğunu yukarı kaydır</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Oturumlar</string>
@@ -411,18 +502,43 @@
     <string name="library_desktop_bookmarks_unfiled">Diğer yer imleri</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Geçmiş</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Eşitlenmiş sekmeler</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Okuma listesi</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Ara</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Arşiv</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Ayarlar</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Geçmiş öğesi menüsü</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Kapat</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Son kapatılan sekmeler</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Tüm geçmişi göster</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d sekme</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d sekme</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Yakın zamanda kapatılmış sekme yok</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Sekmeleri kapat</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Elle</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Bir gün sonra</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Bir hafta sonra</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Bir ay sonra</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -433,6 +549,30 @@
     <string name="tabs_header_private_tabs_title">Gizli sekmeler</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Sekme ekle</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Gizli sekme ekle</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Gizli</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Açık sekmeler</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Koleksiyona kaydet</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Tüm sekmeleri paylaş</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Son kapatılan sekmeler</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Sekme ayarları</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Tüm sekmeleri kapat</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Yeni sekme</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Giriş sayfasına git</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Sekme modunu değiştir</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Sekmeyi koleksiyondan çıkar</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Sekmeyi kapat</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -444,7 +584,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Sekmeleri paylaş</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Koleksiyona kaydet</string>
+    <string name="tabs_menu_save_to_collection1">Sekmeleri koleksiyona kaydet</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Sekmeler menüsü</string>
     <!-- Tab menu item to share the tab -->
@@ -469,6 +609,14 @@
 
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Kaldır</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Geçmişten sil</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Gizli Mod)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Kaydet</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -508,6 +656,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Geçmiş yok</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Hiçbir şey indirilmemiş</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d indirme seçildi</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Kusura bakmayın, %1$s bu sayfayı yükleyemedi.</string>
@@ -535,6 +690,8 @@
     <string name="bookmark_select_folder">Klasör seç</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Bu klasörü silmek istediğinizden emin misiniz?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s seçilen öğeleri silecek.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s silindi</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -589,8 +746,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s silindi</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Yer imleri silindi</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Seçilen klasörler siliniyor</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">GERİ AL</string>
 
@@ -654,16 +813,12 @@
     <string name="delete_browsing_data_quit_off">Kapalı</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Sizin için önemli olan şeyleri toplayın. Başlamak için açık sekmeleri yeni bir koleksiyona kaydedin.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Koleksiyonlar</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Koleksiyon menüsü</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Koleksiyon yok</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Koleksiyonlarınız burada gösterilecek.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Sizin için önemli olan şeyleri toplayın.\nHızlıca erişmek istediğiniz benzer aramaları, siteleri ve sekmeleri bir araya getirin.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Sekmeleri seç</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -686,12 +841,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d sekme seçildi</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Sekmeler kaydedildi!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Koleksiyon kaydedildi!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Sekme kaydedildi!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Kapat</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Kaydet</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Göster</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Koleksiyon %d</string>
@@ -788,6 +948,10 @@
     <string name="qr_scanner_dialog_negative">İZİN VERME</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">%1$s koleksiyonunu silmek istediğinize emin misiniz?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Bu sekmeyi silerseniz tüm koleksiyon silinir. İstediğiniz zaman yeni koleksiyonlar oluşturabilirsiniz.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">%1$s silinsin mi?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Sil</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -804,14 +968,14 @@
     <string name="preference_accessibility_font_size_title">Yazı tipi boyutu</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Otomatik yazı tipi boyutlandırma</string>
+    <string name="preference_accessibility_auto_size_2">Otomatik yazı tipi boyutlandırma</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Yazı tipi boyutu Android ayarlarınızdan alınacaktır. Yazı tipi boyutunu buradan yönetmek isterseniz bu ayarı kapatın.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Gezinti verilerini sil</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Açık sekmeler</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Açık sekmeler</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d sekme</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -843,8 +1007,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Ana menüden &quot;Çık&quot;ı seçtiğinizde gezinti verilerini otomatik olarak siler</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Ana menüden \&quot;Çık\&quot;ı seçtiğinizde gezinti verilerini otomatik olarak siler</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Gezinti geçmişi</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Çık</string>
 
@@ -868,8 +1030,9 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">Firefox Nightly her gece güncellenir ve yeni deneysel özelliklere sahiptir.
         Bununla birlikte, daha kararsız olabilir. Daha kararlı bir deneyim için beta tarayıcımızı indirebilirsiniz.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Mozilla Firefox Browser’ı indirin</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Android için Firefox Beta’yı indirin</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly taşındı</string>
@@ -903,13 +1066,14 @@
     <string name="onboarding_whats_new_description">Yeni %s hakkında sorularınız mı var? Nelerin değiştiğini bilmek ister misiniz?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Yanıtlar burada</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">%s’dan en iyi şekilde yararlanın.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Firefox hesabınızla yer imlerinizi, parolalarınızı ve daha fazlasını eşitlemeye başlayın.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Daha fazla bilgi al</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Bu telefondaki başka bir Firefox tarayıcısına %s olarak giriş yapmışsınız. Bu hesapla giriş yapmak ister misiniz?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Bu cihazdaki başka bir Firefox tarayıcısına %s olarak giriş yapmışsınız. Bu hesapla giriş yapmak ister misiniz?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Evet, giriş yap</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -923,18 +1087,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Giriş başarısız</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Kendinizi koruyun</string>
+    <string name="onboarding_tracking_protection_header_2">Otomatik gizlilik</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s, web sitelerinin internette yaptıklarınızı izlemesini önler.</string>
+    <string name="onboarding_tracking_protection_description_2">Gizlilik ve güvenlik ayarları; takipçileri, kötü amaçlı yazılımları ve sizi takip eden şirketleri engeller.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Standart</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Standart (varsayılan)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Daha az takipçiyi engeller ama sayfaların normal şekilde yüklenmesini sağlar.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Daha az takipçiyi engeller. Sayfalar normal şekilde yüklenir.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Sıkı (önerilen)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Sıkı</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Daha iyi koruma ve performans için daha fazla takipçiyi engeller, ancak bazı sitelerin düzgün çalışmamasına yol açabilir.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Daha fazla takipçiyi, reklamı ve açılır pencereyi engeller. Sayfalar daha hızlı yüklenir ama bazı işlevler çalışmayabilir.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -996,6 +1162,8 @@
     <string name="sign_in_with_camera">Kameranızla giriş yapın</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">E-posta ile giriş yap</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Hesabınız yok mu? Firefox’u cihazlar arasında eşitlemek için <u>hesap açın</u>.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox artık hesabınızla eşitlenmeyecek ama bu cihazdaki gezinti geçmişiniz silinmeyecek.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1020,31 +1188,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Daha fazla bilgi al</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Standart</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Standart (önerilen)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Standart (varsayılan)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Dengeli koruma ve performans.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Sayfalar normal şekilde yüklenecek ama daha az takipçi engellenecek.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Daha az takipçiyi engeller. Sayfalar normal şekilde yüklenir.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Standart izlenme korumasında neler engellenir?</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Sıkı</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Sıkı (Varsayılan)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Daha güçlü izleme koruması ve daha hızlı performans, ancak bazı siteler düzgün çalışmayabilir.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Sıkı (önerilen)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Daha güçlü koruma, ama bazı siteler ve içerikler düzgün çalışmayabilir.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Daha fazla takipçiyi, reklamı ve açılır pencereyi engeller. Sayfalar daha hızlı yüklenir ama bazı işlevler çalışmayabilir.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Sıkı izlenme korumasında neler engellenir?</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Özel</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Hangi takipçilerin ve betiklerin engelleneceğini seçin</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Hangi takipçilerin ve betiklerin engelleneceğini seçin.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Özel izlenme korumasında neler engellenir?</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1094,7 +1252,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Takip kodu içeren reklamların, videoların ve diğer içeriklerin yüklenmesini engeller. Bazı sitelerin işlevlerini etkileyebilir.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">Kalkan mor olduğunda %s bu sitedeki takipçileri engelliyor demektir. Kalkana dokunarak nelerin engellendiğini görebilirsiniz.</string>
+    <string name="etp_onboarding_cfr_message">Kalkan mor olduğunda %s bir sitedeki takipçileri engellemiş demektir. Daha fazla bilgi için dokunun.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Bu sitede korumalar AÇIK</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1114,8 +1272,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS Kitaplıkları</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Yönlendirme takipçileri</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Bilinen takip sitelerine yapılan yönlendirmelere ait çerezleri temizler.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Destek</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Çökmeler</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Gizlilik bildirimi</string>
     <!-- About page link text to open know your rights link -->
@@ -1158,7 +1323,7 @@
     <string name="add_to_homescreen_text_placeholder">Kısayol adı</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Bu siteyi telefonunuzun ana ekranına ekleyerek ona hızlıca erişebilir, site bir uygulamaymış gibi daha hızlı gezinti yapabilirsiniz.</string>
+    <string name="add_to_homescreen_description_2">Bu siteyi cihazınızın ana ekranına ekleyerek ona hızlıca erişebilir, site bir uygulamaymış gibi daha hızlı gezinti yapabilirsiniz.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Hesaplar ve parolalar</string>
@@ -1192,6 +1357,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Kaydedilmeyen hesaplar ve parolalar burada görünecektir.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Bu sitelere ait hesaplar ve parolalar kaydedilmeyecektir.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Tüm istisnaları sil</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Hesaplarda ara</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1226,10 +1393,16 @@
     <string name="logins_site_copied">Site panoya kopyalandı</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Parolayı kopyala</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Parolayı temizle</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Kullanıcı adını kopyala</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Kullanıcı adını temizle</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Siteyi kopyala</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Siteyi tarayıcıda aç</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Parolayı göster</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1251,6 +1424,13 @@
 
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Sıkıştırma ve yakınlaştırma hareketine izin vermeyen sitelerde bu hareketi etkinleştir.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Ad (A-Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Son kullanım</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Hesapları sırala menüsü</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Arama motoru ekle</string>
@@ -1343,8 +1523,78 @@
     <string name="certificate_info_verified_by">Doğrulayan: %1$s </string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Sil</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Düzenle</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Bu hesabı silmek istediğinizden emin misiniz?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Sil</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Hesap seçenekleri</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Hesabın web adresi için düzenlenebilir metin alanı.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Hesabın kullanıcı adı için düzenlenebilir metin alanı.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Hesabın parolası için düzenlenebilir metin alanı.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Değişiklikleri hesaba kaydet.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Değişikliklerden vazgeç</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Düzenle</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Parola gerekli</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Sesle arama</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Şimdi konuşun</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Bu kullanıcı adına sahip bir hesap zaten var</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Başka bir cihaz bağlayın.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Lütfen yeniden giriş yapın.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Lütfen sekme eşitlemeyi etkinleştirin.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Diğer cihazlarınızdaki Firefox’larda hiç açık sekme yok.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Diğer cihazlarınızdaki sekmelerin listesini görün.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Sync’e giriş yapın</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Açık sekme yok</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Sık kullanılan site sınırına ulaşıldı</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Yeni bir sık kullanılan site eklemek için bir siteyi kaldırın. Siteye dokunup basılı tutun ve kaldır’ı seçin.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Tamam</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Sık ziyaret edilen siteleri göster</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Kaldır</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">%s tarayıcınızdan en iyi şekilde yararlanın.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Sizin için önemli olan şeyleri toplayın</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Benzer aramaları, siteleri ve sekmeleri gruplandırarak daha sonra onlara hızlıca erişebilirsiniz.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Bu telefondaki başka bir Firefox tarayıcısına %s olarak giriş yapmışsınız. Bu hesapla giriş yapmak ister misiniz?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Bu siteyi telefonunuzun ana ekranına ekleyerek ona hızlıca erişebilir, site bir uygulamaymış gibi daha hızlı gezinti yapabilirsiniz.</string>
+
+    </resources>

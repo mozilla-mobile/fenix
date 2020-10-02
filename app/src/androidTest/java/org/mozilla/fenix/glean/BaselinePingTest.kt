@@ -4,30 +4,64 @@
 
 package org.mozilla.fenix.glean
 
+import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Assert.assertEquals
-
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
+import mozilla.components.concept.fetch.Client
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
+import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.testing.GleanTestLocalServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.BeforeClass
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MockWebServerHelper
 import java.util.concurrent.TimeUnit
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
+import java.util.zip.GZIPInputStream
+
+/**
+ * Decompress the GZIP returned by the glean-core layer.
+ *
+ * @param data the gzipped [ByteArray] to decompress
+ * @return a [String] containing the uncompressed data.
+ */
+fun decompressGZIP(data: ByteArray): String {
+    return GZIPInputStream(ByteArrayInputStream(data)).bufferedReader().use(BufferedReader::readText)
+}
+
+/**
+ * Convenience method to get the body of a request as a String.
+ * The UTF8 representation of the request body will be returned.
+ * If the request body is gzipped, it will be decompressed first.
+ *
+ * @return a [String] containing the body of the request.
+ */
+fun RecordedRequest.getPlainBody(): String {
+    return if (this.getHeader("Content-Encoding") == "gzip") {
+        val bodyInBytes = this.body.readByteArray()
+        decompressGZIP(bodyInBytes)
+    } else {
+        this.body.readUtf8()
+    }
+}
 
 @RunWith(AndroidJUnit4::class)
 class BaselinePingTest {
@@ -43,6 +77,10 @@ class BaselinePingTest {
         @BeforeClass
         @JvmStatic
         fun setupOnce() {
+            val httpClient = ConceptFetchHttpUploader(lazy {
+                GeckoViewFetchClient(ApplicationProvider.getApplicationContext()) as Client
+            })
+
             // Fenix does not initialize the Glean SDK in tests/debug builds, but this test
             // requires Glean to be initialized so we need to do it manually. Additionally,
             // we need to do this on the main thread, as the Glean SDK requires it.
@@ -50,23 +88,41 @@ class BaselinePingTest {
                 Glean.initialize(
                     ApplicationProvider.getApplicationContext(),
                     true,
-                    Configuration()
+                    Configuration(httpClient = httpClient)
                 )
             }
         }
     }
 
+    /**
+     * Wait for a specific ping to be received by the local server and
+     * return its parsed JSON content.
+     *
+     * @param pingName the name of the ping to wait for
+     * @param pingReason the value of the `reason` field for the received ping
+     * @param maxAttempts how many times should a wait be attempted
+     */
     private fun waitForPingContent(
         pingName: String,
+        pingReason: String?,
         maxAttempts: Int = 3
     ): JSONObject? {
         var attempts = 0
         do {
             attempts += 1
-            val request = server.takeRequest(20L, TimeUnit.SECONDS)
+            val request = server.takeRequest(20L, TimeUnit.SECONDS) ?: break
             val docType = request.path.split("/")[3]
             if (pingName == docType) {
-                return JSONObject(request.body.readUtf8())
+                val parsedPayload = JSONObject(request.getPlainBody())
+                if (pingReason == null) {
+                    return parsedPayload
+                }
+
+                // If we requested a specific ping reason, look for it.
+                val reason = parsedPayload.getJSONObject("ping_info").getString("reason")
+                if (reason == pingReason) {
+                    return parsedPayload
+                }
             }
         } while (attempts < maxAttempts)
 
@@ -87,9 +143,17 @@ class BaselinePingTest {
         // Move it to background.
         device.pressHome()
 
+        // Due to bug 1632184, we need move the activity to foreground again, in order
+        // for a 'background' ping with reason 'foreground' to be generated and also trigger
+        // sending the ping that was submitted on background. This can go away once bug 1634375
+        // is fixed.
+        device.pressRecentApps()
+        device.findObject(UiSelector().descriptionContains(
+            ApplicationProvider.getApplicationContext<Context>().getString(R.string.app_name)))
+            .click()
+
         // Validate the received data.
-        val baselinePing = waitForPingContent("baseline")!!
-        assertEquals("baseline", baselinePing.getJSONObject("ping_info")["ping_type"])
+        val baselinePing = waitForPingContent("baseline", "background")!!
 
         val metrics = baselinePing.getJSONObject("metrics")
 

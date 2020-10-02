@@ -13,11 +13,13 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:id="@+id/addon_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="vertical">
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/enable_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,12 +34,12 @@
                 android:textColor="?primaryText"
                 android:textSize="16sp" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/allow_in_private_browsing_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
-                android:layout_below="@+id/enable_switch"
+                android:layout_below="@id/enable_switch"
                 android:background="?android:attr/selectableItemBackground"
                 android:checked="false"
                 android:clickable="true"
@@ -54,7 +56,7 @@
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/allow_in_private_browsing_switch"
+                android:layout_below="@id/allow_in_private_browsing_switch"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawablePadding="32dp"
                 android:padding="16dp"
@@ -68,7 +70,7 @@
                 android:id="@+id/details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/settings"
+                android:layout_below="@id/settings"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawablePadding="32dp"
                 android:padding="16dp"
@@ -82,7 +84,7 @@
                 android:id="@+id/permissions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/details"
+                android:layout_below="@id/details"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawablePadding="32dp"
                 android:padding="16dp"
@@ -91,12 +93,19 @@
                 android:textSize="16sp"
                 app:drawableStartCompat="@drawable/ic_permission" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/remove_add_on"
                 style="@style/DestructiveButton"
                 android:layout_marginHorizontal="16dp"
-                android:layout_below="@+id/permissions"
+                android:layout_below="@id/permissions"
                 android:text="@string/mozac_feature_addons_remove" />
         </RelativeLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/add_on_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
 </FrameLayout>

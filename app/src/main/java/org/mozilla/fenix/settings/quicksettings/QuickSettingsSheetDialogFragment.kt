@@ -27,7 +27,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.*
 import kotlinx.android.synthetic.main.fragment_quick_settings_dialog_sheet.view.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.plus
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
@@ -35,7 +37,6 @@ import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.utils.Settings
 import com.google.android.material.R as MaterialR
 
 /**
@@ -60,6 +61,7 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
+        val components = context.components
         val rootView = inflateRootView(container)
 
         quickSettingsStore = QuickSettingsFragmentStore.createStore(
@@ -68,26 +70,25 @@ class QuickSettingsSheetDialogFragment : AppCompatDialogFragment() {
             websiteTitle = args.title,
             isSecured = args.isSecured,
             permissions = args.sitePermissions,
-            settings = Settings.getInstance(context),
+            settings = components.settings,
             certificateName = args.certificateName
         )
 
         quickSettingsController = DefaultQuickSettingsController(
             context = context,
             quickSettingsStore = quickSettingsStore,
-            coroutineScope = viewLifecycleOwner.lifecycleScope,
+            ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
             navController = findNavController(),
-            session = context.components.core.sessionManager.findSessionById(args.sessionId),
+            session = components.core.sessionManager.findSessionById(args.sessionId),
             sitePermissions = args.sitePermissions,
-            settings = Settings.getInstance(context),
-            permissionStorage = context.components.core.permissionStorage,
-            reload = context.components.useCases.sessionUseCases.reload,
-            addNewTab = context.components.useCases.tabsUseCases.addTab,
+            settings = components.settings,
+            permissionStorage = components.core.permissionStorage,
+            reload = components.useCases.sessionUseCases.reload,
+            addNewTab = components.useCases.tabsUseCases.addTab,
             requestRuntimePermissions = { permissions ->
                 requestPermissions(permissions, REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS)
                 tryToRequestPermissions = true
             },
-            reportSiteIssue = ::launchIntentReceiver,
             displayPermissions = ::showPermissionsView,
             dismiss = ::dismiss
         )

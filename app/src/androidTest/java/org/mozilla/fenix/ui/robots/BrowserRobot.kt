@@ -10,15 +10,20 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.BundleMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -26,26 +31,18 @@ import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import androidx.test.uiautomator.Until.hasObject
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.LongClickDuration
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
 class BrowserRobot {
-
-    fun verifyBrowserScreen() {
-        onView(ViewMatchers.withResourceName("browserLayout"))
-            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    }
-
     fun verifyCurrentPrivateSession(context: Context) {
         val session = context.components.core.sessionManager.selectedSession
         assertTrue("Current session is private", session?.private!!)
@@ -76,10 +73,15 @@ class BrowserRobot {
 
     /* Asserts that the text within DOM element with ID="testContent" has the given text, i.e.
     *  document.querySelector('#testContent').innerText == expectedText
+    *
     */
+
     fun verifyPageContent(expectedText: String) {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
+        mDevice.waitNotNull(
+            Until.findObject(By.res("org.mozilla.fenix.debug:id/engineView")),
+            waitingTime
+        )
+        assertTrue(mDevice.findObject(UiSelector().text(expectedText)).waitForExists(waitingTime))
     }
 
     fun verifyTabCounter(expectedText: String) {
@@ -134,9 +136,40 @@ class BrowserRobot {
         )
     }
 
-    fun verifyNoLinkImageContextMenuItems(containsTitle: String) {
+    fun verifyNavURLBar() = assertNavURLBar()
+
+    fun verifySecureConnectionLockIcon() = assertSecureConnectionLockIcon()
+
+    fun verifyEnhancedTrackingProtectionSwitch() = assertEnhancedTrackingProtectionSwitch()
+
+    fun clickEnhancedTrackingProtectionSwitchOffOn() =
+        onView(withResourceName("switch_widget")).click()
+
+    fun verifyProtectionSettingsButton() = assertProtectionSettingsButton()
+
+    fun verifyEnhancedTrackingOptions() {
+        clickEnhancedTrackingProtectionPanel()
+        verifyEnhancedTrackingProtectionSwitch()
+        verifyProtectionSettingsButton()
+    }
+
+    fun verifyMenuButton() = assertMenuButton()
+
+    fun verifyBlueDot() = assertBlueDot()
+
+    fun verifyNavURLBarItems() {
+        verifyEnhancedTrackingOptions()
+        pressBack()
+        waitingTime
+        verifySecureConnectionLockIcon()
+        verifyTabCounter("1")
+        verifyNavURLBar()
+        verifyMenuButton()
+    }
+
+    fun verifyNoLinkImageContextMenuItems(containsURL: Uri) {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mDevice.waitNotNull(Until.findObject(By.textContains(containsTitle)))
+        mDevice.waitNotNull(Until.findObject(By.textContains(containsURL.toString())))
         mDevice.waitNotNull(
             Until.findObject(text("Open image in new tab")),
             waitingTime
@@ -146,6 +179,18 @@ class BrowserRobot {
             Until.findObject(text("Copy image location")), waitingTime
         )
     }
+
+    fun dismissContentContextMenu(containsURL: Uri) {
+        onView(withText(containsURL.toString()))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+            .perform(ViewActions.pressBack())
+    }
+
+    fun clickEnhancedTrackingProtectionPanel() = enhancedTrackingProtectionPanel().click()
+
+    fun verifyEnhancedTrackingProtectionPanelNotVisible() =
+        assertEnhancedTrackingProtectionPanelNotVisible()
 
     fun clickContextOpenLinkInNewTab() {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -237,13 +282,6 @@ class BrowserRobot {
         menuSaveImage.click()
     }
 
-    fun waitForCollectionSavedPopup() {
-        mDevice.wait(
-            Until.findObject(text("Tab saved!")),
-            waitingTime
-        )
-    }
-
     fun createBookmark(url: Uri) {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(url) {
@@ -265,7 +303,7 @@ class BrowserRobot {
         mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
 
         val element = mDevice.findObject(text(expectedText))
-        element.click(LongClickDuration.LONG_CLICK_DURATION)
+        element.click(LONG_CLICK_DURATION)
     }
 
     fun snackBarButtonClick(expectedText: String) {
@@ -287,33 +325,18 @@ class BrowserRobot {
     }
 
     fun clickMediaPlayerPlayButton() {
-        mDevice.waitNotNull(
-            hasObject(
-                By
-                    .clazz("android.widget.Button")
-                    .textContains("Play")
-            ),
-            waitingTime
-        )
+        mediaPlayerPlayButton().waitForExists(waitingTime)
         mediaPlayerPlayButton().click()
     }
 
     fun waitForPlaybackToStart() {
-        mDevice.waitNotNull(
-            hasObject(
-                text("Media file is playing")
-            ), waitingTimeShort
-        )
+        val playStateMessage = mDevice.findObject(UiSelector().text("Media file is playing"))
+        assertTrue(playStateMessage.waitForExists(waitingTime))
     }
 
     fun verifyMediaIsPaused() {
-        mDevice.waitNotNull(
-            hasObject(
-                text("Media file is paused")
-            ), waitingTimeShort
-        )
-
-        mDevice.findObject(UiSelector().text("Media file is paused")).exists()
+        val pausedStateMessage = mDevice.findObject(UiSelector().text("Media file is paused"))
+        assertTrue(pausedStateMessage.waitForExists(waitingTime))
     }
 
     class Transition {
@@ -335,25 +358,35 @@ class BrowserRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-
+            mDevice.waitForIdle(waitingTime)
             navURLBar().click()
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
         }
 
-        fun openHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            mDevice.waitForIdle()
-
+        fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
+            mDevice.waitForIdle(waitingTime)
             tabsCounter().click()
 
             mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/header_text")),
+                Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
                 waitingTime
             )
 
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
+            TabDrawerRobot().interact()
+            return TabDrawerRobot.Transition()
+        }
+
+        fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
+            mDevice.waitForIdle(waitingTime)
+
+            tabsCounter().perform(
+                ViewActions.longClick()
+            )
+
+            NavigationToolbarRobot().interact()
+            return NavigationToolbarRobot.Transition()
         }
 
         fun openNotificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot.Transition {
@@ -379,11 +412,51 @@ fun dismissTrackingOnboarding() {
 
 fun navURLBar() = onView(withId(R.id.mozac_browser_toolbar_url_view))
 
-private fun tabsCounter() = onView(withId(R.id.mozac_browser_toolbar_browser_actions))
+private fun assertNavURLBar() = navURLBar()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+fun enhancedTrackingProtectionPanel() =
+    onView(withId(R.id.mozac_browser_toolbar_tracking_protection_indicator))
+
+private fun assertEnhancedTrackingProtectionPanelNotVisible() {
+    enhancedTrackingProtectionPanel()
+        .check(matches(withEffectiveVisibility(Visibility.GONE)))
+}
+
+private fun assertEnhancedTrackingProtectionSwitch() {
+    withText(R.id.trackingProtectionSwitch)
+        .matches(withEffectiveVisibility(Visibility.VISIBLE))
+}
+
+private fun assertProtectionSettingsButton() {
+    onView(withId(R.id.protection_settings))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertSecureConnectionLockIcon() {
+    onView(withId(R.id.mozac_browser_toolbar_security_indicator))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun menuButton() = onView(withId(R.id.icon))
+
+private fun assertMenuButton() {
+    menuButton()
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun tabsCounter() = onView(withId(R.id.counter_box))
 
 private fun mediaPlayerPlayButton() =
     mDevice.findObject(
-        By
-            .clazz("android.widget.Button")
-            .textContains("Play")
+        UiSelector()
+            .className("android.widget.Button")
+            .text("Play")
     )
+
+private fun assertBlueDot() {
+    onView(withId(R.id.notification_dot))
+        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun addOnsReportSiteIssue() = onView(withText("Report Site Issue"))

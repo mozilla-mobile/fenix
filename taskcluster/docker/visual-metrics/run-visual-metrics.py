@@ -27,11 +27,15 @@ from voluptuous import ALLOW_EXTRA, Required, Schema
 #: The directory where artifacts from this job will be placed.
 OUTPUT_DIR = Path("/", "builds", "worker", "artifacts")
 
+
 #: A job to process through visualmetrics.py
 @attr.s
 class Job:
     #: The name of the test.
     test_name = attr.ib(type=str)
+
+    #: The extra options for this job.
+    extra_options = attr.ib(type=str)
 
     #: json_path: The path to the ``browsertime.json`` file on disk.
     json_path = attr.ib(type=Path)
@@ -44,9 +48,14 @@ class Job:
 JOB_SCHEMA = Schema(
     {
         Required("jobs"): [
-            {Required("test_name"): str, Required("browsertime_json_path"): str}
+            {
+                Required("test_name"): str,
+                Required("browsertime_json_path"): str,
+                Required("extra_options"): [str],
+            }
         ],
         Required("application"): {Required("name"): str, "version": str},
+        Required("extra_options"): [str],
     }
 )
 
@@ -79,7 +88,7 @@ def run_command(log, cmd):
         return e.returncode, e.output
 
 
-def append_result(log, suites, test_name, name, result):
+def append_result(log, suites, test_name, name, result, extra_options):
     """Appends a ``name`` metrics result in the ``test_name`` suite.
 
     Args:
@@ -97,10 +106,16 @@ def append_result(log, suites, test_name, name, result):
         log.error("Could not convert value", name=name)
         log.error("%s" % result)
         result = 0
-    if test_name not in suites:
-        suites[test_name] = {"name": test_name, "subtests": {}}
 
-    subtests = suites[test_name]["subtests"]
+    if test_name in suites and suites[test_name]["extraOptions"] != extra_options:
+        missing = set(extra_options) - set(suites[test_name]["extraOptions"])
+        test_name = test_name + "-".join(list(missing))
+
+    subtests = suites.setdefault(
+        test_name,
+        {"name": test_name, "subtests": {}, "extraOptions": extra_options}
+    )["subtests"]
+
     if name not in subtests:
         subtests[name] = {
             "name": name,
@@ -154,13 +169,13 @@ def read_json(json_path, schema):
         The contents of the file at ``json_path`` interpreted as JSON.
     """
     try:
-        with open(str(json_path), "r") as f:
+        with open(str(json_path),  "r", encoding="utf-8", errors="ignore") as f:
             data = json.load(f)
     except Exception:
         log.error("Could not read JSON file", path=json_path, exc_info=True)
         raise
 
-    log.info("Loaded JSON from file", path=json_path, read_json=data)
+    log.info("Loaded JSON from file", path=json_path)
 
     try:
         schema(data)
@@ -202,9 +217,9 @@ def main(log, args):
             tar.extractall(path=str(fetch_dir))
     except Exception:
         log.error(
-            "Could not read extract browsertime results archive",
+            "Could not read/extract browsertime results archive",
             path=browsertime_results_path,
-            exc_info=True,
+            exc_info=True
         )
         return 1
     log.info("Extracted browsertime results", path=browsertime_results_path)
@@ -213,6 +228,11 @@ def main(log, args):
         jobs_json_path = fetch_dir / "browsertime-results" / "jobs.json"
         jobs_json = read_json(jobs_json_path, JOB_SCHEMA)
     except Exception:
+        log.error(
+            "Could not open the jobs.json file",
+            path=jobs_json_path,
+            exc_info=True
+        )
         return 1
 
     jobs = []
@@ -223,6 +243,11 @@ def main(log, args):
         try:
             browsertime_json = read_json(browsertime_json_path, BROWSERTIME_SCHEMA)
         except Exception:
+            log.error(
+                "Could not open a browsertime.json file",
+                path=browsertime_json_path,
+                exc_info=True
+            )
             return 1
 
         for site in browsertime_json:
@@ -230,6 +255,8 @@ def main(log, args):
                 jobs.append(
                     Job(
                         test_name=job["test_name"],
+                        extra_options=len(job["extra_options"]) > 0 and
+                        job["extra_options"] or jobs_json["extra_options"],
                         json_path=browsertime_json_path,
                         video_path=browsertime_json_path.parent / video,
                     )
@@ -262,16 +289,34 @@ def main(log, args):
                 # Python 3.5 requires a str object (not 3.6+)
                 res = json.loads(res.decode("utf8"))
                 for name, value in res.items():
-                    append_result(log, suites, job.test_name, name, value)
+                    append_result(log, suites, job.test_name, name, value, job.extra_options)
 
     suites = [get_suite(suite) for suite in suites.values()]
 
     perf_data = {
         "framework": {"name": "browsertime"},
         "application": jobs_json["application"],
-        "type": "vismet",
+        "type": "pageload",
         "suites": suites,
     }
+
+    # Try to get the similarity for all possible tests, this means that we
+    # will also get a comparison of recorded vs. live sites to check
+    # the on-going quality of our recordings.
+    try:
+        from similarity import calculate_similarity
+        for name, value in calculate_similarity(jobs_json, fetch_dir, OUTPUT_DIR).items():
+            if value is None:
+                continue
+            suites[0]["subtests"].append({
+                "name": name,
+                "value": value,
+                "replicates": [value],
+                "lowerIsBetter": False,
+                "unit": "a.u.",
+            })
+    except Exception:
+        log.info("Failed to calculate similarity score", exc_info=True)
 
     # Validates the perf data complies with perfherder schema.
     # The perfherder schema uses jsonschema so we can't use voluptuous here.

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.search.telemetry
 
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -82,15 +83,10 @@ abstract class BaseSearchTelemetry {
 
     abstract fun install(engine: Engine, store: BrowserStore)
 
-    internal fun getProviderForUrl(url: String): SearchProviderModel? {
-        for (provider in providerList) {
-            if (Regex(provider.regexp).containsMatchIn(url)) {
-                return provider
-            }
-        }
-        return null
-    }
+    internal fun getProviderForUrl(url: String): SearchProviderModel? =
+        providerList.find { provider -> provider.regexp.containsMatchIn(url) }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     internal fun installWebExtension(
         engine: Engine,
         store: BrowserStore,
@@ -99,7 +95,6 @@ abstract class BaseSearchTelemetry {
         engine.installWebExtension(
             id = extensionInfo.id,
             url = extensionInfo.resourceUrl,
-            allowContentMessaging = true,
             onSuccess = { extension ->
                 store.flowScoped { flow -> subscribeToUpdates(flow, extension, extensionInfo) }
             },

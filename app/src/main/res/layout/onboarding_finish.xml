@@ -5,5 +5,7 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/PositiveButton"
     android:id="@+id/finish_button"
-    android:layout_marginBottom="16dp"
+    android:background="@drawable/onboarding_padded_background"
+    android:backgroundTint="?accent"
+    android:layout_marginBottom="10dp"
     android:text="@string/onboarding_finish" />

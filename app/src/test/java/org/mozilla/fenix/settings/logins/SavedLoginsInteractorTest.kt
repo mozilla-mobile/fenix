@@ -5,25 +5,62 @@
 package org.mozilla.fenix.settings.logins
 
 import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.verifyAll
+import mozilla.components.support.test.robolectric.testContext
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.logins.controller.LoginsListController
+import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
+import kotlin.random.Random
 
+@RunWith(FenixRobolectricTestRunner::class)
 class SavedLoginsInteractorTest {
+    private val listController: LoginsListController = mockk(relaxed = true)
+    private val savedLoginsStorageController: SavedLoginsStorageController = mockk(relaxed = true)
+    private lateinit var interactor: SavedLoginsInteractor
+
+    @Before
+    fun setup() {
+        interactor = SavedLoginsInteractor(listController, savedLoginsStorageController)
+    }
 
     @Test
-    fun itemClicked() {
-        val savedLoginClicked: (SavedLoginsItem) -> Unit = mockk(relaxed = true)
-        val learnMore: () -> Unit = mockk(relaxed = true)
-        val interactor = SavedLoginsInteractor(
-            savedLoginClicked,
-            learnMore
-        )
+    fun `GIVEN a SavedLogin being clicked, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
+        val item = SavedLogin("mozilla.org", "username", "password", "id", Random.nextLong())
+        interactor.onItemClicked(item)
 
-        val item = SavedLoginsItem("mozilla.org", "username", "password", "id")
-        interactor.itemClicked(item)
-
-        verify {
-            savedLoginClicked.invoke(item)
+        verifyAll {
+            listController.handleItemClicked(item)
         }
+    }
+
+    @Test
+    fun `GIVEN a change in sorting strategy, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
+        val sortingStrategy = SortingStrategy.Alphabetically(testContext.components.publicSuffixList)
+
+        interactor.onSortingStrategyChanged(sortingStrategy)
+
+        verifyAll {
+            listController.handleSort(sortingStrategy)
+        }
+    }
+
+    @Test
+    fun `GIVEN the learn more option is clicked, WHEN the interactor is called for it, THEN it should just delegate the controller`() {
+        interactor.onLearnMoreClicked()
+
+        verifyAll {
+            listController.handleLearnMoreClicked()
+        }
+    }
+
+    @Test
+    fun loadAndMapLoginsTest() {
+        interactor.loadAndMapLogins()
+        verifyAll { savedLoginsStorageController.handleLoadAndMapLogins() }
     }
 }

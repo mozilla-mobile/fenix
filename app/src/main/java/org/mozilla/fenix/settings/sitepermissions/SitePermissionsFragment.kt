@@ -10,10 +10,13 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
+import org.mozilla.fenix.settings.requirePreference
 
 @SuppressWarnings("TooManyFunctions")
 class SitePermissionsFragment : PreferenceFragmentCompat() {
@@ -39,7 +42,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
         exceptionsCategory.onPreferenceClickListener = OnPreferenceClickListener {
             val directions = SitePermissionsFragmentDirections.actionSitePermissionsToExceptions()
-            Navigation.findNavController(view!!).navigate(directions)
+            Navigation.findNavController(requireView()).navigate(directions)
             true
         }
     }
@@ -64,9 +67,8 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
             } else {
                 null
             }
-        val preferenceKey = phoneFeature.getPreferenceKey(context)
 
-        val cameraPhoneFeatures: Preference = requireNotNull(findPreference(preferenceKey))
+        val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
         cameraPhoneFeatures.summary = autoplaySummary ?: summary
 
         cameraPhoneFeatures.onPreferenceClickListener = OnPreferenceClickListener {
@@ -77,7 +79,12 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
     private fun navigateToPhoneFeature(phoneFeature: PhoneFeature) {
         val directions = SitePermissionsFragmentDirections
-            .actionSitePermissionsToManagePhoneFeatures(phoneFeature.id)
-        Navigation.findNavController(view!!).navigate(directions)
+            .actionSitePermissionsToManagePhoneFeatures(phoneFeature)
+
+        if (phoneFeature == PhoneFeature.AUTOPLAY_AUDIBLE) {
+            requireComponents.analytics.metrics.track(Event.AutoPlaySettingVisited)
+        }
+
+        Navigation.findNavController(requireView()).navigate(directions)
     }
 }

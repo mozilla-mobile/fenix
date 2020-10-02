@@ -13,10 +13,39 @@
     <string name="content_description_disable_private_browsing_button">Вимкнути приватний перегляд</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Введіть запит чи адресу</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Немає відкритих вкладок</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Тут з’являтимуться ваші відкриті вкладки.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Тут зʼявлятимуться ваші приватні вкладки.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 відкрита вкладка. Торкніться, щоб перемкнути вкладки.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s відкритих вкладок. Торкніться, щоб перемкнути вкладки.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">Вибрано %1$d</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Додати нову збірку</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Назва</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Вибрати збірку</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Вихід з режиму вибору</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Зберегти вибрані вкладки до збірки</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">Вибрано %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">Скасовано вибір %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Режим вибору вимкнено</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Режим вибору ввімкнено, виберіть які вкладки зберегти до збірки</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Вибрано</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s розроблено Mozilla.</string>
@@ -34,13 +63,43 @@
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Видалити сеанс</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Додайте ярлик для відкриття приватних вкладок з головного екрану.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Додати ярлик</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ні, дякую</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Відкривайте Firefox швидше. Додайте віджет на головний екран.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Додати віджет</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Не зараз</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Ви можете використати Firefox для автоматичного відкриття посилань у програмах.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Перейти до налаштувань</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Відхилити</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Необхідний доступ до камери. Перейдіть до налаштувань Android, торкніться дозволів та торкніться дозволити.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Перейти до налаштувань</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Закрити</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Налаштуйте автоматичне закривання відкритих вкладок, які не переглядалися попереднього дня, тижня чи місяця.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Перейти до параметрів</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Закрити</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -85,6 +144,10 @@
     <string name="browser_menu_add_to_homescreen">Додати на головний екран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Встановити</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Синхронізовані вкладки</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Синхронізувати повторно</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Знайти на сторінці</string>
     <!-- Browser menu button that creates a private tab -->
@@ -93,8 +156,6 @@
     <string name="browser_menu_new_tab">Нова вкладка</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Зберегти до збірки</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Повідомити про сайт</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Поділитися</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -108,9 +169,11 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Технологія %1$s</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Режим читання</string>
 
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Закрити режим читача</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Відкрити в програмі</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -133,15 +196,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Сканувати</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Ярлики</string>
-
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Засіб пошуку</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Налаштування пошукових засобів</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Шукати з</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Цього разу шукати з:</string>
+    <string name="search_engines_search_with">Цього разу шукати з:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Заповнити посилання з буфера обміну</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -205,13 +265,15 @@
     <!-- Preference category for privacy and security settings -->
     <string name="preferences_category_privacy_security">Приватність та безпека</string>
     <!-- Preference for advanced site permissions -->
-    <string name="preferences_site_permissions">Дозволи сайту</string>
+    <string name="preferences_site_permissions">Дозволи сайтів</string>
     <!-- Preference for private browsing options -->
     <string name="preferences_private_browsing_options">Приватний перегляд</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Відкривати посилання в приватній вкладці</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Дозволити знімки екрана в приватному перегляді</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Якщо дозволено, приватні вкладки також будуть видимі, коли відкрито декілька програм</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Додати ярлик приватного перегляду</string>
     <!-- Preference for accessibility -->
@@ -222,7 +284,7 @@
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Спеціальний сервер синхронізації</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Сервер Облікового запису / Синхронізації  Firefox змінено. Вихід з програми для застосування змін…</string>
+    <string name="toast_override_fxa_sync_server_done">Сервер Облікового запису/Синхронізації Firefox змінено. Вихід з програми для застосування змін…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Обліковий запис</string>
     <!-- Preference shown on banner to sign into account -->
@@ -231,6 +293,10 @@
     <string name="preferences_toolbar">Панель інструментів</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Домівка</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Жести</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Пристосування</string>
     <!-- Preference description for banner about signing in -->
@@ -252,11 +318,13 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Віддалене зневадження через USB</string>
 
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Посилання на пошукові засоби</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Показати засоби пошуку</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Показувати пошукові пропозиції</string>
 
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Показати голосовий пошук</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Показувати в приватних сеансах</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -265,13 +333,22 @@
     <string name="preferences_search_browsing_history">Шукати в історії перегляду</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Шукати закладки</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Шукати синхронізовані вкладки</string>
     <!-- Preference for account settings -->
-    <string name="preferences_account_settings">Налаштування облікового запису</string>
+    <string name="preferences_account_settings">Обліковий запис</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Автозавершення URL-адрес</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Відкривати посилання в програмах</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Зовнішній менеджер завантажень</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Додатки</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Сповіщення</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -284,6 +361,8 @@
     <string name="preferences_sync_bookmarks">Закладки</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Паролі</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Вкладки</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Вийти</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -346,7 +425,7 @@
     <!-- Preference switch for usage and technical data collection -->
     <string name="preference_usage_data">Використання й технічні дані</string>
     <!-- Preference description for usage and technical data collection -->
-    <string name="preferences_usage_data_description">Надсилає в Mozilla дані про використання, швидкодію, апаратне забезпечення та налаштування браузера, щоб допомогти вдосконалити %1$s</string>
+    <string name="preferences_usage_data_description">Надсилання в Mozilla даних про використання, швидкодію, апаратне забезпечення та налаштування браузера, щоб допомогти вдосконалити %1$s</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Маркетингові дані</string>
     <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
@@ -378,7 +457,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Відвідайте <b>firefox.com/pair</b> в Firefox на своєму комп’ютері, щоб отримати QR-код.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Скануйте QR-код, показаний на <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Відкрити камеру</string>
     <!-- Button to cancel pairing -->
@@ -400,6 +479,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Тема пристрою</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Потягнути для оновлення</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Прокрутити для приховання панелі інструментів</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Провести вбік на панелі інструментів для перемикання вкладок</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Провести вгору на панелі інструментів вгору для відкриття вкладок</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Сеанси</string>
@@ -419,18 +508,43 @@
     <string name="library_desktop_bookmarks_unfiled">Інші закладки</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Історія</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Синхронізовані вкладки</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Список читання</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Пошук</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Бібліотека</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Налаштування</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Меню елемента історії</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Закрити</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Недавно закриті вкладки</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Показати всю історію</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d вкладок</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d вкладка</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Немає нещодавно закритих вкладок</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Закрити вкладки</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Вручну</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Через день</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Через тиждень</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Через місяць</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -441,6 +555,30 @@
     <string name="tabs_header_private_tabs_title">Приватні вкладки</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Додати вкладку</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Додати приватну вкладку</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Приватно</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Відкриті вкладки</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Зберегти до збірки</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Поділитися всіма вкладками</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Недавно закриті вкладки</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Налаштування вкладок</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Закрити всі вкладки</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Нова вкладка</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Домівка</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Перемкнути режим вкладок</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Видалити вкладку зі збірки</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Закрити вкладку</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -452,7 +590,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Ділитися вкладками</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Зберегти до збірки</string>
+    <string name="tabs_menu_save_to_collection1">Зберегти до збірки</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Меню вкладок</string>
     <!-- Tab menu item to share the tab -->
@@ -476,6 +614,14 @@
     <string name="collection_open_tabs">Відкрити вкладки</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Вилучити</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Видалити з історії</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Приватний режим)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Зберегти</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -516,6 +662,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Історія відсутня</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Завантажень немає</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">Вибрано %1$d</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Шкода, але %1$s не може завантажити цю сторінку.</string>
@@ -543,6 +696,8 @@
     <string name="bookmark_select_folder">Обрати теку</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Ви впевнені, що хочете видалити цю теку?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s видалить вибрані елементи.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s видалено</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -598,8 +753,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s видалено</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Закладки видалено</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Видалення вибраних тек</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ВІДНОВИТИ</string>
 
@@ -662,16 +819,12 @@
     <string name="delete_browsing_data_quit_off">Вимкнено</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Згрупуйте те, що для вас важливо. Збережіть відкриті вкладки до нової збірки.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Збірки</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Меню збірок</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Немає збірок</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Тут з’являтимуться ваші збірки.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Збирайте все важливе для вас. \nГрупуйте подібні пошуки, вебсайти та вкладки для швидкого доступу надалі.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Виберіть вкладки</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -695,12 +848,17 @@
     <string name="create_collection_save_to_collection_tab_selected">Вибрано %d вкладку</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Вкладки збережено!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Збірку збережено!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Вкладка збережена!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Закрити</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Зберегти</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Переглянути</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Збірка %d</string>
@@ -774,7 +932,7 @@
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Вкладки закрито</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Додано до найпопулярніших сайтів!</string>
+    <string name="snackbar_added_to_top_sites">Додано до популярних сайтів!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Приватну вкладку закрито</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -798,6 +956,10 @@
     <string name="qr_scanner_dialog_negative">ЗАБОРОНИТИ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Ви дійсно хочете видалити %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Видалення цієї вкладки видалить всю збірку. Ви можете створити нові збірки будь-коли.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Видалити %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Видалити</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -814,14 +976,14 @@
     <string name="preference_accessibility_font_size_title">Розмір шрифту</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Автоматичний розмір шрифту</string>
+    <string name="preference_accessibility_auto_size_2">Автоматичний розмір шрифту</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Розмір шрифту відповідатиме системним налаштуванням Android. Вимкніть, щоб керувати шрифтом тут.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Видалити дані перегляду</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Відкриті вкладки</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Відкрити вкладки</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">Вкладок: %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -844,7 +1006,7 @@
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Звільняє місце для зберігання</string>
     <!-- Title for the site permissions item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_site_permissions">Дозволи сайту</string>
+    <string name="preferences_delete_browsing_data_site_permissions">Дозволи сайтів</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Видалити дані перегляду</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -853,8 +1015,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Автоматично видаляє дані перегляду при виборі &quot;Вихід&quot; в головному меню</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Автоматично видаляє дані перегляду при виборі \&quot;Вихід\&quot; в головному меню</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Історія перегляду</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Вихід</string>
 
@@ -878,8 +1038,9 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">Firefox Nightly оновлюється щоночі та має нові експериментальні функції.
         Однак, він може бути дещо нестабільнішим. Завантажте beta версію нашого браузера для стабільнішої роботи.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Отримайте браузер Mozilla Firefox</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Отримати Firefox для Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly переміщено</string>
@@ -914,14 +1075,14 @@
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Отримайте відповіді тут</string>
 
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Отримайте максимум від %s.</string>
-
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Почніть синхронізувати закладки, паролі та інші дані з Обліковим записом Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Докладніше</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Ви увійшли як %s в іншому браузері Firefox на цьому пристрої. Бажаєте увійти в цей обліковий запис?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Ви увійшли як %s в іншому браузері Firefox на цьому пристрої. Бажаєте увійти в цей обліковий запис?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Так, увійти</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -934,20 +1095,22 @@
     <string name="onboarding_firefox_account_sync_is_on">Синхронізація увімкнена</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Не вдалося увійти</string>
-    <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Захистіть себе</string>
 
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header_2">Автоматичний захист приватності</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s допомагає зупинити стеження вебсайтів за вами.</string>
+    <string name="onboarding_tracking_protection_description_2">Налаштування приватності та безпеки блокують елементи стеження, зловмисне програмне забезпечення та стеження компаній за вами.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Стандартний</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Стандартний (типово)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Блокує менше стеження, але дозволяє нормальне завантаження сторінок</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Блокує менше елементів стеження. Сторінки завантажуватимуться нормально.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Надійний (рекомендовано)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Надійний</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Блокує більше стеження для кращого захисту і швидкодії, але може призвести до неправильної роботи деяких сайтів</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Блокує більше елементів стеження, реклами та виринаючих вікон. Сторінки завантажуються швидше, але деякі функції можуть не працювати.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1013,6 +1176,8 @@
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Використати е-пошту</string>
 
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Не маєте облікового запису? <u>Створіть його</u> для синхронізації Firefox між пристроями.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox припинить синхронізацію з вашим обліковим записом, але не вилучить жодних даних перегляду на цьому пристрої.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1036,31 +1201,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Докладніше</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Стандартний</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Стандартний (рекомендовано)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартний (типово)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Збалансований рівень захисту і швидкодії.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Нормальне завантаження сторінок при меншому блокуванні стеження.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Блокує менше елементів стеження. Сторінки завантажуються нормально.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Що блокується стандартним рівнем захисту від стеження</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Надійний</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Надійний (Типово)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Кращий захист від стеження і швидкодія, але деякі сайти можуть працювати неправильно.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Надійний (рекомендовано)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Надійніший захист, але може пошкоджувати деякі сайти чи їх вміст.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Блокує більше елементів стеження, реклами та виринаючих вікон. Сторінки завантажуються швидше, але деякі функції можуть не працювати.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Що блокується надійним рівнем захисту від стеження</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Власний</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Оберіть тип стеження і скриптів для блокування</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Виберіть тип стеження і скриптів для блокування.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Що блокується власними налаштуваннями захисту від стеження</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1085,7 +1240,7 @@
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Криптомайнери</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Зчитування відбитку браузера</string>
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Зчитування цифрового відбитка</string>
     <string name="enhanced_tracking_protection_blocked">Заблоковано</string>
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">Дозволено</string>
@@ -1100,9 +1255,9 @@
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Криптомайнери</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cryptominers_description">Перешкоджає доступу зловмисних скриптів до вашого пристрою для видобутку цифрової валюти.</string>
+    <string name="etp_cryptominers_description">Перешкоджає доступу зловмисних скриптів до вашого пристрою для добування криптовалют.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_fingerprinters_title">Зчитування відбитку браузера</string>
+    <string name="etp_fingerprinters_title">Зчитування цифрового відбитка</string>
 
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_description">Зупиняє збір унікальних даних про ваш пристрій, які можна використовувати для відстеження.</string>
@@ -1111,7 +1266,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Блокує завантаження зовнішньої реклами, відео та іншого вмісту з вбудованим кодом стеження. Може вплинути на функціональність вебсайтів.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s блокує стеження на цьому сайті, коли щит має фіолетовий колір. Торкніться його, щоб побачити, що заблоковано.</string>
+    <string name="etp_onboarding_cfr_message">Коли %s блокує стеження на сайті, щит стає фіолетовим. Торкніться, щоб дізнатися більше.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Захист на цьому сайті увімкнено</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1131,8 +1286,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Вільні бібліотеки</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Елементи стеження переспрямуванням</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Очищує куки, встановлені переспрямовувачами на відомі вебсайти для стеження.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Підтримка</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Збої</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Повідомлення про приватність</string>
     <!-- About page link text to open know your rights link -->
@@ -1174,7 +1336,7 @@
     <string name="add_to_homescreen_text_placeholder">Назва ярлика</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Ви можете легко додати цей вебсайт на головний екран вашого телефону, щоб мати миттєвий доступ до нього і працювати швидше, неначе зі звичайною програмою.</string>
+    <string name="add_to_homescreen_description_2">Ви можете легко додати цей вебсайт на головний екран вашого пристрою, щоб мати миттєвий доступ до нього і працювати швидше.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Паролі</string>
@@ -1209,6 +1371,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Не збережені паролі з’являтимуться тут.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Паролі для цих сайтів не зберігатимуться.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Видалити всі винятки</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Шукати паролі</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1244,10 +1408,16 @@
     <string name="logins_site_copied">Сайт скопійовано в буфер обміну</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Копіювати пароль</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Стерти пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Копіювати ім’я користувача</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Стерти ім’я користувача</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копіювати сайт</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Відкрити сайт у браузері</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Показати пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1268,6 +1438,14 @@
     <string name="preference_accessibility_force_enable_zoom">Масштабування на всіх вебсайтах</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Увімкніть, щоб дозволити масштабування, навіть на вебсайтах, які це не дозволяють.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Назва (A-Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Востаннє використано</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Меню впорядкування паролів</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Додати засіб пошуку</string>
@@ -1355,14 +1533,84 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Ви впевнені, що хочете видалити цю закладку?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Додати до найпопулярніших сайтів</string>
+    <string name="browser_menu_add_to_top_sites">Додати до популярних сайтів</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Засвідчено: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Видалити</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Змінити</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Ви дійсно хочете видалити цей запис?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Видалити</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Опції запису</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Текстове поле для редагування вебадреси запису.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Текстове поле для редагування імені користувача запису.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Текстове поле для редагування пароля запису.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Зберегти зміни.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Відхилити зміни</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Змінити</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Потрібен пароль</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Голосовий пошук</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Говоріть</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Запис з таким іменем користувача вже існує</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Під’єднати інший пристрій.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Повторіть автентифікацію.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Увімкніть синхронізацію вкладок.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">У вас немає вкладок, відкритих у Firefox на інших пристроях.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Переглядайте список вкладок з ваших інших пристроїв.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Увійти до синхронізації</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Немає відкритих вкладок</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Досягнуто ліміту популярних сайтів</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Щоб додати новий популярний сайт, вилучіть один. Торкніться й утримуйте сайт, потім виберіть вилучити.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Гаразд, зрозуміло</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Показати найвідвідуваніші сайти</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Вилучити</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Отримайте якнайбільше від %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Зберігайте важливе для вас</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Групуйте подібні пошуки, сайти та вкладки для швидкого доступу.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Ви увійшли як %s в іншому браузері Firefox на цьому пристрої. Бажаєте увійти в цей обліковий запис?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Ви можете легко додати цей вебсайт на головний екран вашого телефону, щоб мати миттєвий доступ до нього і працювати швидше, неначе зі звичайною програмою.</string>
+
+    </resources>

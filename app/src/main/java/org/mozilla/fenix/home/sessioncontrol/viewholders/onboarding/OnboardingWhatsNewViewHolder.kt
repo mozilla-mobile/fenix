@@ -4,12 +4,13 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.onboarding_whats_new.view.*
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.ext.addUnderline
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.OnboardingInteractor
 
 class OnboardingWhatsNewViewHolder(
@@ -23,14 +24,10 @@ class OnboardingWhatsNewViewHolder(
         val appName = view.context.getString(R.string.app_name)
         view.description_text.text = view.context.getString(R.string.onboarding_whats_new_description, appName)
 
-        val getAnswersText = view.get_answers.text.toString()
-        val textWithLink = SpannableString(getAnswersText).apply {
-            setSpan(UnderlineSpan(), 0, getAnswersText.length, 0)
-        }
-
-        view.get_answers.text = textWithLink
+        view.get_answers.addUnderline()
         view.get_answers.setOnClickListener {
             interactor.onWhatsNewGetAnswersClicked()
+            view.context.components.analytics.metrics.track(Event.OnboardingWhatsNew)
         }
     }
 

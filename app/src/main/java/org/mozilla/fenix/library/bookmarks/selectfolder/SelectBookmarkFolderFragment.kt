@@ -50,6 +50,8 @@ class SelectBookmarkFolderFragment : Fragment() {
         super.onResume()
         showToolbar(getString(R.string.bookmark_select_folder_fragment_label))
 
+        val args: SelectBookmarkFolderFragmentArgs by navArgs()
+
         viewLifecycleOwner.lifecycleScope.launch(Main) {
             bookmarkNode = withContext(IO) {
                 val context = requireContext()
@@ -57,16 +59,15 @@ class SelectBookmarkFolderFragment : Fragment() {
                     .getTree(BookmarkRoot.Root.id, recursive = true)
                     ?.let { DesktopFolders(context, showMobileRoot = true).withOptionalDesktopFolders(it) }
             }
-            activity?.title = bookmarkNode?.title ?: getString(R.string.library_bookmarks)
             val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
             recylerViewBookmarkFolders.adapter = adapter
-            adapter.updateData(bookmarkNode)
+            adapter.updateData(bookmarkNode, args.hideFolderGuid)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val args: SelectBookmarkFolderFragmentArgs by navArgs()
-        if (!args.visitedAddBookmark) {
+        if (!args.allowCreatingNewFolder) {
             inflater.inflate(R.menu.bookmarks_select_folder, menu)
         }
     }

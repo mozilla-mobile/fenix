@@ -20,6 +20,7 @@ job-defaults:
     fetches:
         toolchain:
             - android-sdk-linux
+            - android-gradle-dependencies
     include-pull-request-number: false
     run:
         using: gradlew
@@ -36,10 +37,13 @@ jobs:
     debug:
         attributes:
             build-type: debug
-            geckoview-engine: geckoNightly
             code-review: true
         run:
-            gradlew: ['clean', '-Pcoverage', 'jacocoGeckoNightlyDebugTestReport']
+            gradlew:
+                - 'clean'
+                - '-Pcoverage'
+                - 'jacocoDebugTestReport'
+                - 'githubTestDetails'
             post-gradlew:
                 - ['automation/taskcluster/upload_coverage_report.sh']
             secrets:
@@ -53,5 +57,11 @@ jobs:
         worker:
             artifacts:
                 - name: public/reports/index.html
-                  path: /builds/worker/checkouts/src/app/build/reports/tests/testGeckoNightlyDebugUnitTest/index.html
+                  path: /builds/worker/checkouts/src/app/build/reports/tests/testDebugUnitTest/index.html
                   type: file
+                - name: public/reports/test
+                  path: /builds/worker/checkouts/src/app/build/reports/tests
+                  type: directory
+                - name: public/github
+                  path: /builds/worker/github
+                  type: directory

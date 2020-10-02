@@ -5,14 +5,14 @@
 package org.mozilla.fenix.ext
 
 import androidx.core.content.ContextCompat
+import io.mockk.every
+import io.mockk.mockk
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
@@ -32,9 +32,40 @@ class TabCollectionTest {
         assertNotEquals(defaultColor, mockTabCollection(-123L).getIconColor(testContext))
     }
 
+    @Test
+    fun `GIVEN list of collections WHEN default collection number is required THEN return next default number`() {
+        val collections = mutableListOf<TabCollection>(
+            mockk {
+                every { title } returns "Collection 1"
+            },
+            mockk {
+                every { title } returns "Collection 2"
+            },
+            mockk {
+                every { title } returns "Collection 3"
+            }
+        )
+        assertEquals(4, collections.getDefaultCollectionNumber())
+
+        collections.add(mockk {
+            every { title } returns "Collection 5"
+        })
+        assertEquals(6, collections.getDefaultCollectionNumber())
+
+        collections.add(mockk {
+            every { title } returns "Random name"
+        })
+        assertEquals(6, collections.getDefaultCollectionNumber())
+
+        collections.add(mockk {
+            every { title } returns "Collection 10 10"
+        })
+        assertEquals(6, collections.getDefaultCollectionNumber())
+    }
+
     private fun mockTabCollection(id: Long): TabCollection {
-        val collection: TabCollection = mock()
-        `when`(collection.id).thenReturn(id)
+        val collection: TabCollection = mockk()
+        every { collection.id } returns id
         return collection
     }
 }

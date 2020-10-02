@@ -6,37 +6,31 @@ package org.mozilla.fenix.components
 
 import android.content.Context
 import io.mockk.mockk
-import mozilla.components.support.test.mock
-import org.mockito.Mockito.`when`
 import org.mozilla.fenix.utils.ClipboardHandler
+import org.mozilla.fenix.utils.Settings
 
 class TestComponents(private val context: Context) : Components(context) {
     override val backgroundServices by lazy {
         mockk<BackgroundServices>(relaxed = true)
     }
     override val services by lazy { Services(context, backgroundServices.accountManager) }
-    override val core by lazy { TestCore(context) }
+    override val core by lazy { TestCore(context, analytics.crashReporter) }
     override val search by lazy { Search(context) }
     override val useCases by lazy {
         UseCases(
             context,
+            core.engine,
             core.sessionManager,
             core.store,
-            core.engine.settings,
             search.searchEngineManager,
-            core.webAppShortcutManager
+            core.webAppShortcutManager,
+            core.topSitesStorage
         )
     }
-    override val intentProcessors by lazy {
-        val processors: IntentProcessors = mock()
-        `when`(processors.externalAppIntentProcessors).thenReturn(emptyList())
-        `when`(processors.privateIntentProcessor).thenReturn(mock())
-        `when`(processors.intentProcessor).thenReturn(mock())
-        `when`(processors.customTabIntentProcessor).thenReturn(mock())
-        `when`(processors.privateCustomTabIntentProcessor).thenReturn(mock())
-        processors
-    }
+    override val intentProcessors by lazy { mockk<IntentProcessors>(relaxed = true) }
     override val analytics by lazy { Analytics(context) }
 
     override val clipboardHandler by lazy { ClipboardHandler(context) }
+
+    override val settings by lazy { mockk<Settings>(relaxed = true) }
 }

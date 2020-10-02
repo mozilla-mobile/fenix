@@ -41,21 +41,16 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyOpenTabsHeader()
-            verifyAddTabButton()
-            verifyNoTabsOpenedHeader()
-            verifyNoTabsOpenedText()
-            verifyCollectionsHeaderIsNotShown()
-            verifyNoCollectionsHeaderIsNotShown()
-            verifyNoCollectionsTextIsNotShown()
+            verifyTabButton()
+            verifyCollectionsHeader()
             verifyHomeToolbar()
             verifyHomeComponent()
 
             // Verify Top Sites
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs("Wikipedia")
-            verifyExistingTopSitesTabs("YouTube")
             verifyExistingTopSitesTabs("Top Articles")
+            verifyExistingTopSitesTabs("Google")
         }
     }
 
@@ -77,15 +72,15 @@ class HomeScreenTest {
             verifyGetToKnowHeader()
 
             // See What's new
-            scrollToElementByText("See what’s new")
-            verifyWhatsNewHeader()
-            verifyWhatsNewLink()
+            // scrollToElementByText("See what’s new")
+            // verifyWhatsNewHeader()
+            // verifyWhatsNewLink()
 
-            // Protect yourself
-            scrollToElementByText("Protect yourself")
-            verifyProtectYourselfHeader()
+            // Automatic privacy
+            scrollToElementByText("Automatic privacy")
+            verifyAutomaticPrivacyfHeader()
             verifyTrackingProtectionToggle()
-            verifyProtectYourselfText()
+            verifyAutomaticPrivacyText()
 
             /* Check disable due to Firebase failures on Pixel 2 API 28
             // Choose your theme
@@ -132,10 +127,8 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyAddTabButton()
-            verifyShareTabsButton(visible = false)
-            verifyPrivateSessionHeader()
-            verifyPrivateSessionMessage(visible = true)
+            verifyTabButton()
+            verifyPrivateSessionMessage()
             verifyHomeToolbar()
             verifyHomeComponent()
         }.openCommonMythsLink {
@@ -152,10 +145,8 @@ class HomeScreenTest {
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
-            verifyAddTabButton()
-            verifyShareTabsButton(visible = true)
-            verifyPrivateSessionHeader()
-            verifyPrivateSessionMessage(visible = false)
+            verifyTabButton()
+            verifyPrivateSessionMessage()
             verifyHomeToolbar()
             verifyHomeComponent()
         }

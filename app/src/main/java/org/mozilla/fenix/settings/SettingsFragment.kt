@@ -4,32 +4,39 @@
 
 package org.mozilla.fenix.settings
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.amo_collection_override_dialog.view.*
+import kotlinx.android.synthetic.main.fragment_installed_add_on_details.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
+import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
@@ -37,22 +44,25 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.navigateToNotificationsSettings
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.ext.toRoundedDrawable
-import org.mozilla.fenix.settings.account.AccountAuthErrorPreference
-import org.mozilla.fenix.settings.account.AccountPreference
+import org.mozilla.fenix.settings.account.AccountUiView
+import org.mozilla.fenix.utils.Settings
 import kotlin.system.exitProcess
 
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    private val args by navArgs<SettingsFragmentArgs>()
+    private lateinit var accountUiView: AccountUiView
+
     private val accountObserver = object : AccountObserver {
         private fun updateAccountUi(profile: Profile? = null) {
             val context = context ?: return
             lifecycleScope.launch {
-                updateAccountUIState(
+                accountUiView.updateAccountUIState(
                     context = context,
                     profile = profile
                         ?: context.components.backgroundServices.accountManager.accountProfile()
@@ -74,6 +84,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        accountUiView = AccountUiView(
+            fragment = this,
+            scope = lifecycleScope,
+            accountManager = requireComponents.backgroundServices.accountManager,
+            httpClient = requireComponents.core.client,
+            updateFxASyncOverrideMenu = ::updateFxASyncOverrideMenu
+        )
+
         // Observe account changes to keep the UI up-to-date.
         requireComponents.backgroundServices.accountManager.register(
             accountObserver,
@@ -87,8 +105,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // For example, if user is signed-in, and we don't perform this call in onCreate, we'll briefly
         // display a "Sign In" preference, which will then get replaced by the correct account information
         // once this call is ran in onResume shortly after.
-        updateAccountUIState(
-            context!!,
+        accountUiView.updateAccountUIState(
+            requireContext(),
             requireComponents.backgroundServices.accountManager.accountProfile()
         )
 
@@ -114,8 +132,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+        updateMakeDefaultBrowserPreference()
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onResume() {
         super.onResume()
 
@@ -125,17 +145,26 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // update it here if we're not going through the `onCreate->onStart->onResume` lifecycle chain.
         update(shouldUpdateAccountUIState = !creatingFragment)
 
-        view!!.findViewById<RecyclerView>(R.id.recycler_view)
+        requireView().findViewById<RecyclerView>(R.id.recycler_view)
             ?.hideInitialScrollBar(viewLifecycleOwner.lifecycleScope)
+
+        if (args.preferenceToScrollTo != null) {
+            scrollToPreference(args.preferenceToScrollTo)
+        }
 
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        accountUiView.cancel()
+    }
+
     private fun update(shouldUpdateAccountUIState: Boolean) {
         val trackingProtectionPreference =
-            findPreference<Preference>(getPreferenceKey(R.string.pref_key_tracking_protection_settings))
-        trackingProtectionPreference?.summary = context?.let {
+            requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)
+        trackingProtectionPreference.summary = context?.let {
             if (it.settings().shouldUseTrackingProtection) {
                 getString(R.string.tracking_protection_on)
             } else {
@@ -143,21 +172,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        val toolbarPreference =
-            findPreference<Preference>(getPreferenceKey(R.string.pref_key_toolbar))
-        toolbarPreference?.summary = context?.settings()?.toolbarSettingString
-
-        val aboutPreference = findPreference<Preference>(getPreferenceKey(R.string.pref_key_about))
+        val aboutPreference = requirePreference<Preference>(R.string.pref_key_about)
         val appName = getString(R.string.app_name)
-        aboutPreference?.title = getString(R.string.preferences_about, appName)
+        aboutPreference.title = getString(R.string.preferences_about, appName)
 
         val deleteBrowsingDataPreference =
-            findPreference<Preference>(
-                getPreferenceKey(
-                    R.string.pref_key_delete_browsing_data_on_quit_preference
-                )
-            )
-        deleteBrowsingDataPreference?.summary = context?.let {
+            requirePreference<Preference>(R.string.pref_key_delete_browsing_data_on_quit_preference)
+        deleteBrowsingDataPreference.summary = context?.let {
             if (it.settings().shouldDeleteBrowsingDataOnQuit) {
                 getString(R.string.delete_browsing_data_quit_on)
             } else {
@@ -165,25 +186,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        val tabSettingsPreference =
+            requirePreference<Preference>(R.string.pref_key_close_tabs)
+        tabSettingsPreference.summary = context?.settings()?.getTabTimeoutString()
+
         setupPreferences()
 
         if (shouldUpdateAccountUIState) {
-            updateAccountUIState(
-                context!!,
+            accountUiView.updateAccountUIState(
+                requireContext(),
                 requireComponents.backgroundServices.accountManager.accountProfile()
             )
         }
+
+        updateMakeDefaultBrowserPreference()
     }
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         // Hide the scrollbar so the animation looks smoother
-        val recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view)
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.isVerticalScrollBarEnabled = false
 
         val directions: NavDirections? = when (preference.key) {
             resources.getString(R.string.pref_key_sign_in) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
+            }
+            resources.getString(R.string.pref_key_close_tabs) -> {
+                SettingsFragmentDirections.actionSettingsFragmentToCloseTabsSettingsFragment()
             }
             resources.getString(R.string.pref_key_search_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSearchEngineFragment()
@@ -208,16 +238,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 requireContext().metrics.track(Event.AddonsOpenInSettings)
                 SettingsFragmentDirections.actionSettingsFragmentToAddonsFragment()
             }
-            resources.getString(R.string.pref_key_make_default_browser) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToDefaultBrowserSettingsFragment()
-            }
             resources.getString(R.string.pref_key_data_choices) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDataChoicesFragment()
             }
             resources.getString(R.string.pref_key_help) -> {
                 (activity as HomeActivity).openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                        context!!,
+                        requireContext(),
                         SupportUtils.SumoTopic.HELP
                     ),
                     newTab = true,
@@ -240,7 +267,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 null
             }
             resources.getString(R.string.pref_key_passwords) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToLoginsFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
             }
             resources.getString(R.string.pref_key_about) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
@@ -257,13 +284,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_delete_browsing_data_on_quit_preference) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataOnQuitFragment()
             }
+            resources.getString(R.string.pref_key_notifications) -> {
+                context?.navigateToNotificationsSettings()
+                null
+            }
             resources.getString(R.string.pref_key_customize) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToCustomizationFragment()
             }
             resources.getString(R.string.pref_key_privacy_link) -> {
                 val intent = SupportUtils.createCustomTabIntent(
                     requireContext(),
-                    SupportUtils.getPrivacyNoticeUrl()
+                    SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE)
                 )
                 startActivity(intent)
                 null
@@ -280,6 +311,41 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_debug_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToSecretSettingsFragment()
             }
+            resources.getString(R.string.pref_key_override_amo_collection) -> {
+                val context = requireContext()
+                val dialogView = LayoutInflater.from(context).inflate(R.layout.amo_collection_override_dialog, null)
+
+                AlertDialog.Builder(context).apply {
+                    setTitle(context.getString(R.string.preferences_customize_amo_collection))
+                    setView(dialogView)
+                    setNegativeButton(R.string.customize_addon_collection_cancel) { dialog: DialogInterface, _ ->
+                        dialog.cancel()
+                    }
+
+                    setPositiveButton(R.string.customize_addon_collection_ok) { _, _ ->
+                        context.settings().overrideAmoUser = dialogView.custom_amo_user.text.toString()
+                        context.settings().overrideAmoCollection = dialogView.custom_amo_collection.text.toString()
+
+                        Toast.makeText(
+                            context,
+                            getString(R.string.toast_customize_addon_collection_done),
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        Handler().postDelayed({
+                            exitProcess(0)
+                        }, AMO_COLLECTION_OVERRIDE_EXIT_DELAY)
+                    }
+
+                    dialogView.custom_amo_collection.setText(context.settings().overrideAmoCollection)
+                    dialogView.custom_amo_user.setText(context.settings().overrideAmoUser)
+                    dialogView.custom_amo_user.requestFocus()
+                    dialogView.custom_amo_user.showKeyboard()
+                    create()
+                }.show()
+
+                null
+            }
             else -> null
         }
         directions?.let { navigateFromSettings(directions) }
@@ -289,9 +355,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupPreferences() {
         val leakKey = getPreferenceKey(R.string.pref_key_leakcanary)
         val debuggingKey = getPreferenceKey(R.string.pref_key_remote_debugging)
-
+        val preferencePrivateBrowsing =
+            requirePreference<Preference>(R.string.pref_key_private_browsing)
+        val preferenceExternalDownloadManager =
+            requirePreference<Preference>(R.string.pref_key_external_download_manager)
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
+        val preferenceMakeDefaultBrowser =
+            requirePreference<Preference>(R.string.pref_key_make_default_browser)
+        val preferenceOpenLinksInExternalApp =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
+
+        preferencePrivateBrowsing.icon.mutate().apply {
+            setTint(requireContext().getColorFromAttr(R.attr.primaryText))
+        }
 
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
@@ -301,12 +378,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        preferenceRemoteDebugging?.setOnPreferenceChangeListener { preference, newValue ->
+        preferenceExternalDownloadManager.isVisible = FeatureFlags.externalDownloadManager
+        preferenceRemoteDebugging?.setOnPreferenceChangeListener<Boolean> { preference, newValue ->
             preference.context.settings().preferences.edit()
-                .putBoolean(preference.key, newValue as Boolean).apply()
+                .putBoolean(preference.key, newValue).apply()
             requireComponents.core.engine.settings.remoteDebuggingEnabled = newValue
             true
         }
+
+        preferenceMakeDefaultBrowser.onPreferenceClickListener =
+            getClickListenerForMakeDefaultBrowser()
+
+        preferenceOpenLinksInExternalApp?.onPreferenceChangeListener = SharedPreferenceUpdater()
 
         val preferenceFxAOverride =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_fxa_server))
@@ -333,6 +416,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(
             getPreferenceKey(R.string.pref_key_debug_settings)
         )?.isVisible = requireContext().settings().showSecretDebugMenuThisSession
+
+        setupAmoCollectionOverridePreference(requireContext().settings())
+    }
+
+    private fun getClickListenerForMakeDefaultBrowser(): Preference.OnPreferenceClickListener {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Preference.OnPreferenceClickListener {
+                val intent = Intent(android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
+                startActivity(intent)
+                true
+            }
+        } else {
+            Preference.OnPreferenceClickListener {
+                (activity as HomeActivity).openToBrowserAndLoad(
+                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                        requireContext(),
+                        SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER
+                    ),
+                    newTab = true,
+                    from = BrowserDirection.FromSettings
+                )
+                true
+            }
+        }
+    }
+
+    private fun updateMakeDefaultBrowserPreference() {
+        requirePreference<DefaultBrowserPreference>(R.string.pref_key_make_default_browser).updateSwitch()
     }
 
     private fun navigateFromSettings(directions: NavDirections) {
@@ -352,72 +463,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             scrollBarSize = 0
             delay(SCROLL_INDICATOR_DELAY)
             scrollBarSize = originalSize
-        }
-    }
-
-    /**
-     * Updates the UI to reflect current account state.
-     * Possible conditions are logged-in without problems, logged-out, and logged-in but needs to re-authenticate.
-     */
-    private fun updateAccountUIState(context: Context, profile: Profile?) {
-        val preferenceSignIn =
-            findPreference<Preference>(context.getPreferenceKey(R.string.pref_key_sign_in))
-        val preferenceFirefoxAccount =
-            findPreference<AccountPreference>(context.getPreferenceKey(R.string.pref_key_account))
-        val preferenceFirefoxAccountAuthError =
-            findPreference<AccountAuthErrorPreference>(
-                context.getPreferenceKey(
-                    R.string.pref_key_account_auth_error
-                )
-            )
-        val accountPreferenceCategory =
-            findPreference<PreferenceCategory>(context.getPreferenceKey(R.string.pref_key_account_category))
-
-        val accountManager = requireComponents.backgroundServices.accountManager
-        val account = accountManager.authenticatedAccount()
-
-        updateFxASyncOverrideMenu()
-
-        // Signed-in, no problems.
-        if (account != null && !accountManager.accountNeedsReauth()) {
-            preferenceSignIn?.isVisible = false
-
-            profile?.avatar?.url?.let { avatarUrl ->
-                lifecycleScope.launch(Main) {
-                    val roundedDrawable =
-                        avatarUrl.toRoundedDrawable(context, requireComponents.core.client)
-                    preferenceFirefoxAccount?.icon =
-                        roundedDrawable ?: AppCompatResources.getDrawable(
-                            context,
-                            R.drawable.ic_account
-                        )
-                }
-            }
-            preferenceSignIn?.onPreferenceClickListener = null
-            preferenceFirefoxAccountAuthError?.isVisible = false
-            preferenceFirefoxAccount?.isVisible = true
-            accountPreferenceCategory?.isVisible = true
-
-            preferenceFirefoxAccount?.displayName = profile?.displayName
-            preferenceFirefoxAccount?.email = profile?.email
-
-            // Signed-in, need to re-authenticate.
-        } else if (account != null && accountManager.accountNeedsReauth()) {
-            preferenceFirefoxAccount?.isVisible = false
-            preferenceFirefoxAccountAuthError?.isVisible = true
-            accountPreferenceCategory?.isVisible = true
-
-            preferenceSignIn?.isVisible = false
-            preferenceSignIn?.onPreferenceClickListener = null
-
-            preferenceFirefoxAccountAuthError?.email = profile?.email
-
-            // Signed-out.
-        } else {
-            preferenceSignIn?.isVisible = true
-            preferenceFirefoxAccount?.isVisible = false
-            preferenceFirefoxAccountAuthError?.isVisible = false
-            accountPreferenceCategory?.isVisible = false
         }
     }
 
@@ -445,8 +490,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @VisibleForTesting
+    internal fun setupAmoCollectionOverridePreference(settings: Settings) {
+        val preferenceAmoCollectionOverride =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_amo_collection))
+
+        val show = (Config.channel.isNightlyOrDebug && (
+            settings.amoCollectionOverrideConfigured() || settings.showSecretDebugMenuThisSession)
+        )
+        preferenceAmoCollectionOverride?.apply {
+            isVisible = show
+            summary = settings.overrideAmoCollection.ifEmpty { null }
+        }
+    }
+
     companion object {
         private const val SCROLL_INDICATOR_DELAY = 10L
         private const val FXA_SYNC_OVERRIDE_EXIT_DELAY = 2000L
+        private const val AMO_COLLECTION_OVERRIDE_EXIT_DELAY = 3000L
     }
 }

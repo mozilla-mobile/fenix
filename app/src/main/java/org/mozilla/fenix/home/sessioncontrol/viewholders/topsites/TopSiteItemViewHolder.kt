@@ -4,57 +4,88 @@
 
 package org.mozilla.fenix.home.sessioncontrol.viewholders.topsites
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.view.MotionEvent
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.top_site_item.view.*
+import android.widget.PopupWindow
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import kotlinx.android.synthetic.main.top_site_item.*
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.feature.top.sites.TopSite.Type.FRECENT
+import mozilla.components.feature.top.sites.TopSite.Type.PINNED
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.view.ViewHolder
 
 class TopSiteItemViewHolder(
-    private val view: View,
+    view: View,
     private val interactor: TopSiteInteractor
-) : RecyclerView.ViewHolder(view) {
+) : ViewHolder(view) {
     private lateinit var topSite: TopSite
-    private var topSiteMenu: TopSiteItemMenu
 
     init {
-        topSiteMenu = TopSiteItemMenu(view.context) {
-            when (it) {
-                is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
-                    topSite
-                )
-                is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(topSite)
+        top_site_item.setOnClickListener {
+            interactor.onSelectTopSite(topSite.url, topSite.type)
+        }
+
+        top_site_item.setOnLongClickListener {
+            it.context.components.analytics.metrics.track(Event.TopSiteLongPress(topSite.type))
+
+            val topSiteMenu = TopSiteItemMenu(view.context, topSite.type != FRECENT) { item ->
+                when (item) {
+                    is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
+                        topSite
+                    )
+                    is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(
+                        topSite
+                    )
+                }
             }
-        }
-
-        view.top_site_item.setOnClickListener {
-            interactor.onSelectTopSite(topSite.url)
-        }
-
-        view.top_site_item.setOnLongClickListener() {
-            topSiteMenu.menuBuilder.build(view.context).show(anchor = it.top_site_title)
-            return@setOnLongClickListener true
+            val menu = topSiteMenu.menuBuilder.build(view.context).show(anchor = it)
+            it.setOnTouchListener @SuppressLint("ClickableViewAccessibility") { v, event ->
+                onTouchEvent(v, event, menu)
+            }
+            true
         }
     }
 
     fun bind(topSite: TopSite) {
-        this.topSite = topSite
-        view.top_site_title.text = topSite.title
-        when {
-            topSite.url == SupportUtils.POCKET_TRENDING_URL -> {
-                view.favicon_image.setImageDrawable(view.context.getDrawable(R.drawable.ic_pocket))
+        top_site_title.text = topSite.title
+
+        pin_indicator.visibility = if (topSite.type == PINNED) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
+        when (topSite.url) {
+            SupportUtils.POCKET_TRENDING_URL -> {
+                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_pocket))
             }
             else -> {
-                view.context.components.core.icons.loadIntoView(view.favicon_image, topSite.url)
+                itemView.context.components.core.icons.loadIntoView(favicon_image, topSite.url)
             }
         }
+
+        this.topSite = topSite
+    }
+
+    private fun onTouchEvent(
+        v: View,
+        event: MotionEvent,
+        menu: PopupWindow
+    ): Boolean {
+        if (event.action == MotionEvent.ACTION_CANCEL) {
+            menu.dismiss()
+        }
+        return v.onTouchEvent(event)
     }
 
     companion object {
@@ -64,6 +95,7 @@ class TopSiteItemViewHolder(
 
 class TopSiteItemMenu(
     private val context: Context,
+    private val isPinnedSite: Boolean,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
     sealed class Item {
@@ -80,9 +112,12 @@ class TopSiteItemMenu(
             ) {
                 onItemTapped.invoke(Item.OpenInPrivateTab)
             },
-
             SimpleBrowserMenuItem(
-                context.getString(R.string.remove_top_site)
+                if (isPinnedSite) {
+                    context.getString(R.string.remove_top_site)
+                } else {
+                    context.getString(R.string.delete_from_history)
+                }
             ) {
                 onItemTapped.invoke(Item.RemoveTopSite)
             }

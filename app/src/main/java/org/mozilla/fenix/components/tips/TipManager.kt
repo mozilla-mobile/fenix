@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.components.tips
 
-import org.mozilla.fenix.FeatureFlags
+import android.graphics.drawable.Drawable
 
 sealed class TipType {
     data class Button(val text: String, val action: () -> Unit) : TipType()
@@ -15,7 +15,8 @@ open class Tip(
     val identifier: String,
     val title: String,
     val description: String,
-    val learnMoreURL: String?
+    val learnMoreURL: String?,
+    val titleDrawable: Drawable? = null
 )
 
 interface TipProvider {
@@ -31,7 +32,6 @@ class FenixTipManager(
     private val providers: List<TipProvider>
 ) : TipManager {
     override fun getTip(): Tip? {
-        if (!FeatureFlags.tips) { return null }
         return providers
             .firstOrNull { it.shouldDisplay }
             ?.tip

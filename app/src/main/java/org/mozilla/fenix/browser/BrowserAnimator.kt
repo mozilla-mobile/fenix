@@ -4,25 +4,21 @@
 
 package org.mozilla.fenix.browser
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.view.View
-import android.view.animation.DecelerateInterpolator
-import androidx.core.animation.doOnEnd
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.EngineView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
 
 /**
@@ -33,11 +29,10 @@ class BrowserAnimator(
     private val fragment: WeakReference<Fragment>,
     private val engineView: WeakReference<EngineView>,
     private val swipeRefresh: WeakReference<View>,
-    private val arguments: Bundle
+    private val viewLifecycleScope: WeakReference<LifecycleCoroutineScope>,
+    private val settings: Settings,
+    private val firstContentfulHappened: () -> Boolean
 ) {
-
-    private val viewLifeCycleScope: LifecycleCoroutineScope?
-        get() = fragment.get()?.viewLifecycleOwner?.lifecycleScope
 
     private val unwrappedEngineView: EngineView?
         get() = engineView.get()
@@ -45,52 +40,14 @@ class BrowserAnimator(
     private val unwrappedSwipeRefresh: View?
         get() = swipeRefresh.get()
 
-    private val browserZoomInValueAnimator = ValueAnimator.ofFloat(0f, END_ANIMATOR_VALUE).apply {
-        addUpdateListener {
-            unwrappedSwipeRefresh?.scaleX =
-                STARTING_XY_SCALE + XY_SCALE_MULTIPLIER * it.animatedFraction
-            unwrappedSwipeRefresh?.scaleY =
-                STARTING_XY_SCALE + XY_SCALE_MULTIPLIER * it.animatedFraction
-            unwrappedSwipeRefresh?.alpha = it.animatedFraction
-        }
-
-        doOnEnd {
-            unwrappedEngineView?.asView()?.visibility = View.VISIBLE
-            unwrappedSwipeRefresh?.background = null
-            arguments.putBoolean(SHOULD_ANIMATE_FLAG, false)
-        }
-
-        interpolator = DecelerateInterpolator()
-        duration = ANIMATION_DURATION
-    }
-
-    private val browserFadeInValueAnimator = ValueAnimator.ofFloat(0f, END_ANIMATOR_VALUE).apply {
-        addUpdateListener {
-            unwrappedSwipeRefresh?.alpha = it.animatedFraction
-        }
-
-        doOnEnd {
-            unwrappedEngineView?.asView()?.visibility = View.VISIBLE
-            unwrappedSwipeRefresh?.background = null
-            arguments.putBoolean(SHOULD_ANIMATE_FLAG, false)
-        }
-
-        interpolator = DecelerateInterpolator()
-        duration = ANIMATION_DURATION
-    }
-
-    /**
-     * Triggers the *zoom in* browser animation to run if necessary (based on the SHOULD_ANIMATE_FLAG).
-     * Also removes the flag from the bundle so it is not played on future entries into the fragment.
-     */
     fun beginAnimateInIfNecessary() {
-        val shouldAnimate = arguments.getBoolean(SHOULD_ANIMATE_FLAG, false)
-        if (shouldAnimate) {
-            viewLifeCycleScope?.launch(Dispatchers.Main) {
-                delay(ANIMATION_DELAY)
-                captureEngineViewAndDrawStatically {
-                    unwrappedSwipeRefresh?.alpha = 0f
-                    browserZoomInValueAnimator.start()
+        if (settings.waitToShowPageUntilFirstPaint) {
+            if (firstContentfulHappened()) {
+                viewLifecycleScope.get()?.launch {
+                    delay(ANIMATION_DELAY)
+                    unwrappedEngineView?.asView()?.visibility = View.VISIBLE
+                    unwrappedSwipeRefresh?.background = null
+                    unwrappedSwipeRefresh?.alpha = 1f
                 }
             }
         } else {
@@ -101,28 +58,20 @@ class BrowserAnimator(
     }
 
     /**
-     * Triggers the *zoom out* browser animation to run.
-     */
-    fun beginAnimateOut() {
-        viewLifeCycleScope?.launch(Dispatchers.Main) {
-            captureEngineViewAndDrawStatically {
-                unwrappedEngineView?.asView()?.visibility = View.GONE
-                browserZoomInValueAnimator.reverse()
-            }
-        }
-    }
-
-    /**
      * Makes the swipeRefresh background a screenshot of the engineView in its current state.
      * This allows us to "animate" the engineView.
      */
     fun captureEngineViewAndDrawStatically(onComplete: () -> Unit) {
         unwrappedEngineView?.asView()?.context.let {
-            viewLifeCycleScope?.launch {
+            viewLifecycleScope.get()?.launch {
                 // isAdded check is necessary because of a bug in viewLifecycleOwner. See AC#3828
-                if (!fragment.isAdded()) { return@launch }
+                if (!fragment.isAdded()) {
+                    return@launch
+                }
                 unwrappedEngineView?.captureThumbnail { bitmap ->
-                    if (!fragment.isAdded()) { return@captureThumbnail }
+                    if (!fragment.isAdded()) {
+                        return@captureThumbnail
+                    }
 
                     unwrappedSwipeRefresh?.apply {
                         // If the bitmap is null, the best we can do to reduce the flash is set transparent
@@ -144,22 +93,20 @@ class BrowserAnimator(
     }
 
     companion object {
-        private const val SHOULD_ANIMATE_FLAG = "shouldAnimate"
-        private const val ANIMATION_DELAY = 50L
-        private const val ANIMATION_DURATION = 115L
-        private const val END_ANIMATOR_VALUE = 500f
-        private const val XY_SCALE_MULTIPLIER = .05f
-        private const val STARTING_XY_SCALE = .95f
+        private const val ANIMATION_DELAY = 100L
 
         fun getToolbarNavOptions(context: Context): NavOptions {
             val navOptions = NavOptions.Builder()
 
-            if (!context.settings().shouldUseBottomToolbar) {
-                navOptions.setEnterAnim(R.anim.fade_in)
-                navOptions.setExitAnim(R.anim.fade_out)
-            } else {
-                navOptions.setEnterAnim(R.anim.fade_in_up)
-                navOptions.setExitAnim(R.anim.fade_out_down)
+            when (context.settings().toolbarPosition) {
+                ToolbarPosition.TOP -> {
+                    navOptions.setEnterAnim(R.anim.fade_in)
+                    navOptions.setExitAnim(R.anim.fade_out)
+                }
+                ToolbarPosition.BOTTOM -> {
+                    navOptions.setEnterAnim(R.anim.fade_in_up)
+                    navOptions.setExitAnim(R.anim.fade_out_down)
+                }
             }
 
             return navOptions.build()

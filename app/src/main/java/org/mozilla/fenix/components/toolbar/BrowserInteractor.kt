@@ -5,11 +5,16 @@
 package org.mozilla.fenix.components.toolbar
 
 open class BrowserInteractor(
-    private val browserToolbarController: BrowserToolbarController
+    private val browserToolbarController: BrowserToolbarController,
+    private val menuController: BrowserToolbarMenuController
 ) : BrowserToolbarViewInteractor {
 
     override fun onTabCounterClicked() {
         browserToolbarController.handleTabCounterClick()
+    }
+
+    override fun onTabCounterMenuItemTapped(item: TabCounterMenu.Item) {
+        browserToolbarController.handleTabCounterItemInteraction(item)
     }
 
     override fun onBrowserToolbarPaste(text: String) {
@@ -25,14 +30,14 @@ open class BrowserInteractor(
     }
 
     override fun onBrowserToolbarMenuItemTapped(item: ToolbarMenu.Item) {
-        browserToolbarController.handleToolbarItemInteraction(item)
-    }
-
-    override fun onBrowserMenuDismissed(lowPrioHighlightItems: List<ToolbarMenu.Item>) {
-        browserToolbarController.handleBrowserMenuDismissed(lowPrioHighlightItems)
+        menuController.handleToolbarItemInteraction(item)
     }
 
     override fun onScrolled(offset: Int) {
         browserToolbarController.handleScroll(offset)
+    }
+
+    override fun onReaderModePressed(enabled: Boolean) {
+        browserToolbarController.handleReaderModePressed(enabled)
     }
 }

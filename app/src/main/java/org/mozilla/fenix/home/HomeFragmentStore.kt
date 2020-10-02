@@ -5,8 +5,6 @@
 package org.mozilla.fenix.home
 
 import android.graphics.Bitmap
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.MediaState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
@@ -34,10 +32,6 @@ data class Tab(
     val mediaState: MediaState.State
 )
 
-fun List<Tab>.toSessionBundle(sessionManager: SessionManager): List<Session> {
-    return this.mapNotNull { sessionManager.findSessionById(it.sessionId) }
-}
-
 /**
  * The state for the [HomeFragment].
  *
@@ -47,23 +41,25 @@ fun List<Tab>.toSessionBundle(sessionManager: SessionManager): List<Session> {
  * @property mode The state of the [HomeFragment] UI.
  * @property tabs The list of opened [Tab] in the [HomeFragment].
  * @property topSites The list of [TopSite] in the [HomeFragment].
+ * @property tip The current [Tip] to show on the [HomeFragment].
+ * @property showCollectionPlaceholder If true, shows a placeholder when there are no collections.
  */
 data class HomeFragmentState(
     val collections: List<TabCollection>,
     val expandedCollections: Set<Long>,
     val mode: Mode,
-    val tabs: List<Tab>,
     val topSites: List<TopSite>,
-    val tip: Tip? = null
+    val tip: Tip? = null,
+    val showCollectionPlaceholder: Boolean
 ) : State
 
 sealed class HomeFragmentAction : Action {
     data class Change(
-        val tabs: List<Tab>,
         val topSites: List<TopSite>,
         val mode: Mode,
         val collections: List<TabCollection>,
-        val tip: Tip? = null
+        val tip: Tip? = null,
+        val showCollectionPlaceholder: Boolean
     ) :
         HomeFragmentAction()
 
@@ -71,10 +67,10 @@ sealed class HomeFragmentAction : Action {
         HomeFragmentAction()
 
     data class CollectionsChange(val collections: List<TabCollection>) : HomeFragmentAction()
-    data class ModeChange(val mode: Mode, val tabs: List<Tab> = emptyList()) : HomeFragmentAction()
-    data class TabsChange(val tabs: List<Tab>) : HomeFragmentAction()
+    data class ModeChange(val mode: Mode) : HomeFragmentAction()
     data class TopSitesChange(val topSites: List<TopSite>) : HomeFragmentAction()
     data class RemoveTip(val tip: Tip) : HomeFragmentAction()
+    object RemoveCollectionsPlaceholder : HomeFragmentAction()
 }
 
 private fun homeFragmentStateReducer(
@@ -85,7 +81,6 @@ private fun homeFragmentStateReducer(
         is HomeFragmentAction.Change -> state.copy(
             collections = action.collections,
             mode = action.mode,
-            tabs = action.tabs,
             topSites = action.topSites,
             tip = action.tip
         )
@@ -101,9 +96,13 @@ private fun homeFragmentStateReducer(
             state.copy(expandedCollections = newExpandedCollection)
         }
         is HomeFragmentAction.CollectionsChange -> state.copy(collections = action.collections)
-        is HomeFragmentAction.ModeChange -> state.copy(mode = action.mode, tabs = action.tabs)
-        is HomeFragmentAction.TabsChange -> state.copy(tabs = action.tabs)
+        is HomeFragmentAction.ModeChange -> state.copy(mode = action.mode)
         is HomeFragmentAction.TopSitesChange -> state.copy(topSites = action.topSites)
-        is HomeFragmentAction.RemoveTip -> { state.copy(tip = null) }
+        is HomeFragmentAction.RemoveTip -> {
+            state.copy(tip = null)
+        }
+        is HomeFragmentAction.RemoveCollectionsPlaceholder -> {
+            state.copy(showCollectionPlaceholder = false)
+        }
     }
 }

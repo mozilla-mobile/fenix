@@ -19,24 +19,24 @@ class AppRequestInterceptor(private val context: Context) : RequestInterceptor {
     override fun onLoadRequest(
         engineSession: EngineSession,
         uri: String,
+        lastUri: String?,
         hasUserGesture: Boolean,
-        isSameDomain: Boolean
+        isSameDomain: Boolean,
+        isRedirect: Boolean,
+        isDirectNavigation: Boolean,
+        isSubframeRequest: Boolean
     ): RequestInterceptor.InterceptionResponse? {
-        var result: RequestInterceptor.InterceptionResponse? = null
-
-        // WebChannel-driven authentication does not require a separate redirect interceptor.
-        @Suppress("ConstantConditionIf")
-        if (FeatureFlags.asFeatureWebChannelsDisabled) {
-            result = context.components.services.accountsAuthFeature.interceptor.onLoadRequest(
-                    engineSession, uri, hasUserGesture, isSameDomain)
-        }
-
-        if (result == null) {
-            result = context.components.services.appLinksInterceptor.onLoadRequest(
-                engineSession, uri, hasUserGesture, isSameDomain)
-        }
-
-        return result
+        return context.components.services.appLinksInterceptor
+            .onLoadRequest(
+                engineSession,
+                uri,
+                lastUri,
+                hasUserGesture,
+                isSameDomain,
+                isRedirect,
+                isDirectNavigation,
+                isSubframeRequest
+            )
     }
 
     override fun onErrorRequest(

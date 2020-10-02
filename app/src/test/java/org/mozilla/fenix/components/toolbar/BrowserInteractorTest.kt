@@ -1,5 +1,7 @@
 package org.mozilla.fenix.components.toolbar
 
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
@@ -7,14 +9,16 @@ import org.junit.Test
 
 class BrowserInteractorTest {
 
-    lateinit var browserToolbarController: BrowserToolbarController
+    @RelaxedMockK lateinit var browserToolbarController: BrowserToolbarController
+    @RelaxedMockK lateinit var browserToolbarMenuController: BrowserToolbarMenuController
     lateinit var interactor: BrowserInteractor
 
     @Before
     fun setup() {
-        browserToolbarController = mockk(relaxed = true)
+        MockKAnnotations.init(this)
         interactor = BrowserInteractor(
-            browserToolbarController
+            browserToolbarController,
+            browserToolbarMenuController
         )
     }
 
@@ -22,6 +26,14 @@ class BrowserInteractorTest {
     fun onTabCounterClicked() {
         interactor.onTabCounterClicked()
         verify { browserToolbarController.handleTabCounterClick() }
+    }
+
+    @Test
+    fun onTabCounterMenuItemTapped() {
+        val item: TabCounterMenu.Item = mockk()
+
+        interactor.onTabCounterMenuItemTapped(item)
+        verify { browserToolbarController.handleTabCounterItemInteraction(item) }
     }
 
     @Test
@@ -52,15 +64,6 @@ class BrowserInteractorTest {
 
         interactor.onBrowserToolbarMenuItemTapped(item)
 
-        verify { browserToolbarController.handleToolbarItemInteraction(item) }
-    }
-
-    @Test
-    fun onBrowserMenuDismissed() {
-        val itemList: List<ToolbarMenu.Item> = listOf()
-
-        interactor.onBrowserMenuDismissed(itemList)
-
-        verify { browserToolbarController.handleBrowserMenuDismissed(itemList) }
+        verify { browserToolbarMenuController.handleToolbarItemInteraction(item) }
     }
 }

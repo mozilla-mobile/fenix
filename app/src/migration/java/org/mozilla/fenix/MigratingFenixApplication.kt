@@ -8,6 +8,7 @@ import android.content.Context
 import kotlinx.coroutines.runBlocking
 import mozilla.components.support.migration.FennecMigrator
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
+import org.mozilla.fenix.migration.MigrationTelemetryListener
 
 /**
  * An application class which knows how to migrate Fennec data.
@@ -27,7 +28,7 @@ class MigratingFenixApplication : FenixApplication() {
             .migrateHistory(this.components.core.lazyHistoryStorage)
             .migrateBookmarks(
                 this.components.core.lazyBookmarksStorage,
-                this.components.core.topSiteStorage.storage
+                this.components.core.pinnedSiteStorage
             )
             .migrateLogins(this.components.core.lazyPasswordsStorage)
             .migrateFxa(lazy { this.components.backgroundServices.accountManager })

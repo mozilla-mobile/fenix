@@ -12,13 +12,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.LinearLayout
 import android.widget.RadioGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import kotlinx.android.synthetic.main.search_engine_radio_button.view.*
+import kotlinx.android.synthetic.main.search_engine_radio_button.view.engine_icon
+import kotlinx.android.synthetic.main.search_engine_radio_button.view.engine_text
+import kotlinx.android.synthetic.main.search_engine_radio_button.view.overflow_menu
+import kotlinx.android.synthetic.main.search_engine_radio_button.view.radio_button
 import kotlinx.coroutines.MainScope
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
@@ -73,6 +76,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             it.identifier == defaultEngine
         } ?: searchEngineList.list.first()).identifier
 
+        context.components.search.searchEngineManager.defaultSearchEngine =
+            searchEngineList.list.find {
+                it.identifier == selectedEngine
+            }
+
         searchEngineGroup!!.removeAllViews()
 
         val layoutInflater = LayoutInflater.from(context)
@@ -94,6 +102,10 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             engineItem.tag = engineId
             if (engineId == selectedEngine) {
                 updateDefaultItem(engineItem.radio_button)
+                /* #11465 -> radio_button.isChecked = true does not trigger
+                * onSearchEngineSelected because searchEngineGroup has null views at that point.
+                * So we trigger it here.*/
+                onSearchEngineSelected(engine)
             }
             searchEngineGroup!!.addView(engineItem, layoutParams)
         }
@@ -114,9 +126,10 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         res: Resources,
         allowDeletion: Boolean
     ): View {
-        val isCustomSearchEngine = CustomSearchEngineStore.isCustomSearchEngine(context, engine.identifier)
+        val isCustomSearchEngine =
+            CustomSearchEngineStore.isCustomSearchEngine(context, engine.identifier)
 
-        val wrapper = layoutInflater.inflate(itemResId, null) as ConstraintLayout
+        val wrapper = layoutInflater.inflate(itemResId, null) as LinearLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = engine.name
@@ -129,7 +142,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 onItemTapped = {
                     when (it) {
                         is SearchEngineMenu.Item.Edit -> editCustomSearchEngine(engine)
-                        is SearchEngineMenu.Item.Delete -> deleteSearchEngine(context, engine, isCustomSearchEngine)
+                        is SearchEngineMenu.Item.Delete -> deleteSearchEngine(
+                            context,
+                            engine,
+                            isCustomSearchEngine
+                        )
                     }
                 }
             ).menuBuilder.build(context).show(wrapper.overflow_menu)
@@ -143,7 +160,8 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
 
     override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
         searchEngineList.list.forEach { engine ->
-            val wrapper: ConstraintLayout = searchEngineGroup?.findViewWithTag(engine.identifier) ?: return
+            val wrapper: LinearLayout =
+                searchEngineGroup?.findViewWithTag(engine.identifier) ?: return
 
             when (wrapper.radio_button == buttonView) {
                 true -> onSearchEngineSelected(engine)
@@ -162,12 +180,20 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
         Navigation.findNavController(searchEngineGroup!!).navigate(directions)
     }
 
-    private fun deleteSearchEngine(context: Context, engine: SearchEngine, isCustomSearchEngine: Boolean) {
+    private fun deleteSearchEngine(
+        context: Context,
+        engine: SearchEngine,
+        isCustomSearchEngine: Boolean
+    ) {
         val isDefaultEngine = engine == context.components.search.provider.getDefaultEngine(context)
         val initialEngineList = searchEngineList.copy()
         val initialDefaultEngine = searchEngineList.default
 
-        context.components.search.provider.uninstallSearchEngine(context, engine)
+        context.components.search.provider.uninstallSearchEngine(
+            context,
+            engine,
+            isCustomSearchEngine
+        )
 
         MainScope().allowUndo(
             view = context.getRootView()!!,
@@ -175,7 +201,11 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 .getString(R.string.search_delete_search_engine_success_message, engine.name),
             undoActionTitle = context.getString(R.string.snackbar_deleted_undo),
             onCancel = {
-                context.components.search.provider.installSearchEngine(context, engine)
+                context.components.search.provider.installSearchEngine(
+                    context,
+                    engine,
+                    isCustomSearchEngine
+                )
 
                 searchEngineList = initialEngineList.copy(
                     default = initialDefaultEngine

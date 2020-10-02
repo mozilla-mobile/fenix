@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home
 
-import android.view.View
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.feature.tab.collections.Tab
@@ -23,20 +22,6 @@ class SessionControlInteractorTest {
     @Before
     fun setup() {
         interactor = SessionControlInteractor(controller)
-    }
-
-    @Test
-    fun onCloseTab() {
-        val sessionId = "hello"
-        interactor.onCloseTab(sessionId)
-        verify { controller.handleCloseTab(sessionId) }
-    }
-
-    @Test
-    fun onCloseAllTabs() {
-        val isPrivateMode = true
-        interactor.onCloseAllTabs(isPrivateMode)
-        verify { controller.handleCloseAllTabs(isPrivateMode) }
     }
 
     @Test
@@ -64,8 +49,8 @@ class SessionControlInteractorTest {
     fun onCollectionRemoveTab() {
         val collection: TabCollection = mockk(relaxed = true)
         val tab: Tab = mockk(relaxed = true)
-        interactor.onCollectionRemoveTab(collection, tab)
-        verify { controller.handleCollectionRemoveTab(collection, tab) }
+        interactor.onCollectionRemoveTab(collection, tab, false)
+        verify { controller.handleCollectionRemoveTab(collection, tab, false) }
     }
 
     @Test
@@ -83,18 +68,6 @@ class SessionControlInteractorTest {
     }
 
     @Test
-    fun onPauseMediaClicked() {
-        interactor.onPauseMediaClicked()
-        verify { controller.handlePauseMediaClicked() }
-    }
-
-    @Test
-    fun onPlayMediaClicked() {
-        interactor.onPlayMediaClicked()
-        verify { controller.handlePlayMediaClicked() }
-    }
-
-    @Test
     fun onPrivateBrowsingLearnMoreClicked() {
         interactor.onPrivateBrowsingLearnMoreClicked()
         verify { controller.handlePrivateBrowsingLearnMoreClicked() }
@@ -108,26 +81,6 @@ class SessionControlInteractorTest {
     }
 
     @Test
-    fun onSaveToCollection() {
-        interactor.onSaveToCollection(null)
-        verify { controller.handleSaveTabToCollection(null) }
-    }
-
-    @Test
-    fun onSelectTab() {
-        val tabView: View = mockk(relaxed = true)
-        val sessionId = "hello"
-        interactor.onSelectTab(tabView, sessionId)
-        verify { controller.handleSelectTab(tabView, sessionId) }
-    }
-
-    @Test
-    fun onShareTabs() {
-        interactor.onShareTabs()
-        verify { controller.handleShareTabs() }
-    }
-
-    @Test
     fun onStartBrowsingClicked() {
         interactor.onStartBrowsingClicked()
         verify { controller.handleStartBrowsingClicked() }
@@ -138,5 +91,29 @@ class SessionControlInteractorTest {
         val collection: TabCollection = mockk(relaxed = true)
         interactor.onToggleCollectionExpanded(collection, true)
         verify { controller.handleToggleCollectionExpanded(collection, true) }
+    }
+
+    @Test
+    fun onAddTabsToCollection() {
+        interactor.onAddTabsToCollectionTapped()
+        verify { controller.handleCreateCollection() }
+    }
+
+    @Test
+    fun onPaste() {
+        interactor.onPaste("text")
+        verify { controller.handlePaste("text") }
+    }
+
+    @Test
+    fun onPasteAndGo() {
+        interactor.onPasteAndGo("text")
+        verify { controller.handlePasteAndGo("text") }
+    }
+
+    @Test
+    fun onRemoveCollectionsPlaceholder() {
+        interactor.onRemoveCollectionsPlaceholder()
+        verify { controller.handleRemoveCollectionsPlaceholder() }
     }
 }

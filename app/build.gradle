@@ -5,22 +5,20 @@ plugins {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'jacoco'
-apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
 
 import com.android.build.OutputFile
+import groovy.json.JsonOutput
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
-import org.mozilla.fenix.gradle.tasks.LintUnitTestRunner
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion Config.compileSdkVersion
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion Config.minSdkVersion
@@ -32,11 +30,10 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         resValue "bool", "IS_DEBUG", "false"
         buildConfigField "boolean", "USE_RELEASE_VERSIONING", "false"
-        buildConfigField "String", "AMO_COLLECTION", "\"16f6e5d9a40448b8955db57ced6d75\""
+        buildConfigField "String", "AMO_COLLECTION", "\"83a9cccfe6e24a34bd7b155ff9ee32\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
         manifestPlaceholders = [
-                "isRaptorEnabled": "false",
                 "deepLinkScheme": deepLinkSchemeValue
         ]
     }
@@ -44,8 +41,16 @@ android {
     def releaseTemplate = {
         shrinkResources true
         minifyEnabled true
-        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        proguardFiles 'proguard-android-optimize-3.5.0-modified.txt', 'proguard-rules.pro'
         matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
+
+        if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
+            signingConfig signingConfigs.debug
+        }
+
+        if (gradle.hasProperty("localProperties.debuggable")) {
+            debuggable true
+        }
     }
 
     buildTypes {
@@ -53,44 +58,36 @@ android {
             shrinkResources false
             minifyEnabled false
             applicationIdSuffix ".fenix.debug"
-            manifestPlaceholders.isRaptorEnabled = "true"
+            buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
             resValue "bool", "IS_DEBUG", "true"
             pseudoLocalesEnabled true
         }
-        forPerformanceTest releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
-            manifestPlaceholders.isRaptorEnabled = "true"
-            applicationIdSuffix ".fenix.performancetest"
-            debuggable true
-            manifestPlaceholders = [
-                // Since we configure this build to behave like a "fennec" flavored build, we need
-                // to set a shared user id for the manifest. The actual values does not matter.
-                // However we pick a unique value to not "clash" with other Fenix/Fennec builds
-                // installed on the device.
-                "sharedUserId": "org.mozilla.fenix.performancetest.sharedID"
-            ]
-        }
-        fenixNightly releaseTemplate >> {
-            applicationIdSuffix ".fenix.nightly"
+        nightly releaseTemplate >> {
+            applicationIdSuffix ".fenix"
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            buildConfigField "String", "AMO_COLLECTION", "\"7dfae8669acc4312a65e8ba5553036\""
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
         }
-        fenixBeta releaseTemplate >> {
-            applicationIdSuffix ".fenix.beta"
+        beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+            applicationIdSuffix ".firefox_beta"
             def deepLinkSchemeValue = "fenix-beta"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
+            manifestPlaceholders = [
+                    // This release type is meant to replace Firefox (Beta channel) and therefore needs to inherit
+                    // its sharedUserId for all eternity. See:
+                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // Shipping an app update without sharedUserId can have
+                    // fatal consequences. For example see:
+                    //  - https://issuetracker.google.com/issues/36924841
+                    //  - https://issuetracker.google.com/issues/36905922
+                    "sharedUserId": "org.mozilla.firefox.sharedID",
+                    "deepLinkScheme": deepLinkSchemeValue
+            ]
         }
-        fenixProduction releaseTemplate >> {
-            applicationIdSuffix ".fenix"
-            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            def deepLinkSchemeValue = "fenix"
-            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
-        }
-        fennecProduction releaseTemplate >> {
+        release releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             applicationIdSuffix ".firefox"
             def deepLinkSchemeValue = "fenix"
@@ -107,77 +104,6 @@ android {
                     "deepLinkScheme": deepLinkSchemeValue
             ]
         }
-        fennecBeta releaseTemplate >> {
-            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            applicationIdSuffix ".firefox_beta"
-            def deepLinkSchemeValue = "fenix-beta"
-            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
-                    // This release type is meant to replace Firefox (Release channel) and therefore needs to inherit
-                    // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
-                    // Shipping an app update without sharedUserId can have
-                    // fatal consequences. For example see:
-                    //  - https://issuetracker.google.com/issues/36924841
-                    //  - https://issuetracker.google.com/issues/36905922
-                    "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
-            ]
-        }
-        fennecNightly releaseTemplate >> {
-            buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            applicationIdSuffix ".fennec_aurora"
-            def deepLinkSchemeValue = "fenix-nightly"
-            buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
-                    // This release type is meant to replace Firefox (Release channel) and therefore needs to inherit
-                    // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
-                    // Shipping an app update without sharedUserId can have
-                    // fatal consequences. For example see:
-                    //  - https://issuetracker.google.com/issues/36924841
-                    //  - https://issuetracker.google.com/issues/36905922
-                    "sharedUserId": "org.mozilla.fennec.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
-            ]
-        }
-    }
-
-    variantFilter { // There's a "release" build type that exists by default that we don't use (it's replaced by "nightly" and "beta")
-        if (buildType.name == 'release') {
-            setIgnore true
-        }
-
-        // Current build variant setup:
-        //
-        //                      | geckoNightly  | geckoBeta |
-        // |--------------------|---------------|-----------|
-        // | debug              | ✅            | ✅       | Both variants for testing and development.
-        // | forPerformanceTest | ✅            | ✅       | Both variants unless the perf team only cares about Nightly (TBD).
-        // | fenixNightly       | ✅            | ✅       | Built with both, but only the "geckoNightly" one is published to Google Play
-        // | fenixBeta          | ❌            | ✅       | Fenix Beta ships with GV Beta
-        // | fenixProduction    | ❌            | ✅       | Fenix Production ships with GV Beta
-        // | fennecProduction   | ❌            | ✅       | Fenix build to replace production Firefox builds
-        // | fennecBeta         | ❌            | ✅       | Fenix build to replace beta Firefox builds
-        // | fennecNightly      | ✅            | ❌       | Fenix build to replace Nightly Firefox builds
-
-        def flavors = flavors*.name.toString().toLowerCase()
-
-        if (buildType.name == 'fenixBeta' && flavors.contains("geckonightly")) {
-            setIgnore true
-        }
-
-        if (buildType.name == 'fenixProduction' && flavors.contains("geckonightly")) {
-            setIgnore true
-        }
-
-        if ((buildType.name == 'fennecProduction' || buildType.name == 'fennecBeta') && flavors.contains("geckonightly")) {
-            setIgnore true
-        }
-
-        if (buildType.name == 'fennecNightly' && flavors.contains("geckobeta")) {
-            setIgnore true
-        }
     }
 
     aaptOptions {
@@ -186,6 +112,10 @@ android {
         // GeckoView must uncompress it before it can do anything else which
         // causes a significant delay on startup.
         noCompress 'ja'
+
+        // manifest.template.json is converted to manifest.json at build time.
+        // No need to package the template in the APK.
+        ignoreAssetsPattern "manifest.template.json"
     }
 
     testOptions {
@@ -200,33 +130,19 @@ android {
         androidTest {
             resources.srcDirs += ['src/androidTest/resources']
         }
-        fennecNightly {
-            java.srcDirs = ['src/migration/java']
+        debug {
+            java.srcDirs = ['src/geckoNightly/java']
+        }
+        nightly {
+            java.srcDirs = ['src/geckoNightly/java']
+        }
+        beta {
+            java.srcDirs = ['src/migration/java', 'src/geckoBeta/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
         }
-        fennecBeta {
-            java.srcDirs = ['src/migration/java']
+        release {
+            java.srcDirs = ['src/migration/java', 'src/geckoRelease/java']
             manifest.srcFile "src/migration/AndroidManifest.xml"
-        }
-        fennecProduction {
-            java.srcDirs = ['src/migration/java']
-            manifest.srcFile "src/migration/AndroidManifest.xml"
-        }
-        forPerformanceTest {
-            // We want our performance test builds to use the same code as our "fennec" flavor builds
-            // since those builds will ship to our large user base.
-            java.srcDirs = ['src/migration/java']
-            manifest.srcFile "src/migration/AndroidManifest.xml"
-        }
-    }
-
-    productFlavors {
-        geckoNightly {
-            dimension "engine"
-        }
-
-        geckoBeta {
-            dimension "engine"
         }
     }
 
@@ -257,8 +173,6 @@ android {
         unitTests.returnDefaultValues = true
     }
 }
-
-def baseVersionCode = generatedVersionCode
 
 android.applicationVariants.all { variant ->
 
@@ -294,27 +208,11 @@ android.applicationVariants.all { variant ->
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
 
-        // Our generated version code now has a length of 9 (See automation/gradle/versionCode.gradle).
-        // Our x86 builds need a higher version code to avoid installing ARM builds on an x86 device
-        // with ARM compatibility mode.
-
         variant.outputs.each { output ->
             def abi = output.getFilter(OutputFile.ABI)
-
-            def versionCodeOverride
-            if (variant.name.contains("Fennec")) {
-                versionCodeOverride = Config.generateFennecVersionCode(abi)
-            } else if (abi == "x86_64") {
-                versionCodeOverride = baseVersionCode + 3
-            } else if (abi == "x86") {
-                versionCodeOverride = baseVersionCode + 2
-            } else if (abi == "arm64-v8a") {
-                versionCodeOverride = baseVersionCode + 1
-            } else if (abi == "armeabi-v7a") {
-                versionCodeOverride = baseVersionCode
-            } else {
-                throw RuntimeException("Unknown ABI: $abi")
-            }
+            // We use the same version code generator, that we inherited from Fennec, across all channels - even on
+            // channels that never shipped a Fennec build.
+            def versionCodeOverride = Config.generateFennecVersionCode(abi)
 
             println("versionCode for $abi = $versionCodeOverride")
 
@@ -346,9 +244,13 @@ android.applicationVariants.all { variant ->
     }
 
     def buildDate = Config.generateBuildDate()
-    buildConfigField 'String', 'BUILD_DATE', '"' + buildDate + '"'
-
-    def variantName = variant.getName()
+    // Setting buildDate with every build changes the generated BuildConfig, which slows down the
+    // build. Only do this for non-debug builds, to speed-up builds produced during local development.
+    if (isDebug) {
+        buildConfigField 'String', 'BUILD_DATE', '"debug build"'
+    } else {
+        buildConfigField 'String', 'BUILD_DATE', '"' + buildDate + '"'
+    }
 
 // -------------------------------------------------------------------------------------------------
 // Adjust: Read token from local file if it exists (Only release builds)
@@ -390,21 +292,6 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
-// Digital Asset Links: Read token from local file if it exists
-// -------------------------------------------------------------------------------------------------
-
-    print("Digital Asset Links token: ")
-
-    try {
-        def token = new File("${rootDir}/.digital_asset_links_token").text.trim()
-        buildConfigField 'String', 'DIGITAL_ASSET_LINKS_TOKEN', '"' + token + '"'
-        println "(Added from .digital_asset_links_token file)"
-    } catch (FileNotFoundException ignored) {
-        buildConfigField 'String', 'DIGITAL_ASSET_LINKS_TOKEN', 'null'
-        println("X_X")
-    }
-
-// -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
 
@@ -430,8 +317,11 @@ ext.gleanDocsDirectory = "$rootDir/docs"
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 dependencies {
-    geckoNightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
-    geckoBetaImplementation Deps.mozilla_browser_engine_gecko_beta
+    debugImplementation Deps.mozilla_browser_engine_gecko_nightly
+
+    nightlyImplementation Deps.mozilla_browser_engine_gecko_nightly
+    betaImplementation Deps.mozilla_browser_engine_gecko_beta
+    releaseImplementation Deps.mozilla_browser_engine_gecko_release
 
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_coroutines
@@ -442,12 +332,12 @@ dependencies {
     implementation Deps.androidx_coordinatorlayout
 
     implementation Deps.sentry
-    implementation Deps.osslicenses_library
 
     implementation Deps.leanplum_core
     implementation Deps.leanplum_fcm
 
     implementation Deps.mozilla_concept_engine
+    implementation Deps.mozilla_concept_menu
     implementation Deps.mozilla_concept_push
     implementation Deps.mozilla_concept_storage
     implementation Deps.mozilla_concept_sync
@@ -457,13 +347,15 @@ dependencies {
     implementation Deps.mozilla_browser_awesomebar
     implementation Deps.mozilla_feature_downloads
     implementation Deps.mozilla_browser_domains
-    implementation Deps.mozilla_browser_tabstray
     implementation Deps.mozilla_browser_icons
     implementation Deps.mozilla_browser_menu
+    implementation Deps.mozilla_browser_menu2
     implementation Deps.mozilla_browser_search
     implementation Deps.mozilla_browser_session
     implementation Deps.mozilla_browser_state
     implementation Deps.mozilla_browser_storage_sync
+    implementation Deps.mozilla_browser_tabstray
+    implementation Deps.mozilla_browser_thumbnails
     implementation Deps.mozilla_browser_toolbar
 
     implementation Deps.mozilla_support_extensions
@@ -479,30 +371,36 @@ dependencies {
     implementation Deps.mozilla_feature_media
     implementation Deps.mozilla_feature_prompts
     implementation Deps.mozilla_feature_push
+    implementation Deps.mozilla_feature_privatemode
     implementation Deps.mozilla_feature_pwa
     implementation Deps.mozilla_feature_qr
     implementation Deps.mozilla_feature_search
     implementation Deps.mozilla_feature_session
+    implementation Deps.mozilla_feature_syncedtabs
     implementation Deps.mozilla_feature_toolbar
     implementation Deps.mozilla_feature_tabs
     implementation Deps.mozilla_feature_findinpage
+    implementation Deps.mozilla_feature_logins
     implementation Deps.mozilla_feature_site_permissions
     implementation Deps.mozilla_feature_readerview
     implementation Deps.mozilla_feature_tab_collections
+    implementation Deps.mozilla_feature_recentlyclosed
     implementation Deps.mozilla_feature_top_sites
     implementation Deps.mozilla_feature_share
     implementation Deps.mozilla_feature_accounts_push
     implementation Deps.mozilla_feature_webcompat
     implementation Deps.mozilla_feature_webnotifications
+    implementation Deps.mozilla_feature_webcompat_reporter
 
+    implementation Deps.mozilla_service_digitalassetlinks
+    implementation Deps.mozilla_service_experiments
     implementation Deps.mozilla_service_sync_logins
     implementation Deps.mozilla_service_firefox_accounts
     implementation Deps.mozilla_service_glean
-    implementation Deps.mozilla_service_experiments
     implementation Deps.mozilla_service_location
 
-
     implementation Deps.mozilla_support_base
+    implementation Deps.mozilla_support_images
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog
     implementation Deps.mozilla_support_utils
@@ -512,7 +410,8 @@ dependencies {
 
     implementation Deps.mozilla_ui_colors
     implementation Deps.mozilla_ui_icons
-    implementation Deps.mozilla_ui_publicsuffixlist
+    implementation Deps.mozilla_lib_publicsuffixlist
+    implementation Deps.mozilla_ui_widgets
 
     implementation Deps.mozilla_lib_crash
     implementation Deps.mozilla_lib_push_firebase
@@ -536,14 +435,14 @@ dependencies {
     implementation Deps.androidx_work_ktx
     implementation Deps.google_material
 
-    implementation Deps.google_flexbox
-
     implementation Deps.lottie
 
     implementation Deps.adjust
     implementation Deps.installreferrer // Required by Adjust
 
     implementation Deps.google_ads_id // Required for the Google Advertising ID
+
+    implementation Deps.google_play_store // Required for in-app reviews
 
     androidTestImplementation Deps.uiautomator
 // Removed pending AndroidX fixes
@@ -587,8 +486,6 @@ dependencies {
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     implementation Deps.mozilla_support_rusthttp
 
-    testImplementation Deps.mockito_core
-    androidTestImplementation Deps.mockito_android
     testImplementation Deps.mockk
 
     // For the initial release of Glean 19, we require consumer applications to
@@ -598,17 +495,15 @@ dependencies {
     lintChecks project(":mozilla-lint-rules")
 }
 
-if (project.hasProperty("raptor")) {
-    android.defaultConfig.manifestPlaceholders.isRaptorEnabled = "true"
-}
-
 if (project.hasProperty("coverage")) {
-    tasks.withType(Test) {
+    tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
     }
 
     android.applicationVariants.all { variant ->
-        task "jacoco${variant.name.capitalize()}TestReport"(type: JacocoReport, dependsOn: "test${variant.name.capitalize()}UnitTest") {
+        tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
+            dependsOn "test${variant.name.capitalize()}UnitTest"
+
             reports {
                 xml.enabled = true
                 html.enabled = true
@@ -621,11 +516,12 @@ if (project.hasProperty("coverage")) {
                     excludes: fileFilter)
             def mainSrc = "$project.projectDir/src/main/java"
 
-            sourceDirectories = files([mainSrc])
-            classDirectories = files([kotlinDebugTree, javaDebugTree])
-            executionData = fileTree(dir: project.buildDir, includes: [
-                    "jacoco/test${variant.name.capitalize()}UnitTest.exec", 'outputs/code-coverage/connected/*coverage.ec'
-            ])
+            sourceDirectories.setFrom(files([mainSrc]))
+            classDirectories.setFrom(files([kotlinDebugTree, javaDebugTree]))
+            executionData.setFrom(fileTree(dir: project.buildDir, includes: [
+                "jacoco/test${variant.name.capitalize()}UnitTest.exec",
+                'outputs/code-coverage/connected/*coverage.ec'
+            ]))
         }
     }
 
@@ -642,7 +538,7 @@ if (project.hasProperty("coverage")) {
 // Task for printing APK information for the requested variant
 // Usage: "./gradlew printVariants
 // -------------------------------------------------------------------------------------------------
-task printVariants {
+tasks.register('printVariants') {
     doLast {
         def variants = android.applicationVariants.collect {[
                 apks: it.variantData.outputScope.apkDatas.collect {[
@@ -650,24 +546,24 @@ task printVariants {
                         fileName: it.outputFileName,
                 ]},
                 build_type: it.buildType.name,
-                engine: it.productFlavors.find { it.dimension == 'engine' }.name,
                 name: it.name,
         ]}
         // AndroidTest is a special case not included above
         variants.add([
             apks: [[
                 abi: 'noarch',
-                fileName: 'app-geckoNightly-debug-androidTest.apk',
+                fileName: 'app-debug-androidTest.apk',
             ]],
             build_type: 'androidTest',
-            engine: 'geckoNightly',
             name: 'androidTest',
         ])
-        println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
+        println 'variants: ' + JsonOutput.toJson(variants)
     }
 }
 
 task buildTranslationArray {
+    // This isn't running as a task, instead the array is build when the gradle file is parsed.
+    // https://github.com/mozilla-mobile/fenix/issues/14175
     def foundLocales = new StringBuilder()
     foundLocales.append("new String[]{")
 
@@ -684,12 +580,10 @@ task buildTranslationArray {
     android.defaultConfig.buildConfigField "String[]", "SUPPORTED_LOCALE_ARRAY", foundLocalesString
 }
 
-task lintUnitTestRunner(type: LintUnitTestRunner)
-
 afterEvaluate {
 
     // Format test output. Ported from AC #2401
-    tasks.matching {it instanceof Test}.all {
+    tasks.withType(Test).configureEach {
         systemProperty "robolectric.logging", "stdout"
         systemProperty "logging.test-mode", "true"
 
@@ -748,3 +642,34 @@ if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) 
     ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
     apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
 }
+
+// Define a reusable task for updating the versions of our built-in web extensions. We automate this
+// to make sure we never forget to update the version, either in local development or for releases.
+// In both cases, we want to make sure the latest version of all extensions (including their latest
+// changes) are installed on first start-up.
+// We're using the A-C version here as we want to uplift all built-in extensions to A-C (Once that's
+// done we can also remove the task below):
+// https://github.com/mozilla-mobile/android-components/issues/7249
+ext.updateExtensionVersion = { task, extDir ->
+    configure(task) {
+        from extDir
+        include 'manifest.template.json'
+        rename { 'manifest.json' }
+        into extDir
+
+        def values = ['version': AndroidComponents.VERSION + "." + new Date().format('MMddHHmmss')]
+        inputs.properties(values)
+        expand(values)
+    }
+}
+
+tasks.register("updateAdsExtensionVersion", Copy) { task ->
+    updateExtensionVersion(task, 'src/main/assets/extensions/ads')
+}
+
+tasks.register("updateCookiesExtensionVersion", Copy) { task ->
+    updateExtensionVersion(task, 'src/main/assets/extensions/cookies')
+}
+
+preBuild.dependsOn "updateAdsExtensionVersion"
+preBuild.dependsOn "updateCookiesExtensionVersion"

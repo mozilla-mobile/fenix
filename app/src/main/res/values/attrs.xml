@@ -43,22 +43,35 @@
     <attr name="syncDisconnected" format="reference" />
     <attr name="syncDisconnectedBackground" format="reference" />
     <attr name="swipeDeleteBackground" format="reference" />
+    <attr name="onboardingDarkGradientStartBackground" format="reference" />
+    <attr name="onboardingDarkGradientEndBackground" format="reference" />
+    <attr name="onboardingSelected" format="reference"/>
+    <attr name="onboardingDeselected" format="reference"/>
+    <attr name="addOnPrivateBrowsingExteriorCircleBackground" format="reference"/>
+    <attr name="addOnPrivateBrowsingInteriorIconBackground" format="reference"/>
+    <attr name="readerModeStartGradient" format="reference"/>
+    <attr name="readerModeEndGradient" format="reference"/>
+    <attr name="syncedTabsSeparator" format="reference"/>
+    <attr name="awesomeBarIndicatorColor" format="reference|color"/>
+    <attr name="awesomeBarIndicatorBookmarkColor" format="reference|color"/>
 
     <!-- Tab tray -->
-    <attr name="tabTrayItemText" format="reference"/>
-    <attr name="tabTrayItemUrl" format="reference" />
+    <attr name="tabTrayItemMediaBackground" format="reference" />
+    <attr name="tabTrayHeadingIcon" format="reference" />
+    <attr name="tabTrayHeadingIconInactive" format="reference" />
+    <attr name="tabTrayThumbnailItemBackground" format="reference" />
+    <attr name="tabTrayThumbnailIcon" format="reference" />
+    <!-- Note - these are currently unused, but they are for if/when we add private UI to tabs tray -->
     <attr name="tabTrayItemBackground" format="reference" />
     <attr name="tabTrayItemSelectedBackground" format="reference" />
+    <attr name="tabTrayToolbarBackground" format="reference" />
 
-    <declare-styleable name="LibraryListItem">
-        <attr name="listItemTitle" format="reference" />
-        <attr name="listItemIcon" format="reference" />
-    </declare-styleable>
+    <!-- Tab History -->
+    <attr name="tabHistoryItemSelectedBackground" format="reference" />
 
     <declare-styleable name="TrackingProtectionCategory">
         <attr name="categoryItemTitle" format="reference" />
         <attr name="categoryItemDescription" format="reference" />
-        <attr name="categoryItemIcon" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="SwitchWithDescription">
@@ -75,6 +88,9 @@
 
     <declare-styleable name="OnboardingRadioButton">
         <attr name="onboardingKey" format="reference" />
+        <attr name="onboardingKeyTitle" format="reference" />
+        <attr name="onboardingKeyDescription" format="reference" />
     </declare-styleable>
 
+    <attr name="selectLoginHeaderTextColor" format="reference"/>
 </resources>

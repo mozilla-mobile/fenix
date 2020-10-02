@@ -12,53 +12,46 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
+import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.mozac_ui_tabcounter_layout.view.*
 import org.mozilla.fenix.R
 import java.text.NumberFormat
 
-open class TabCounter @JvmOverloads constructor(
+class TabCounter @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : RelativeLayout(context, attrs, defStyle) {
 
     private val animationSet: AnimatorSet
-    private var count: Int = 0
 
     init {
         val inflater = LayoutInflater.from(context)
         inflater.inflate(R.layout.mozac_ui_tabcounter_layout, this)
 
-        counter_text.text = DEFAULT_TABS_COUNTER_TEXT
-        val shiftThreeDp = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, TWO_DIGIT_PADDING, context.resources.displayMetrics
-        ).toInt()
-        counter_text.setPadding(0, shiftThreeDp, shiftThreeDp, 0)
+        // This is needed because without this counter box will be empty.
+        setCount(INTERNAL_COUNT)
 
         animationSet = createAnimatorSet()
     }
 
+    private fun updateContentDescription(count: Int) {
+        counter_root.contentDescription = if (count == 1) {
+            context?.getString(R.string.open_tab_tray_single)
+        } else {
+            context?.getString(R.string.open_tab_tray_plural, count.toString())
+        }
+    }
+
     fun setCountWithAnimation(count: Int) {
-        // Don't animate from initial state.
-        if (this.count == 0) {
-            setCount(count)
-            return
+        setCount(count)
+
+        // No need to animate on these cases.
+        when {
+            INTERNAL_COUNT == 0 -> return // Initial state.
+            INTERNAL_COUNT == count -> return // There isn't any tab added or removed.
+            INTERNAL_COUNT > MAX_VISIBLE_TABS -> return // There are still over MAX_VISIBLE_TABS tabs open.
         }
-
-        if (this.count == count) {
-            return
-        }
-
-        // Don't animate if there are still over MAX_VISIBLE_TABS tabs open.
-        if (this.count > MAX_VISIBLE_TABS && count > MAX_VISIBLE_TABS) {
-            this.count = count
-            return
-        }
-
-        adjustTextSize(count)
-
-        counter_text.text = formatForDisplay(count)
-        this.count = count
 
         // Cancel previous animations if necessary.
         if (animationSet.isRunning) {
@@ -69,10 +62,10 @@ open class TabCounter @JvmOverloads constructor(
     }
 
     fun setCount(count: Int) {
+        updateContentDescription(count)
         adjustTextSize(count)
-
         counter_text.text = formatForDisplay(count)
-        this.count = count
+        INTERNAL_COUNT = count
     }
 
     private fun createAnimatorSet(): AnimatorSet {
@@ -186,6 +179,7 @@ open class TabCounter @JvmOverloads constructor(
 
     private fun formatForDisplay(count: Int): String {
         return if (count > MAX_VISIBLE_TABS) {
+            counter_text.updatePadding(bottom = INFINITE_CHAR_PADDING_BOTTOM)
             SO_MANY_TABS_OPEN
         } else NumberFormat.getInstance().format(count.toLong())
     }
@@ -205,14 +199,16 @@ open class TabCounter @JvmOverloads constructor(
     }
 
     companion object {
+        internal var INTERNAL_COUNT = 0
+
         internal const val MAX_VISIBLE_TABS = 99
 
         internal const val SO_MANY_TABS_OPEN = "∞"
-        internal const val DEFAULT_TABS_COUNTER_TEXT = ":)"
+
+        internal const val INFINITE_CHAR_PADDING_BOTTOM = 6
 
         internal const val ONE_DIGIT_SIZE_RATIO = 0.5f
         internal const val TWO_DIGITS_SIZE_RATIO = 0.4f
-        internal const val TWO_DIGIT_PADDING = 3F
         internal const val TWO_DIGITS_TAB_COUNT_THRESHOLD = 10
 
         // createBoxAnimatorSet

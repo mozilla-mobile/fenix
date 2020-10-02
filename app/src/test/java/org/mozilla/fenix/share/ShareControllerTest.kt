@@ -5,6 +5,7 @@
 package org.mozilla.fenix.share
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import androidx.navigation.NavController
@@ -39,8 +40,8 @@ import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.share.listadapters.AppShareOption
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.share.listadapters.AppShareOption
 
 @RunWith(FenixRobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
@@ -48,6 +49,7 @@ class ShareControllerTest {
     // Need a valid context to retrieve Strings for example, but we also need it to return our "metrics"
     private val context: Context = spyk(testContext)
     private val metrics: MetricController = mockk(relaxed = true)
+    private val shareSubject = "shareSubject"
     private val shareData = listOf(
         ShareData(url = "url0", title = "title0"),
         ShareData(url = "url1", title = "title1")
@@ -57,7 +59,7 @@ class ShareControllerTest {
         TabData("title0", "url0"),
         TabData("title1", "url1")
     )
-    private val textToShare = "${shareData[0].title}\n${shareData[0].url}\n\n${shareData[1].title}\n${shareData[1].url}"
+    private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
     private val testCoroutineScope = TestCoroutineScope()
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
@@ -65,7 +67,7 @@ class ShareControllerTest {
     private val dismiss = mockk<(ShareController.Result) -> Unit>(relaxed = true)
     private val recentAppStorage = mockk<RecentAppsStorage>(relaxed = true)
     private val controller = DefaultShareController(
-        context, shareData, sendTabUseCases, snackbar, navController,
+        context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
         recentAppStorage, testCoroutineScope, dismiss
     )
 
@@ -91,8 +93,8 @@ class ShareControllerTest {
         // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
-        val testController = DefaultShareController(activityContext, shareData, mockk(), mockk(), mockk(),
-            recentAppStorage, testCoroutineScope, dismiss)
+        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, dismiss)
         every { activityContext.startActivity(capture(shareIntent)) } just Runs
         every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
 
@@ -101,14 +103,15 @@ class ShareControllerTest {
         // Check that the Intent used for querying apps has the expected structure
         assertTrue(shareIntent.isCaptured)
         assertEquals(Intent.ACTION_SEND, shareIntent.captured.action)
+        assertEquals(shareSubject, shareIntent.captured.extras!![Intent.EXTRA_SUBJECT])
         assertEquals(textToShare, shareIntent.captured.extras!![Intent.EXTRA_TEXT])
         assertEquals("text/plain", shareIntent.captured.type)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, shareIntent.captured.flags)
         assertEquals(appPackageName, shareIntent.captured.component!!.packageName)
         assertEquals(appClassName, shareIntent.captured.component!!.className)
 
+        verify { recentAppStorage.updateRecentApp(appShareOption.activityName) }
         verifyOrder {
-            recentAppStorage.updateRecentApp(appShareOption.activityName)
             activityContext.startActivity(shareIntent.captured)
             dismiss(ShareController.Result.SUCCESS)
         }
@@ -124,9 +127,34 @@ class ShareControllerTest {
         // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
         // need to use an Activity Context.
         val activityContext: Context = mockk<Activity>()
-        val testController = DefaultShareController(activityContext, shareData, mockk(), snackbar,
-            mockk(), mockk(), testCoroutineScope, dismiss)
+        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
+            snackbar, mockk(), mockk(), testCoroutineScope, dismiss)
         every { activityContext.startActivity(capture(shareIntent)) } throws SecurityException()
+        every { activityContext.getString(R.string.share_error_snackbar) } returns "Cannot share to this app"
+
+        testController.handleShareToApp(appShareOption)
+
+        verifyOrder {
+            activityContext.startActivity(shareIntent.captured)
+            snackbar.setText("Cannot share to this app")
+            snackbar.show()
+            dismiss(ShareController.Result.SHARE_ERROR)
+        }
+    }
+
+    @Test
+    fun `handleShareToApp should dismiss with an error start when a ActivityNotFoundException occurs`() {
+        val appPackageName = "package"
+        val appClassName = "activity"
+        val appShareOption = AppShareOption("app", mockk(), appPackageName, appClassName)
+        val shareIntent = slot<Intent>()
+        // Our share Intent uses `FLAG_ACTIVITY_NEW_TASK` but when resolving the startActivity call
+        // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
+        // need to use an Activity Context.
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
+            snackbar, mockk(), mockk(), testCoroutineScope, dismiss)
+        every { activityContext.startActivity(capture(shareIntent)) } throws ActivityNotFoundException()
         every { activityContext.getString(R.string.share_error_snackbar) } returns "Cannot share to this app"
 
         testController.handleShareToApp(appShareOption)
@@ -247,6 +275,7 @@ class ShareControllerTest {
     fun `getSuccessMessage should return different strings depending on the number of shared tabs`() {
         val controllerWithOneSharedTab = DefaultShareController(
             context,
+            shareSubject,
             listOf(ShareData(url = "url0", title = "title0")),
             mockk(),
             mockk(),
@@ -270,6 +299,37 @@ class ShareControllerTest {
     @Test
     fun `getShareText should respect concatenate shared tabs urls`() {
         assertEquals(textToShare, controller.getShareText())
+    }
+
+    @Test
+    fun `getShareText attempts to use original URL for reader pages`() {
+        val shareData = listOf(
+            ShareData(url = "moz-extension://eb8df45a-895b-4f3a-896a-c0c71ae4/page.html"),
+            ShareData(url = "moz-extension://eb8df45a-895b-4f3a-896a-c0c71ae5/page.html?url=url0"),
+            ShareData(url = "url1")
+        )
+        val controller = DefaultShareController(
+            context, shareSubject, shareData, sendTabUseCases, snackbar, navController,
+            recentAppStorage, testCoroutineScope, dismiss
+        )
+
+        val expectedShareText = "${shareData[0].url}\n\nurl0\n\n${shareData[2].url}"
+        assertEquals(expectedShareText, controller.getShareText())
+    }
+
+    @Test
+    fun `getShareSubject will return "shareSubject" if that is non null`() {
+        assertEquals(shareSubject, controller.getShareSubject())
+    }
+
+    @Test
+    fun `getShareSubject will return a concatenation of tab titles if "shareSubject" is null`() {
+        val controller = DefaultShareController(
+            context, null, shareData, sendTabUseCases, snackbar, navController,
+            recentAppStorage, testCoroutineScope, dismiss
+        )
+
+        assertEquals("title0, title1", controller.getShareSubject())
     }
 
     @Test

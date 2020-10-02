@@ -17,22 +17,25 @@ import java.util.Calendar
 import java.util.Date
 
 enum class HistoryItemTimeGroup {
-    Today, ThisWeek, ThisMonth, Older;
+    Today, Yesterday, ThisWeek, ThisMonth, Older;
 
     fun humanReadable(context: Context): String = when (this) {
-        Today -> context.getString(R.string.history_24_hours)
+        Today -> context.getString(R.string.history_today)
+        Yesterday -> context.getString(R.string.history_yesterday)
         ThisWeek -> context.getString(R.string.history_7_days)
         ThisMonth -> context.getString(R.string.history_30_days)
         Older -> context.getString(R.string.history_older)
     }
 }
 
-class HistoryAdapter(
-    private val historyInteractor: HistoryInteractor
-) : PagedListAdapter<HistoryItem, HistoryListItemViewHolder>(historyDiffCallback), SelectionHolder<HistoryItem> {
+class HistoryAdapter(private val historyInteractor: HistoryInteractor) :
+    PagedListAdapter<HistoryItem, HistoryListItemViewHolder>(historyDiffCallback),
+    SelectionHolder<HistoryItem> {
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     override val selectedItems get() = mode.selectedItems
+    var pendingDeletionIds = emptySet<Long>()
+    private val itemsWithHeaders: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
 
     override fun getItemViewType(position: Int): Int = HistoryListItemViewHolder.LAYOUT_ID
 
@@ -48,22 +51,45 @@ class HistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: HistoryListItemViewHolder, position: Int) {
-        val previous = if (position == 0) null else getItem(position - 1)
         val current = getItem(position) ?: return
+        val headerForCurrentItem = timeGroupForHistoryItem(current)
+        val isPendingDeletion = pendingDeletionIds.contains(current.visitedAt)
+        var timeGroup: HistoryItemTimeGroup? = null
 
-        val previousHeader = previous?.let(::timeGroupForHistoryItem)
-        val currentHeader = timeGroupForHistoryItem(current)
-        val timeGroup = if (currentHeader != previousHeader) currentHeader else null
-        holder.bind(current, timeGroup, position == 0, mode)
+        // Add or remove the header and position to the map depending on it's deletion status
+        if (itemsWithHeaders.containsKey(headerForCurrentItem)) {
+            if (isPendingDeletion && itemsWithHeaders[headerForCurrentItem] == position) {
+                itemsWithHeaders.remove(headerForCurrentItem)
+            } else if (isPendingDeletion && itemsWithHeaders[headerForCurrentItem] != position) {
+                // do nothing
+            } else {
+                if (position <= itemsWithHeaders[headerForCurrentItem] as Int) {
+                    itemsWithHeaders[headerForCurrentItem] = position
+                    timeGroup = headerForCurrentItem
+                }
+            }
+        } else if (!isPendingDeletion) {
+            itemsWithHeaders[headerForCurrentItem] = position
+            timeGroup = headerForCurrentItem
+        }
+
+        holder.bind(current, timeGroup, position == 0, mode, isPendingDeletion)
+    }
+
+    fun updatePendingDeletionIds(pendingDeletionIds: Set<Long>) {
+        this.pendingDeletionIds = pendingDeletionIds
     }
 
     companion object {
         private const val zeroDays = 0
+        private const val oneDay = 1
         private const val sevenDays = 7
         private const val thirtyDays = 30
-        private val oneDayAgo = getDaysAgo(zeroDays).time
+        private val zeroDaysAgo = getDaysAgo(zeroDays).time
+        private val oneDayAgo = getDaysAgo(oneDay).time
         private val sevenDaysAgo = getDaysAgo(sevenDays).time
         private val thirtyDaysAgo = getDaysAgo(thirtyDays).time
+        private val yesterdayRange = LongRange(oneDayAgo, zeroDaysAgo)
         private val lastWeekRange = LongRange(sevenDaysAgo, oneDayAgo)
         private val lastMonthRange = LongRange(thirtyDaysAgo, sevenDaysAgo)
 
@@ -77,6 +103,7 @@ class HistoryAdapter(
         private fun timeGroupForHistoryItem(item: HistoryItem): HistoryItemTimeGroup {
             return when {
                 DateUtils.isToday(item.visitedAt) -> HistoryItemTimeGroup.Today
+                yesterdayRange.contains(item.visitedAt) -> HistoryItemTimeGroup.Yesterday
                 lastWeekRange.contains(item.visitedAt) -> HistoryItemTimeGroup.ThisWeek
                 lastMonthRange.contains(item.visitedAt) -> HistoryItemTimeGroup.ThisMonth
                 else -> HistoryItemTimeGroup.Older

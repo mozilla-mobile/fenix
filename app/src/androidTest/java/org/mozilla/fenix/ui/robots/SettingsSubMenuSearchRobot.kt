@@ -36,6 +36,7 @@ class SettingsSubMenuSearchRobot {
         selectDefaultSearchEngine(searchEngineName)
 
     fun disableShowSearchSuggestions() = toggleShowSearchSuggestions()
+    fun enableShowSearchShortcuts() = toggleShowSearchShortcuts()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -63,8 +64,6 @@ private fun assertSearchEngineList() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     onView(withText("DuckDuckGo"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-    onView(withText("Twitter"))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     onView(withText("Wikipedia"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     onView(withText("Add search engine"))
@@ -84,10 +83,10 @@ private fun assertShowSearchSuggestions() {
 private fun assertShowSearchShortcuts() {
     onView(withId(androidx.preference.R.id.recycler_view)).perform(
         RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-            hasDescendant(withText("Show search shortcuts"))
+            hasDescendant(withText("Show search engines"))
         )
     )
-    onView(withText("Show search shortcuts"))
+    onView(withText("Show search engines"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
@@ -139,6 +138,17 @@ private fun toggleShowSearchSuggestions() {
     )
 
     onView(withText("Show search suggestions"))
+        .perform(click())
+}
+
+private fun toggleShowSearchShortcuts() {
+    onView(withId(androidx.preference.R.id.recycler_view)).perform(
+        RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+            hasDescendant(withText("Show search engines"))
+        )
+    )
+
+    onView(withText("Show search engines"))
         .perform(click())
 }
 

@@ -6,36 +6,35 @@ package org.mozilla.fenix.customtabs
 
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.component_browser_top_toolbar.*
 import kotlinx.android.synthetic.main.fragment_browser.*
-import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.manifest.getOrNull
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.customtabs.CustomTabWindowFeature
-import mozilla.components.feature.pwa.ext.getTrustedScope
-import mozilla.components.feature.pwa.ext.trustedOrigins
 import mozilla.components.feature.pwa.feature.ManifestUpdateFeature
 import mozilla.components.feature.pwa.feature.WebAppActivityFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
-import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -61,7 +60,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
             val manifest = args.webAppManifest?.let { json ->
                 WebAppManifestParser().parse(json).getOrNull()
             }
-            val trustedScopes = listOfNotNull(manifest?.getTrustedScope())
 
             customTabSessionId?.let { customTabSessionId ->
                 customTabsIntegration.set(
@@ -70,7 +68,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         toolbar = toolbar,
                         sessionId = customTabSessionId,
                         activity = activity,
-                        engineLayout = view.swipeRefresh,
                         onItemTapped = { browserInteractor.onBrowserToolbarMenuItemTapped(it) },
                         isPrivate = it.private,
                         shouldReverseItems = !activity.settings().shouldUseBottomToolbar
@@ -85,7 +82,8 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         components.core.store,
                         customTabSessionId
                     ) { uri ->
-                        val intent = Intent.parseUri("${BuildConfig.DEEP_LINK_SCHEME}://open?url=$uri", 0)
+                        val intent =
+                            Intent.parseUri("${BuildConfig.DEEP_LINK_SCHEME}://open?url=$uri", 0)
                         if (intent.action == Intent.ACTION_VIEW) {
                             intent.addCategory(Intent.CATEGORY_BROWSABLE)
                             intent.component = null
@@ -100,13 +98,19 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
 
                 hideToolbarFeature.set(
                     feature = WebAppHideToolbarFeature(
-                        requireComponents.core.sessionManager,
-                        toolbar,
-                        customTabSessionId,
-                        trustedScopes
+                        store = requireComponents.core.store,
+                        customTabsStore = requireComponents.core.customTabsStore,
+                        tabId = customTabSessionId,
+                        manifest = manifest
                     ) { toolbarVisible ->
-                        if (!toolbarVisible) { engineView.setDynamicToolbarMaxHeight(0) }
-                        if (!FeatureFlags.dynamicBottomToolbar) { updateLayoutMargins(inFullScreen = !toolbarVisible) }
+                        browserToolbarView.view.isVisible = toolbarVisible
+                        webAppToolbarShouldBeVisible = toolbarVisible
+                        if (!toolbarVisible) {
+                            engineView.setDynamicToolbarMaxHeight(0)
+                            val browserEngine =
+                                swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
+                            browserEngine.bottomMargin = 0
+                        }
                     },
                     owner = this,
                     view = toolbar
@@ -153,18 +157,23 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     )
                 }
             }
-
-            consumeFrom(components.core.customTabsStore) { state ->
-                getSessionById()
-                    ?.let { session -> session.customTabConfig?.sessionToken }
-                    ?.let { token -> state.tabs[token] }
-                    ?.let { tabState ->
-                        hideToolbarFeature.withFeature {
-                            it.onTrustedScopesChange(tabState.trustedOrigins)
-                        }
-                    }
-            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currTimeMs = SystemClock.elapsedRealtimeNanos() / MS_PRECISION
+        requireComponents.analytics.metrics.track(
+            Event.ProgressiveWebAppForeground(currTimeMs)
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val currTimeMs = SystemClock.elapsedRealtimeNanos() / MS_PRECISION
+        requireComponents.analytics.metrics.track(
+            Event.ProgressiveWebAppBackground(currTimeMs)
+        )
     }
 
     override fun removeSessionIfNeeded(): Boolean {
@@ -186,11 +195,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
     }
 
     override fun navToTrackingProtectionPanel(session: Session) {
-        val useCase = TrackingProtectionUseCases(
-            sessionManager = requireComponents.core.sessionManager,
-            engine = requireComponents.core.engine
-        )
-        useCase.containsException(session) { contains ->
+        requireComponents.useCases.trackingProtectionUseCases.containsException(session.id) { contains ->
             val isEnabled = session.trackerBlockingEnabled && !contains
             val directions =
                 ExternalAppBrowserFragmentDirections
@@ -213,4 +218,9 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         view,
         FenixSnackbarDelegate(view)
     )
+
+    companion object {
+        // We only care about millisecond precision for telemetry events
+        internal const val MS_PRECISION = 1_000_000L
+    }
 }

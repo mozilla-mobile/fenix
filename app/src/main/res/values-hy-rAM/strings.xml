@@ -14,13 +14,42 @@
     <string name="content_description_disable_private_browsing_button">Անջատել գաղտնի դիտարկումը</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Մուտքագրեք որոնում կամ կայքի հասցե</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Չկան բաց ներդիրներ</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Ձեր բաց ներդիրները կցուցադրվեն այստեղ:</string>
 
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Ձեր գաղտնի ներդիրները կցուցադրվեն այստեղ:</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 բաց ներդիր: Հպեք՝ փոխարկելու համար:</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s բաց ներդիրներ: Հպեք՝ փոխարկելու համար:</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">Ընտրված է %1$d</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Ավելացնել նոր հավաքածու</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Անուն</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Ընտրել հավաքածուն</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Փակել բազմակի ընտրման կերպը</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Պահպանել ընտրված ներդիրները հավաքածուում</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">Ընտրված է %1$s-ը</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">Չընտրված %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Փակում է բազմակի ընտրման կերպը</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Մուտք բազմակի ընտրման կերպ: Ընտրեք ներդիրներ՝ հավաքածուում պահպանելու համար</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Ընտրված</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s-ն արտադրվում է Mozilla-ի կողմից:</string>
+    <string name="about_content">%1$s-ը մշակված է Mozilla-ի կողմից:</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -28,18 +57,48 @@
 
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s-ը մաքրում է ձեր որոնման և զննարկման պատմությունը, երբ դուրս եք գալիս ծրագրից կամ փակում եք բոլոր գաղտնի ներդիրները: Չնայած դա ձեզ անանուն չի դարձնում ինտերնետային կայքերի կամ ձեր ինտերնետային ծառայություններ մատուցողի համար, այն ավելի հեշտ է դարձնում ձեր առցանց ակտիվության գաղտնիությունը այն դեպքում, եթե մեկ ուրիշը ևս օգտագործում է այս սարքը:</string>
+    <string name="private_browsing_placeholder_description_2">%1$s-ին մաքրում է որոնման և զննարկման պատմությունը, երբ փակում եք ներդիրը կամ դուրս եք գալիս հավելվածից: Չնայած դա ձեզ անանուն չի դարձնում կայքերի կամ ձեր համացանցի ծառայություններ մատուցողի համար, այն ավելի հեշտ է դարձնում ձեր առցանց ակտիվության գաղտնիությունը այն դեպքում, եթե մեկ ուրիշը ևս օգտագործում է տվյալ սարքը:</string>
     <string name="private_browsing_common_myths">Տարածված առասպելներ գաղտնի դիտարկման վերաբերյալ</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Ջնջել աշխատաշրջանը</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Ավելացնել դյուրանցում՝ Տնային էկրանից գաղտնի ներդիրները բացելու համար:</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Ավելացնել դյուրանցում</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Ոչ, շնորհակալ եմ</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Ավելի արագ անցեք Firefox-ին: Ավելացրեք վիջեթը ձեր Տնային էկրանին:</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Ավելացնել վիջեթը</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Ոչ հիմա</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Դուք կարող եք կայել Firefox-ը ինքնաշխատ բացել հղումները հավելվածներում:</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Անցնել Կարգավորումներին</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Բաց թողնել</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Անհրաժեշտ է տեսախցիկի մատչում: Անցեք Android-ի կարգավորումներ, հպեք թույլտվություններին և հպեք թույլատրել:</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Անցնել Կարգավորումներին</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Բաց թողնել</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Կայեք բացված ներդիրների ինքնաբար փակումը, որոնք վերջին մեկ օրում, շաբաթում կամ ամսում չեն դիտվել:</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Դիտել ընտրանքները</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Բաց թողնել</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -85,6 +144,8 @@
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Տեղադրել</string>
 
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Համաժամեցված ներդիրներ</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Գտնել էջում</string>
     <!-- Browser menu button that creates a private tab -->
@@ -93,8 +154,6 @@
     <string name="browser_menu_new_tab">Նոր ներդիր</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Պահպանել հավաքածուում</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Զեկուցել կայքի խնդրի մասին</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Համօգտագործել</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -108,8 +167,10 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">%1$s-ի կողմից</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Ընթերցողի դիտում</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Փակել Ընթերցման դիտումը</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Բացել հավելվածում</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -132,14 +193,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Սկանավորել</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Դյուրանցումներ</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Որոնիչ</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Որոնիչի կարգավորումներ</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Որոնել հետևյալում՝</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Այս անգամ որոնել հետևյալով՝</string>
+    <string name="search_engines_search_with">Այս անգամ որոնել հետևյալով՝</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Լրացնել հղումը սեղմատախտակից</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -147,9 +206,9 @@
     <!-- Button in the search suggestions onboarding that does not allow search suggestions in private sessions -->
     <string name="search_suggestions_onboarding_do_not_allow_button">Չթույլատրել</string>
     <!-- Search suggestion onboarding hint title text -->
-    <string name="search_suggestions_onboarding_title">Թույլատրեք որոնման առաջարկներ մասնավոր աշխատաշրջաններում:</string>
+    <string name="search_suggestions_onboarding_title">Թույլատրել որոնման առաջարկներ մասնավոր աշխատաշրջաններում:</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
-    <string name="search_suggestions_onboarding_text">%s-ը համօգտագործելու է այն ամենը, ինչ մուտքագրում եք հասցեի տողում՝ ձեր սկզբնական որոնիչի հետ:</string>
+    <string name="search_suggestions_onboarding_text">%s-ը համօգտագործելու է այն ամենը, ինչ մուտքագրում եք հասցեի տողում ձեր սկզբնական որոնիչի հետ:</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
     <string name="search_suggestions_onboarding_learn_more_link">Իմանալ ավելին</string>
 
@@ -208,6 +267,8 @@
     <string name="preferences_open_links_in_a_private_tab">Բացել հղումը գաղտնի ներդիրում</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Թույլ տալ էկրանի կորզումը գաղտնի դիտարկումում</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Թույլատրելու դեպքում գաղտնի ներդիրները նույնպես տեսանելի կլինեն, երբ բազմաթիվ հավելվածներ բաց լինեն</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Ավելացնել գաղտնի դիտարկման դյուրանցում</string>
     <!-- Preference for accessibility -->
@@ -226,16 +287,20 @@
     <string name="preferences_toolbar">Գործիքագոտի</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Ոճ</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Տուն</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Ժեստեր</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Հարմարեցնել</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">Համաժամեցեք էջանիշները, պատմությունը և ավելին ձեր Firefox հաշվի հետ</string>
+    <string name="preferences_sign_in_description">Համաժամեցրեք էջանիշները, պատմությունը և ավելին ձեր Firefox հաշվի հետ</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox-ի հաշիվ</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Կրկին կապակցվեք՝ համաժամեցումը վերսկսելու համար</string>
     <!-- Preference for language -->
-    <string name="preferences_language">Լեզու</string>
+    <string name="preferences_language">Լեզուն</string>
 
     <!-- Preference for data choices -->
     <string name="preferences_data_choices">Տվյալների ընտրություն</string>
@@ -247,11 +312,13 @@
     <string name="developer_tools_category">Մշակողի գործիքներ</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Հեռակա վրիպազերծում USB-ով</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Ցուցադրել որոնման դյուրացումները</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Ցուցադրել որոնիչները</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Ցուցադրել որոնման հուշումներ</string>
 
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Ցուցադրել ձայնային որոնումը</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Ցուցադրել գաղտնի աշխատաշրջաններում</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -262,10 +329,17 @@
     <string name="preferences_search_bookmarks">Որոնել էջանիշեր</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Հաշվի կարգավորումներ</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Ինքնալրացում</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Բացել հղումները հավելվածներում</string>
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Ներբեռնումների արտաքին հավելված</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Հավելումներ</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Ծանուցումներ</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -278,6 +352,8 @@
     <string name="preferences_sync_bookmarks">Էջանիշեր</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Մուտքանուններ</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Բացել ներդիրներ</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Դուրս գրվել</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -336,7 +412,7 @@
     <!-- Preference switch for Telemetry -->
     <string name="preferences_telemetry">Telemetry</string>
     <!-- Preference switch for usage and technical data collection -->
-    <string name="preference_usage_data">Օգտագործում և տեխնիկական տվյալներ</string>
+    <string name="preference_usage_data">Օգտագործման և տեխնիկական տվյալներ</string>
     <!-- Preference description for usage and technical data collection -->
     <string name="preferences_usage_data_description">Կիսվում է արագագործության, օգտագործման, սարքակազմի և ձեր դիտարկիչի կարգավորումներով Mozilla-ի հետ՝ %1$s-ը էլ ավելի լավը դարձնելու համար</string>
     <!-- Preference switch for marketing data collection -->
@@ -369,7 +445,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Այցելեք <b>firefox.com/pair</b> ձեր համակարգչի Firefox-ով՝ ձեր QR կոդը ստանալու համար:]]></string>
+    <string name="pair_instructions_2"><![CDATA[Սկանացրեք <b>firefox.com/pair</b>-ում ցուցադրված QR կոդը]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Բացել տեսախցիկը</string>
     <!-- Button to cancel pairing -->
@@ -391,6 +467,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Ըստ սարքի ոճի</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Քաշեք՝ թարմացնելու համար</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Ոլորեք՝ գործիքագոտին թաքցնելու համար</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Սեղմեք գործիքագոտը կողքից՝ ներդիրներին անցնելու համար</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Սահեցրեք գործիքագոտին վերև՝ ներդիրները բացելու համար</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Աշխատաշրջաններ</string>
@@ -410,18 +496,43 @@
     <string name="library_desktop_bookmarks_unfiled">Այլ էջանիշեր</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Պատմություն</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Համաժամեցված ներդիրներ</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Ընթերցացուցակ</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Որոնել</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Գրադարան</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Կարգավորումներ</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Պատմության միույթի ցանկ</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Փակել</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Վերջերս փակված ներդիրներ</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Ցուցադրել ամբողջ պատմությունը</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d ներդիրներ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d ներդիր</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Վերջերս փակված ներդիրներ չկան</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Փակել ներդիրները</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Ձեռքով</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Մեկ օր անց</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Մեկ շաբաթ անց</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Մեկ ամիս անց</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -432,6 +543,30 @@
     <string name="tabs_header_private_tabs_title">Գաղտնի ներդիրներ</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Ավելացնել ներդիր</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Հավելել մասնավոր ներդիր</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Մասնավոր</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Բացել ներդիրները</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Պահպանել հավաքածուում</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Համօգտագործել ներդիրները</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Վերջերս փակված ներդիրներ</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Ներդիրի կարգավորումներ</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Փակել բոլոր ներդիրները</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Նոր Ներդիր</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Անցնել Տուն</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Փոխարկել ներդիրի կերպը</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Հեռացնել ներդիրը հավաքածուից</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Փակել ներդիրը</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -443,7 +578,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Համօգտագործել ներդիրները</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Պահպանել հավաքածուում</string>
+    <string name="tabs_menu_save_to_collection1">Պահպանել ներդիրները հավաքածուում</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Ներդիրի ցանկ</string>
     <!-- Tab menu item to share the tab -->
@@ -466,6 +601,14 @@
     <string name="collection_open_tabs">Բաց ներդիրներ</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Ջնջել</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Ջնջել Պատմությունից</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Գաղտնի կերպ)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Պահպանել</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -505,6 +648,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Այստեղ պատմություն չկա</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Չկան նեևբեռնումներ</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">Ընտրված է %1$d-ը</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Ներողություն. %1$s-ը չի կարող բեռնել այդ էջը:</string>
@@ -532,6 +682,8 @@
     <string name="bookmark_select_folder">Ընտրել պանակ</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս պանակը:</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s-ը կջնջի ընտրված միույթները:</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s-ը ջնջվել է</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -553,7 +705,7 @@
     <!-- Bookmark overflow menu open in new tab button -->
     <string name="bookmark_menu_open_in_new_tab_button">Բացել նոր ներդիր</string>
     <!-- Bookmark overflow menu open in private tab button -->
-    <string name="bookmark_menu_open_in_private_tab_button">Բացել Գաղտնի ներդիրով</string>
+    <string name="bookmark_menu_open_in_private_tab_button">Բացել Գաղտնի ներդիրում</string>
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">Ջնջել</string>
     <!--Bookmark overflow menu save button -->
@@ -587,8 +739,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">Ջնջվել է %1$s-ը</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Էջանիշը ջնջվեց</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Ընտրված պանակների ջնջում</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ՀԵՏԱՐԿԵԼ</string>
 
@@ -653,16 +807,12 @@
     <string name="delete_browsing_data_quit_off">Անջ.</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Հավաքեք ձեզ համար կարևոր բաները: Սկսելու համար՝ բաց էջանիշերը պահպանեք նոր հավաքածուի մեջ:</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Հավաքածուներ</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Հավաքածուի ցանկ</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Հավաքածուներ չկան</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Ձեր հավաքածուները կցուցադրվեն այստեղ:</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Հավաքեք ձեզ համար կարևոր բաները:\nԽմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ ավելի ուշ արագ մատչելու համար:</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Ընտրեք ներդիրները</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -685,12 +835,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d ներդիր է ընտրված</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Ներդիրները պահպանված են:</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Հավաքածուն պահպանվել է</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Ներդիրը պահպանված է:</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Փակել</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Պահպանել</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Դիտել</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Հավաքածու %d</string>
@@ -789,6 +944,10 @@
     <string name="qr_scanner_dialog_negative">ԱՐԳԵԼԵԼ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել %1$s-ը։</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Այս ներդիրի ջնջումը կհեռացնի ամբողջ հավաքածուն: Կարող եք ստեգղծել նոր հավաքածու ցանկացած ժամանակ:</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Ջնջե՞լ %1$s-ը:</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Ջնջել</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -805,18 +964,18 @@
     <string name="preference_accessibility_font_size_title">Տառատեսակի չափ</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Տառատեսակի ինքնաշխատ չափում</string>
+    <string name="preference_accessibility_auto_size_2">Տառատեսակի ինքնաշխատ չափում</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Տառատեսակի չափը կհամապատասխանի ձեր Android-ի կարգավորումներին: Անջատեք՝ տառատեսակի չափը այստեղ կառավարելու համար:</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Ջնջել դիտարկման տվյալները</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Բաց ներդիրներ</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Բաց ներդիրներ</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d ներդիրներ</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Պատմության և կայքի տվյալների դիտարկում</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title">Դիտարկման պատմություն և կայքերի տվյալներ</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d հասցեներ</string>
@@ -828,13 +987,13 @@
     <!-- Title for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies">Cookie-ներ</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies_subtitle">Դուք դուրս կգրվեք կայքերի մեծ մասից</string>
+    <string name="preferences_delete_browsing_data_cookies_subtitle">Դուրս կգրվեք կայքերի մեծ մասից</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cached_files">Պահված պատկերներն ու ֆայլերը</string>
+    <string name="preferences_delete_browsing_data_cached_files">Շտեմված պատկերներ ու ֆայլեր</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">Ազատում է պահեստային տարածք</string>
     <!-- Title for the site permissions item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_site_permissions">Կայքի թույլտվություններ</string>
+    <string name="preferences_delete_browsing_data_site_permissions">Կայքերի թույլտվություններ</string>
     <!-- Text for the button to delete browsing data -->
     <string name="preferences_delete_browsing_data_button">Ջնջել դիտարկման տվյալները</string>
     <!-- Title for the Delete browsing data on quit preference -->
@@ -843,8 +1002,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Ինքնաբար ջնջում է դիտարկման տվյալները, երբ հիմնական ցանկից ընտրում եք «Փակել»:</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Ինքնաբար ջնջում է դիտարկման տվյալները, երբ հիմնական ցանկից ընտրում եք \«Փակել»\:</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Դիտարկման պատմություն</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Փակել</string>
 
@@ -867,8 +1024,9 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">Firefox Nightly-ին ամեն երեկո թարմացվում է և ունի նորարարական հնարավորություններ:
         Այնուամենայնիվ, այն կարող է լինել ավելի քիչ կայուն: Ներբեռնեք մեր բետա դիտարկիչը՝ ավելի կայուն փորձի համար:</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Ստացեք Mozilla Firefox զննարկիչը</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Ստանալ Firefox for Android Beta-ն</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly-ն հեռացված է</string>
@@ -903,13 +1061,14 @@
 
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Ստացեք պատասխանները այստեղ</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Օգտագործեք առավելագույնը %s-ից:</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Համաժամեցրեք էջանիշերը, գաղտնաբառերը և ավելին՝ ձեր Firefox հաշվով:</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Իմանալ ավելին</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Դուք մուտք եք գործել որպես %s այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Դուք մուտք եք գործել որպես %s տվյալ սարքից այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Այո, գրանցեք ինձ</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -923,31 +1082,33 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Չհաջողվեց մուտք գործել</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Պաշտպանեք ինքներդ ձեզ</string>
+    <string name="onboarding_tracking_protection_header_2">Ինքնաշխատ գաղտնիություն</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s-ն օգնում է դադարեցնել կայքերի կողմից ձեր առցանց հետագծումը:</string>
+    <string name="onboarding_tracking_protection_description_2">Գաղտնիության և անվտանգության կարգավորումները արգելափակում են հետագծումները, վնասագրերը և Ձեզ հետևող ընկերություններին:</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Ստանդարտ</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Ստանդարտ (սկզբնադիր)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Արգելափակում է ավելի քիչ հետագծիչներ, բայց թույլ է տալիս էջերը նորմալ բեռնել</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Արգելափակում է ավելի քիչ հետագծիչներ: Էջերը նորմալ կբեռնվեն:</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Խիստ (հանձնարարելի)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Խիստ</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Ավելի լավ պաշտպանության և արտադրողականության համար արգելափակում է ավելի շատ հետագծիչներ, բայց կարող է պատճառ դառնալ, որ որոշ կայքեր պատշաճ չաշխատեն</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Արգելափակում է ավելի շատ հետագծիչներ, գովազդ և թռուցիկներ: Էջերը բեռնում են ավելի արագ, բայց որոշ գործառույթներ կարող են չաշխատել:</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
-    <string name="onboarding_toolbar_position_header">Դիրքորոշեք</string>
+    <string name="onboarding_toolbar_position_header">Դիրքորոշել</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Փորձեք մի ձեռքով դիտարկումը գործիքագոտու ներքևում կամ այն տեղափոխել վերև:</string>
+    <string name="onboarding_toolbar_position_description">Փորձեք մի ձեռքով դիտարկումը գործիքագոտու ներքևում կամ այն տեղափոխեք վերև:</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Դիտարկեք գաղտնի</string>
+    <string name="onboarding_private_browsing_header">Դիտարկել գաղտնի</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Մեկ անգամ բացել գաղտնի ներդիր. Հպեք %s պատկերակին:</string>
+    <string name="onboarding_private_browsing_description1">Ցանկանում եք բացել գաղտնի ներդիր, հպեք %s պատկերակին:</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Ամեն անգամ բացել գաղտնի ներդիրները. Թարմացրեք ձեր գաղտնի դիտարկման կարգավորումները:</string>
+    <string name="onboarding_private_browsing_always_description">Ցանկանում եք ամեն անգամ բացել գաղտնի ներդիրները. Թարմացրեք գաղտնի դիտարկման կարգավորումները:</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
     <string name="onboarding_private_browsing_button">Բացել կարգավորումները</string>
     <!-- text for the privacy notice onboarding card header -->
@@ -955,8 +1116,8 @@
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Մենք պատրաստել ենք %s-ը, որպեսզի տանք Ձեզ հսկողություն սահմանելու այն ամենի նկատմամբ, ինչ որ համօգտագործում եք
-        առցանց և այն, ինչ դուք համօգտագործում եք մեզ հետ:</string>
+    <string name="onboarding_privacy_notice_description">Մենք պատրաստել ենք %s-ը, որպեսզի Ձեզ տանք հսկողություն սահմանելը այն ամենի նկատմամբ, ինչ որ համօգտագործում եք
+        առցանց և մեզ հետ:</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Կարդացեք մեր գաղտնիության ծանուցումը</string>
 
@@ -997,7 +1158,7 @@
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Մուտք գործեք ձեր տեսախցիկի հետ</string>
     <!-- Text shown for settings option for sign with email -->
-    <string name="sign_in_with_email">Փոխարենը օգտագործեք էլ. փոստ</string>
+    <string name="sign_in_with_email">Փոխարենը օգտ. էլ. փոստ</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox-ը կկանգնեցնի համաժամացումը ձեր հաշվի հետ, բայց չի ջնջվի այս սարքում ձեր դիտարկման որևէ տվյալ։</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1017,36 +1178,26 @@
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title">Դիտարկեք առանց Ձեզ հետևելու</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">Ձեր տվյալները պահեք ձեզ մոտ: %s-ը ձեզ պաշտպանում է ամենատարածված հետագծիչներից, որոնք հետևում են այն ամենին, ինչ որ անում եք առցանց:</string>
+    <string name="preference_enhanced_tracking_protection_explanation">Ձեր տվյալները պահեք ձեզ մոտ: %s-ը պաշտպանում է ամենատարածված հետագծիչներից, որոնք հետևում են այն ամենին, ինչ որ անում եք առցանց:</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Իմանալ ավելին</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Ստանդարտ</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Ստանդարտ (հանձնարարելի)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Ստանդարտ (սկզբնադիր)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Հավասարակշռված է պաշտպանության և արտադրողականության միջև:</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Էջերը նորմալ կբեռնվեն, բայց արգելափակվելու են ավելի քիչ որոնիչներ:</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Արգելափակում է ավելի քիչ հետագծիչներ: Էջերը նորմալ կբեռնվեն:</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ինչն է արգելափակված հետագծման ստանդարտ պաշտպանությամբ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Խիստ</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Խիստ (կանխադրված)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Ավելի ուժեղ հետագծման պաշտպանություն և ավելի արագ արտադրողականություն, բայց որոշ կայքեր, հնարավոր է, նորմալ չաշխատեն:</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Խիստ (հանձնարարելի)</string>
 
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Ավելի ուժեղ պաշտպանություն, բայց կարող է որոշ կայքեր կամ բովանդակության ընդմիջում:</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Արգելափակում է ավելի շատ հետագծիչներ, գովազդ և թռուցիկներ: Էջերը բեռնում են ավելի արագ, բայց որոշ գործառույթներ կարող են չաշխատել:</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Ինչն է արգելափակված խիստ հետագծման պաշտպանությամբ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Հարմարեցված</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Ընտրեք, թե որ հետագծիչները և սկրիպտները արգելափակել</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Ընտրեք, թե որ հետագծիչները և սկրիպտները արգելափակել։</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Ինչն է արգելափակված հարմարեցված հետագծման պաշտպանությամբ</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1097,7 +1248,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Դադարեցվում է արտաքին գովազդի, տեսանյութերի և այլ բովանդակության բեռնումը, որը պարունակում է հետագծման կոդ: Կարող է ազդել կայքի որոշ գործառությունների վրա:</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s-ն արգելափակում է հետագծիչներն այս կայքում, երբ վահանը մանուշակագույն է: Հպեք՝ տեսնելու համար, թե ինչն է արգելափակված:</string>
+    <string name="etp_onboarding_cfr_message">Ամեն անգամ, երբ վահանը մանուշակագույն է, ուրեմն %s-ն արգելափակել է հետագծիչները այս կայքում: Հպեք՝ տեղեկությունների համար:</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Պաշտպանությունը միացված է այս կայքի համար</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1119,6 +1270,8 @@
 
     <!-- About page link text to open support link -->
     <string name="about_support">Աջակցում</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Վթարներ</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Գաղտնիության ծանուցում</string>
     <!-- About page link text to open know your rights link -->
@@ -1160,7 +1313,7 @@
     <string name="add_to_homescreen_text_placeholder">Դյուրանցման անունը</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթային մատչելու և արագ դիտարկելու համար:</string>
+    <string name="add_to_homescreen_description_2">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Մուտքանուններ և գաղտնաբառեր</string>
@@ -1183,7 +1336,7 @@
     <!-- Syncing saved logins in Fenix needs login -->
     <string name="preferences_passwords_sync_logins_sign_in">Մուտք գործեք՝ համաժամեցնելու համար</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">Պահպանված մուտքաանուններ</string>
+    <string name="preferences_passwords_saved_logins">Պահպանված մուտքանուններ</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Ձեր պահպանած կամ համաժամեցրած մուտքանունները կցուցադրվեն այստեղ:</string>
     <!-- Preference to access list of saved logins -->
@@ -1194,6 +1347,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Մուտքանունները և գաղտնաբառերը, որոնք չեն պահպանվել, կցուցադրվեն այստեղ:</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Մուտքանունները և գաղտնաբառերը չեն պահպանվի այս կայքերի համար:</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Ջնջել բոլոր բացառությունները</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Որոնել մուտքանուններ</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1216,7 +1371,7 @@
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning_learn_more">Իմանալ ավելին</string>
     <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">Ցանկանո՞ւմ եք, որ %s-ը պահպանի այս մուտքաանունը:</string>
+    <string name="logins_doorhanger_save">Ցանկանո՞ւմ եք, որ %s-ը պահպանի այս մուտքանունը:</string>
     <!-- Positive confirmation that Fenix should save the new or updated login -->
     <string name="logins_doorhanger_save_confirmation">Պահպանել</string>
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
@@ -1229,10 +1384,16 @@
     <string name="logins_site_copied">Կայքը պատճենված է</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Պատճենել գաղտնաբառը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Մաքրել գաղտնաբառը</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Պատճենել օգտվողի անունը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Մաքրել օգտվողի անունը</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Պատճենել կայքը</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Բացել կայքը դիտարկիչում</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Ցուցադրել գաղտնաբառը</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1255,6 +1416,13 @@
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Միացրեք՝ թույլատրելու համար պտղունցումը և չափափոխումը, նույնիսկ այն կայքերում, որոնք կանխում են այս ժեստը:</string>
 
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Անվան (Ա-Ֆ)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Վերջին օգտագործվածը</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Տեսակավորել մուտագրումների ցանկը</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ավելացնել որոնիչ</string>
     <!-- Title of the Edit search engine screen -->
@@ -1273,7 +1441,7 @@
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Անուն</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint">Որոնել տողը՝ օգտագործելու համար</string>
+    <string name="search_add_custom_engine_search_string_hint">Օգտագործվող որոնման տողը </string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example">Հարցումը փոխարինել “%s”-ով: Օրինակ՝ \nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
@@ -1288,7 +1456,7 @@
     <!-- Text shown when a user tries to add a search engine that already exists -->
     <string name="search_add_custom_engine_error_existing_name">«%s» անունով որոնիչ արդեն գոյություն ունի:</string>
     <!-- Text shown when a user leaves the search string field empty -->
-    <string name="search_add_custom_engine_error_empty_search_string">Մուտքագրել որոնման տող</string>
+    <string name="search_add_custom_engine_error_empty_search_string">Մուտքագրեք որոնման տող</string>
     <!-- Text shown when a user leaves out the required template string -->
     <string name="search_add_custom_engine_error_missing_template">Ստուգեք, որ որոնման տողը համապատասխանում է օրինակի ձևաչափին</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
@@ -1301,10 +1469,10 @@
     <string name="search_delete_search_engine_success_message">%s-ը ջնջվել է</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Բարի գալուստ բոլորովին նոր %s</string>
+    <string name="migration_title">Բարի գալուստ նոր %s</string>
 
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Ամբողջովին վերափոխված դիտարկիչը Ձեզ է սպասում՝ բարելավված արտադրողականությամբ և յուրահատկություններով, որոնք կօգնեն ավելին անել առցանց:\n\nԽնդրում ենք սպասել, մինչ մենք կթարմացնենք %s-ը ձեր</string>
+    <string name="migration_description">Ամբողջովին վերափոխված դիտարկիչը Ձեզ է սպասում՝ բարելավված արտադրողականությամբ և յուրահատկություններով, որոնք կօգնեն անել ավելին առցանց:\n\nԽնդրում ենք սպասել, մինչ մենք կթարմացնենք %s-ի հետևյալ բաղադրիչները՝</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">%s-ը արդիացվում է…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
@@ -1334,7 +1502,7 @@
     <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
     <string name="confirm_clear_permission_site">Համոզվա՞ծ եք, որ ցանկանում եք մաքրել այս թույլտվությունը այս կայքում:</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
-    <string name="no_site_exceptions">Կայքի բացառություններ չեն</string>
+    <string name="no_site_exceptions">Բացառություններ չկան</string>
     <!-- Label for the Pocket default top site -->
     <string name="pocket_top_articles">Լավագույն հոդվածներ</string>
     <!-- Bookmark deletion confirmation -->
@@ -1346,8 +1514,79 @@
     <string name="certificate_info_verified_by">Ստուգված է %1$s-ի կողմից</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Ջնջել</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Խմբագրել</string>
     <!-- Message in delete confirmation dialog for logins -->
-    <string name="login_deletion_confirmation">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս մուտքագրումը:</string>
+    <string name="login_deletion_confirmation">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս մուտքանունը:</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Ջնջել</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Մուտքի ընտրանքներ</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Խմբագրելի տեքստի դաշտը մուտքի վեբ հասցեի համար:</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Խմբագրելի տեքստի դաշտը մուտք գործողի համար:</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Խմբագրելի տեքստի դաշտը մուտքի գաղտնաբառի համար:</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Պահպանել փոփոխությունները մուտքագրման համար:</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Հրաժարվել փոփոխություններից</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Խմբագրել</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Գաղտնաբառ է պահանջվում</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Ձայնային որոնում</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Խոսել</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Այդ անունով մուտքանուն արդեն գոյություն ունի</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Կապակցել այլ սարքի:</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Խնդրում ենք վերահաստատել:</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Խնդրում ենք միացնել ներդիրի համաժամացումը:</string>
+
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Դուք չունեք բացված որևէ ներդիր Firefox-ի ձեր մյուս սարքերում:</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Դիտեք այլ սարքերում ձեր ներդիրների ցանկը:</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Մուտք գործեք՝ համաժամեցնելու համար</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Չկան բացված ներդիրներ</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Լավագույն կայքերի ցանկը լրացել է</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Նոր լավագույն կայքի ավելացման համար հեռացրեք մեկը: Հպեք և սեղմած պահեք կայքը և ընտրեք հեռացնել:</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Հասկանալի է</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Ցուցադրել ամենաշատ այցելվող կայքերը</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Հեռացնել</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Ստացեք առավելագույնը %s-ից:</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Հավաքեք ձեզ համար կարևոր բաները</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Խմբավորեք համանման որոնումները, կայքերը և ներդիրները՝ հետո արագ մատչելու համար:</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Դուք մուտք եք գործել որպես %s այլ Firefox դիտարկիչում: Ցանկանո՞ւմ եք մուտք գործել այս հաշիվ:</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Հեշտությամբ կարող եք ավելացնել այս կայքը ձեր հեռախոսի Տնային էկրանին՝ ակնթարթորեն մատչելու և արագ դիտարկելու համար:</string>
+
+    </resources>

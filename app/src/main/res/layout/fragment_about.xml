@@ -59,14 +59,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/about_content"
             app:layout_constraintWidth_percent="0.8"
-            tools:text="1.0.x (Build #x)\nGV: 69.x-x\nAC: 1.0.0" />
+            tools:text="1.0.x (Build #x)\nAC: 1.0.0\nGV: 69.x-x\nAS: 1.0.0" />
 
         <TextView
             android:id="@+id/build_date"
             style="@style/AboutHeaderContentText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/about_header_build_date_margin_top"
+            android:paddingTop="@dimen/about_header_build_date_padding_top"
+            android:paddingBottom="@dimen/about_header_build_date_padding_bottom"
             android:textAlignment="center"
             android:textIsSelectable="true"
             app:layout_constraintEnd_toEndOf="parent"

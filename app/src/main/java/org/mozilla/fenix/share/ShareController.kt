@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.share
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -24,6 +25,7 @@ import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
+import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
@@ -54,6 +56,7 @@ interface ShareController {
  * Default behavior of [ShareController]. Other implementations are possible.
  *
  * @param context [Context] used for various Android interactions.
+ * @param shareSubject desired message subject used when sharing through 3rd party apps, like email clients.
  * @param shareData the list of [ShareData]s that can be shared.
  * @param sendTabUseCases instance of [SendTabUseCases] which allows sending tabs to account devices.
  * @param snackbar - instance of [FenixSnackbar] for displaying styled snackbars
@@ -63,6 +66,7 @@ interface ShareController {
 @Suppress("TooManyFunctions")
 class DefaultShareController(
     private val context: Context,
+    private val shareSubject: String?,
     private val shareData: List<ShareData>,
     private val sendTabUseCases: SendTabUseCases,
     private val snackbar: FenixSnackbar,
@@ -89,19 +93,25 @@ class DefaultShareController(
 
         val intent = Intent(ACTION_SEND).apply {
             putExtra(EXTRA_TEXT, getShareText())
-            putExtra(EXTRA_SUBJECT, shareData.map { it.title }.joinToString(", "))
+            putExtra(EXTRA_SUBJECT, getShareSubject())
             type = "text/plain"
             flags = FLAG_ACTIVITY_NEW_TASK
             setClassName(app.packageName, app.activityName)
         }
 
+        @Suppress("TooGenericExceptionCaught")
         val result = try {
             context.startActivity(intent)
             ShareController.Result.SUCCESS
-        } catch (e: SecurityException) {
-            snackbar.setText(context.getString(R.string.share_error_snackbar))
-            snackbar.show()
-            ShareController.Result.SHARE_ERROR
+        } catch (e: Exception) {
+            when (e) {
+                is SecurityException, is ActivityNotFoundException -> {
+                    snackbar.setText(context.getString(R.string.share_error_snackbar))
+                    snackbar.show()
+                    ShareController.Result.SHARE_ERROR
+                }
+                else -> throw e
+            }
         }
         dismiss(result)
     }
@@ -172,8 +182,24 @@ class DefaultShareController(
 
     @VisibleForTesting
     fun getShareText() = shareData.joinToString("\n\n") { data ->
-        listOfNotNull(data.title, data.url).joinToString("\n")
+        val url = data.url.orEmpty()
+        if (url.isExtensionUrl()) {
+            // Sharing moz-extension:// URLs is not practical in general, as
+            // they will only work on the current device.
+
+            // We solve this for URLs from our reader extension as they contain
+            // the original URL as a query parameter. This is a workaround for
+            // now and needs a clean fix once we have a reader specific protocol
+            // e.g. ext+reader://
+            // https://github.com/mozilla-mobile/android-components/issues/2879
+            Uri.parse(url).getQueryParameter("url") ?: url
+        } else {
+            url
+        }
     }
+
+    @VisibleForTesting
+    internal fun getShareSubject() = shareSubject ?: shareData.map { it.title }.joinToString(", ")
 
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
     @VisibleForTesting

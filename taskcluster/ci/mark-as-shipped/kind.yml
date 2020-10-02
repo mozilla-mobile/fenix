@@ -18,7 +18,7 @@ group-by: build-type
 
 only-for-build-types:
     - beta
-    - production
+    - release
 
 job-template:
     description: Mark Fenix as shipped in ship-it

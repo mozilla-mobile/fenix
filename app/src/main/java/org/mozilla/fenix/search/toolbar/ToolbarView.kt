@@ -1,52 +1,47 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.search.toolbar
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.LayoutRes
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.util.dpToPx
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.SearchFragmentState
-import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
- * to respond to user interaction on the [BrowserToolbarView]
+ * to respond to user interaction on the [ToolbarView]
  */
 interface ToolbarInteractor {
 
     /**
-     * Called when a user hits the return key while [BrowserToolbarView] has focus.
-     * @param url the text inside the [BrowserToolbarView] when committed
+     * Called when a user hits the return key while [ToolbarView] has focus.
+     * @param url the text inside the [ToolbarView] when committed
      */
     fun onUrlCommitted(url: String)
 
     /**
-     * Called when a user removes focus from the [BrowserToolbarView]
+     * Called when a user removes focus from the [ToolbarView]
      */
     fun onEditingCanceled()
 
     /**
-     * Called whenever the text inside the [BrowserToolbarView] changes
-     * @param text the current text displayed by [BrowserToolbarView]
+     * Called whenever the text inside the [ToolbarView] changes
+     * @param text the current text displayed by [ToolbarView]
      */
     fun onTextChanged(text: String)
 }
@@ -55,36 +50,20 @@ interface ToolbarInteractor {
  * View that contains and configures the BrowserToolbar to only be used in its editing mode.
  */
 class ToolbarView(
-    private val container: ViewGroup,
+    private val context: Context,
     private val interactor: ToolbarInteractor,
     private val historyStorage: HistoryStorage?,
     private val isPrivate: Boolean,
+    val view: BrowserToolbar,
     engine: Engine
-) : LayoutContainer {
+) {
 
-    override val containerView: View?
-        get() = container
-
-    private val settings = container.context.settings()
-
-    @LayoutRes
-    private val toolbarLayout = when {
-        settings.shouldUseBottomToolbar -> R.layout.component_bottom_browser_toolbar
-        else -> R.layout.component_browser_top_toolbar
-    }
-
-    val view: BrowserToolbar = LayoutInflater.from(container.context)
-        .inflate(toolbarLayout, container, true)
-        .findViewById(R.id.toolbar)
-
-    private var isInitialized = false
-    private var hasBeenCanceled = false
+    @VisibleForTesting
+    internal var isInitialized = false
 
     init {
         view.apply {
             editMode()
-
-            elevation = TOOLBAR_ELEVATION_IN_DP.dpToPx(resources.displayMetrics).toFloat()
 
             setOnUrlCommitListener {
                 // We're hiding the keyboard as early as possible to prevent the engine view
@@ -95,53 +74,52 @@ class ToolbarView(
                 false
             }
 
-            background =
-                AppCompatResources.getDrawable(
-                    container.context, ThemeManager.resolveAttribute(R.attr.foundation, context)
-                )
-
-            layoutParams.height = CoordinatorLayout.LayoutParams.MATCH_PARENT
+            background = AppCompatResources.getDrawable(
+                context, context.theme.resolveAttribute(R.attr.foundation)
+            )
 
             edit.hint = context.getString(R.string.search_hint)
 
             edit.colors = edit.colors.copy(
-                text = container.context.getColorFromAttr(R.attr.primaryText),
-                hint = container.context.getColorFromAttr(R.attr.secondaryText),
+                text = context.getColorFromAttr(R.attr.primaryText),
+                hint = context.getColorFromAttr(R.attr.secondaryText),
                 suggestionBackground = ContextCompat.getColor(
-                    container.context,
+                    context,
                     R.color.suggestion_highlight_color
                 ),
-                clear = container.context.getColorFromAttr(R.attr.primaryText)
+                clear = context.getColorFromAttr(R.attr.primaryText)
             )
 
             edit.setUrlBackground(
-                AppCompatResources.getDrawable(container.context, R.drawable.search_url_background))
+                AppCompatResources.getDrawable(context, R.drawable.search_url_background)
+            )
 
             private = isPrivate
 
             setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
                 override fun onCancelEditing(): Boolean {
-                    // For some reason, this can be triggered twice on one back press. This only leads to
-                    // navigateUp, so let's make sure we only call it once
-                    if (!hasBeenCanceled) interactor.onEditingCanceled()
-                    hasBeenCanceled = true
+                    interactor.onEditingCanceled()
                     // We need to return false to not show display mode
                     return false
                 }
+
                 override fun onTextChanged(text: String) {
                     url = text
-                    this@ToolbarView.interactor.onTextChanged(text)
+                    interactor.onTextChanged(text)
                 }
             })
         }
 
         val engineForSpeculativeConnects = if (!isPrivate) engine else null
-        ToolbarAutocompleteFeature(
-            view,
-            engineForSpeculativeConnects
-        ).apply {
-            addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })
-            historyStorage?.also(::addHistoryStorageProvider)
+
+        if (context.settings().shouldAutocompleteInAwesomebar) {
+            ToolbarAutocompleteFeature(
+                view,
+                engineForSpeculativeConnects
+            ).apply {
+                addDomainProvider(ShippedDomainsProvider().also { it.initialize(view.context) })
+                historyStorage?.also(::addHistoryStorageProvider)
+            }
         }
     }
 
@@ -152,7 +130,14 @@ class ToolbarView(
             /* Only set the search terms if pasted text is null so that the search term doesn't
             overwrite pastedText when view enters `editMode` */
             if (searchState.pastedText.isNullOrEmpty()) {
-                view.setSearchTerms(searchState.session?.searchTerms.orEmpty())
+                // If we're in edit mode, setting the search term will update the toolbar,
+                // so we make sure we have the correct term/query to show.
+                val termOrQuery = if (searchState.searchTerms.isNotEmpty()) {
+                    searchState.searchTerms
+                } else {
+                    searchState.query
+                }
+                view.setSearchTerms(termOrQuery)
             }
 
             // We must trigger an onTextChanged so when search terms are set when transitioning to `editMode`
@@ -163,20 +148,18 @@ class ToolbarView(
             isInitialized = true
         }
 
-        val iconSize = container.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
+        val iconSize =
+            context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
 
         val scaledIcon = Bitmap.createScaledBitmap(
             searchState.searchEngineSource.searchEngine.icon,
             iconSize,
             iconSize,
-            true)
+            true
+        )
 
-        val icon = BitmapDrawable(container.resources, scaledIcon)
+        val icon = BitmapDrawable(context.resources, scaledIcon)
 
         view.edit.setIcon(icon, searchState.searchEngineSource.searchEngine.name)
-    }
-
-    companion object {
-        private const val TOOLBAR_ELEVATION_IN_DP = 16
     }
 }

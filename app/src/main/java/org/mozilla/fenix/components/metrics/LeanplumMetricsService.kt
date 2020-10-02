@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import com.leanplum.Leanplum
 import com.leanplum.LeanplumActivityHelper
@@ -20,7 +21,9 @@ import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.components.metrics.MozillaProductDetector.MozillaProducts
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
 import java.util.Locale
+import java.util.MissingResourceException
 import java.util.UUID.randomUUID
 
 private val Event.name: String?
@@ -33,17 +36,25 @@ private val Event.name: String?
         is Event.InteractWithSearchURLArea -> "E_Interact_With_Search_URL_Area"
         is Event.CollectionSaved -> "E_Collection_Created"
         is Event.CollectionTabRestored -> "E_Collection_Tab_Opened"
-        is Event.SyncAuthSignIn -> "E_Sign_In_FxA"
+        is Event.SyncAuthSignUp -> "E_FxA_New_Signup"
+        is Event.SyncAuthSignIn, Event.SyncAuthPaired, Event.SyncAuthOtherExternal -> "E_Sign_In_FxA"
+        is Event.SyncAuthFromSharedCopy, Event.SyncAuthFromSharedReuse -> "E_Sign_In_FxA_Fennec_to_Fenix"
         is Event.SyncAuthSignOut -> "E_Sign_Out_FxA"
         is Event.ClearedPrivateData -> "E_Cleared_Private_Data"
         is Event.DismissedOnboarding -> "E_Dismissed_Onboarding"
         is Event.FennecToFenixMigrated -> "E_Fennec_To_Fenix_Migrated"
+        is Event.AddonInstalled -> "E_Addon_Installed"
+        is Event.SearchWidgetInstalled -> "E_Search_Widget_Added"
+        is Event.ChangedToDefaultBrowser -> "E_Changed_Default_To_Fenix"
+        is Event.TrackingProtectionSettingChanged -> "E_Changed_ETP"
 
         // Do not track other events in Leanplum
-        else -> ""
+        else -> null
     }
 
-class LeanplumMetricsService(private val application: Application) : MetricsService {
+class LeanplumMetricsService(
+    private val application: Application
+) : MetricsService, DeepLinkIntentProcessor.DeepLinkVerifier {
     val scope = CoroutineScope(Dispatchers.IO)
     var leanplumJob: Job? = null
 
@@ -67,6 +78,7 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
     override val type = MetricServiceType.Marketing
     private val token = Token(LeanplumId, LeanplumToken)
 
+    @Suppress("ComplexMethod")
     override fun start() {
 
         if (!application.settings().isMarketingTelemetryEnabled) return
@@ -79,12 +91,19 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         leanplumJob = scope.launch {
 
             val applicationSetLocale = LocaleManager.getCurrentLocale(application)
-            val currentLocale = when (applicationSetLocale != null) {
-                true -> applicationSetLocale.isO3Language
-                false -> Locale.getDefault().isO3Language
-            }
-            if (!isLeanplumEnabled(currentLocale)) {
-                Log.i(LOGTAG, "Leanplum is not available for this locale: $currentLocale")
+            val currentLocale = applicationSetLocale ?: Locale.getDefault()
+            val languageCode =
+                currentLocale.iso3LanguageOrNull
+                    ?: currentLocale.language.let {
+                        if (it.isNotBlank()) {
+                            it
+                        } else {
+                            currentLocale.toString()
+                        }
+                    }
+
+            if (!isLeanplumEnabled(languageCode)) {
+                Log.i(LOGTAG, "Leanplum is not available for this locale: $languageCode")
                 return@launch
             }
 
@@ -101,23 +120,52 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
 
             val installedApps = MozillaProductDetector.getInstalledMozillaProducts(application)
 
-            Leanplum.start(application, hashMapOf(
-                "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application).orEmpty(),
-                "fennec_installed" to installedApps.contains(MozillaProducts.FIREFOX.productName),
-                "focus_installed" to installedApps.contains(MozillaProducts.FOCUS.productName),
-                "klar_installed" to installedApps.contains(MozillaProducts.KLAR.productName),
-                "fxa_signed_in" to application.settings().fxaSignedIn,
-                "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
-                "search_widget_installed" to application.settings().searchWidgetInstalled,
-                "fenix" to true
-            ))
+            val trackingProtection = application.settings().run {
+                when {
+                    !shouldUseTrackingProtection -> "none"
+                    useStandardTrackingProtection -> "standard"
+                    useStrictTrackingProtection -> "strict"
+                    else -> "custom"
+                }
+            }
+
+            Leanplum.start(
+                application, hashMapOf(
+                    "default_browser" to MozillaProductDetector.getMozillaBrowserDefault(application)
+                        .orEmpty(),
+                    "fennec_installed" to installedApps.contains(MozillaProducts.FIREFOX.productName),
+                    "focus_installed" to installedApps.contains(MozillaProducts.FOCUS.productName),
+                    "klar_installed" to installedApps.contains(MozillaProducts.KLAR.productName),
+                    "fxa_signed_in" to application.settings().fxaSignedIn,
+                    "fxa_has_synced_items" to application.settings().fxaHasSyncedItems,
+                    "search_widget_installed" to application.settings().searchWidgetInstalled,
+                    "tracking_protection_enabled" to application.settings().shouldUseTrackingProtection,
+                    "tracking_protection_setting" to trackingProtection,
+                    "fenix" to true
+                )
+            )
 
             withContext(Main) {
                 LeanplumInternal.setCalledStart(true)
                 LeanplumInternal.setHasStarted(true)
                 LeanplumInternal.setStartedInBackground(true)
+                Log.i(LOGTAG, "Started Leanplum with deviceId ${Leanplum.getDeviceId()}" +
+                        " and userId ${Leanplum.getUserId()}")
             }
         }
+    }
+
+    /**
+     * Verifies a deep link and returns `true` for deep links that should be handled and `false` if
+     * a deep link should be rejected.
+     *
+     * @See DeepLinkIntentProcessor.verifier
+     */
+    override fun verifyDeepLink(deepLink: Uri): Boolean {
+        // We compare the local Leanplum device ID against the "uid" query parameter and only
+        // accept deep links where both values match.
+        val uid = deepLink.getQueryParameter("uid")
+        return uid == Leanplum.getDeviceId()
     }
 
     override fun stop() {
@@ -155,6 +203,14 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         return LEANPLUM_ENABLED_LOCALES.contains(locale)
     }
 
+    private val Locale.iso3LanguageOrNull: String?
+        get() =
+            try {
+                this.isO3Language
+            } catch (_: MissingResourceException) {
+                null
+            }
+
     companion object {
         private const val LOGTAG = "LeanplumMetricsService"
 
@@ -164,9 +220,10 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
         private val LeanplumToken: String
             // Debug builds have a null (nullable) LEANPLUM_TOKEN
             get() = BuildConfig.LEANPLUM_TOKEN.orEmpty()
+
         // Leanplum needs to be enabled for the following locales.
         // Irrespective of the actual device location.
-        private val LEANPLUM_ENABLED_LOCALES = listOf(
+        private val LEANPLUM_ENABLED_LOCALES = setOf(
             "eng", // English
             "zho", // Chinese
             "deu", // German
@@ -183,5 +240,8 @@ class LeanplumMetricsService(private val application: Application) : MetricsServ
             "ara", // Arabic
             "jpn" // Japanese
         )
+
+        private const val PREFERENCE_NAME = "LEANPLUM_PREFERENCES"
+        private const val DEVICE_ID_KEY = "LP_DEVICE_ID"
     }
 }

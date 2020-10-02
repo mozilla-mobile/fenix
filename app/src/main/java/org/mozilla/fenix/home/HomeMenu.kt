@@ -8,10 +8,12 @@ import android.content.Context
 import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.ext.getHighlight
-import mozilla.components.browser.menu.item.BrowserMenuCategory
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
 import mozilla.components.browser.menu.item.BrowserMenuImageText
@@ -23,7 +25,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.whatsnew.WhatsNew
 
 class HomeMenu(
@@ -36,10 +37,12 @@ class HomeMenu(
     sealed class Item {
         object WhatsNew : Item()
         object Help : Item()
+        object AddonsManager : Item()
         object Settings : Item()
-        object Library : Item()
+        object SyncedTabs : Item()
         object History : Item()
         object Bookmarks : Item()
+        object Downloads : Item()
         object Quit : Item()
         object Sync : Item()
     }
@@ -95,7 +98,7 @@ class HomeMenu(
 
         val bookmarksItem = BrowserMenuImageText(
             context.getString(R.string.library_bookmarks),
-            R.drawable.ic_bookmark_outline,
+            R.drawable.ic_bookmark_filled,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Bookmarks)
@@ -109,12 +112,28 @@ class HomeMenu(
             onItemTapped.invoke(Item.History)
         }
 
+        val addons = BrowserMenuImageText(
+            context.getString(R.string.browser_menu_add_ons),
+            R.drawable.ic_addons_extensions,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.AddonsManager)
+        }
+
         val settingsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_settings),
             R.drawable.ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)
+        }
+
+        val syncedTabsItem = BrowserMenuImageText(
+            context.getString(R.string.library_synced_tabs),
+            R.drawable.ic_synced_tabs,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.SyncedTabs)
         }
 
         val helpItem = BrowserMenuImageText(
@@ -125,6 +144,14 @@ class HomeMenu(
             onItemTapped.invoke(Item.Help)
         }
 
+        val downloadsItem = BrowserMenuImageText(
+            context.getString(R.string.library_downloads),
+            R.drawable.ic_download,
+            primaryTextColor
+        ) {
+            onItemTapped.invoke(Item.Downloads)
+        }
+
         // Only query account manager if it has been initialized.
         // We don't want to cause its initialization just for this check.
         val accountAuthItem = if (context.components.backgroundServices.accountManagerAvailableQueue.isReady()) {
@@ -133,42 +160,30 @@ class HomeMenu(
             null
         }
 
+        val settings = context.components.settings
+
+        val menuItems = listOfNotNull(
+            if (settings.shouldDeleteBrowsingDataOnQuit) quitItem else null,
+            settingsItem,
+            BrowserMenuDivider(),
+            if (settings.syncedTabsInTabsTray) null else syncedTabsItem,
+            bookmarksItem,
+            historyItem,
+            downloadsItem,
+            BrowserMenuDivider(),
+            addons,
+            BrowserMenuDivider(),
+            whatsNewItem,
+            helpItem,
+            accountAuthItem
+        ).also { items ->
+            items.getHighlight()?.let { onHighlightPresent(it) }
+        }
+
         if (shouldUseBottomToolbar) {
-            listOfNotNull(
-                accountAuthItem,
-                whatsNewItem,
-                BrowserMenuDivider(),
-                BrowserMenuCategory(
-                    context.getString(R.string.browser_menu_library),
-                    textColorResource = menuCategoryTextColor
-                ),
-                bookmarksItem,
-                historyItem,
-                BrowserMenuDivider(),
-                settingsItem,
-                helpItem,
-                if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null
-            ).also { items ->
-                items.getHighlight()?.let { onHighlightPresent(it) }
-            }
+            menuItems.reversed()
         } else {
-            listOfNotNull(
-                if (Settings.getInstance(context).shouldDeleteBrowsingDataOnQuit) quitItem else null,
-                helpItem,
-                settingsItem,
-                accountAuthItem,
-                BrowserMenuDivider(),
-                BrowserMenuCategory(
-                    context.getString(R.string.browser_menu_library),
-                    textColorResource = menuCategoryTextColor
-                ),
-                bookmarksItem,
-                historyItem,
-                BrowserMenuDivider(),
-                whatsNewItem
-            ).also { items ->
-                items.getHighlight()?.let { onHighlightPresent(it) }
-            }
+            menuItems
         }
     }
 
@@ -184,21 +199,31 @@ class HomeMenu(
             }
             context.components.backgroundServices.accountManager.register(object : AccountObserver {
                 override fun onAuthenticationProblems() {
-                    onMenuBuilderChanged(BrowserMenuBuilder(
-                        listOf(reconnectToSyncItem) + coreMenuItems
-                    ))
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(BrowserMenuBuilder(
+                            listOf(reconnectToSyncItem) + coreMenuItems
+                        ))
+                    }
                 }
 
                 override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-                    onMenuBuilderChanged(BrowserMenuBuilder(
-                        coreMenuItems
-                    ))
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                coreMenuItems
+                            )
+                        )
+                    }
                 }
 
                 override fun onLoggedOut() {
-                    onMenuBuilderChanged(BrowserMenuBuilder(
-                        coreMenuItems
-                    ))
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        onMenuBuilderChanged(
+                            BrowserMenuBuilder(
+                                coreMenuItems
+                            )
+                        )
+                    }
                 }
             }, lifecycleOwner)
         }

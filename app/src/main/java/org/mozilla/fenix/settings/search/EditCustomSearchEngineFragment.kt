@@ -20,10 +20,11 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
@@ -53,18 +54,15 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         val decodedUrl = Uri.decode(searchEngine.buildSearchUrl("%s"))
         edit_search_string.setText(decodedUrl)
 
-        custom_search_engines_learn_more.increaseTapArea(DPS_TO_INCREASE)
         custom_search_engines_learn_more.setOnClickListener {
-            requireContext().let { context ->
-                val intent = SupportUtils.createCustomTabIntent(
-                    context,
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
-                    )
-                )
-                startActivity(intent)
-            }
+            (activity as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                    requireContext(),
+                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                ),
+                newTab = true,
+                from = BrowserDirection.FromEditCustomSearchEngineFragment
+            )
         }
     }
 

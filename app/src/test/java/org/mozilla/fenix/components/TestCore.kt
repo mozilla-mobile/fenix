@@ -9,18 +9,27 @@ import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.pwa.WebAppShortcutManager
+import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 
-class TestCore(context: Context) : Core(context) {
+class TestCore(context: Context, crashReporter: CrashReporting) : Core(
+    context,
+    crashReporter,
+    mockk()
+) {
 
     override val engine = mockk<Engine>(relaxed = true) {
-        every { this@mockk getProperty "settings" } returns mockk<Settings>()
+        every { this@mockk getProperty "settings" } returns mockk<Settings>(relaxed = true)
     }
     override val sessionManager = SessionManager(engine)
     override val store = mockk<BrowserStore>()
     override val client = mockk<Client>()
     override val webAppShortcutManager = mockk<WebAppShortcutManager>()
+    override val thumbnailStorage = mockk<ThumbnailStorage>()
+    override val topSitesStorage = mockk<DefaultTopSitesStorage>()
 }

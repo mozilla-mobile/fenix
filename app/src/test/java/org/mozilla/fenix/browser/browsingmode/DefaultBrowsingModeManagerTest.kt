@@ -5,14 +5,19 @@
 package org.mozilla.fenix.browser.browsingmode
 
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.utils.Settings
 
 class DefaultBrowsingModeManagerTest {
 
+    @MockK lateinit var settings: Settings
     @MockK(relaxed = true) lateinit var callback: (BrowsingMode) -> Unit
     lateinit var manager: BrowsingModeManager
 
@@ -21,7 +26,9 @@ class DefaultBrowsingModeManagerTest {
     @Before
     fun before() {
         MockKAnnotations.init(this)
-        manager = DefaultBrowsingModeManager(initMode, callback)
+
+        manager = DefaultBrowsingModeManager(initMode, settings, callback)
+        every { settings.lastKnownMode = any() } just Runs
     }
 
     @Test
@@ -32,12 +39,12 @@ class DefaultBrowsingModeManagerTest {
         manager.mode = BrowsingMode.Private
         manager.mode = BrowsingMode.Private
 
-        verify(exactly = 3) { callback.invoke(any()) }
+        verify(exactly = 3) { callback.invoke(BrowsingMode.Private) }
 
         manager.mode = BrowsingMode.Normal
         manager.mode = BrowsingMode.Normal
 
-        verify(exactly = 5) { callback.invoke(any()) }
+        verify(exactly = 2) { callback.invoke(BrowsingMode.Normal) }
     }
 
     @Test
@@ -46,8 +53,10 @@ class DefaultBrowsingModeManagerTest {
 
         manager.mode = BrowsingMode.Private
         assertEquals(BrowsingMode.Private, manager.mode)
+        verify { settings.lastKnownMode = BrowsingMode.Private }
 
         manager.mode = BrowsingMode.Normal
         assertEquals(BrowsingMode.Normal, manager.mode)
+        verify { settings.lastKnownMode = BrowsingMode.Normal }
     }
 }

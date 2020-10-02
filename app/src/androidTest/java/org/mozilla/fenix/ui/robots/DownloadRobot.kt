@@ -37,8 +37,6 @@ class DownloadRobot {
 
     fun verifyDownloadNotificationPopup() = assertDownloadNotificationPopup()
 
-    fun verifyDownloadNotificationShade() = assertDownloadNotificationShade()
-
     fun verifyPhotosAppOpens() = assertPhotosOpens()
 
     class Transition {
@@ -98,21 +96,10 @@ private fun assertDownloadPrompt() {
     mDevice.waitNotNull(Until.findObjects(By.res("org.mozilla.fenix.debug:id/download_button")))
 }
 
-private fun assertDownloadNotificationShade() {
-    val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    mDevice.openNotification()
-    mDevice.waitNotNull(
-        Until.findObjects(By.text("Download completed")), TestAssetHelper.waitingTime
-    )
-
-    // Go home (no UIDevice closeNotification) to close notification shade
-    mDevice.pressHome()
-}
-
 private fun assertDownloadNotificationPopup() {
     val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     mDevice.waitNotNull(Until.findObjects(By.text("Open")), TestAssetHelper.waitingTime)
-    onView(withId(R.id.download_notification_title))
+    onView(withId(R.id.download_dialog_title))
         .check(matches(withText(CoreMatchers.containsString("Download completed"))))
 }
 
@@ -123,7 +110,7 @@ private fun clickDownloadButton() =
     onView(withText("Download")).inRoot(isDialog()).check(matches(isDisplayed()))
 
 private fun clickOpenButton() =
-    onView(withId(R.id.download_notification_action_button)).inRoot(isDialog()).check(
+    onView(withId(R.id.download_dialog_action_button)).check(
         matches(isDisplayed())
     )
 

@@ -14,8 +14,10 @@ import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.LeanplumMetricsService
@@ -43,7 +45,8 @@ class Analytics(
                 BuildConfig.SENTRY_TOKEN,
                 tags = mapOf("geckoview" to "$MOZ_APP_VERSION-$MOZ_APP_BUILDID"),
                 environment = BuildConfig.BUILD_TYPE,
-                sendEventForNativeCrashes = true
+                sendEventForNativeCrashes = false, // Do not send native crashes to Sentry
+                sentryProjectUrl = getSentryProjectUrl()
             )
 
             services.add(sentryService)
@@ -68,6 +71,7 @@ class Analytics(
         )
 
         CrashReporter(
+            context = context,
             services = services,
             telemetryServices = listOf(GleanCrashReporterService(context)),
             shouldPrompt = CrashReporter.Prompt.ALWAYS,
@@ -80,12 +84,14 @@ class Analytics(
         )
     }
 
+    val leanplumMetricsService by lazy { LeanplumMetricsService(context as Application) }
+
     val metrics: MetricController by lazy {
         MetricController.create(
             listOf(
                 GleanMetricsService(context),
-                LeanplumMetricsService(context as Application),
-                AdjustMetricsService(context)
+                leanplumMetricsService,
+                AdjustMetricsService(context as Application)
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled }
@@ -94,3 +100,13 @@ class Analytics(
 }
 
 fun isSentryEnabled() = !BuildConfig.SENTRY_TOKEN.isNullOrEmpty()
+
+private fun getSentryProjectUrl(): String? {
+    val baseUrl = "https://sentry.prod.mozaws.net/operations"
+    return when (Config.channel) {
+        ReleaseChannel.Nightly -> "$baseUrl/fenix"
+        ReleaseChannel.Release -> "$baseUrl/fenix-fennec"
+        ReleaseChannel.Beta -> "$baseUrl/fenix-fennec-beta"
+        else -> null
+    }
+}

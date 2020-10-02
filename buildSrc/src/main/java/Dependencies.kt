@@ -3,33 +3,31 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.3.30"
+    const val kotlin = "1.3.72"
     const val coroutines = "1.3.3"
     const val android_gradle_plugin = "3.5.0"
     const val sentry = "1.7.10"
-    const val leakcanary = "2.2"
-    const val leanplum = "5.2.3"
+    const val leakcanary = "2.4"
+    const val leanplum = "5.4.0"
     const val osslicenses_plugin = "0.9.5"
-    const val osslicenses_library = "17.0.0"
-    const val detekt = "1.6.0"
+    const val detekt = "1.9.1"
 
-    const val androidx_appcompat = "1.2.0-beta01"
-    const val androidx_biometric = "1.0.1"
+    const val androidx_appcompat = "1.2.0-rc01"
+    const val androidx_biometric = "1.1.0-alpha01"
     const val androidx_coordinator_layout = "1.1.0-rc01"
-    const val androidx_constraint_layout = "2.0.0-beta4"
+    const val androidx_constraint_layout = "2.0.0"
     const val androidx_preference = "1.1.0"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.2.0"
-    const val androidx_fragment = "1.2.4"
-    const val androidx_navigation = "2.2.1"
-    const val androidx_recyclerview = "1.1.0"
+    const val androidx_fragment = "1.2.5"
+    const val androidx_navigation = "2.3.0"
+    const val androidx_recyclerview = "1.2.0-alpha05"
     const val androidx_core = "1.2.0"
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.3.0"
     const val androidx_work = "2.2.0"
     const val google_material = "1.1.0"
-    const val google_flexbox = "2.0.1"
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
@@ -37,15 +35,16 @@ object Versions {
     const val installreferrer = "1.0"
 
     const val junit = "5.5.2"
-    const val mockito = "2.24.5"
-    const val mockk = "1.9.kotlin12"
+    const val mockk = "1.10.0"
 
     const val mockwebserver = "3.11.0"
     const val uiautomator = "2.2.0"
 
     const val google_ads_id_version = "16.0.0"
 
-    const val airbnb_lottie = "3.3.0"
+    const val google_play_store_version = "1.8.0"
+
+    const val airbnb_lottie = "3.4.0"
 }
 
 @Suppress("unused")
@@ -59,9 +58,9 @@ object Deps {
 
     const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
-    const val osslicenses_library = "com.google.android.gms:play-services-oss-licenses:${Versions.osslicenses_library}"
 
     const val mozilla_concept_engine = "org.mozilla.components:concept-engine:${Versions.mozilla_android_components}"
+    const val mozilla_concept_menu = "org.mozilla.components:concept-menu:${Versions.mozilla_android_components}"
     const val mozilla_concept_push = "org.mozilla.components:concept-push:${Versions.mozilla_android_components}"
     const val mozilla_concept_tabstray = "org.mozilla.components:concept-tabstray:${Versions.mozilla_android_components}"
     const val mozilla_concept_toolbar = "org.mozilla.components:concept-toolbar:${Versions.mozilla_android_components}"
@@ -78,8 +77,10 @@ object Deps {
     const val mozilla_browser_session = "org.mozilla.components:browser-session:${Versions.mozilla_android_components}"
     const val mozilla_browser_state = "org.mozilla.components:browser-state:${Versions.mozilla_android_components}"
     const val mozilla_browser_tabstray = "org.mozilla.components:browser-tabstray:${Versions.mozilla_android_components}"
+    const val mozilla_browser_thumbnails = "org.mozilla.components:browser-thumbnails:${Versions.mozilla_android_components}"
     const val mozilla_browser_toolbar = "org.mozilla.components:browser-toolbar:${Versions.mozilla_android_components}"
     const val mozilla_browser_menu = "org.mozilla.components:browser-menu:${Versions.mozilla_android_components}"
+    const val mozilla_browser_menu2 = "org.mozilla.components:browser-menu2:${Versions.mozilla_android_components}"
     const val mozilla_browser_errorpages = "org.mozilla.components:browser-errorpages:${Versions.mozilla_android_components}"
     const val mozilla_browser_storage_sync = "org.mozilla.components:browser-storage-sync:${Versions.mozilla_android_components}"
 
@@ -96,40 +97,50 @@ object Deps {
     const val mozilla_feature_qr = "org.mozilla.components:feature-qr:${Versions.mozilla_android_components}"
     const val mozilla_feature_search = "org.mozilla.components:feature-search:${Versions.mozilla_android_components}"
     const val mozilla_feature_session = "org.mozilla.components:feature-session:${Versions.mozilla_android_components}"
+    const val mozilla_feature_syncedtabs = "org.mozilla.components:feature-syncedtabs:${Versions.mozilla_android_components}"
     const val mozilla_feature_tabs = "org.mozilla.components:feature-tabs:${Versions.mozilla_android_components}"
     const val mozilla_feature_downloads = "org.mozilla.components:feature-downloads:${Versions.mozilla_android_components}"
     const val mozilla_feature_storage = "org.mozilla.components:feature-storage:${Versions.mozilla_android_components}"
     const val mozilla_feature_prompts = "org.mozilla.components:feature-prompts:${Versions.mozilla_android_components}"
     const val mozilla_feature_push = "org.mozilla.components:feature-push:${Versions.mozilla_android_components}"
+    const val mozilla_feature_privatemode = "org.mozilla.components:feature-privatemode:${Versions.mozilla_android_components}"
     const val mozilla_feature_pwa = "org.mozilla.components:feature-pwa:${Versions.mozilla_android_components}"
     const val mozilla_feature_toolbar = "org.mozilla.components:feature-toolbar:${Versions.mozilla_android_components}"
     const val mozilla_feature_findinpage = "org.mozilla.components:feature-findinpage:${Versions.mozilla_android_components}"
+    const val mozilla_feature_logins = "org.mozilla.components:feature-logins:${Versions.mozilla_android_components}"
     const val mozilla_feature_site_permissions = "org.mozilla.components:feature-sitepermissions:${Versions.mozilla_android_components}"
     const val mozilla_feature_readerview = "org.mozilla.components:feature-readerview:${Versions.mozilla_android_components}"
     const val mozilla_feature_tab_collections = "org.mozilla.components:feature-tab-collections:${Versions.mozilla_android_components}"
+    const val mozilla_feature_recentlyclosed = "org.mozilla.components:feature-recentlyclosed:${Versions.mozilla_android_components}"
     const val mozilla_feature_accounts_push = "org.mozilla.components:feature-accounts-push:${Versions.mozilla_android_components}"
     const val mozilla_feature_top_sites = "org.mozilla.components:feature-top-sites:${Versions.mozilla_android_components}"
     const val mozilla_feature_share = "org.mozilla.components:feature-share:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
+    const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
 
+    const val mozilla_service_digitalassetlinks =
+        "org.mozilla.components:service-digitalassetlinks:${Versions.mozilla_android_components}"
+    const val mozilla_service_experiments =
+        "org.mozilla.components:service-experiments:${Versions.mozilla_android_components}"
     const val mozilla_service_sync_logins =
         "org.mozilla.components:service-sync-logins:${Versions.mozilla_android_components}"
     const val mozilla_service_firefox_accounts = "org.mozilla.components:service-firefox-accounts:${Versions.mozilla_android_components}"
     const val mozilla_service_glean = "org.mozilla.components:service-glean:${Versions.mozilla_android_components}"
-    const val mozilla_service_experiments = "org.mozilla.components:service-experiments:${Versions.mozilla_android_components}"
     const val mozilla_service_location = "org.mozilla.components:service-location:${Versions.mozilla_android_components}"
 
     const val mozilla_ui_colors = "org.mozilla.components:ui-colors:${Versions.mozilla_android_components}"
     const val mozilla_ui_icons = "org.mozilla.components:ui-icons:${Versions.mozilla_android_components}"
+    const val mozilla_ui_widgets = "org.mozilla.components:ui-widgets:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
 
-    const val mozilla_ui_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
+    const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
 
     const val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
+    const val mozilla_support_images = "org.mozilla.components:support-images:${Versions.mozilla_android_components}"
     const val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
     const val mozilla_support_rusthttp = "org.mozilla.components:support-rusthttp:${Versions.mozilla_android_components}"
     const val mozilla_support_rustlog = "org.mozilla.components:support-rustlog:${Versions.mozilla_android_components}"
@@ -166,14 +177,11 @@ object Deps {
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
-    const val google_flexbox = "com.google.android:flexbox:${Versions.google_flexbox}"
 
     const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
 
     const val junit = "junit:junit:${Versions.junit}"
-    const val mockito_core = "org.mockito:mockito-core:${Versions.mockito}"
-    const val mockito_android = "org.mockito:mockito-android:${Versions.mockito}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
 
     // --- START AndroidX test dependencies --- //
@@ -203,6 +211,9 @@ object Deps {
     const val robolectric = "org.robolectric:robolectric:4.3.1"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
+
+    // Required for in-app reviews
+    const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
 
     const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
 

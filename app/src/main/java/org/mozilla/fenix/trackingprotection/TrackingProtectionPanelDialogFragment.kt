@@ -57,6 +57,12 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     private lateinit var trackingProtectionStore: TrackingProtectionStore
     private lateinit var trackingProtectionView: TrackingProtectionPanelView
     private lateinit var trackingProtectionInteractor: TrackingProtectionPanelInteractor
+    private lateinit var trackingProtectionUseCases: TrackingProtectionUseCases
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        trackingProtectionUseCases = requireComponents.useCases.trackingProtectionUseCases
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,7 +79,8 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
                     args.url,
                     args.trackingProtectionEnabled,
                     listTrackers = listOf(),
-                    mode = TrackingProtectionState.Mode.Normal
+                    mode = TrackingProtectionState.Mode.Normal,
+                    lastAccessedCategory = ""
                 )
             )
         }
@@ -84,47 +91,34 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         )
         trackingProtectionView =
             TrackingProtectionPanelView(view.fragment_tp, trackingProtectionInteractor)
-        updateTrackers()
+        session?.let { updateTrackers(it) }
         return view
     }
 
     private val sessionObserver = object : Session.Observer {
         override fun onUrlChanged(session: Session, url: String) {
-            trackingProtectionStore.dispatch(
-                TrackingProtectionAction.UrlChange(url)
-            )
+            trackingProtectionStore.dispatch(TrackingProtectionAction.UrlChange(url))
         }
 
         override fun onTrackerBlocked(session: Session, tracker: Tracker, all: List<Tracker>) {
-            updateTrackers()
+            updateTrackers(session)
         }
 
         override fun onTrackerLoaded(session: Session, tracker: Tracker, all: List<Tracker>) {
-            updateTrackers()
+            updateTrackers(session)
         }
     }
 
-    private fun updateTrackers() {
-        context?.let { context ->
-            val session =
-                context.components.core.sessionManager.findSessionById(args.sessionId) ?: return
-            val useCase = TrackingProtectionUseCases(
-                sessionManager = context.components.core.sessionManager,
-                engine = context.components.core.engine
-            )
-
-            useCase.fetchTrackingLogs(
-                session,
-                onSuccess = {
-                    trackingProtectionStore.dispatch(
-                        TrackingProtectionAction.TrackerLogChange(it)
-                    )
-                },
-                onError = {
-                    Logger.error("TrackingProtectionUseCases - fetchTrackingLogs onError", it)
-                }
-            )
-        }
+    private fun updateTrackers(session: Session) {
+        trackingProtectionUseCases.fetchTrackingLogs(
+            session.id,
+            onSuccess = {
+                trackingProtectionStore.dispatch(TrackingProtectionAction.TrackerLogChange(it))
+            },
+            onError = {
+                Logger.error("TrackingProtectionUseCases - fetchTrackingLogs onError", it)
+            }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,17 +143,13 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
 
     private fun toggleTrackingProtection(isEnabled: Boolean) {
         context?.let { context ->
-            val useCase = TrackingProtectionUseCases(
-                sessionManager = context.components.core.sessionManager,
-                engine = context.components.core.engine
-            )
             val session = context.components.core.sessionManager.findSessionById(args.sessionId)
             session?.let {
                 if (isEnabled) {
-                    useCase.removeException(it)
+                    trackingProtectionUseCases.removeException(it.id)
                 } else {
                     context.metrics.track(Event.TrackingProtectionException)
-                    useCase.addException(it)
+                    trackingProtectionUseCases.addException(it.id)
                 }
 
                 with(context.components) {

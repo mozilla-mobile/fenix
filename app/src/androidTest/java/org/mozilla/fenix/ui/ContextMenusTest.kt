@@ -53,7 +53,6 @@ class ContextMenusTest {
     }
 
     @Test
-    @Ignore("Disabling because of intermittent failures https://github.com/mozilla-mobile/fenix/issues/8663")
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -62,15 +61,14 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("Link 1")
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInNewTab()
             verifySnackBarText("New tab opened")
             snackBarButtonClick("Switch")
             verifyUrl(genericURL.url.toString())
-        }.openHomeScreen {
-            verifyHomeScreen()
+        }.openTabDrawer {
             verifyExistingOpenTabs("Test_Page_1")
             verifyExistingOpenTabs("Test_Page_4")
         }
@@ -85,20 +83,20 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("Link 2")
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInPrivateTab()
             verifySnackBarText("New private tab opened")
             snackBarButtonClick("Switch")
             verifyUrl(genericURL.url.toString())
-        }.openHomeScreen {
-            verifyPrivateSessionHeader()
+        }.openTabDrawer {
+            verifyPrivateModeSelected()
             verifyExistingOpenTabs("Test_Page_2")
         }
     }
 
-    @Ignore("Intermittent failure - https://github.com/mozilla-mobile/fenix/issues/8832")
+    @Ignore("Test failures: https://github.com/mozilla-mobile/fenix/issues/12473")
     @Test
     fun verifyContextCopyLink() {
         val pageLinks =
@@ -108,7 +106,7 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("Link 3")
             verifyLinkContextMenuItems(genericURL.url)
             clickContextCopyLink()
@@ -128,14 +126,14 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("Link 1")
             verifyLinkContextMenuItems(genericURL.url)
             clickContextShareLink(genericURL.url) // verify share intent is matched with associated URL
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7687")
+    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12367")
     @Test
     fun verifyContextOpenImageNewTab() {
         val pageLinks =
@@ -145,7 +143,7 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextOpenImageNewTab()
@@ -155,8 +153,8 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7687")
     @Test
+    @Ignore("Disabled – Google Keyboard Clipboard overlay blocks the address bar: https://github.com/mozilla-mobile/fenix/issues/10586")
     fun verifyContextCopyImageLocation() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -165,7 +163,7 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextCopyImageLocation()
@@ -176,8 +174,8 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7666")
     @Test
+    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextSaveImage() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -186,7 +184,7 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextSaveImage()
@@ -201,8 +199,8 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Temp disable intermittent failure - https://github.com/mozilla-mobile/fenix/issues/7693")
     @Test
+    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/12309")
     fun verifyContextMixedVariations() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -213,15 +211,15 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            verifyPageContent(pageLinks.content)
+            mDevice.waitForIdle()
             longClickMatchingText("Link 1")
             verifyLinkContextMenuItems(genericURL.url)
-            mDevice.pressBack()
+            dismissContentContextMenu(genericURL.url)
             longClickMatchingText("test_link_image")
             verifyLinkImageContextMenuItems(imageResource.url)
-            mDevice.pressBack()
+            dismissContentContextMenu(imageResource.url)
             longClickMatchingText("test_no_link_image")
-            verifyNoLinkImageContextMenuItems("test_no_link_image")
+            verifyNoLinkImageContextMenuItems(imageResource.url)
         }
     }
 }

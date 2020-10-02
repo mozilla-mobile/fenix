@@ -9,6 +9,7 @@ import android.content.Intent.ACTION_VIEW
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.intent.ext.putSessionId
 import mozilla.components.feature.intent.processing.IntentProcessor
@@ -35,12 +36,12 @@ class FennecBookmarkShortcutsIntentProcessor(
      * If this is an Intent for a Fennec pinned website shortcut
      * prepare it for opening website's URL in a new tab.
      */
-    override suspend fun process(intent: Intent): Boolean {
+    override fun process(intent: Intent): Boolean {
         val safeIntent = intent.toSafeIntent()
         val url = safeIntent.dataString
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val session = Session(url, private = false, source = Session.Source.HOME_SCREEN)
+            val session = Session(url, private = false, source = SessionState.Source.HOME_SCREEN)
 
             sessionManager.add(session, selected = true)
             loadUrlUseCase(url, session, EngineSession.LoadUrlFlags.external())

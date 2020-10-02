@@ -6,16 +6,22 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.hasFocus
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -25,7 +31,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
@@ -38,9 +46,10 @@ import org.mozilla.fenix.share.ShareFragment
  */
 class ThreeDotMenuMainRobot {
     fun verifySettingsButton() = assertSettingsButton()
-    fun verifyLibraryButton() = assertLibraryButton()
+    fun verifyAddOnsButton() = assertAddOnsButton()
     fun verifyHistoryButton() = assertHistoryButton()
     fun verifyBookmarksButton() = assertBookmarksButton()
+    fun verifySyncedTabsButton() = assertSyncedTabsButton()
     fun verifyHelpButton() = assertHelpButton()
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
     fun verifyForwardButton() = assertForwardButton()
@@ -58,6 +67,7 @@ class ThreeDotMenuMainRobot {
 
     fun verifyShareTabButton() = assertShareTabButton()
     fun verifySaveCollection() = assertSaveCollectionButton()
+
     fun clickBrowserViewSaveCollectionButton() {
         browserViewSaveCollectionButton().click()
     }
@@ -71,7 +81,26 @@ class ThreeDotMenuMainRobot {
             Until.findObject(By.desc("Bookmark")),
             waitingTime
         )
-        addBookmarkButton().click()
+        addBookmarkButton().perform(
+            click(
+                /* no-op rollback action for when clicks randomly perform a long click, Espresso should attempt to click again
+                https://issuetracker.google.com/issues/37078920#comment9
+                */
+                object : ViewAction {
+                    override fun getDescription(): String {
+                        return "Handle tap->longclick."
+                    }
+
+                    override fun getConstraints(): Matcher<View> {
+                        return isAssignableFrom(View::class.java)
+                    }
+
+                    override fun perform(uiController: UiController?, view: View?) {
+                        // do nothing
+                    }
+                }
+            )
+        )
     }
 
     fun verifyCollectionNameTextField() = assertCollectionNameTextField()
@@ -81,12 +110,40 @@ class ThreeDotMenuMainRobot {
     fun verifyShareALinkTitle() = assertShareALinkTitle()
     fun verifyWhatsNewButton() = assertWhatsNewButton()
     fun verifyAddFirefoxHome() = assertAddToFirefoxHome()
+    fun verifyAddToMobileHome() = assertAddToMobileHome()
+    fun verifyDesktopSite() = assertDesktopSite()
+    fun verifyOpenInAppButton() = assertOpenInAppButton()
+
+    fun verifyThreeDotMainMenuItems() {
+        verifyAddOnsButton()
+        verifyHistoryButton()
+        verifyBookmarksButton()
+        verifySyncedTabsButton()
+        verifySettingsButton()
+        verifyFindInPageButton()
+        verifyAddFirefoxHome()
+        verifyAddToMobileHome()
+        verifyDesktopSite()
+        verifyAddBookmarkButton()
+        verifyShareButton()
+        verifyForwardButton()
+        verifyRefreshButton()
+    }
 
     class Transition {
 
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
+        fun clickAddOnsReportSiteIssue(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            addOnsButton().click()
+            addOnsReportSiteIssueButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
         fun openSettings(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
             onView(allOf(withResourceName("text"), withText(R.string.browser_menu_settings)))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
                 .check(matches(isCompletelyDisplayed()))
@@ -96,16 +153,18 @@ class ThreeDotMenuMainRobot {
             return SettingsRobot.Transition()
         }
 
-        fun openLibrary(interact: LibraryRobot.() -> Unit): LibraryRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.text("Library")), waitingTime)
-            libraryButton().click()
+        fun openSyncedTabs(interact: SyncedTabsRobot.() -> Unit): SyncedTabsRobot.Transition {
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
+            mDevice.waitNotNull(Until.findObject(By.text("Synced tabs")), waitingTime)
+            syncedTabsButton().click()
 
-            LibraryRobot().interact()
-            return LibraryRobot.Transition()
+            SyncedTabsRobot().interact()
+            return SyncedTabsRobot.Transition()
         }
 
         fun openBookmarks(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
+            mDevice.findObject(UiSelector().resourceId("R.id.bookmark_list")).waitForExists(waitingTime)
             bookmarksButton().click()
 
             BookmarksRobot().interact()
@@ -113,11 +172,29 @@ class ThreeDotMenuMainRobot {
         }
 
         fun openHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
             mDevice.waitNotNull(Until.findObject(By.text("History")), waitingTime)
             historyButton().click()
 
             HistoryRobot().interact()
             return HistoryRobot.Transition()
+        }
+
+        fun bookmarkPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Bookmark")), waitingTime)
+            addBookmarkButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun sharePage(interact: LibrarySubMenusMultipleSelectionToolbarRobot.() -> Unit): LibrarySubMenusMultipleSelectionToolbarRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Share")), waitingTime)
+            shareButton().click()
+            pressBack()
+
+            LibrarySubMenusMultipleSelectionToolbarRobot().interact()
+            return LibrarySubMenusMultipleSelectionToolbarRobot.Transition()
         }
 
         fun openHelp(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
@@ -140,6 +217,13 @@ class ThreeDotMenuMainRobot {
             // Close three dot
             mDevice.pressBack()
             // Nav back to previous page
+            mDevice.pressBack()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.pressBack()
 
             BrowserRobot().interact()
@@ -171,7 +255,6 @@ class ThreeDotMenuMainRobot {
         }
 
         fun closeAllTabs(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.text("Close all tabs")), waitingTime)
             closeAllTabsButton().click()
 
             HomeScreenRobot().interact()
@@ -179,6 +262,7 @@ class ThreeDotMenuMainRobot {
         }
 
         fun openFindInPage(interact: FindInPageRobot.() -> Unit): FindInPageRobot.Transition {
+            onView(withId(R.id.mozac_browser_menu_recyclerView)).perform(ViewActions.swipeDown())
             mDevice.waitNotNull(Until.findObject(By.text("Find in page")), waitingTime)
             findInPageButton().click()
 
@@ -203,11 +287,12 @@ class ThreeDotMenuMainRobot {
                 waitingTime
             )
 
-            collectionNameTextField().check(matches(hasFocus()))
             collectionNameTextField().perform(
                 ViewActions.replaceText(name),
                 ViewActions.pressImeActionButton()
             )
+            // wait for the collection creation wrapper to be dismissed
+            mDevice.waitNotNull(Until.gone(By.res("org.mozilla.fenix.debug:id/createCollectionWrapper")))
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -241,6 +326,38 @@ class ThreeDotMenuMainRobot {
             AddToHomeScreenRobot().interact()
             return AddToHomeScreenRobot.Transition()
         }
+
+        fun selectExistingCollection(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.text(title)), waitingTime)
+            onView(withText(title)).click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickOpenTabsMenuSaveCollection(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            saveCollectionButton().click()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+
+        fun openSaveToCollection(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
+            mDevice.waitNotNull(Until.findObject(By.text("Save to collection")), waitingTime)
+            saveCollectionButton().click()
+            ThreeDotMenuMainRobot().interact()
+            return ThreeDotMenuMainRobot.Transition()
+        }
+
+        fun openAddonsManagerMenu(interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
+            clickAddonsManagerButton()
+            mDevice.findObject(
+                UiSelector().text("Recommended")
+            ).waitForExists(waitingTime)
+
+            SettingsSubMenuAddonsManagerRobot().interact()
+            return SettingsSubMenuAddonsManagerRobot.Transition()
+        }
     }
 }
 
@@ -253,9 +370,10 @@ private fun assertSettingsButton() = settingsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     .check(matches(isCompletelyDisplayed()))
 
-private fun libraryButton() = onView(allOf(withText(R.string.browser_menu_library)))
-private fun assertLibraryButton() = libraryButton()
+private fun addOnsButton() = onView(allOf(withText("Add-ons")))
+private fun assertAddOnsButton() = addOnsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun addOnsReportSiteIssueButton() = onView(allOf(withText("Report Site Issue…")))
 
 private fun historyButton() = onView(allOf(withText(R.string.library_history)))
 private fun assertHistoryButton() = historyButton()
@@ -263,6 +381,10 @@ private fun assertHistoryButton() = historyButton()
 
 private fun bookmarksButton() = onView(allOf(withText(R.string.library_bookmarks)))
 private fun assertBookmarksButton() = bookmarksButton()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun syncedTabsButton() = onView(allOf(withText(R.string.library_synced_tabs)))
+private fun assertSyncedTabsButton() = syncedTabsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun helpButton() = onView(allOf(withText(R.string.browser_menu_help)))
@@ -285,11 +407,11 @@ private fun refreshButton() = onView(ViewMatchers.withContentDescription("Refres
 private fun assertRefreshButton() = refreshButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs")))
+private fun closeAllTabsButton() = onView(allOf(withText("Close all tabs"))).inRoot(RootMatchers.isPlatformPopup())
 private fun assertCloseAllTabsButton() = closeAllTabsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun shareTabButton() = onView(allOf(withText("Share tabs")))
+private fun shareTabButton() = onView(allOf(withText("Share all tabs"))).inRoot(RootMatchers.isPlatformPopup())
 private fun assertShareTabButton() = shareTabButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
@@ -304,7 +426,7 @@ private fun browserViewSaveCollectionButton() = onView(
     )
 )
 
-private fun saveCollectionButton() = onView(allOf(withText("Save to collection")))
+private fun saveCollectionButton() = onView(allOf(withText("Save to collection"))).inRoot(RootMatchers.isPlatformPopup())
 private fun assertSaveCollectionButton() = saveCollectionButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
@@ -312,7 +434,9 @@ private fun addNewCollectionButton() = onView(allOf(withText("Add new collection
 private fun assertaddNewCollectionButton() = addNewCollectionButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun collectionNameTextField() = onView(allOf(withResourceName("name_collection_edittext")))
+private fun collectionNameTextField() =
+    onView(allOf(withResourceName("name_collection_edittext")))
+
 private fun assertCollectionNameTextField() = collectionNameTextField()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
@@ -362,6 +486,7 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) = readerViewAppea
 
 private fun addToFirefoxHomeButton() =
     onView(allOf(withText(R.string.browser_menu_add_to_top_sites)))
+
 private fun assertAddToFirefoxHome() {
     onView(withId(R.id.mozac_browser_menu_recyclerView))
         .perform(
@@ -369,4 +494,44 @@ private fun assertAddToFirefoxHome() {
                 hasDescendant(withText(R.string.browser_menu_add_to_top_sites))
             )
         ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun addToMobileHomeButton() =
+    onView(allOf(withText(R.string.browser_menu_add_to_homescreen)))
+private fun assertAddToMobileHome() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
+        .perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText(R.string.browser_menu_add_to_homescreen))
+            )
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun desktopSiteButton() =
+    onView(allOf(withText(R.string.browser_menu_desktop_site)))
+private fun assertDesktopSite() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
+        .perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText(R.string.browser_menu_desktop_site))
+            )
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun openInAppButton() =
+    onView(allOf(withText(R.string.browser_menu_open_app_link)))
+private fun assertOpenInAppButton() {
+    onView(withId(R.id.mozac_browser_menu_recyclerView))
+        .perform(
+            RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
+                hasDescendant(withText(R.string.browser_menu_open_app_link))
+            )
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun addonsManagerButton() = onView(withText("Add-ons Manager"))
+
+private fun clickAddonsManagerButton() {
+    onView(withText("Add-ons")).click()
+    addonsManagerButton().click()
 }

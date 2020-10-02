@@ -8,10 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.component_bookmark.view.*
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.library.SelectionInteractor
@@ -90,11 +93,28 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
      *
      */
     fun onBackPressed()
+
+    /**
+     * Handles user requested sync of bookmarks.
+     *
+     */
+    fun onRequestSync()
+
+    /**
+     * Handles the start of a swipe on a bookmark.
+     */
+    fun onStartSwipingItem()
+
+    /**
+     * Handles the end of a swipe on a bookmark.
+     */
+    fun onStopSwipingItem()
 }
 
 class BookmarkView(
     container: ViewGroup,
-    val interactor: BookmarkViewInteractor
+    val interactor: BookmarkViewInteractor,
+    private val navController: NavController
 ) : LibraryPageView(container), UserInteractionHandler {
 
     val view: View = LayoutInflater.from(container.context)
@@ -102,48 +122,64 @@ class BookmarkView(
 
     private var mode: BookmarkFragmentState.Mode = BookmarkFragmentState.Mode.Normal()
     private var tree: BookmarkNode? = null
-    private var canGoBack = false
 
-    private val bookmarkAdapter: BookmarkAdapter
+    private val bookmarkAdapter = BookmarkAdapter(view.bookmarks_empty_view, interactor)
 
     init {
         view.bookmark_list.apply {
-            bookmarkAdapter = BookmarkAdapter(view.bookmarks_empty_view, interactor)
             adapter = bookmarkAdapter
+        }
+        view.bookmark_folders_sign_in.setOnClickListener {
+            navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
+        }
+        view.swipe_refresh.setOnRefreshListener {
+            interactor.onRequestSync()
+        }
+
+        if (FeatureFlags.bookmarkSwipeToDelete) {
+            BookmarkTouchHelper(interactor).attachToRecyclerView(view.bookmark_list)
         }
     }
 
     fun update(state: BookmarkFragmentState) {
-        canGoBack = BookmarkRoot.Root.matches(state.tree)
         tree = state.tree
         if (state.mode != mode) {
             mode = state.mode
-            interactor.onSelectionModeSwitch(mode)
+            if (mode is BookmarkFragmentState.Mode.Normal || mode is BookmarkFragmentState.Mode.Selecting) {
+                interactor.onSelectionModeSwitch(mode)
+            }
         }
 
         bookmarkAdapter.updateData(state.tree, mode)
+
         when (mode) {
-            is BookmarkFragmentState.Mode.Normal ->
+            is BookmarkFragmentState.Mode.Normal -> {
                 setUiForNormalMode(state.tree)
-            is BookmarkFragmentState.Mode.Selecting ->
+            }
+            is BookmarkFragmentState.Mode.Selecting -> {
                 setUiForSelectingMode(
-                    context.getString(R.string.bookmarks_multi_select_title, mode.selectedItems.size)
+                    context.getString(
+                        R.string.bookmarks_multi_select_title,
+                        mode.selectedItems.size
+                    )
                 )
+            }
         }
         view.bookmarks_progress_bar.isVisible = state.isLoading
+        view.swipe_refresh.isEnabled = state.isSwipeToRefreshEnabled
+        view.swipe_refresh.isRefreshing = state.mode is BookmarkFragmentState.Mode.Syncing
     }
 
     override fun onBackPressed(): Boolean {
-        return when {
-            mode is BookmarkFragmentState.Mode.Selecting -> {
+        return when (mode) {
+            is BookmarkFragmentState.Mode.Selecting -> {
                 interactor.onAllBookmarksDeselected()
                 true
             }
-            canGoBack -> {
+            else -> {
                 interactor.onBackPressed()
                 true
             }
-            else -> false
         }
     }
 

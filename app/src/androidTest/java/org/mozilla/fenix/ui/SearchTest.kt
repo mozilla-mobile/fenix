@@ -50,8 +50,14 @@ class SearchTest {
     @Test
     fun shortcutButtonTest() {
         homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            enableShowSearchShortcuts()
+        }.goBack {
+        }.goBack {
         }.openSearch {
-            verifySearchWithText()
+//            verifySearchWithText()
             clickSearchEngineButton("DuckDuckGo")
             typeSearch("mozilla")
             verifySearchEngineResults("DuckDuckGo")
@@ -63,6 +69,12 @@ class SearchTest {
     @Test
     fun shortcutSearchEngineSettingsTest() {
         homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            enableShowSearchShortcuts()
+        }.goBack {
+        }.goBack {
         }.openSearch {
             scrollToSearchEngineSettings()
             clickSearchEngineSettings()

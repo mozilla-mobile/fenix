@@ -8,9 +8,12 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
+import android.util.Log.INFO
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
+import androidx.work.Configuration.Builder
+import androidx.work.Configuration.Provider
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -19,8 +22,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
+import mozilla.components.lib.crash.CrashReporter
+import mozilla.components.service.experiments.Experiments
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
@@ -34,22 +40,24 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
-import org.mozilla.fenix.FeatureFlags.webPushIntegration
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricServiceType
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.perf.StorageStatsMetrics
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
-import org.mozilla.fenix.session.NotificationSessionObserver
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
-import org.mozilla.fenix.utils.Settings
 
-@SuppressLint("Registered")
-@Suppress("TooManyFunctions", "LargeClass")
-open class FenixApplication : LocaleAwareApplication() {
+/**
+ *The main application class for Fenix. Records data to measure initialization performance.
+ *  Installs [CrashReporter], initializes [Glean]  in fenix builds and setup Megazord in the main process.
+ */
+@Suppress("Registered", "TooManyFunctions", "LargeClass")
+open class FenixApplication : LocaleAwareApplication(), Provider {
     init {
         recordOnInit() // DO NOT MOVE ANYTHING ABOVE HERE: the timing of this measurement is critical.
     }
@@ -85,7 +93,7 @@ open class FenixApplication : LocaleAwareApplication() {
         setupInMainProcessOnly()
     }
 
-    protected fun initializeGlean() {
+    protected open fun initializeGlean() {
         val telemetryEnabled = settings().isTelemetryEnabled
 
         logger.debug("Initializing Glean (uploadEnabled=$telemetryEnabled, isFennec=${Config.channel.isFennec})")
@@ -116,13 +124,16 @@ open class FenixApplication : LocaleAwareApplication() {
             val megazordSetup = setupMegazord()
 
             setDayNightTheme()
-            enableStrictMode()
+            components.strictMode.enableStrictMode(true)
             warmBrowsersCache()
 
             // Make sure the engine is initialized and ready to use.
-            components.core.engine.warmUp()
-
+            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                components.core.engine.warmUp()
+            }
             initializeWebExtensionSupport()
+
+            restoreDownloads()
 
             // Just to make sure it is impossible for any application-services pieces
             // to invoke parts of itself that require complete megazord initialization
@@ -133,20 +144,11 @@ open class FenixApplication : LocaleAwareApplication() {
         }
 
         setupLeakCanary()
-        if (settings().isTelemetryEnabled) {
-            components.analytics.metrics.start(MetricServiceType.Data)
-        }
-
-        if (settings().isMarketingTelemetryEnabled) {
-            components.analytics.metrics.start(MetricServiceType.Marketing)
-        }
-
+        startMetricsIfEnabled()
         setupPush()
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
-
-        components.core.sessionManager.register(NotificationSessionObserver(this))
 
         // Storage maintenance disabled, for now, as it was interfering with background migrations.
         // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
@@ -154,25 +156,97 @@ open class FenixApplication : LocaleAwareApplication() {
         //    runStorageMaintenance()
         // }
 
-        registerActivityLifecycleCallbacks(
-            PerformanceActivityLifecycleCallbacks(components.performance.visualCompletenessQueue)
-        )
+        initVisualCompletenessQueueAndQueueTasks()
 
-        components.performance.visualCompletenessQueue.runIfReadyOrQueue {
+        components.appStartupTelemetry.onFenixApplicationOnCreate()
+    }
+
+    private fun restoreDownloads() {
+        components.useCases.downloadUseCases.restoreDownloads()
+    }
+
+    private fun initVisualCompletenessQueueAndQueueTasks() {
+        val queue = components.performance.visualCompletenessQueue.queue
+
+        fun initQueue() {
+            registerActivityLifecycleCallbacks(PerformanceActivityLifecycleCallbacks(queue))
+        }
+
+        fun queueInitExperiments() {
+            if (settings().isExperimentationEnabled) {
+                queue.runIfReadyOrQueue {
+                    Experiments.initialize(
+                        applicationContext = applicationContext,
+                        onExperimentsUpdated = {
+                            ExperimentsManager.initSearchWidgetExperiment(this)
+                        },
+                        configuration = mozilla.components.service.experiments.Configuration(
+                            httpClient = components.core.client,
+                            kintoEndpoint = KINTO_ENDPOINT_PROD
+                        )
+                    )
+                    ExperimentsManager.initSearchWidgetExperiment(this)
+                }
+            } else {
+                // We should make a better way to opt out for when we have more experiments
+                // See https://github.com/mozilla-mobile/fenix/issues/6278
+                ExperimentsManager.optOutSearchWidgetExperiment(this)
+            }
+        }
+
+        fun queueInitStorageAndServices() {
+            components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
+                GlobalScope.launch(Dispatchers.IO) {
+                    logger.info("Running post-visual completeness tasks...")
+                    logElapsedTime(logger, "Storage initialization") {
+                        components.core.historyStorage.warmUp()
+                        components.core.bookmarksStorage.warmUp()
+                        components.core.passwordsStorage.warmUp()
+                    }
+                }
+                // Account manager initialization needs to happen on the main thread.
+                GlobalScope.launch(Dispatchers.Main) {
+                    logElapsedTime(logger, "Kicking-off account manager") {
+                        components.backgroundServices.accountManager
+                    }
+                }
+            }
+        }
+
+        fun queueMetrics() {
+            if (SDK_INT >= Build.VERSION_CODES.O) { // required by StorageStatsMetrics.
+                queue.runIfReadyOrQueue {
+                    // Because it may be slow to capture the storage stats, it might be preferred to
+                    // create a WorkManager task for this metric, however, I ran out of
+                    // implementation time and WorkManager is harder to test.
+                    StorageStatsMetrics.report(this.applicationContext)
+                }
+            }
+        }
+
+        fun queueReviewPrompt() {
             GlobalScope.launch(Dispatchers.IO) {
-                logger.info("Running post-visual completeness tasks...")
-                logElapsedTime(logger, "Storage initialization") {
-                    components.core.historyStorage.warmUp()
-                    components.core.bookmarksStorage.warmUp()
-                    components.core.passwordsStorage.warmUp()
-                }
+                components.reviewPromptController.trackApplicationLaunch()
             }
-            // Account manager initialization needs to happen on the main thread.
-            GlobalScope.launch(Dispatchers.Main) {
-                logElapsedTime(logger, "Kicking-off account manager") {
-                    components.backgroundServices.accountManager
-                }
-            }
+        }
+
+        initQueue()
+
+        // We init these items in the visual completeness queue to avoid them initing in the critical
+        // startup path, before the UI finishes drawing (i.e. visual completeness).
+        queueInitExperiments()
+        queueInitStorageAndServices()
+        queueMetrics()
+        queueReviewPrompt()
+    }
+
+    private fun startMetricsIfEnabled() {
+        if (settings().isTelemetryEnabled) {
+            components.analytics.metrics.start(MetricServiceType.Data)
+        }
+
+        if (settings().isMarketingTelemetryEnabled) {
+            components.analytics.metrics.start(MetricServiceType.Marketing)
         }
     }
 
@@ -207,10 +281,7 @@ open class FenixApplication : LocaleAwareApplication() {
             // Install the AutoPush singleton to receive messages.
             PushProcessor.install(it)
 
-            if (webPushIntegration) {
-                // WebPush integration to observe and deliver push messages to engine.
-                WebPushEngineIntegration(components.core.engine, it).start()
-            }
+            WebPushEngineIntegration(components.core.engine, it).start()
 
             // Perform a one-time initialization of the account manager if a message is received.
             PushFxaIntegration(it, lazy { components.backgroundServices.accountManager }).launch()
@@ -244,7 +315,7 @@ open class FenixApplication : LocaleAwareApplication() {
         return GlobalScope.async(Dispatchers.IO) {
             // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
             RustHttpConfig.setClient(lazy { components.core.client })
-            RustLog.enable()
+            RustLog.enable(components.analytics.crashReporter)
         }
     }
 
@@ -253,7 +324,7 @@ open class FenixApplication : LocaleAwareApplication() {
 
         runOnlyInMainProcess {
             components.core.icons.onTrimMemory(level)
-            components.core.sessionManager.onTrimMemory(level)
+            components.core.store.dispatch(SystemAction.LowMemoryAction(level))
         }
     }
 
@@ -307,28 +378,6 @@ open class FenixApplication : LocaleAwareApplication() {
         }
     }
 
-    private fun enableStrictMode() {
-        if (Config.channel.isDebug) {
-            StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build()
-            )
-            var builder = StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .detectLeakedRegistrationObjects()
-                .detectActivityLeaks()
-                .detectFileUriExposure()
-                .penaltyLog()
-            if (SDK_INT >= Build.VERSION_CODES.O) builder =
-                builder.detectContentUriWithoutPermission()
-            if (SDK_INT >= Build.VERSION_CODES.P) builder = builder.detectNonSdkApiUsage()
-            StrictMode.setVmPolicy(builder.build())
-        }
-    }
-
     private fun initializeWebExtensionSupport() {
         try {
             GlobalAddonDependencyProvider.initialize(
@@ -345,8 +394,7 @@ open class FenixApplication : LocaleAwareApplication() {
                     _, engineSession, url ->
                         val shouldCreatePrivateSession =
                             components.core.sessionManager.selectedSession?.private
-                                ?: Settings.instance?.openLinksInAPrivateTab
-                                ?: false
+                                ?: components.settings.openLinksInAPrivateTab
 
                         val session = Session(url, shouldCreatePrivateSession)
                         components.core.sessionManager.add(session, true, engineSession)
@@ -384,6 +432,16 @@ open class FenixApplication : LocaleAwareApplication() {
         // are not triggered when also using createConfigurationContext like we do in LocaleManager
         // https://issuetracker.google.com/issues/143570309#comment3
         applicationContext.resources.configuration.uiMode = config.uiMode
-        super.onConfigurationChanged(config)
+
+        // random StrictMode onDiskRead violation even when Fenix is not running in the background.
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            super.onConfigurationChanged(config)
+        }
     }
+
+    companion object {
+        private const val KINTO_ENDPOINT_PROD = "https://firefox.settings.services.mozilla.com/v1"
+    }
+
+    override fun getWorkManagerConfiguration() = Builder().setMinimumLoggingLevel(INFO).build()
 }

@@ -16,10 +16,40 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Введите запрос или адрес</string>
 
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Нет открытых вкладок</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Открытые вами вкладки будут показаны здесь.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Ваши приватные вкладки будут показаны здесь.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 открытая вкладка. Нажмите, чтобы переключить вкладки.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">Открытых вкладок: %1$s. Нажмите, чтобы переключить вкладки.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">Выбрано: %1$d</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Создать новую коллекцию</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Название</string>
+
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Выберите коллекцию</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Выйти из режима множественного выбора</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Сохранить выбранные вкладки в коллекцию</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">Выбрана %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">Снят выбор с %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Режим множественного выбора отключен</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Включен режим множественного выбора, выберите вкладки для сохранения в коллекцию</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Выбрано</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s разработан Mozilla.</string>
@@ -29,21 +59,53 @@
     <string name="private_browsing_title">Вы находитесь в приватной сессии</string>
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">¶
- · %1$s удаляет историю поиска и просмотра страниц в приватных вкладках, когда вы закрываете их или выходите из приложения. Хотя это не делает вас анонимными для веб-сайтов или вашего Интернет-провайдера, вам будет легче сохранить конфиденциальность ваших действий в Интернете от других людей, которые используют это устройство.</string>
+    <string name="private_browsing_placeholder_description_2">%1$s удаляет историю поиска и просмотра страниц в приватных вкладках, когда вы закрываете их или выходите из приложения. Хотя это не делает вас анонимными для веб-сайтов или вашего Интернет-провайдера, вам будет легче сохранить конфиденциальность ваших действий в Интернете от других людей, которые используют это устройство.</string>
     <string name="private_browsing_common_myths">
        Распространённые мифы о приватном просмотре
     </string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Удалить сессию</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Добавьте ярлык, чтобы открывать приватные вкладки с главного экрана.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Добавить ярлык</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Нет, спасибо</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Открывайте Firefox быстрее. Добавьте виджет на ваш главный экран.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Добавить виджет</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Не сейчас</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Вы можете настроить Firefox на автоматическое открытие ссылок в приложениях.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Перейти в настройки</string>
+
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Пропустить</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Требуется доступ к камере. Перейдите в настройки системы, коснитесь разрешений и нажмите «разрешить».</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Перейти в настройки</string>
+
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Пропустить</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Настройте автоматическое закрытие открытых вкладок, которые не просматривались в последний день, неделю или месяц.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Открыть настройки</string>
+
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Пропустить</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -89,6 +151,10 @@
     <string name="browser_menu_add_to_homescreen">На домашний экран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Установить</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Облачные вкладки</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Повторная синхронизация</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Найти на странице</string>
     <!-- Browser menu button that creates a private tab -->
@@ -97,8 +163,6 @@
     <string name="browser_menu_new_tab">Новая вкладка</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">В коллекцию</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Сообщить о проблеме с сайтом</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Поделиться</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -114,8 +178,10 @@
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">На движке %1$s</string>
 
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Вид для чтения</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Закрыть вид для чтения</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Открыть в приложении</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -138,14 +204,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Cканировать</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Ярлыки</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Поисковая система</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Настройки поисковых систем</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Искать в</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">В этот раз искать с помощью:</string>
+    <string name="search_engines_search_with">В этот раз искать с помощью:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Вставить ссылку из буфера обмена</string>
 
@@ -188,7 +252,7 @@
     <!-- Preference linking to help about Fenix -->
     <string name="preferences_help">Справка</string>
     <!-- Preference link to rating Fenix on the Play Store -->
-    <string name="preferences_rate">Оценить на Google Play</string>
+    <string name="preferences_rate">Оценить в Google Play</string>
     <!-- Preference for giving feedback about Fenix -->
     <string name="preferences_feedback">Оставить отзыв</string>
     <!-- Preference linking to about page for Fenix
@@ -216,6 +280,8 @@
     <string name="preferences_open_links_in_a_private_tab">Открывать ссылки в приватной вкладке</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Разрешить скриншоты при приватном просмотре</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">В случае, если разрешено, приватные вкладки будут видны при просмотре нескольких приложений</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Добавить ярлык приватного просмотра</string>
     <!-- Preference for accessibility -->
@@ -234,6 +300,10 @@
     <string name="preferences_toolbar">Панель инструментов</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Тема</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Домой</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Жесты</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Персонализация</string>
     <!-- Preference description for banner about signing in -->
@@ -254,10 +324,12 @@
     <string name="developer_tools_category">Инструменты разработчика</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Удалённая отладка по USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Ссылки на поисковые системы</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Показать поисковые системы</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Поисковые предложения</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Показывать голосовой поиск</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Показывать в приватных окнах</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -266,14 +338,23 @@
     <string name="preferences_search_browsing_history">Поиск по истории сёрфинга</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Поиск закладок</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Поиск облачных вкладок</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Настройки Аккаунта</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Автозаполнение URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Открывать ссылки в приложениях</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Внешний менеджер загрузок</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Дополнения</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Уведомления</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -286,6 +367,8 @@
     <string name="preferences_sync_bookmarks">Закладки</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Логины</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Открытые вкладки</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Выйти</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -379,7 +462,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Посетите <b>firefox.com/pair</b> в Firefox на вашем компьютере, чтобы получить свой QR-код.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Отсканируйте QR-код на <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Открыть камеру</string>
     <!-- Button to cancel pairing -->
@@ -401,6 +484,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Использовать тему устройства</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Потяните, чтобы обновить</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Прокрутите страницу, чтобы скрыть панель инструментов</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Проведите в сторону по панели инструментов, чтобы переключить вкладки</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Проведите вверх по панели инструментов, чтобы открыть вкладки</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Сессии</string>
@@ -420,18 +513,44 @@
     <string name="library_desktop_bookmarks_unfiled">Другие закладки</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">История</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Облачные вкладки</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Список для чтения</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Поиск</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Библиотека</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Настройки</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Меню элемента истории</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Закрыть</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Недавно закрытые вкладки</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Показать всю историю</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d вкладки(ок)</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d вкладка</string>
+
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Здесь нет недавно закрытых вкладок</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Закрывать вкладки</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Вручную</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Через день</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Через неделю</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Через месяц</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -442,6 +561,30 @@
     <string name="tabs_header_private_tabs_title">Приватные вкладки</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Открыть вкладку</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Добавить приватную вкладку</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Приватно</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Открытые вкладки</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Сохранить в коллекцию</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Поделиться всеми вкладками</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Недавно закрытые вкладки</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Параметры вкладок</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Закрыть все вкладки</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Новая вкладка</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">На главную</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Переключить режим просмотра</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Удалить вкладку из коллекции</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Закрыть вкладку</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -453,7 +596,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Поделиться вкладками</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Сохранить в коллекцию</string>
+    <string name="tabs_menu_save_to_collection1">Сохранить вкладки в коллекцию</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Меню вкладок</string>
     <!-- Tab menu item to share the tab -->
@@ -478,6 +621,14 @@
 
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Удалить</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Удалить из истории</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Приватный просмотр)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Сохранить</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -518,6 +669,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">История отсутствует</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Здесь ещё нет загрузок</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">Выбрано: %1$d</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Извините, %1$s не смог загрузить эту страницу.</string>
@@ -546,6 +704,8 @@
     <string name="bookmark_select_folder">Выбрать папку</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Вы действительно хотите удалить эту папку?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s удалит выбранные элементы.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s удалён</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -601,8 +761,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s удалён</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Закладки удалены</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Удаление выбранных папок</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ОТМЕНИТЬ</string>
 
@@ -667,17 +829,13 @@
     <string name="delete_browsing_data_quit_off">Отключено</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Собирайте то, что важно для вас. Чтобы начать, сохраните открытые вкладки в новую коллекцию.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Коллекции</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Меню коллекции</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Нет коллекций</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Ваши коллекции будут показаны здесь.</string>
 
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Собирайте то, что важно для вас.\nОбъединяйте похожие запросы, сайты и вкладки для быстрого доступа в будущем.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Выберите вкладки</string>
 
@@ -708,6 +866,8 @@
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Вкладки сохранены!</string>
 
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Коллекция сохранена!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Вкладка сохранена!</string>
 
@@ -716,6 +876,9 @@
 
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Сохранить</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Посмотреть</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Коллекция %d</string>
@@ -816,6 +979,10 @@
     <string name="qr_scanner_dialog_negative">ЗАПРЕТИТЬ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Вы уверены, что хотите удалить %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Удалив эту вкладку, вы удалите всю коллекцию. Вы можете создавать новые коллекции в любое время.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Удалить %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Удалить</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -835,14 +1002,14 @@
     <string name="preference_accessibility_font_size_title">Размер шрифта</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Автоматический размер шрифта</string>
+    <string name="preference_accessibility_auto_size_2">Автоматический размер шрифта</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Размер шрифта будет соответствовать настройкам Android. Отключите этот параметр, чтобы управлять размером шрифта здесь.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Удаление данных веб-сёрфинга</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Открытые вкладки</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Открытые вкладки</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d вкладки(ок)</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -874,8 +1041,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Автоматически удаляет данные веб-сёрфинга, когда вы выбираете «Выйти» в главном меню</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Автоматически удаляет данные веб-сёрфинга, когда вы выбираете  \&quot;Выйти\&quot; в главном меню</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">История веб-сёрфинга</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Выйти</string>
 
@@ -897,27 +1062,25 @@
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header">Firefox Preview теперь стал Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">¶
- · Firefox Nightly обновляется каждую ночь и включает в себя новые, экспериментальные возможности.¶
- · Однако, он может быть менее стабилен. Если вы хотите более стабильной работы, загрузите нашу бета-версию браузера.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Получить браузер Mozilla Firefox</string>
+    <string name="tip_firefox_preview_moved_description">Firefox Nightly обновляется каждую ночь и включает в себя новые, экспериментальные возможности.
+        Однако, он может быть менее стабилен. Если вы хотите более стабильной работы, загрузите нашу бета-версию браузера.</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Загрузить Firefox для Android Бета</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly переехал</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">¶
- · Это приложение больше не будет получать обновлений безопасности. Прекратите использование этого приложения и переключитесь на новый Nightly.¶
- · \n\nЧтобы переместить ваши закладки, логины и историю в другое приложение, создайте аккаунт Firefox.</string>
+    <string name="tip_firefox_preview_moved_description_preview_installed">Это приложение больше не будет получать обновлений безопасности. Прекратите использование этого приложения и переключитесь на новый Nightly.
+        \n\nЧтобы переместить ваши закладки, логины и историю в другое приложение, создайте аккаунт Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_installed">Переключиться на новый Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly переехал</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">¶
- · Это приложение больше не будет получать обновлений безопасности. Получите новый Nightly и прекратите использование этого приложения.¶
- · \n\nЧтобы переместить ваши закладки, логины и историю в другое приложение, создайте аккаунт Firefox.</string>
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">Это приложение больше не будет получать обновлений безопасности. Загрузите новый Nightly и прекратите использование этого приложения.
+        \n\nЧтобы переместить ваши закладки, логины и историю в другое приложение, создайте аккаунт Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_not_installed">Получить новый Nightly</string>
 
@@ -937,13 +1100,14 @@
     <string name="onboarding_whats_new_description">Есть вопросы о переработанном %s? Хотите узнать, что изменилось?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Получите ответы здесь</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Получите максимум от %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Начните синхронизировать закладки, пароли и многое другое с вашим Аккаунтом Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Узнать больше</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Да, авторизоваться</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -951,24 +1115,26 @@
     <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
     <string name="onboarding_firefox_account_sign_in">Войти в Firefox</string>
     <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
-    <string name="onboarding_firefox_account_stay_signed_out">Запомнить меня</string>
+    <string name="onboarding_firefox_account_stay_signed_out">Не входить</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Началась синхронизация</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Не удалось выполнить вход</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Защитите себя</string>
+    <string name="onboarding_tracking_protection_header_2">Автоматическая приватность</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s помогает не дать веб-сайтам отслеживать вас в Интернете.</string>
+    <string name="onboarding_tracking_protection_description_2">Настройки конфиденциальности и безопасности блокируют трекеры, вредоносные программы, и компании, которые вас отслеживают.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Стандартная</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Стандартная (по умолчанию)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Блокирует меньше трекеров, но позволяет обеспечить нормальную загрузку страниц</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Блокирует меньше трекеров. Страницы будут загружаться нормально.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Строгая (рекомендуется)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Строгая</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Блокирует больше трекеров для улучшения защиты и производительности, но некоторые сайты могут перестать корректно работать</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Блокирует больше трекеров, рекламы и всплывающих окон. Страницы будут грузиться быстрее, но часть функций может не работать.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1007,11 +1173,11 @@
     <!-- text for the theme picker onboarding card description -->
     <string name="onboarding_theme_picker_description1">Сохраните заряд аккумулятора и ваше зрение, включив тёмную тему.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Автоматически</string>
+    <string name="onboarding_theme_automatic_title">Автоматическая</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_summary">Адаптируется к настройкам вашего устройства</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Темная тема</string>
+    <string name="onboarding_theme_dark_title">Тёмная тема</string>
     <!-- Theme setting for light mode -->
     <string name="onboarding_theme_light_title">Светлая тема</string>
 
@@ -1024,15 +1190,17 @@
     <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
     <string name="sync_sent_tab_error_snackbar_action">ПОВТОРИТЬ</string>
     <!-- Title of QR Pairing Fragment -->
-    <string name="sync_scan_code">Просканируйте QR-код</string>
+    <string name="sync_scan_code">Сканирование QR-кода</string>
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[Откройте Firefox на вашем компьютере и перейдите на <b>https://firefox.com/pair</b>]]></string>
     <!-- Text shown for sign in pairing when ready -->
-    <string name="sign_in_ready_for_scan">Готов к сканированию</string>
+    <string name="sign_in_ready_for_scan">Сканировать QR-код</string>
     <!-- Text shown for settings option for sign with pairing -->
-    <string name="sign_in_with_camera">Войти с распознаванием лица</string>
+    <string name="sign_in_with_camera">Войти с помощью камеры</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Использовать электронную почту</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Ещё нет аккаунта? <u>Создайте его</u>, чтобы синхронизировать Firefox между устройствами.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox прекратит синхронизацию с вашим аккаунтом, но не будет удалять ничего из ваших данных веб-сёрфинга на этом устройстве.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1056,31 +1224,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Узнать больше</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Стандартная</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Стандартная (рекомендуется)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартная (по умолчанию)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Обеспечивает наилучший баланс защиты и производительности.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Страницы будут загружаться нормально, но будет блокироваться меньше трекеров.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Блокирует меньше трекеров. Страницы будут загружаться нормально.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Что блокируется стандартной защитой от отслеживания</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Строгая</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Строгая (по умолчанию)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Строгая защита от отслеживания с увеличенной производительностью, некоторые сайты могут работать некорректно.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Строгая (рекомендуется)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Усиленная защита может вызывать проблемы с некоторыми веб-сайтами и их содержимым.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Блокирует больше трекеров, рекламы и всплывающих окон. Страницы будут грузиться быстрее, но часть функций может не работать.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Что блокируется строгой защитой от отслеживания</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Персональная</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Выберите, какие трекеры и скрипты необходимо блокировать</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Выберите, какие трекеры и скрипты необходимо блокировать.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Что блокируется персональной защитой от отслеживания</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1130,7 +1288,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Блокирует загрузку внешней рекламы, видео и другого содержимого, если они содержат отслеживающий код. Может повлиять на работу некоторых веб-сайтов.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">Если %s блокирует трекеры на этом сайте, значок щита становится фиолетовым. Нажмите на него, чтобы увидеть, что блокируется.</string>
+    <string name="etp_onboarding_cfr_message">Фиолетовый цвет щита означает, что %s заблокировал трекеры на сайте. Нажмите, чтобы узнать больше.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Защита для этого сайта включена</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1150,8 +1308,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Свободные библиотеки</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Трекеры перенаправлений</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Удаляет куки, установленные в ходе перенаправлений на известные веб-сайты с отслеживанием.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Поддержка</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Падения</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Уведомление о конфиденциальности</string>
     <!-- About page link text to open know your rights link -->
@@ -1194,7 +1359,7 @@
     <string name="add_to_homescreen_text_placeholder">Название ярлыка</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Вы можете легко добавить этот веб-сайт на домашний экран вашего телефона, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
+    <string name="add_to_homescreen_description_2">Вы можете легко добавить этот веб-сайт на домашний экран вашего устройства, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Логины и пароли</string>
@@ -1228,6 +1393,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Здесь будут показаны не сохраняемые логины и пароли.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Логины и пароли для этих сайтов сохраняться не будут.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Удалить все исключения</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Поиск логинов</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1262,10 +1429,16 @@
     <string name="logins_site_copied">Сайт скопирован в буфер обмена</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Копировать пароль</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Очистить пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Копировать имя пользователя</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Очистить имя пользователя</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Копировать сайт</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Открыть сайт в браузере</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Показать пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1286,6 +1459,13 @@
     <string name="preference_accessibility_force_enable_zoom">Масштабирование на всех сайтах</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Включите, чтобы разрешить масштабирование даже на тех сайтах, которые это запрещают.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">По имени (А-Я)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">По последнему использованию</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Меню сортировки логинов</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Добавление поисковой системы</string>
@@ -1378,8 +1558,78 @@
     <string name="certificate_info_verified_by">Подтверждено: %1$s </string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Удалить</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Редактировать</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Вы уверены, что хотите удалить этот логин?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Удалить</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Настройки логина</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Редактируемое текстовое поле для веб-адреса логина.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Редактируемое текстовое поле для имени пользователя логина.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Редактируемое текстовое поле для пароля логина.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Сохранить изменения в логине.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Отменить изменения</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Редактирование</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Требуется пароль</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Голосовой поиск</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Говорите</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Логин с таким именем пользователя уже существует</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Подключить другое устройство.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Пожалуйста, авторизуйтесь повторно.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Пожалуйста, включите синхронизацию вкладок.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">На ваших других устройствах в Firefox не открыто ни одной вкладки.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Просмотрите список вкладок с других устройств.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Войти в Синхронизацию</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Нет открытых вкладок</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Достигнут лимит топа сайтов</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Чтобы добавить новый сайт в топ, удалите другой. Нажмите и удерживайте карточку с сайтом, затем откройте меню и нажмите удалить.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">OK, понятно</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Показать самые посещаемые сайты</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Убрать</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Получите максимум от %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Собирайте то, что важно для вас</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Объединяйте похожие запросы, сайты и вкладки, для быстрого доступа к ним в будущем.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">В другом браузере Firefox на этом устройстве вы вошли как %s. Вы хотите авторизоваться с помощью этого аккаунта?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Вы можете легко добавить этот веб-сайт на домашний экран вашего телефона, чтобы иметь к нему мгновенный доступ и сёрфить быстрее со скоростью нативного приложения.</string>
+
+    </resources>

@@ -11,7 +11,7 @@ kind-dependencies:
     - toolchain
 
 only-for-build-types:
-    - performance-test
+    - nightly
 
 only-for-abis:
     - armeabi-v7a
@@ -19,6 +19,7 @@ only-for-abis:
 
 job-defaults:
     attributes:
+        nightly: true
         retrigger: true
     dependencies:
         geckoview-nightly: geckoview-nightly
@@ -76,9 +77,10 @@ job-defaults:
             - './test-linux.sh'
             - '--cfg=mozharness/configs/raptor/android_hw_config.py'
             - '--app=fenix'
-            - '--binary=org.mozilla.fenix.performancetest'
+            - '--binary=org.mozilla.fenix'
             - '--activity=org.mozilla.fenix.IntentReceiverActivity'
             - '--download-symbols=ondemand'
+            - '--no-conditioned-profile'
     fetches:
         toolchain:
             - linux64-minidump-stackwalk

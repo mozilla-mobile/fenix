@@ -1,4 +1,3 @@
-# %ARG DOCKER_IMAGE_PARENT
 FROM $DOCKER_IMAGE_PARENT
 MAINTAINER Gregory Mierzwinski <gmierzwinski@mozilla.com>
 
@@ -20,10 +19,10 @@ WORKDIR /builds/worker
 USER worker:worker
 
 COPY requirements.txt /builds/worker/requirements.txt
-RUN pip3 install setuptools==46.0.0
 RUN pip3 install --require-hashes -r /builds/worker/requirements.txt && \
     rm /builds/worker/requirements.txt
 
+COPY similarity.py /builds/worker/bin/similarity.py
 COPY run-visual-metrics.py /builds/worker/bin/run-visual-metrics.py
 COPY performance-artifact-schema.json /builds/worker/performance-artifact-schema.json
 

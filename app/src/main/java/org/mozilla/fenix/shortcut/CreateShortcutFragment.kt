@@ -41,8 +41,8 @@ class CreateShortcutFragment : DialogFragment() {
 
             cancel_button.setOnClickListener { dismiss() }
             add_button.setOnClickListener {
-                val text = shortcut_text.text.toString()
-                viewLifecycleOwner.lifecycleScope.launch {
+                val text = shortcut_text.text.toString().trim()
+                requireActivity().lifecycleScope.launch {
                     requireComponents.useCases.webAppUseCases.addToHomescreen(text)
                 }
                 dismiss()
@@ -57,8 +57,9 @@ class CreateShortcutFragment : DialogFragment() {
     }
 
     private fun updateAddButtonEnabledState() {
-        add_button.isEnabled = shortcut_text.text.isNotEmpty()
-        add_button.alpha = if (shortcut_text.text.isNotEmpty()) ENABLED_ALPHA else DISABLED_ALPHA
+        val text = shortcut_text.text
+        add_button.isEnabled = text.isNotBlank()
+        add_button.alpha = if (text.isNotBlank()) ENABLED_ALPHA else DISABLED_ALPHA
     }
 
     companion object {

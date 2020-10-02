@@ -8,17 +8,22 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.browser.storage.sync.RemoteTabsStorage
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceCapability
+import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.accounts.push.FxaPushSupportFeature
 import mozilla.components.feature.accounts.push.SendTabFeature
+import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
 import mozilla.components.lib.crash.CrashReporter
-import mozilla.components.service.fxa.DeviceConfig
+import mozilla.components.service.fxa.PeriodicSyncConfig
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.SyncConfig
 import mozilla.components.service.fxa.SyncEngine
@@ -28,28 +33,33 @@ import mozilla.components.service.fxa.manager.SCOPE_SYNC
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.utils.RunWhenReadyQueue
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.StrictModeManager
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.sync.SyncedTabsIntegration
 import org.mozilla.fenix.utils.Mockable
-import org.mozilla.fenix.utils.RunWhenReadyQueue
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
  * background worker.
  */
 @Mockable
+@Suppress("LongParameterList")
 class BackgroundServices(
     private val context: Context,
     private val push: Push,
     crashReporter: CrashReporter,
     historyStorage: Lazy<PlacesHistoryStorage>,
     bookmarkStorage: Lazy<PlacesBookmarksStorage>,
-    passwordsStorage: Lazy<SyncableLoginsStorage>
+    passwordsStorage: Lazy<SyncableLoginsStorage>,
+    remoteTabsStorage: Lazy<RemoteTabsStorage>,
+    strictMode: StrictModeManager
 ) {
     // Allows executing tasks which depend on the account manager, but do not need to eagerly initialize it.
     val accountManagerAvailableQueue = RunWhenReadyQueue()
@@ -77,32 +87,33 @@ class BackgroundServices(
         // Enabling this for all channels is tracked in https://github.com/mozilla-mobile/fenix/issues/6704
         secureStateAtRest = Config.channel.isNightlyOrDebug
     )
-    // If sync has been turned off on the server then disable syncing.
-    @Suppress("ConstantConditionIf")
-    @VisibleForTesting(otherwise = PRIVATE)
-    val syncConfig = if (FeatureFlags.asFeatureSyncDisabled) {
-        null
-    } else {
-        SyncConfig(
-            setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords),
-            syncPeriodInMinutes = 240L) // four hours
-    }
+
+    @VisibleForTesting
+    val supportedEngines =
+        setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords, SyncEngine.Tabs)
+    private val syncConfig = SyncConfig(supportedEngines, PeriodicSyncConfig(periodMinutes = 240)) // four hours
 
     init {
-        // Make the "history", "bookmark", and "passwords" stores accessible to workers spawned by the sync manager.
+        /* Make the "history", "bookmark", "passwords", and "tabs" stores accessible to workers
+           spawned by the sync manager. */
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to historyStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Bookmarks to bookmarkStorage)
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to passwordsStorage)
+        GlobalSyncableStoreProvider.configureStore(SyncEngine.Tabs to remoteTabsStorage)
     }
 
     private val telemetryAccountObserver = TelemetryAccountObserver(
-        context,
+        context.settings(),
         context.components.analytics.metrics
     )
 
-    val accountAbnormalities = AccountAbnormalities(context, crashReporter)
+    val accountAbnormalities = AccountAbnormalities(context, crashReporter, strictMode)
 
     val accountManager by lazy { makeAccountManager(context, serverConfig, deviceConfig, syncConfig) }
+
+    val syncedTabsStorage by lazy {
+        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value)
+    }
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun makeAccountManager(
@@ -148,10 +159,12 @@ class BackgroundServices(
             notificationManager.showReceivedTabs(context, device, tabs)
         }
 
-        accountAbnormalities.accountManagerInitializedAsync(
-            accountManager,
-            accountManager.initAsync()
-        )
+        SyncedTabsIntegration(context, accountManager).launch()
+
+        MainScope().launch {
+            accountManager.start()
+            accountAbnormalities.accountManagerStarted(accountManager)
+        }
     }.also {
         accountManagerAvailableQueue.ready()
     }
@@ -165,45 +178,47 @@ class BackgroundServices(
 }
 
 @VisibleForTesting(otherwise = PRIVATE)
-class TelemetryAccountObserver(
-    private val context: Context,
+internal class TelemetryAccountObserver(
+    private val settings: Settings,
     private val metricController: MetricController
 ) : AccountObserver {
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
         when (authType) {
             // User signed-in into an existing FxA account.
-            AuthType.Signin ->
-                metricController.track(Event.SyncAuthSignIn)
+            AuthType.Signin -> Event.SyncAuthSignIn
 
             // User created a new FxA account.
-            AuthType.Signup ->
-                metricController.track(Event.SyncAuthSignUp)
+            AuthType.Signup -> Event.SyncAuthSignUp
 
             // User paired to an existing account via QR code scanning.
-            AuthType.Pairing ->
-                metricController.track(Event.SyncAuthPaired)
+            AuthType.Pairing -> Event.SyncAuthPaired
 
-            // User signed-in into an FxA account shared from another locally installed app
-            // (e.g. Fennec).
-            AuthType.Shared ->
-                metricController.track(Event.SyncAuthFromShared)
+            // User signed-in into an FxA account shared from another locally installed app using the reuse flow.
+            AuthType.MigratedReuse -> Event.SyncAuthFromSharedReuse
+
+            // User signed-in into an FxA account shared from another locally installed app using the copy flow.
+            AuthType.MigratedCopy -> Event.SyncAuthFromSharedCopy
 
             // Account Manager recovered a broken FxA auth state, without direct user involvement.
-            AuthType.Recovered ->
-                metricController.track(Event.SyncAuthRecovered)
+            AuthType.Recovered -> Event.SyncAuthRecovered
 
             // User signed-in into an FxA account via unknown means.
             // Exact mechanism identified by the 'action' param.
-            is AuthType.OtherExternal ->
-                metricController.track(Event.SyncAuthOtherExternal)
+            is AuthType.OtherExternal -> Event.SyncAuthOtherExternal
+
+            // Account restored from a hydrated state on disk (e.g. during startup).
+            AuthType.Existing -> null
+        }?.let {
+            metricController.track(it)
         }
+
         // Used by Leanplum as a context variable.
-        context.settings().fxaSignedIn = true
+        settings.fxaSignedIn = true
     }
 
     override fun onLoggedOut() {
         metricController.track(Event.SyncAuthSignOut)
         // Used by Leanplum as a context variable.
-        context.settings().fxaSignedIn = false
+        settings.fxaSignedIn = false
     }
 }

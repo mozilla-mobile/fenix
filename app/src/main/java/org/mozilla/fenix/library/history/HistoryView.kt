@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.android.synthetic.main.component_history.*
 import kotlinx.android.synthetic.main.component_history.view.*
+import kotlinx.android.synthetic.main.recently_closed_nav_item.*
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.library.SelectionInteractor
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Interface for the HistoryViewInteractor. This interface is implemented by objects that want
@@ -71,6 +74,16 @@ interface HistoryViewInteractor : SelectionInteractor<HistoryItem> {
      * @param items the history items to delete
      */
     fun onDeleteSome(items: Set<HistoryItem>)
+
+    /**
+     * Called when the user requests a sync of the history
+     */
+    fun onRequestSync()
+
+    /**
+     * Called when the user clicks on recently closed tab button.
+     */
+    fun onRecentlyClosedClicked()
 }
 
 /**
@@ -84,7 +97,6 @@ class HistoryView(
     val view: View = LayoutInflater.from(container.context)
         .inflate(R.layout.component_history, container, true)
 
-    private var items: List<HistoryItem> = listOf()
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
@@ -97,14 +109,28 @@ class HistoryView(
             adapter = historyAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
+
+        val primaryTextColor =
+            ThemeManager.resolveAttribute(R.attr.primaryText, context)
+        view.swipe_refresh.setColorSchemeColors(primaryTextColor)
+        view.swipe_refresh.setOnRefreshListener {
+            interactor.onRequestSync()
+            view.history_list.scrollToPosition(0)
+        }
     }
 
     fun update(state: HistoryFragmentState) {
         val oldMode = mode
 
-        view.progress_bar.isVisible = state.mode === HistoryFragmentState.Mode.Deleting
-        items = state.items
+        view.progress_bar.isVisible = state.isDeletingItems
+        view.swipe_refresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
+        view.swipe_refresh.isEnabled =
+            state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
+
+        historyAdapter.updatePendingDeletionIds(state.pendingDeletionIds)
+
+        updateEmptyState(state.pendingDeletionIds.size != historyAdapter.currentList?.size)
 
         historyAdapter.updateMode(state.mode)
         val first = layoutManager.findFirstVisibleItemPosition()
@@ -124,18 +150,35 @@ class HistoryView(
         }
 
         when (val mode = state.mode) {
-            is HistoryFragmentState.Mode.Normal ->
+            is HistoryFragmentState.Mode.Normal -> {
                 setUiForNormalMode(
-                    context.getString(R.string.library_history))
-            is HistoryFragmentState.Mode.Editing ->
+                    context.getString(R.string.library_history)
+                )
+            }
+            is HistoryFragmentState.Mode.Editing -> {
                 setUiForSelectingMode(
-                    context.getString(R.string.history_multi_select_title, mode.selectedItems.size))
+                    context.getString(R.string.history_multi_select_title, mode.selectedItems.size)
+                )
+            }
         }
     }
 
     fun updateEmptyState(userHasHistory: Boolean) {
         history_list.isVisible = userHasHistory
         history_empty_view.isVisible = !userHasHistory
+        recently_closed_nav_empty.apply {
+            setOnClickListener {
+                interactor.onRecentlyClosedClicked()
+            }
+            val numRecentTabs = view.context.components.core.store.state.closedTabs.size
+            recently_closed_tabs_description.text = String.format(
+                view.context.getString(
+                    if (numRecentTabs == 1)
+                        R.string.recently_closed_tab else R.string.recently_closed_tabs
+                ), numRecentTabs
+            )
+            isVisible = !userHasHistory
+        }
         if (!userHasHistory) {
             history_empty_view.announceForAccessibility(context.getString(R.string.history_empty_message))
         }

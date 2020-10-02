@@ -1,29 +1,21 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.exceptions
 
-import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
-
 /**
- * Interactor for the exceptions screen
- * Provides implementations for the ExceptionsViewInteractor
+ * Interface for exceptions view interactors. This interface is implemented by objects that want
+ * to respond to user interaction on the [ExceptionsView].
  */
-class ExceptionsInteractor(
-    private val learnMore: () -> Unit,
-    private val deleteOne: (TrackingProtectionException) -> Unit,
-    private val deleteAll: () -> Unit
-) : ExceptionsViewInteractor {
-    override fun onLearnMore() {
-        learnMore.invoke()
-    }
+interface ExceptionsInteractor<T> {
+    /**
+     * Called whenever all exception items are deleted
+     */
+    fun onDeleteAll()
 
-    override fun onDeleteAll() {
-        deleteAll.invoke()
-    }
-
-    override fun onDeleteOne(item: TrackingProtectionException) {
-        deleteOne.invoke(item)
-    }
+    /**
+     * Called whenever one exception item is deleted
+     */
+    fun onDeleteOne(item: T)
 }

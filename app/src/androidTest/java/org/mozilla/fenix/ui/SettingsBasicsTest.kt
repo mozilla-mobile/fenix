@@ -68,6 +68,8 @@ class SettingsBasicsTest {
         }.openSettings {
             verifyBasicsHeading()
             verifySearchEngineButton()
+            verifyDefaultBrowserItem()
+            verifyCloseTabsItem()
             // drill down to submenu
         }.openSearchSubMenu {
             verifyDefaultSearchEngineHeader()
@@ -86,10 +88,6 @@ class SettingsBasicsTest {
             verifyAutomaticFontSizingMenuItems()
         }.goBack {
             // drill down to submenu
-        }.openDefaultBrowserSubMenu {
-            // verify item: set as default browser (duplicates, verify child of recyclerview)
-            // Verify label: Open links in private tab
-        }.goBack {
         }
     }
 
@@ -126,7 +124,6 @@ class SettingsBasicsTest {
         }
     }
 
-    @Ignore("Currently failing on firebase: https://github.com/mozilla-mobile/fenix/issues/8747")
     @Test
     fun toggleShowVisitedSitesAndBookmarks() {
         // Bookmarks a few websites, toggles the history and bookmarks setting to off, then verifies if the visited and bookmarked websites do not show in the suggestions.
@@ -137,27 +134,24 @@ class SettingsBasicsTest {
         homeScreen {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(page1.url) {
-            verifyPageContent(page1.content)
         }.openThreeDotMenu {
             clickAddBookmarkButton()
         }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(page2.url) {
-            verifyPageContent(page2.content)
         }.openThreeDotMenu {
             clickAddBookmarkButton()
         }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(page3.url) {
-            verifyPageContent(page3.content)
+            mDevice.waitForIdle()
         }
 
         navigationToolbar {
             verifyNoHistoryBookmarks()
         }
-
     }
 
     @Test
@@ -172,6 +166,17 @@ class SettingsBasicsTest {
             verifyDarkThemeApplied(getUiTheme())
             selectLightMode()
             verifyLightThemeApplied(getUiTheme())
+        }
+    }
+
+    @Test
+    fun changeCloseTabsSetting() {
+        // Goes through the settings and verified the close tabs setting options.
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCloseTabsSubMenu {
+            verifyOptions()
         }
     }
 
@@ -197,7 +202,9 @@ class SettingsBasicsTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(webpage) {
             checkTextSizeOnWebsite(textSizePercentage, fenixApp.components)
-        }.openHomeScreen {
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAccessibilitySubMenu {
@@ -212,11 +219,9 @@ class SettingsBasicsTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-        }.openDefaultBrowserSubMenu {
-            verifyDefaultBrowserIsDisabled()
+            verifyDefaultBrowserIsDisaled()
             clickDefaultBrowserSwitch()
             verifyAndroidDefaultAppsMenuAppears()
         }
-
     }
 }

@@ -6,7 +6,6 @@ package org.mozilla.fenix.components
 
 import android.content.Context
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.CustomTabIntentProcessor
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.intent.processing.TabIntentProcessor
@@ -15,9 +14,9 @@ import mozilla.components.feature.pwa.intent.TrustedWebActivityIntentProcessor
 import mozilla.components.feature.pwa.intent.WebAppIntentProcessor
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.support.migration.MigrationIntentProcessor
 import mozilla.components.support.migration.state.MigrationStore
-import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.customtabs.FennecWebAppIntentProcessor
 import org.mozilla.fenix.home.intent.FennecBookmarkShortcutsIntentProcessor
 import org.mozilla.fenix.utils.Mockable
@@ -26,12 +25,13 @@ import org.mozilla.fenix.utils.Mockable
  * Component group for miscellaneous components.
  */
 @Mockable
+@Suppress("LongParameterList")
 class IntentProcessors(
     private val context: Context,
     private val sessionManager: SessionManager,
     private val sessionUseCases: SessionUseCases,
     private val searchUseCases: SearchUseCases,
-    private val httpClient: Client,
+    private val relationChecker: RelationChecker,
     private val customTabsStore: CustomTabsServiceStore,
     private val migrationStore: MigrationStore,
     private val manifestStorage: ManifestStorage
@@ -63,15 +63,17 @@ class IntentProcessors(
             TrustedWebActivityIntentProcessor(
                 sessionManager = sessionManager,
                 loadUrlUseCase = sessionUseCases.loadUrl,
-                httpClient = httpClient,
                 packageManager = context.packageManager,
-                apiKey = BuildConfig.DIGITAL_ASSET_LINKS_TOKEN,
+                relationChecker = relationChecker,
                 store = customTabsStore
             ),
             WebAppIntentProcessor(sessionManager, sessionUseCases.loadUrl, manifestStorage),
-            FennecBookmarkShortcutsIntentProcessor(sessionManager, sessionUseCases.loadUrl),
             FennecWebAppIntentProcessor(context, sessionManager, sessionUseCases.loadUrl, manifestStorage)
         )
+    }
+
+    val fennecPageShortcutIntentProcessor by lazy {
+        FennecBookmarkShortcutsIntentProcessor(sessionManager, sessionUseCases.loadUrl)
     }
 
     val migrationIntentProcessor by lazy {

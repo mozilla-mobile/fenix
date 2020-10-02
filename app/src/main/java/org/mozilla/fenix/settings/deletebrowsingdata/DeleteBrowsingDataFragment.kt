@@ -13,51 +13,90 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.*
 import kotlinx.android.synthetic.main.fragment_delete_browsing_data.view.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import mozilla.components.browser.session.Session
-import mozilla.components.browser.session.SessionManager
+import kotlinx.coroutines.withContext
+import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.utils.Settings
 
 @SuppressWarnings("TooManyFunctions")
 class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_data) {
-    private lateinit var sessionObserver: SessionManager.Observer
+
     private lateinit var controller: DeleteBrowsingDataController
+    private var scope: CoroutineScope? = null
+    private lateinit var settings: Settings
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        controller = DefaultDeleteBrowsingDataController(requireContext())
+        controller = DefaultDeleteBrowsingDataController(
+            requireComponents.useCases.tabsUseCases.removeAllTabs,
+            requireComponents.core.historyStorage,
+            requireComponents.core.permissionStorage,
+            requireComponents.core.store,
+            requireComponents.core.icons,
+            requireComponents.core.engine
+        )
+        settings = requireContext().settings()
 
-        sessionObserver = object : SessionManager.Observer {
-            override fun onSessionAdded(session: Session) = updateTabCount()
-            override fun onSessionRemoved(session: Session) = updateTabCount()
-            override fun onSessionSelected(session: Session) = updateTabCount()
-            override fun onSessionsRestored() = updateTabCount()
-            override fun onAllSessionsRemoved() = updateTabCount()
-        }
-
-        requireComponents.core.sessionManager.register(sessionObserver, owner = this)
         getCheckboxes().forEach {
-            it.onCheckListener = { _ -> updateDeleteButton() }
+            it.onCheckListener = { _ ->
+                updateDeleteButton()
+                updatePreference(it)
+            }
         }
 
-        getCheckboxes().forEach { it.isChecked = true }
+        getCheckboxes().forEach {
+            it.isChecked = when (it.id) {
+                R.id.open_tabs_item -> settings.deleteOpenTabs
+                R.id.browsing_data_item -> settings.deleteBrowsingHistory
+                R.id.cookies_item -> settings.deleteCookies
+                R.id.cached_files_item -> settings.deleteCache
+                R.id.site_permissions_item -> settings.deleteSitePermissions
+                else -> true
+            }
+        }
 
         view.delete_data?.setOnClickListener {
             askToDelete()
         }
+        updateDeleteButton()
     }
 
-    private fun updateDeleteButton() {
-        val enabled = getCheckboxes().any { it.isChecked }
+    private fun updatePreference(it: DeleteBrowsingDataItem) {
+        when (it.id) {
+            R.id.open_tabs_item -> settings.deleteOpenTabs = it.isChecked
+            R.id.browsing_data_item -> settings.deleteBrowsingHistory = it.isChecked
+            R.id.cookies_item -> settings.deleteCookies = it.isChecked
+            R.id.cached_files_item -> settings.deleteCache = it.isChecked
+            R.id.site_permissions_item -> settings.deleteSitePermissions = it.isChecked
+            else -> return
+        }
+    }
 
-        view?.delete_data?.isEnabled = enabled
-        view?.delete_data?.alpha = if (enabled) ENABLED_ALPHA else DISABLED_ALPHA
+    @ExperimentalCoroutinesApi
+    override fun onStart() {
+        super.onStart()
+
+        scope = requireComponents.core.store.flowScoped(viewLifecycleOwner) { flow ->
+            flow.map { state -> state.tabs.size }
+                .ifChanged()
+                .collect { openTabs -> updateTabCount(openTabs) }
+        }
     }
 
     override fun onResume() {
@@ -69,6 +108,13 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         }
 
         updateItemCounts()
+    }
+
+    private fun updateDeleteButton() {
+        val enabled = getCheckboxes().any { it.isChecked }
+
+        view?.delete_data?.isEnabled = enabled
+        view?.delete_data?.alpha = if (enabled) ENABLED_ALPHA else DISABLED_ALPHA
     }
 
     private fun askToDelete() {
@@ -96,7 +142,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
 
     private fun deleteSelected() {
         startDeletion()
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(IO) {
             getCheckboxes().mapIndexed { i, v ->
                 if (v.isChecked) {
                     when (i) {
@@ -109,7 +155,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
                 }
             }
 
-            launch(Dispatchers.Main) {
+            withContext(Main) {
                 finishDeletion()
                 requireComponents.analytics.metrics.track(Event.ClearedPrivateData)
             }
@@ -129,10 +175,6 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         delete_browsing_data_wrapper.isEnabled = true
         delete_browsing_data_wrapper.isClickable = true
         delete_browsing_data_wrapper.alpha = ENABLED_ALPHA
-
-        getCheckboxes().forEach {
-            it.isChecked = false
-        }
 
         updateItemCounts()
 
@@ -162,6 +204,11 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         progress_bar.visibility = View.GONE
     }
 
+    override fun onStop() {
+        super.onStop()
+        scope?.cancel()
+    }
+
     private fun updateItemCounts() {
         updateTabCount()
         updateHistoryCount()
@@ -170,9 +217,8 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         updateSitePermissions()
     }
 
-    private fun updateTabCount() {
+    private fun updateTabCount(openTabs: Int = requireComponents.core.store.state.tabs.size) {
         view?.open_tabs_item?.apply {
-            val openTabs = requireComponents.core.sessionManager.sessions.size
             subtitleView.text = resources.getString(
                 R.string.preferences_delete_browsing_data_tabs_subtitle,
                 openTabs
@@ -210,7 +256,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
     }
 
     private fun getCheckboxes(): List<DeleteBrowsingDataItem> {
-        val fragmentView = view!!
+        val fragmentView = requireView()
         return listOf(
             fragmentView.open_tabs_item,
             fragmentView.browsing_data_item,

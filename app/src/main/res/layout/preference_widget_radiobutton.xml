@@ -29,20 +29,23 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
+        android:layout_marginStart="@dimen/radiobutton_preference_margin_start"
         android:layout_height="wrap_content"
         android:gravity="center|start"
         android:layout_marginEnd="@dimen/radio_button_preference_horizontal"
         tools:text="@tools:sample/lorem"
+        android:textAlignment="viewStart"
         android:textAppearance="?android:attr/textAppearanceListItem"
         app:layout_constraintTop_toTopOf="@id/radio_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/radio_button"
+        app:layout_constraintStart_toEndOf="@id/radio_button"
         app:layout_constraintBottom_toBottomOf="@id/radio_button"/>
 
     <TextView
         android:id="@+id/widget_summary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textAlignment="viewStart"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="?android:attr/textColorSecondary"
         tools:text="@tools:sample/lorem/random"

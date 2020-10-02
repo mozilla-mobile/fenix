@@ -4,48 +4,41 @@
 
 package org.mozilla.fenix.exceptions.viewholders
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.exception_item.view.*
-import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.exceptions.ExceptionsInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 
 /**
- * View holder for a single website that is exempted from Tracking Protection.
+ * View holder for a single website that is exempted from Tracking Protection or Logins.
  */
-class ExceptionsListItemViewHolder(
-    view: View,
-    private val interactor: ExceptionsInteractor
+class ExceptionsListItemViewHolder<T : Any>(
+    private val view: WidgetSiteItemView,
+    private val interactor: ExceptionsInteractor<T>,
+    private val icons: BrowserIcons = view.context.components.core.icons
 ) : RecyclerView.ViewHolder(view) {
 
-    private val favicon = view.favicon_image
-    private val url = view.domainView
-    private val deleteButton = view.delete_exception
-
-    private var item: TrackingProtectionException? = null
+    private lateinit var item: T
 
     init {
-        deleteButton.setOnClickListener {
-            item?.let {
-                interactor.onDeleteOne(it)
-            }
+        view.setSecondaryButton(
+            icon = R.drawable.ic_close,
+            contentDescription = R.string.history_delete_item
+        ) {
+            interactor.onDeleteOne(item)
         }
     }
 
-    fun bind(item: TrackingProtectionException) {
+    fun bind(item: T, url: String) {
         this.item = item
-        url.text = item.url
-        updateFavIcon(item.url)
-    }
-
-    private fun updateFavIcon(url: String) {
-        favicon.context.components.core.icons.loadIntoView(favicon, url)
+        view.setText(label = url, caption = null)
+        icons.loadIntoView(view.iconView, url)
     }
 
     companion object {
-        const val LAYOUT_ID = R.layout.exception_item
+        const val LAYOUT_ID = R.layout.site_list_item
     }
 }

@@ -4,20 +4,15 @@
 
 package org.mozilla.fenix.library.bookmarks.viewholders
 
-import mozilla.components.concept.storage.BookmarkNode
-import org.mozilla.fenix.library.LibrarySiteItemView
-import org.mozilla.fenix.library.bookmarks.BookmarkViewInteractor
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.R
 
 /**
  * Simple view holder for dividers in the bookmarks list.
  */
-class BookmarkSeparatorViewHolder(
-    view: LibrarySiteItemView,
-    interactor: BookmarkViewInteractor
-) : BookmarkNodeViewHolder(view, interactor) {
-
-    override fun bind(item: BookmarkNode) {
-        containerView.displayAs(LibrarySiteItemView.ItemType.SEPARATOR)
-        setupMenu(item)
+class BookmarkSeparatorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
+        const val LAYOUT_ID = R.layout.library_separator
     }
 }

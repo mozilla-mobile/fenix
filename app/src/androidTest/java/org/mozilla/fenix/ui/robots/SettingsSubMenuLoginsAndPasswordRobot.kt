@@ -38,7 +38,11 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         mDevice.waitNotNull(Until.findObjects(By.text("On")), TestAssetHelper.waitingTime)
     }
 
-    fun verifyDefaultValueSyncLogins() = asserDefaultValueSyncLogins()
+    fun verifyDefaultValueExceptions() = assertDefaultValueExceptions()
+
+    fun verifyDefaultValueAutofillLogins() = assertDefaultValueAutofillLogins()
+
+    fun verifyDefaultValueSyncLogins() = assertDefaultValueSyncLogins()
 
     class Transition {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -53,6 +57,14 @@ class SettingsSubMenuLoginsAndPasswordRobot {
         fun openSavedLogins(interact: SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.Transition {
             fun savedLoginsButton() = onView(ViewMatchers.withText("Saved logins"))
             savedLoginsButton().click()
+
+            SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot().interact()
+            return SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.Transition()
+        }
+
+        fun openLoginExceptions(interact: SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.Transition {
+            fun loginExceptionsButton() = onView(ViewMatchers.withText("Exceptions"))
+            loginExceptionsButton().click()
 
             SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot().interact()
             return SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot.Transition()
@@ -87,5 +99,11 @@ private fun goBackButton() =
 private fun assertDefaultView() = onView(ViewMatchers.withText("Sync logins"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
-private fun asserDefaultValueSyncLogins() = onView(ViewMatchers.withText("Sign in to Sync"))
+private fun assertDefaultValueAutofillLogins() = onView(ViewMatchers.withText("Autofill"))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertDefaultValueExceptions() = onView(ViewMatchers.withText("Exceptions"))
+    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+private fun assertDefaultValueSyncLogins() = onView(ViewMatchers.withText("Sign in to Sync"))
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))

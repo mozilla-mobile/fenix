@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.lintrules
 
 import com.android.SdkConstants
@@ -18,7 +22,6 @@ class ButtonStyleXmlDetector : ResourceXmlDetector() {
     companion object {
         const val SCHEMA = "http://schemas.android.com/apk/res-auto"
 
-        // TODO:
         const val ERROR_MESSAGE =
             "All buttons must have a style, try using NeutralButton or similar."
 

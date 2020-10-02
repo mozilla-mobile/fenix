@@ -31,14 +31,20 @@ open class ExternalAppBrowserActivity : HomeActivity() {
 
     final override fun getIntentSource(intent: SafeIntent) = Event.OpenedApp.Source.CUSTOM_TAB
 
+    final override fun getIntentAllSource(intent: SafeIntent) = Event.AppReceivedIntent.Source.CUSTOM_TAB
+
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
+
+    override fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
+        components.appStartupTelemetry.onExternalAppBrowserOnCreate(safeIntent, hasSavedInstanceState)
+    }
 
     override fun getNavDirections(
         from: BrowserDirection,
         customTabSessionId: String?
     ): NavDirections? {
         if (customTabSessionId == null) {
-            finish()
+            finishAndRemoveTask()
             return null
         }
 

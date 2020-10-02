@@ -23,28 +23,41 @@
     <string name="pocket_pinned_top_articles" translatable="false">Top Articles</string>
     <!-- Default title for pinned Wikipedia top site that links to Wikipedia home page -->
     <string name="default_top_site_wikipedia" translatable="false">Wikipedia</string>
-    <!-- Default title for pinned YouTube top site that links to Youtube home page  -->
-    <string name="default_top_site_youtube" translatable="false">YouTube</string>
+    <!-- Default title for pinned Google top site that links to Google home page  -->
+    <string name="default_top_site_google" translatable="false">Google</string>
+    <!-- Android Components abbreviation used in AboutFragment -->
+    <string name="components_abbreviation" translatable="false">AC</string>
     <!-- Application Services abbreviation used in AboutFragment -->
     <string name="app_services_abbreviation" translatable="false">AS</string>
 
-    <!-- WIP: Tab Tray -->
-    <!-- Text shown as the title of the open tab tray -->
-    <string name="tab_tray_title" translatable="false">Open Tabs</string>
-    <!-- Text shown in the menu for saving tabs to a collection -->
-    <string name="tab_tray_menu_item_save" translatable="false">Save to collection</string>
-    <!-- Text shown in the menu for sharing all tabs -->
-    <string name="tab_tray_menu_item_share" translatable="false">Share all tabs</string>
-    <!-- Text shown in the menu for closing all tabs -->
-    <string name="tab_tray_menu_item_close" translatable="false">Close all tabs</string>
-    <!-- Shortcut action to open new tab -->
-    <string name="tab_tray_menu_open_new_tab" translatable="false">New tab</string>
-    <!-- Shortcut action to open the home screen -->
-    <string name="tab_tray_menu_home" translatable="false">Go home</string>
-    <!-- Shortcut action to toggle private mode -->
-    <string name="tab_tray_menu_toggle" translatable="false">Toggle tab mode</string>
-
     <!-- Label for the secret settings preference -->
     <string name="preferences_debug_settings">Secret Settings</string>
-    <string name="preferences_debug_settings_enable_tab_tray">Use New Tab Tray</string>
+    <!-- Label for the show top frequently visited sites preference -->
+    <string name="preferences_debug_settings_enable_top_frecent_sites">Show Top Frequently Visited Sites</string>
+    <!-- Label for the wait until first paint preference -->
+    <string name="preferences_debug_settings_wait_first_paint">Wait Until First Paint To Show Page Content</string>
+    <!-- Label for showing Synced Tabs in the tabs tray -->
+    <string name="preferences_debug_synced_tabs_tabs_tray">Show Synced Tabs in the tabs tray</string>
+
+    <!-- Content description (not visible, for screen readers etc.) used to announce [LinkTextView]. -->
+    <string name="link_text_view_type_announcement" translatable="false">link</string>
+
+    <!-- Name of the application for about page -->
+    <string name="daylight_app_name" translatable="false">Firefox Daylight</string>
+
+    <!-- MP Migration -->
+    <string name="mp_homescreen_tip_title">Looking for your logins?</string>
+    <string name="mp_homescreen_tip_message">If you had a master password before Firefox updated, you’ll need to enter it to transfer your saved logins.</string>
+    <string name="mp_homescreen_button">Enter master password</string>
+    <string name="mp_dialog_title_recovery_transfer_saved_logins">Transfer saved logins</string>
+    <string name="mp_dialog_message_recovery_transfer_saved_logins">Enter your previous master password.</string>
+    <string name="mp_dialog_positive_transfer_saved_logins">Continue and transfer</string>
+    <string name="mp_dialog_negative_transfer_saved_logins">Cancel</string>
+    <string name="mp_dialog_error_transfer_saved_logins">Invalid password</string>
+    <string name="mp_dialog_title_transfer_success">Transfer successful</string>
+    <string name="mp_dialog_message_transfer_success">Your saved logins have been transferred to Firefox.</string>
+    <string name="mp_dialog_positive_transfer_success">View saved logins</string>
+    <string name="mp_dialog_close_transfer">Close</string>
+    <string name="mp_dialog_title_transfer_failure">Transfer failed</string>
+    <string name="mp_dialog_message_transfer_failure">An unknown error occurred and logins could not be transferred.</string>
 </resources>

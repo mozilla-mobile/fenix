@@ -7,10 +7,10 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.StrictMode
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import mozilla.components.feature.intent.processing.IntentProcessor
+import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.components.IntentProcessorType
 import org.mozilla.fenix.components.getType
 import org.mozilla.fenix.components.metrics.Event
@@ -26,23 +26,32 @@ class IntentReceiverActivity : Activity() {
 
     @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        MainScope().launch {
-            // The intent property is nullable, but the rest of the code below
-            // assumes it is not. If it's null, then we make a new one and open
-            // the HomeActivity.
-            val intent = intent?.let { Intent(intent) } ?: Intent()
-            intent.stripUnwantedFlags()
-            processIntent(intent)
+        // StrictMode violation on certain devices such as Samsung
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            super.onCreate(savedInstanceState)
         }
 
-        StartupTimeline.onActivityCreateEndIntentReceiver()
+        // The intent property is nullable, but the rest of the code below
+        // assumes it is not. If it's null, then we make a new one and open
+        // the HomeActivity.
+        val intent = intent?.let { Intent(it) } ?: Intent()
+        intent.stripUnwantedFlags()
+        processIntent(intent)
+
+        StartupTimeline.onActivityCreateEndIntentReceiver() // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    suspend fun processIntent(intent: Intent) {
+    fun processIntent(intent: Intent) {
         // Call process for side effects, short on the first that returns true
-        val processor = getIntentProcessors().firstOrNull { it.process(intent) }
+        val private = settings().openLinksInAPrivateTab
+        intent.putExtra(PRIVATE_BROWSING_MODE, private)
+        if (private) {
+            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
+        } else {
+            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
+        }
+
+        val processor = getIntentProcessors(private).firstOrNull { it.process(intent) }
         val intentProcessorType = components.intentProcessors.getType(processor)
 
         launch(intent, intentProcessorType)
@@ -50,23 +59,28 @@ class IntentReceiverActivity : Activity() {
 
     private fun launch(intent: Intent, intentProcessorType: IntentProcessorType) {
         intent.setClassName(applicationContext, intentProcessorType.activityClassName)
-        intent.putExtra(HomeActivity.OPEN_TO_BROWSER, intentProcessorType.shouldOpenToBrowser(intent))
 
-        startActivity(intent)
+        if (!intent.hasExtra(HomeActivity.OPEN_TO_BROWSER)) {
+            intent.putExtra(
+                HomeActivity.OPEN_TO_BROWSER,
+                intentProcessorType.shouldOpenToBrowser(intent)
+            )
+        }
+        // StrictMode violation on certain devices such as Samsung
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            startActivity(intent)
+        }
         finish() // must finish() after starting the other activity
     }
 
-    private fun getIntentProcessors(): List<IntentProcessor> {
-        val modeDependentProcessors = if (settings().openLinksInAPrivateTab) {
-            components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.PRIVATE))
-            intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+    private fun getIntentProcessors(private: Boolean): List<IntentProcessor> {
+        val modeDependentProcessors = if (private) {
             listOf(
                 components.intentProcessors.privateCustomTabIntentProcessor,
                 components.intentProcessors.privateIntentProcessor
             )
         } else {
             components.analytics.metrics.track(Event.OpenedLink(Event.OpenedLink.Mode.NORMAL))
-            intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, false)
             listOf(
                 components.intentProcessors.customTabIntentProcessor,
                 components.intentProcessors.intentProcessor
@@ -75,6 +89,7 @@ class IntentReceiverActivity : Activity() {
 
         return listOf(components.intentProcessors.migrationIntentProcessor) +
             components.intentProcessors.externalAppIntentProcessors +
+            components.intentProcessors.fennecPageShortcutIntentProcessor +
             modeDependentProcessors +
             NewTabShortcutIntentProcessor()
     }

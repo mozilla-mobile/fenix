@@ -16,6 +16,8 @@ class FenixRobolectricTestApplication : FenixApplication() {
 
     override val components = TestComponents(this)
 
+    override fun initializeGlean() = Unit
+
     override fun setupInAllProcesses() = Unit
 
     override fun setupInMainProcessOnly() = Unit

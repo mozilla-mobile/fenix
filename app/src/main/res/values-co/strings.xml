@@ -14,10 +14,40 @@
     <string name="content_description_disable_private_browsing_button">Disattivà a navigazione privata</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Ricerca o indirizzu</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Alcuna unghjetta aperta</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">E vostre unghjette aperte seranu affissate quì.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">E vostre unghjette private seranu affissate quì.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 unghjetta aperta. Picchichjà per cambià d’unghjetta.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s unghjette aperte. Picchichjà per cambià d’unghjetta.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d selezziunatu(i)</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Aghjunghje una nova cullezzione</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Nome</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Selezziunà a cullezzione</string>
+
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Piantà u modu di selezzione multiple</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Arregistrà l’unghjette selezziunate in una cullezzione</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">%1$s selezziunatu</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s diselezziunatu</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Fine di u modu di selezzione multiple</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Modu di selezzione multiple attivatu, selezziunate l’unghjette à arregistrà in una cullezzione</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Selezziunatu</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s hè sviluppatu da Mozilla.</string>
@@ -29,20 +59,50 @@
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="private_browsing_placeholder_description_2">¶
- · %1$s squassa e vostre crunulogie di ricerca è di navigazione da l’unghjette private quandu và chjuditele o chitate l’appiecazione. Benchè quessu ùn vi rende micca anonimu nant’à i siti web nè da u vostru furnidore d’accessu à internet, vi permette di cunservà sicreta a vostra attività in linea per tutte l’altre persone chì impiegherianu u vostru apparechju.</string>
+ · %1$s squassa e vostre crunulogie di ricerca è di navigazione da l’unghjette private quandu vò chjuditele o chitate l’appiecazione. Benchè quessu ùn vi rende micca anonimu nant’à i siti web nè da u vostru furnidore d’accessu à internet, vi permette di cunservà sicreta a vostra attività in linea per tutte l’altre persone chì impiegherianu u vostru apparechju.</string>
     <string name="private_browsing_common_myths">¶
        Idee precuncepite apprupositu di a navigazione privata¶
     </string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Squassà a sessione</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Aghjunghjite un accurtatoghju per apre unghjette private da u vostru screnu d’accolta.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Aghjunghje un accurtatoghjiu</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Innò, vi ringraziu</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Accidite più prestu à Firefox. Aghjunghjite un widget à u vostru screnu d’accolta.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Aghjunghje u widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Micca subitu</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Pudete cunfigurà Firefox per apre autumaticamente e leie in d’altre appiecazioni.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Apre e preferenze</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Ricusà</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Accessu richiestu à l’appareghju-fotò. Accidite à e preferenze d’Android, picchichjate Permessi, è dopu Permette.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Apre e preferenze</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Ricusà</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Cunfigurate l’unghjette aperte per ch’elle si chjodinu autumaticamente quand’elle ùn sò state micca fighjate l’ultimi ghjorni, settimane, o mesi.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Fighjà l’ozzioni</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Ricusà</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -52,7 +112,7 @@
     <string name="home_screen_shortcut_open_new_private_tab_2">Nova unghjetta privata</string>
 
     <!-- Heading for the Top Sites block -->
-    <string name="home_screen_top_sites_heading">Siti principali</string>
+    <string name="home_screen_top_sites_heading">Siti principale</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate to open tabs -->
@@ -87,6 +147,10 @@
     <string name="browser_menu_add_to_homescreen">Aghjunghje à u screnu d’accolta</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Installà</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Unghjette sincrunizate</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Risincrunizà</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Circà in a pagina</string>
     <!-- Browser menu button that creates a private tab -->
@@ -95,8 +159,6 @@
     <string name="browser_menu_new_tab">Nova unghjetta</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Arregistrà in una cullezzione</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Signalà un penseru nant’à stu situ</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Sparte</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -110,8 +172,10 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Funziuneghja grazia à %1$s</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Modu di lettura</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Chjode u modu di lettura</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Apre in un’appiecazione</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -134,14 +198,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Numerizà</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Accurtatoghji</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Mutore di ricerca</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Preferenze di u mutore di ricerca</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Circà cù</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Per sta volta, circà cù :</string>
+    <string name="search_engines_search_with">Per sta volta, circà cù :</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Riempie da u preme’papei</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -211,6 +273,8 @@
     <string name="preferences_open_links_in_a_private_tab">Apre i liami in un’unghjetta privata</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Permette e catture di screnu durante a navigazione privata</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">S’ella hè permessa, l’unghjette private seranu ancu videvule quandu parechje appiecazioni sò aperte</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Aghjunghje un accurtatoghjiu per a navigazione privata</string>
     <!-- Preference for accessibility -->
@@ -229,6 +293,10 @@
     <string name="preferences_toolbar">Barra d’attrezzi</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Accolta</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Mosse</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Persunalizà</string>
     <!-- Preference description for banner about signing in -->
@@ -249,10 +317,12 @@
     <string name="developer_tools_category">Attrezzi di sviluppu</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Spannatura alluntanata via USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Affissà l’accurtatoghji di ricerca</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Affissà i mutori di ricerca</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Affissà e suggestioni di ricerca</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Affissà a ricerca vucale</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Affissà durante e sessioni di navigazione privata</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -262,14 +332,23 @@
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Circà in l’indette</string>
 
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Ricercà in l’unghjette sincrunizate</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Preferenze di u contu</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Compie autumaticamente l’URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Apre i liami in appiecazioni</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Ghjestiunariu esternu di scaricamentu</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Moduli addiziunali</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Nutificazioni</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -282,6 +361,8 @@
     <string name="preferences_sync_bookmarks">Indette</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Identificazioni di cunnessione</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Apre l’unghjette</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Scunnettassi</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -372,7 +453,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Visitate <b>firefox.com/pair</b> in Firefox nant’à u vostru urdinatore per ottene u vostru codice QR.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Analizate u codice QR affissatu nant’à <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Apre l’appareghju-fotò</string>
     <!-- Button to cancel pairing -->
@@ -394,6 +475,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Seguità u tema di l’apparechju</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Tirà per attualizà</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Sfilà per piattà a barra d’attrezzi</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Fà sfilà a barra d’attrezzi lateralmente per cambià d’unghjetta</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Fà sfilà a barra d’attrezzi insù per apre unghjette</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessioni</string>
@@ -413,12 +505,12 @@
     <string name="library_desktop_bookmarks_unfiled">Altre indette</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Crunulogia</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Unghjette sincrunizate</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista di lettura</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Ricercà</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Bibliuteca</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Preferenze</string>
 
@@ -426,6 +518,32 @@
     <string name="content_description_history_menu">Listinu di l’elementi di crunulogia</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Chjode</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Unghjette chjose pocu fà</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Affissà a crunulogia sana</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d unghjette</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d unghjetta</string>
+
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Alcuna unghjetta chjosa pocu fà</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Chjode l’unghjette</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Manualmente</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Dopu un ghjornu</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Dopu una settimana</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Dopu un mese</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -436,6 +554,30 @@
     <string name="tabs_header_private_tabs_title">Unghjette private</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Aghjunghje un’unghjetta</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Apre una nova unghjetta privata</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Unghjetta privata</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Unghjette aperte</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Arregistrà in una cullezzione</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Sparte tutte l’unghjette</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Unghjette chjose pocu fà</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Preferenze di l’unghjette</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Chjode tutte l’unghjette</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Nova unghjetta</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Andà à l’accolta</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Cambià di modu d’unghjette</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Caccià l’unghjetta da a cullezzione</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Chjode l’unghjetta</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -447,7 +589,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Sparte l’unghjette</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Arregistrà in una cullezzione</string>
+    <string name="tabs_menu_save_to_collection1">Arregistrà l’unghjette in una cullezzione</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Listinu di l’unghjetta</string>
     <!-- Tab menu item to share the tab -->
@@ -471,6 +613,14 @@
 
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Caccià</string>
+
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Squassà da a crunulogia</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (navigazione privata)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Arregistrà</string>
 
     <!-- History -->
     <!-- Text for the button to clear all history -->
@@ -510,6 +660,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Alcuna crunulogia</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Alcunu scaricamentu quì</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d selezziunatu(i)</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Per disgrazia, %1$s ùn pò micca caricà a pagina.</string>
@@ -537,6 +694,8 @@
     <string name="bookmark_select_folder">Selezziunà un cartulare</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">Site sicuru di vulè squassà stu cartulare ?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s squasserà l’elementi selezziunati.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s squassatu</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -593,8 +752,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s squassatu</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Indette squassate</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Squassatura di i cartulari selezziunati</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ABBANDUNÀ</string>
 
@@ -659,16 +820,12 @@
     <string name="delete_browsing_data_quit_off">Disattivata</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Racuglite ciò chì conta per voi. Per principià, arregistrate l’unghjette aperte in una nova cullezzione.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Cullezzioni</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Listinu di a cullezzione</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Alcuna cullezzione</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">E vostre cullezzioni seranu affissate quì.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Racuglite ciò chì conta per voi.\nGruppate inseme ricerche simile, i siti è l’unghjette per un accessu future più prestu.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Selezziunà unghjette</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -691,12 +848,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d unghjetta selezziunata</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Unghjette arregistrate !</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Cullezzione arregistrata !</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Unghjetta arregistrata !</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Chjode</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Arregistrà</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Affissà</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Cullezzione %d</string>
@@ -728,7 +890,7 @@
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">Cunnettà un altru apparechju</string>
     <!-- The dialog text shown when additional devices are not available -->
-    <string name="sync_connect_device_dialog">Per mandà un’unghjetta, cunnettatevi à u vostru contu Firefox nant’à al menu un altru apparechju.</string>
+    <string name="sync_connect_device_dialog">Per mandà un’unghjetta, cunnettatevi à u vostru contu Firefox nant’à omancu un altru apparechju.</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">Ahju capitu</string>
     <!-- Share error message -->
@@ -792,6 +954,10 @@
     <string name="qr_scanner_dialog_negative">RICUSÀ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Site sicuru di vulè squassà %1$s ?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">A squassatura di st’unghjetta squasserà a cullezzione sana. Pudete creà nove cullezzioni à ogni mumentu.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Squassà %1$s ?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Squassà</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -808,14 +974,14 @@
     <string name="preference_accessibility_font_size_title">Dimensione di grafia</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Adattazione autumatica di a dimensione di grafia</string>
+    <string name="preference_accessibility_auto_size_2">Dimensione autumatica di e grafie</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">A dimensione di a grafia currispunderà à e vostre preferenze d’Android. Disattivate st’ozzione per amministrà a dimensione di a grafia.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Squassà i dati di navigazione</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Unghjette aperte</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Unghjette aperte</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d unghjette</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -846,8 +1012,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Squassa autumaticamente i dati di navigazione quandu vi selezziunate « Esce » in u listinu principale</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Squassa autumaticamente i dati di navigazione quandu vi selezziunate « Esce » in u listinu principale</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Crunulogia di navigazione</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Esce</string>
 
@@ -872,15 +1036,16 @@
     <string name="tip_firefox_preview_moved_description">¶
  · Firefox Nightly cambia ogni notte è vene cù nove funzioni esperimentale.¶
  · Sarrimanenti, pò esse menu stabule. Scaricate u nostru navigatore beta per una pratica più stabule.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Ottene u navigatore Mozilla Firefox</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Ottene Firefox for Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly hà cambiatu</string>
 
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description_preview_installed">¶
- · St’appiecazione ùn riciverà più di mudificazione di sicurità. Fermate d’impiegalla è cambiate per u novu Nightly.¶
+ · St’appiecazione ùn riciverà più mudificazione di sicurità. Fermate d’impiegalla è cambiate per u novu Nightly.¶
  · \n\nPer trasferà e vostre indette, identificazioni di cunnessione, è crunulogia ver di un’altra appiecazione, create un contu Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_installed">Cambià ver di u novu Nightly</string>
@@ -889,7 +1054,7 @@
     <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly hà cambiatu</string>
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description_preview_not_installed">¶
- · St’appiecazione ùn riciverà più di mudificazione di sicurità. Ottene u novu Nightly è fermà d’impiegà st’appiecazione.¶
+ · St’appiecazione ùn riciverà più mudificazione di sicurità. Ottene u novu Nightly è fermà d’impiegà st’appiecazione.¶
  · \n\nPer trasferà e vostre indette, identificazioni di cunnessione, è crunulogia ver di un’altra appiecazione, create un contu Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_not_installed">Ottene u novu Nightly</string>
@@ -910,13 +1075,14 @@
     <string name="onboarding_whats_new_description">Avete dumande apprupositu di u rinnovu di %s ? Vulete sapè ciò chì hà cambiatu ?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Truvate risposte quì</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Ottene u più bellu da %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Sincrunizate l’indette, e parolle d’entrata è ancu di più cù u vostru contu Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Sapene di più</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Site cunnettu cum’è %s nant’à un altru navigatore Firefox cù stu telefonu. Vulete cunnettavvi cù stu contu ?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Site cunnettu cum’è %s nant’à un altru navigatore Firefox cù st’apparechju. Vulete cunnettavvi cù stu contu ?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Iè, cunnettatemi</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -930,18 +1096,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Fiascu di cunnessione</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Prutigitevvi</string>
+    <string name="onboarding_tracking_protection_header_2">Rispettu autumaticu di a vita privata</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s vi aiuta à impedisce i siti web di seguitavvi in linea.</string>
+    <string name="onboarding_tracking_protection_description_2">E preferenze di vita privata è di sicurità bloccanu i perseguitatori, prugrammi animosi è sucietà chì vo seguitanu.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Classicu</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Classica (predefinita)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Bluccheghja menu di perseguitatori ma permette à e pagine di caricassi nurmalmente</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Bluccheghja menu di perseguitatori. E pagine si caricanu nurmalmente.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_button">Severu (ricumandatu)</string>
+    <string name="onboarding_tracking_protection_strict_button">Severa (ricumandata)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Severa</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Bluccheghja più di perseguitatori per una prutezzione più forte contr’à u spiunagiu è un andamentu piu rapidu, ma certi siti puderianu ùn micca funziunà currettamente</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Bluccheghja più perseguitatori, publicità è annunzii micca richiesti. E pagine si caricanu più prestu, ma certi siti puderianu ùn micca funziunà currettamente.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -975,7 +1143,7 @@
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Sceglite u vostru tema</string>
+    <string name="onboarding_theme_picker_header">Sciglite u vostru tema</string>
 
     <!-- text for the theme picker onboarding card description -->
     <string name="onboarding_theme_picker_description1">Ecunumizate a vostra batteria è i vostri ochji grazia à u modu scuru.</string>
@@ -1006,6 +1174,8 @@
     <string name="sign_in_with_camera">Cunnettatevi cù u vostru appareghju-fotò</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Impiegà piuttostu un messaghju elettronicu</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Contu, ùn ne avete ? <u>Createne unu</u> per sincrunizà Firefox trà i vostri apparechji.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox ùn si sincruniserà più cù u vostru contu, ma ùn squasserà alcunu datu di navigazione nant’à st’apparechju.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1029,31 +1199,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Sapene di più</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Classica</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Classica (ricumandatu)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Classica (predefinita)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Equilibratu trà a prutezzione è a prestazione.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">E pagine si caricheranu nurmalmente, ma bluccheranu menu di perseguitatori.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Bluccheghja menu perseguitatori. E pagine si caricanu nurmalmente.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ciò chì hè bluccatu da a prutezzione classica contr’à u spiunagiu</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict">Severu</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Severu (predefinitu)</string>
+    <string name="preference_enhanced_tracking_protection_strict">Severa</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Una prutezzione più forte contr’à u spiunagiu è un andamentu piu rapidu, ma certi siti ponu ùn micca funziunà currettamente.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Severu (ricumandatu)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Prutezzione più forte, ma certi siti o cuntenuti puderianu esse alterati.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Bluccheghja più perseguitatori, publicità è annunzii micca richiesti. E pagine si caricanu più prestu, ma certi siti puderianu ùn micca funziunà currettamente.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Ciò chì hè bluccatu da a prutezzione severa contr’à u spiunagiu</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom">Persunalizatu</string>
+    <string name="preference_enhanced_tracking_protection_custom">Persunalizata</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Sceglite i perseguitatori è i scritti à bluccà</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Sciglite i perseguitatori è i scritti à bluccà.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Ciò chì hè bluccatu da a prutezzione persunalizata contr’à u spiunagiu</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1103,7 +1263,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Impedisce u caricamentu di e publicità, video è altri cuntenuti d’urigine esterna à u situ è cuntenendu codice di spiunagiu. Quessu pò affettà certe funzioni di u situ web.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s bluccheghja perseguitatori nant’à stu situ quandu u scudu hè di culore viulettu. Picchichjatellu per sapè qualè sò.</string>
+    <string name="etp_onboarding_cfr_message">Quandu u scudu hè di culore viulettu, vole si dì chì %s hà bluccatu perseguitatori nant’à u situ visitatu. Picchichjate per sapene di più.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">E prutezzioni sò attivate per stu situ</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1123,8 +1283,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliuteche di fonte aperta</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Perseguitatori da ridirezzione</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Squasseghja i canistrelli definiti da ridirezzione ver di siti web cunnisciuti per u spiunagiu.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Assistenza</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Lampate</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Pulitica di cunfidenzialità</string>
 
@@ -1167,7 +1334,7 @@
     <string name="add_to_homescreen_text_placeholder">Nome di l’accurtatoghju</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Hè faciule d’aghjunghje stu situ nant’à u screnu d’accolta di u vostru telefonu per accedeci direttamente è navigà più prestu cum’è s’ella fussi un’appiecazione.</string>
+    <string name="add_to_homescreen_description_2">Hè faciule d’aghjunghje stu situ nant’à u screnu d’accolta di u vostru apparechju per accedeci direttamente è navigà più prestu cum’è s’ella fussi un’appiecazione.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Identificazioni è parolle d’entrata</string>
@@ -1201,6 +1368,8 @@
     <string name="preferences_passwords_exceptions_description_empty">L’identificazioni è parolle d’entrata chì ùn sò micca arregistrate seranu affissate quì.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">L’identificazioni è parolle d’entrata ùn seranu micca arregistrate per sti siti.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Squassà tutte l’eccezzioni</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Circà identificazioni di cunnessione</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1237,10 +1406,16 @@
     <string name="logins_site_copied">Situ cupiatu ver di u preme’papei</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Cupià a parolla d’entrata</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Squassà a parolla d’entrata</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Cupià u nome d’utilizatore</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Squassà u nome d’utilizatore</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Cupià u situ</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Apre u situ in u navigatore</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Affissa a parolla d’entrata</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1250,7 +1425,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Prutigite e vostre identificazioni di cunnessione è parolle d’entrata</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Definite un dissegnu di chjuditura, un codice PIN o una parolla d’entrata per prutege e vostre identificazioni di cunnessione è parolle d’entrata arregistrate s’ellu ci era qualchissia chì accidissi à u vostru apparechju.</string>
+    <string name="logins_warning_dialog_message">Definite un dissegnu di chjusura, un codice PIN o una parolla d’entrata per prutege e vostre identificazioni di cunnessione è parolle d’entrata arregistrate s’ellu ci era qualchissia chì accidissi à u vostru apparechju.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Dopu</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1261,6 +1436,14 @@
     <string name="preference_accessibility_force_enable_zoom">Ingrandamentu per tutti i siti</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Attivà per permette l’ingrandamentu cù dui diti ancu nant’à i siti chì impediscenu stu gestu.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Nome (A à Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Ultimu impiegu</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Listinu di classificazione di l’identificazioni</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Aghjunghje un mutore di ricerca</string>
@@ -1355,8 +1538,80 @@
     <string name="certificate_info_verified_by">Verificatu da : %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Squassà</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Mudificà</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Site sicuru di vulè squassà st’identificazione di cunnessione ?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Squassà</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Ozzioni di l’identificazione</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">U campu di testu mudifichevule per l’indirizzu web di l’identificazione.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">U campu di testu mudifichevule per u nome d’utilizatore di l’identificazione.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">U campu di testu mudifichevule per a parolla d’entrata di l’identificazione.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Arregistrà i cambiamenti di l’identificazione.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Disfà i cambiamenti</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Mudificà</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Parolla d’entrata richiesta</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Ricerca vucale</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Parlate avà</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">L’identificazione di cunnessione cù stu nome d’utilizatore esiste dighjà</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Cunnettate un altru apparechju.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Ci vole à autenticassi torna.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Ci vole à attivà a sincrunizazione di l’unghjette.</string>
+
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Ùn avete alcuna unghjetta aperta in Firefox nant’à i vostri altri apparechji.</string>
+
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Affissate a lista di l’unghjette di i vostri altri apparechji.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Cunnettassi à Sync</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Alcuna unghjetta aperta</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Cunfina di siti principale tocca</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Per aghjunghje un novu situ principale, ci vole à cacciane un’altru. Effettuate una longa incalcata nant’à u situ è selezziunate Caccià.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Iè, aghju capitu</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Affissà i siti visitati aspessu</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Caccià</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Ottene u più bellu da %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Racuglite ciò chì conta per voi</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Gruppate inseme ricerche simile, i siti è l’unghjette per un accessu future più prestu.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Site cunnettu cum’è %s nant’à un altru navigatore Firefox cù stu telefonu. Vulete cunnettavvi cù stu contu ?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Hè faciule d’aghjunghje stu situ nant’à u screnu d’accolta di u vostru telefonu per accedeci direttamente è navigà più prestu cum’è s’ella fussi un’appiecazione.</string>
+
+    </resources>

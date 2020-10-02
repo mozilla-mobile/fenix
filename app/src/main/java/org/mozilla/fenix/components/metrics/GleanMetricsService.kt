@@ -5,16 +5,19 @@
 package org.mozilla.fenix.components.metrics
 
 import android.content.Context
+import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.private.NoExtraKeys
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.AboutPage
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AppTheme
+import org.mozilla.fenix.GleanMetrics.Autoplay
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.ContextMenu
+import org.mozilla.fenix.GleanMetrics.ContextualHintTrackingProtection
 import org.mozilla.fenix.GleanMetrics.CrashReporter
 import org.mozilla.fenix.GleanMetrics.CustomTab
 import org.mozilla.fenix.GleanMetrics.DownloadNotification
@@ -22,29 +25,37 @@ import org.mozilla.fenix.GleanMetrics.ErrorPage
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.FindInPage
 import org.mozilla.fenix.GleanMetrics.History
-import org.mozilla.fenix.GleanMetrics.Library
+import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
+import org.mozilla.fenix.GleanMetrics.MasterPassword
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
+import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingMode
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcut
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.QrScanner
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.SearchSuggestions
 import org.mozilla.fenix.GleanMetrics.SearchWidget
+import org.mozilla.fenix.GleanMetrics.SearchWidgetCfr
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.Tab
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.GleanMetrics.UserSpecifiedSearchEngines
+import org.mozilla.fenix.GleanMetrics.VoiceSearch
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.BrowsersCache
@@ -92,6 +103,14 @@ private val Event.wrapper: EventWrapper<*>?
             { Events.appOpened.record(it) },
             { Events.appOpenedKeys.valueOf(it) }
         )
+        is Event.AppReceivedIntent -> EventWrapper(
+            { Events.appReceivedIntent.record(it) },
+            { Events.appReceivedIntentKeys.valueOf(it) }
+        )
+        is Event.AppAllStartup -> EventWrapper(
+            { Events.appOpenedAllStartup.record(it) },
+            { Events.appOpenedAllStartupKeys.valueOf(it) }
+        )
         is Event.SearchBarTapped -> EventWrapper(
             { Events.searchBarTapped.record(it) },
             { Events.searchBarTappedKeys.valueOf(it) }
@@ -126,8 +145,17 @@ private val Event.wrapper: EventWrapper<*>?
             { SearchShortcuts.selected.record(it) },
             { SearchShortcuts.selectedKeys.valueOf(it) }
         )
-        is Event.ReaderModeAvailable -> EventWrapper<NoExtraKeys>(
-            { ReaderMode.available.record(it) }
+        is Event.LoginDialogPromptDisplayed -> EventWrapper<NoExtraKeys>(
+            { LoginDialog.displayed.record(it) }
+        )
+        is Event.LoginDialogPromptCancelled -> EventWrapper<NoExtraKeys>(
+            { LoginDialog.cancelled.record(it) }
+        )
+        is Event.LoginDialogPromptSave -> EventWrapper<NoExtraKeys>(
+            { LoginDialog.saved.record(it) }
+        )
+        is Event.LoginDialogPromptNeverSave -> EventWrapper<NoExtraKeys>(
+            { LoginDialog.neverSave.record(it) }
         )
         is Event.FindInPageOpened -> EventWrapper<NoExtraKeys>(
             { FindInPage.opened.record(it) }
@@ -213,16 +241,6 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.QRScannerNavigationDenied -> EventWrapper<NoExtraKeys>(
             { QrScanner.navigationDenied.record(it) }
         )
-        is Event.LibraryOpened -> EventWrapper<NoExtraKeys>(
-            { Library.opened.record(it) }
-        )
-        is Event.LibraryClosed -> EventWrapper<NoExtraKeys>(
-            { Library.closed.record(it) }
-        )
-        is Event.LibrarySelectedItem -> EventWrapper(
-            { Library.selectedItem.record(it) },
-            { Library.selectedItemKeys.valueOf(it) }
-        )
         is Event.ErrorPageVisited -> EventWrapper(
             { ErrorPage.visitedError.record(it) },
             { ErrorPage.visitedErrorKeys.valueOf(it) }
@@ -251,7 +269,7 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SyncAuthOtherExternal -> EventWrapper<NoExtraKeys>(
             { SyncAuth.otherExternal.record(it) }
         )
-        is Event.SyncAuthFromShared -> EventWrapper<NoExtraKeys>(
+        is Event.SyncAuthFromSharedReuse, Event.SyncAuthFromSharedCopy -> EventWrapper<NoExtraKeys>(
             { SyncAuth.autoLogin.record(it) }
         )
         is Event.SyncAuthRecovered -> EventWrapper<NoExtraKeys>(
@@ -318,8 +336,14 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.CollectionTabSelectOpened -> EventWrapper<NoExtraKeys>(
             { Collections.tabSelectOpened.record(it) }
         )
+        is Event.ReaderModeAvailable -> EventWrapper<NoExtraKeys>(
+            { ReaderMode.available.record(it) }
+        )
         is Event.ReaderModeOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.opened.record(it) }
+        )
+        is Event.ReaderModeClosed -> EventWrapper<NoExtraKeys>(
+            { ReaderMode.closed.record(it) }
         )
         is Event.ReaderModeAppearanceOpened -> EventWrapper<NoExtraKeys>(
             { ReaderMode.appearance.record(it) }
@@ -464,6 +488,15 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ViewLoginPassword -> EventWrapper<NoExtraKeys>(
             { Logins.viewPasswordLogin.record(it) }
         )
+        is Event.DeleteLogin -> EventWrapper<NoExtraKeys>(
+            { Logins.deleteSavedLogin.record(it) }
+        )
+        is Event.EditLogin -> EventWrapper<NoExtraKeys>(
+            { Logins.openLoginEditor.record(it) }
+        )
+        is Event.EditLoginSave -> EventWrapper<NoExtraKeys>(
+            { Logins.saveEditedLogin.record(it) }
+        )
         is Event.PrivateBrowsingShowSearchSuggestions -> EventWrapper<NoExtraKeys>(
             { SearchSuggestions.enableInPrivate.record(it) }
         )
@@ -481,6 +514,15 @@ private val Event.wrapper: EventWrapper<*>?
             { Logins.saveLoginsSettingChanged.record(it) },
             { Logins.saveLoginsSettingChangedKeys.valueOf(it) }
         )
+        is Event.TopSiteOpenDefault -> EventWrapper<NoExtraKeys>(
+            { TopSites.openDefault.record(it) }
+        )
+        is Event.TopSiteOpenFrecent -> EventWrapper<NoExtraKeys>(
+            { TopSites.openFrecency.record(it) }
+        )
+        is Event.TopSiteOpenPinned -> EventWrapper<NoExtraKeys>(
+            { TopSites.openPinned.record(it) }
+        )
         is Event.TopSiteOpenInNewTab -> EventWrapper<NoExtraKeys>(
             { TopSites.openInNewTab.record(it) }
         )
@@ -490,20 +532,19 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.TopSiteRemoved -> EventWrapper<NoExtraKeys>(
             { TopSites.remove.record(it) }
         )
+        is Event.TopSiteLongPress -> EventWrapper(
+            { TopSites.longPress.record(it) },
+            { TopSites.longPressKeys.valueOf(it) }
+        )
+        is Event.TopSiteSwipeCarousel -> EventWrapper(
+            { TopSites.swipeCarousel.record(it) },
+            { TopSites.swipeCarouselKeys.valueOf(it) }
+        )
         is Event.SupportTapped -> EventWrapper<NoExtraKeys>(
             { AboutPage.supportTapped.record(it) }
         )
         is Event.PrivacyNoticeTapped -> EventWrapper<NoExtraKeys>(
             { AboutPage.privacyNoticeTapped.record(it) }
-        )
-        is Event.RightsTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.rightsTapped.record(it) }
-        )
-        is Event.LicensingTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.licensingTapped.record(it) }
-        )
-        is Event.LibrariesThatWeUseTapped -> EventWrapper<NoExtraKeys>(
-            { AboutPage.librariesTapped.record(it) }
         )
         is Event.PocketTopSiteClicked -> EventWrapper<NoExtraKeys>(
             { Pocket.pocketTopSiteClicked.record(it) }
@@ -518,8 +559,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.AddonsOpenInSettings -> EventWrapper<NoExtraKeys>(
             { Addons.openAddonsInSettings.record(it) }
         )
-        is Event.AddonsOpenInToolbarMenu -> EventWrapper<NoExtraKeys>(
-            { Addons.openAddonInToolbarMenu.record(it) }
+        is Event.AddonsOpenInToolbarMenu -> EventWrapper(
+            { Addons.openAddonInToolbarMenu.record(it) },
+            { Addons.openAddonInToolbarMenuKeys.valueOf(it) }
         )
         is Event.TipDisplayed -> EventWrapper(
             { Tip.displayed.record(it) },
@@ -533,6 +575,137 @@ private val Event.wrapper: EventWrapper<*>?
             { Tip.closed.record(it) },
             { Tip.closedKeys.valueOf(it) }
         )
+        is Event.VoiceSearchTapped -> EventWrapper<NoExtraKeys>(
+            { VoiceSearch.tapped.record(it) }
+        )
+        is Event.SearchWidgetCFRDisplayed -> EventWrapper<NoExtraKeys>(
+            { SearchWidgetCfr.displayed.record(it) }
+        )
+        is Event.SearchWidgetCFRCanceled -> EventWrapper<NoExtraKeys>(
+            { SearchWidgetCfr.canceled.record(it) }
+        )
+        is Event.SearchWidgetCFRNotNowPressed -> EventWrapper<NoExtraKeys>(
+            { SearchWidgetCfr.notNowPressed.record(it) }
+        )
+        is Event.SearchWidgetCFRAddWidgetPressed -> EventWrapper<NoExtraKeys>(
+            { SearchWidgetCfr.addWidgetPressed.record(it) }
+        )
+        is Event.TabCounterMenuItemTapped -> EventWrapper(
+            { Events.tabCounterMenuAction.record(it) },
+            { Events.tabCounterMenuActionKeys.valueOf(it) }
+        )
+        is Event.OnboardingWhatsNew -> EventWrapper<NoExtraKeys>(
+            { Onboarding.whatsNew.record(it) }
+        )
+        is Event.OnboardingPrivateBrowsing -> EventWrapper<NoExtraKeys>(
+            { Onboarding.prefToggledPrivateBrowsing.record(it) }
+        )
+        is Event.OnboardingPrivacyNotice -> EventWrapper<NoExtraKeys>(
+            { Onboarding.privacyNotice.record(it) }
+        )
+        is Event.OnboardingManualSignIn -> EventWrapper<NoExtraKeys>(
+            { Onboarding.fxaManualSignin.record(it) }
+        )
+        is Event.OnboardingAutoSignIn -> EventWrapper<NoExtraKeys>(
+            { Onboarding.fxaAutoSignin.record(it) }
+        )
+        is Event.OnboardingFinish -> EventWrapper<NoExtraKeys>(
+            { Onboarding.finish.record(it) }
+        )
+        is Event.OnboardingTrackingProtection -> EventWrapper(
+            { Onboarding.prefToggledTrackingProt.record(it) },
+            { Onboarding.prefToggledTrackingProtKeys.valueOf(it) }
+        )
+        is Event.OnboardingThemePicker -> EventWrapper(
+            { Onboarding.prefToggledThemePicker.record(it) },
+            { Onboarding.prefToggledThemePickerKeys.valueOf(it) }
+        )
+        is Event.OnboardingToolbarPosition -> EventWrapper(
+            { Onboarding.prefToggledToolbarPosition.record(it) },
+            { Onboarding.prefToggledToolbarPositionKeys.valueOf(it) }
+        )
+
+        is Event.ContextualHintETPDisplayed -> EventWrapper<NoExtraKeys>(
+            { ContextualHintTrackingProtection.display.record(it) }
+        )
+
+        is Event.ContextualHintETPDismissed -> EventWrapper<NoExtraKeys>(
+            { ContextualHintTrackingProtection.dismiss.record(it) }
+        )
+
+        is Event.ContextualHintETPInsideTap -> EventWrapper<NoExtraKeys>(
+            { ContextualHintTrackingProtection.insideTap.record(it) }
+        )
+
+        is Event.ContextualHintETPOutsideTap -> EventWrapper<NoExtraKeys>(
+            { ContextualHintTrackingProtection.outsideTap.record(it) }
+        )
+
+        is Event.TabsTrayOpened -> EventWrapper<NoExtraKeys>(
+            { TabsTray.opened.record(it) }
+        )
+        is Event.TabsTrayClosed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closed.record(it) }
+        )
+        is Event.OpenedExistingTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.openedExistingTab.record(it) }
+        )
+        is Event.ClosedExistingTab -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closedExistingTab.record(it) }
+        )
+        is Event.TabsTrayPrivateModeTapped -> EventWrapper<NoExtraKeys>(
+            { TabsTray.privateModeTapped.record(it) }
+        )
+        is Event.TabsTrayNormalModeTapped -> EventWrapper<NoExtraKeys>(
+            { TabsTray.normalModeTapped.record(it) }
+        )
+        is Event.NewTabTapped -> EventWrapper<NoExtraKeys>(
+            { TabsTray.newTabTapped.record(it) }
+        )
+        is Event.NewPrivateTabTapped -> EventWrapper<NoExtraKeys>(
+            { TabsTray.newPrivateTabTapped.record(it) }
+        )
+        is Event.TabsTrayMenuOpened -> EventWrapper<NoExtraKeys>(
+            { TabsTray.menuOpened.record(it) }
+        )
+        is Event.TabsTraySaveToCollectionPressed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.saveToCollection.record(it) }
+        )
+        is Event.TabsTrayShareAllTabsPressed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.shareAllTabs.record(it) }
+        )
+        is Event.TabsTrayCloseAllTabsPressed -> EventWrapper<NoExtraKeys>(
+            { TabsTray.closeAllTabs.record(it) }
+        )
+        Event.AutoPlaySettingVisited -> EventWrapper<NoExtraKeys>(
+            { Autoplay.visitedSetting.record(it) }
+        )
+        is Event.AutoPlaySettingChanged -> EventWrapper(
+            { Autoplay.settingChanged.record(it) },
+            { Autoplay.settingChangedKeys.valueOf(it) }
+        )
+        is Event.ProgressiveWebAppOpenFromHomescreenTap -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.homescreenTap.record(it) }
+        )
+        is Event.ProgressiveWebAppInstallAsShortcut -> EventWrapper<NoExtraKeys>(
+            { ProgressiveWebApp.installTap.record(it) }
+        )
+        is Event.ProgressiveWebAppForeground -> EventWrapper(
+            { ProgressiveWebApp.foreground.record(it) },
+            { ProgressiveWebApp.foregroundKeys.valueOf(it) }
+        )
+        is Event.ProgressiveWebAppBackground -> EventWrapper(
+            { ProgressiveWebApp.background.record(it) },
+            { ProgressiveWebApp.backgroundKeys.valueOf(it) }
+        )
+
+        Event.MasterPasswordMigrationDisplayed -> EventWrapper<NoExtraKeys>(
+            { MasterPassword.displayed.record(it) }
+        )
+        Event.MasterPasswordMigrationSuccess -> EventWrapper<NoExtraKeys>(
+            { MasterPassword.migration.record(it) }
+        )
+
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
         is Event.OpenedBookmark -> null
@@ -541,6 +714,9 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ClearedPrivateData -> null
         is Event.DismissedOnboarding -> null
         is Event.FennecToFenixMigrated -> null
+        is Event.AddonInstalled -> null
+        is Event.SearchWidgetInstalled -> null
+        is Event.ChangedToDefaultBrowser -> null
     }
 
 class GleanMetricsService(private val context: Context) : MetricsService {
@@ -550,7 +726,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
     private var initialized = false
 
     private val activationPing = ActivationPing(context)
-    private val installationPing = InstallationPing(context)
+    private val installationPing = FirstSessionPing(context)
 
     override fun start() {
         logger.debug("Enabling Glean.")
@@ -562,7 +738,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
         // The code below doesn't need to execute immediately, so we'll add them to the visual
         // completeness task queue to be run later.
-        context.components.performance.visualCompletenessQueue.runIfReadyOrQueue {
+        context.components.performance.visualCompletenessQueue.queue.runIfReadyOrQueue {
             // We have to initialize Glean *on* the main thread, because it registers lifecycle
             // observers. However, the activation ping must be sent *off* of the main thread,
             // because it calls Google ad APIs that must be called *off* of the main thread.
@@ -577,6 +753,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
     }
 
     internal fun setStartupMetrics() {
+        setPreferenceMetrics()
         Metrics.apply {
             defaultBrowser.set(BrowsersCache.all(context).isDefaultBrowser)
             MozillaProductDetector.getMozillaBrowserDefault(context)?.also {
@@ -588,6 +765,15 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             adjustAdGroup.set(context.settings().adjustAdGroup)
             adjustCreative.set(context.settings().adjustCreative)
             adjustNetwork.set(context.settings().adjustNetwork)
+
+            searchWidgetInstalled.set(context.settings().searchWidgetInstalled)
+
+            val openTabsCount = context.settings().openTabsCount
+            hasOpenTabs.set(openTabsCount > 0)
+            if (openTabsCount > 0) {
+                tabsOpenCount.add(openTabsCount)
+            }
+
             val topSitesSize = context.settings().topSitesSize
             hasTopSites.set(topSitesSize > 0)
             if (topSitesSize > 0) {
@@ -595,10 +781,9 @@ class GleanMetricsService(private val context: Context) : MetricsService {
             }
 
             toolbarPosition.set(
-                if (context.settings().shouldUseBottomToolbar) {
-                    Event.ToolbarPositionChanged.Position.BOTTOM.name
-                } else {
-                    Event.ToolbarPositionChanged.Position.TOP.name
+                when (context.settings().toolbarPosition) {
+                    ToolbarPosition.BOTTOM -> Event.ToolbarPositionChanged.Position.BOTTOM.name
+                    ToolbarPosition.TOP -> Event.ToolbarPositionChanged.Position.TOP.name
                 }
             )
         }
@@ -619,6 +804,86 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         installationPing.checkAndSend()
     }
 
+    private fun setPreferenceMetrics() {
+        // We purposefully make all of our preferences the string_list format to make data analysis
+        // simpler. While it makes things like booleans a bit more complicated, it means all our
+        // preferences can be analyzed with the same dashboard and compared.
+        Preferences.apply {
+            showSearchSuggestions.set(context.settings().shouldShowSearchSuggestions.toStringList())
+            remoteDebugging.set(context.settings().isRemoteDebuggingEnabled.toStringList())
+            telemetry.set(context.settings().isTelemetryEnabled.toStringList())
+            searchBrowsingHistory.set(context.settings().shouldShowHistorySuggestions.toStringList())
+            searchBookmarks.set(context.settings().shouldShowBookmarkSuggestions.toStringList())
+            showClipboardSuggestions.set(context.settings().shouldShowClipboardSuggestions.toStringList())
+            showSearchShortcuts.set(context.settings().shouldShowSearchShortcuts.toStringList())
+            openLinksInAPrivateTab.set(context.settings().openLinksInAPrivateTab.toStringList())
+            searchSuggestionsPrivate.set(context.settings().shouldShowSearchSuggestionsInPrivate.toStringList())
+            showVoiceSearch.set(context.settings().shouldShowVoiceSearch.toStringList())
+            openLinksInApp.set(context.settings().openLinksInExternalApp.toStringList())
+
+            val isLoggedIn =
+                context.components.backgroundServices.accountManager.accountProfile() != null
+            sync.set(isLoggedIn.toStringList())
+
+            val syncedItems = SyncEnginesStorage(context).getStatus().entries.filter {
+                it.value
+            }.map { it.key.nativeName }
+
+            syncItems.set(syncedItems)
+
+            val toolbarPositionSelection =
+                if (context.settings().shouldUseFixedTopToolbar) {
+                    "fixed_top"
+                } else if (context.settings().shouldUseBottomToolbar) {
+                    "bottom"
+                } else {
+                    "top"
+                }
+
+            toolbarPosition.set(listOf(toolbarPositionSelection))
+
+            val etpSelection =
+                if (!context.settings().shouldUseTrackingProtection) {
+                    ""
+                } else if (context.settings().useStandardTrackingProtection) {
+                    "standard"
+                } else if (context.settings().useStrictTrackingProtection) {
+                    "strict"
+                } else if (context.settings().useCustomTrackingProtection) {
+                    "custom"
+                } else {
+                    ""
+                }
+
+            trackingProtection.set(listOf(etpSelection))
+
+            val accessibilitySelection = mutableListOf<String>()
+
+            if (context.settings().switchServiceIsEnabled) { accessibilitySelection.add("switch") }
+
+            if (context.settings().touchExplorationIsEnabled) {
+                accessibilitySelection.add("touch exploration")
+            }
+
+            accessibilityServices.set(accessibilitySelection.toList())
+
+            val themeSelection =
+                if (context.settings().shouldUseLightTheme) {
+                    "light"
+                } else if (context.settings().shouldUseDarkTheme) {
+                    "dark"
+                } else if (context.settings().shouldFollowDeviceTheme) {
+                    "system"
+                } else if (context.settings().shouldUseAutoBatteryTheme) {
+                    "battery"
+                } else {
+                    ""
+                }
+
+            theme.set(listOf(themeSelection))
+        }
+    }
+
     override fun stop() {
         Glean.setUploadEnabled(false)
     }
@@ -630,4 +895,9 @@ class GleanMetricsService(private val context: Context) : MetricsService {
     override fun shouldTrack(event: Event): Boolean {
         return event.wrapper != null
     }
+}
+
+// Helper function for making our booleans fit into the string list formatting
+fun Boolean.toStringList(): List<String> {
+    return listOf(this.toString())
 }

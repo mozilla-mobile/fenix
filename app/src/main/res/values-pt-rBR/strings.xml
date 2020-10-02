@@ -13,10 +13,39 @@
     <string name="content_description_disable_private_browsing_button">Desativar navegação privativa</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Pesquise ou digite um endereço</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Nenhuma aba aberta</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Suas abas abertas serão mostradas aqui.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Suas abas privativas são mostradas aqui.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 aba aberta. Toque para alternar abas.</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s abas abertas. Toque para alternar abas.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d selecionadas</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Nova coleção</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Nome</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Selecionar coleção</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Sair do modo de seleção múltipla</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Salvar abas selecionadas em coleção</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">%1$s selecionada</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s não selecionada</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Saiu do modo de seleção múltipla</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Entrou no modo de seleção múltipla, selecione abas para salvar em uma coleção</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Selecionada</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">O %1$s é produzido pela Mozilla.</string>
@@ -33,13 +62,44 @@
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Excluir sessão</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Adiciona um atalho na tela inicial para abrir abas privativas.</string>
+    <string name="cfr_message">Adicione um atalho na tela inicial para abrir abas privativas.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Adicionar atalho</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Não, obrigado</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Acesse o Firefox mais rápido. Adicione um widget à tela inicial.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Adicionar widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Agora não</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Você pode configurar o Firefox para abrir links automaticamente em aplicativos.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Ir para configurações</string>
+
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Descartar</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">É necessário acesso à câmera. Use as configurações do Android para mudar as permissões para permitir acesso.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Ir para configurações</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Descartar</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Defina fechar automaticamente as abas abertas que não foram vistas no último dia, semana ou mês.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Ver opções</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Descartar</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -80,9 +140,13 @@
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Site do desktop</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
-    <string name="browser_menu_add_to_homescreen">Adicionar à tela inicial</string>
+    <string name="browser_menu_add_to_homescreen">Adicionar à tela</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Instalar</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Abas sincronizadas</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Ressincronizar</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Procurar na página</string>
     <!-- Browser menu button that creates a private tab -->
@@ -91,8 +155,6 @@
     <string name="browser_menu_new_tab">Nova aba</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Salvar em coleção</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Relatar problema</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Compartilhar</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -107,8 +169,10 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Com tecnologia %1$s</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Leitor</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Fechar leitor</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Abrir em aplicativo</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -132,14 +196,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Digitalizar</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Atalhos</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Mecanismo de pesquisa</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
-    <string name="search_shortcuts_engine_settings">Configurações do mecanismo de pesquisa</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Pesquisar com</string>
+    <string name="search_shortcuts_engine_settings">Configurações de mecanismos de pesquisa</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Desta vez, pesquisar com:</string>
+    <string name="search_engines_search_with">Desta vez, pesquisar com:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Usar link da área de transferência</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -205,9 +267,11 @@
     <!-- Preference for private browsing options -->
     <string name="preferences_private_browsing_options">Navegação privativa</string>
     <!-- Preference for opening links in a private tab-->
-    <string name="preferences_open_links_in_a_private_tab">Abrir links em uma aba privativa</string>
+    <string name="preferences_open_links_in_a_private_tab">Abrir links em abas privativas</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Permitir capturas de tela na navegação privativa</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Se permitido, as abas privativas também ficam visíveis quando vários aplicativos estão abertos</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Adicionar atalho para navegação privativa</string>
     <!-- Preference for accessibility -->
@@ -226,6 +290,10 @@
     <string name="preferences_toolbar">Barra de ferramentas</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Tela inicial</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Gestos</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Personalizar</string>
     <!-- Preference description for banner about signing in -->
@@ -246,10 +314,12 @@
     <string name="developer_tools_category">Ferramentas do desenvolvedor</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Depuração remota via USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Mostrar atalhos de pesquisa</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Mostrar mecanismos de pesquisa</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Mostrar sugestões de pesquisa</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Mostrar pesquisa por voz</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Mostrar em sessões privativas</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -258,13 +328,22 @@
     <string name="preferences_search_browsing_history">Pesquisar no histórico de navegação</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Pesquisar nos favoritos</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Pesquisar em abas sincronizadas</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Configurações da conta</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Completar URLs automaticamente</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Abrir links em aplicativos</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Gerenciador de downloads externo</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Extensões</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Notificações</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -277,6 +356,8 @@
     <string name="preferences_sync_bookmarks">Favoritos</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Contas de acesso</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Abas abertas</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Desconectar</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -347,7 +428,7 @@
     <string name="preference_experiments">Experimentos</string>
 
     <!-- Summary for experiments preferences -->
-    <string name="preference_experiments_summary">Permite que o Mozilla instale e colete dados para recursos experimentais</string>
+    <string name="preference_experiments_summary">Permitir que a Mozilla instale e colete dados para recursos experimentais</string>
     <!-- Preference switch for crash reporter -->
     <string name="preferences_crash_reporter">Relator de travamentos</string>
     <!-- Preference switch for Mozilla location service -->
@@ -369,7 +450,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Visite <b>firefox.com/pair</b> no Firefox no seu computador para obter seu código QR.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Digitalize o código QR exibido em <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Abrir câmera</string>
     <!-- Button to cancel pairing -->
@@ -391,6 +472,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Acompanhar tema do dispositivo</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Puxe para atualizar</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Deslize para ocultar a barra de ferramentas</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Deslize a barra de ferramentas para o lado para mudar de aba</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Deslize a barra de ferramentas para cima para abrir abas</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessões</string>
@@ -410,18 +501,43 @@
     <string name="library_desktop_bookmarks_unfiled">Outros favoritos</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Histórico</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Abas sincronizadas</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Lista de leitura</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Pesquisa</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Biblioteca</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Configurações</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Menu de item do histórico</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Fechar</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Abas fechadas recentemente</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Mostrar todo o histórico</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d abas</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d aba</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Nenhuma aba fechada recentemente aqui</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Fechar abas</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Manualmente</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Após um dia</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Após uma semana</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Após um mês</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -432,6 +548,30 @@
     <string name="tabs_header_private_tabs_title">Abas privativas</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Adicionar aba</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Adicionar aba privativa</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Privativa</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Abas abertas</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Salvar em coleção</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Compartilhar todas as abas</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Abas fechadas recentemente</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Configurações de abas</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Fechar todas as abas</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Nova aba</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Início</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Alternar modo de aba</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Remover aba da coleção</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Fechar aba</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -443,7 +583,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Compartilhar abas</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Salvar em uma coleção</string>
+    <string name="tabs_menu_save_to_collection1">Salvar abas em coleção</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Menu de abas</string>
     <!-- Tab menu item to share the tab -->
@@ -468,11 +608,19 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Remover</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Excluir do histórico</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (modo privativo)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Salvar</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Limpar histórico</string>
     <!-- Text for the dialog to confirm clearing all history -->
-    <string name="history_delete_all_dialog">Tem certeza que deseja limpar seu histórico?</string>
+    <string name="history_delete_all_dialog">Tem certeza que quer limpar o histórico?</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
     <string name="history_delete_multiple_items_snackbar">Histórico excluído</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
@@ -506,6 +654,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Nenhum histórico aqui</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Nenhum download aqui</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d selecionados</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Desculpe. O %1$s não pode carregar essa página.</string>
@@ -532,7 +687,9 @@
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Selecionar pasta</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
-    <string name="bookmark_delete_folder_confirmation_dialog">Tem certeza que deseja excluir esta pasta?</string>
+    <string name="bookmark_delete_folder_confirmation_dialog">Tem certeza que quer excluir esta pasta?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">O %s excluirá os itens selecionados.</string>
     <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
     <string name="bookmark_delete_folder_snackbar">%1$s excluída</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -587,8 +744,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">Excluiu %1$s</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Favoritos excluídos</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Excluindo pastas selecionadas</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">DESFAZER</string>
 
@@ -641,7 +800,7 @@
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Bloquear áudio e vídeo apenas em rede móvel</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
-    <string name="preference_option_autoplay_allowed_wifi_subtext">Áudio e vídeo são reproduzidos em Wi-Fi</string>
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Áudio e vídeo só são reproduzidos automaticamente se o dispositivo estiver conectado a uma rede Wi-Fi</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Bloquear apenas áudio</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
@@ -652,16 +811,12 @@
     <string name="delete_browsing_data_quit_off">Desativado</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Colete as coisas que são importantes para você. Para começar, salve abas abertas em uma nova coleção.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Coleções</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Menu de coleções</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Nenhuma coleção</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Suas coleções serão mostradas aqui.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Reúna o que é importante para você.\nAgrupe pesquisas, sites e abas semelhantes para acesso rápido mais tarde.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Selecionar abas</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -685,12 +840,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d aba selecionada</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Abas salvas!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Coleção salva!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Aba salva!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Fechar</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Salvar</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Ver</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Coleção %d</string>
@@ -785,7 +945,11 @@
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">NEGAR</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
-    <string name="tab_collection_dialog_message">Tem certeza que deseja excluir %1$s?</string>
+    <string name="tab_collection_dialog_message">Tem certeza que quer excluir %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Excluir esta aba também excluirá toda a coleção. Você pode criar novas coleções quando quiser.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Excluir %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Excluir</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -804,14 +968,14 @@
     <string name="preference_accessibility_font_size_title">Tamanho das fontes</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Dimensionamento automático de fontes</string>
+    <string name="preference_accessibility_auto_size_2">Dimensionamento automático de fontes</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size_summary">Usar a configuração do Android de tamanho de fonte de caracteres. Desative para definir aqui o tamanho.</string>
+    <string name="preference_accessibility_auto_size_summary">Usar a configuração do Android de tamanho de fontes de caracteres. Desative para definir aqui o tamanho.</string>
 
     <!-- Title for the Delete browsing data preference -->
-    <string name="preferences_delete_browsing_data">Excluir dados de navegação</string>
+    <string name="preferences_delete_browsing_data">Limpar dados de navegação</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Abas abertas</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Abas abertas</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d abas</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -836,15 +1000,13 @@
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">Permissões de sites</string>
     <!-- Text for the button to delete browsing data -->
-    <string name="preferences_delete_browsing_data_button">Excluir dados de navegação</string>
+    <string name="preferences_delete_browsing_data_button">Limpar dados de navegação</string>
     <!-- Title for the Delete browsing data on quit preference -->
-    <string name="preferences_delete_browsing_data_on_quit">Excluir dados de navegação ao sair</string>
+    <string name="preferences_delete_browsing_data_on_quit">Limpar dados de navegação ao sair</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">Excluir dados de navegação automaticamente ao selecionar &quot;Sair&quot; no menu principal.</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Excluir automaticamente os dados de navegação quando você selecionar \&quot;Sair\&quot; no menu principal.</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Histórico de navegação</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Sair</string>
 
@@ -867,8 +1029,9 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">O Firefox Nightly é atualizado toda noite e tem novos recursos experimentais.
         No entanto, pode ser menos estável. Instale nosso navegador beta se quiser uma experiência de uso mais estável.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Instale o navegador Mozilla Firefox</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Instale o Firefox Beta para Android</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">O Firefox Nightly mudou</string>
@@ -902,13 +1065,14 @@
     <string name="onboarding_whats_new_description">Tem dúvidas sobre o %s reprojetado? Quer saber o que mudou?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Obtenha respostas aqui</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Aproveite ao máximo o %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Comece a sincronizar favoritos, senhas e muito mais com sua Conta Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Saiba mais</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Você está conectado como %s em outro navegador Firefox neste celular. Deseja entrar com esta conta?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Você está conectado como %s em outro navegador Firefox neste dispositivo. Quer entrar com esta conta?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Sim, entrar</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -922,40 +1086,40 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Falha ao entrar</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Proteja-se</string>
+    <string name="onboarding_tracking_protection_header_2">Privacidade automática</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">O %s ajuda a impedir que sites rastreiem você online.</string>
+    <string name="onboarding_tracking_protection_description_2">As configurações de privacidade e segurança bloqueiam rastreadores, código malicioso (malware) e empresas que seguem você.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Padrão</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Padrão (predefinido)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Bloqueia menos rastreadores, mas permite que páginas sejam carregadas normalmente</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Bloqueia menos rastreadores. As páginas são carregadas normalmente.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Rigoroso (recomendado)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Rigoroso</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Bloqueia mais rastreadores para melhor proteção e desempenho, mas pode fazer com que alguns sites não funcionem corretamente</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Bloqueia mais rastreadores, anúncios e notificações. As páginas são carregadas mais rápido, mas algumas coisas podem não funcionar.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
     <string name="onboarding_toolbar_position_header">Escolha uma posição</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_position_description">Experimente navegar com apenas uma mão, usando a barra de ferramentas embaixo, ou a mova para o alto.</string>
+    <string name="onboarding_toolbar_position_description">Experimente navegar usando apenas uma mão com a barra de ferramentas embaixo, ou a mova para o alto.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">Navegue com privacidade</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
-    <string name="onboarding_private_browsing_description1">Para abrir uma aba privativa só uma vez: Toque no ícone %s.</string>
+    <string name="onboarding_private_browsing_description1">Para abrir manualmente uma aba privativa, toque no ícone %s.</string>
     <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
-    <string name="onboarding_private_browsing_always_description">Para abrir abas privativas todas as vezes: Mude a configuração da navegação privativa.</string>
+    <string name="onboarding_private_browsing_always_description">Para sempre abrir abas privativas, mude as configurações de navegação privativa.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
     <string name="onboarding_private_browsing_button">Abrir configurações</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">Sua privacidade</string>
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_privacy_notice_description">Projetamos o %s para lhe dar o controle sobre o que você compartilha
-        online e o que compartilha conosco.
-    </string>
+    <string name="onboarding_privacy_notice_description">Projetamos o %s para lhe dar o controle sobre o que você compartilha online e o que compartilha conosco.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Leia nosso aviso de privacidade</string>
 
@@ -970,7 +1134,7 @@
     <string name="onboarding_theme_picker_header">Escolha um tema</string>
 
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description1">Se quiser economizar bateria e poupar sua visão, use o modo escuro.</string>
+    <string name="onboarding_theme_picker_description1">Se quiser poupar sua vista e economizar bateria, use o modo escuro.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Automático</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -999,6 +1163,8 @@
     <string name="sign_in_with_camera">Entre com sua câmera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Usar e-mail</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Não tem conta? <u>Crie uma</u> para sincronizar o Firefox entre dispositivos.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">O Firefox deixará de sincronizar com sua conta, mas não excluirá seus dados de navegação neste dispositivo.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1023,33 +1189,23 @@
     <string name="preference_enhanced_tracking_protection_explanation">Mantenha seus dados consigo. O %s lhe protege de muitos dos rastreadores mais comuns que seguem o que você faz online.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Saiba mais</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Padrão</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Padrão (recomendado)</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Balanceado entre proteção e desempenho.</string>
 
+    <!-- Preference for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Padrão (predefinido)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">As páginas são carregadas normalmente, mas bloqueia menos rastreadores.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Bloqueia menos rastreadores. As páginas são carregadas normalmente.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">O que é bloqueado pela proteção padrão contra rastreamento</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Rigoroso</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Rigoroso (predefinido)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Proteção mais forte contra rastreamento e desempenho mais rápido, mas alguns sites podem não funcionar corretamente.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Rigoroso (recomendado)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Proteção reforçada, mas pode atrapalhar alguns sites ou conteúdos.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Bloqueia mais rastreadores, anúncios e notificações. As páginas são carregadas mais rápido, mas algumas coisas podem não funcionar.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">O que é bloqueado pela proteção rigorosa contra rastreamento</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Personalizado</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Escolha que rastreadores e scripts bloquear.</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Escolha que rastreadores e scripts bloquear.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">O que é bloqueado pela proteção personalizada contra rastreamento</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1098,9 +1254,9 @@
     <string name="etp_tracking_content_title">Conteúdo de rastreamento</string>
 
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_tracking_content_description">Impede o carregamento de anúncios, vídeos e outros conteúdos externos que contenham código de rastreamento. Pode afetar funcionalidades de alguns sites.</string>
+    <string name="etp_tracking_content_description">Impede o carregamento de anúncios, vídeos e outros conteúdos externos que contêm código de rastreamento. Pode afetar funcionalidades de alguns sites.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">O escudo fica roxo para indicar que o %s está bloqueando rastreadores neste site. Toque no escudo para ver o que foi bloqueado.</string>
+    <string name="etp_onboarding_cfr_message">Quando o escudo fica roxo, indica que o %s bloqueou rastreadores no site. Toque no escudo para ver mais informações.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">As proteções estão ATIVADAS neste site</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1120,8 +1276,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliotecas de código aberto</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Rastreadores de redirecionamento</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Limpa cookies definidos por redirecionamento de sites de rastreamento conhecidos.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Suporte</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Travamentos</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Aviso de privacidade</string>
     <!-- About page link text to open know your rights link -->
@@ -1163,7 +1326,7 @@
     <string name="add_to_homescreen_text_placeholder">Nome do atalho</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Você pode facilmente adicionar este site à tela inicial do celular para ter acesso imediato e navegar mais rápido com uma experiência semelhante a um aplicativo.</string>
+    <string name="add_to_homescreen_description_2">Você pode facilmente adicionar este site à tela inicial do dispositivo para ter acesso imediato e navegar mais rápido com uma experiência semelhante a um aplicativo.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Contas e senhas</string>
@@ -1197,6 +1360,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Contas e senhas que não são salvas são mostradas aqui.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Contas e senhas desses sites não serão salvas.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Excluir todas as exceções</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Pesquisar contas</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1231,10 +1396,16 @@
     <string name="logins_site_copied">Site copiado para a área de transferência</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Copiar senha</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Limpar senha</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Copiar nome de usuário</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Limpar nome de usuário</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Copiar site</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Abrir site no navegador</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Exibir senha</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1256,6 +1427,13 @@
     <string name="preference_accessibility_force_enable_zoom">Zoom em todos os sites</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Ativar permite zoom com movimento de pinça com dois dedos, mesmo em sites que tentam impedir esse gesto.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Nome (A-Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Data de uso</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Menu de ordenação de contas</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Adicionar mecanismo de pesquisa</string>
@@ -1330,17 +1508,17 @@
     <!-- Label that indicates a site is using a insecure connection -->
     <string name="quick_settings_sheet_insecure_connection">Conexão não segura</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for all sites-->
-    <string name="confirm_clear_permissions_on_all_sites">Tem certeza que deseja limpar todas as permissões de todos os sites?</string>
+    <string name="confirm_clear_permissions_on_all_sites">Tem certeza que quer limpar todas as permissões de todos os sites?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
-    <string name="confirm_clear_permissions_site">Tem certeza que deseja limpar todas as permissões deste site?</string>
+    <string name="confirm_clear_permissions_site">Tem certeza que quer limpar todas as permissões deste site?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
-    <string name="confirm_clear_permission_site">Tem certeza que deseja limpar esta permissão deste site?</string>
+    <string name="confirm_clear_permission_site">Tem certeza que quer limpar esta permissão deste site?</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">Nenhuma exceção de sites</string>
     <!-- Label for the Pocket default top site -->
     <string name="pocket_top_articles">Artigos populares</string>
     <!-- Bookmark deletion confirmation -->
-    <string name="bookmark_deletion_confirmation">Tem certeza que deseja excluir este favorito?</string>
+    <string name="bookmark_deletion_confirmation">Tem certeza que quer excluir este favorito?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
     <string name="browser_menu_add_to_top_sites">Adicionar preferido</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
@@ -1348,8 +1526,79 @@
     <string name="certificate_info_verified_by">Homologado por: %1$s </string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Excluir</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Editar</string>
     <!-- Message in delete confirmation dialog for logins -->
-    <string name="login_deletion_confirmation">Tem certeza de que deseja excluir esta conta?</string>
+    <string name="login_deletion_confirmation">Tem certeza que quer excluir esta conta?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Excluir</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Opções da conta</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">O campo de texto editável do endereço web da conta.</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">O campo de texto editável do nome de usuário da conta.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">O campo de texto editável da senha da conta.</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Salvar alterações na conta.</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Descartar alterações</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Editar</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">A senha é obrigatória</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Pesquisa por voz</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Fale agora</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Já existe uma conta com este nome de usuário</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Conecte outro dispositivo.</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Autentique novamente.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Ative a sincronização de abas.</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Você não tem nenhuma aba aberta no Firefox em outros dispositivos.</string>
+
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Veja uma lista de abas de seus outros dispositivos.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Entrar para sincronizar</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Nenhuma aba aberta</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Atingiu o limite de sites preferidos</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Para adicionar mais um site preferido, remova outro. Mantenha o dedo sobre o site e selecione remover.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">OK, entendi</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Mostrar os sites mais visitados</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Remover</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Aproveite ao máximo o %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Reúna o que é importante para você</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Agrupe pesquisas, sites e abas semelhantes para acesso rápido mais tarde.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Você está conectado como %s em outro navegador Firefox neste celular. Quer entrar com esta conta?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Você pode facilmente adicionar este site à tela inicial do celular para ter acesso imediato e navegar mais rápido com uma experiência semelhante a um aplicativo.</string>
+
+    </resources>

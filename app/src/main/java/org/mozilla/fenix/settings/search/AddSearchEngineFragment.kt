@@ -14,7 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,19 +28,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
-class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
+class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
+    CompoundButton.OnCheckedChangeListener {
     private var availableEngines: List<SearchEngine> = listOf()
     private var selectedIndex: Int = -1
     private val engineViews = mutableListOf<View>()
@@ -59,14 +61,6 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         }
 
         selectedIndex = if (availableEngines.isEmpty()) CUSTOM_INDEX else FIRST_INDEX
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_search_engine, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,25 +95,21 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
 
         toggleCustomForm(selectedIndex == CUSTOM_INDEX)
 
-        custom_search_engines_learn_more.increaseTapArea(DPS_TO_INCREASE)
         custom_search_engines_learn_more.setOnClickListener {
-            requireContext().let { context ->
-                val intent = SupportUtils.createCustomTabIntent(
-                    context,
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
-                    )
-                )
-                startActivity(intent)
-            }
+            (activity as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                    requireContext(),
+                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                ),
+                newTab = true,
+                from = BrowserDirection.FromAddSearchEngineFragment
+            )
         }
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).title = getString(R.string.search_engine_add_custom_search_engine_title)
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary().show()
+        showToolbar(getString(R.string.search_engine_add_custom_search_engine_title))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -274,7 +264,7 @@ class AddSearchEngineFragment : Fragment(), CompoundButton.OnCheckedChangeListen
         res: Resources
     ): View {
         val wrapper = layoutInflater
-            .inflate(R.layout.search_engine_radio_button, null) as ConstraintLayout
+            .inflate(R.layout.search_engine_radio_button, null) as LinearLayout
         wrapper.setOnClickListener { wrapper.radio_button.isChecked = true }
         wrapper.radio_button.setOnCheckedChangeListener(this)
         wrapper.engine_text.text = engine.name

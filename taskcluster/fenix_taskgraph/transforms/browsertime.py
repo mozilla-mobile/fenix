@@ -30,9 +30,10 @@ def add_variants(config, tasks):
         if build_type not in only_types:
             continue
 
-        for abi, apk_path in dep_task.attributes["apks"].items():
+        for abi, apk_metadata in dep_task.attributes["apks"].items():
             if abi not in only_abis:
                 continue
+            apk_path = apk_metadata["name"]
             for test in tests:
                 test = copy.deepcopy(test)
                 attributes = copy.deepcopy(dep_task.attributes)
@@ -94,7 +95,13 @@ def build_browsertime_task(config, tasks):
         run_visual_metrics = task.pop("run-visual-metrics", False)
         if run_visual_metrics:
             task["run"]["command"].append("--browsertime-video")
+            task["run"]["command"].append("--browsertime-no-ffwindowrecorder")
             task["attributes"]["run-visual-metrics"] = True
+
+        # taskcluster is merging task attributes with the default ones
+        # resulting the --cold extra option in the ytp warm tasks
+        if 'youtube-playback' in task["name"]:
+            task["run"]["command"].remove("--cold")
 
         yield task
 

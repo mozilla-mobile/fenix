@@ -4,26 +4,36 @@
 
 package org.mozilla.fenix.settings
 
-import android.view.View
 import android.widget.RadioButton
-import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.text.HtmlCompat
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import mozilla.components.feature.sitepermissions.SitePermissions
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
-import org.mozilla.fenix.R
-import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.ext.getPreferenceKey
 
 fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
-    return when (featurePhone) {
-        PhoneFeature.CAMERA -> copy(camera = camera.toggle())
-        PhoneFeature.LOCATION -> copy(location = location.toggle())
-        PhoneFeature.MICROPHONE -> copy(microphone = microphone.toggle())
-        PhoneFeature.NOTIFICATION -> copy(notification = notification.toggle())
-        PhoneFeature.AUTOPLAY_AUDIBLE -> copy(autoplayAudible = autoplayAudible.toggle())
-        PhoneFeature.AUTOPLAY_INAUDIBLE -> copy(autoplayInaudible = autoplayInaudible.toggle())
-    }
+    return update(featurePhone, get(featurePhone).toggle())
+}
+
+fun SitePermissions.get(field: PhoneFeature) = when (field) {
+    PhoneFeature.CAMERA -> camera
+    PhoneFeature.LOCATION -> location
+    PhoneFeature.MICROPHONE -> microphone
+    PhoneFeature.NOTIFICATION -> notification
+    PhoneFeature.AUTOPLAY_AUDIBLE -> autoplayAudible
+    PhoneFeature.AUTOPLAY_INAUDIBLE -> autoplayInaudible
+}
+
+fun SitePermissions.update(field: PhoneFeature, value: SitePermissions.Status) = when (field) {
+    PhoneFeature.CAMERA -> copy(camera = value)
+    PhoneFeature.LOCATION -> copy(location = value)
+    PhoneFeature.MICROPHONE -> copy(microphone = value)
+    PhoneFeature.NOTIFICATION -> copy(notification = value)
+    PhoneFeature.AUTOPLAY_AUDIBLE -> copy(autoplayAudible = value)
+    PhoneFeature.AUTOPLAY_INAUDIBLE -> copy(autoplayInaudible = value)
 }
 
 /**
@@ -31,32 +41,12 @@ fun SitePermissions.toggle(featurePhone: PhoneFeature): SitePermissions {
  * as a result we have to apply it programmatically. More info about this issue https://github.com/mozilla-mobile/fenix/issues/1414
  */
 fun RadioButton.setStartCheckedIndicator() {
-    val attr = ThemeManager.resolveAttribute(android.R.attr.listChoiceIndicatorSingle, context)
+    val attr = context.theme.resolveAttribute(android.R.attr.listChoiceIndicatorSingle)
     val buttonDrawable = AppCompatResources.getDrawable(context, attr)
     buttonDrawable?.apply {
         setBounds(0, 0, intrinsicWidth, intrinsicHeight)
     }
     putCompoundDrawablesRelative(start = buttonDrawable)
-}
-
-fun initBlockedByAndroidView(phoneFeature: PhoneFeature, blockedByAndroidView: View) {
-    val context = blockedByAndroidView.context
-    if (!phoneFeature.isAndroidPermissionGranted(context)) {
-        blockedByAndroidView.visibility = View.VISIBLE
-
-        val descriptionLabel = blockedByAndroidView.findViewById<TextView>(R.id.blocked_by_android_feature_label)
-        val descriptionText = context.getString(
-            R.string.phone_feature_blocked_step_feature,
-            phoneFeature.getLabel(context)
-        )
-        descriptionLabel.text = HtmlCompat.fromHtml(descriptionText, HtmlCompat.FROM_HTML_MODE_COMPACT)
-
-        val permissionsLabel = blockedByAndroidView.findViewById<TextView>(R.id.blocked_by_android_permissions_label)
-        val permissionsText = context.getString(R.string.phone_feature_blocked_step_permissions)
-        permissionsLabel.text = HtmlCompat.fromHtml(permissionsText, HtmlCompat.FROM_HTML_MODE_COMPACT)
-    } else {
-        blockedByAndroidView.visibility = View.GONE
-    }
 }
 
 /**
@@ -73,3 +63,10 @@ inline fun <reified T> Preference.setOnPreferenceChangeListener(
         (newValue as? T)?.let { onPreferenceChangeListener(preference, it) } ?: false
     }
 }
+
+/**
+ * Find a preference with the corresponding key and throw if it does not exist.
+ * @param preferenceId Resource ID from preference_keys
+ */
+fun <T : Preference> PreferenceFragmentCompat.requirePreference(@StringRes preferenceId: Int) =
+    requireNotNull(findPreference<T>(getPreferenceKey(preferenceId)))

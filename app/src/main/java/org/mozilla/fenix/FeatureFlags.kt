@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix
 
 /**
@@ -11,36 +15,34 @@ object FeatureFlags {
     const val pullToRefreshEnabled = false
 
     /**
-     * Disables FxA Application Services Web Channels feature
-     */
-    const val asFeatureWebChannelsDisabled = false
-
-    /**
-     * Disables FxA Application Services Sync feature
-     */
-    const val asFeatureSyncDisabled = false
-
-    /**
-     * Enables dynamic bottom toolbar
-     */
-    val dynamicBottomToolbar = Config.channel.isNightlyOrDebug
-
-    /**
-     * Integration of push support provided by `feature-push` component into the Gecko engine.
+     * Shows Synced Tabs in the tabs tray.
      *
-     * Behind nightly flag until all fatal bugs are resolved.
-     *
-     * https://github.com/mozilla-mobile/fenix/issues/9059
+     * Tracking issue: https://github.com/mozilla-mobile/fenix/issues/13892
      */
-    const val webPushIntegration = true
+    val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables tip feature
+     * Enables showing the top frequently visited sites
      */
-    val tips = Config.channel.isDebug
+    const val topFrecentSite = true
 
     /**
-     * Enables new tab tray pref
+     * Enables wait til first contentful paint
      */
-    val tabTray = Config.channel.isNightlyOrDebug
+    val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables downloads with external download managers.
+     */
+    const val externalDownloadManager = true
+
+    /**
+     * Enables swipe to delete in bookmarks
+     */
+    val bookmarkSwipeToDelete = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables ETP cookie purging
+     */
+    val etpCookiePurging = Config.channel.isNightlyOrDebug
 }

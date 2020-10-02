@@ -9,14 +9,18 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
  * Lets the user customize the UI.
@@ -46,31 +50,24 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bindAutoBatteryTheme()
         setupRadioGroups()
         setupToolbarCategory()
+        setupHomeCategory()
+        setupGesturesCategory()
     }
 
     private fun setupRadioGroups() {
-        radioLightTheme.addToRadioGroup(radioDarkTheme)
-
-        radioDarkTheme.addToRadioGroup(radioLightTheme)
-
-        if (SDK_INT >= Build.VERSION_CODES.P) {
-            radioLightTheme.addToRadioGroup(radioFollowDeviceTheme)
-            radioDarkTheme.addToRadioGroup(radioFollowDeviceTheme)
-
-            radioFollowDeviceTheme.addToRadioGroup(radioDarkTheme)
-            radioFollowDeviceTheme.addToRadioGroup(radioLightTheme)
-        } else {
-            radioLightTheme.addToRadioGroup(radioAutoBatteryTheme)
-            radioDarkTheme.addToRadioGroup(radioAutoBatteryTheme)
-
-            radioAutoBatteryTheme.addToRadioGroup(radioLightTheme)
-            radioAutoBatteryTheme.addToRadioGroup(radioDarkTheme)
-        }
+        addToRadioGroup(
+            radioLightTheme,
+            radioDarkTheme,
+            if (SDK_INT >= Build.VERSION_CODES.P) {
+                radioFollowDeviceTheme
+            } else {
+                radioAutoBatteryTheme
+            }
+        )
     }
 
     private fun bindLightTheme() {
-        val keyLightTheme = getPreferenceKey(R.string.pref_key_light_theme)
-        radioLightTheme = requireNotNull(findPreference(keyLightTheme))
+        radioLightTheme = requirePreference(R.string.pref_key_light_theme)
         radioLightTheme.onClickListener {
             setNewTheme(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -79,16 +76,14 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     @SuppressLint("WrongConstant")
     // Suppressing erroneous lint warning about using MODE_NIGHT_AUTO_BATTERY, a likely library bug
     private fun bindAutoBatteryTheme() {
-        val keyBatteryTheme = getPreferenceKey(R.string.pref_key_auto_battery_theme)
-        radioAutoBatteryTheme = requireNotNull(findPreference(keyBatteryTheme))
+        radioAutoBatteryTheme = requirePreference(R.string.pref_key_auto_battery_theme)
         radioAutoBatteryTheme.onClickListener {
             setNewTheme(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
         }
     }
 
     private fun bindDarkTheme() {
-        val keyDarkTheme = getPreferenceKey(R.string.pref_key_dark_theme)
-        radioDarkTheme = requireNotNull(findPreference(keyDarkTheme))
+        radioDarkTheme = requirePreference(R.string.pref_key_dark_theme)
         radioDarkTheme.onClickListener {
             requireContext().components.analytics.metrics.track(
                 Event.DarkThemeSelected(
@@ -100,8 +95,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindFollowDeviceTheme() {
-        val keyDeviceTheme = getPreferenceKey(R.string.pref_key_follow_device_theme)
-        radioFollowDeviceTheme = requireNotNull(findPreference(keyDeviceTheme))
+        radioFollowDeviceTheme = requirePreference(R.string.pref_key_follow_device_theme)
         if (SDK_INT >= Build.VERSION_CODES.P) {
             radioFollowDeviceTheme.onClickListener {
                 setNewTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -120,26 +114,51 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupToolbarCategory() {
-        val keyToolbarTop = getPreferenceKey(R.string.pref_key_toolbar_top)
-        val topPreference = requireNotNull(findPreference<RadioButtonPreference>(keyToolbarTop))
+        val topPreference = requirePreference<RadioButtonPreference>(R.string.pref_key_toolbar_top)
         topPreference.onClickListener {
             requireContext().components.analytics.metrics.track(Event.ToolbarPositionChanged(
                 Event.ToolbarPositionChanged.Position.TOP
             ))
         }
 
-        val keyToolbarBottom = getPreferenceKey(R.string.pref_key_toolbar_bottom)
-        val bottomPreference = requireNotNull(findPreference<RadioButtonPreference>(keyToolbarBottom))
+        val bottomPreference = requirePreference<RadioButtonPreference>(R.string.pref_key_toolbar_bottom)
         bottomPreference.onClickListener {
             requireContext().components.analytics.metrics.track(Event.ToolbarPositionChanged(
                 Event.ToolbarPositionChanged.Position.BOTTOM
             ))
         }
 
-        topPreference.setCheckedWithoutClickListener(!requireContext().settings().shouldUseBottomToolbar)
-        bottomPreference.setCheckedWithoutClickListener(requireContext().settings().shouldUseBottomToolbar)
+        val toolbarPosition = requireContext().settings().toolbarPosition
+        topPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.TOP)
+        bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
-        topPreference.addToRadioGroup(bottomPreference)
-        bottomPreference.addToRadioGroup(topPreference)
+        addToRadioGroup(topPreference, bottomPreference)
+    }
+
+    private fun setupHomeCategory() {
+        requirePreference<PreferenceCategory>(R.string.pref_home_category).apply {
+            isVisible = FeatureFlags.topFrecentSite
+        }
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
+            isVisible = FeatureFlags.topFrecentSite
+            isChecked = context.settings().showTopFrecentSites
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupGesturesCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_website_pull_to_refresh).apply {
+            isVisible = FeatureFlags.pullToRefreshEnabled
+            isChecked = context.settings().isPullToRefreshEnabledInBrowser
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+        requirePreference<SwitchPreference>(R.string.pref_key_dynamic_toolbar).apply {
+            isChecked = context.settings().isDynamicToolbarEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+        requirePreference<SwitchPreference>(R.string.pref_key_swipe_toolbar_switch_tabs).apply {
+            isChecked = context.settings().isSwipeToolbarToSwitchTabsEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 }

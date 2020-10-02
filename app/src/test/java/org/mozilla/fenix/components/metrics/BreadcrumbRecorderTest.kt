@@ -4,44 +4,71 @@
 
 package org.mozilla.fenix.components.metrics
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import io.mockk.Called
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.lib.crash.Crash
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
-import mozilla.components.support.test.any
-import mozilla.components.support.test.mock
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
 
-internal class BreadcrumbRecorderTest {
+class BreadcrumbRecorderTest {
+
+    @Test
+    fun `sets listener on create and destroy`() {
+        val navController: NavController = mockk(relaxUnitFun = true)
+
+        val lifecycle = LifecycleRegistry(mockk())
+        val breadCrumbRecorder = BreadcrumbsRecorder(mockk(), navController) { "test" }
+
+        lifecycle.addObserver(breadCrumbRecorder)
+        verify { navController wasNot Called }
+
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        verify { navController.addOnDestinationChangedListener(breadCrumbRecorder) }
+
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        verify { navController.removeOnDestinationChangedListener(breadCrumbRecorder) }
+    }
+
     @Test
     fun `ensure crash reporter recordCrashBreadcrumb is called`() {
         val service = object : CrashReporterService {
-            override fun report(throwable: Throwable): String? = ""
+            override val id: String = "test"
+            override val name: String = "Test"
+            override fun createCrashReportUrl(identifier: String): String? = null
+            override fun report(throwable: Throwable, breadcrumbs: ArrayList<Breadcrumb>): String? = ""
             override fun report(crash: Crash.NativeCodeCrash): String? = ""
             override fun report(crash: Crash.UncaughtExceptionCrash): String? = ""
         }
 
-        val reporter = spy(
+        val reporter = spyk(
             CrashReporter(
+                context = mockk(),
                 services = listOf(service),
                 shouldPrompt = CrashReporter.Prompt.NEVER
             )
         )
 
-        fun getBreadcrumbMessage(@Suppress("UNUSED_PARAMETER") destination: NavDestination): String {
-            return "test"
-        }
+        val navController: NavController = mockk()
+        val navDestination: NavDestination = mockk()
 
-        val navController: NavController = mock()
-        val navDestination: NavDestination = mock()
-
-        val breadCrumbRecorder =
-            BreadcrumbsRecorder(reporter, navController, ::getBreadcrumbMessage)
+        val breadCrumbRecorder = BreadcrumbsRecorder(reporter, navController) { "test" }
         breadCrumbRecorder.onDestinationChanged(navController, navDestination, null)
 
-        verify(reporter).recordCrashBreadcrumb(any())
+        verify {
+            reporter.recordCrashBreadcrumb(withArg {
+                assertEquals("test", it.message)
+                assertEquals("DestinationChanged", it.category)
+                assertEquals(Breadcrumb.Level.INFO, it.level)
+            })
+        }
     }
 }

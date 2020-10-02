@@ -15,10 +15,40 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Cari atau masukkan alamat</string>
 
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">Tidak ada tab terbuka</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">Tab terbuka Anda akan ditampilkan di sini.</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">Tab privat Anda akan muncul di sini.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 tab terbuka. Ketuk untuk beralih tab.</string>
+
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s tab terbuka. Ketuk untuk beralih tab.</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d terpilih</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">Tambah koleksi baru</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">Nama</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">Pilih koleksi</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">Keluar mode seleksi ganda</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">Simpan tab terpilih ke koleksi</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">%1$s dipilih</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">%1$s tidak dipilih</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">Keluar dari mode seleksi ganda</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">Memasuki mode seleksi ganda, pilih tab untuk menyimpannya ke koleksi</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">Terpilih</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s diproduksi oleh Mozilla.</string>
@@ -35,13 +65,43 @@
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">Hapus sesi</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">Tambahkan pintasan untuk membuka tab privat dari layar Beranda Anda.</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">Tambahkan pintasan</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">Tidak, terima kasih</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">Dapatkan akses cepat ke Firefox. Tambahkan widget ke layar Beranda Anda.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">Tambahkan widget</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">Jangan sekarang</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Anda dapat mengatur Firefox untuk membuka tautan secara otomatis dalam aplikasi.</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">Buka pengaturan</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">Tutup</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">Akses kamera diperlukan. Buka pengaturan Android, ketuk izin, dan ketuk izinkan.</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">Buka pengaturan</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">Tutup</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">Setel tab yang terbuka untuk menutup secara otomatis yang belum pernah dilihat pada beberapa hari, minggu, atau bulan terakhir.</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">Lihat pengaturan</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">Tutup</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -85,6 +145,10 @@
     <string name="browser_menu_add_to_homescreen">Tambahkan ke Beranda</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Pasang</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">Tab yang disinkronkan</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Sinkron ulang</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Temukan di laman</string>
     <!-- Browser menu button that creates a private tab -->
@@ -93,8 +157,6 @@
     <string name="browser_menu_new_tab">Tab baru</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Simpan ke koleksi</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">Laporkan masalah situs</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">Bagikan</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -111,8 +173,10 @@
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">Diberdayakan oleh %1$s</string>
 
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">Tampilan baca</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">Tutup tampilan pembaca</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">Buka di Aplikasi</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
@@ -135,15 +199,13 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Pindai</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">Pintasan</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">Mesin pencari</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Setelan mesin pencari</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">Cari dengan</string>
 
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">Kali ini, cari lewat:</string>
+    <string name="search_engines_search_with">Saat ini, cari dengan:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">Isi tautan dari papan klip</string>
 
@@ -215,6 +277,8 @@
     <string name="preferences_open_links_in_a_private_tab">Buka tautan di tab pribadi</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Izinkan tangkapan layar di penjelajahan pribadi</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Jika diizinkan, tab pribadi juga akan terlihat saat beberapa aplikasi terbuka</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Tambahkan pintasan penjelajahan pribadi</string>
     <!-- Preference for accessibility -->
@@ -233,6 +297,10 @@
     <string name="preferences_toolbar">Bilah alat</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">Tema</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">Beranda</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Gestur</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Ubahsuai</string>
     <!-- Preference description for banner about signing in -->
@@ -253,10 +321,12 @@
     <string name="developer_tools_category">Perangkat pengembang</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Pengawakutuan jarak jauh melalui USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">Tampilkan pintasan pencarian</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">Tampilkan mesin pencari</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Tampilkan saran pencarian</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">Tampilkan pencarian suara</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Tampilkan dalam sesi privat</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -265,14 +335,23 @@
     <string name="preferences_search_browsing_history">Cari riwayat jelajah</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Cari markah</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Cari tab tersinkron</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Setelan akun</string>
 
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">URL lengkapi-otomatis</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Buka tautan di aplikasi</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">Pengelola unduhan eksternal</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Pengaya</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">Notifikasi</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -284,7 +363,9 @@
     <!-- Preference for syncing bookmarks -->
     <string name="preferences_sync_bookmarks">Markah</string>
     <!-- Preference for syncing logins -->
-    <string name="preferences_sync_logins">Log Masuk</string>
+    <string name="preferences_sync_logins">Info Masuk</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">Tab terbuka</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">Keluar</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -380,7 +461,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[Kunjungi <b>firefox.com/pair</b> dari Firefox di komputer Anda untuk mendapatkan kode QR Anda.]]></string>
+    <string name="pair_instructions_2"><![CDATA[Pindai kode QR yang ditunjukkan di <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Buka Kamera</string>
     <!-- Button to cancel pairing -->
@@ -403,6 +484,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Ikuti tema peranti</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Tarik untuk menyegarkan</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Gulir untuk menyembunyikan bilah alat</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Geser bilah alat ke samping untuk beralih tab</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Geser bilah alat ke atas untuk membuka tab</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sesi</string>
@@ -422,18 +513,43 @@
     <string name="library_desktop_bookmarks_unfiled">Markah Lain</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">Riwayat</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">Tab yang disinkronkan</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">Daftar Baca</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">Cari</string>
-    <!-- Library Page Title -->
-    <string name="library_title">Pustaka</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Setelan</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">Menu item riwayat</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Tutup</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">Tab yang baru saja ditutup</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Tampilkan riwayat penuh</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d tab</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d tab</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Tidak ada tab yang baru saja ditutup di sini</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">Tutup tab</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">Secara manual</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">Setelah satu hari</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">Setelah satu pekan</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">Setelah satu bulan</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -444,6 +560,30 @@
     <string name="tabs_header_private_tabs_title">Tab privat</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Tambah tab</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">Tambah tab pribadi</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">Pribadi</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">Tab Terbuka</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">Simpan ke koleksi</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">Bagikan semua tab</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">Tab yang baru saja ditutup</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">Setelan tab</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">Tutup semua tab</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">Tab baru</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">Buka beranda</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">Alihkan mode tab</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">Hapus tab dari koleksi</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Tutup tab</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -455,7 +595,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">Bagikan tab</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">Simpan ke koleksi</string>
+    <string name="tabs_menu_save_to_collection1">Simpan tab ke koleksi</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">Menu tab</string>
     <!-- Tab menu item to share the tab -->
@@ -481,11 +621,23 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Hapus</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">Hapus dari riwayat</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (Mode Privat)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">Simpan</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Hapus riwayat</string>
     <!-- Text for the dialog to confirm clearing all history -->
     <string name="history_delete_all_dialog">Yakin akan menghapus riwayat Anda?</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">Riwayat Dihapus</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">%1$s terhapus</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">Bersihkan</string>
     <!-- History overflow menu copy button -->
@@ -516,6 +668,13 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Tidak ada riwayat di sini</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">Tidak ada unduhan di sini</string>
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">%1$d terpilih</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">Maaf. %1$s tidak dapat memuat halaman.</string>
@@ -542,6 +701,12 @@
     <string name="bookmark_edit">Edit markah</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">Pilih folder</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">Yakin akan menghapus folder ini?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s akan menghapus item terpilih.</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">%1$s terhapus</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Tambah folder</string>
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
@@ -594,8 +759,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">%1$s terhapus</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">Menghapus markah terpilih</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">Markah dihapus</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Menghapus folder terpilih</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">URUNGKAN</string>
 
@@ -660,16 +827,12 @@
     <string name="delete_browsing_data_quit_off">Nonaktif</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">Kumpulkan hal-hal yang penting bagi Anda. Untuk memulai, simpan tab terbuka ke koleksi baru.</string>
     <!-- Collections header on home fragment -->
     <string name="collections_header">Koleksi</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Menu koleksi</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">Tidak ada koleksi</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">Koleksi Anda akan muncul di sini.</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Kumpulkan hal-hal yang penting bagi Anda.\nKelompokkan pencarian, situs, dan tab serupa untuk akses cepat nanti.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Pilih Tab</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -693,12 +856,17 @@
     <string name="create_collection_save_to_collection_tab_selected">%d tab dipilih</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">Tab disimpan!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">Koleksi disimpan!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Tab disimpan!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">Tutup</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">Simpan</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">Lihat</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Koleksi %d</string>
@@ -796,6 +964,10 @@
     <string name="qr_scanner_dialog_negative">TOLAK</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Yakin ingin menghapus %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">Menghapus tab ini akan menghapus keseluruhan koleksi. Kamu dapat membuat koleksi baru kapan saja.</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">Hapus %1$s?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">Hapus</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -812,15 +984,14 @@
     <string name="preference_accessibility_font_size_title">Ukuran Fon</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">Ukuran Fon Otomatis</string>
-
+    <string name="preference_accessibility_auto_size_2">Ukuran fon otomatis</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">Ukuran font akan sesuai dengan pengaturan Android Anda. Nonaktifkan untuk mengelola ukuran font di sini.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Hapus data penjelajahan</string>
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">Buka tab</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">Tab terbuka</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d tab</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -853,8 +1024,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">Otomatis menghapus data penjelajahan ketika Anda memilih &quot;Keluar&quot; pada menu utama</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">Otomatis menghapus data penjelajahan ketika Anda memilih \&quot;Keluar\&quot; pada menu utama</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">Riwayat jelajah</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Keluar</string>
 
@@ -878,23 +1047,24 @@
     <!-- text for firefox preview moving tip description -->
     <string name="tip_firefox_preview_moved_description">Firefox Nightly mendapatkan pemutakhiran setiap malam dan memiliki fitur eksperimental baru.
         Namun, fitur ini mungkin kurang stabil. Unduh peramban beta kami untuk pengalaman yang lebih stabil.</string>
-    <!-- text for firefox preview moving tip button. "Mozilla Firefox Browser" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button">Dapatkan Peramban Mozilla Firefox</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">Dapatkan Firefox untuk Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly telah pindah</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Aplikasi ini tidak akan lagi menerima pemutakhiran keamanan. Berhenti memakai aplikasi ini dan beralih ke Nightly.
-        \n\nUntuk memindahkan markah, log masuk, dan riwayat ke aplikasi lain, buatlah akun Firefox.</string>
+    <string name="tip_firefox_preview_moved_description_preview_installed">Aplikasi ini tidak akan lagi menerima pemutakhiran keamanan. Hentikan memakai aplikasi ini dan beralih ke Nightly yang baru.
+        \n\nUntuk memindahkan markah, info masuk, dan riwayat ke aplikasi lain, buatlah akun Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_installed">Beralih ke Nightly baru</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly telah pindah</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Aplikasi ini tidak akan lagi menerima pemutakhiran keamanan. Dapatkan Nightly baru dan berhenti memakai aplikasi ini.
-        \n\nUntuk memindahkan markah, log masuk, dan riwayat ke aplikasi lain, buatlah akun Firefox.</string>
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">Aplikasi ini tidak akan lagi menerima pemutakhiran keamanan. Dapatkan Nightly baru dan hentikan memakai aplikasi ini.
+        \n\nUntuk memindahkan markah, info masuk, dan riwayat ke aplikasi lain, buatlah akun Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_not_installed">Dapatkan Nightly baru</string>
 
@@ -915,13 +1085,14 @@
     <string name="onboarding_whats_new_description">Punya pertanyaan mengenai desain ulang %s? Ingin tahu apa saja yang berubah?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Dapatkan jawabannya di sini</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">Dapatkan hasil maksimal dari %s.</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">Mulai sinkronkan markah, kata sandi, dan lainnya dengan akun Firefox Anda.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">Pelajari lebih lanjut</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">Anda masuk sebagai %s di peramban Firefox lainnya pada ponsel ini. Apakah Anda ingin masuk dengan akun tersebut?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">Anda masuk sebagai %s di peramban Firefox lainnya pada perangkat ini. Apakah Anda ingin masuk dengan akun tersebut?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Ya, masukkan saya</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -935,18 +1106,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">Gagal masuk</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Lindungi diri Anda</string>
+    <string name="onboarding_tracking_protection_header_2">Privasi otomatis</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s membantu menghentikan laman web untuk melacak Anda secara daring.</string>
+    <string name="onboarding_tracking_protection_description_2">Pengaturan privasi dan keamanan memblokir pelacak, malware, dan perusahaan yang mengikuti Anda.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">Standar</string>
+    <string name="onboarding_tracking_protection_standard_button_2">Standar (baku)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">Memblokir lebih sedikit pelacak tetapi memungkinkan laman untuk dimuat secara normal</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">Memblokir lebih sedikit pelacak. Laman akan dimuat secara normal.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">Ketat (disarankan)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Ketat</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">Memblokir lebih banyak pelacak untuk perlindungan dan kinerja yang lebih baik, tetapi mungkin dapat menyebabkan beberapa situs tidak berfungsi dengan semestinya</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">Memblokir lebih banyak pelacak, iklan, dan sembulan. Halaman dimuat lebih cepat, namun beberapa fungsi mungkin tidak berfungsi.</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -1008,6 +1181,8 @@
     <string name="sign_in_with_camera">Masuk dengan kamera Anda</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Gunakan surel saja</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Tidak ada akun? <u>Buat satu</u> untuk menyinkronkan Firefox antar perangkat.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox akan berhenti menyinkronkan dengan akun Anda, tetapi tidak akan menghapus data penjelajahan Anda di peranti ini.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1032,31 +1207,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Pelajari lebih lanjut</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">Standar</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">Standar (disarankan)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">Standar (baku)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">Seimbang untuk perlindungan dan kinerja.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">Halaman akan dimuat secara normal, tetapi memblokir lebih sedikit pelacak.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">Memblokir lebih sedikit pelacak. Laman akan dimuat secara normal.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Apa yang diblokir oleh perlindungan pelacakan standar</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Ketat</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">Ketat (Baku)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">Perlindungan pelacakan yang lebih kuat dan kinerja yang lebih cepat, tetapi beberapa situs mungkin tidak berfungsi dengan baik.</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">Ketat (disarankan)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">Perlindungan yang lebih kuat, tetapi dapat menyebabkan beberapa situs atau konten rusak.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">Memblokir lebih banyak pelacak, iklan, dan sembulan. Halaman dimuat lebih cepat, namun beberapa fungsi mungkin tidak berfungsi.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Apa yang diblokir oleh perlindungan pelacakan ketat</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Ubahsuai</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">Pilih pelacak dan skrip yang akan diblokir</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Pilih pelacak dan skrip yang akan diblokir.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Apa yang diblokir oleh perlindungan pelacakan ubahsuai</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1106,7 +1271,7 @@
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_description">Menghentikan iklan, video, dan konten lain dari luar yang memuat kode pelacakan. Dapat memengaruhi beberapa fungsionalitas situs web.</string>
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s memblokir pelacak di situs ini ketika perisai berwarna ungu. Ketuk untuk melihat apa yang diblokir.</string>
+    <string name="etp_onboarding_cfr_message">Setiap kali perisai berwarna ungu, %s telah memblokir pelacak pada sebuah situs. Ketuk untuk info lebih lanjut.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Perlindungan DIAKTIFKAN untuk situs ini</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1126,8 +1291,15 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Pustaka OSS</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Alihkan Pelacak</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Menghapus kuki yang ditetapkan oleh pengalihan ke situs web pelacakan yang dikenal.</string>
+
     <!-- About page link text to open support link -->
     <string name="about_support">Dukungan</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">Mogok</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">Kebijakan privasi</string>
     <!-- About page link text to open know your rights link -->
@@ -1170,12 +1342,12 @@
     <string name="add_to_homescreen_text_placeholder">Nama pintasan</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description">Anda dapat dengan mudah menambahkan situs web ini ke layar Beranda ponsel Anda untuk mendapatkan akses instan dan penjelajahan lebih cepat seperti menggunakan aplikasi.</string>
+    <string name="add_to_homescreen_description_2">Anda dapat dengan mudah menambahkan situs web ini ke layar Beranda perangkat Anda untuk mendapatkan akses instan dan penjelajahan lebih cepat seperti menggunakan aplikasi.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
-    <string name="preferences_passwords_logins_and_passwords">Log masuk dan kata sandi</string>
+    <string name="preferences_passwords_logins_and_passwords">Info masuk dan kata sandi</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
-    <string name="preferences_passwords_save_logins">Simpan log masuk dan kata sandi</string>
+    <string name="preferences_passwords_save_logins">Simpan info masuk dan kata sandi</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Minta untuk menyimpan</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1183,7 +1355,7 @@
     <!-- Preference for autofilling saved logins in Fenix -->
     <string name="preferences_passwords_autofill">Isi Otomatis</string>
     <!-- Preference for syncing saved logins in Fenix -->
-    <string name="preferences_passwords_sync_logins">Sinkronkan log masuk</string>
+    <string name="preferences_passwords_sync_logins">Sinkronkan info masuk</string>
     <!-- Syncing saved logins in Fenix is on -->
     <string name="preferences_passwords_sync_logins_on">Aktif</string>
     <!-- Syncing saved logins in Fenix is off -->
@@ -1193,7 +1365,7 @@
     <!-- Syncing saved logins in Fenix needs login -->
     <string name="preferences_passwords_sync_logins_sign_in">Masuk ke Sync</string>
     <!-- Preference to access list of saved logins -->
-    <string name="preferences_passwords_saved_logins">Log masuk tersimpan</string>
+    <string name="preferences_passwords_saved_logins">Info masuk tersimpan</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Info masuk yang Anda simpan atau sinkronkan ke %s akan ditampilkan di sini.</string>
     <!-- Preference to access list of saved logins -->
@@ -1204,6 +1376,8 @@
     <string name="preferences_passwords_exceptions_description_empty">Info masuk dan kata sandi yang tidak disimpan akan ditampilkan di sini.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Info masuk dan kata sandi tidak akan disimpan untuk situs-situs ini.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">Hapus semua pengecualian</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Cari log masuk</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1219,13 +1393,13 @@
     <!-- Message displayed in security prompt to reenter a secret pin to access saved logins -->
     <string name="preferences_passwords_saved_logins_enter_pin">Masukkan kembali PIN Anda</string>
     <!-- Message displayed in security prompt to access saved logins -->
-    <string name="preferences_passwords_saved_logins_enter_pin_description">Buka kunci untuk melihat log masuk Anda yang tersimpan</string>
+    <string name="preferences_passwords_saved_logins_enter_pin_description">Buka kunci untuk melihat info masuk Anda yang tersimpan</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">Sambungan ini tidak aman. Info masuk yang diketikkan di sini bisa diketahui orang lain.</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning_learn_more">Pelajari lebih lanjut</string>
     <!-- Prompt message displayed when Fenix detects a user has entered a password and user decides if Fenix should save it. The first parameter is the name of the application (For example: Fenix)  -->
-    <string name="logins_doorhanger_save">Apakah Anda ingin %s menyimpan log masuk ini?</string>
+    <string name="logins_doorhanger_save">Ingin %s menyimpan info masuk ini?</string>
     <!-- Positive confirmation that Fenix should save the new or updated login -->
     <string name="logins_doorhanger_save_confirmation">Simpan</string>
     <!-- Negative confirmation that Fenix should not save the new or updated login -->
@@ -1238,20 +1412,26 @@
     <string name="logins_site_copied">Situs disalin ke clipboard</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Salin sandi</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Hapus sandi</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Salin nama pengguna</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Hapus nama pengguna</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Salin situs</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">Buka situs di peramban</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">Tampilkan sandi</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">Sembunyikan sandi</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
-    <string name="logins_biometric_prompt_message">Buka kunci untuk melihat log masuk Anda yang tersimpan</string>
+    <string name="logins_biometric_prompt_message">Buka kunci untuk melihat info masuk Anda yang tersimpan</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_title">Amankan log masuk dan kata sandi Anda</string>
+    <string name="logins_warning_dialog_title">Amankan info masuk dan kata sandi Anda</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Atur pola, PIN, atau kata sandi kunci perangkat untuk melindungi log masuk dan kata sandi Anda yang tersimpan agar tidak diakses jika orang lain memiliki perangkat Anda.</string>
+    <string name="logins_warning_dialog_message">Atur pola, PIN, atau kata sandi kunci perangkat untuk melindungi info masuk dan kata sandi Anda yang tersimpan agar tidak diakses jika orang lain memiliki perangkat Anda.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Nanti</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1262,6 +1442,13 @@
     <string name="preference_accessibility_force_enable_zoom">Zum di semua situs web</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">Aktifkan untuk memungkinkan cubitan dan zum, bahkan di situs web yang mencegah gerakan ini.</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">Nama (A-Z)</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">Terakhir digunakan</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sortir menu info masuk</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Tambah mesin pencari</string>
@@ -1310,7 +1497,7 @@
     <string name="search_delete_search_engine_success_message">%s dihapus</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Selamat datang ke %s yang benar-benar baru</string>
+    <string name="migration_title">Selamat datang di %s terbaru</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
     <string name="migration_description">Sebuah peramban yang telah didesain ulang sepenuhnya, dengan peningkatan kinerja dan fitur untuk membantu anda dalam melakukan sesuatu secara daring.\n\nHarap tunggu selama kami memperbarui %s dengan milik anda</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
@@ -1354,8 +1541,79 @@
     <string name="certificate_info_verified_by">Diverifikasi oleh: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">Hapus</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">Ubah</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Yakin ingin menghapus info masuk ini?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Hapus</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">Opsi info masuk</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">Bidang teks yang dapat diubah untuk alamat web info masuk</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description">Bidang teks yang dapat diubah untuk nama pengguna info masuk</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description">Bidang teks yang dapat diubah untuk kata sandi info masuk</string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">Simpan perubahan untuk masuk</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">Batalkan perubahan</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">Ubah</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">Kata sandi diperlukan</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">Pencarian suara</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">Bicara sekarang</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">Sebuah info masuk dengan nama pengguna tersebut sudah ada</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">Hubungkan perangkat lain</string>
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">Harap autentikasi ulang.</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">Harap aktifkan sinkronisasi tab.</string>
+
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">Anda tidak memiliki tab terbuka di Firefox pada perangkat Anda lainnya.</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">Lihat daftar tab dari perangkat Anda lainnya.</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">Masuk untuk sinkronisasi</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">Tidak ada tab terbuka</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">Batas situs teratas tercapai</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Untuk menambahkan situs teratas, hapus salah satu. Tekan lama situs yang dimaksud dan pilih hapus.</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">Oke, Paham!</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">Tampilkan situs yang paling sering dikunjungi</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">Hapus</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">Dapatkan hasil maksimal dari %s.</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">Kumpulkan hal-hal yang penting bagi Anda</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">Kelompokkan pencarian, situs, dan tab yang serupa agar dapat diakses cepat nanti.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">Anda masuk sebagai %s di peramban Firefox lainnya pada ponsel ini. Apakah Anda ingin masuk dengan akun tersebut?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Anda dapat dengan mudah menambahkan situs web ini ke layar Beranda ponsel Anda untuk mendapatkan akses instan dan penjelajahan lebih cepat seperti menggunakan aplikasi.</string>
+
+    </resources>

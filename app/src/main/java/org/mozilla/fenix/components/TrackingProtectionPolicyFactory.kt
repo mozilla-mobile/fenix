@@ -4,7 +4,11 @@
 
 package org.mozilla.fenix.components
 
+import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
+import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicyForSessionTypes
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -24,7 +28,7 @@ class TrackingProtectionPolicyFactory(private val settings: Settings) {
     @Suppress("ComplexMethod")
     fun createTrackingProtectionPolicy(
         normalMode: Boolean = settings.shouldUseTrackingProtection,
-        privateMode: Boolean = true
+        privateMode: Boolean = settings.shouldUseTrackingProtection
     ): TrackingProtectionPolicy {
         val trackingProtectionPolicy =
             when {
@@ -34,9 +38,9 @@ class TrackingProtectionPolicyFactory(private val settings: Settings) {
             }
 
         return when {
-            normalMode && privateMode -> trackingProtectionPolicy
-            normalMode && !privateMode -> trackingProtectionPolicy.forRegularSessionsOnly()
-            !normalMode && privateMode -> trackingProtectionPolicy.forPrivateSessionsOnly()
+            normalMode && privateMode -> trackingProtectionPolicy.adaptPolicyToChannel()
+            normalMode && !privateMode -> trackingProtectionPolicy.adaptPolicyToChannel().forRegularSessionsOnly()
+            !normalMode && privateMode -> trackingProtectionPolicy.adaptPolicyToChannel().forPrivateSessionsOnly()
             else -> TrackingProtectionPolicy.none()
         }
     }
@@ -44,7 +48,8 @@ class TrackingProtectionPolicyFactory(private val settings: Settings) {
     private fun createCustomTrackingProtectionPolicy(): TrackingProtectionPolicy {
         return TrackingProtectionPolicy.select(
             cookiePolicy = getCustomCookiePolicy(),
-            trackingCategories = getCustomTrackingCategories()
+            trackingCategories = getCustomTrackingCategories(),
+            cookiePurging = Config.channel.isNightlyOrDebug
         ).let {
             if (settings.blockTrackingContentSelectionInCustomTrackingProtection == "private") {
                 it.forPrivateSessionsOnly()
@@ -90,4 +95,14 @@ class TrackingProtectionPolicyFactory(private val settings: Settings) {
 
         return categories.toTypedArray()
     }
+}
+
+@VisibleForTesting
+internal fun TrackingProtectionPolicyForSessionTypes.adaptPolicyToChannel(): TrackingProtectionPolicyForSessionTypes {
+    return TrackingProtectionPolicy.select(
+        trackingCategories = trackingCategories,
+        cookiePolicy = cookiePolicy,
+        strictSocialTrackingProtection = strictSocialTrackingProtection,
+        cookiePurging = FeatureFlags.etpCookiePurging
+    )
 }

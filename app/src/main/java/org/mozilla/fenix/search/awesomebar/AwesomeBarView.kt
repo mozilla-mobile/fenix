@@ -4,16 +4,10 @@
 
 package org.mozilla.fenix.search.awesomebar
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.core.graphics.drawable.toBitmap
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.fragment_search.*
 import mozilla.components.browser.awesomebar.BrowserAwesomeBar
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.Session
@@ -21,87 +15,40 @@ import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionProvider
+import mozilla.components.feature.awesomebar.provider.SearchActionProvider
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.search.SearchUseCases
+import mozilla.components.feature.syncedtabs.DeviceIndicators
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.syncedtabs.SyncedTabsStorageSuggestionProvider
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.asActivity
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
 
 /**
- * Interface for the AwesomeBarView Interactor. This interface is implemented by objects that want
- * to respond to user interaction on the AwesomebarView
- */
-interface AwesomeBarInteractor {
-
-    /**
-     * Called whenever a suggestion containing a URL is tapped
-     * @param url the url the suggestion was providing
-     */
-    fun onUrlTapped(url: String)
-
-    /**
-     * Called whenever a search engine suggestion is tapped
-     * @param searchTerms the query contained by the search suggestion
-     */
-    fun onSearchTermsTapped(searchTerms: String)
-
-    /**
-     * Called whenever a search engine shortcut is tapped
-     * @param searchEngine the searchEngine that was selected
-     */
-    fun onSearchShortcutEngineSelected(searchEngine: SearchEngine)
-
-    /**
-     * Called whenever the "Search Engine Settings" item is tapped
-     */
-    fun onClickSearchEngineSettings()
-
-    /**
-     * Called whenever an existing session is selected from the sessionSuggestionProvider
-     */
-    fun onExistingSessionSelected(session: Session)
-
-    /**
-     * Called whenever an existing session is selected from the sessionSuggestionProvider
-     */
-    fun onExistingSessionSelected(tabId: String)
-
-    /**
-     * Called whenever the Shortcuts button is clicked
-     */
-    fun onSearchShortcutsButtonClicked()
-}
-
-/**
  * View that contains and configures the BrowserAwesomeBar
  */
+@Suppress("LargeClass")
 class AwesomeBarView(
-    private val container: ViewGroup,
-    val interactor: AwesomeBarInteractor
-) : LayoutContainer {
-    val view: BrowserAwesomeBar = LayoutInflater.from(container.context)
-        .inflate(R.layout.component_awesomebar, container, true)
-        .findViewById(R.id.awesomeBar)
-
-    override val containerView: View?
-        get() = container
-
+    private val activity: HomeActivity,
+    val interactor: AwesomeBarInteractor,
+    val view: BrowserAwesomeBar
+) {
     private val sessionProvider: SessionSuggestionProvider
     private val historyStorageProvider: HistoryStorageSuggestionProvider
     private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
     private val bookmarksStorageSuggestionProvider: BookmarksStorageSuggestionProvider
+    private val syncedTabsStorageSuggestionProvider: SyncedTabsStorageSuggestionProvider
     private val defaultSearchSuggestionProvider: SearchSuggestionProvider
-    private val searchSuggestionProviderMap: MutableMap<SearchEngine, SearchSuggestionProvider>
+    private val defaultSearchActionProvider: SearchActionProvider
+    private val searchSuggestionProviderMap: MutableMap<SearchEngine, List<AwesomeBar.SuggestionProvider>>
     private var providersInUse = mutableSetOf<AwesomeBar.SuggestionProvider>()
-    internal var isKeyboardDismissedProgrammatically: Boolean = false
 
     private val loadUrlUseCase = object : SessionUseCases.LoadUrlUseCase {
         override fun invoke(
@@ -114,13 +61,21 @@ class AwesomeBarView(
     }
 
     private val searchUseCase = object : SearchUseCases.SearchUseCase {
-        override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
+        override fun invoke(
+            searchTerms: String,
+            searchEngine: SearchEngine?,
+            parentSession: Session?
+        ) {
             interactor.onSearchTermsTapped(searchTerms)
         }
     }
 
     private val shortcutSearchUseCase = object : SearchUseCases.SearchUseCase {
-        override fun invoke(searchTerms: String, searchEngine: SearchEngine?) {
+        override fun invoke(
+            searchTerms: String,
+            searchEngine: SearchEngine?,
+            parentSession: Session?
+        ) {
             interactor.onSearchTermsTapped(searchTerms)
         }
     }
@@ -138,20 +93,20 @@ class AwesomeBarView(
     init {
         view.itemAnimator = null
 
-        val context = container.context
-        val components = context.components
-        val primaryTextColor = context.getColorFromAttr(R.attr.primaryText)
+        val components = activity.components
+        val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
 
-        val draw = getDrawable(context, R.drawable.ic_link)!!
-        draw.colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
-
-        val engineForSpeculativeConnects = if (!isBrowsingModePrivate()) components.core.engine else null
+        val engineForSpeculativeConnects = when (activity.browsingModeManager.mode) {
+            BrowsingMode.Normal -> components.core.engine
+            BrowsingMode.Private -> null
+        }
         sessionProvider =
             SessionSuggestionProvider(
-                context.resources,
+                activity.resources,
                 components.core.store,
                 selectTabUseCase,
                 components.core.icons,
+                getDrawable(activity, R.drawable.ic_search_results_tab),
                 excludeSelectedSession = true
             )
 
@@ -165,61 +120,69 @@ class AwesomeBarView(
 
         bookmarksStorageSuggestionProvider =
             BookmarksStorageSuggestionProvider(
-                components.core.bookmarksStorage,
-                loadUrlUseCase,
-                components.core.icons,
-                engineForSpeculativeConnects
+                bookmarksStorage = components.core.bookmarksStorage,
+                loadUrlUseCase = loadUrlUseCase,
+                icons = components.core.icons,
+                indicatorIcon = getDrawable(activity, R.drawable.ic_search_results_bookmarks),
+                engine = engineForSpeculativeConnects
             )
 
-        val searchDrawable = getDrawable(context, R.drawable.ic_search)!!
-        searchDrawable.colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
+        syncedTabsStorageSuggestionProvider =
+            SyncedTabsStorageSuggestionProvider(
+                components.backgroundServices.syncedTabsStorage,
+                loadUrlUseCase,
+                components.core.icons,
+                DeviceIndicators(
+                    getDrawable(activity, R.drawable.ic_search_results_device_desktop),
+                    getDrawable(activity, R.drawable.ic_search_results_device_mobile),
+                    getDrawable(activity, R.drawable.ic_search_results_device_tablet)
+                )
+            )
+
+        val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
+            colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
+        }.toBitmap()
 
         defaultSearchSuggestionProvider =
             SearchSuggestionProvider(
-                context = context,
+                context = activity,
                 searchEngineManager = components.search.searchEngineManager,
                 searchUseCase = searchUseCase,
                 fetchClient = components.core.client,
                 mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                 limit = 3,
-                icon = searchDrawable.toBitmap(),
+                icon = searchBitmap,
                 showDescription = false,
-                engine = engineForSpeculativeConnects
+                engine = engineForSpeculativeConnects,
+                filterExactMatch = true
+            )
+
+        defaultSearchActionProvider =
+            SearchActionProvider(
+                searchEngineGetter = suspend {
+                    components.search.searchEngineManager.getDefaultSearchEngineAsync(activity)
+                },
+                searchUseCase = searchUseCase,
+                icon = searchBitmap,
+                showDescription = false
             )
 
         shortcutsEnginePickerProvider =
             ShortcutsSuggestionProvider(
                 searchEngineProvider = components.search.provider,
-                context = context,
+                context = activity,
                 selectShortcutEngine = interactor::onSearchShortcutEngineSelected,
                 selectShortcutEngineSettings = interactor::onClickSearchEngineSettings
             )
 
         searchSuggestionProviderMap = HashMap()
-
-        val recyclerListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_DRAGGING ->
-                        if (!isKeyboardDismissedProgrammatically) {
-                        view.hideKeyboard()
-                        isKeyboardDismissedProgrammatically = true
-                    }
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        isKeyboardDismissedProgrammatically = false
-                        view.requestFocus()
-                    }
-                }
-            }
-        }
-        view.addOnScrollListener(recyclerListener)
     }
 
     fun update(state: SearchFragmentState) {
         updateSuggestionProvidersVisibility(state)
 
         // Do not make suggestions based on user's current URL unless it's a search shortcut
-        if (state.query == state.session?.url && !state.showSearchShortcuts) {
+        if (state.query.isNotEmpty() && state.query == state.url && !state.showSearchShortcuts) {
             return
         }
 
@@ -257,6 +220,7 @@ class AwesomeBarView(
         }
     }
 
+    @Suppress("ComplexMethod")
     private fun getProvidersToAdd(state: SearchFragmentState): MutableSet<AwesomeBar.SuggestionProvider> {
         val providersToAdd = mutableSetOf<AwesomeBar.SuggestionProvider>()
 
@@ -269,12 +233,14 @@ class AwesomeBarView(
         }
 
         if (state.showSearchSuggestions) {
-            getSelectedSearchSuggestionProvider(state)?.let {
-                providersToAdd.add(it)
-            }
+            providersToAdd.addAll(getSelectedSearchSuggestionProvider(state))
         }
 
-        if (!isBrowsingModePrivate()) {
+        if (state.showSyncedTabsSuggestions) {
+            providersToAdd.add(syncedTabsStorageSuggestionProvider)
+        }
+
+        if (activity.browsingModeManager.mode == BrowsingMode.Normal) {
             providersToAdd.add(sessionProvider)
         }
 
@@ -295,26 +261,26 @@ class AwesomeBarView(
         }
 
         if (!state.showSearchSuggestions) {
-            getSelectedSearchSuggestionProvider(state)?.let {
-                providersToRemove.add(it)
-            }
+            providersToRemove.addAll(getSelectedSearchSuggestionProvider(state))
         }
 
-        if (isBrowsingModePrivate()) {
+        if (!state.showSyncedTabsSuggestions) {
+            providersToRemove.add(syncedTabsStorageSuggestionProvider)
+        }
+
+        if (activity.browsingModeManager.mode == BrowsingMode.Private) {
             providersToRemove.add(sessionProvider)
         }
 
         return providersToRemove
     }
 
-    private fun isBrowsingModePrivate(): Boolean {
-        return (container.context.asActivity() as? HomeActivity)?.browsingModeManager?.mode?.isPrivate
-            ?: false
-    }
-
-    private fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): SearchSuggestionProvider? {
+    private fun getSelectedSearchSuggestionProvider(state: SearchFragmentState): List<AwesomeBar.SuggestionProvider> {
         return when (state.searchEngineSource) {
-            is SearchEngineSource.Default -> defaultSearchSuggestionProvider
+            is SearchEngineSource.Default -> listOf(
+                defaultSearchActionProvider,
+                defaultSearchSuggestionProvider
+            )
             is SearchEngineSource.Shortcut -> getSuggestionProviderForEngine(
                 state.searchEngineSource.searchEngine
             )
@@ -328,26 +294,39 @@ class AwesomeBarView(
         view.addProviders(shortcutsEnginePickerProvider)
     }
 
-    private fun getSuggestionProviderForEngine(engine: SearchEngine): SearchSuggestionProvider? {
+    private fun getSuggestionProviderForEngine(engine: SearchEngine): List<AwesomeBar.SuggestionProvider> {
         return searchSuggestionProviderMap.getOrPut(engine) {
-            val context = container.context
-            val components = context.components
-            val primaryTextColor = context.getColorFromAttr(R.attr.primaryText)
+            val components = activity.components
+            val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
 
-            val draw = getDrawable(context, R.drawable.ic_search)
-            draw?.colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
+            val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
+                colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
+            }.toBitmap()
 
-            val engineForSpeculativeConnects = if (!isBrowsingModePrivate()) components.core.engine else null
+            val engineForSpeculativeConnects = when (activity.browsingModeManager.mode) {
+                BrowsingMode.Normal -> components.core.engine
+                BrowsingMode.Private -> null
+            }
+            val searchEngine =
+                components.search.provider.installedSearchEngines(activity).list.find { it.name == engine.name }
+                    ?: components.search.provider.getDefaultEngine(activity)
 
-            SearchSuggestionProvider(
-                components.search.provider.installedSearchEngines(context).list.find { it.name == engine.name }
-                    ?: components.search.provider.getDefaultEngine(context),
-                shortcutSearchUseCase,
-                components.core.client,
-                limit = 3,
-                mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
-                icon = draw?.toBitmap(),
-                engine = engineForSpeculativeConnects
+            listOf(
+                SearchActionProvider(
+                    searchEngineGetter = suspend { searchEngine },
+                    searchUseCase = shortcutSearchUseCase,
+                    icon = searchBitmap
+                ),
+                SearchSuggestionProvider(
+                    searchEngine,
+                    shortcutSearchUseCase,
+                    components.core.client,
+                    limit = 3,
+                    mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
+                    icon = searchBitmap,
+                    engine = engineForSpeculativeConnects,
+                    filterExactMatch = true
+                )
             )
         }
     }

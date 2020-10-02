@@ -8,15 +8,16 @@ package org.mozilla.fenix.collections
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.tab.collections.TabCollection
-import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.getDefaultCollectionNumber
+import org.mozilla.fenix.ext.normalSessionSize
 import org.mozilla.fenix.home.Tab
-import org.mozilla.fenix.home.toSessionBundle
 
 interface CollectionCreationController {
 
@@ -58,13 +59,25 @@ interface CollectionCreationController {
     fun removeTabFromSelection(tab: Tab)
 }
 
+fun List<Tab>.toSessionBundle(sessionManager: SessionManager): List<Session> {
+    return this.mapNotNull { sessionManager.findSessionById(it.sessionId) }
+}
+
+/**
+ * @param store Store used to hold in-memory collection state.
+ * @param dismiss Callback to dismiss the collection creation dialog.
+ * @param metrics Controller that handles telemetry events.
+ * @param tabCollectionStorage Storage used to save tab collections to disk.
+ * @param sessionManager Used to query and serialize tabs.
+ * @param scope Coroutine scope to launch coroutines.
+ */
 class DefaultCollectionCreationController(
     private val store: CollectionCreationStore,
     private val dismiss: () -> Unit,
-    private val analytics: Analytics,
+    private val metrics: MetricController,
     private val tabCollectionStorage: TabCollectionStorage,
     private val sessionManager: SessionManager,
-    private val viewLifecycleScope: CoroutineScope
+    private val scope: CoroutineScope
 ) : CollectionCreationController {
 
     companion object {
@@ -75,26 +88,31 @@ class DefaultCollectionCreationController(
     override fun saveCollectionName(tabs: List<Tab>, name: String) {
         dismiss()
 
-        val sessionBundle = tabs.toList().toSessionBundle(sessionManager)
-        viewLifecycleScope.launch(Dispatchers.IO) {
+        val sessionBundle = tabs.toSessionBundle(sessionManager)
+        scope.launch {
             tabCollectionStorage.createCollection(name, sessionBundle)
         }
 
-        analytics.metrics.track(
-            Event.CollectionSaved(normalSessionSize(sessionManager), sessionBundle.size)
+        metrics.track(
+            Event.CollectionSaved(sessionManager.normalSessionSize(), sessionBundle.size)
         )
     }
 
     override fun renameCollection(collection: TabCollection, name: String) {
         dismiss()
-        viewLifecycleScope.launch(Dispatchers.IO) {
+        scope.launch {
             tabCollectionStorage.renameCollection(collection, name)
-            analytics.metrics.track(Event.CollectionRenamed)
         }
+        metrics.track(Event.CollectionRenamed)
     }
 
     override fun backPressed(fromStep: SaveCollectionStep) {
-        handleBackPress(fromStep)
+        val newStep = stepBack(fromStep)
+        if (newStep != null) {
+            store.dispatch(CollectionCreationAction.StepChanged(newStep))
+        } else {
+            dismiss()
+        }
     }
 
     override fun selectAllTabs() {
@@ -112,13 +130,13 @@ class DefaultCollectionCreationController(
     override fun selectCollection(collection: TabCollection, tabs: List<Tab>) {
         dismiss()
         val sessionBundle = tabs.toList().toSessionBundle(sessionManager)
-        viewLifecycleScope.launch(Dispatchers.IO) {
+        scope.launch {
             tabCollectionStorage
                 .addTabsToCollection(collection, sessionBundle)
         }
 
-        analytics.metrics.track(
-            Event.CollectionTabsAdded(normalSessionSize(sessionManager), sessionBundle.size)
+        metrics.track(
+            Event.CollectionTabsAdded(sessionManager.normalSessionSize(), sessionBundle.size)
         )
     }
 
@@ -130,7 +148,7 @@ class DefaultCollectionCreationController(
                 } else {
                     SaveCollectionStep.SelectCollection
                 },
-                defaultCollectionNumber = getDefaultCollectionNumber()
+                defaultCollectionNumber = store.state.tabCollections.getDefaultCollectionNumber()
             )
         )
     }
@@ -139,24 +157,9 @@ class DefaultCollectionCreationController(
         store.dispatch(
             CollectionCreationAction.StepChanged(
                 SaveCollectionStep.NameCollection,
-                getDefaultCollectionNumber()
+                store.state.tabCollections.getDefaultCollectionNumber()
             )
         )
-    }
-
-    /**
-     * Returns the new default name recommendation for a collection
-     *
-     * Algorithm: Go through all collections, make a list of their names and keep only the default ones.
-     * Then get the numbers from all these default names, compute the maximum number and add one.
-     */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getDefaultCollectionNumber(): Int {
-        return (store.state.tabCollections
-            .map { it.title }
-            .filter { it.matches(Regex("Collection\\s\\d+")) }
-            .map { Integer.valueOf(it.split(" ")[DEFAULT_COLLECTION_NUMBER_POSITION]) }
-            .max() ?: 0) + DEFAULT_INCREMENT_VALUE
     }
 
     override fun addTabToSelection(tab: Tab) {
@@ -167,25 +170,15 @@ class DefaultCollectionCreationController(
         store.dispatch(CollectionCreationAction.TabRemoved(tab))
     }
 
-    private fun handleBackPress(backFromStep: SaveCollectionStep) {
-        val newStep = stepBack(backFromStep)
-        if (newStep != null) {
-            store.dispatch(CollectionCreationAction.StepChanged(newStep))
-        } else {
-            dismiss()
-        }
-    }
-
+    /**
+     * Will return the next valid state according to this diagram.
+     *
+     * Name Collection -> Select Collection -> Select Tabs -> (dismiss fragment) <- Rename Collection
+     */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun stepBack(
         backFromStep: SaveCollectionStep
     ): SaveCollectionStep? {
-        /*
-        Will return the next valid state according to this diagram.
-
-        Name Collection -> Select Collection -> Select Tabs -> (dismiss fragment) <- Rename Collection
-         */
-
         val tabCollectionCount = store.state.tabCollections.size
         val tabCount = store.state.tabs.size
 
@@ -202,15 +195,5 @@ class DefaultCollectionCreationController(
             }
             SaveCollectionStep.SelectTabs, SaveCollectionStep.RenameCollection -> null
         }
-    }
-
-    /**
-     * @return the number of currently active sessions that are neither custom nor private
-     */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun normalSessionSize(sessionManager: SessionManager): Int {
-        return sessionManager.sessions.filter { session ->
-            (!session.isCustomTabSession() && !session.private)
-        }.size
     }
 }

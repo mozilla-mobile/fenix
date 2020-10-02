@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.account
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,35 +18,68 @@ import kotlinx.android.synthetic.main.fragment_turn_on_sync.view.*
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
+import mozilla.components.support.ktx.android.content.hasCamera
+import mozilla.components.support.ktx.android.content.isPermissionGranted
+import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 
 class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     private val args by navArgs<TurnOnSyncFragmentArgs>()
+    private lateinit var interactor: DefaultSyncInteractor
+
+    private var shouldLoginJustWithEmail = false
+    private var pairWithEmailStarted = false
 
     private val signInClickListener = View.OnClickListener {
-        requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
-        requireComponents.analytics.metrics.track(Event.SyncAuthUseEmail)
-        // TODO The sign-in web content populates session history,
-        // so pressing "back" after signing in won't take us back into the settings screen, but rather up the
-        // session history stack.
-        // We could auto-close this tab once we get to the end of the authentication process?
-        // Via an interceptor, perhaps.
+        navigateToPairWithEmail()
     }
 
     private val paringClickListener = View.OnClickListener {
+        if (requireContext().settings().shouldShowCameraPermissionPrompt) {
+            requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+            navigateToPairFragment()
+        } else {
+            if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
+                requireComponents.analytics.metrics.track(Event.QRScannerOpened)
+                navigateToPairFragment()
+            } else {
+                interactor.onCameraPermissionsNeeded()
+                view?.hideKeyboard()
+            }
+        }
+        view?.hideKeyboard()
+        requireContext().settings().setCameraPermissionNeededState = false
+    }
+
+    private fun navigateToPairFragment() {
         val directions = TurnOnSyncFragmentDirections.actionTurnOnSyncFragmentToPairFragment()
-        view!!.findNavController().navigate(directions)
+        requireView().findNavController().navigate(directions)
         requireComponents.analytics.metrics.track(Event.SyncAuthScanPairing)
+    }
+
+    private val createAccountClickListener = View.OnClickListener {
+        navigateToPairWithEmail()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireComponents.backgroundServices.accountManager.register(this, owner = this)
         requireComponents.analytics.metrics.track(Event.SyncAuthOpened)
+
+        // App can be installed on devices with no camera modules. Like Android TV boxes.
+        // Let's skip presenting the option to sign in by scanning a qr code in this case
+        // and default to login with email and password.
+        shouldLoginJustWithEmail = !requireContext().hasCamera()
+        if (shouldLoginJustWithEmail) {
+            navigateToPairWithEmail()
+        }
     }
 
     override fun onDestroy() {
@@ -55,16 +89,29 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     override fun onResume() {
         super.onResume()
-        if (requireComponents.backgroundServices.accountManager.authenticatedAccount() != null) {
+        if (pairWithEmailStarted ||
+            requireComponents.backgroundServices.accountManager.authenticatedAccount() != null
+        ) {
+
             findNavController().popBackStack()
             return
         }
 
-        requireComponents.backgroundServices.accountManager.register(this, owner = this)
-        showToolbar(getString(R.string.preferences_sync))
+        if (shouldLoginJustWithEmail) {
+            // Next time onResume is called, after returning from pairing with email this Fragment will be popped.
+            pairWithEmailStarted = true
+        } else {
+            requireComponents.backgroundServices.accountManager.register(this, owner = this)
+            showToolbar(getString(R.string.preferences_sync))
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        if (shouldLoginJustWithEmail) {
+            // Headless fragment. Don't need UI if we're taking the user to another screen.
+            return null
+        }
+
         val view = inflater.inflate(R.layout.fragment_turn_on_sync, container, false)
         view.signInScanButton.setOnClickListener(paringClickListener)
         view.signInEmailButton.setOnClickListener(signInClickListener)
@@ -72,31 +119,48 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             getString(R.string.sign_in_instructions),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
+
+        interactor = DefaultSyncInteractor(
+            DefaultSyncController(activity = activity as HomeActivity)
+        )
+
+        view.createAccount.apply {
+            text = HtmlCompat.fromHtml(
+                getString(R.string.sign_in_create_account_text),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            setOnClickListener(createAccountClickListener)
+        }
         return view
     }
 
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+        // If we're in a `shouldLoginJustWithEmail = true` state, we won't have a view available,
+        // and can't display a snackbar.
+        if (view == null) {
+            return
+        }
         val snackbarText = requireContext().getString(R.string.sync_syncing_in_progress)
         val snackbarLength = FenixSnackbar.LENGTH_SHORT
 
         // Since the snackbar can be presented in BrowserFragment or in SettingsFragment we must
         // base our display method on the padSnackbar argument
-        if (args.padSnackbar) {
-            FenixSnackbar.make(
-                view = requireView(),
-                duration = snackbarLength,
-                isDisplayedWithBrowserToolbar = true
-            )
-                .setText(snackbarText)
-                .show()
-        } else {
-            FenixSnackbar.make(
-                view = requireView(),
-                duration = snackbarLength,
-                isDisplayedWithBrowserToolbar = false
-            )
-                .setText(snackbarText)
-                .show()
-        }
+        FenixSnackbar.make(
+            view = requireView(),
+            duration = snackbarLength,
+            isDisplayedWithBrowserToolbar = args.padSnackbar
+        )
+            .setText(snackbarText)
+            .show()
+    }
+
+    private fun navigateToPairWithEmail() {
+        requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
+        requireComponents.analytics.metrics.track(Event.SyncAuthUseEmail)
+        // TODO The sign-in web content populates session history,
+        // so pressing "back" after signing in won't take us back into the settings screen, but rather up the
+        // session history stack.
+        // We could auto-close this tab once we get to the end of the authentication process?
+        // Via an interceptor, perhaps.
     }
 }

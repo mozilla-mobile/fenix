@@ -7,6 +7,7 @@ package org.mozilla.fenix.components.searchengine
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -17,6 +18,7 @@ import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.search.provider.SearchEngineProvider
 import mozilla.components.browser.search.provider.filter.SearchEngineFilter
+import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
@@ -31,7 +33,8 @@ import java.util.Locale
 open class FenixSearchEngineProvider(
     private val context: Context
 ) : SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {
-    private val locationService: LocationService = if (Config.channel.isDebug) {
+    private val shouldMockMLS = Config.channel.isDebug || BuildConfig.MLS_TOKEN.isNullOrEmpty()
+    private val locationService: LocationService = if (shouldMockMLS) {
         LocationService.dummy()
     } else {
         MozillaLocationService(
@@ -41,6 +44,13 @@ open class FenixSearchEngineProvider(
         )
     }
 
+    // We have two search engine types: one based on MLS reported region, one based only on Locale.
+    // There are multiple steps involved in returning the default search engine for example.
+    // Simplest and most effective way to make sure the MLS engines do not mix with Locale based engines
+    // is to use the same type of engines for the entire duration of the app's run.
+    // See fenix/issues/11875
+    private val isRegionCachedByLocationService = locationService.hasRegionCached()
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open val localizationProvider: SearchLocalizationProvider =
         RegionSearchLocalizationProvider(locationService)
@@ -48,6 +58,19 @@ open class FenixSearchEngineProvider(
     open var baseSearchEngines = async {
         AssetsSearchEngineProvider(localizationProvider).loadSearchEngines(context)
     }
+
+    private val loadedRegion = async { localizationProvider.determineRegion() }
+
+    // https://github.com/mozilla-mobile/fenix/issues/9935
+    // Adds a Locale search engine provider as a fallback in case the MLS lookup takes longer
+    // than the time it takes for a user to try to search.
+    private val fallbackLocationService: SearchLocalizationProvider = LocaleSearchLocalizationProvider()
+    private val fallBackProvider =
+        AssetsSearchEngineProvider(fallbackLocationService)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    open val fallbackEngines = async { fallBackProvider.loadSearchEngines(context) }
+    private val fallbackRegion = async { fallbackLocationService.determineRegion() }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open val bundledSearchEngines = async {
@@ -71,6 +94,17 @@ open class FenixSearchEngineProvider(
 
     private var loadedSearchEngines = refreshAsync()
 
+    // https://github.com/mozilla-mobile/fenix/issues/9935
+    // Create new getter that will return the fallback SearchEngineList if
+    // the main one hasn't completed yet
+    private val searchEngines: Deferred<SearchEngineList>
+        get() =
+            if (isRegionCachedByLocationService) {
+                loadedSearchEngines
+            } else {
+                fallbackEngines
+            }
+
     fun getDefaultEngine(context: Context): SearchEngine {
         val engines = installedSearchEngines(context)
         val selectedName = context.settings().defaultSearchEngineName
@@ -84,7 +118,7 @@ open class FenixSearchEngineProvider(
      */
     fun installedSearchEngines(context: Context): SearchEngineList = runBlocking {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
-        val engineList = loadedSearchEngines.await()
+        val engineList = searchEngines.await()
 
         engineList.copy(
             list = engineList.list.filter {
@@ -115,24 +149,28 @@ open class FenixSearchEngineProvider(
         return installedSearchEngines(context)
     }
 
-    fun installSearchEngine(context: Context, searchEngine: SearchEngine) = runBlocking {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
-        installedIdentifiers.add(searchEngine.identifier)
-        prefs(context).edit().putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
+    fun installSearchEngine(context: Context, searchEngine: SearchEngine, isCustom: Boolean = false) = runBlocking {
+        if (isCustom) {
+            val searchUrl = searchEngine.getSearchTemplate()
+            CustomSearchEngineStore.addSearchEngine(context, searchEngine.name, searchUrl)
+            reload()
+        } else {
+            val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
+            installedIdentifiers.add(searchEngine.identifier)
+            prefs(context).edit()
+                .putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
+        }
     }
 
-    fun uninstallSearchEngine(context: Context, searchEngine: SearchEngine) = runBlocking {
-        val isCustom = CustomSearchEngineStore.isCustomSearchEngine(context, searchEngine.identifier)
-
+    fun uninstallSearchEngine(context: Context, searchEngine: SearchEngine, isCustom: Boolean = false) = runBlocking {
         if (isCustom) {
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
+            reload()
         } else {
             val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
             installedIdentifiers.remove(searchEngine.identifier)
             prefs(context).edit().putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
         }
-
-        reload()
     }
 
     fun reload() {
@@ -159,7 +197,7 @@ open class FenixSearchEngineProvider(
     }
 
     private fun prefs(context: Context) = context.getSharedPreferences(
-        PREF_FILE,
+        PREF_FILE_SEARCH_ENGINES,
         Context.MODE_PRIVATE
     )
 
@@ -168,14 +206,12 @@ open class FenixSearchEngineProvider(
         val prefs = prefs(context)
         val installedEnginesKey = localeAwareInstalledEnginesKey()
 
-        if (installedEnginesKey != prefs.getString(CURRENT_LOCALE_KEY, "")) {
-            updateBaseSearchEngines()
-            reload()
-            prefs.edit().putString(CURRENT_LOCALE_KEY, installedEnginesKey).apply()
-        }
-
         if (!prefs.contains(installedEnginesKey)) {
-            val defaultSet = baseSearchEngines.await()
+            val searchEngines =
+                if (isRegionCachedByLocationService) baseSearchEngines
+                else fallbackEngines
+
+            val defaultSet = searchEngines.await()
                 .list
                 .map { it.identifier }
                 .toSet()
@@ -191,12 +227,20 @@ open class FenixSearchEngineProvider(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun localeAwareInstalledEnginesKey(): String {
-        val tag = localizationProvider.determineRegion().let {
-            val region = it.region?.let { region ->
-                if (region.isEmpty()) "" else "-$region"
+        val tag = if (isRegionCachedByLocationService) {
+            val localization = loadedRegion.await()
+            val region = localization.region?.let {
+                if (it.isEmpty()) "" else "-$it"
             }
 
-            "${it.languageTag}$region"
+            "${localization.languageTag}$region"
+        } else {
+            val localization = fallbackRegion.await()
+            val region = localization.region?.let {
+                if (it.isEmpty()) "" else "-$it"
+            }
+
+            "${localization.languageTag}$region-fallback"
         }
 
         return "$INSTALLED_ENGINES_KEY-$tag"
@@ -205,7 +249,7 @@ open class FenixSearchEngineProvider(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     companion object {
         val BUNDLED_SEARCH_ENGINES = listOf("reddit", "youtube")
-        const val PREF_FILE = "fenix-search-engine-provider"
+        const val PREF_FILE_SEARCH_ENGINES = "fenix-search-engine-provider"
         const val INSTALLED_ENGINES_KEY = "fenix-installed-search-engines"
         const val CURRENT_LOCALE_KEY = "fenix-current-locale"
     }

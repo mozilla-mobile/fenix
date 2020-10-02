@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_tracking_protection_blocking.*
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -18,43 +19,34 @@ class TrackingProtectionBlockingFragment :
     Fragment(R.layout.fragment_tracking_protection_blocking) {
 
     private val args: TrackingProtectionBlockingFragmentArgs by navArgs()
-    private var isCustomProtection: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        isCustomProtection = requireContext().settings().useCustomTrackingProtection
-    }
+    private val settings by lazy { requireContext().settings() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        category_redirect_trackers.isVisible = FeatureFlags.etpCookiePurging
 
         when (args.protectionMode) {
-
-            getString(R.string.preference_enhanced_tracking_protection_standard_option) -> {
-                category_fingerprinters.isVisible = false
+            TrackingProtectionMode.STANDARD -> {
                 category_tracking_content.isVisible = false
             }
 
-            getString(R.string.preference_enhanced_tracking_protection_strict) -> return
+            TrackingProtectionMode.STRICT -> {}
 
-            getString(R.string.preference_enhanced_tracking_protection_custom) -> {
+            TrackingProtectionMode.CUSTOM -> {
                 category_fingerprinters.isVisible =
-                    requireContext().settings().blockFingerprintersInCustomTrackingProtection
+                    settings.blockFingerprintersInCustomTrackingProtection
                 category_cryptominers.isVisible =
-                    requireContext().settings().blockCryptominersInCustomTrackingProtection
+                    settings.blockCryptominersInCustomTrackingProtection
                 category_cookies.isVisible =
-                    requireContext().settings().blockCookiesInCustomTrackingProtection
+                    settings.blockCookiesInCustomTrackingProtection
                 category_tracking_content.isVisible =
-                    requireContext().settings().blockTrackingContentInCustomTrackingProtection
+                    settings.blockTrackingContentInCustomTrackingProtection
             }
-
-            else -> return
         }
     }
 
     override fun onResume() {
         super.onResume()
-        showToolbar(args.protectionMode)
+        showToolbar(getString(args.protectionMode.titleRes))
     }
 }

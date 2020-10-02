@@ -8,27 +8,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.LibrarySiteItemView
+import org.mozilla.fenix.library.bookmarks.BookmarkNodeWithDepth
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
+import org.mozilla.fenix.library.bookmarks.flatNodeList
 import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderAdapter.BookmarkFolderViewHolder
-import org.mozilla.fenix.library.bookmarks.selectfolder.SelectBookmarkFolderAdapter.BookmarkNodeWithDepth
 
 class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedViewModel) :
     ListAdapter<BookmarkNodeWithDepth, BookmarkFolderViewHolder>(DiffCallback) {
 
-    fun updateData(tree: BookmarkNode?) {
+    fun updateData(tree: BookmarkNode?, hideFolderGuid: String?) {
         val updatedData = tree
-            ?.convertToFolderDepthTree()
+            ?.flatNodeList(hideFolderGuid)
             ?.drop(1)
             .orEmpty()
+
         submitList(updatedData)
     }
 
@@ -84,24 +85,14 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
             view.setOnClickListener {
                 onSelect(folder.node)
             }
-            val pxToIndent = dpsToIndent.dpToPx(view.context.resources.displayMetrics)
-            val padding = pxToIndent * if (folder.depth > maxDepth) maxDepth else folder.depth
-            view.setPadding(padding, 0, 0, 0)
+            val pxToIndent = view.resources.getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
+            val padding = pxToIndent * minOf(MAX_DEPTH, folder.depth)
+            view.updatePaddingRelative(start = padding)
         }
 
         companion object {
             const val viewType = 1
         }
-    }
-
-    data class BookmarkNodeWithDepth(val depth: Int, val node: BookmarkNode, val parent: String?)
-
-    private fun BookmarkNode.convertToFolderDepthTree(depth: Int = 0): List<BookmarkNodeWithDepth> {
-        val newList = listOf(BookmarkNodeWithDepth(depth, this, this.parentGuid))
-        return newList + children
-            ?.filter { it.type == BookmarkNodeType.FOLDER }
-            ?.flatMap { it.convertToFolderDepthTree(depth = depth + 1) }
-            .orEmpty()
     }
 
     private fun getSelectedItemIndex(): Int? {
@@ -116,8 +107,7 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
         this == sharedViewModel.selectedFolder
 
     companion object {
-        private const val maxDepth = 10
-        private const val dpsToIndent = 10
+        private const val MAX_DEPTH = 10
     }
 }
 

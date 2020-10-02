@@ -8,7 +8,7 @@ tasks:
     - $let:
           taskgraph:
               branch: taskgraph
-              revision: a8366f88fc8b35b284ad550358c89ec10133fb42
+              revision: 12992b0f984884ec2b0a7bdedc3b3ba467363eb4
           trustDomain: mobile
       in:
           $let:
@@ -17,15 +17,17 @@ tasks:
                   $if: 'tasks_for in ["cron", "action"]'
                   then: '${tasks_for}@noreply.mozilla.org'
                   else:
-                      $if: 'tasks_for == "github-push"'
-                      then: '${event.pusher.email}'
-                      # Assume Pull Request
+                      $if: 'event.sender.login == "bors[bot]"'
+                      then: 'skaspari+mozlando@mozilla.com'   # It must match what's in bors.toml
                       else:
-                          $if: 'tasks_for == "github-pull-request"'
-                          then: '${event.pull_request.user.login}@users.noreply.github.com'
+                          $if: 'tasks_for == "github-push"'
+                          then: '${event.pusher.email}'
                           else:
-                              $if: 'tasks_for == "github-release"'
-                              then: '${event.sender.login}@users.noreply.github.com'
+                              $if: 'tasks_for == "github-pull-request"'
+                              then: '${event.pull_request.user.login}@users.noreply.github.com'
+                              else:
+                                  $if: 'tasks_for == "github-release"'
+                                  then: '${event.sender.login}@users.noreply.github.com'
               baseRepoUrl:
                   $if: 'tasks_for in ["github-push", "github-release"]'
                   then: '${event.repository.html_url}'
@@ -101,7 +103,7 @@ tasks:
               $if: >
                 tasks_for in ["action", "cron"]
                 || (tasks_for == "github-pull-request" && pullRequestAction in ["opened", "reopened", "synchronize"])
-                || (tasks_for == "github-push" && head_branch[:10] != "refs/tags/")
+                || (tasks_for == "github-push" && head_branch[:10] != "refs/tags/") && (head_branch != "staging.tmp") && (head_branch != "trying.tmp")
                 || (tasks_for == "github-release" && releaseAction == "published")
               then:
                   $let:
@@ -140,7 +142,10 @@ tasks:
                                         $if: 'tasks_for == "action"'
                                         then:
                                             name: "Action: ${action.title}"
-                                            description: '${action.description}'
+                                            description: |
+                                                ${action.description}
+
+                                                Action triggered by clientID `${clientId}`
                                         else:
                                             name: "Decision Task for cron job ${cron.job_name}"
                                             description: 'Created by a [cron task](https://firefox-ci-tc.services.mozilla.com/tasks/${cron.task_id})'
@@ -168,14 +173,15 @@ tasks:
                                         # staging release promotion on forks.
                                         - $if: 'tasks_for == "github-push"'
                                           then:
-                                              - index.project.mobile.${project}.v2.branch.${short_head_branch}.latest.taskgraph.decision
-                                              - index.project.mobile.${project}.v2.branch.${short_head_branch}.revision.${head_sha}.taskgraph.decision
+                                              - index.mobile.v2.${project}.branch.${short_head_branch}.latest.taskgraph.decision
+                                              - index.mobile.v2.${project}.branch.${short_head_branch}.revision.${head_sha}.taskgraph.decision
+                                              - index.mobile.v2.${project}.revision.${head_sha}.taskgraph.decision
                                         - $if: 'tasks_for == "cron"'
                                           then:
                                               # cron context provides ${head_branch} as a short one
-                                              - index.project.mobile.${project}.v2.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
-                                              - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
-                                              - index.project.mobile.${project}.v2.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
+                                              - index.mobile.v2.${project}.branch.${head_branch}.latest.taskgraph.decision-${cron.job_name}
+                                              - index.mobile.v2.${project}.branch.${head_branch}.revision.${head_sha}.taskgraph.decision-${cron.job_name}
+                                              - index.mobile.v2.${project}.branch.${head_branch}.revision.${head_sha}.taskgraph.cron.${ownTaskId}
                           scopes:
                               $if: 'tasks_for == "github-push"'
                               then:
@@ -237,7 +243,7 @@ tasks:
                               # Note: This task is built server side without the context or tooling that
                               # exist in tree so we must hard code the hash
                               image:
-                                  mozillareleases/taskgraph:decision-mobile-6020473b1a928d8df50e234a7ca2e81ade2220a4fb5fbe16b02477dd64a49728@sha256:98d226736b7d03907114bf37938002b90e8a37cbe3a297690e349f1ddddb1d7c
+                                  mozillareleases/taskgraph:decision-mobile-6607973bc60e32323a541861cc5856cd6a0f51ea9fd664ef7d43bca8df53db47@sha256:8c471aacc469ea8e7bb4846c16efe086f7350a5cc1df570cc6c86b22895a2456
 
                               maxRunTime: 1800
 
@@ -284,6 +290,14 @@ tasks:
                                       type: 'directory'
                                       path: '/builds/worker/artifacts'
                                       expires: {$fromNow: '1 year'}
+                                  'public/docker-contexts':
+                                      type: 'directory'
+                                      path: '/builds/worker/checkouts/src/docker-contexts'
+                                      # This needs to be at least the deadline of the
+                                      # decision task + the docker-image task deadlines.
+                                      # It is set to a week to allow for some time for
+                                      # debugging, but they are not useful long-term.
+                                      expires: {$fromNow: '7 day'}
 
                           extra:
                               $merge:
@@ -316,6 +330,7 @@ tasks:
                                                 taskGroupId: '${action.taskGroupId}'
                                                 taskId: {$eval: 'taskId'}
                                                 input: {$eval: 'input'}
+                                                clientId: {$eval: 'clientId'}
                                   - $if: 'tasks_for == "cron"'
                                     then:
                                         cron: {$json: {$eval: 'cron'}}

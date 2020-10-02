@@ -4,57 +4,47 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.view.View
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.prompt.ShareData
-import mozilla.components.feature.media.ext.pauseIfPlaying
-import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.ext.restore
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.TabCollectionStorage
-import org.mozilla.fenix.components.TopSiteStorage
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.metrics.MetricsUtils
+import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.sessionsOfType
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.HomeFragmentStore
-import org.mozilla.fenix.home.Tab
-import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.Settings
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 /**
  * [HomeFragment] controller. An interface that handles the view manipulation of the Tabs triggered
  * by the Interactor.
  */
-@SuppressWarnings("TooManyFunctions")
+@Suppress("TooManyFunctions")
 interface SessionControlController {
-    /**
-     * @see [TabSessionInteractor.onCloseTab]
-     */
-    fun handleCloseTab(sessionId: String)
-
-    /**
-     * @see [TabSessionInteractor.onCloseAllTabs]
-     */
-    fun handleCloseAllTabs(isPrivateMode: Boolean)
-
     /**
      * @see [CollectionInteractor.onCollectionAddTabTapped]
      */
@@ -73,7 +63,7 @@ interface SessionControlController {
     /**
      * @see [CollectionInteractor.onCollectionRemoveTab]
      */
-    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
+    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab, wasSwiped: Boolean)
 
     /**
      * @see [CollectionInteractor.onCollectionShareTabsClicked]
@@ -91,16 +81,6 @@ interface SessionControlController {
     fun handleOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
-     * @see [TabSessionInteractor.onPauseMediaClicked]
-     */
-    fun handlePauseMediaClicked()
-
-    /**
-     * @see [TabSessionInteractor.onPlayMediaClicked]
-     */
-    fun handlePlayMediaClicked()
-
-    /**
      * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
@@ -116,24 +96,9 @@ interface SessionControlController {
     fun handleRenameCollectionTapped(collection: TabCollection)
 
     /**
-     * @see [TabSessionInteractor.onSaveToCollection]
-     */
-    fun handleSaveTabToCollection(selectedTabId: String?)
-
-    /**
-     * @see [TabSessionInteractor.onSelectTab]
-     */
-    fun handleSelectTab(tabView: View, sessionId: String)
-
-    /**
      * @see [TopSiteInteractor.onSelectTopSite]
      */
-    fun handleSelectTopSite(url: String)
-
-    /**
-     * @see [TabSessionInteractor.onShareTabs]
-     */
-    fun handleShareTabs()
+    fun handleSelectTopSite(url: String, type: TopSite.Type)
 
     /**
      * @see [OnboardingInteractor.onStartBrowsingClicked]
@@ -161,50 +126,55 @@ interface SessionControlController {
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
 
     /**
-     * @see [TabSessionInteractor.onOpenNewTabClicked]
+     * @see [TipInteractor.onCloseTip]
      */
-    fun handleonOpenNewTabClicked()
-
     fun handleCloseTip(tip: Tip)
+
+    /**
+     * @see [ToolbarInteractor.onPasteAndGo]
+     */
+    fun handlePasteAndGo(clipboardText: String)
+
+    /**
+     * @see [ToolbarInteractor.onPaste]
+     */
+    fun handlePaste(clipboardText: String)
+
+    /**
+     * @see [CollectionInteractor.onAddTabsToCollectionTapped]
+     */
+    fun handleCreateCollection()
+
+    /**
+     * @see [CollectionInteractor.onRemoveCollectionsPlaceholder]
+     */
+    fun handleRemoveCollectionsPlaceholder()
 }
 
-@SuppressWarnings("TooManyFunctions", "LargeClass")
+@Suppress("TooManyFunctions", "LargeClass")
 class DefaultSessionControlController(
-    private val store: BrowserStore,
     private val activity: HomeActivity,
+    private val settings: Settings,
+    private val engine: Engine,
+    private val metrics: MetricController,
+    private val sessionManager: SessionManager,
+    private val tabCollectionStorage: TabCollectionStorage,
+    private val addTabUseCase: TabsUseCases.AddNewTabUseCase,
     private val fragmentStore: HomeFragmentStore,
     private val navController: NavController,
-    private val browsingModeManager: BrowsingModeManager,
     private val viewLifecycleScope: CoroutineScope,
-    private val closeTab: (sessionId: String) -> Unit,
-    private val closeAllTabs: (isPrivateMode: Boolean) -> Unit,
-    private val getListOfTabs: () -> List<Tab>,
     private val hideOnboarding: () -> Unit,
-    private val invokePendingDeleteJobs: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
-    private val scrollToTheTop: () -> Unit,
-    private val showDeleteCollectionPrompt: (tabCollection: TabCollection) -> Unit,
-    private val openSettingsScreen: () -> Unit,
-    private val openSearchScreen: () -> Unit,
-    private val openWhatsNewLink: () -> Unit,
-    private val openPrivacyNotice: () -> Unit
+    private val showDeleteCollectionPrompt: (
+        tabCollection: TabCollection,
+        title: String?,
+        message: String,
+        wasSwiped: Boolean,
+        handleSwipedItemDeletionCancel: () -> Unit
+    ) -> Unit,
+    private val showTabTray: () -> Unit,
+    private val handleSwipedItemDeletionCancel: () -> Unit
 ) : SessionControlController {
-    private val metrics: MetricController
-        get() = activity.components.analytics.metrics
-    private val sessionManager: SessionManager
-        get() = activity.components.core.sessionManager
-    private val tabCollectionStorage: TabCollectionStorage
-        get() = activity.components.core.tabCollectionStorage
-    private val topSiteStorage: TopSiteStorage
-        get() = activity.components.core.topSiteStorage
-
-    override fun handleCloseTab(sessionId: String) {
-        closeTab.invoke(sessionId)
-    }
-
-    override fun handleCloseAllTabs(isPrivateMode: Boolean) {
-        closeAllTabs.invoke(isPrivateMode)
-    }
 
     override fun handleCollectionAddTabTapped(collection: TabCollection) {
         metrics.track(Event.CollectionAddTabPressed)
@@ -215,11 +185,9 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
-        invokePendingDeleteJobs()
-
         sessionManager.restore(
             activity,
-            activity.components.core.engine,
+            engine,
             tab,
             onTabRestored = {
                 activity.openToBrowser(BrowserDirection.FromHome)
@@ -237,36 +205,59 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
-        invokePendingDeleteJobs()
-
         sessionManager.restore(
             activity,
-            activity.components.core.engine,
+            engine,
             collection,
             onFailure = { url ->
-                activity.components.useCases.tabsUseCases.addTab.invoke(url)
+                addTabUseCase.invoke(url)
             }
         )
 
-        scrollToTheTop()
+        showTabTray()
         metrics.track(Event.CollectionAllTabsRestored)
     }
 
-    override fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab) {
+    override fun handleCollectionRemoveTab(
+        collection: TabCollection,
+        tab: ComponentTab,
+        wasSwiped: Boolean
+    ) {
         metrics.track(Event.CollectionTabRemoved)
 
-        viewLifecycleScope.launch(Dispatchers.IO) {
-            tabCollectionStorage.removeTabFromCollection(collection, tab)
+        if (collection.tabs.size == 1) {
+            val title = activity.resources.getString(
+                R.string.delete_tab_and_collection_dialog_title,
+                collection.title
+            )
+            val message =
+                activity.resources.getString(R.string.delete_tab_and_collection_dialog_message)
+            showDeleteCollectionPrompt(
+                collection,
+                title,
+                message,
+                wasSwiped,
+                handleSwipedItemDeletionCancel
+            )
+        } else {
+            viewLifecycleScope.launch {
+                tabCollectionStorage.removeTabFromCollection(collection, tab)
+            }
         }
     }
 
     override fun handleCollectionShareTabsClicked(collection: TabCollection) {
-        showShareFragment(collection.tabs.map { ShareData(url = it.url, title = it.title) })
+        showShareFragment(
+            collection.title,
+            collection.tabs.map { ShareData(url = it.url, title = it.title) }
+        )
         metrics.track(Event.CollectionShared)
     }
 
     override fun handleDeleteCollectionTapped(collection: TabCollection) {
-        showDeleteCollectionPrompt(collection)
+        val message =
+            activity.resources.getString(R.string.tab_collection_dialog_message, collection.title)
+        showDeleteCollectionPrompt(collection, null, message, false, handleSwipedItemDeletionCancel)
     }
 
     override fun handleOpenInPrivateTabClicked(topSite: TopSite) {
@@ -279,14 +270,6 @@ class DefaultSessionControlController(
                 from = BrowserDirection.FromHome
             )
         }
-    }
-
-    override fun handlePauseMediaClicked() {
-        store.state.media.pauseIfPlaying()
-    }
-
-    override fun handlePlayMediaClicked() {
-        store.state.media.playIfPaused()
     }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {
@@ -305,7 +288,9 @@ class DefaultSessionControlController(
         }
 
         viewLifecycleScope.launch(Dispatchers.IO) {
-            topSiteStorage.removeTopSite(topSite)
+            with(activity.components.useCases.topSitesUseCase) {
+                removeTopSites(topSite)
+            }
         }
     }
 
@@ -317,38 +302,18 @@ class DefaultSessionControlController(
         metrics.track(Event.CollectionRenamePressed)
     }
 
-    override fun handleSaveTabToCollection(selectedTabId: String?) {
-        if (browsingModeManager.mode.isPrivate) return
-
-        invokePendingDeleteJobs()
-
-        val tabs = getListOfTabs()
-        val step = when {
-            // Show the SelectTabs fragment if there are multiple opened tabs to select which tabs
-            // you want to save to a collection.
-            tabs.size > 1 -> SaveCollectionStep.SelectTabs
-            // If there is an existing tab collection, show the SelectCollection fragment to save
-            // the selected tab to a collection of your choice.
-            tabCollectionStorage.cachedTabCollections.isNotEmpty() -> SaveCollectionStep.SelectCollection
-            // Show the NameCollection fragment to create a new collection for the selected tab.
-            else -> SaveCollectionStep.NameCollection
+    override fun handleSelectTopSite(url: String, type: TopSite.Type) {
+        metrics.track(Event.TopSiteOpenInNewTab)
+        when (type) {
+            TopSite.Type.DEFAULT -> metrics.track(Event.TopSiteOpenDefault)
+            TopSite.Type.FRECENT -> metrics.track(Event.TopSiteOpenFrecent)
+            TopSite.Type.PINNED -> metrics.track(Event.TopSiteOpenPinned)
         }
 
-        showCollectionCreationFragment(step, selectedTabId?.let { arrayOf(it) })
-    }
-
-    override fun handleSelectTab(tabView: View, sessionId: String) {
-        invokePendingDeleteJobs()
-        val session = sessionManager.findSessionById(sessionId)
-        sessionManager.select(session!!)
-        activity.openToBrowser(BrowserDirection.FromHome)
-    }
-
-    override fun handleSelectTopSite(url: String) {
-        invokePendingDeleteJobs()
-        metrics.track(Event.TopSiteOpenInNewTab)
-        if (url == SupportUtils.POCKET_TRENDING_URL) { metrics.track(Event.PocketTopSiteClicked) }
-        activity.components.useCases.tabsUseCases.addTab.invoke(
+        if (url == SupportUtils.POCKET_TRENDING_URL) {
+            metrics.track(Event.PocketTopSiteClicked)
+        }
+        addTabUseCase.invoke(
             url = url,
             selectTab = true,
             startLoading = true
@@ -356,41 +321,44 @@ class DefaultSessionControlController(
         activity.openToBrowser(BrowserDirection.FromHome)
     }
 
-    override fun handleShareTabs() {
-        invokePendingDeleteJobs()
-        val shareData = sessionManager
-            .sessionsOfType(private = browsingModeManager.mode.isPrivate)
-            .map { ShareData(url = it.url, title = it.title) }
-            .toList()
-        showShareFragment(shareData)
-    }
-
     override fun handleStartBrowsingClicked() {
         hideOnboarding()
     }
 
     override fun handleOpenSettingsClicked() {
-        openSettingsScreen()
+        val directions = HomeFragmentDirections.actionGlobalPrivateBrowsingFragment()
+        navController.nav(R.id.homeFragment, directions)
     }
 
     override fun handleWhatsNewGetAnswersClicked() {
-        openWhatsNewLink()
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getWhatsNewUrl(activity),
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )
     }
 
     override fun handleReadPrivacyNoticeClicked() {
-        openPrivacyNotice()
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )
     }
 
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
         fragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, expand))
     }
 
-    override fun handleonOpenNewTabClicked() {
-        openSearchScreen()
-    }
-
     override fun handleCloseTip(tip: Tip) {
         fragmentStore.dispatch(HomeFragmentAction.RemoveTip(tip))
+    }
+
+    private fun showTabTrayCollectionCreation() {
+        val directions = HomeFragmentDirections.actionGlobalTabTrayDialogFragment(
+            enterMultiselect = true
+        )
+        navController.nav(R.id.homeFragment, directions)
     }
 
     private fun showCollectionCreationFragment(
@@ -403,10 +371,13 @@ class DefaultSessionControlController(
         // Only register the observer right before moving to collection creation
         registerCollectionStorageObserver()
 
-        val tabIds = getListOfTabs().map { it.sessionId }.toTypedArray()
-        val directions = HomeFragmentDirections.actionHomeFragmentToCreateCollectionFragment(
+        val tabIds = sessionManager
+            .sessionsOfType(private = activity.browsingModeManager.mode.isPrivate)
+            .map { session -> session.id }
+            .toList()
+            .toTypedArray()
+        val directions = HomeFragmentDirections.actionGlobalCollectionCreationFragment(
             tabIds = tabIds,
-            previousFragmentId = R.id.homeFragment,
             saveCollectionStep = step,
             selectedTabIds = selectedTabIds,
             selectedTabCollectionId = selectedTabCollectionId ?: -1
@@ -414,14 +385,53 @@ class DefaultSessionControlController(
         navController.nav(R.id.homeFragment, directions)
     }
 
-    private fun showShareFragment(data: List<ShareData>) {
+    override fun handleCreateCollection() {
+        showTabTrayCollectionCreation()
+    }
+
+    override fun handleRemoveCollectionsPlaceholder() {
+        settings.showCollectionsPlaceholderOnHome = false
+        fragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder)
+    }
+
+    private fun showShareFragment(shareSubject: String, data: List<ShareData>) {
         val directions = HomeFragmentDirections.actionGlobalShareFragment(
+            shareSubject = shareSubject,
             data = data.toTypedArray()
         )
         navController.nav(R.id.homeFragment, directions)
     }
 
-    companion object {
-        private const val TAB_ITEM_TRANSITION_NAME = "tab_item"
+    override fun handlePasteAndGo(clipboardText: String) {
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = clipboardText,
+            newTab = true,
+            from = BrowserDirection.FromHome,
+            engine = activity.components.search.provider.getDefaultEngine(activity)
+        )
+
+        val event = if (clipboardText.isUrl()) {
+            Event.EnteredUrl(false)
+        } else {
+            val searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.ACTION
+            activity.settings().incrementActiveSearchCount()
+            searchAccessPoint.let { sap ->
+                MetricsUtils.createSearchEvent(
+                    activity.components.search.provider.getDefaultEngine(activity),
+                    activity,
+                    sap
+                )
+            }
+        }
+
+        event?.let { activity.metrics.track(it) }
+    }
+
+    override fun handlePaste(clipboardText: String) {
+        val directions = HomeFragmentDirections.actionGlobalSearchDialog(
+            sessionId = null,
+            pastedText = clipboardText
+        )
+        navController.nav(R.id.homeFragment, directions)
     }
 }

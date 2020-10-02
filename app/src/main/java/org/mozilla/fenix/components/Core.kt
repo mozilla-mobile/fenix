@@ -5,9 +5,9 @@
 package org.mozilla.fenix.components
 
 import GeckoProvider
-import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import android.os.StrictMode
 import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,45 +16,72 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
+import mozilla.components.browser.session.undo.UndoMiddleware
+import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.browser.storage.sync.RemoteTabsStorage
+import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
+import mozilla.components.feature.downloads.DownloadMiddleware
+import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.RecordingDevicesNotificationFeature
 import mozilla.components.feature.media.middleware.MediaMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
+import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
 import mozilla.components.feature.session.HistoryDelegate
+import mozilla.components.feature.top.sites.DefaultTopSitesStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.webcompat.WebCompatFeature
+import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.lib.dataprotect.generateEncryptionKey
+import mozilla.components.service.digitalassetlinks.RelationChecker
+import mozilla.components.service.digitalassetlinks.local.StatementApi
+import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.media.MediaService
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
 import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
+import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.utils.Mockable
+import org.mozilla.fenix.utils.getUndoDelay
 import java.util.concurrent.TimeUnit
 
 /**
  * Component group for all core browser functionality.
  */
 @Mockable
-class Core(private val context: Context) {
+class Core(
+    private val context: Context,
+    private val crashReporter: CrashReporting,
+    strictMode: StrictModeManager
+) {
     /**
      * The browser engine component initialized based on the build
      * configuration (see build variants).
@@ -70,15 +97,30 @@ class Core(private val context: Context) {
             automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
             fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = false,
-            forceUserScalableContent = context.settings().forceEnableZoom
+            forceUserScalableContent = context.settings().forceEnableZoom,
+            loginAutofillEnabled = context.settings().shouldAutofillLogins
         )
 
         GeckoEngine(
             context,
             defaultSettings,
-            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage)
+            GeckoProvider.getOrCreateRuntime(
+                context,
+                lazyPasswordsStorage,
+                trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
+            )
         ).also {
             WebCompatFeature.install(it)
+
+            /**
+             * There are some issues around localization to be resolved, as well as questions around
+             * the capacity of the WebCompat team, so the "Report site issue" feature should stay
+             * disabled in Fenix Release builds for now.
+             * This is consistent with both Fennec and Firefox Desktop.
+             */
+            if (Config.channel.isNightlyOrDebug || Config.channel.isBeta) {
+                WebCompatReporterFeature.install(it, "fenix")
+            }
         }
     }
 
@@ -88,7 +130,11 @@ class Core(private val context: Context) {
     val client: Client by lazy {
         GeckoViewFetchClient(
             context,
-            GeckoProvider.getOrCreateRuntime(context, lazyPasswordsStorage)
+            GeckoProvider.getOrCreateRuntime(
+                context,
+                lazyPasswordsStorage,
+                trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
+            )
         )
     }
 
@@ -102,10 +148,24 @@ class Core(private val context: Context) {
     val store by lazy {
         BrowserStore(
             middleware = listOf(
+                RecentlyClosedMiddleware(context, RECENTLY_CLOSED_MAX, engine),
                 MediaMiddleware(context, MediaService::class.java),
-                ReaderViewMiddleware()
-            )
-        )
+                DownloadMiddleware(context, DownloadService::class.java),
+                ReaderViewMiddleware(),
+                ThumbnailsMiddleware(thumbnailStorage),
+                UndoMiddleware(::lookupSessionManager, context.getUndoDelay())
+            ) + EngineMiddleware.create(engine, ::findSessionById)
+        ).also {
+            it.dispatch(RecentlyClosedAction.InitializeRecentlyClosedState)
+        }
+    }
+
+    private fun lookupSessionManager(): SessionManager {
+        return sessionManager
+    }
+
+    private fun findSessionById(tabId: String): Session? {
+        return sessionManager.findSessionById(tabId)
     }
 
     /**
@@ -114,9 +174,11 @@ class Core(private val context: Context) {
     val customTabsStore by lazy { CustomTabsServiceStore() }
 
     /**
-     * The [PendingSessionDeletionManager] maintains a set of sessionIds that are marked for deletion
+     * The [RelationChecker] checks Digital Asset Links relationships for Trusted Web Activities.
      */
-    val pendingSessionDeletionManager by lazy { PendingSessionDeletionManager(context as Application) }
+    val relationChecker: RelationChecker by lazy {
+        StatementRelationChecker(StatementApi(client))
+    }
 
     /**
      * The session manager component provides access to a centralized registry of
@@ -150,15 +212,9 @@ class Core(private val context: Context) {
                     )
                 }
 
-                pendingSessionDeletionManager.getSessionsToDelete(context).forEach {
-                    sessionManager.findSessionById(it)?.let { session ->
-                        sessionManager.remove(session)
-                    }
-                }
-
                 // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
                 // the app is used.
-                sessionStorage.autoSave(sessionManager)
+                sessionStorage.autoSave(store)
                     .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                     .whenGoingToBackground()
                     .whenSessionsChange()
@@ -166,7 +222,7 @@ class Core(private val context: Context) {
 
             WebNotificationFeature(
                 context, engine, icons, R.drawable.ic_status_logo,
-                HomeActivity::class.java
+                permissionStorage.permissionsStorage, HomeActivity::class.java
             )
         }
     }
@@ -202,22 +258,77 @@ class Core(private val context: Context) {
     // Use these for startup-path code, where we don't want to do any work that's not strictly necessary.
     // For example, this is how the GeckoEngine delegates (history, logins) are configured.
     // We can fully initialize GeckoEngine without initialized our storage.
-    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context) }
+    val lazyHistoryStorage = lazy { PlacesHistoryStorage(context, crashReporter) }
     val lazyBookmarksStorage = lazy { PlacesBookmarksStorage(context) }
     val lazyPasswordsStorage = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+
+    /**
+     * The storage component to sync and persist tabs in a Firefox Sync account.
+     */
+    val lazyRemoteTabsStorage = lazy { RemoteTabsStorage() }
 
     // For most other application code (non-startup), these wrappers are perfectly fine and more ergonomic.
     val historyStorage by lazy { lazyHistoryStorage.value }
     val bookmarksStorage by lazy { lazyBookmarksStorage.value }
     val passwordsStorage by lazy { lazyPasswordsStorage.value }
 
-    val tabCollectionStorage by lazy { TabCollectionStorage(context, sessionManager) }
+    val tabCollectionStorage by lazy { TabCollectionStorage(
+        context,
+        sessionManager,
+        strictMode
+    ) }
 
-    val topSiteStorage by lazy { TopSiteStorage(context) }
+    /**
+     * A storage component for persisting thumbnail images of tabs.
+     */
+    val thumbnailStorage by lazy { ThumbnailStorage(context) }
+
+    val pinnedSiteStorage by lazy { PinnedSiteStorage(context) }
+
+    val topSitesStorage by lazy {
+        val defaultTopSites = mutableListOf<Pair<String, String>>()
+
+        strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            if (!context.settings().defaultTopSitesAdded) {
+                defaultTopSites.add(
+                    Pair(
+                        context.getString(R.string.default_top_site_google),
+                        SupportUtils.GOOGLE_URL
+                    )
+                )
+
+                if (LocaleManager.getSelectedLocale(context).language == "en") {
+                    defaultTopSites.add(
+                        Pair(
+                            context.getString(R.string.pocket_pinned_top_articles),
+                            SupportUtils.POCKET_TRENDING_URL
+                        )
+                    )
+                }
+
+                defaultTopSites.add(
+                    Pair(
+                        context.getString(R.string.default_top_site_wikipedia),
+                        SupportUtils.WIKIPEDIA_URL
+                    )
+                )
+
+                context.settings().defaultTopSitesAdded = true
+            }
+        }
+
+        DefaultTopSitesStorage(
+            pinnedSiteStorage,
+            historyStorage,
+            defaultTopSites
+        )
+    }
 
     val permissionStorage by lazy { PermissionStorage(context) }
 
     val webAppManifestStorage by lazy { ManifestStorage(context) }
+
+    val loginExceptionStorage by lazy { LoginExceptionStorage(context) }
 
     /**
      * Shared Preferences that encrypt/decrypt using Android KeyStore and lib-dataprotect for 23+
@@ -234,7 +345,9 @@ class Core(private val context: Context) {
     private val passwordsEncryptionKey by lazy {
         getSecureAbove22Preferences().getString(PASSWORDS_KEY)
             ?: generateEncryptionKey(KEY_STRENGTH).also {
-                if (context.settings().passwordsEncryptionKeyGenerated) {
+                if (context.settings().passwordsEncryptionKeyGenerated &&
+                    isSentryEnabled()
+                ) {
                     // We already had previously generated an encryption key, but we have lost it
                     Sentry.capture("Passwords encryption key for passwords storage was lost and we generated a new one")
                 }
@@ -264,5 +377,6 @@ class Core(private val context: Context) {
         private const val KEY_STRENGTH = 256
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
+        private const val RECENTLY_CLOSED_MAX = 10
     }
 }

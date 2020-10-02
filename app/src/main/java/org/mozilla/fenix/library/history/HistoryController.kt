@@ -1,8 +1,6 @@
-/*
- *  This Source Code Form is subject to the terms of the Mozilla Public
- *  * License, v. 2.0. If a copy of the MPL was not distributed with this
- *  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.library.history
 
@@ -10,11 +8,15 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.res.Resources
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 
+@Suppress("TooManyFunctions")
 interface HistoryController {
     fun handleOpen(item: HistoryItem, mode: BrowsingMode? = null)
     fun handleSelect(item: HistoryItem)
@@ -25,24 +27,32 @@ interface HistoryController {
     fun handleDeleteSome(items: Set<HistoryItem>)
     fun handleCopyUrl(item: HistoryItem)
     fun handleShare(item: HistoryItem)
+    fun handleRequestSync()
+    fun handleEnterRecentlyClosed()
 }
 
+@Suppress("TooManyFunctions")
 class DefaultHistoryController(
     private val store: HistoryFragmentStore,
     private val navController: NavController,
     private val resources: Resources,
     private val snackbar: FenixSnackbar,
     private val clipboardManager: ClipboardManager,
+    private val scope: CoroutineScope,
     private val openToBrowser: (item: HistoryItem, mode: BrowsingMode?) -> Unit,
     private val displayDeleteAll: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
-    private val deleteHistoryItems: (Set<HistoryItem>) -> Unit
+    private val deleteHistoryItems: (Set<HistoryItem>) -> Unit,
+    private val syncHistory: suspend () -> Unit
 ) : HistoryController {
     override fun handleOpen(item: HistoryItem, mode: BrowsingMode?) {
         openToBrowser(item, mode)
     }
 
     override fun handleSelect(item: HistoryItem) {
+        if (store.state.mode === HistoryFragmentState.Mode.Syncing) {
+            return
+        }
         store.dispatch(HistoryFragmentAction.AddItemForRemoval(item))
     }
 
@@ -73,7 +83,7 @@ class DefaultHistoryController(
 
     override fun handleCopyUrl(item: HistoryItem) {
         val urlClipData = ClipData.newPlainText(item.url, item.url)
-        clipboardManager.primaryClip = urlClipData
+        clipboardManager.setPrimaryClip(urlClipData)
         with(snackbar) {
             setText(resources.getString(R.string.url_copied))
             show()
@@ -85,6 +95,21 @@ class DefaultHistoryController(
             HistoryFragmentDirections.actionGlobalShareFragment(
                 data = arrayOf(ShareData(url = item.url, title = item.title))
             )
+        )
+    }
+
+    override fun handleRequestSync() {
+        scope.launch {
+            store.dispatch(HistoryFragmentAction.StartSync)
+            syncHistory.invoke()
+            store.dispatch(HistoryFragmentAction.FinishSync)
+        }
+    }
+
+    override fun handleEnterRecentlyClosed() {
+        navController.navigate(
+            HistoryFragmentDirections.actionGlobalRecentlyClosed(),
+            NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build()
         )
     }
 }

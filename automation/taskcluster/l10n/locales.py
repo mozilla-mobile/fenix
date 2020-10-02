@@ -11,18 +11,28 @@ import re
 OPEN_LOCALES = "locales = ["
 CLOSE_LOCALES = "]"
 
+# Android uses non-standard locale codes, these are the mappings back and forth
+# See Legacy language codes in https://developer.android.com/reference/java/util/Locale.html
+ANDROID_LEGACY_MAP = {
+    'he': 'iw',
+    'id': 'in',
+    'yi': 'ji'
+}
+
 def trim_to_locale(str):
     match = re.search('\s*"([a-z]+-?[A-Z]*)",\s*', str)
     if not match:
         raise Exception("Failed parsing locale found in l10n.toml: " + str)
-    return match.group(1)
+
+    locale = match.group(1)
+    return ANDROID_LEGACY_MAP.get(locale, locale)
 
 
-# This file is a dumb parser that converts values from '/l10n.toml' to be easily consumed from
-# Python.
+# This file is a dumb parser that converts values from '/l10n-release.toml' to be easily
+# consumed from Python.
 #
-# 'l10n.toml' has a very simple structure, and it is reasonable to believe that this (very basic)
-# algorithm will continue to work as it is changed.
+# 'l10n-release.toml' has a very simple structure, and it is reasonable to believe that this
+# (very basic) algorithm will continue to work as it is changed.
 #
 # Alternatives to custom parsing that were considered:
 # - Using standard library module --- none exists to parse TOML
@@ -31,7 +41,7 @@ def trim_to_locale(str):
 # - Vendoring a TOML module --- large amount of code given the use case. Introduces a security
 #   risk
 def get_release_locales():
-    with open(r"l10n.toml") as f:
+    with open(r"l10n-release.toml") as f:
         file = f.read().splitlines()
 
     locales_opened = False

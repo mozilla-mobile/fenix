@@ -1,11 +1,33 @@
-# Firefox Preview
+# Firefox for Android
 
 [![Task Status](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/master/badge.svg)](https://github.taskcluster.net/v1/repository/mozilla-mobile/fenix/master/latest)
 [![codecov](https://codecov.io/gh/mozilla-mobile/fenix/branch/master/graph/badge.svg)](https://codecov.io/gh/mozilla-mobile/fenix)
 
-Firefox Preview (internal code name: "Fenix") is an all-new browser for Android, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
+Fenix (internal codename) is the all-new Firefox for Android browser, based on [GeckoView](https://mozilla.github.io/geckoview/) and [Mozilla Android Components](https://mozac.org/).
+
+<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox" target="_blank"><img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="90"/></a>
 
 ** Note: The team is currently experiencing heavy triage and review load, so when triaging issues, we will mainly be looking to identify [S1 (high severity)](https://github.com/mozilla-mobile/fenix/labels/S1) issues. See our triage process [here](https://github.com/mozilla-mobile/fenix/wiki/Triage-Process). Please be patient if you don't hear back from us immediately on your issue! **
+
+## Getting Involved
+
+Please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) and the [Bugzilla Etiquette guidelines](https://bugzilla.mozilla.org/page.cgi?id=etiquette.html) before filing an issue. This is our professional working environment as much as it is our bug tracker, and we want to keep our workspace clean and healthy.
+
+* [Guide to Contributing](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING.md) (**New contributors start here!**)
+
+* Browse our [current Issues](https://github.com/mozilla-mobile/fenix/issues), or [file a security issue][sec issue].
+
+* Matrix: [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org) (**We're available Monday-Friday, GMT and PST working hours**). Related channels:
+  * [#mobile-test-eng:mozilla.org channel](https://chat.mozilla.org/#/room/#mobile-test-eng:mozilla.org): for UI test automation
+  * [#perf-android-frontend:mozilla.org channel](https://chat.mozilla.org/#/room/#perf-android-frontend:mozilla.org): for front-end (JVM) performance of Android apps
+  * [#android-tips:mozilla.org channel](https://chat.mozilla.org/#/room/#android-tips:mozilla.org): for tips on Android development
+
+* Check out the [project wiki](https://github.com/mozilla-mobile/fenix/wiki) for more information.
+
+* Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
+
+**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first timers to have a go, get involved and make a positive contribution to the project!
+
 
 ## I want to open a Pull Request!
 
@@ -31,28 +53,26 @@ because we find ourselves in a constant need to prioritize
 certain issues/PRs over others. If you think your issue/PR is very important,
 try to popularize it by getting other users to comment and share their point of view.
 
-## Getting Involved
+## I want to file an issue!
 
-Before you attempt to make a contribution please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
+Great! We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
 
-* [Guide to Contributing](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING.md) (**New contributors start here!**)
+To make it easier to triage, we have these issue requirements:
 
-* Browse our [current Issues](https://github.com/mozilla-mobile/fenix/issues), or [file a security issue][sec issue].
+* Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean.
+* Every issue should have **exactly** one bug/feature request described in it. Please do not file meta feedback list tickets as it is difficult to parse them and address their individual points.
+* Feature Requests are better when they’re open-ended instead of demanding a specific solution -ie  “I want an easier way to do X” instead of “add Y”
+* Issues are not the place to go off topic or debate. If you have questions, please join the [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org).
+* Please always remember our [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
+* Please do not tag specific team members to try to get your issue looked at faster. We have a triage process that will tag and label issues correctly in due time. If you think an issue is very severe, you can ask about it in Matrix.
 
-* Matrix: [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org) (**We're available Monday-Friday, GMT and PST working hours**). Related channels:
-  * [#mobile-test-eng:mozilla.org channel](https://chat.mozilla.org/#/room/#mobile-test-eng:mozilla.org): for UI test automation
-  * [#perf-android-frontend:mozilla.org channel](https://chat.mozilla.org/#/room/#perf-android-frontend:mozilla.org): for front-end (JVM) performance of Android apps
-  * [#android-tips:mozilla.org channel](https://chat.mozilla.org/#/room/#android-tips:mozilla.org): for tips on Android development
-
-* Check out the [project wiki](https://github.com/mozilla-mobile/fenix/wiki) for more information.
-
-* Localization happens on [Pontoon](https://pontoon.mozilla.org/projects/android-l10n/). Please get in touch with delphine (at) mozilla (dot) com directly for more information.
-
-**Beginners!** - Watch out for [Issues with the "Good First Issue" label](https://github.com/mozilla-mobile/fenix/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These are easy bugs that have been left for first timers to have a go, get involved and make a positive contribution to the project!
+Please keep in mind that even though a feature you have in mind may seem like a small ask, as a small team, we have to prioritize our planned work and every new feature adds complexity and maintenance and may take up design, research, marketing, product, and engineering time. We appreciate everyone’s passion but we will not be able to incorporate every feature request or even fix every bug. That being said, just because we haven't replied, doesn't mean we don't care about the issue, please be patient with our response times as we're very busy.
 
 ## Build Instructions
 
-Note: Both Android SDK and NDK are required.
+Pre-requisites:
+* Android SDK
+* To run command line tools, you'll need to configure Java: see [our how-to guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
 
 1. Clone or Download the repository:
 
@@ -63,76 +83,56 @@ Note: Both Android SDK and NDK are required.
 2. **Import** the project into Android Studio **or** build on the command line:
 
   ```shell
-  ./gradlew clean app:assembleGeckoBetaDebug
+  ./gradlew clean app:assembleDebug
   ```
 
-  Use app:assembleGeckoNightlyDebug to build with the Gecko Nightly version instead.
+  If this errors out, make sure that you have an `ANDROID_SDK_ROOT` environment
+  variable pointing to the right path.
 
 3. Make sure to select the correct build variant in Android Studio. See the next section.
 
-### Guide to Build Variants
-We have a lot of build variants. Each variant is composed of two flavors. One flavor is the version of Gecko to use and the other describes
-which app id and settings to use. Here is a description of what each means:
+### Build Variants
+For general development, we recommend the **debug** build variant. Here's an explanation of each variant:
 
-- **geckoBeta** (recommended) uses the Beta variant of the Gecko rendering engine, which corresponds to the next version of Gecko which will go to production
-- **geckoNightly** uses the Nightly variant of the Gecko rendering engine, which is the version which will arrive after beta and is less stable
+- **debug**: the default for developers, similar to most other Android apps. It is debuggable, uses a Nightly GeckoView with debug symbols, adds tools like LeakCanary for troublingshooting, and does not strip unused code.
+- **nightly**: what we ship to the Firefox Nightly channel, using GeckoView Nightly.
+- **beta**: what we ship to the Firefox Beta channel, using GeckoView Beta. It is more stable than nightly.
+- **release**: what we ship as Firefox for Android, using GeckoView Release. It is the most stable.
 
-<br />
-<br />
-
-- **debug** uses debug symbols and debug signing, adds tools like LeakCanary for troubleshooting, and does not strip unused or wasteful code
-- **fenixNightly** is a release build with nightly signing which uses the org.mozilla.fenix.nightly app id for nightly releases to Google Play
-- **fenixBeta** is a release build with beta signing which uses the org.mozilla.fenix.beta app id for beta releases to Google Play
-- **fenixProduction** is a release build with release signing which uses the org.mozilla.fenix app id for production releases to Google Play
-- **fennecProduction** is an experimental build with release signing which uses the org.mozilla.firefox app id and supports upgrading the older Firefox. **WARNING** Pre-production versions of this may result in data loss.
-- **forPerformanceTest**: see "Performance Build Variants" below.
+nightly, beta, and release are unsigned and `debuggable=false` by default. If
+you want these variants to be:
+- automatically signed, see [Automatically signing release builds](#automatically-sign-release-builds)
+- `debuggable=true`, see [Building debuggable release variants](#building-debuggable-release-variants)
 
 #### Performance Build Variants
 For accurate performance measurements, read this section!
 
-If you want to analyze performance during **local development** (note: there is a non-trivial performance impact - see caveats):
-- Recommendation: use a `forPerformanceTest` variant with local Leanplum, Adjust, & Sentry API tokens: contact the front-end perf group for access to them
-- Rationale: `forPerformanceTest` is a release variant with `debuggable` set to true. There are numerous performance-impacting differences between debug and release variants so we need a release variant. To profile, we also need debuggable, which is disabled on other release variants. If API tokens are not provided, the SDKs may change their behavior in non-trivial ways.
-- Caveats:
-  - debuggable has a non-trivial & variable impact on performance but is needed to take profiles.
-  - Random experiment opt-in & feature flags may impact performance (see [perf-frontend-issues#45](https://github.com/mozilla-mobile/perf-frontend-issues/issues/45) for mitigation).
-  - This is slower to build than debug builds because it does additional tasks (e.g. minification) similar to other release builds
+To analyze performance during **local development** build a production variant locally (this could either be the Nightly, beta or release).  Otherwise, you could also grab a pre-existing APK if you don't need to test some local changes. Then, use the Firefox profiler to profile what you need!
 
-Nightly `forPerformanceTest` variants with API tokens already added [are also available from Taskcluster](https://firefox-ci-tc.services.mozilla.com/tasks/index/project.mobile.fenix.v2.performance-test/).
+For more information on how to use the profiler or how to use the build, refer to this [how to measure performance with the build](https://wiki.mozilla.org/Performance/How_to_get_started_on_Fenix)
 
-If you want to run **performance tests/benchmarks** in automation or locally:
-- Recommendation: production builds. If debuggable is required, use recommendation above but note the caveat above. If your needs are not met, please contact the front-end perf group to identify a new solution.
-- Rationale: like the rationale above, we need release variants so the choice is based on the debuggable flag.
+If you want to run **performance tests/benchmarks** in automation or locally use a production build since it is much closer in behavior compared to what users see in the wild.
 
-For additional context on these recommendations, see [the perf build variant analysis](https://docs.google.com/document/d/1aW-m0HYncTDDiRz_2x6EjcYkjBpL9SHhhYix13Vil30/edit#).
+Before you can install any release builds, **You will need to sign production build variants:** see [Automatically signing release builds](#automatically-sign-release-builds) for details.
 
-You will **need to sign `forPerformanceTest` variants.** For local development, our recommendation is to add the following configuration to `app/build.gradle`:
-
-```groovy
-android { // this line already exists
-    // ...
-
-    buildTypes { // this line already exists
-        // ...
-
-        forPerformanceTest releaseTemplate >> { // this line already exists.
-            // ...
-
-            signingConfig signingConfigs.debug
-        }
-    }
-}
-```
-
-This recommendation will let you use AS just like you do with debug builds but **please do not check in these changes.**
-
-See [perf-frontend-issues#44](https://github.com/mozilla-mobile/perf-frontend-issues/issues/44) for efforts to make performance signing easier.
+##### Known disabled-by-default features
+Some features are disabled by default when Fenix is built locally. This can be problematic at times for checking performance since you might want to know how your code behaves with those features.
+The known features that are disabled by default are:
+- Sentry
+- Leanplum
+- Adjust
+- Mozilla Location Services (also known as MLS)
+- Firebase Push Services
+- Telemetry (only disabled by default in debug builds)
 
 ## Pre-push hooks
 To reduce review turn-around time, we'd like all pushes to run tests locally. We'd
 recommend you use our provided pre-push hook in `config/pre-push-recommended.sh`.
 Using this hook will guarantee your hook gets updated as the repository changes.
 This hook tries to run as much as possible without taking too much time.
+
+Before you can run the hook, you'll need to configure Java properly because it relies on command line tools: see
+[our how-to guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
 
 To add it on Mac/Linux, run this command from the project root:
 ```sh
@@ -152,9 +152,47 @@ To push without running the pre-push hook (e.g. doc updates):
 git push <remote> --no-verify
 ```
 
+Note: If while pushing you encounter this error "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" and are currently on Java14 then downgrading your Java version to Java13 or lower can resolve the issue
+
+Steps to downgrade Java Version on Mac with Brew: 
+1. Install Homebrew (https://brew.sh/)
+2. run ```brew update```
+3. To uninstall your current java version, run ```sudo rm -fr /Library/Java/JavaVirtualMachines/<jdk-version>```
+4. run ```brew tap homebrew/cask-versions```
+5. run ```brew search java```
+6. If you see java11, then run ```brew install java11```
+7. Verify java-version by running ```java -version```
+
 ## local.properties helpers
-There are multiple helper flags available via `local.properties` that will help speed up local development workflow
-when working across multiple layers of the dependency stack - specifically, with android-components, geckoview or application-services.
+You can speed up local development by setting a few helper flags available in `local.properties`. Some flags will make it easy to
+work across multiple layers of the dependency stack - specifically, with android-components, geckoview or application-services.
+
+### Automatically sign release builds
+To sign your release builds with your debug key automatically, add the following to `<proj-root>/local.properties`:
+
+```sh
+autosignReleaseWithDebugKey
+```
+
+With this line, release build variants will automatically be signed with your debug key (like debug builds), allowing them to be built and installed directly through Android Studio or the command line.
+
+This is helpful when you're building release variants frequently, for example to test feature flags and or do performance analyses.
+
+### Building debuggable release variants
+
+Nightly, Beta and Release variants are getting published to Google Play and therefore are not debuggable. To locally create debuggable builds of those variants, add the following to `<proj-root>/local.properties`:
+
+```sh
+debuggable
+```
+
+### Setting raptor manifest flag
+
+To set the raptor manifest flag in Nightly, Beta and Release variants, add the following to `<proj-root>/local.properties`:
+
+```sh
+raptorEnabled
+```
 
 ### Auto-publication workflow for android-components and application-services
 If you're making changes to these projects and want to test them in Fenix, auto-publication workflow is the fastest, most reliable
@@ -168,12 +206,18 @@ Once these flags are set, your Fenix builds will include any local modifications
 
 See a [demo of auto-publication workflow in action](https://www.youtube.com/watch?v=qZKlBzVvQGc).
 
+In order to build successfully, you need to check out a commit in the dependency repository that has no breaking changes. The two best ways to do this are:
+- Run the `<android-components>/tools/list_compatible_dependency_versions.py` script to output a compatible commit
+- Check out the latest commit from master in this repository and the dependency repository. However, this may fail if there were breaking changes added recently to the dependency.
+
 ### GeckoView
 Specify a relative path to your local `mozilla-central` checkout via `dependencySubstitutions.geckoviewTopsrcdir`,
 and optional a path to m-c object directory via `dependencySubstitutions.geckoviewTopobjdir`.
 
 If these are configured, local builds of GeckoView will be used instead of what's configured in Dependencies.kt.
-For more details, see https://mozilla.github.io/geckoview/contributor/geckoview-quick-start#include-geckoview-as-a-dependency
+For more details, see https://firefox-source-docs.mozilla.org/mobile/android/geckoview/contributor/geckoview-quick-start.html#include-geckoview-as-a-dependency
+
+See notes on building successfully in the `android-components` auto-publication section.
 
 ## License
 

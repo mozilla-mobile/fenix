@@ -17,24 +17,26 @@ primary-dependency: signing
 group-by: build-type
 
 only-for-build-types:
-    - fennec-nightly
-    - fennec-beta
-    - nightly
     - beta
-    - production
+    - release
+    - nightly
 
 job-template:
     description: Publish Fenix
     worker-type: push-apk
     worker:
+        certificate-alias:
+            # TODO rename these values to use non-legacy terms.
+            by-build-type:
+                nightly: fenix-production
+                beta: fennec-beta
+                release: fennec-production
         commit: true
         channel:
             by-build-type:
-                fennec-nightly: fennec-nightly
-                fennec-beta: fennec-beta
-                nightly: nightly
-                beta: beta
-                production: production
+                beta: fennec-beta
+                release: fennec-production
+                nightly: production
         dep:
             by-level:
                 '3': false

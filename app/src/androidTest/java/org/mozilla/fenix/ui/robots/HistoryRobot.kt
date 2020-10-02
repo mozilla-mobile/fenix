@@ -10,12 +10,12 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -32,19 +32,17 @@ class HistoryRobot {
     fun verifyHistoryMenuView() = assertHistoryMenuView()
 
     fun verifyEmptyHistoryView() {
-        mDevice.waitNotNull(
-            Until.findObject(
-                By.text("No history here")
-            ),
-            waitingTime
-        )
+        mDevice.findObject(
+            UiSelector().text("No history here")
+        ).waitForExists(waitingTime)
+
         assertEmptyHistoryView()
     }
 
     fun verifyVisitedTimeTitle() {
         mDevice.waitNotNull(
             Until.findObject(
-                By.text("Last 24 hours")
+                By.text("Today")
             ),
             waitingTime
         )
@@ -83,16 +81,25 @@ class HistoryRobot {
             .click()
     }
 
+    fun verifyDeleteSnackbarText(text: String) = assertSnackBarText(text)
+
     class Transition {
-        fun goBack(interact: HistoryRobot.() -> Unit): Transition {
-            goBackButton().click()
+        fun closeMenu(interact: HistoryRobot.() -> Unit): Transition {
+            closeButton().click()
 
             HistoryRobot().interact()
             return Transition()
         }
 
+        fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            closeButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
         fun openThreeDotMenu(interact: ThreeDotMenuHistoryItemRobot.() -> Unit):
-            ThreeDotMenuHistoryItemRobot.Transition {
+                ThreeDotMenuHistoryItemRobot.Transition {
 
             threeDotMenu().click()
 
@@ -107,7 +114,7 @@ fun historyMenu(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
     return HistoryRobot.Transition()
 }
 
-private fun goBackButton() = onView(withContentDescription("Navigate up"))
+private fun closeButton() = onView(withId(R.id.close_history))
 
 private fun testPageTitle() = onView(allOf(withId(R.id.title), withText("Test_Page_1")))
 
@@ -136,7 +143,7 @@ private fun assertEmptyHistoryView() =
         .check(matches(withText("No history here")))
 
 private fun assertVisitedTimeTitle() =
-    onView(withId(R.id.header_title)).check(matches(withText("Last 24 hours")))
+    onView(withId(R.id.header_title)).check(matches(withText("Today")))
 
 private fun assertTestPageTitle(title: String) = testPageTitle()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
@@ -152,3 +159,6 @@ private fun assertDeleteConfirmationMessage() =
         .check(matches(isDisplayed()))
 
 private fun assertCopySnackBarText() = snackBarText().check(matches(withText("URL copied")))
+
+private fun assertSnackBarText(text: String) =
+    snackBarText().check(matches(withText(Matchers.containsString(text))))

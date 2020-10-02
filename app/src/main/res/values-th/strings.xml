@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_2">Firefox Preview ส่วนตัว</string>
-    <!-- App name for private browsing mode, only the "Private" portion should be localized. -->
-    <string name="app_name_private_3">Firefox Preview (ส่วนตัว)</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">%s ส่วนตัว</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (ส่วนตัว)</string>
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">ตัวเลือกเพิ่มเติม</string>
@@ -13,10 +13,42 @@
     <string name="content_description_disable_private_browsing_button">ปิดใช้งานการเรียกดูแบบส่วนตัว</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">ค้นหาหรือป้อนที่อยู่</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_open_tabs_header_2">ไม่มีแท็บที่เปิดอยู่</string>
     <!-- No Open Tabs Message Description -->
     <string name="no_open_tabs_description">แท็บที่คุณเปิดจะถูกแสดงที่นี่</string>
+
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">แท็บส่วนตัวของคุณจะถูกแสดงที่นี่</string>
+
+    <!-- Message announced to the user when tab tray is selected with 1 tab -->
+    <string name="open_tab_tray_single">1 แท็บที่เปิด แตะเพื่อสลับไปยังแท็บ</string>
+    <!-- Message announced to the user when tab tray is selected with 0 or 2+ tabs -->
+    <string name="open_tab_tray_plural">%1$s แท็บที่เปิด แตะเพื่อสลับไปยังแท็บ</string>
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">เลือกอยู่ %1$d</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">เพิ่มชุดสะสมใหม่</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">ชื่อ</string>
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">เลือกชุดสะสม</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">ออกจากโหมดเลือกหลายรายการ</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">บันทึกแท็บที่เลือกลงในชุดสะสม</string>
+    <!-- Content description for checkmark while tab is selected while in multiselect mode in tab tray. The first parameter is the title of the tab selected -->
+    <string name="tab_tray_item_selected_multiselect_content_description">เลือกแล้ว %1$s</string>
+    <!-- Content description when tab is unselected while in multiselect mode in tab tray. The first parameter is the title of the tab unselected -->
+    <string name="tab_tray_item_unselected_multiselect_content_description">เลิกเลือกแล้ว %1$s</string>
+    <!-- Content description announcement when exiting multiselect mode in tab tray -->
+    <string name="tab_tray_exit_multiselect_content_description">ออกจากโหมดเลือกหลายรายการแล้ว</string>
+    <!-- Content description announcement when entering multiselect mode in tab tray -->
+    <string name="tab_tray_enter_multiselect_content_description">เข้าสู่โหมดเลือกหลายรายการแล้ว เลือกแท็บที่จะบันทึกลงในชุดสะสม</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">เลือกแล้ว</string>
+
+    <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
+    <string name="about_content">%1$s ผลิตขึ้นโดย Mozilla</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -24,19 +56,48 @@
 
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description">%1$s จะล้างประวัติการค้นหาและประวัติการท่องเว็บของคุณเมื่อคุณออกจากแอปหรือปิดแท็บและหน้าต่างการท่องเว็บแบบส่วนตัวทั้งหมด แม้ว่าสิ่งนี้จะไม่ทำให้คุณไม่เปิดเผยตัวตนกับเว็บไซต์หรือผู้ให้บริการอินเทอร์เน็ตของคุณ
-        แต่จะทำให้การรักษาความเป็นส่วนตัวของสิ่งที่คุณทำออนไลน์จากผู้อื่นที่ใช้คอมพิวเตอร์เครื่องนี้ง่ายขึ้น</string>
+    <string name="private_browsing_placeholder_description_2">%1$s จะล้างประวัติการค้นหาและประวัติการเรียกดูของคุณจากแท็บส่วนตัวเมื่อคุณปิดแท็บเหล่านั้นหรือออกจากแอป แม้ว่าสิ่งนี้จะไม่ทำให้คุณไม่เปิดเผยตัวตนกับเว็บไซต์หรือผู้ให้บริการอินเทอร์เน็ตของคุณ แต่จะทำให้การรักษาความเป็นส่วนตัวของสิ่งที่คุณทำออนไลน์จากผู้อื่นที่ใช้อุปกรณ์เครื่องนี้ง่ายขึ้น</string>
     <string name="private_browsing_common_myths">ความเข้าใจผิดที่พบบ่อยเกี่ยวกับการท่องเว็บแบบส่วนตัว</string>
     <!-- Delete session button to erase your history in a private session -->
     <string name="private_browsing_delete_session">ลบวาระ</string>
 
-    <!-- Private mode shortcut "contextual feature recommender" (CFR) -->
+    <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
     <string name="cfr_message">เพิ่มทางลัดเพื่อเปิดแท็บส่วนตัวจากหน้าจอหลักของคุณ</string>
     <!-- Text for the positive button -->
     <string name="cfr_pos_button_text">เพิ่มทางลัด</string>
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">ไม่ ขอบคุณ</string>
+
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">เข้า Firefox ได้เร็วขึ้นโดยเพิ่มวิดเจ็ตไปยังหน้าจอหลักของคุณ</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">เพิ่มวิดเจ็ต</string>
+    <!-- Text for the negative button -->
+    <string name="search_widget_cfr_neg_button_text">ไม่ใช่ตอนนี้</string>
+
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">คุณสามารถตั้งค่าให้ Firefox เปิดลิงก์ในแอปโดยอัตโนมัติได้</string>
+    <!-- Text for the positive action button -->
+    <string name="open_in_app_cfr_positive_button_text">ไปยังการตั้งค่า</string>
+    <!-- Text for the negative action button -->
+    <string name="open_in_app_cfr_negative_button_text">ยกเลิก</string>
+
+    <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
+    <string name="camera_permissions_needed_message">จำเป็นต้องมีการเข้าถึงกล้อง ไปที่การตั้งค่า Android แตะสิทธิอนุญาต แล้วแตะอนุญาต</string>
+    <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
+    <string name="camera_permissions_needed_positive_button_text">ไปยังการตั้งค่า</string>
+    <!-- Text for the negative action button to dismiss the dialog. -->
+    <string name="camera_permissions_needed_negative_button_text">ยกเลิก</string>
+
+    <!-- Text for the banner message to tell users about our auto close feature. -->
+    <string name="tab_tray_close_tabs_banner_message">ตั้งค่าแท็บที่เปิดอยู่ให้ปิดโดยอัตโนมัติที่ไม่ได้เข้าดูในวัน สัปดาห์ หรือเดือนที่ผ่านมา</string>
+    <!-- Text for the positive action button to go to Settings for auto close tabs. -->
+    <string name="tab_tray_close_tabs_banner_positive_button_text">ดูตัวเลือก</string>
+    <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
+    <string name="tab_tray_close_tabs_banner_negative_button_text">ยกเลิก</string>
 
     <!-- Home screen icons - Long press shortcuts -->
     <!-- Shortcut action to open new tab -->
@@ -81,6 +142,10 @@
     <string name="browser_menu_add_to_homescreen">เพิ่มไปยังหน้าจอหลัก</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">ติดตั้ง</string>
+    <!-- Menu option on the toolbar that takes you to synced tabs page-->
+    <string name="synced_tabs">แท็บที่ซิงค์</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">ซิงค์ใหม่</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">ค้นหาในหน้า</string>
     <!-- Browser menu button that creates a private tab -->
@@ -89,8 +154,6 @@
     <string name="browser_menu_new_tab">แท็บใหม่</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">บันทึกไปยังชุดสะสม</string>
-    <!-- Browser menu button that opens a dialog to report issues with the current site -->
-    <string name="browser_menu_report_issue">รายงานปัญหาไซต์</string>
     <!-- Browser menu button that open a share menu to share the current site -->
     <string name="browser_menu_share">แบ่งปัน</string>
     <!-- Share menu title, displayed when a user is sharing their current site -->
@@ -104,12 +167,18 @@
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="browser_menu_powered_by2">ขับเคลื่อนโดย %1$s</string>
-    <!-- Browser menu button to put the the current page in reader mode -->
+    <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">มุมมองผู้อ่าน</string>
+    <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
+    <string name="browser_menu_read_close">ปิดมุมมองผู้อ่าน</string>
     <!-- Browser menu button to open the current page in an external app -->
     <string name="browser_menu_open_app_link">เปิดในแอป</string>
     <!-- Browser menu button to configure reader mode appearance e.g. the used font type and size -->
     <string name="browser_menu_read_appearance">ลักษณะที่ปรากฏ</string>
+
+    <!-- Error message to show when the user tries to access a scheme not
+        handled by the app (Ex: blob, tel etc) -->
+    <string name="unknown_scheme_error_message">ไม่สามารถเชื่อมต่อได้เนื่องจากเป็นรูปแบบ URL ที่ไม่รู้จัก</string>
 
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
@@ -124,14 +193,12 @@
     <!-- Search Fragment -->
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">สแกน</string>
-    <!-- Button in the search view that lets a user search by using a shortcut -->
-    <string name="search_shortcuts_button">ทางลัด</string>
+    <!-- Button in the search view that lets a user change their search engine -->
+    <string name="search_engine_button">เครื่องมือค้นหา</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">การตั้งค่าเครื่องมือค้นหา</string>
-    <!-- DEPRECATED: Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with">ค้นหาด้วย</string>
     <!-- Header displayed when selecting a shortcut search engine -->
-    <string name="search_shortcuts_search_with_2">คราวนี้ค้นหาด้วย:</string>
+    <string name="search_engines_search_with">คราวนี้ค้นหาด้วย:</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
     <string name="awesomebar_clipboard_title">เติมลิงก์จากคลิปบอร์ด</string>
     <!-- Button in the search suggestions onboarding that allows search suggestions in private sessions -->
@@ -200,10 +267,20 @@
     <string name="preferences_private_browsing_options">การเรียกดูแบบส่วนตัว</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">เปิดลิงก์ในแท็บส่วนตัว</string>
+    <!-- Preference for allowing screenshots to be taken while in a private tab-->
+    <string name="preferences_allow_screenshots_in_private_mode">อนุญาตภาพหน้าจอในการเรียกดูแบบส่วนตัว</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">ถ้าอนุญาต แท็บส่วนตัวจะปรากฏให้เห็นเมื่อมีหลายแอปที่เปิดอยู่</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">เพิ่มทางลัดการเรียกดูแบบส่วนตัว</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">การช่วยเข้าถึง</string>
+    <!-- Preference to override the Firefox Account server -->
+    <string name="preferences_override_fxa_server">เซิร์ฟเวอร์บัญชี Firefox ที่กำหนดเอง</string>
+    <!-- Preference to override the Sync token server -->
+    <string name="preferences_override_sync_tokenserver">เซิร์ฟเวอร์ Sync ที่กำหนดเอง</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">เปลี่ยนแปลงเซิร์ฟเวอร์บัญชี Firefox/Sync แล้ว กำลังออกจากแอปพลิเคชันเพื่อนำการเปลี่ยนแปลงไปใช้…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">บัญชี</string>
     <!-- Preference shown on banner to sign into account -->
@@ -212,6 +289,10 @@
     <string name="preferences_toolbar">แถบเครื่องมือ</string>
     <!-- Preference for changing default theme to dark or light mode -->
     <string name="preferences_theme">ชุดตกแต่ง</string>
+    <!-- Preference for customizing the home screen -->
+    <string name="preferences_home">หน้าแรก</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">ท่าทาง</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">ปรับแต่ง</string>
     <!-- Preference description for banner about signing in -->
@@ -232,10 +313,12 @@
     <string name="developer_tools_category">เครื่องมือนักพัฒนา</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">การดีบั๊กระยะไกลผ่าน USB</string>
-    <!-- Preference title for switch preference to show search shortcuts -->
-    <string name="preferences_show_search_shortcuts">แสดงทางลัดการค้นหา</string>
+    <!-- Preference title for switch preference to show search engines -->
+    <string name="preferences_show_search_engines">แสดงเครื่องมือค้นหา</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">แสดงข้อเสนอแนะการค้นหา</string>
+    <!-- Preference title for switch preference to show voice search button -->
+    <string name="preferences_show_voice_search">แสดงการค้นหาด้วยเสียง</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">แสดงในวาระส่วนตัว</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -244,13 +327,22 @@
     <string name="preferences_search_browsing_history">ค้นหาประวัติการเรียกดู</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">ค้นหาที่คั่นหน้า</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">ค้นหาแท็บที่ซิงค์</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">การตั้งค่าบัญชี</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">เติม URL อัตโนมัติ</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">เปิดลิงก์ในแอป</string>
 
+    <!-- Preference for open download with an external download manager app -->
+    <string name="preferences_external_download_manager">ตัวจัดการการดาวน์โหลดภายนอก</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">ส่วนเสริม</string>
+
+    <!-- Preference for notifications -->
+    <string name="preferences_notifications">การแจ้งเตือน</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -263,6 +355,8 @@
     <string name="preferences_sync_bookmarks">ที่คั่นหน้า</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">การเข้าสู่ระบบ</string>
+    <!-- Preference for syncing tabs -->
+    <string name="preferences_sync_tabs_2">แท็บที่เปิดอยู่</string>
     <!-- Preference for signing out -->
     <string name="preferences_sign_out">ลงชื่อออก</string>
     <!-- Preference displays and allows changing current FxA device name -->
@@ -279,10 +373,11 @@
     <string name="sync_last_synced_summary">ซิงค์ล่าสุด: %s</string>
     <!-- Label summary showing never synced -->
     <string name="sync_never_synced_summary">ซิงค์ล่าสุด: ไม่เคย</string>
+
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
         and the third is the device model. -->
-    <string name="default_device_name">%s บน %s %s</string>
+    <string name="default_device_name_2">%1$s บน %2$s %3$s</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -353,7 +448,7 @@
 
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
-    <string name="pair_instructions"><![CDATA[เยี่ยมชม <b>firefox.com/pair</b> ใน Firefox บนคอมพิวเตอร์ของคุณเพื่อรับรหัส QR ของคุณ]]></string>
+    <string name="pair_instructions_2"><![CDATA[สแกนรหัส QR ที่แสดงใน <b>firefox.com/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">เปิดกล้อง</string>
     <!-- Button to cancel pairing -->
@@ -375,6 +470,16 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">ตามชุดตกแต่งอุปกรณ์</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">ดึงเพื่อรีเฟรช</string>
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">เลื่อนเพื่อซ่อนแถบเครื่องมือ</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">ปัดแถบเครื่องมือไปด้านข้างเพื่อสลับแท็บ</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">ปัดแถบเครื่องมือไปด้านบนเพื่อเปิดแท็บ</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">วาระ</string>
@@ -394,18 +499,43 @@
     <string name="library_desktop_bookmarks_unfiled">ที่คั่นหน้าอื่น ๆ</string>
     <!-- Option in Library to open History page -->
     <string name="library_history">ประวัติ</string>
+    <!-- Option in Library to open Synced Tabs page -->
+    <string name="library_synced_tabs">แท็บที่ซิงค์</string>
     <!-- Option in Library to open Reading List -->
     <string name="library_reading_list">รายการอ่าน</string>
     <!-- Menu Item Label for Search in Library -->
     <string name="library_search">ค้นหา</string>
-    <!-- Library Page Title -->
-    <string name="library_title">ห้องสมุด</string>
     <!-- Settings Page Title -->
     <string name="settings_title">การตั้งค่า</string>
     <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
     <string name="content_description_history_menu">เมนูรายการประวัติ</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">ปิด</string>
+
+    <!-- Option in library for Recently Closed Tabs -->
+    <string name="library_recently_closed_tabs">แท็บที่ปิดล่าสุด</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">แสดงประวัติแบบเต็ม</string>
+    <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tabs">%d แท็บ</string>
+    <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
+    %d is a placeholder for the number of tabs selected. -->
+    <string name="recently_closed_tab">%d แท็บ</string>
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">ไม่มีแท็บที่ปิดล่าสุด</string>
+
+    <!-- Tab Management -->
+    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <string name="preferences_close_tabs">ปิดแท็บ</string>
+    <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
+    <string name="close_tabs_manually">กำหนดเอง</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one day -->
+    <string name="close_tabs_after_one_day">หลังจากผ่านไปหนึ่งวัน</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one week -->
+    <string name="close_tabs_after_one_week">หลังจากผ่านไปหนึ่งสัปดาห์</string>
+    <!-- Option for auto closing tabs that will auto close tabs after one month -->
+    <string name="close_tabs_after_one_month">หลังจากผ่านไปหนึ่งเดือน</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -416,6 +546,30 @@
     <string name="tabs_header_private_tabs_title">แท็บส่วนตัว</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">เพิ่มแท็บ</string>
+    <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
+    <string name="add_private_tab">เพิ่มแท็บส่วนตัว</string>
+    <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
+    <string name="tab_drawer_fab_content">ส่วนตัว</string>
+    <!-- Text shown as the title of the open tab tray -->
+    <string name="tab_tray_title">แท็บที่เปิด</string>
+    <!-- Text shown in the menu for saving tabs to a collection -->
+    <string name="tab_tray_menu_item_save">บันทึกไปยังชุดสะสม</string>
+    <!-- Text shown in the menu for sharing all tabs -->
+    <string name="tab_tray_menu_item_share">แบ่งปันแท็บทั้งหมด</string>
+    <!-- Text shown in the menu to view recently closed tabs -->
+    <string name="tab_tray_menu_recently_closed">แท็บที่ปิดล่าสุด</string>
+    <!-- Text shown in the menu to view tab settings -->
+    <string name="tab_tray_menu_tab_settings">การตั้งค่าแท็บ</string>
+    <!-- Text shown in the menu for closing all tabs -->
+    <string name="tab_tray_menu_item_close">ปิดแท็บทั้งหมด</string>
+    <!-- Shortcut action to open new tab -->
+    <string name="tab_tray_menu_open_new_tab">แท็บใหม่</string>
+    <!-- Shortcut action to open the home screen -->
+    <string name="tab_tray_menu_home">ไปยังหน้าแรก</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">สลับโหมดแท็บ</string>
+    <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
+    <string name="remove_tab_from_collection">เอาแท็บออกจากชุดสะสม</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">ปิดแท็บ</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -427,7 +581,7 @@
     <!-- Open tabs menu item to share all tabs -->
     <string name="tabs_menu_share_tabs">แบ่งปันแท็บ</string>
     <!-- Open tabs menu item to save tabs to collection -->
-    <string name="tabs_menu_save_to_collection">บันทึกไปยังชุดสะสม</string>
+    <string name="tabs_menu_save_to_collection1">บันทึกแท็บไปยังชุดสะสม</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
     <string name="tab_menu">เมนูแท็บ</string>
     <!-- Tab menu item to share the tab -->
@@ -453,11 +607,23 @@
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">เอาออก</string>
 
+    <!-- Text for the menu button to delete a top site from history -->
+    <string name="delete_from_history">ลบออกจากประวัติ</string>
+    <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
+    <string name="pwa_site_controls_title_private">%1$s (โหมดส่วนตัว)</string>
+
+    <!-- Button in the current tab tray header in multiselect mode. Saved the selected tabs to a collection when pressed. -->
+    <string name="tab_tray_save_to_collection">บันทึก</string>
+
     <!-- History -->
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">ลบประวัติ</string>
     <!-- Text for the dialog to confirm clearing all history -->
     <string name="history_delete_all_dialog">คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติของคุณ?</string>
+    <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
+    <string name="history_delete_multiple_items_snackbar">ลบประวัติแล้ว</string>
+    <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
+    <string name="history_delete_single_item_snackbar">ลบ %1$s แล้ว</string>
     <!-- Text for positive action to delete history in deleting history dialog -->
     <string name="history_clear_dialog">ล้าง</string>
     <!-- History overflow menu copy button -->
@@ -487,6 +653,14 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">ไม่มีประวัติที่นี่</string>
 
+    <!-- Downloads -->
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message">ไม่มีการดาวน์โหลด</string>
+
+    <!-- History multi select title in app bar
+    The first parameter is the number of downloads selected -->
+    <string name="download_multi_select_title">เลือกอยู่ %1$d</string>
+
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->
     <string name="tab_crash_title_2">ขออภัย %1$s ไม่สามารถโหลดหน้านั้นได้</string>
@@ -512,6 +686,12 @@
     <string name="bookmark_edit">แก้ไขที่คั่นหน้า</string>
     <!-- Screen title for selecting a bookmarks folder -->
     <string name="bookmark_select_folder">เลือกโฟลเดอร์</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
+    <string name="bookmark_delete_folder_confirmation_dialog">คุณแน่ใจหรือไม่ว่าต้องการลบโฟลเดอร์นี้?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s จะลบรายการที่เลือก</string>
+    <!-- Snackbar title shown after a folder has been deleted. This first parameter is the name of the deleted folder -->
+    <string name="bookmark_delete_folder_snackbar">ลบ %1$s แล้ว</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">เพิ่มโฟลเดอร์</string>
     <!-- deprecated: Snackbar title shown after a bookmark has been created. -->
@@ -564,8 +744,10 @@
     <!-- Bookmark snackbar message on deletion
      The first parameter is the host part of the URL of the bookmark deleted, if any -->
     <string name="bookmark_deletion_snackbar_message">ลบ %1$s แล้ว</string>
-    <!-- Bookmark snackbar message on deleting multiple bookmarks -->
-    <string name="bookmark_deletion_multiple_snackbar_message">กำลังลบที่คั่นหน้าที่เลือก</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_2">เอาที่คั่นหน้าออกแล้ว</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">กำลังลบโฟลเดอร์ที่เลือก</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">เลิกทำ</string>
 
@@ -628,17 +810,12 @@
     <string name="delete_browsing_data_quit_off">ปิด</string>
 
     <!-- Collections -->
-    <!-- Label to describe what collections are to a new user without any collections -->
-    <string name="collections_description">รวบรวมสิ่งที่สำคัญสำหรับคุณ เมื่อต้องการเริ่มต้น ให้บันทึกแท็บที่เปิดอยู่ไปยังชุดสะสมใหม่</string>
-
     <!-- Collections header on home fragment -->
     <string name="collections_header">ชุดสะสม</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">เมนูชุดสะสม</string>
-    <!-- No Open Tabs Message Header -->
-    <string name="no_collections_header">ไม่มีชุดสะสม</string>
-    <!-- No Open Tabs Message Description -->
-    <string name="no_collections_description">ชุดสะสมของคุณจะถูกแสดงที่นี่</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">รวบรวมสิ่งที่สำคัญต่อคุณ\nรวมกลุ่มการค้นหา ไซต์ และแท็บที่คล้ายกันให้อยู่ด้วยกันเพื่อให้เข้าถึงได้อย่างรวดเร็วในภายหลัง</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">เลือกแท็บ</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -661,12 +838,17 @@
     <string name="create_collection_save_to_collection_tab_selected">เลือกอยู่ %d แท็บ</string>
     <!-- Text shown in snackbar when multiple tabs have been saved in a collection -->
     <string name="create_collection_tabs_saved">บันทึกแท็บแล้ว!</string>
+    <!-- Text shown in snackbar when one or multiple tabs have been saved in a new collection -->
+    <string name="create_collection_tabs_saved_new_collection">บันทึกชุดสะสมแล้ว!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">บันทึกแท็บแล้ว!</string>
     <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
     <string name="create_collection_close">ปิด</string>
     <!-- Button to save currently selected tabs in the "select tabs" step of the collection creator-->
     <string name="create_collection_save">บันทึก</string>
+
+    <!-- Snackbar action to view the collection the user just created or updated -->
+    <string name="create_collection_view">ดู</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">ชุดสะสม %d</string>
@@ -762,6 +944,10 @@
     <string name="qr_scanner_dialog_negative">ปฏิเสธ</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">คุณแน่ใจหรือไม่ว่าต้องการลบ %1$s?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">การลบแท็บนี้จะลบชุดสะสมทั้งชุด คุณสามารถสร้างชุดสะสมใหม่ได้ทุกเมื่อ</string>
+    <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_title">ลบ %1$s หรือไม่?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
     <string name="tab_collection_dialog_positive">ลบ</string>
     <!-- Tab collection deletion prompt dialog option to cancel deleting the collection -->
@@ -778,7 +964,7 @@
     <string name="preference_accessibility_font_size_title">ขนาดแบบอักษร</string>
 
     <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size">การปรับขนาดแบบอักษรโดยอัตโนมัติ</string>
+    <string name="preference_accessibility_auto_size_2">การปรับขนาดแบบอักษรโดยอัตโนมัติ</string>
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
     <string name="preference_accessibility_auto_size_summary">ขนาดแบบอักษรจะตรงกับการตั้งค่า Android ของคุณ ปิดใช้งานเพื่อจัดการขนาดแบบอักษรที่นี่</string>
 
@@ -786,7 +972,7 @@
     <string name="preferences_delete_browsing_data">ลบข้อมูลการเรียกดู</string>
 
     <!-- Title for the tabs item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_tabs_title">แท็บที่เปิด</string>
+    <string name="preferences_delete_browsing_data_tabs_title_2">แท็บที่เปิด</string>
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d แท็บ</string>
     <!-- Title for the data and history items in Delete browsing data -->
@@ -817,8 +1003,6 @@
     <string name="preference_summary_delete_browsing_data_on_quit">ลบข้อมูลการเรียกดูโดยอัตโนมัติเมื่อคุณเลือก &quot;ออก&quot; จากเมนูหลัก</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit_2">ลบข้อมูลการเรียกดูโดยอัตโนมัติเมื่อคุณเลือก \&quot;ออก\&quot; จากเมนูหลัก</string>
-    <!-- Category for history items to delete on quit in delete browsing data on quit -->
-    <string name="preferences_delete_browsing_data_on_quit_browsing_history">ประวัติการเรียกดู</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">ออก</string>
 
@@ -836,6 +1020,32 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">กำลังลบข้อมูลการเรียกดู…</string>
 
+    <!-- Tips -->
+    <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header">ตอนนี้ Firefox Preview เป็น Firefox Nightly แล้ว</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">Firefox Nightly อัปเดตทุกคืนและมีลูกเล่นใหม่ ๆ ทุกคืน
+        อย่างไรก็ตามความเสถียรอาจลดลง ดาวน์โหลดเบราว์เซอร์เบต้าของเราเพื่อประสบการณ์ที่เสถียรยิ่งขึ้น</string>
+
+    <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_button_2">รับ Firefox Beta สำหรับ Android</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly ย้ายไปแล้ว</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">แอพนี้จะไม่ได้รับการอัปเดตด้านความปลอดภัยอีกต่อไป หยุดใช้งานแอปนี้และเปลี่ยนเป็น Nightly ตัวใหม่
+        \n\nหากต้องการโอนที่คั่นหน้า การเข้าสู่ระบบ และประวัติการท่องของตุณไปยังแอปอื่นให้สร้างบัญชี Firefox ขึ้นมา</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">โยกไปใช้ Nightly ตัวใหม่</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly ได้ย้ายไปแล้ว</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">แอพนี้จะไม่ได้รับการอัปเดตความปลอดภัยอีกต่อไป รับ Nightly ใหม่และหยุดใช้แอปนี้
+        \n\nหากต้องการโอนที่คั่นหน้า การเข้าสู่ระบบ และประวัติการท่องของคุณไปยังแอปอื่นให้สร้างบัญชี Firefox ขึ้นมา</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_not_installed">รับ Nightly ตัวใหม่</string>
+
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -852,13 +1062,14 @@
     <string name="onboarding_whats_new_description">มีคำถามเกี่ยวกับ %s ที่ออกแบบใหม่หรือไม่? ต้องการรู้ว่ามีอะไรเปลี่ยนไปบ้างหรือไม่?</string>
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">พบคำตอบได้ที่นี่</string>
-    <!-- text for the firefox account onboarding card header
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_firefox_account_header">รับประโยชน์สูงสุดจาก %s</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">เริ่มซิงค์ที่คั่นหน้า รหัสผ่าน และอื่น ๆ ด้วยบัญชี Firefox ของคุณ</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">เรียนรู้เพิ่มเติม</string>
     <!-- text for the firefox account onboarding card header when we detect you're already signed in to
         another Firefox browser. (The word `Firefox` should not be translated)
         The first parameter is the email of the detected user's account -->
-    <string name="onboarding_firefox_account_auto_signin_header_2">คุณลงชื่อเข้าในชื่อ %s บนเบราว์เซอร์ Firefox อื่นบนโทรศัพท์นี้ คุณต้องการลงชื่อเข้าด้วยบัญชีนี้หรือไม่?</string>
+    <string name="onboarding_firefox_account_auto_signin_header_3">คุณลงชื่อเข้าในชื่อ %s บนเบราว์เซอร์ Firefox อื่นบนอุปกรณ์นี้ คุณต้องการลงชื่อเข้าด้วยบัญชีนี้หรือไม่?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">ใช่ ให้ฉันลงชื่อเข้า</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -872,18 +1083,20 @@
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">ไม่สามารถเข้าสู่ระบบ</string>
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">ปกป้องตัวคุณเอง</string>
+    <string name="onboarding_tracking_protection_header_2">ความเป็นส่วนตัวอัตโนมัติ</string>
     <!-- text for the tracking protection card description
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_tracking_protection_description1">%s ช่วยหยุดเว็บไซต์จากการติดตามคุณออนไลน์</string>
+    <string name="onboarding_tracking_protection_description_2">ตั้งค่าความเป็นส่วนตัวและความปลอดภัยป้องกันตัวติดตาม มัลแวร์ และบริษัทที่ตามคุณ</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button">มาตรฐาน</string>
+    <string name="onboarding_tracking_protection_standard_button_2">มาตรฐาน (ค่าเริ่มต้น)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description">ปิดกันตัวติดตามน้อยลง แต่อนุญาตให้โหลดหน้าได้ตามปกติ</string>
+    <string name="onboarding_tracking_protection_standard_button_description_2">ปิดกั้นตัวติดตามน้อยลง หน้าเว็บจะโหลดตามปกติ</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">เข้มงวด (แนะนำ)</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">เข้มงวด</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description">ปิดกันตัวติดตามมากขึ้นเพื่อการปกป้องและประสิทธิภาพที่ดีกว่า แต่ก็อาจทำให้บางไซต์ทำงานไม่สมบูรณ์</string>
+    <string name="onboarding_tracking_protection_strict_button_description_2">ปิดกั้นตัวติดตาม โฆษณา และป๊อปอัปมากขึ้น เว็บโหลดเร็วขึ้น แต่ฟังก์ชั่นบางอย่างอาจไม่ทำงาน</string>
     <!-- text for the toolbar position card header
         In English this is an idiom for "choose a side as in an argument or fight"
         but it is ok to make this more literally about "choosing a position in a physical space -->
@@ -949,6 +1162,8 @@
     <string name="sign_in_with_email">ใช้อีเมลแทน</string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox จะหยุดการซิงค์กับบัญชีของคุณ แต่จะไม่ลบข้อมูลการเรียกดูใด ๆ ของคุณบนอุปกรณ์นี้</string>
+    <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="sign_out_confirmation_message_2">%s จะหยุดซิงค์กับบัญชีของคุณ แต่จะไม่ลบข้อมูลการท่องเว็บใด ๆ ของคุณบนอุปกรณ์นี้</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">ตัดการเชื่อมต่อ</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
@@ -968,31 +1183,21 @@
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">เรียนรู้เพิ่มเติม</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_option">มาตรฐาน</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard">มาตรฐาน (แนะนำ)</string>
+    <string name="preference_enhanced_tracking_protection_standard_default_1">มาตรฐาน (ค่าเริ่มต้น)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description">การป้องกันและประสิทธิภาพแบบสมดุล</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_2">หน้าเว็บจะโหลดตามปกติ แต่ปิดกั้นตัวติดตามน้อยลง</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_3">ปิดกั้นตัวติดตามน้อยลง หน้าเว็บจะโหลดตามปกติ</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบมาตรฐาน</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">เข้มงวด</string>
-    <!-- Preference for enhanced tracking protection for the strict protection settings, default setting -->
-    <string name="preference_enhanced_tracking_protection_strict_default">เข้มงวด (ค่าเริ่มต้น)</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_default_description">การป้องกันการติดตามที่แข็งแกร่งขึ้นและประสิทธิภาพที่เร็วขึ้น แต่บางไซต์อาจไม่ทำงานอย่างถูกต้อง</string>
-    <!-- Preference for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_recommended">เข้มงวด (แนะนำ)</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description">การป้องกันที่แกร่งขึ้น แต่อาจทำให้บางไซต์หรือเนื้อหาหยุดทำงานได้</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_2">ปิดกั้นตัวติดตาม โฆษณา และป๊อปอัปมากขึ้น เว็บโหลดเร็วขึ้น แต่ฟังก์ชั่นบางอย่างอาจไม่ทำงาน</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบเข้มงวด</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">กำหนดเอง</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description">เลือกตัวติดตามหรือสคริปต์ที่ต้องการปิดกั้น</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">เลือกตัวติดตามหรือสคริปต์ที่ต้องการปิดกั้น</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบกำหนดเอง</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
@@ -1043,7 +1248,7 @@
     <string name="etp_tracking_content_description">หยุดไม่ให้โหลดโฆษณาภายนอก, วิดีโอ, และเนื้อหาอื่น ๆ ที่มีรหัสการติดตาม อาจส่งผลต่อฟังก์ชันการทำงานของบางเว็บไซต์</string>
 
     <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="etp_onboarding_message_2">%s กำลังปิดกั้นตัวติดตามบนไซต์นี้เมื่อเกราะเป็นสีม่วง แตะเพื่อดูสิ่งที่ถูกปิดกั้น</string>
+    <string name="etp_onboarding_cfr_message">ทุกครั้งที่โล่เป็นสีม่วง %s ได้ทำการปิดกั้นตัวติดตามบนไซต์ แตะเพื่ออ่านข้อมูลเพิ่มเติม</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">การป้องกันถูก เปิด สำหรับไซต์นี้</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1065,6 +1270,8 @@
 
     <!-- About page link text to open support link -->
     <string name="about_support">การสนับสนุน</string>
+    <!-- About page link text to list of past crashes (like about:crashes on desktop) -->
+    <string name="about_crashes">ข้อขัดข้อง</string>
     <!-- About page link text to open privacy notice link -->
     <string name="about_privacy_notice">ประกาศความเป็นส่วนตัว</string>
     <!-- About page link text to open know your rights link -->
@@ -1105,6 +1312,9 @@
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">ชื่อทางลัด</string>
 
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">คุณสามารถเพิ่มเว็บไซต์นี้ลงในหน้าจอหลักของอุปกรณ์ของคุณเพื่อเข้าถึงและเรียกดูได้เร็วขึ้นด้วยประสบการณ์ที่เหมือนแอป</string>
+
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">การเข้าสู่ระบบและรหัสผ่าน</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
@@ -1138,6 +1348,8 @@
     <string name="preferences_passwords_exceptions_description_empty">การเข้าสู่ระบบและรหัสผ่านที่ไม่ได้บันทึกจะถูกแสดงที่นี่</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">การเข้าสู่ระบบและรหัสผ่านจะไม่ถูกบันทึกสำหรับไซต์เหล่านี้</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">ลบข้อยกเว้นทั้งหมด</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">ค้นหาการเข้าสู่ระบบ</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1172,10 +1384,16 @@
     <string name="logins_site_copied">คัดลอกไซต์ไปยังคลิปบอร์ดแล้ว</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">คัดลอกรหัสผ่าน</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">ล้างรหัสผ่าน</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">คัดลอกชื่อผู้ใช้</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">ล้างชื่อผู้ใช้</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">คัดลอกไซต์</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">เปิดไซต์ในเบราว์เซอร์</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">แสดงรหัสผ่าน</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
@@ -1197,6 +1415,13 @@
 
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">เปิดใช้งานเพื่ออนุญาตการย่อและซูม แม้กระทั่งบนเว็บไซต์ที่ป้องกันท่าทางนี้</string>
+
+    <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
+    <string name="saved_logins_sort_strategy_alphabetically">ชื่อตามตัวอักษร</string>
+    <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
+    <string name="saved_logins_sort_strategy_last_used">ใช้งานครั้งสุดท้าย</string>
+    <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description">เรียงเมนูเข้าสู่ระบบ</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">เพิ่มเครื่องมือค้นหา</string>
@@ -1289,8 +1514,79 @@
     <string name="certificate_info_verified_by">ยืนยันโดย: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">ลบ</string>
+    <!-- Login overflow menu edit button -->
+    <string name="login_menu_edit_button">แก้ไข</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">คุณแน่ใจหรือไม่ที่ต้องการจะลบการเข้าสู่ระบบนี้?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">ลบ</string>
-</resources>
+    <!--  The saved login options menu description. -->
+    <string name="login_options_menu">ตัวเลือกการเข้าสู่ระบบ</string>
+    <!--  The editable text field for a login's web address. -->
+    <string name="saved_login_hostname_description">ช่องข้อความที่แก้ไขได้สำหรับที่อยู่เว็บของการเข้าสู่ระบบ</string>
+    <!--  The editable text field for a login's username. -->
+    <string name="saved_login_username_description"></string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description"></string>
+    <!--  The button description to save changes to an edited login. -->
+    <string name="save_changes_to_login">บันทึกการเปลี่ยนแปลงเพื่อเข้าสู่ระบบ</string>
+    <!--  The button description to discard changes to an edited login. -->
+    <string name="discard_changes">ละทิ้งการเปลี่ยนแปลง</string>
+    <!--  The page title for editing a saved login. -->
+    <string name="edit">แก้ไข</string>
+    <!--  The error message in edit login view when password field is blank. -->
+    <string name="saved_login_password_required">ต้องการรหัสผ่าน</string>
+    <!-- Voice search button content description  -->
+    <string name="voice_search_content_description">ค้นหาด้วยเสียง</string>
+    <!-- Voice search prompt description displayed after the user presses the voice search button -->
+    <string name="voice_search_explainer">พูดเลย</string>
+
+    <!--  The error message in edit login view when a duplicate username exists. -->
+    <string name="saved_login_duplicate">การเข้าสู่ระบบที่มีชื่อผู้ใช้นี้มีอยู่แล้ว</string>
+
+    <!-- Synced Tabs -->
+    <!-- Text displayed to ask user to connect another device as no devices found with account -->
+    <string name="synced_tabs_connect_another_device">เชื่อมต่ออุปกรณ์อื่น</string>
+
+    <!-- Text displayed asking user to re-authenticate -->
+    <string name="synced_tabs_reauth">โปรดรับรอบความถูกต้องอีกครั้ง</string>
+    <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
+    <string name="synced_tabs_enable_tab_syncing">โปรดเปิดใช้งานซิงค์แท็บ</string>
+    <!-- Text displayed when user has no tabs that have been synced -->
+    <string name="synced_tabs_no_tabs">คุณไม่มีแท็บใด ๆ ที่เปิดอยู่ใน Firefox บนอุปกรณ์อื่น ๆ ของคุณ</string>
+    <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
+    <string name="synced_tabs_sign_in_message">ดูรายการแท็บจากอุปกรณ์อื่น ๆ ของคุณ</string>
+    <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
+    <string name="synced_tabs_sign_in_button">ลงชื่อเข้าใช้เพื่อซิงค์</string>
+
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">ไม่มีแท็บที่เปิดอยู่</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">ถึงขีดจำกัดของไซต์เด่นแล้ว</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">การเพิ่มไซต์ยอดนิยมต้องลบอันเก่าออก แตะค้างที่ไซต์และเลือกลบ</string>
+    <!-- Confirmation dialog button text when top sites limit is reached. -->
+    <string name="top_sites_max_limit_confirmation_button">ตกลง เข้าใจแล้ว</string>
+
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">แสดงไซต์ที่เยี่ยมชมบ่อยที่สุด</string>
+
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">ลบ</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_firefox_account_header">รับประโยชน์สูงสุดจาก %s</string>
+
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">รวบรวมสิ่งที่สำคัญสำหรับคุณ</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">จัดกลุ่มการค้นหา ไซต์ และแท็บที่คล้ายกันเพื่อการเข้าถึงอย่างรวดเร็วในภายหลัง</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">คุณลงชื่อเข้าในชื่อ %s บนเบราว์เซอร์ Firefox อื่นบนโทรศัพท์นี้ คุณต้องการลงชื่อเข้าด้วยบัญชีนี้หรือไม่?</string>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">คุณสามารถเพิ่มเว็บไซต์นี้ลงในหน้าจอหลักของโทรศัพท์ของคุณเพื่อเข้าถึงและเรียกดูได้เร็วขึ้นด้วยประสบการณ์ที่เหมือนแอป</string>
+
+    </resources>

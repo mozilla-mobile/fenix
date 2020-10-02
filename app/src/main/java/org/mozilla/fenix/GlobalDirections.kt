@@ -5,6 +5,7 @@
 package org.mozilla.fenix
 
 import androidx.navigation.NavDirections
+import mozilla.appservices.places.BookmarkRoot
 
 /**
  * Used with [HomeActivity] global navigation to indicate which fragment is being opened.
@@ -14,6 +15,14 @@ import androidx.navigation.NavDirections
  */
 enum class GlobalDirections(val navDirections: NavDirections, val destinationId: Int) {
     Home(NavGraphDirections.actionGlobalHome(), R.id.homeFragment),
+    Bookmarks(
+        NavGraphDirections.actionGlobalBookmarkFragment(BookmarkRoot.Root.id),
+        R.id.bookmarkFragment
+    ),
+    History(
+        NavGraphDirections.actionGlobalHistoryFragment(),
+        R.id.historyFragment
+    ),
     Settings(
         NavGraphDirections.actionGlobalSettingsFragment(),
         R.id.settingsFragment
@@ -35,7 +44,15 @@ enum class GlobalDirections(val navDirections: NavDirections, val destinationId:
         R.id.deleteBrowsingDataFragment
     ),
     SettingsAddonManager(
-        NavGraphDirections.actionGlobalSettingsAddonsManagementFragment(),
+        NavGraphDirections.actionGlobalAddonsManagementFragment(),
         R.id.addonsManagementFragment
+    ),
+    SettingsLogins(
+        NavGraphDirections.actionGlobalSavedLoginsAuthFragment(),
+        R.id.saveLoginSettingFragment
+    ),
+    SettingsTrackingProtection(
+        NavGraphDirections.actionGlobalTrackingProtectionFragment(),
+        R.id.trackingProtectionFragment
     )
 }

@@ -53,13 +53,13 @@ class TopSitesTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openHomeScreen {
-            verifyExistingTabList()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }
@@ -72,19 +72,20 @@ class TopSitesTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openHomeScreen {
-            verifyExistingTabList()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openTopSiteTabWithTitle(title = defaultWebPageTitle) {
-            verifyPageContent(defaultWebPage.content)
             verifyUrl(defaultWebPage.url.toString().replace("http://", ""))
-        }.openHomeScreen {
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -102,13 +103,13 @@ class TopSitesTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openHomeScreen {
-            verifyExistingTabList()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -125,13 +126,13 @@ class TopSitesTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyPageContent(defaultWebPage.content)
         }.openThreeDotMenu {
             verifyAddFirefoxHome()
         }.addToFirefoxHome {
             verifySnackBarText("Added to top sites!")
-        }.openHomeScreen {
-            verifyExistingTabList()
+        }.openTabDrawer {
+        }.openNewTab {
+        }.dismiss {
             verifyExistingTopSitesList()
             verifyExistingTopSitesTabs(defaultWebPageTitle)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPageTitle) {
@@ -147,7 +148,7 @@ class TopSitesTest {
         val defaultTopSites = arrayOf(
             "Top Articles",
             "Wikipedia",
-            "YouTube"
+            "Google"
         )
 
         homeScreen { }.dismissOnboarding()

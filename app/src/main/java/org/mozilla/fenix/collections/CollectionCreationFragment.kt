@@ -9,21 +9,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_collection.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.toTab
-import org.mozilla.fenix.home.Tab
 
 @ExperimentalCoroutinesApi
 class CollectionCreationFragment : DialogFragment() {
@@ -45,29 +39,16 @@ class CollectionCreationFragment : DialogFragment() {
         val view = inflater.inflate(R.layout.fragment_create_collection, container, false)
         val args: CollectionCreationFragmentArgs by navArgs()
 
-        val sessionManager = requireComponents.core.sessionManager
-        val store = requireComponents.core.store
-        val publicSuffixList = requireComponents.publicSuffixList
-        val tabs = sessionManager.getTabs(args.tabIds, store, publicSuffixList)
-        val selectedTabs = if (args.selectedTabIds != null) {
-            sessionManager.getTabs(args.selectedTabIds, store, publicSuffixList).toSet()
-        } else {
-            if (tabs.size == 1) setOf(tabs.first()) else emptySet()
-        }
-
-        val tabCollections = requireComponents.core.tabCollectionStorage.cachedTabCollections
-        val selectedTabCollection = args.selectedTabCollectionId
-            .let { id -> tabCollections.firstOrNull { it.id == id } }
-
         collectionCreationStore = StoreProvider.get(this) {
             CollectionCreationStore(
-                CollectionCreationState(
-                    previousFragmentId = args.previousFragmentId,
-                    tabs = tabs,
-                    selectedTabs = selectedTabs,
+                createInitialCollectionCreationState(
+                    browserState = requireComponents.core.store.state,
+                    tabCollectionStorage = requireComponents.core.tabCollectionStorage,
+                    publicSuffixList = requireComponents.publicSuffixList,
                     saveCollectionStep = args.saveCollectionStep,
-                    tabCollections = tabCollections,
-                    selectedTabCollection = selectedTabCollection
+                    tabIds = args.tabIds,
+                    selectedTabIds = args.selectedTabIds,
+                    selectedTabCollectionId = args.selectedTabCollectionId
                 )
             )
         }
@@ -75,10 +56,10 @@ class CollectionCreationFragment : DialogFragment() {
             DefaultCollectionCreationController(
                 collectionCreationStore,
                 ::dismiss,
-                requireComponents.analytics,
+                requireComponents.analytics.metrics,
                 requireComponents.core.tabCollectionStorage,
                 requireComponents.core.sessionManager,
-                viewLifecycleOwner.lifecycleScope
+                scope = lifecycleScope
             )
         )
         collectionCreationView = CollectionCreationView(
@@ -109,16 +90,4 @@ class CollectionCreationFragment : DialogFragment() {
         }
         return dialog
     }
-}
-
-@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-fun SessionManager.getTabs(
-    tabIds: Array<String>?,
-    store: BrowserStore,
-    publicSuffixList: PublicSuffixList
-): List<Tab> {
-    return tabIds
-        ?.mapNotNull { this.findSessionById(it) }
-        ?.map { it.toTab(store, publicSuffixList) }
-        ?: emptyList()
 }

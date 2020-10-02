@@ -45,7 +45,6 @@ def add_shippable_secrets(config, tasks):
             } for key, target_file in (
                 ('adjust', '.adjust_token'),
                 ('firebase', 'app/src/{}/res/values/firebase.xml'.format(gradle_build_type)),
-                ('digital_asset_links', '.digital_asset_links_token'),
                 ('leanplum', '.leanplum_token'),
                 ('sentry_dsn', '.sentry_token'),
                 ('mls', '.mls_token'),
@@ -56,7 +55,6 @@ def add_shippable_secrets(config, tasks):
                 "path": target_file,
             } for fake_value, target_file in (
                 ("faketoken", ".adjust_token"),
-                ("faketoken", ".digital_asset_links_token"),
                 ("fake:token", ".leanplum_token"),  # : is used by leanplum
                 ("faketoken", ".mls_token"),
                 ("https://fake@sentry.prod.mozaws.net/368", ".sentry_token"),
@@ -69,8 +67,7 @@ def add_shippable_secrets(config, tasks):
 def build_gradle_command(config, tasks):
     for task in tasks:
         gradle_build_type = task["run"]["gradle-build-type"]
-        geckoview_engine = task["run"]["geckoview-engine"]
-        variant_config = get_variant(gradle_build_type, geckoview_engine)
+        variant_config = get_variant(gradle_build_type)
 
         task["run"]["gradlew"] = [
             "clean",
@@ -106,8 +103,7 @@ def add_release_version(config, tasks):
 def add_artifacts(config, tasks):
     for task in tasks:
         gradle_build_type = task["run"].pop("gradle-build-type")
-        geckoview_engine = task["run"].pop("geckoview-engine")
-        variant_config = get_variant(gradle_build_type, geckoview_engine)
+        variant_config = get_variant(gradle_build_type)
         artifacts = task.setdefault("worker", {}).setdefault("artifacts", [])
         task["attributes"]["apks"] = apks = {}
 
@@ -115,18 +111,23 @@ def add_artifacts(config, tasks):
             artifact_template = task.pop("apk-artifact-template")
             for apk in variant_config["apks"]:
                 apk_name = artifact_template["name"].format(
-                    geckoview_engine=geckoview_engine, **apk
+                    **apk
                 )
                 artifacts.append({
                     "type": artifact_template["type"],
                     "name": apk_name,
                     "path": artifact_template["path"].format(
-                        geckoview_engine=geckoview_engine,
                         gradle_build_type=gradle_build_type,
                         **apk
                     ),
                 })
-                apks[apk["abi"]] = apk_name
+                apks[apk["abi"]] = {
+                    "name": apk_name,
+                    "github-name": artifact_template["github-name"].format(
+                        version=config.params["version"],
+                        **apk
+                    )
+                }
 
         yield task
 

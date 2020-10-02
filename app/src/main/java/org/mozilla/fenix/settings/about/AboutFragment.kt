@@ -10,25 +10,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.android.synthetic.main.fragment_about.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.about.AboutItemType.LICENSING_INFO
 import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE
 import org.mozilla.fenix.settings.about.AboutItemType.RIGHTS
 import org.mozilla.fenix.settings.about.AboutItemType.SUPPORT
 import org.mozilla.fenix.settings.about.AboutItemType.WHATS_NEW
+import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.whatsnew.WhatsNew
 import org.mozilla.geckoview.BuildConfig as GeckoViewBuildConfig
 
@@ -36,10 +38,10 @@ import org.mozilla.geckoview.BuildConfig as GeckoViewBuildConfig
  * Displays the logo and information about the app, including library versions.
  */
 class AboutFragment : Fragment(), AboutPageListener {
+
+    private lateinit var headerAppName: String
     private lateinit var appName: String
-    private val aboutPageAdapter: AboutPageAdapter = AboutPageAdapter(this)
-    private var secretDebugMenuClicks = 0
-    private var lastDebugMenuToast: Toast? = null
+    private var aboutPageAdapter: AboutPageAdapter? = AboutPageAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,19 +50,17 @@ class AboutFragment : Fragment(), AboutPageListener {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_about, container, false)
         appName = getString(R.string.app_name)
+        headerAppName =
+            if (Config.channel.isRelease) getString(R.string.daylight_app_name) else appName
         activity?.title = getString(R.string.preferences_about, appName)
 
         return rootView
     }
 
-    override fun onResume() {
-        super.onResume()
-        secretDebugMenuClicks = 0
-    }
-
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        if (aboutPageAdapter == null) {
+            aboutPageAdapter = AboutPageAdapter(this)
+        }
 
         about_list.run {
             adapter = aboutPageAdapter
@@ -72,52 +72,41 @@ class AboutFragment : Fragment(), AboutPageListener {
             )
         }
 
-        // 5 taps on the logo activate the "secret" debug menu.
-        wordmark.setOnClickListener {
-            // Because the user will mostly likely tap the logo in rapid succession,
-            // we ensure only 1 toast is shown at any given time.
-            lastDebugMenuToast?.let { toast -> toast.cancel() }
-            secretDebugMenuClicks += 1
-            when (secretDebugMenuClicks) {
-                in 2 until SECRET_DEBUG_MENU_CLICKS -> {
-                    val clicksLeft = SECRET_DEBUG_MENU_CLICKS - secretDebugMenuClicks
-                    val toast = Toast.makeText(
-                        context,
-                        getString(R.string.about_debug_menu_toast_progress, clicksLeft),
-                        Toast.LENGTH_SHORT
-                    )
-                    toast.show()
-                    lastDebugMenuToast = toast
-                }
-                SECRET_DEBUG_MENU_CLICKS -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.about_debug_menu_toast_done),
-                        Toast.LENGTH_LONG
-                    ).show()
-                    requireContext().settings().showSecretDebugMenuThisSession = true
-                }
-            }
-        }
+        lifecycle.addObserver(
+            SecretDebugMenuTrigger(
+                logoView = wordmark,
+                settings = view.context.settings()
+            )
+        )
 
         populateAboutHeader()
-        aboutPageAdapter.submitList(populateAboutList())
+        aboutPageAdapter?.submitList(populateAboutList())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        aboutPageAdapter = null
     }
 
     private fun populateAboutHeader() {
         val aboutText = try {
-            val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            val packageInfo =
+                requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
             val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo).toString()
-            val componentsVersion = mozilla.components.Build.version + ", " + mozilla.components.Build.gitHash
+            val componentsAbbreviation = getString(R.string.components_abbreviation)
+            val componentsVersion =
+                mozilla.components.Build.version + ", " + mozilla.components.Build.gitHash
             val maybeGecko = getString(R.string.gecko_view_abbreviation)
-            val geckoVersion = GeckoViewBuildConfig.MOZ_APP_VERSION + "-" + GeckoViewBuildConfig.MOZ_APP_BUILDID
+            val geckoVersion =
+                GeckoViewBuildConfig.MOZ_APP_VERSION + "-" + GeckoViewBuildConfig.MOZ_APP_BUILDID
             val appServicesAbbreviation = getString(R.string.app_services_abbreviation)
             val appServicesVersion = mozilla.components.Build.applicationServicesVersion
 
             String.format(
-                "%s (Build #%s)\n%s\n%s: %s\n%s: %s",
+                "%s (Build #%s)\n%s: %s\n%s: %s\n%s: %s",
                 packageInfo.versionName,
                 versionCode,
+                componentsAbbreviation,
                 componentsVersion,
                 maybeGecko,
                 geckoVersion,
@@ -128,7 +117,7 @@ class AboutFragment : Fragment(), AboutPageListener {
             ""
         }
 
-        val content = getString(R.string.about_content, appName)
+        val content = getString(R.string.about_content, headerAppName)
         val buildDate = BuildConfig.BUILD_DATE
 
         about_text.text = aboutText
@@ -140,51 +129,56 @@ class AboutFragment : Fragment(), AboutPageListener {
         val context = requireContext()
 
         return listOf(
-            AboutPageItem.Item(
+            AboutPageItem(
                 AboutItem.ExternalLink(
                     WHATS_NEW,
                     SupportUtils.getWhatsNewUrl(context)
                 ), getString(R.string.about_whats_new, getString(R.string.app_name))
             ),
-            AboutPageItem.Item(
+            AboutPageItem(
                 AboutItem.ExternalLink(
                     SUPPORT,
                     SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.HELP)
                 ), getString(R.string.about_support)
             ),
-            AboutPageItem.Item(
+            AboutPageItem(
+                AboutItem.Crashes,
+                getString(R.string.about_crashes)
+            ),
+            AboutPageItem(
                 AboutItem.ExternalLink(
                     PRIVACY_NOTICE,
-                    SupportUtils.getPrivacyNoticeUrl()
+                    SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE)
                 ), getString(R.string.about_privacy_notice)
             ),
-            AboutPageItem.Item(
+            AboutPageItem(
                 AboutItem.ExternalLink(
                     RIGHTS,
                     SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.YOUR_RIGHTS)
                 ), getString(R.string.about_know_your_rights)
             ),
-            AboutPageItem.Item(
+            AboutPageItem(
                 AboutItem.ExternalLink(LICENSING_INFO, ABOUT_LICENSE_URL),
                 getString(R.string.about_licensing_information)
             ),
-            AboutPageItem.Item(
+            AboutPageItem(
                 AboutItem.Libraries,
                 getString(R.string.about_other_open_source_libraries)
             )
         )
     }
 
-    private fun openLinkInCustomTab(url: String) {
-        context?.let { context ->
-            val intent = SupportUtils.createCustomTabIntent(context, url)
-            startActivity(intent)
-        }
+    private fun openLinkInNormalTab(url: String) {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = url,
+            newTab = true,
+            from = BrowserDirection.FromAbout
+        )
     }
 
     private fun openLibrariesPage() {
-        startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-        OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_licenses_title, appName))
+        val navController = findNavController()
+        navController.navigate(R.id.action_aboutFragment_to_aboutLibrariesFragment)
     }
 
     override fun onAboutItemClicked(item: AboutItem) {
@@ -201,26 +195,21 @@ class AboutFragment : Fragment(), AboutPageListener {
                     PRIVACY_NOTICE -> {
                         requireComponents.analytics.metrics.track(Event.PrivacyNoticeTapped)
                     }
-                    RIGHTS -> {
-                        requireComponents.analytics.metrics.track(Event.RightsTapped)
-                    }
-                    LICENSING_INFO -> {
-                        requireComponents.analytics.metrics.track(Event.LicensingTapped)
-                    }
+                    LICENSING_INFO, RIGHTS -> {} // no telemetry needed
                 }
 
-                openLinkInCustomTab(item.url)
+                openLinkInNormalTab(item.url)
             }
             is AboutItem.Libraries -> {
-                requireComponents.analytics.metrics.track(Event.LibrariesThatWeUseTapped)
                 openLibrariesPage()
+            }
+            is AboutItem.Crashes -> {
+                startActivity(Intent(requireContext(), CrashListActivity::class.java))
             }
         }
     }
 
     companion object {
         private const val ABOUT_LICENSE_URL = "about:license"
-        // Number of clicks on the app logo to enable the "secret" debug menu.
-        private const val SECRET_DEBUG_MENU_CLICKS = 5
     }
 }

@@ -18,13 +18,14 @@ import kotlinx.coroutines.withContext
 import mozilla.components.feature.sitepermissions.SitePermissions
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.PhoneFeature.CAMERA
 import org.mozilla.fenix.settings.PhoneFeature.LOCATION
 import org.mozilla.fenix.settings.PhoneFeature.MICROPHONE
 import org.mozilla.fenix.settings.PhoneFeature.NOTIFICATION
+import org.mozilla.fenix.settings.requirePreference
 
 class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     private lateinit var sitePermissions: SitePermissions
@@ -44,13 +45,10 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         showToolbar(sitePermissions.origin)
-        viewLifecycleOwner.lifecycleScope.launch(IO) {
-            val context = requireContext()
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
             sitePermissions =
-                requireNotNull(context.components.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
-            withContext(Main) {
-                bindCategoryPhoneFeatures()
-            }
+                requireNotNull(requireComponents.core.permissionStorage.findSitePermissionsBy(sitePermissions.origin))
+            bindCategoryPhoneFeatures()
         }
     }
 
@@ -64,8 +62,7 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
 
     private fun initPhoneFeature(phoneFeature: PhoneFeature) {
         val summary = phoneFeature.getActionLabel(requireContext(), sitePermissions)
-        val keyPreference = phoneFeature.getPreferenceKey(requireContext())
-        val cameraPhoneFeatures: Preference = requireNotNull(findPreference(keyPreference))
+        val cameraPhoneFeatures = requirePreference<Preference>(phoneFeature.getPreferenceId())
         cameraPhoneFeatures.summary = summary
 
         cameraPhoneFeatures.onPreferenceClickListener = Preference.OnPreferenceClickListener {
@@ -75,8 +72,7 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindClearPermissionsButton() {
-        val keyPreference = getPreferenceKey(R.string.pref_key_exceptions_clear_site_permissions)
-        val button: Preference = requireNotNull(findPreference(keyPreference))
+        val button: Preference = requirePreference(R.string.pref_key_exceptions_clear_site_permissions)
 
         button.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             AlertDialog.Builder(requireContext()).apply {
@@ -96,7 +92,8 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     }
 
     private fun clearSitePermissions() {
-        viewLifecycleOwner.lifecycleScope.launch(IO) {
+        // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+        lifecycleScope.launch(IO) {
             requireContext().components.core.permissionStorage.deleteSitePermissions(sitePermissions)
             withContext(Main) {
                 requireView().findNavController().popBackStack()
@@ -108,7 +105,7 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
     private fun navigateToPhoneFeature(phoneFeature: PhoneFeature) {
         val directions =
             SitePermissionsDetailsExceptionsFragmentDirections.actionSitePermissionsToExceptionsToManagePhoneFeature(
-                phoneFeatureId = phoneFeature.id,
+                phoneFeature = phoneFeature,
                 sitePermissions = sitePermissions
             )
         requireView().findNavController().navigate(directions)
