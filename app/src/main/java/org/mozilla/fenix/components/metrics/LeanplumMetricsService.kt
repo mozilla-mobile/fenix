@@ -20,7 +20,6 @@ import kotlinx.coroutines.withContext
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.components.metrics.MozillaProductDetector.MozillaProducts
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.intent.DeepLinkIntentProcessor
 import java.util.Locale
