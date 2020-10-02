@@ -6,7 +6,7 @@ package org.mozilla.fenix.lintrules
 
 import com.android.tools.lint.checks.infrastructure.TestFiles
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.mozilla.fenix.lintrules.LicenseCommentChecker.Companion.ValidLicenseForKotlinFiles
 import org.mozilla.fenix.lintrules.LicenseDetector.Companion.ISSUE_INVALID_LICENSE_FORMAT
 import org.mozilla.fenix.lintrules.LicenseDetector.Companion.ISSUE_MISSING_LICENSE

@@ -12,6 +12,9 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.3.61"
     compileOnly "com.android.tools.lint:lint-api:26.6.1"
     compileOnly "com.android.tools.lint:lint-checks:26.6.1"
+
+    testImplementation "com.android.tools.lint:lint:26.6.1"
+    testImplementation "com.android.tools.lint:lint-tests:26.6.1"
 }
 
 jar {
