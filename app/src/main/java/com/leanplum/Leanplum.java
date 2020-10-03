@@ -88,4 +88,8 @@ public class Leanplum {
 
   public static void track(String event, double value, String info) {
   }
+
+  public static String getDeviceId() { return "stub"; }
+
+  public static String getUserId() { return "stub"; }
 }
