@@ -64,7 +64,7 @@ class BookmarkNodeViewHolder(
 
         // Hide menu button if this item is a root folder or is selected
         if (item.type == BookmarkNodeType.FOLDER && item.inRoots()) {
-            containerView.overflowView.visibility = View.GONE
+            containerView.overflowView.hideAndDisable()
         } else if (payload.modeChanged) {
             if (mode is BookmarkFragmentState.Mode.Selecting) {
                 containerView.overflowView.hideAndDisable()
