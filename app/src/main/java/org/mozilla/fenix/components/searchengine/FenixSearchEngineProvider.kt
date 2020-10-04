@@ -99,7 +99,7 @@ open class FenixSearchEngineProvider(
     // the main one hasn't completed yet
     private val searchEngines: Deferred<SearchEngineList>
         get() =
-            if (isRegionCachedByLocationService) {
+            if (isRegionCachedByLocationService || shouldMockMLS) {
                 loadedSearchEngines
             } else {
                 fallbackEngines
