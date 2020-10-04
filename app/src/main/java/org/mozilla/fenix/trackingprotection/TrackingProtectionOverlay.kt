@@ -49,7 +49,7 @@ class TrackingProtectionOverlay(
 
     @Suppress("MagicNumber", "InflateParams")
     private fun showTrackingProtectionOnboarding() {
-        if (!getToolbar().hasWindowFocus()) return
+        if (getToolbar().translationY > 0) return
 
         val trackingOnboardingDialog = object : Dialog(context) {
             override fun onTouchEvent(event: MotionEvent): Boolean {
