@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 object Versions {
-    const val kotlin = "1.3.72"
-    const val coroutines = "1.3.3"
+    const val kotlin = "1.4.10"
+    const val coroutines = "1.3.9"
     const val android_gradle_plugin = "4.0.1"
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
