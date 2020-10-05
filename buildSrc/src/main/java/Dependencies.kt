@@ -9,7 +9,7 @@ object Versions {
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
     const val android_gradle_plugin = "4.0.1"
-    const val android_lint_api = "26.6.4"
+    const val android_lint_api = "27.0.1"
 
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
@@ -55,6 +55,7 @@ object Deps {
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+    const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
