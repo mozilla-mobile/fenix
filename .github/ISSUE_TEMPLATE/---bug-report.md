@@ -6,8 +6,10 @@ labels: "\U0001F41E bug"
 assignees: ''
 
 ---
-
 ## Steps to reproduce
+[comment]: # (Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean)
+[comment]: # (Every issue should have exactly bug described in it. Please do not file feedback list tickets as it is difficult to parse them and address their individual points)
+[comment]: # (Read https://github.com/mozilla-mobile/fenix#i-want-to-file-an-issue for more information)
 
 ### Expected behavior
 
