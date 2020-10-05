@@ -1480,7 +1480,7 @@
     <string name="search_add_custom_engine_error_empty_name">Skriv inn namn på søkjemotor</string>
 
     <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">Søkjemotor med namnet «%» finst allereie.</string>
+    <string name="search_add_custom_engine_error_existing_name">Søkjemotor med namnet «%s» finst allereie.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Skriv inn ein søkjestreng</string>
     <!-- Text shown when a user leaves out the required template string -->

@@ -6,8 +6,8 @@ package org.mozilla.fenix.settings
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.widget.ImageView
-import androidx.core.content.res.TypedArrayUtils
 import androidx.core.content.withStyledAttributes
 import androidx.preference.PreferenceViewHolder
 import org.mozilla.fenix.R
@@ -36,10 +36,9 @@ class RadioButtonInfoPreference @JvmOverloads constructor(
         context.withStyledAttributes(
             attrs,
             androidx.preference.R.styleable.Preference,
-            TypedArrayUtils.getAttr(
+            getAttr(
                 context,
-                androidx.preference.R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle
+                androidx.preference.R.attr.preferenceStyle
             ),
             0
         ) {
@@ -66,4 +65,10 @@ class RadioButtonInfoPreference @JvmOverloads constructor(
         infoView?.alpha = if (isEnabled) FULL_ALPHA else HALF_ALPHA
         contentDescription?.let { infoView?.contentDescription = it }
     }
+}
+
+private fun getAttr(context: Context, attr: Int): Int {
+    val value = TypedValue()
+    context.theme.resolveAttribute(attr, value, true)
+    return if (value.resourceId != 0) attr else android.R.attr.preferenceStyle
 }

@@ -1487,7 +1487,7 @@
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Skriv inn navn på søkemotor</string>
     <!-- Text shown when a user tries to add a search engine that already exists -->
-    <string name="search_add_custom_engine_error_existing_name">Søkemotor med navnet «%» finnes allerede.</string>
+    <string name="search_add_custom_engine_error_existing_name">Søkemotor med navnet «%s» finnes allerede.</string>
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">Skriv inn en søkestreng</string>
 

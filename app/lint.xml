@@ -3,6 +3,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <lint>
+    <issue id="ButtonStyleXmlDetector" severity="ignore" />
     <issue id="InvalidPackage">
         <!-- The Sentry SDK is compiled against parts of the Java SDK that are not available in the Android SDK.
              Let's just ignore issues in the Sentry code since that is a third-party dependency anyways. -->
@@ -14,6 +15,7 @@
     <issue id="MissingTranslation" severity="ignore" />
     <issue id="PluralsCandidate" severity="ignore" />
     <issue id="StringFormatCount" severity="ignore" />
+    <issue id="StringFormatInvalid" severity="warning" />
     <issue id="TypographyEllipsis" severity="ignore" />
     <issue id="ExtraTranslation" severity="warning" />
     <!-- Lints that are disabled by default -->

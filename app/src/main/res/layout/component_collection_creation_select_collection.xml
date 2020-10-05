@@ -125,7 +125,7 @@
             android:layout_margin="16dp"
             android:background="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_new"
-            android:tint="?neutral"
+            app:tint="?neutral"
             android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
