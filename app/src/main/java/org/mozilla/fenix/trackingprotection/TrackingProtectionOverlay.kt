@@ -13,8 +13,10 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.*
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import mozilla.components.browser.session.Session
@@ -49,7 +51,24 @@ class TrackingProtectionOverlay(
 
     @Suppress("MagicNumber", "InflateParams")
     private fun showTrackingProtectionOnboarding() {
-        if (getToolbar().translationY > 0) return
+
+        if (!getToolbar().hasWindowFocus()) return
+
+        when (getToolbar().parent) {
+            is CoordinatorLayout -> {
+                if(getToolbar().translationY > 0) {
+                    return
+                }
+            }
+            is AppBarLayout -> {
+                val appBarLayout = getToolbar().parent as AppBarLayout?
+                appBarLayout?.let { appBar ->
+                    if(appBar.y != 0.toFloat()) {
+                        return
+                    }
+                }
+            }
+        }
 
         val trackingOnboardingDialog = object : Dialog(context) {
             override fun onTouchEvent(event: MotionEvent): Boolean {
