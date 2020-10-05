@@ -49,5 +49,5 @@ object FeatureFlags {
     /**
      * Enables ETP cookie purging
      */
-    val etpCookiePurging = Config.channel.isNightlyOrDebug
+    const val etpCookiePurging = true
 }
