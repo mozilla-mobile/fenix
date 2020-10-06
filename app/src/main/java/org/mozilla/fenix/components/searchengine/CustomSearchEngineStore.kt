@@ -11,9 +11,23 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineParser
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.search.provider.SearchEngineProvider
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import mozilla.components.lib.state.Action
+import mozilla.components.lib.state.State
 import mozilla.components.support.ktx.android.content.PreferencesHolder
 import mozilla.components.support.ktx.android.content.stringSetPreference
+import org.mozilla.fenix.R
+import org.mozilla.fenix.collections.CollectionCreationAction
+import org.mozilla.fenix.collections.CollectionCreationState
+import org.mozilla.fenix.collections.SaveCollectionStep
+import org.mozilla.fenix.collections.getTabs
+import org.mozilla.fenix.collections.toTab
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.home.Tab
 
 /**
  * SearchEngineProvider implementation to load user entered custom search engines.
@@ -24,11 +38,14 @@ class CustomSearchEngineProvider : SearchEngineProvider {
     }
 }
 
+
 /**
  * Object to handle storing custom search engines
  */
 object CustomSearchEngineStore {
     class EngineNameAlreadyExists : Exception()
+
+
 
     /**
      * Add a search engine to the store.
@@ -38,12 +55,16 @@ object CustomSearchEngineStore {
      * @throws EngineNameAlreadyExists if you try to add a search engine that already exists
      */
     suspend fun addSearchEngine(context: Context, engineName: String, searchQuery: String) {
-        val storage = engineStorage(context)
-        if (storage.customSearchEngineIds.contains(engineName)) { throw EngineNameAlreadyExists() }
+        if (CustomSearchEngineState.customSearchEngineIds.contains(engineName)) {
+            throw EngineNameAlreadyExists()
+        }
 
         val icon = context.components.core.icons.loadIcon(IconRequest(searchQuery)).await()
         val searchEngineXml = SearchEngineWriter.buildSearchEngineXML(engineName, searchQuery, icon.bitmap)
         val engines = storage.customSearchEngineIds.toMutableSet()
+
+        val newSearchEngine = Set<String>()
+
         engines.add(engineName)
         storage.customSearchEngineIds = engines
         storage[engineName] = searchEngineXml
@@ -63,6 +84,7 @@ object CustomSearchEngineStore {
         newEngineName: String,
         searchQuery: String
     ) {
+
         removeSearchEngine(context, oldEngineName)
         addSearchEngine(context, newEngineName, searchQuery)
     }
@@ -104,26 +126,73 @@ object CustomSearchEngineStore {
             parser.load(it, engineInputStream)
         }
     }
+//
+//    /**
+//     * Creates a helper object to help interact with [SharedPreferences]
+//     * @param context [Context] used for various Android interactions.
+//     */
+//    private fun engineStorage(context: Context) = object : PreferencesHolder {
+//        override val preferences: SharedPreferences
+//            get() = context.getSharedPreferences(
+//                context.getPreferenceKey(
+//                    R.string.pref_key_file_search_engines
+//                ), Context.MODE_PRIVATE
+//            )
+//
+//        var customSearchEngineIds by stringSetPreference(
+//            context.getPreferenceKey(
+//                R.string.pref_key_custom_search_engines
+//            ), emptySet()
+//        )
+//
+//        operator fun get(engineId: String): String? {
+//            return preferences.getString(engineId, null)
+//        }
+//
+//        operator fun set(engineId: String, value: String?) {
+//            preferences.edit().putString(engineId, value).apply()
+//        }
+//    }
 
-    /**
-     * Creates a helper object to help interact with [SharedPreferences]
-     * @param context [Context] used for various Android interactions.
-     */
-    private fun engineStorage(context: Context) = object : PreferencesHolder {
-        override val preferences: SharedPreferences
-            get() = context.getSharedPreferences(PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
+}
 
-        var customSearchEngineIds by stringSetPreference(PREF_KEY_CUSTOM_SEARCH_ENGINES, emptySet())
+data class CustomSearchEngineState(
+    val searchEngineList: SearchEngineList = SearchEngineList(emptyList(), default = null)
+) : State
 
-        operator fun get(engineId: String): String? {
-            return preferences.getString(engineId, null)
+
+sealed class CustomSearchEngineAction : Action {
+    data class AddCustomSearchEngine(val newSearchEngine: SearchEngine) : CustomSearchEngineAction()
+    data class DeleteCustomSearchEngine(val id: String) : CustomSearchEngineAction()
+    data class EditSearchEngine(val id: String) : CustomSearchEngineAction()
+    data class SetDefaultSearchEngine(val id: String) : CustomSearchEngineAction()
+}
+
+internal fun CustomSearchEngineState.get(id: String): SearchEngine? {
+    return searchEngineList.list.firstOrNull { it.identifier == id }
+}
+
+private fun customSearchEngineReducer(
+    prevState: CustomSearchEngineState,
+    action: CustomSearchEngineAction
+): CustomSearchEngineState = when (action) {
+    is CustomSearchEngineAction.AddCustomSearchEngine ->
+        prevState.copy(
+            searchEngineList = SearchEngineList(
+                list = prevState.searchEngineList.list + action.newSearchEngine,
+                default = prevState.searchEngineList.default)
+        )
+    is CustomSearchEngineAction.DeleteCustomSearchEngine -> {
+        val default = if (prevState.searchEngineList.default.identifier == action.id) {
+            prevState.searchEngineList.list[0]
         }
-
-        operator fun set(engineId: String, value: String?) {
-            preferences.edit().putString(engineId, value).apply()
-        }
+        prevState.copy(
+            searchEngineList = SearchEngineList(
+                list = prevState.searchEngineList.list.filter { it.identifier != action.id },
+                default = prevState.searchEngineList.default)
+        )
     }
 
-    private const val PREF_KEY_CUSTOM_SEARCH_ENGINES = "pref_custom_search_engines"
-    const val PREF_FILE_SEARCH_ENGINES = "custom-search-engines"
+    is CustomSearchEngineAction.EditSearchEngine -> prevState.copy(selectedTabs = prevState.selectedTabs + action.tab)
+    is CustomSearchEngineAction.SetDefaultSearchEngine -> prevState.copy(selectedTabs = prevState.selectedTabs - action.tab)
 }

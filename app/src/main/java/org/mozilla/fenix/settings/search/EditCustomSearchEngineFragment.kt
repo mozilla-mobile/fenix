@@ -38,8 +38,7 @@ import java.util.Locale
  */
 class EditCustomSearchEngineFragment
     : Fragment(R.layout.fragment_add_search_engine),
-      CoroutineScope by CoroutineScope(Job() + IO)
-{
+      CoroutineScope by CoroutineScope(Job() + IO) {
 
     private val args by navArgs<EditCustomSearchEngineFragmentArgs>()
 
@@ -153,7 +152,7 @@ class EditCustomSearchEngineFragment
         }
 
         val nameHasChanged = name != args.searchEngineIdentifier
-
+        val searchStringHasChanged = searchString != args
         val hasError = when {
             name.isEmpty() -> {
                 custom_search_engine_name_field.error = resources

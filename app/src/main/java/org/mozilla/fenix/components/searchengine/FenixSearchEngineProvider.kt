@@ -26,17 +26,23 @@ open class FenixSearchEngineProvider(
     private val context: Context
 ) : SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {
 
-    val localizationProvider = SearchEngineLocalizationProvider(context, coroutineContext)
+    private val localizationProvider = SearchEngineLocalizationProvider(context, coroutineContext)
 
-    open var baseSearchEngines = async {
+    /**
+     * Unfiltered list of search engines based on locale.
+     */
+    open var localizedSearchEngines = async {
         AssetsSearchEngineProvider(localizationProvider.searchLocalizationProvider)
             .loadSearchEngines(context)
     }
 
+    /**
+     * Default bundled search engines based on locale.
+     */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open val bundledSearchEngines = async {
         val defaultEngineIdentifiers =
-            baseSearchEngines.await().list.map { it.identifier }.toSet()
+            localizedSearchEngines.await().list.map { it.identifier }.toSet()
         AssetsSearchEngineProvider(
             localizationProvider.searchLocalizationProvider,
             filters = listOf(object : SearchEngineFilter {
@@ -49,12 +55,13 @@ open class FenixSearchEngineProvider(
         ).loadSearchEngines(context)
     }
 
+    /**
+     * Search engines that have been manually added by a user.
+     */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open var customSearchEngines = async {
         CustomSearchEngineProvider().loadSearchEngines(context)
     }
-
-    private var loadedSearchEngines = refreshAsync()
 
     // https://github.com/mozilla-mobile/fenix/issues/9935
     // Create new getter that will return the fallback SearchEngineList if
@@ -62,7 +69,7 @@ open class FenixSearchEngineProvider(
     private val searchEngines: Deferred<SearchEngineList>
         get() =
             if (localizationProvider.isRegionCachedByLocationService) {
-                loadedSearchEngines
+                refreshInstalledEngineListAsync()
             } else {
                 localizationProvider.fallbackEngines
             }
@@ -157,21 +164,21 @@ open class FenixSearchEngineProvider(
     fun reload() {
         launch {
             customSearchEngines = async { CustomSearchEngineProvider().loadSearchEngines(context) }
-            loadedSearchEngines = refreshAsync()
+//            loadedSearchEngines = refreshInstalledEngineListAsync()
         }
     }
 
     // When we change the locale we need to update the baseSearchEngines list
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open fun updateBaseSearchEngines() {
-        baseSearchEngines = async {
+        localizedSearchEngines = async {
             AssetsSearchEngineProvider(localizationProvider.searchLocalizationProvider)
                 .loadSearchEngines(context)
         }
     }
 
-    private fun refreshAsync() = async {
-        val engineList = baseSearchEngines.await()
+    private fun refreshInstalledEngineListAsync() = async {
+        val engineList = localizedSearchEngines.await()
         val bundledList = bundledSearchEngines.await().list
         val customList = customSearchEngines.await().list
 
@@ -191,7 +198,7 @@ open class FenixSearchEngineProvider(
         if (!prefs.contains(installedEnginesKey)) {
             val searchEngines =
                 if (localizationProvider.isRegionCachedByLocationService) {
-                    baseSearchEngines
+                    localizedSearchEngines
                 } else {
                     localizationProvider.fallbackEngines
                 }
