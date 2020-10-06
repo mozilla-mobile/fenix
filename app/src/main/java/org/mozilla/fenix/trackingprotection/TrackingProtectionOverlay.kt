@@ -54,13 +54,15 @@ class TrackingProtectionOverlay(
 
         if (!getToolbar().hasWindowFocus()) return
 
-        when (getToolbar().parent) {
-            is CoordinatorLayout -> {
+        val toolbarPosition = settings.toolbarPosition
+
+        when (toolbarPosition) {
+            ToolbarPosition.BOTTOM -> {
                 if(getToolbar().translationY > 0) {
                     return
                 }
             }
-            is AppBarLayout -> {
+            ToolbarPosition.TOP -> {
                 val appBarLayout = getToolbar().parent as AppBarLayout?
                 appBarLayout?.let { appBar ->
                     if(appBar.y != 0.toFloat()) {
@@ -82,7 +84,6 @@ class TrackingProtectionOverlay(
 
         val layout = LayoutInflater.from(context)
             .inflate(R.layout.tracking_protection_onboarding_popup, null)
-        val toolbarPosition = settings.toolbarPosition
 
         layout.drop_down_triangle.isVisible = toolbarPosition == ToolbarPosition.TOP
         layout.pop_up_triangle.isVisible = toolbarPosition == ToolbarPosition.BOTTOM
