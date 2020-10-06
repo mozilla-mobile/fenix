@@ -9,7 +9,7 @@ import android.view.View
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.about_list_item.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +28,7 @@ class AboutItemViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext).inflate(AboutItemViewHolder.LAYOUT_ID, null)
+        view = LayoutInflater.from(fenixTestContext).inflate(AboutItemViewHolder.LAYOUT_ID, null)
         listener = mockk(relaxed = true)
     }
 

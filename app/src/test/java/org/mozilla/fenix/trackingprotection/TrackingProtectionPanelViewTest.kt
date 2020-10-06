@@ -10,7 +10,7 @@ import androidx.core.view.isVisible
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.component_tracking_protection_panel.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -39,7 +39,7 @@ class TrackingProtectionPanelViewTest {
 
     @Before
     fun setup() {
-        container = FrameLayout(testContext)
+        container = FrameLayout(fenixTestContext)
         interactor = mockk(relaxUnitFun = true)
         view = TrackingProtectionPanelView(container, interactor)
     }
@@ -65,15 +65,15 @@ class TrackingProtectionPanelViewTest {
         assertTrue(view.details_mode.isVisible)
         assertFalse(view.normal_mode.isVisible)
         assertEquals(
-            testContext.getString(R.string.etp_tracking_content_title),
+            fenixTestContext.getString(R.string.etp_tracking_content_title),
             view.category_title.text
         )
         assertEquals(
-            testContext.getString(R.string.etp_tracking_content_description),
+            fenixTestContext.getString(R.string.etp_tracking_content_description),
             view.category_description.text
         )
         assertEquals(
-            testContext.getString(R.string.enhanced_tracking_protection_allowed),
+            fenixTestContext.getString(R.string.enhanced_tracking_protection_allowed),
             view.details_blocking_header.text
         )
     }

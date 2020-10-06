@@ -10,7 +10,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.onboarding_privacy_notice.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +26,7 @@ class OnboardingPrivacyNoticeViewHolderTest {
 
     @Before
     fun setup() {
-        val context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        val context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         view = LayoutInflater.from(context)
             .inflate(OnboardingPrivacyNoticeViewHolder.LAYOUT_ID, null)
         interactor = mockk(relaxed = true)

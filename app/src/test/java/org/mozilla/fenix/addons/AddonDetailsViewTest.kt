@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.fragment_add_on_details.view.*
 import mozilla.components.feature.addons.Addon
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -37,7 +37,7 @@ class AddonDetailsViewTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext).inflate(R.layout.fragment_add_on_details, null)
+        view = LayoutInflater.from(fenixTestContext).inflate(R.layout.fragment_add_on_details, null)
         interactor = mockk(relaxed = true)
 
         detailsView = AddonDetailsView(view, interactor)

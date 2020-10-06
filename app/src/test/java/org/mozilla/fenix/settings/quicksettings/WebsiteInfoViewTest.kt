@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.library_site_item.title
 import kotlinx.android.synthetic.main.library_site_item.url
 import kotlinx.android.synthetic.main.quicksettings_website_info.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -25,7 +25,7 @@ class WebsiteInfoViewTest {
 
     @Before
     fun setup() {
-        view = WebsiteInfoView(FrameLayout(testContext))
+        view = WebsiteInfoView(FrameLayout(fenixTestContext))
     }
 
     @Test

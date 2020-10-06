@@ -17,7 +17,7 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -80,19 +80,19 @@ class ContextTest {
     @Test
     fun `GIVEN context WHEN seeking application of context THEN send back application context`() {
         val expectedAppValue = ApplicationProvider.getApplicationContext<FenixApplication>()
-        assertEquals(expectedAppValue, testContext.application)
+        assertEquals(expectedAppValue, fenixTestContext.application)
     }
 
     @Test
     fun `GIVEN context WHEN requiring components THEN send back application components`() {
         val expectedComponentsValue = ApplicationProvider.getApplicationContext<FenixApplication>().components
-        assertEquals(expectedComponentsValue, testContext.components)
+        assertEquals(expectedComponentsValue, fenixTestContext.components)
     }
 
     @Test
     fun `GIVEN context WHEN getting metrics controller THEN send back metrics`() {
         val expectedMetricsValue = ApplicationProvider.getApplicationContext<FenixApplication>().components.analytics.metrics
-        assertEquals(expectedMetricsValue, testContext.metrics)
+        assertEquals(expectedMetricsValue, fenixTestContext.metrics)
     }
 
     @Test
@@ -161,8 +161,8 @@ class ContextTest {
 
     @Test
     fun `GIVEN context WHEN given a preference key THEN send back the right string`() {
-        val comparisonStr = testContext.getString(R.string.private_browsing_common_myths)
-        val actualStr = testContext.getPreferenceKey(R.string.private_browsing_common_myths)
+        val comparisonStr = fenixTestContext.getString(R.string.private_browsing_common_myths)
+        val actualStr = fenixTestContext.getPreferenceKey(R.string.private_browsing_common_myths)
         assertEquals(comparisonStr, actualStr)
     }
 }

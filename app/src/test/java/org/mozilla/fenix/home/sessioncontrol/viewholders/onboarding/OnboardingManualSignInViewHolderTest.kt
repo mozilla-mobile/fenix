@@ -17,7 +17,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.android.synthetic.main.onboarding_manual_signin.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -37,14 +37,14 @@ class OnboardingManualSignInViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingManualSignInViewHolder.LAYOUT_ID, null)
         navController = mockk(relaxed = true)
         interactor = mockk(relaxUnitFun = true)
         itemView = mockk(relaxed = true)
 
         mockkStatic(Navigation::class)
-        every { itemView.context } returns testContext
+        every { itemView.context } returns fenixTestContext
         every { interactor.onLearnMoreClicked() } just Runs
         every { Navigation.findNavController(view) } returns navController
     }

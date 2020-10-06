@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import io.mockk.every
 import io.mockk.spyk
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import mozilla.components.support.utils.toSafeIntent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -33,7 +33,7 @@ class HomeActivityTest {
     fun setup() {
         activity = spyk(HomeActivity())
 
-        every { activity.applicationContext } returns testContext
+        every { activity.applicationContext } returns fenixTestContext
     }
 
     @Test
@@ -52,19 +52,19 @@ class HomeActivityTest {
 
     @Test
     fun `getModeFromIntentOrLastKnown returns mode from settings when intent does not set`() {
-        testContext.settings().lastKnownMode = BrowsingMode.Private
+        fenixTestContext.settings().lastKnownMode = BrowsingMode.Private
 
-        assertEquals(testContext.settings().lastKnownMode, activity.getModeFromIntentOrLastKnown(null))
+        assertEquals(fenixTestContext.settings().lastKnownMode, activity.getModeFromIntentOrLastKnown(null))
     }
 
     @Test
     fun `getModeFromIntentOrLastKnown returns mode from intent when set`() {
-        testContext.settings().lastKnownMode = BrowsingMode.Normal
+        fenixTestContext.settings().lastKnownMode = BrowsingMode.Normal
 
         val intent = Intent()
         intent.putExtra(PRIVATE_BROWSING_MODE, true)
 
-        assertNotEquals(testContext.settings().lastKnownMode, activity.getModeFromIntentOrLastKnown(intent))
+        assertNotEquals(fenixTestContext.settings().lastKnownMode, activity.getModeFromIntentOrLastKnown(intent))
         assertEquals(BrowsingMode.Private, activity.getModeFromIntentOrLastKnown(intent))
     }
 

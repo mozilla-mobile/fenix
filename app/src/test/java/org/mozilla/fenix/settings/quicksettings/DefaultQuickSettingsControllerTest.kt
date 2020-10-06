@@ -21,7 +21,7 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status.NO_DECISION
 import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -37,7 +37,7 @@ import org.mozilla.fenix.utils.Settings
 @ExperimentalCoroutinesApi
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultQuickSettingsControllerTest {
-    private val context = testContext
+    private val context = fenixTestContext
     private val store = mockk<QuickSettingsFragmentStore>()
     private val coroutinesScope = TestCoroutineScope()
     private val navController = mockk<NavController>(relaxed = true)

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 import androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags
 import androidx.recyclerview.widget.RecyclerView
 import io.mockk.mockk
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,8 +21,8 @@ class TabsTouchHelperTest {
 
     @Test
     fun `movement flags remain unchanged if onSwipeToDelete is true`() {
-        val recyclerView = RecyclerView(testContext)
-        val layout = FrameLayout(testContext)
+        val recyclerView = RecyclerView(fenixTestContext)
+        val layout = FrameLayout(fenixTestContext)
         val interactor: TabTrayInteractor = mockk(relaxed = true)
         val viewHolder = SaveToCollectionsButtonAdapter.ViewHolder(layout, interactor)
         val callback = TouchCallback(mockk()) { true }
@@ -38,8 +38,8 @@ class TabsTouchHelperTest {
 
     @Test
     fun `movement flags remain unchanged if onSwipeToDelete is false`() {
-        val recyclerView = RecyclerView(testContext)
-        val layout = FrameLayout(testContext)
+        val recyclerView = RecyclerView(fenixTestContext)
+        val layout = FrameLayout(fenixTestContext)
         val interactor: TabTrayInteractor = mockk(relaxed = true)
         val viewHolder = SaveToCollectionsButtonAdapter.ViewHolder(layout, interactor)
         val callback = TouchCallback(mockk()) { false }

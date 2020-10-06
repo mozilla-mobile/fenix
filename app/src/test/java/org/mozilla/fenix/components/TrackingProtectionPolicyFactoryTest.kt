@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -184,7 +184,7 @@ class TrackingProtectionPolicyFactoryTest {
 
     @Test
     fun `all cookies_options_entry_values values should create policies without crashing`() {
-        testContext.resources.getStringArray(R.array.cookies_options_entry_values).forEach {
+        fenixTestContext.resources.getStringArray(R.array.cookies_options_entry_values).forEach {
             TrackingProtectionPolicyFactory(settingsForCustom(shouldBlockCookiesInCustom = true, blockCookiesSelection = it))
                 .createTrackingProtectionPolicy(normalMode = true, privateMode = true)
         }

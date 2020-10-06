@@ -21,7 +21,7 @@ import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.support.images.ImageLoadRequest
 import mozilla.components.support.images.loader.ImageLoader
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -42,7 +42,7 @@ class TabTrayViewHolderTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(R.layout.tab_tray_item, null, false)
         state = BrowserState()
 

@@ -19,7 +19,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ class FragmentTest {
     private val mockDestination = spyk(NavDestination("hi"))
     private val mockExtras: Extras = mockk(relaxed = true)
     private val mockId = 4
-    private val navController = spyk(NavController(testContext))
+    private val navController = spyk(NavController(fenixTestContext))
     private val mockFragment: Fragment = mockk(relaxed = true)
     private val mockOptions: NavOptions = mockk(relaxed = true)
 

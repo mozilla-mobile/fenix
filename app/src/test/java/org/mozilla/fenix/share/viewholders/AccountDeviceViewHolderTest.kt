@@ -11,7 +11,7 @@ import io.mockk.verify
 import kotlinx.android.synthetic.main.account_share_list_item.view.*
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.DeviceType
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -41,7 +41,7 @@ class AccountDeviceViewHolderTest {
     fun setup() {
         interactor = mockk(relaxUnitFun = true)
 
-        val view = LayoutInflater.from(testContext).inflate(AccountDeviceViewHolder.LAYOUT_ID, null)
+        val view = LayoutInflater.from(fenixTestContext).inflate(AccountDeviceViewHolder.LAYOUT_ID, null)
         viewHolder = AccountDeviceViewHolder(view, interactor)
     }
 

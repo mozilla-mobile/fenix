@@ -17,7 +17,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.button_tip_item.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -47,7 +47,7 @@ class ButtonTipViewHolderTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        val view = spyk(LayoutInflater.from(testContext)
+        val view = spyk(LayoutInflater.from(fenixTestContext)
             .inflate(ButtonTipViewHolder.LAYOUT_ID, null))
 
         viewHolder = ButtonTipViewHolder(view, interactor, metrics, settings)

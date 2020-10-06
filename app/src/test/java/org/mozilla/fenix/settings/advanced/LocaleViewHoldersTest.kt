@@ -15,7 +15,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import kotlinx.android.synthetic.main.locale_settings_item.view.*
 import mozilla.components.support.locale.LocaleManager
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -40,7 +40,7 @@ class LocaleViewHoldersTest {
         mockkObject(LocaleManager)
         every { LocaleManager.getCurrentLocale(any()) } returns null
 
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(R.layout.locale_settings_item, null)
         interactor = mockk()
 

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.no_collections_message.view.*
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -41,7 +41,7 @@ class NoCollectionsMessageViewHolderTest {
 
     @Before
     fun setup() {
-        val appCompatContext = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        val appCompatContext = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         view = LayoutInflater.from(appCompatContext)
             .inflate(NoCollectionsMessageViewHolder.LAYOUT_ID, null)
         lifecycleOwner = mockk(relaxed = true)

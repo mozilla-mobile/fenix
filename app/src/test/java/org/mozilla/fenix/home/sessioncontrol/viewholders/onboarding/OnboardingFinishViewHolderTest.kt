@@ -9,7 +9,7 @@ import android.view.View
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.onboarding_finish.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,7 @@ class OnboardingFinishViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingFinishViewHolder.LAYOUT_ID, null)
         interactor = mockk(relaxed = true)
     }

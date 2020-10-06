@@ -11,7 +11,7 @@ import io.mockk.impl.annotations.MockK
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissions.Status
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -59,12 +59,12 @@ class PhoneFeatureTest {
 
     @Test
     fun getLabel() {
-        assertEquals("Camera", PhoneFeature.CAMERA.getLabel(testContext))
-        assertEquals("Location", PhoneFeature.LOCATION.getLabel(testContext))
-        assertEquals("Microphone", PhoneFeature.MICROPHONE.getLabel(testContext))
-        assertEquals("Notification", PhoneFeature.NOTIFICATION.getLabel(testContext))
-        assertEquals("Autoplay", PhoneFeature.AUTOPLAY_AUDIBLE.getLabel(testContext))
-        assertEquals("Autoplay", PhoneFeature.AUTOPLAY_INAUDIBLE.getLabel(testContext))
+        assertEquals("Camera", PhoneFeature.CAMERA.getLabel(fenixTestContext))
+        assertEquals("Location", PhoneFeature.LOCATION.getLabel(fenixTestContext))
+        assertEquals("Microphone", PhoneFeature.MICROPHONE.getLabel(fenixTestContext))
+        assertEquals("Notification", PhoneFeature.NOTIFICATION.getLabel(fenixTestContext))
+        assertEquals("Autoplay", PhoneFeature.AUTOPLAY_AUDIBLE.getLabel(fenixTestContext))
+        assertEquals("Autoplay", PhoneFeature.AUTOPLAY_INAUDIBLE.getLabel(fenixTestContext))
     }
 
     @Test
@@ -78,7 +78,7 @@ class PhoneFeatureTest {
 
         assertEquals(
             "pref_key_browser_feature_autoplay_inaudible",
-            PhoneFeature.AUTOPLAY_INAUDIBLE.getPreferenceKey(testContext)
+            PhoneFeature.AUTOPLAY_INAUDIBLE.getPreferenceKey(fenixTestContext)
         )
     }
 

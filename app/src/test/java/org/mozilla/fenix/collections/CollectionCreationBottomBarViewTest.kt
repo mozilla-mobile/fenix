@@ -14,7 +14,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -38,9 +38,9 @@ class CollectionCreationBottomBarViewTest {
     fun setup() {
         interactor = mockk(relaxed = true)
         layout = spyk()
-        iconButton = ImageButton(testContext)
-        textView = TextView(testContext)
-        saveButton = Button(testContext)
+        iconButton = ImageButton(fenixTestContext)
+        textView = TextView(fenixTestContext)
+        saveButton = Button(fenixTestContext)
 
         bottomBarView = CollectionCreationBottomBarView(
             interactor,

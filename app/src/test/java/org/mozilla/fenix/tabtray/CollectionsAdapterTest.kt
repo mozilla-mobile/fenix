@@ -7,7 +7,7 @@ package org.mozilla.fenix.tabtray
 import android.widget.FrameLayout
 import io.mockk.mockk
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,9 +46,9 @@ class CollectionsAdapterTest {
     fun `creates and binds viewholder`() {
         val adapter = CollectionsAdapter(collectionList, onNewCollectionClicked)
 
-        val holder1 = adapter.createViewHolder(FrameLayout(testContext), 0)
-        val holder2 = adapter.createViewHolder(FrameLayout(testContext), 0)
-        val holder3 = adapter.createViewHolder(FrameLayout(testContext), 0)
+        val holder1 = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
+        val holder2 = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
+        val holder3 = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
 
         adapter.bindViewHolder(holder1, 0)
         adapter.bindViewHolder(holder2, 1)

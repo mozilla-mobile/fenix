@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import io.mockk.every
 import kotlinx.android.synthetic.main.onboarding_toolbar_position_picker.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -27,8 +27,8 @@ class OnboardingToolbarPositionPickerViewHolderTest {
 
     @Before
     fun setup() {
-        val components = testContext.components
-        view = LayoutInflater.from(testContext)
+        val components = fenixTestContext.components
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID, null)
         settings = components.settings
     }

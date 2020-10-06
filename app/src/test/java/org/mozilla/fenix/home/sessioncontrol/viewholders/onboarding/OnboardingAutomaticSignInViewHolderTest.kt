@@ -18,7 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.service.fxa.manager.MigrationResult
 import mozilla.components.service.fxa.sharing.ShareableAccount
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -41,12 +41,12 @@ class OnboardingAutomaticSignInViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingAutomaticSignInViewHolder.LAYOUT_ID, null)
         snackbar = mockk(relaxed = true)
         mockkObject(FenixSnackbar.Companion)
 
-        backgroundServices = testContext.components.backgroundServices
+        backgroundServices = fenixTestContext.components.backgroundServices
         every { FenixSnackbar.make(any(), any(), any(), any()) } returns snackbar
     }
 

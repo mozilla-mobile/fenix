@@ -11,7 +11,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import mozilla.components.support.utils.Browsers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -36,7 +36,7 @@ class BrowsersCacheTest {
             )
         )
 
-        val initialBrowserList = BrowsersCache.all(testContext)
+        val initialBrowserList = BrowsersCache.all(fenixTestContext)
         assertEquals(3, initialBrowserList.installedBrowsers.size)
 
         pretendBrowsersAreInstalled(
@@ -49,7 +49,7 @@ class BrowsersCacheTest {
                 Browsers.KnownBrowser.REFERENCE_BROWSER.packageName
             )
         )
-        val updatedBrowserList = BrowsersCache.all(testContext)
+        val updatedBrowserList = BrowsersCache.all(fenixTestContext)
         assertEquals(3, updatedBrowserList.installedBrowsers.size)
     }
 
@@ -63,7 +63,7 @@ class BrowsersCacheTest {
             )
         )
 
-        val initialBrowserList = BrowsersCache.all(testContext)
+        val initialBrowserList = BrowsersCache.all(fenixTestContext)
         assertEquals(3, initialBrowserList.installedBrowsers.size)
 
         pretendBrowsersAreInstalled(
@@ -79,7 +79,7 @@ class BrowsersCacheTest {
 
         BrowsersCache.resetAll()
 
-        val updatedBrowserList = BrowsersCache.all(testContext)
+        val updatedBrowserList = BrowsersCache.all(fenixTestContext)
         assertEquals(7, updatedBrowserList.installedBrowsers.size)
     }
 
@@ -87,7 +87,7 @@ class BrowsersCacheTest {
     fun `resetting the cache should empty it`() {
         BrowsersCache.resetAll()
 
-        BrowsersCache.all(testContext)
+        BrowsersCache.all(fenixTestContext)
 
         assertNotNull(BrowsersCache.cachedBrowsers)
 
@@ -105,7 +105,7 @@ class BrowsersCacheTest {
         browsersExported: Boolean = true,
         defaultBrowserExported: Boolean = true
     ) {
-        val packageManager = testContext.packageManager
+        val packageManager = fenixTestContext.packageManager
         val shadow = shadowOf(packageManager)
 
         browsers.forEach { packageName ->

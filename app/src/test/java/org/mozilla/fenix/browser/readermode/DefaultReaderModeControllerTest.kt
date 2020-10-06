@@ -19,7 +19,7 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,7 +42,7 @@ class DefaultReaderModeControllerTest {
                 selectedTabId = tab.id
             )
         )
-        readerViewFeature = spyk(ReaderViewFeature(testContext, mockk(), store, mockk()))
+        readerViewFeature = spyk(ReaderViewFeature(fenixTestContext, mockk(), store, mockk()))
 
         featureWrapper = ViewBoundFeatureWrapper(
             feature = readerViewFeature,

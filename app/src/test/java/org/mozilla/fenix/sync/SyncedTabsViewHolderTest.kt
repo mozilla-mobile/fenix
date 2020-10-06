@@ -13,13 +13,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.sync_tabs_list_item.view.*
 import kotlinx.android.synthetic.main.view_synced_tabs_group.view.*
-import kotlinx.android.synthetic.main.view_synced_tabs_title.view.*
 import mozilla.components.browser.storage.sync.Tab
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -56,7 +55,7 @@ class SyncedTabsViewHolderTest {
 
     @Before
     fun setup() {
-        val inflater = LayoutInflater.from(testContext)
+        val inflater = LayoutInflater.from(fenixTestContext)
 
         tabView = inflater.inflate(SyncedTabsViewHolder.TabViewHolder.LAYOUT_ID, null)
         tabViewHolder = SyncedTabsViewHolder.TabViewHolder(tabView)

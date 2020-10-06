@@ -13,7 +13,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.collection_tab_list_row.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -65,7 +65,7 @@ class CollectionCreationTabListAdapterTest {
             hideCheckboxes = false
         )
 
-        val holder = adapter.createViewHolder(FrameLayout(testContext), 0)
+        val holder = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
         adapter.bindViewHolder(holder, 0)
 
         assertEquals("Mozilla", holder.tab_title.text)
@@ -94,7 +94,7 @@ class CollectionCreationTabListAdapterTest {
             hideCheckboxes = true
         )
 
-        val holder = adapter.createViewHolder(FrameLayout(testContext), 0)
+        val holder = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
         adapter.bindViewHolder(holder, 0)
 
         assertEquals("Mozilla", holder.tab_title.text)

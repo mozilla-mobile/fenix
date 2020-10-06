@@ -12,7 +12,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import mozilla.components.service.glean.testing.GleanTestRule
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,7 +26,7 @@ import org.mozilla.fenix.GleanMetrics.StorageStats as Metrics
 class StorageStatsMetricsTest {
 
     @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
+    val gleanTestRule = GleanTestRule(fenixTestContext)
 
     @RelaxedMockK private lateinit var mockContext: Context
     @RelaxedMockK private lateinit var storageStats: StorageStats

@@ -9,7 +9,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.AL
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ASK_TO_ALLOW
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.BLOCKED
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,7 +36,7 @@ class SettingsTest {
 
     @Before
     fun setUp() {
-        settings = Settings(testContext)
+        settings = Settings(fenixTestContext)
     }
 
     @Test

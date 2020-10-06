@@ -12,7 +12,7 @@ import io.mockk.mockkStatic
 import mozilla.components.browser.errorpages.ErrorPages
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.request.RequestInterceptor
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -32,9 +32,9 @@ class AppRequestInterceptorTest {
 
         mockkStatic("org.mozilla.fenix.ext.ConnectivityManagerKt")
 
-        every { testContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
+        every { fenixTestContext.getSystemService<ConnectivityManager>()!!.isOnline() } returns true
 
-        interceptor = AppRequestInterceptor(testContext)
+        interceptor = AppRequestInterceptor(fenixTestContext)
     }
 
     @Test
@@ -113,7 +113,7 @@ class AppRequestInterceptorTest {
 
     private fun createExpectedErrorPage(error: ErrorType, html: String): String {
         return ErrorPages.createUrlEncodedErrorPage(
-            context = testContext,
+            context = fenixTestContext,
             errorType = error,
             htmlResource = html
         )

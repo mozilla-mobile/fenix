@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.menu.candidate.TextStyle
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +28,7 @@ class HistoryItemMenuTest {
 
     @Before
     fun setup() {
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         onItemTapped = mockk(relaxed = true)
         menu = HistoryItemMenu(context, onItemTapped)
     }

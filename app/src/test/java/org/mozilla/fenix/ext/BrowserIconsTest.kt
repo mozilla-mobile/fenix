@@ -10,7 +10,7 @@ import io.mockk.verify
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.IconRequest
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -19,8 +19,8 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class BrowserIconsTest {
     @Test
     fun loadIntoViewTest() {
-        val imageView = spyk(ImageView(testContext))
-        val icons = spyk(BrowserIcons(testContext, httpClient = GeckoViewFetchClient(testContext)))
+        val imageView = spyk(ImageView(fenixTestContext))
+        val icons = spyk(BrowserIcons(fenixTestContext, httpClient = GeckoViewFetchClient(fenixTestContext)))
         val myUrl = "https://mozilla.com"
         val request = spyk(IconRequest(url = myUrl))
         icons.loadIntoView(imageView, myUrl)

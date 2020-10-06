@@ -5,7 +5,7 @@ package org.mozilla.fenix.whatsnew
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import androidx.preference.PreferenceManager
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -20,14 +20,14 @@ class WhatsNewTest {
 
     @Before
     fun setup() {
-        storage = SharedPreferenceWhatsNewStorage(testContext)
-        PreferenceManager.getDefaultSharedPreferences(testContext).clearAndCommit()
+        storage = SharedPreferenceWhatsNewStorage(fenixTestContext)
+        PreferenceManager.getDefaultSharedPreferences(fenixTestContext).clearAndCommit()
         WhatsNew.wasUpdatedRecently = null
     }
 
     @Test
     fun `should highlight after fresh install`() {
-        assertEquals(true, WhatsNew.shouldHighlightWhatsNew(testContext))
+        assertEquals(true, WhatsNew.shouldHighlightWhatsNew(fenixTestContext))
     }
 
     @Test
@@ -80,10 +80,10 @@ class WhatsNewTest {
 
     @Test
     fun `should not highlight after user viewed what's new`() {
-        assertEquals(true, WhatsNew.shouldHighlightWhatsNew(testContext))
+        assertEquals(true, WhatsNew.shouldHighlightWhatsNew(fenixTestContext))
 
-        WhatsNew.userViewedWhatsNew(testContext)
+        WhatsNew.userViewedWhatsNew(fenixTestContext)
 
-        assertEquals(false, WhatsNew.shouldHighlightWhatsNew(testContext))
+        assertEquals(false, WhatsNew.shouldHighlightWhatsNew(fenixTestContext))
     }
 }

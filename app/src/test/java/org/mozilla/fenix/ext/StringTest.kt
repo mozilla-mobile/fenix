@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.ext
 
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -19,7 +19,7 @@ const val IDN = "台灣"
 @RunWith(FenixRobolectricTestRunner::class)
 class StringTest {
 
-    private val publicSuffixList = testContext.components.publicSuffixList
+    private val publicSuffixList = fenixTestContext.components.publicSuffixList
 
     @Test
     fun `Url To Trimmed Host`() {

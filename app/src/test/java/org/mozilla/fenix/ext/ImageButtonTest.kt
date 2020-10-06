@@ -5,7 +5,7 @@
 package org.mozilla.fenix.ext
 
 import android.view.View
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Test
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -16,7 +16,7 @@ import android.widget.ImageButton
 
 @RunWith(FenixRobolectricTestRunner::class)
 class ImageButtonTest {
-    private val imageButton = ImageButton(testContext)
+    private val imageButton = ImageButton(fenixTestContext)
 
     @Test
     fun `Hide and disable`() {

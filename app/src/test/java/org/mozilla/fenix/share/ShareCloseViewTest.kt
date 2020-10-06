@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.share_close.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +26,7 @@ class ShareCloseViewTest {
 
     @Before
     fun setup() {
-        container = FrameLayout(testContext)
+        container = FrameLayout(fenixTestContext)
         interactor = mockk(relaxUnitFun = true)
     }
 

@@ -12,7 +12,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mozilla.components.feature.sitepermissions.SitePermissions
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -32,7 +32,7 @@ import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class QuickSettingsFragmentStoreTest {
-    private val context = spyk(testContext)
+    private val context = spyk(fenixTestContext)
     private val permissions = mockk<SitePermissions>()
     private val appSettings = mockk<Settings>()
 
@@ -116,7 +116,7 @@ class QuickSettingsFragmentStoreTest {
     @Test
     fun `PhoneFeature#toWebsitePermission helps in constructing the right WebsitePermission`() {
         val cameraFeature = PhoneFeature.CAMERA
-        val allowedStatus = testContext.getString(R.string.preference_option_phone_feature_allowed)
+        val allowedStatus = fenixTestContext.getString(R.string.preference_option_phone_feature_allowed)
         every {
             context.checkPermission(
                 any(),

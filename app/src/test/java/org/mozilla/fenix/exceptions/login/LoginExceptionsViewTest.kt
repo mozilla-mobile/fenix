@@ -10,7 +10,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.mockk.mockk
 import kotlinx.android.synthetic.main.component_exceptions.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -28,7 +28,7 @@ class LoginExceptionsViewTest {
 
     @Before
     fun setup() {
-        parent = FrameLayout(testContext)
+        parent = FrameLayout(fenixTestContext)
         interactor = mockk()
         view = LoginExceptionsView(
             parent,

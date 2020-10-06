@@ -11,7 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.fragment_add_on_permissions.*
 import mozilla.components.feature.addons.Addon
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +35,7 @@ class AddonPermissionsDetailsViewTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext).inflate(R.layout.fragment_add_on_permissions, null)
+        view = LayoutInflater.from(fenixTestContext).inflate(R.layout.fragment_add_on_permissions, null)
         interactor = mockk(relaxed = true)
         permissionsDetailsView = AddonPermissionsDetailsView(view, interactor)
     }

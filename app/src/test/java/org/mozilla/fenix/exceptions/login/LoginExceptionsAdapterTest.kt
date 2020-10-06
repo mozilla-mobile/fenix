@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import io.mockk.every
 import io.mockk.mockk
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -34,7 +34,7 @@ class LoginExceptionsAdapterTest {
     fun setup() {
         interactor = mockk()
         adapter = LoginExceptionsAdapter(interactor)
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
     }
 
     @Test

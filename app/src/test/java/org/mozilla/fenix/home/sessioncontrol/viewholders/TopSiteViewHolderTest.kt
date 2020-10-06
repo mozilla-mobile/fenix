@@ -9,7 +9,7 @@ import android.view.View
 import io.mockk.mockk
 import kotlinx.android.synthetic.main.component_top_sites.view.*
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +25,7 @@ class TopSiteViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(TopSiteViewHolder.LAYOUT_ID, null)
         interactor = mockk()
     }

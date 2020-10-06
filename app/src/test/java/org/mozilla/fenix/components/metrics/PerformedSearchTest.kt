@@ -8,7 +8,7 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.SearchEngineManager
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +29,7 @@ class PerformedSearchTest {
 
     @Before
     fun setUp() {
-        searchEngines = SearchEngineManager(listOf(provider)).getSearchEngines(testContext)
+        searchEngines = SearchEngineManager(listOf(provider)).getSearchEngines(fenixTestContext)
     }
 
     @Test

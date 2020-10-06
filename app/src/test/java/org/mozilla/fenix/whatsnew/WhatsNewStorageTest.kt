@@ -5,7 +5,7 @@
 package org.mozilla.fenix.whatsnew
 
 import androidx.preference.PreferenceManager
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -20,8 +20,8 @@ class WhatsNewStorageTest {
 
     @Before
     fun setUp() {
-        storage = SharedPreferenceWhatsNewStorage(testContext)
-        PreferenceManager.getDefaultSharedPreferences(testContext).clearAndCommit()
+        storage = SharedPreferenceWhatsNewStorage(fenixTestContext)
+        PreferenceManager.getDefaultSharedPreferences(fenixTestContext).clearAndCommit()
     }
 
     @Test

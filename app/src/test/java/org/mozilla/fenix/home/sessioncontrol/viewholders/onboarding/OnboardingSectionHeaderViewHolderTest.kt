@@ -7,7 +7,7 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 import android.view.LayoutInflater
 import android.view.View
 import kotlinx.android.synthetic.main.onboarding_section_header.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +21,7 @@ class OnboardingSectionHeaderViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingSectionHeaderViewHolder.LAYOUT_ID, null)
     }
 

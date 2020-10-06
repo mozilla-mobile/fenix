@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Before
@@ -39,26 +39,26 @@ class DesktopFoldersTest {
 
     @Before
     fun setup() {
-        context = spyk(testContext)
+        context = spyk(fenixTestContext)
         every { context.components.core.bookmarksStorage } returns mockk()
     }
 
     @Test
     fun `withRootTitle and do showMobileRoot`() {
-        assertEquals(testContext.getString(R.string.library_bookmarks), friendlyRootTitle(context, mockNodeWithTitle("root")))
-        assertEquals(testContext.getString(R.string.library_bookmarks), friendlyRootTitle(context, mockNodeWithTitle("mobile")))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_menu), friendlyRootTitle(context, mockNodeWithTitle("menu")))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_toolbar), friendlyRootTitle(context, mockNodeWithTitle("toolbar")))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_unfiled), friendlyRootTitle(context, mockNodeWithTitle("unfiled")))
+        assertEquals(fenixTestContext.getString(R.string.library_bookmarks), friendlyRootTitle(context, mockNodeWithTitle("root")))
+        assertEquals(fenixTestContext.getString(R.string.library_bookmarks), friendlyRootTitle(context, mockNodeWithTitle("mobile")))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_menu), friendlyRootTitle(context, mockNodeWithTitle("menu")))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_toolbar), friendlyRootTitle(context, mockNodeWithTitle("toolbar")))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_unfiled), friendlyRootTitle(context, mockNodeWithTitle("unfiled")))
     }
 
     @Test
     fun `withRootTitle and do not showMobileRoot`() {
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_root), friendlyRootTitle(context, mockNodeWithTitle("root"), false))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_root), friendlyRootTitle(context, mockNodeWithTitle("root"), false))
         assertEquals(mockNodeWithTitle("mobile").title, friendlyRootTitle(context, mockNodeWithTitle("mobile"), false))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_menu), friendlyRootTitle(context, mockNodeWithTitle("menu"), false))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_toolbar), friendlyRootTitle(context, mockNodeWithTitle("toolbar"), false))
-        assertEquals(testContext.getString(R.string.library_desktop_bookmarks_unfiled), friendlyRootTitle(context, mockNodeWithTitle("unfiled"), false))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_menu), friendlyRootTitle(context, mockNodeWithTitle("menu"), false))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_toolbar), friendlyRootTitle(context, mockNodeWithTitle("toolbar"), false))
+        assertEquals(fenixTestContext.getString(R.string.library_desktop_bookmarks_unfiled), friendlyRootTitle(context, mockNodeWithTitle("unfiled"), false))
     }
 
     @Test

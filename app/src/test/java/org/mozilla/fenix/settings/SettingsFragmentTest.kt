@@ -11,7 +11,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -42,7 +42,7 @@ class SettingsFragmentTest {
     @Before
     fun setup() {
         // Mock client for fetching account avatar
-        val client = testContext.components.core.client
+        val client = fenixTestContext.components.core.client
         every { client.fetch(any()) } throws IOException("test")
 
         mockkObject(Config)

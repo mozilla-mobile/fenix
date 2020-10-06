@@ -5,7 +5,7 @@
 package org.mozilla.fenix.components.metrics
 
 import mozilla.components.service.glean.testing.GleanTestRule
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -21,13 +21,13 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 @RunWith(FenixRobolectricTestRunner::class)
 class GleanMetricsServiceTest {
     @get:Rule
-    val gleanRule = GleanTestRule(testContext)
+    val gleanRule = GleanTestRule(fenixTestContext)
 
     private lateinit var gleanService: GleanMetricsService
 
     @Before
     fun setup() {
-        gleanService = GleanMetricsService(testContext)
+        gleanService = GleanMetricsService(fenixTestContext)
     }
 
     @Test

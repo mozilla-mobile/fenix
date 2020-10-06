@@ -7,7 +7,7 @@ package org.mozilla.fenix.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -24,8 +24,8 @@ class ClipboardHandlerTest {
 
     @Before
     fun setup() {
-        clipboard = testContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboardHandler = ClipboardHandler(testContext)
+        clipboard = fenixTestContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardHandler = ClipboardHandler(fenixTestContext)
     }
 
     @Test

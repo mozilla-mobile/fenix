@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,7 +62,7 @@ class AppShareAdapterTest {
     fun `the adapter uses the right ViewHolder`() {
         val adapter = AppShareAdapter(interactor)
         val parentView: ViewGroup = mockk(relaxed = true)
-        every { parentView.context } returns testContext
+        every { parentView.context } returns fenixTestContext
 
         val viewHolder = adapter.onCreateViewHolder(parentView, 0)
 
@@ -73,7 +73,7 @@ class AppShareAdapterTest {
     fun `the adapter passes the Interactor to the ViewHolder`() {
         val adapter = AppShareAdapter(interactor)
         val parentView: ViewGroup = mockk(relaxed = true)
-        every { parentView.context } returns testContext
+        every { parentView.context } returns fenixTestContext
 
         val viewHolder = adapter.onCreateViewHolder(parentView, 0)
 
@@ -85,8 +85,8 @@ class AppShareAdapterTest {
         val adapter = AppShareAdapter(interactor).apply { submitList(appOptions) }
         val parentView: ViewGroup = mockk(relaxed = true)
         val itemView: ViewGroup = mockk(relaxed = true)
-        every { parentView.context } returns testContext
-        every { itemView.context } returns testContext
+        every { parentView.context } returns fenixTestContext
+        every { itemView.context } returns fenixTestContext
         val viewHolder = spyk(AppViewHolder(parentView, mockk()))
         every { adapter.onCreateViewHolder(parentView, 0) } returns viewHolder
         every { viewHolder.bind(any()) } just Runs

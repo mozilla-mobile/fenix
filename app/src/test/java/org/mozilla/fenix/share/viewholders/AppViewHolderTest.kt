@@ -10,7 +10,7 @@ import io.mockk.Called
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.app_share_list_item.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +30,7 @@ class AppViewHolderTest {
     fun setup() {
         interactor = mockk(relaxUnitFun = true)
 
-        val view = LayoutInflater.from(testContext).inflate(AppViewHolder.LAYOUT_ID, null)
+        val view = LayoutInflater.from(fenixTestContext).inflate(AppViewHolder.LAYOUT_ID, null)
         viewHolder = AppViewHolder(view, interactor)
     }
 
@@ -38,7 +38,7 @@ class AppViewHolderTest {
     fun `bind app share option`() {
         val app = AppShareOption(
             name = "Pocket",
-            icon = getDrawable(testContext, R.drawable.ic_pocket)!!,
+            icon = getDrawable(fenixTestContext, R.drawable.ic_pocket)!!,
             packageName = "com.mozilla.pocket",
             activityName = "MainActivity"
         )
@@ -52,7 +52,7 @@ class AppViewHolderTest {
     fun `trigger interactor if application is bound`() {
         val app = AppShareOption(
             name = "Pocket",
-            icon = getDrawable(testContext, R.drawable.ic_pocket)!!,
+            icon = getDrawable(fenixTestContext, R.drawable.ic_pocket)!!,
             packageName = "com.mozilla.pocket",
             activityName = "MainActivity"
         )

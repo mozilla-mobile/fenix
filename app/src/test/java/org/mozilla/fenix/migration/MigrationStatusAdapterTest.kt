@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.migration_list_item.view.*
 import mozilla.components.support.migration.Migration
 import mozilla.components.support.migration.MigrationRun
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -44,8 +44,8 @@ class MigrationStatusAdapterTest {
             Migration.History to MigrationRun(0, success = true)
         ))
 
-        val holder1 = adapter.createViewHolder(FrameLayout(testContext), 0)
-        val holder2 = adapter.createViewHolder(FrameLayout(testContext), 0)
+        val holder1 = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
+        val holder2 = adapter.createViewHolder(FrameLayout(fenixTestContext), 0)
         adapter.bindViewHolder(holder1, 0)
         adapter.bindViewHolder(holder2, 1)
 

@@ -12,7 +12,7 @@ import mozilla.components.browser.storage.sync.Tab
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -95,7 +95,7 @@ class SyncedTabsAdapterTest {
 
     @Test
     fun `adapter can create and bind viewholders for SyncedDeviceTabs`() {
-        val parent = FrameLayout(testContext)
+        val parent = FrameLayout(fenixTestContext)
         adapter.updateData(listOf(oneTabDevice))
 
         val deviceHolder = adapter.createViewHolder(parent, SyncedTabsViewHolder.DeviceViewHolder.LAYOUT_ID)

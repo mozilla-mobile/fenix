@@ -7,7 +7,7 @@ package org.mozilla.fenix.components.metrics
 import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.browser.search.SearchEngine
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +22,7 @@ class MetricsUtilsTestRoboelectric {
 
     @Test
     fun createSearchEvent() {
-        val context = testContext
+        val context = fenixTestContext
         val engine: SearchEngine = mockk(relaxed = true)
 
         every { engine.identifier } returns MetricsUtilsTest.ENGINE_SOURCE_IDENTIFIER

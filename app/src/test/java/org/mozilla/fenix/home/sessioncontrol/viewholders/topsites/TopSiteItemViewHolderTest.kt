@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.top_site_item.view.*
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ class TopSiteItemViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(TopSiteItemViewHolder.LAYOUT_ID, null)
         interactor = mockk(relaxed = true)
     }

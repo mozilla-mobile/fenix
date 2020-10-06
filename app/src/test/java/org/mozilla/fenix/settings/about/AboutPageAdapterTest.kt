@@ -13,7 +13,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.about_list_item.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,7 +55,7 @@ class AboutPageAdapterTest {
     fun `the adapter uses AboutItemViewHolder`() {
         val adapter = AboutPageAdapter(listener)
         val parentView: ViewGroup = mockk(relaxed = true)
-        every { parentView.context } returns testContext
+        every { parentView.context } returns fenixTestContext
 
         val viewHolder = adapter.onCreateViewHolder(parentView, AboutItemViewHolder.LAYOUT_ID)
 
@@ -66,7 +66,7 @@ class AboutPageAdapterTest {
     fun `the adapter binds the right item to a ViewHolder`() {
         val adapter = AboutPageAdapter(listener)
         val parentView: ViewGroup = mockk(relaxed = true)
-        every { parentView.about_item_title } returns TextView(testContext)
+        every { parentView.about_item_title } returns TextView(fenixTestContext)
         val viewHolder = spyk(AboutItemViewHolder(parentView, mockk()))
         every {
             adapter.onCreateViewHolder(

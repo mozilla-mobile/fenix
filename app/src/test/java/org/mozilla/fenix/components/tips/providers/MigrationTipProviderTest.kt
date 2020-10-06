@@ -18,7 +18,7 @@ import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -47,7 +47,7 @@ class MigrationTipProviderTest {
     fun setup() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt")
         mockkObject(MozillaProductDetector)
-        context = spyk(testContext)
+        context = spyk(fenixTestContext)
         settings = mockk()
 
         every { context.settings() } returns settings

@@ -9,7 +9,7 @@ import android.content.Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
 import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.feature.intent.processing.IntentProcessor
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -45,8 +45,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for normal intent processor`() {
-        val processor = testContext.components.intentProcessors.intentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.intentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.NEW_TAB, type)
         assertEquals(HomeActivity::class.java.name, type.activityClassName)
@@ -54,8 +54,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for private intent processor`() {
-        val processor = testContext.components.intentProcessors.privateIntentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.privateIntentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.NEW_TAB, type)
         assertEquals(HomeActivity::class.java.name, type.activityClassName)
@@ -63,8 +63,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for custom tab intent processor`() {
-        val processor = testContext.components.intentProcessors.customTabIntentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.customTabIntentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.EXTERNAL_APP, type)
         assertEquals(ExternalAppBrowserActivity::class.java.name, type.activityClassName)
@@ -72,8 +72,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for private custom tab intent processor`() {
-        val processor = testContext.components.intentProcessors.privateCustomTabIntentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.privateCustomTabIntentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.EXTERNAL_APP, type)
         assertEquals(ExternalAppBrowserActivity::class.java.name, type.activityClassName)
@@ -81,8 +81,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for TWA intent processor`() {
-        val processor = testContext.components.intentProcessors.privateCustomTabIntentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.privateCustomTabIntentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.EXTERNAL_APP, type)
         assertEquals(ExternalAppBrowserActivity::class.java.name, type.activityClassName)
@@ -90,8 +90,8 @@ class IntentProcessorTypeTest {
 
     @Test
     fun `get type for PWA intent processor`() {
-        val processor = testContext.components.intentProcessors.privateCustomTabIntentProcessor
-        val type = testContext.components.intentProcessors.getType(processor)
+        val processor = fenixTestContext.components.intentProcessors.privateCustomTabIntentProcessor
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.EXTERNAL_APP, type)
         assertEquals(ExternalAppBrowserActivity::class.java.name, type.activityClassName)
@@ -102,7 +102,7 @@ class IntentProcessorTypeTest {
         val processor = object : IntentProcessor {
             override fun process(intent: Intent) = true
         }
-        val type = testContext.components.intentProcessors.getType(processor)
+        val type = fenixTestContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.OTHER, type)
         assertEquals(HomeActivity::class.java.name, type.activityClassName)

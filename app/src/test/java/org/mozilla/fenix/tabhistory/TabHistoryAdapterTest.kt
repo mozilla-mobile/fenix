@@ -11,7 +11,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -45,7 +45,7 @@ class TabHistoryAdapterTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         parent = FrameLayout(context)
         adapter = TabHistoryAdapter(interactor)
     }

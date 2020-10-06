@@ -13,7 +13,7 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.test.robolectric.createAddedTestFragment
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -49,7 +49,7 @@ class CollectionCreationFragmentTest {
 
     @Test
     fun `creation dialog shows and can be dismissed`() {
-        val store = testContext.components.core.store
+        val store = fenixTestContext.components.core.store
         every { store.state } returns state
 
         val fragment = createAddedTestFragment {

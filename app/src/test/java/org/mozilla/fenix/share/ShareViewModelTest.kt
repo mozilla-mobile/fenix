@@ -26,7 +26,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.feature.share.RecentApp
 import mozilla.components.feature.share.RecentAppsStorage
 import mozilla.components.service.fxa.manager.FxaAccountManager
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -54,7 +54,7 @@ class ShareViewModelTest {
 
     @Before
     fun setup() {
-        application = spyk(testContext.application)
+        application = spyk(fenixTestContext.application)
         packageManager = mockk(relaxed = true)
         connectivityManager = mockk(relaxed = true)
         fxaAccountManager = mockk(relaxed = true)

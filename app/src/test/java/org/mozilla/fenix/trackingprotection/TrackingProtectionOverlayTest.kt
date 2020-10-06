@@ -13,7 +13,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.session.Session
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +36,7 @@ class TrackingProtectionOverlayTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        context = spyk(testContext)
+        context = spyk(fenixTestContext)
 
         overlay = TrackingProtectionOverlay(context, settings, metrics) { toolbar }
         every { toolbar.findViewById<View>(R.id.mozac_browser_toolbar_tracking_protection_indicator) } returns icon

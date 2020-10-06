@@ -16,7 +16,7 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -31,10 +31,10 @@ class FenixSearchEngineProviderTest {
 
     @Before
     fun before() {
-        fenixSearchEngineProvider = FakeFenixSearchEngineProvider(testContext)
+        fenixSearchEngineProvider = FakeFenixSearchEngineProvider(fenixTestContext)
         mockkObject(CustomSearchEngineStore)
         fenixSearchEngineProvider.let {
-            every { CustomSearchEngineStore.loadCustomSearchEngines(testContext) } returns listOf(
+            every { CustomSearchEngineStore.loadCustomSearchEngines(fenixTestContext) } returns listOf(
                 (it as FakeFenixSearchEngineProvider).mockSearchEngine("my custom site", "my custom site")
             )
         }
@@ -59,15 +59,15 @@ class FenixSearchEngineProviderTest {
         mockkObject(CustomSearchEngineStore)
         coEvery {
             CustomSearchEngineStore.addSearchEngine(
-                testContext,
+                fenixTestContext,
                 engineName,
                 engineQuery
             )
         } just Runs
 
-        fenixSearchEngineProvider.installSearchEngine(testContext, searchEngine, true)
+        fenixSearchEngineProvider.installSearchEngine(fenixTestContext, searchEngine, true)
 
-        coVerify { CustomSearchEngineStore.addSearchEngine(testContext, engineName, engineQuery) }
+        coVerify { CustomSearchEngineStore.addSearchEngine(fenixTestContext, engineName, engineQuery) }
     }
 
     @Test
@@ -76,20 +76,20 @@ class FenixSearchEngineProviderTest {
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedDefaults + expectedCustom
 
-        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(testContext)
+        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(fenixTestContext)
         assertEquals(expected, actual)
     }
 
     @Test
     fun `GIVEN sharedprefs contains installed engines WHEN installedSearchEngineIdentifiers THEN defaultEngines + customEngines ids are returned`() = runBlockingTest {
-        val sp = testContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
+        val sp = fenixTestContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
         sp.edit().putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), persistedInstalledEngines).apply()
 
         val expectedStored = persistedInstalledEngines
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedStored + expectedCustom
 
-        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(testContext)
+        val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(fenixTestContext)
         assertEquals(expected, actual)
     }
 }

@@ -18,7 +18,7 @@ import io.mockk.unmockkConstructor
 import io.mockk.verify
 import kotlinx.android.synthetic.main.component_exceptions.*
 import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -38,7 +38,7 @@ class TrackingProtectionExceptionsViewTest {
     @Before
     fun setup() {
         mockkConstructor(TrackingProtectionExceptionsAdapter::class)
-        container = FrameLayout(testContext)
+        container = FrameLayout(fenixTestContext)
         interactor = mockk()
 
         exceptionsView = TrackingProtectionExceptionsView(

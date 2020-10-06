@@ -9,7 +9,7 @@ import android.content.Intent
 import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService.Companion.ACTION_ERASE
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +29,7 @@ class PrivateNotificationServiceTest {
 
     @Before
     fun setup() {
-        val store = testContext.components.core.store
+        val store = fenixTestContext.components.core.store
         every { store.dispatch(any()) } returns mockk()
 
         controller = Robolectric.buildService(
@@ -45,7 +45,7 @@ class PrivateNotificationServiceTest {
         controller.startCommand(0, 0)
 
         val intent = service.nextStartedActivity
-        assertEquals(ComponentName(testContext, HomeActivity::class.java), intent.component)
+        assertEquals(ComponentName(fenixTestContext, HomeActivity::class.java), intent.component)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.flags)
         assertEquals(true, intent.extras?.getBoolean(PRIVATE_BROWSING_MODE))
     }
@@ -57,7 +57,7 @@ class PrivateNotificationServiceTest {
         controller.startCommand(0, 0)
 
         val intent = service.nextStartedActivity
-        assertEquals(ComponentName(testContext, HomeActivity::class.java), intent.component)
+        assertEquals(ComponentName(fenixTestContext, HomeActivity::class.java), intent.component)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.flags)
         assertEquals(false, intent.extras?.getBoolean(PRIVATE_BROWSING_MODE))
     }

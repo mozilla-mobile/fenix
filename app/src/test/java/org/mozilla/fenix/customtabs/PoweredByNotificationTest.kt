@@ -10,7 +10,7 @@ import mozilla.components.browser.state.state.CustomTabConfig
 import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -29,7 +29,7 @@ class PoweredByNotificationTest {
             )
         )
 
-        val feature = PoweredByNotification(testContext, store, "session-id")
+        val feature = PoweredByNotification(fenixTestContext, store, "session-id")
         feature.onResume()
     }
 
@@ -44,13 +44,13 @@ class PoweredByNotificationTest {
             )
         )
 
-        val feature = PoweredByNotification(testContext, store, "session-id")
+        val feature = PoweredByNotification(fenixTestContext, store, "session-id")
         feature.onResume()
     }
 
     @Test
     fun `unregister receiver on pause`() {
-        val feature = PoweredByNotification(testContext, mockk(), "session-id")
+        val feature = PoweredByNotification(fenixTestContext, mockk(), "session-id")
         feature.onPause()
     }
 }

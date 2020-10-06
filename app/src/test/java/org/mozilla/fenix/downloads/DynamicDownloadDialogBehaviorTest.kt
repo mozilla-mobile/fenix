@@ -11,7 +11,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -23,7 +23,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Starting a nested scroll should cancel an ongoing snap animation`() {
-        val behavior = spyk(DynamicDownloadDialogBehavior<View>(testContext, attrs = null))
+        val behavior = spyk(DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null))
         every { behavior.shouldScroll } returns true
 
         val animator: ValueAnimator = mockk(relaxed = true)
@@ -45,7 +45,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Behavior should not accept nested scrolls on the horizontal axis`() {
-        val behavior = DynamicDownloadDialogBehavior<View>(testContext, attrs = null)
+        val behavior = DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null)
 
         val acceptsNestedScroll = behavior.onStartNestedScroll(
             coordinatorLayout = mockk(),
@@ -61,7 +61,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Behavior will snap the dialog up if it is more than 50% visible`() {
-        val behavior = spyk(DynamicDownloadDialogBehavior<View>(testContext, attrs = null,
+        val behavior = spyk(DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null,
         bottomToolbarHeight = 10f))
         every { behavior.shouldScroll } returns true
 
@@ -102,7 +102,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Behavior will snap the dialog down if translationY is at least equal to half the toolbarHeight`() {
-        val behavior = spyk(DynamicDownloadDialogBehavior<View>(testContext, attrs = null,
+        val behavior = spyk(DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null,
         bottomToolbarHeight = 10f))
         every { behavior.shouldScroll } returns true
 
@@ -143,7 +143,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Behavior will apply translation to the dialog for nested scroll`() {
-        val behavior = spyk(DynamicDownloadDialogBehavior<View>(testContext, attrs = null))
+        val behavior = spyk(DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null))
         every { behavior.shouldScroll } returns true
 
         val child = mockk<View> {
@@ -167,7 +167,7 @@ class DynamicDownloadDialogBehaviorTest {
 
     @Test
     fun `Behavior will animateSnap UP when forceExpand is called`() {
-        val behavior = spyk(DynamicDownloadDialogBehavior<View>(testContext, attrs = null))
+        val behavior = spyk(DynamicDownloadDialogBehavior<View>(fenixTestContext, attrs = null))
         val dynamicDialogView: View = mockk(relaxed = true)
         every { behavior.shouldScroll } returns true
 

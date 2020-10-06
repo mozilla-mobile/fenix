@@ -11,7 +11,7 @@ import io.mockk.verifyAll
 import mozilla.components.concept.menu.candidate.DividerMenuCandidate
 import mozilla.components.concept.menu.candidate.DrawableMenuIcon
 import mozilla.components.concept.menu.candidate.TextMenuCandidate
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -32,7 +32,7 @@ class TabCounterMenuTest {
 
     @Before
     fun setup() {
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         metrics = mockk(relaxed = true)
         onItemTapped = mockk(relaxed = true)
         menu = TabCounterMenu(context, metrics, onItemTapped)

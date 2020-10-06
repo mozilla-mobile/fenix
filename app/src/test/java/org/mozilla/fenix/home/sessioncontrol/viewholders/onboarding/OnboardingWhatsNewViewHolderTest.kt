@@ -17,7 +17,7 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.android.synthetic.main.onboarding_whats_new.view.*
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -37,7 +37,7 @@ class OnboardingWhatsNewViewHolderTest {
     @Before
     fun setup() {
         mockkStatic("mozilla.components.support.ktx.android.content.res.ThemeKt")
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(OnboardingWhatsNewViewHolder.LAYOUT_ID, null)
         interactor = mockk(relaxed = true)
 

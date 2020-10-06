@@ -16,7 +16,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelative
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -37,9 +37,9 @@ class ExtensionsTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        preference = Preference(testContext)
+        preference = Preference(fenixTestContext)
 
-        every { radioButton.context } returns testContext
+        every { radioButton.context } returns fenixTestContext
         every {
             fragment.getString(R.string.pref_key_accessibility_force_enable_zoom)
         } returns "pref_key_accessibility_force_enable_zoom"

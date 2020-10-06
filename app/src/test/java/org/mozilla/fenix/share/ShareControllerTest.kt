@@ -27,7 +27,7 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -47,7 +47,7 @@ import org.mozilla.fenix.share.listadapters.AppShareOption
 @ExperimentalCoroutinesApi
 class ShareControllerTest {
     // Need a valid context to retrieve Strings for example, but we also need it to return our "metrics"
-    private val context: Context = spyk(testContext)
+    private val context: Context = spyk(fenixTestContext)
     private val metrics: MetricController = mockk(relaxed = true)
     private val shareSubject = "shareSubject"
     private val shareData = listOf(

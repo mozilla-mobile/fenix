@@ -20,7 +20,7 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.edit.EditToolbar
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.toolbar.Toolbar
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -46,7 +46,7 @@ class ToolbarViewTest {
         query = "",
         searchEngineSource = SearchEngineSource.Default(mockk {
             every { name } returns "Search Engine"
-            every { icon } returns testContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
+            every { icon } returns fenixTestContext.getDrawable(R.drawable.ic_search)!!.toBitmap()
         }),
         defaultEngineSource = mockk(relaxed = true),
         showSearchSuggestionsHint = false,
@@ -63,7 +63,7 @@ class ToolbarViewTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         toolbar = spyk(BrowserToolbar(context))
     }
 

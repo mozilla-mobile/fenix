@@ -9,7 +9,7 @@ import android.view.View
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.private_browsing_description.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,7 @@ class PrivateBrowsingDescriptionViewHolderTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext)
+        view = LayoutInflater.from(fenixTestContext)
             .inflate(PrivateBrowsingDescriptionViewHolder.LAYOUT_ID, null)
         interactor = mockk(relaxed = true)
     }

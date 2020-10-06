@@ -7,7 +7,7 @@ package org.mozilla.fenix.settings.logins
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_login_detail.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -40,7 +40,7 @@ class LoginDetailViewTest {
 
     @Before
     fun setup() {
-        view = LayoutInflater.from(testContext).inflate(R.layout.fragment_login_detail, null)
+        view = LayoutInflater.from(fenixTestContext).inflate(R.layout.fragment_login_detail, null)
             .findViewById(R.id.loginDetailLayout)
         detailView = LoginDetailView(view)
     }

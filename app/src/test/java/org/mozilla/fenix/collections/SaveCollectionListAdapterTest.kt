@@ -13,7 +13,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.android.synthetic.main.collections_list_item.view.*
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +29,7 @@ class SaveCollectionListAdapterTest {
 
     @Before
     fun setup() {
-        parent = FrameLayout(testContext)
+        parent = FrameLayout(fenixTestContext)
         interactor = mockk()
         adapter = SaveCollectionListAdapter(interactor)
 

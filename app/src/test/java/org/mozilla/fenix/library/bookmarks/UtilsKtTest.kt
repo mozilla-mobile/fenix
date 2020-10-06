@@ -6,7 +6,7 @@ package org.mozilla.fenix.library.bookmarks
 
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,7 +25,7 @@ class UtilsKtTest {
             "http://mozilla.org",
             null
         )
-        assertEquals("Mozilla", friendlyRootTitle(testContext, url))
+        assertEquals("Mozilla", friendlyRootTitle(fenixTestContext, url))
 
         val folder = BookmarkNode(
             BookmarkNodeType.FOLDER,
@@ -36,31 +36,31 @@ class UtilsKtTest {
             null,
             null
         )
-        assertEquals("Folder", friendlyRootTitle(testContext, folder))
+        assertEquals("Folder", friendlyRootTitle(fenixTestContext, folder))
 
         val root = folder.copy(guid = "root________", title = "root")
-        assertEquals("Bookmarks", friendlyRootTitle(testContext, root, withMobileRoot = true))
-        assertEquals("Desktop Bookmarks", friendlyRootTitle(testContext, root, withMobileRoot = false))
+        assertEquals("Bookmarks", friendlyRootTitle(fenixTestContext, root, withMobileRoot = true))
+        assertEquals("Desktop Bookmarks", friendlyRootTitle(fenixTestContext, root, withMobileRoot = false))
 
         val mobileRoot = folder.copy(guid = "mobile______", title = "mobile")
-        assertEquals("Bookmarks", friendlyRootTitle(testContext, mobileRoot, withMobileRoot = true))
-        assertEquals("mobile", friendlyRootTitle(testContext, mobileRoot, withMobileRoot = false))
+        assertEquals("Bookmarks", friendlyRootTitle(fenixTestContext, mobileRoot, withMobileRoot = true))
+        assertEquals("mobile", friendlyRootTitle(fenixTestContext, mobileRoot, withMobileRoot = false))
 
         val menuRoot = folder.copy(guid = "menu________", title = "menu")
-        assertEquals("Bookmarks Menu", friendlyRootTitle(testContext, menuRoot, withMobileRoot = true))
-        assertEquals("Bookmarks Menu", friendlyRootTitle(testContext, menuRoot, withMobileRoot = false))
+        assertEquals("Bookmarks Menu", friendlyRootTitle(fenixTestContext, menuRoot, withMobileRoot = true))
+        assertEquals("Bookmarks Menu", friendlyRootTitle(fenixTestContext, menuRoot, withMobileRoot = false))
 
         val toolbarRoot = folder.copy(guid = "toolbar_____", title = "toolbar")
-        assertEquals("Bookmarks Toolbar", friendlyRootTitle(testContext, toolbarRoot, withMobileRoot = true))
-        assertEquals("Bookmarks Toolbar", friendlyRootTitle(testContext, toolbarRoot, withMobileRoot = false))
+        assertEquals("Bookmarks Toolbar", friendlyRootTitle(fenixTestContext, toolbarRoot, withMobileRoot = true))
+        assertEquals("Bookmarks Toolbar", friendlyRootTitle(fenixTestContext, toolbarRoot, withMobileRoot = false))
 
         val unfiledRoot = folder.copy(guid = "unfiled_____", title = "unfiled")
-        assertEquals("Other Bookmarks", friendlyRootTitle(testContext, unfiledRoot, withMobileRoot = true))
-        assertEquals("Other Bookmarks", friendlyRootTitle(testContext, unfiledRoot, withMobileRoot = false))
+        assertEquals("Other Bookmarks", friendlyRootTitle(fenixTestContext, unfiledRoot, withMobileRoot = true))
+        assertEquals("Other Bookmarks", friendlyRootTitle(fenixTestContext, unfiledRoot, withMobileRoot = false))
 
         val almostRoot = folder.copy(guid = "notRoot________", title = "root")
-        assertEquals("root", friendlyRootTitle(testContext, almostRoot, withMobileRoot = true))
-        assertEquals("root", friendlyRootTitle(testContext, almostRoot, withMobileRoot = false))
+        assertEquals("root", friendlyRootTitle(fenixTestContext, almostRoot, withMobileRoot = true))
+        assertEquals("root", friendlyRootTitle(fenixTestContext, almostRoot, withMobileRoot = false))
     }
 
     @Test

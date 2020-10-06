@@ -13,7 +13,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.concept.menu.candidate.HighPriorityHighlightEffect
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -34,7 +34,7 @@ class SavedLoginsSortingStrategyMenuTest {
 
     @Before
     fun setup() {
-        context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         interactor = mockk()
         menu = SavedLoginsSortingStrategyMenu(context, interactor)
     }

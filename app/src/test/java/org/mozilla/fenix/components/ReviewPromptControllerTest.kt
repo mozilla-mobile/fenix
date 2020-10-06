@@ -6,7 +6,7 @@ package org.mozilla.fenix.components
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -37,7 +37,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -60,7 +60,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -82,7 +82,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -102,7 +102,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { 100L },
             { promptWasCalled = true }
@@ -126,7 +126,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { 0L }
         )
@@ -149,7 +149,7 @@ class ReviewPromptControllerTest {
         )
 
         val controller = ReviewPromptController(
-            testContext,
+            fenixTestContext,
             settings,
             { TEST_TIME_NOW }
         )

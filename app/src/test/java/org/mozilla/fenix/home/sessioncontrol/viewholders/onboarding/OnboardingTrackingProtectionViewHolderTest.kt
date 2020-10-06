@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.view.ContextThemeWrapper
 import kotlinx.android.synthetic.main.onboarding_tracking_protection.view.*
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +23,7 @@ class OnboardingTrackingProtectionViewHolderTest {
 
     @Before
     fun setup() {
-        val context = ContextThemeWrapper(testContext, R.style.NormalTheme)
+        val context = ContextThemeWrapper(fenixTestContext, R.style.NormalTheme)
         view = LayoutInflater.from(context)
             .inflate(OnboardingTrackingProtectionViewHolder.LAYOUT_ID, null)
     }

@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import io.mockk.every
 import io.mockk.mockk
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.support.test.robolectric.testContext
+import org.mozilla.fenix.test.fenixTestContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
@@ -21,15 +21,15 @@ class TabCollectionTest {
 
     @Test
     fun getIconColor() {
-        val color = mockTabCollection(100L).getIconColor(testContext)
+        val color = mockTabCollection(100L).getIconColor(fenixTestContext)
         // Color does not change
         for (i in 0..99) {
-            assertEquals(color, mockTabCollection(100L).getIconColor(testContext))
+            assertEquals(color, mockTabCollection(100L).getIconColor(fenixTestContext))
         }
 
         // Returns a color for negative IDs
-        val defaultColor = ContextCompat.getColor(testContext, R.color.white_color)
-        assertNotEquals(defaultColor, mockTabCollection(-123L).getIconColor(testContext))
+        val defaultColor = ContextCompat.getColor(fenixTestContext, R.color.white_color)
+        assertNotEquals(defaultColor, mockTabCollection(-123L).getIconColor(fenixTestContext))
     }
 
     @Test
