@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
@@ -194,6 +195,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
 
         view.search_engines_shortcut_button.setOnClickListener {
+            interactor.onSearchShortcutsButtonClicked()
+        }
+
+        view.pill_wrapper.setOnClickListener { toolbarView.view.edit.focus() }
+        view.findViewById<ImageView>(R.id.mozac_browser_toolbar_edit_icon).setOnClickListener {
             interactor.onSearchShortcutsButtonClicked()
         }
 
