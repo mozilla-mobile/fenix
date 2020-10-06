@@ -219,7 +219,7 @@ events:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   preference_toggled:
     type: event
     description: |
@@ -332,7 +332,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   fxa_manual_signin:
     type: event
     description:
@@ -346,7 +346,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   privacy_notice:
     type: event
     description:
@@ -360,7 +360,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pref_toggled_private_browsing:
     type: event
     description:
@@ -374,7 +374,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pref_toggled_toolbar_position:
     type: event
     description:
@@ -393,7 +393,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pref_toggled_tracking_prot:
     type: event
     description:
@@ -412,7 +412,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   whats_new:
     type: event
     description:
@@ -426,7 +426,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pref_toggled_theme_picker:
     type: event
     description:
@@ -445,7 +445,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   finish:
     type: event
     description:
@@ -459,7 +459,7 @@ onboarding:
     notification_emails:
       - fenix-core@mozilla.com
       - erichards@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 search_shortcuts:
   selected:
@@ -476,7 +476,7 @@ search_shortcuts:
       - https://github.com/mozilla-mobile/fenix/pull/1202#issuecomment-476870449
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 toolbar_settings:
   changed_position:
@@ -495,7 +495,7 @@ toolbar_settings:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 crash_reporter:
   opened:
@@ -624,7 +624,7 @@ find_in_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -637,7 +637,7 @@ find_in_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   searched_page:
     type: event
     description: |
@@ -650,7 +650,7 @@ find_in_page:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 metrics:
   default_browser:
@@ -668,7 +668,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   top_sites_count:
     type: counter
     lifetime: application
@@ -688,7 +688,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   has_top_sites:
     type: boolean
     lifetime: application
@@ -704,7 +704,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   recently_used_pwa_count:
     type: counter
     lifetime: application
@@ -773,7 +773,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   mozilla_products:
     type: string_list
     lifetime: application
@@ -794,7 +794,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   default_moz_browser:
     type: string
     lifetime: application
@@ -813,7 +813,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   adjust_campaign:
     type: string
     lifetime: application
@@ -832,7 +832,7 @@ metrics:
       - technical
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   adjust_ad_group:
     type: string
     lifetime: application
@@ -851,7 +851,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   adjust_creative:
     type: string
     lifetime: application
@@ -870,7 +870,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   adjust_network:
     type: string
     lifetime: application
@@ -889,7 +889,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   toolbar_position:
     type: string
     lifetime: application
@@ -905,7 +905,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   search_widget_installed:
     type: boolean
     lifetime: application
@@ -921,7 +921,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   tabs_open_count:
     type: counter
     lifetime: application
@@ -941,7 +941,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   has_open_tabs:
     type: boolean
     lifetime: application
@@ -957,7 +957,7 @@ metrics:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 preferences:
   show_search_suggestions:
@@ -975,7 +975,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   remote_debugging:
     type: string_list
     description: >
@@ -991,7 +991,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   telemetry:
     type: string_list
     description: >
@@ -1009,7 +1009,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   tracking_protection:
     type: string_list
     description: >
@@ -1026,7 +1026,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   search_bookmarks:
     type: string_list
     description: >
@@ -1042,7 +1042,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   search_browsing_history:
     type: string_list
     description: >
@@ -1058,7 +1058,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   show_clipboard_suggestions:
     type: string_list
     description: >
@@ -1074,7 +1074,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   show_search_shortcuts:
     type: string_list
     description: >
@@ -1090,7 +1090,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_links_in_a_private_tab:
     type: string_list
     description: >
@@ -1106,7 +1106,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sync:
     type: string_list
     description: >
@@ -1122,7 +1122,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sync_items:
     type: string_list
     description: >
@@ -1140,7 +1140,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   show_voice_search:
     type: string_list
     description: >
@@ -1156,7 +1156,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   search_suggestions_private:
     type: string_list
     description: >
@@ -1173,7 +1173,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   toolbar_position:
     type: string_list
     description: >
@@ -1189,7 +1189,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   accessibility_services:
     type: string_list
     description: >
@@ -1206,7 +1206,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_links_in_app:
     type: string_list
     description: >
@@ -1222,7 +1222,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   theme:
     type: string_list
     description: >
@@ -1238,7 +1238,7 @@ preferences:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 search.default_engine:
   code:
@@ -1261,7 +1261,7 @@ search.default_engine:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   name:
     type: string
     lifetime: application
@@ -1282,7 +1282,7 @@ search.default_engine:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   submission_url:
     type: string
     lifetime: application
@@ -1304,7 +1304,7 @@ search.default_engine:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 bookmarks_management:
   open_in_new_tab:
@@ -1574,7 +1574,7 @@ qr_scanner:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   prompt_displayed:
     type: event
     description: |
@@ -1588,7 +1588,7 @@ qr_scanner:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   navigation_allowed:
     type: event
     description: |
@@ -1602,7 +1602,7 @@ qr_scanner:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   navigation_denied:
     type: event
     description: |
@@ -1616,7 +1616,7 @@ qr_scanner:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 error_page:
   visited_error:
@@ -1650,7 +1650,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -1663,7 +1663,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   use_email:
     type: event
     description: |
@@ -1677,7 +1677,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   use_email_problem:
     type: event
     description: |
@@ -1690,7 +1690,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sign_in:
     type: event
     description: |
@@ -1704,7 +1704,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sign_out:
     type: event
     description: |
@@ -1718,7 +1718,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sign_up:
     type: event
     description: |
@@ -1732,7 +1732,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   paired:
     type: event
     description: |
@@ -1747,7 +1747,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   auto_login:
     type: event
     description: |
@@ -1762,7 +1762,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   recovered:
     type: event
     description: |
@@ -1777,7 +1777,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   other_external:
     type: event
     description: |
@@ -1792,7 +1792,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   scan_pairing:
     type: event
     description: |
@@ -1805,7 +1805,7 @@ sync_auth:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 sync_account:
   opened:
@@ -1820,7 +1820,7 @@ sync_account:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -1833,7 +1833,7 @@ sync_account:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sync_now:
     type: event
     description: |
@@ -1846,7 +1846,7 @@ sync_account:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   send_tab:
     type: event
     description: |
@@ -1859,7 +1859,7 @@ sync_account:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   sign_in_to_send_tab:
     type: event
     description: |
@@ -1872,7 +1872,7 @@ sync_account:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 history:
   opened:
@@ -1887,7 +1887,7 @@ history:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   removed:
     type: event
     description: |
@@ -1900,7 +1900,7 @@ history:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   removed_all:
     type: event
     description: |
@@ -1913,7 +1913,7 @@ history:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   shared:
     type: event
     description: |
@@ -1926,7 +1926,7 @@ history:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   opened_item:
     type: event
     description: |
@@ -1939,7 +1939,7 @@ history:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 tip:
   displayed:
@@ -1957,7 +1957,7 @@ tip:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pressed:
     type: event
     description: |
@@ -1973,7 +1973,7 @@ tip:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -1989,7 +1989,7 @@ tip:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 reader_mode:
   available:
@@ -2004,7 +2004,7 @@ reader_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   opened:
     type: event
     description: |
@@ -2017,7 +2017,7 @@ reader_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -2030,7 +2030,7 @@ reader_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   appearance:
     type: event
     description: |
@@ -2043,7 +2043,7 @@ reader_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 tabs_tray:
   opened:
@@ -2058,7 +2058,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed:
     type: event
     description: |
@@ -2071,7 +2071,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   opened_existing_tab:
     type: event
     description: |
@@ -2084,7 +2084,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   closed_existing_tab:
     type: event
     description: |
@@ -2097,7 +2097,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   private_mode_tapped:
     type: event
     description: |
@@ -2110,7 +2110,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   normal_mode_tapped:
     type: event
     description: |
@@ -2123,7 +2123,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   new_tab_tapped:
     type: event
     description: |
@@ -2136,7 +2136,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   new_private_tab_tapped:
     type: event
     description: |
@@ -2149,7 +2149,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   menu_opened:
     type: event
     description: |
@@ -2162,7 +2162,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   save_to_collection:
     type: event
     description: |
@@ -2176,7 +2176,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   share_all_tabs:
     type: event
     description: |
@@ -2190,7 +2190,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   close_all_tabs:
     type: event
     description: |
@@ -2204,7 +2204,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 collections:
   renamed:
@@ -2431,7 +2431,7 @@ search_widget:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   voice_button:
     type: event
     description: |
@@ -2444,7 +2444,7 @@ search_widget:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 search_widget_cfr:
   displayed:
@@ -2459,7 +2459,7 @@ search_widget_cfr:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   add_widget_pressed:
     type: event
     description: |
@@ -2472,7 +2472,7 @@ search_widget_cfr:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   not_now_pressed:
     type: event
     description: |
@@ -2485,7 +2485,7 @@ search_widget_cfr:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   canceled:
     type: event
     description: |
@@ -2499,7 +2499,7 @@ search_widget_cfr:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 private_browsing_mode:
   garbage_icon:
@@ -2515,7 +2515,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   snackbar_undo:
     type: event
     description: |
@@ -2529,7 +2529,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   notification_tapped:
     type: event
     description: |
@@ -2542,7 +2542,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   notification_open:
     type: event
     description: |
@@ -2555,7 +2555,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   notification_delete:
     type: event
     description: |
@@ -2569,7 +2569,7 @@ private_browsing_mode:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 contextual_hint.tracking_protection:
   display:
@@ -2648,7 +2648,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   panel_settings:
     type: event
     description: |
@@ -2661,7 +2661,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   etp_shield:
     type: event
     description: |
@@ -2674,7 +2674,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   etp_tracker_list:
     type: event
     description: |
@@ -2688,7 +2688,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   etp_settings:
     type: event
     description: |
@@ -2701,7 +2701,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   etp_setting_changed:
     type: event
     description: |
@@ -2720,7 +2720,7 @@ tracking_protection:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 private_browsing_shortcut:
   create_shortcut:
@@ -2735,7 +2735,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   cfr_add_shortcut:
     type: event
     description: |
@@ -2749,7 +2749,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   cfr_cancel:
     type: event
     description: |
@@ -2763,7 +2763,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pinned_shortcut_priv:
     type: event
     description: |
@@ -2777,7 +2777,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   static_shortcut_tab:
     type: event
     description: |
@@ -2791,7 +2791,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   static_shortcut_priv:
     type: event
     description: |
@@ -2805,7 +2805,7 @@ private_browsing_shortcut:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 tab:
   media_play:
@@ -2820,7 +2820,7 @@ tab:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
     no_lint:
       - COMMON_PREFIX
   media_pause:
@@ -2835,7 +2835,7 @@ tab:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 media_notification:
   play:
@@ -2850,7 +2850,7 @@ media_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pause:
     type: event
     description: |
@@ -2863,7 +2863,7 @@ media_notification:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 media_state:
   play:
@@ -2878,7 +2878,7 @@ media_state:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   pause:
     type: event
     description: |
@@ -2891,7 +2891,7 @@ media_state:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   stop:
     type: event
     description: |
@@ -2904,7 +2904,7 @@ media_state:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 logins:
   open_logins:
@@ -2919,7 +2919,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_individual_login:
     type: event
     description: |
@@ -2932,7 +2932,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   copy_login:
     type: event
     description: |
@@ -2945,7 +2945,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   view_password_login:
     type: event
     description: |
@@ -2958,7 +2958,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   save_logins_setting_changed:
     type: event
     description: |
@@ -2976,7 +2976,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_login_editor:
     type: event
     description: |
@@ -2989,7 +2989,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   delete_saved_login:
     type: event
     description: |
@@ -3002,7 +3002,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   save_edited_login:
     type: event
     description: |
@@ -3015,7 +3015,7 @@ logins:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 download_notification:
   resume:
@@ -3132,7 +3132,7 @@ user_specified_search_engines:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
     no_lint:
       - COMMON_PREFIX
   custom_engine_deleted:
@@ -3148,7 +3148,7 @@ user_specified_search_engines:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 search_suggestions:
   enable_in_private:
@@ -3164,7 +3164,7 @@ search_suggestions:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 voice_search:
   tapped:
@@ -3179,7 +3179,7 @@ voice_search:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 top_sites:
   open_default:
@@ -3194,7 +3194,7 @@ top_sites:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_in_new_tab:
     type: event
     description: |
@@ -3207,7 +3207,7 @@ top_sites:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   open_in_private_tab:
     type: event
     description: |
@@ -3220,7 +3220,7 @@ top_sites:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   remove:
     type: event
     description: |
@@ -3233,7 +3233,7 @@ top_sites:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 about_page:
   support_tapped:
@@ -3299,7 +3299,7 @@ pocket:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
     no_lint:
       - COMMON_PREFIX
 
@@ -3315,7 +3315,7 @@ pocket:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 first_session:
   campaign:
@@ -3333,7 +3333,7 @@ first_session:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   network:
     type: string
     send_in_pings:
@@ -3349,7 +3349,7 @@ first_session:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   adgroup:
     type: string
     send_in_pings:
@@ -3365,7 +3365,7 @@ first_session:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   creative:
     send_in_pings:
       - first-session
@@ -3381,7 +3381,7 @@ first_session:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   timestamp:
     send_in_pings:
       - first-session
@@ -3399,7 +3399,7 @@ first_session:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 browser.search:
   with_ads:
@@ -3417,7 +3417,7 @@ browser.search:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   ad_clicks:
     type: labeled_counter
     description: |
@@ -3433,7 +3433,7 @@ browser.search:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   in_content:
     type: labeled_counter
     description: |
@@ -3448,7 +3448,7 @@ browser.search:
       - interaction
     notification_emails:
       - fenix-core@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 addons:
   open_addons_in_settings:
@@ -3573,7 +3573,7 @@ startup.timeline:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   framework_start_error:
     send_in_pings:
       - startup-timeline
@@ -3591,7 +3591,7 @@ startup.timeline:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   framework_start_read_error:
     send_in_pings:
       - startup-timeline
@@ -3609,7 +3609,7 @@ startup.timeline:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   clock_ticks_per_second:
     send_in_pings:
       - startup-timeline
@@ -3627,7 +3627,7 @@ startup.timeline:
     notification_emails:
       - perf-android-fe@mozilla.com
       - mcomella@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 perf.awesomebar:
   history_suggestions:
@@ -3647,7 +3647,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -3665,7 +3665,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -3683,7 +3683,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   session_suggestions:
     send_in_pings:
       - metrics
@@ -3701,7 +3701,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -3719,7 +3719,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -3737,7 +3737,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -3755,7 +3755,7 @@ perf.awesomebar:
     notification_emails:
       - fenix-core@mozilla.com
       - gkruglov@mozilla.com
-    expires: "2020-11-15"
+    expires: "2020-11-30"
 
 autoplay:
   visited_setting:
