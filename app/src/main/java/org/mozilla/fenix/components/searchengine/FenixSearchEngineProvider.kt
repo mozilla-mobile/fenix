@@ -24,6 +24,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import java.util.Locale
 
+@SuppressWarnings("TooManyFunctions")
 open class FenixSearchEngineProvider(
     private val context: Context
 ) : SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {

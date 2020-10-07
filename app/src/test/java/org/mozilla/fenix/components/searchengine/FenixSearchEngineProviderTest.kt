@@ -2,13 +2,12 @@ package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.mockk
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.impl.annotations.MockK
+import io.mockk.every
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -16,16 +15,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
-import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
-import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
-import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.engine.Settings
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.components.BackgroundServices
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @ExperimentalCoroutinesApi

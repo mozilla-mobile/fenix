@@ -19,7 +19,6 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.components
 import kotlin.coroutines.CoroutineContext
 
-
 /**
  * Handles localization for search engines
  */
