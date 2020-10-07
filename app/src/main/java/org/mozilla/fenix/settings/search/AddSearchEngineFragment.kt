@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.LinearLayout
+import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -141,37 +142,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
         val name = edit_engine_name.text?.toString()?.trim() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
-        var hasError = false
-        if (name.isEmpty()) {
-            custom_search_engine_name_field.error = resources
-                .getString(R.string.search_add_custom_engine_error_empty_name)
-            hasError = true
-        }
-
-        val existingIdentifiers = requireComponents
-            .search
-            .provider
-            .allSearchEngineIdentifiers()
-            .map { it.toLowerCase(Locale.ROOT) }
-
-        if (existingIdentifiers.contains(name.toLowerCase(Locale.ROOT))) {
-            custom_search_engine_name_field.error = String.format(
-                resources.getString(R.string.search_add_custom_engine_error_existing_name), name
-            )
-            hasError = true
-        }
-
-        custom_search_engine_search_string_field.error = when {
-            searchString.isEmpty() ->
-                resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
-            !searchString.contains("%s") ->
-                resources.getString(R.string.search_add_custom_engine_error_missing_template)
-            else -> null
-        }
-
-        if (custom_search_engine_search_string_field.error != null) {
-            hasError = true
-        }
+        val hasError = checkErrors(name, searchString)
 
         if (hasError) { return }
 
@@ -189,17 +160,28 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
                         .getString(R.string.search_add_custom_engine_error_cannot_reach, name)
                 }
                 SearchStringValidator.Result.Success -> {
-                    CustomSearchEngineStore.addSearchEngine(
-                        context = requireContext(),
-                        engineName = name,
-                        searchQuery = searchString
-                    )
-                    requireComponents.search.provider.reload()
+                    try {
+                        CustomSearchEngineStore.addSearchEngine(
+                            context = requireContext(),
+                            engineName = name,
+                            searchQuery = searchString
+                        )
+                    } catch (engineNameExists: CustomSearchEngineStore.EngineNameAlreadyExists) {
+                        custom_search_engine_name_field.error =
+                            String.format(
+                                resources.getString(
+                                    R.string.search_add_custom_engine_error_existing_name
+                                ), name
+                            )
+                        return@launch
+                    }
+                    requireComponents.search.provider.reloadCustomSearchEngines()
                     val successMessage = resources
                         .getString(R.string.search_add_custom_engine_success_message, name)
 
                     view?.also {
-                        FenixSnackbar.make(view = it,
+                        FenixSnackbar.make(
+                            view = it,
                             duration = FenixSnackbar.LENGTH_SHORT,
                             isDisplayedWithBrowserToolbar = false
                         )
@@ -212,6 +194,48 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
                 }
             }
         }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun checkErrors(name: String, searchString: String): Boolean {
+        var existingIdentifiers: List<String> = listOf()
+        lifecycleScope.launch(IO) {
+            existingIdentifiers = requireComponents
+                .search
+                .provider
+                .allSearchEngineIdentifiers()
+                .map { it.toLowerCase(Locale.ROOT) }
+        }
+
+        val hasError = when {
+            name.isEmpty() -> {
+                custom_search_engine_name_field.error = resources
+                    .getString(R.string.search_add_custom_engine_error_empty_name)
+                true
+            }
+            existingIdentifiers.contains(name.toLowerCase(Locale.ROOT)) -> {
+                custom_search_engine_name_field.error =
+                    String.format(
+                        resources.getString(
+                            R.string.search_add_custom_engine_error_existing_name
+                        ), name
+                    )
+                true
+            }
+            searchString.isEmpty() -> {
+                custom_search_engine_search_string_field.error =
+                    resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
+                true
+            }
+            !searchString.contains("%s") -> {
+                custom_search_engine_search_string_field.error =
+                    resources.getString(R.string.search_add_custom_engine_error_missing_template)
+                true
+            }
+            else -> false
+        }
+
+        return hasError
     }
 
     private fun installEngine(engine: SearchEngine) {
@@ -282,6 +306,5 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
         private const val DISABLED_ALPHA = 0.2f
         private const val CUSTOM_INDEX = -1
         private const val FIRST_INDEX = 0
-        private const val DPS_TO_INCREASE = 20
     }
 }

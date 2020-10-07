@@ -1,11 +1,13 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
+import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockkObject
 import kotlinx.coroutines.CompletableDeferred
@@ -16,11 +18,14 @@ import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
 import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
+import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.engine.Settings
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.components.BackgroundServices
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @ExperimentalCoroutinesApi
@@ -28,14 +33,16 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class FenixSearchEngineProviderTest {
 
     private lateinit var fenixSearchEngineProvider: FenixSearchEngineProvider
-
     @Before
     fun before() {
         fenixSearchEngineProvider = FakeFenixSearchEngineProvider(testContext)
+        MockKAnnotations.init(this)
         mockkObject(CustomSearchEngineStore)
+
         fenixSearchEngineProvider.let {
             every { CustomSearchEngineStore.loadCustomSearchEngines(testContext) } returns listOf(
-                (it as FakeFenixSearchEngineProvider).mockSearchEngine("my custom site", "my custom site")
+                (it as FakeFenixSearchEngineProvider)
+                    .mockSearchEngine("my custom site", "my custom site")
             )
         }
     }
@@ -72,7 +79,7 @@ class FenixSearchEngineProviderTest {
 
     @Test
     fun `GIVEN sharedprefs does not contain installed engines WHEN installedSearchEngineIdentifiers THEN defaultEngines + customEngines ids are returned`() = runBlockingTest {
-        val expectedDefaults = fenixSearchEngineProvider.baseSearchEngines.toIdSet()
+        val expectedDefaults = fenixSearchEngineProvider.localizedSearchEngines.toIdSet()
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedDefaults + expectedCustom
 
@@ -82,8 +89,14 @@ class FenixSearchEngineProviderTest {
 
     @Test
     fun `GIVEN sharedprefs contains installed engines WHEN installedSearchEngineIdentifiers THEN defaultEngines + customEngines ids are returned`() = runBlockingTest {
-        val sp = testContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
-        sp.edit().putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), persistedInstalledEngines).apply()
+        val sp = testContext.getSharedPreferences(
+            FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES,
+            Context.MODE_PRIVATE
+        )
+        sp.edit().putStringSet(
+            fenixSearchEngineProvider.localizationProvider.localeAwareInstalledEnginesKey(),
+            persistedInstalledEngines
+        ).apply()
 
         val expectedStored = persistedInstalledEngines
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
@@ -100,26 +113,14 @@ private suspend fun Deferred<SearchEngineList>.toIdSet() =
 private val persistedInstalledEngines = setOf("bing", "ecosia")
 
 class FakeFenixSearchEngineProvider(context: Context) : FenixSearchEngineProvider(context) {
-    override val localizationProvider: SearchLocalizationProvider
-        get() = LocaleSearchLocalizationProvider()
 
-    override var baseSearchEngines: Deferred<SearchEngineList>
+    override val localizationProvider = mockk<SearchEngineLocalizationProvider>(relaxed = true) {
+        every { this@mockk invokeNoArgs "localeAwareInstalledEnginesKey" } returns "key"
+        every { this@mockk getProperty "isRegionCachedByLocationService" } returns true
+    }
+
+    override var localizedSearchEngines: Deferred<SearchEngineList>
         set(_) { throw NotImplementedError("Setting not currently supported on this fake") }
-        get() {
-            val google = mockSearchEngine(id = "google-b-1-m", n = "Google")
-
-            return CompletableDeferred(
-                SearchEngineList(
-                    listOf(
-                        google,
-                        mockSearchEngine("bing", "Bing"),
-                        mockSearchEngine("amazondotcom", "Amazon.com")
-                    ), default = google
-                )
-            )
-        }
-
-    override val fallbackEngines: Deferred<SearchEngineList>
         get() {
             val google = mockSearchEngine(id = "google-b-1-m", n = "Google")
 

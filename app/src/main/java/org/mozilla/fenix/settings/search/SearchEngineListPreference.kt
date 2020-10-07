@@ -234,7 +234,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 it.identifier != engine.identifier
             },
             default = if (searchEngineList.default?.identifier == engine.identifier) {
-                null
+                searchEngineList.list.first { it.identifier != engine.identifier}
             } else {
                 searchEngineList.default
             }
