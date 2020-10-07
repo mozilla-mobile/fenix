@@ -33,7 +33,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -92,8 +91,6 @@ import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.resetPoliciesAfter
-import org.mozilla.fenix.ext.sessionsOfType
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
@@ -118,8 +115,8 @@ class HomeFragment : Fragment() {
     private val args by navArgs<HomeFragmentArgs>()
     private lateinit var bundleArgs: Bundle
 
-    private val homeViewModel: HomeScreenViewModel by viewModels {
-        ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+    private val homeViewModel: HomeScreenViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
     }
 
     private val snackbarAnchorView: View?
@@ -150,7 +147,7 @@ class HomeFragment : Fragment() {
         get() = requireComponents.core.store
 
     private val onboarding by lazy {
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             FenixOnboarding(requireContext())
         }
     }
@@ -200,7 +197,7 @@ class HomeFragment : Fragment() {
                     expandedCollections = emptySet(),
                     mode = currentMode.getCurrentMode(),
                     topSites = components.core.topSitesStorage.cachedTopSites,
-                    tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+                    tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                         FenixTipManager(
                             listOf(
                                 MasterPasswordTipProvider(
@@ -452,13 +449,15 @@ class HomeFragment : Fragment() {
             updateTabCounter(it)
         }
 
-        bundleArgs.getString(SESSION_TO_DELETE)?.also {
+        homeViewModel.sessionToDelete?.also {
             if (it == ALL_NORMAL_TABS || it == ALL_PRIVATE_TABS) {
                 removeAllTabsAndShowSnackbar(it)
             } else {
                 removeTabAndShowSnackbar(it)
             }
         }
+
+        homeViewModel.sessionToDelete = null
 
         updateTabCounter(requireComponents.core.store.state)
 
@@ -468,17 +467,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
-        val tabs = sessionManager.sessionsOfType(private = sessionCode == ALL_PRIVATE_TABS).toList()
-        val selectedIndex = sessionManager
-            .selectedSession?.let { sessionManager.sessions.indexOf(it) }
-            ?: SessionManager.NO_SELECTION
-
-        val snapshot = tabs
-            .map(sessionManager::createSessionSnapshot)
-            .let { SessionManager.Snapshot(it, selectedIndex) }
-
-        tabs.forEach {
-            requireComponents.useCases.tabsUseCases.removeTab(it)
+        if (sessionCode == ALL_PRIVATE_TABS) {
+            sessionManager.removePrivateSessions()
+        } else {
+            sessionManager.removeNormalSessions()
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
@@ -492,7 +484,7 @@ class HomeFragment : Fragment() {
             snackbarMessage,
             requireContext().getString(R.string.snackbar_deleted_undo),
             {
-                sessionManager.restore(snapshot)
+                requireComponents.useCases.tabsUseCases.undo.invoke()
             },
             operation = { },
             anchorView = snackbarAnchorView
@@ -500,38 +492,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun removeTabAndShowSnackbar(sessionId: String) {
-        sessionManager.findSessionById(sessionId)?.let { session ->
-            val snapshot = sessionManager.createSessionSnapshot(session)
-            val state = store.state.findTab(sessionId)?.engineState?.engineSessionState
-            val isSelected =
-                session.id == requireComponents.core.store.state.selectedTabId ?: false
+        val tab = store.state.findTab(sessionId) ?: return
 
-            requireComponents.useCases.tabsUseCases.removeTab(sessionId)
+        requireComponents.useCases.tabsUseCases.removeTab(sessionId)
 
-            val snackbarMessage = if (snapshot.session.private) {
-                requireContext().getString(R.string.snackbar_private_tab_closed)
-            } else {
-                requireContext().getString(R.string.snackbar_tab_closed)
-            }
-
-            viewLifecycleOwner.lifecycleScope.allowUndo(
-                requireView(),
-                snackbarMessage,
-                requireContext().getString(R.string.snackbar_deleted_undo),
-                {
-                    sessionManager.add(
-                        snapshot.session,
-                        isSelected,
-                        engineSessionState = state
-                    )
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionGlobalBrowser(null)
-                    )
-                },
-                operation = { },
-                anchorView = snackbarAnchorView
-            )
+        val snackbarMessage = if (tab.content.private) {
+            requireContext().getString(R.string.snackbar_private_tab_closed)
+        } else {
+            requireContext().getString(R.string.snackbar_tab_closed)
         }
+
+        viewLifecycleOwner.lifecycleScope.allowUndo(
+            requireView(),
+            snackbarMessage,
+            requireContext().getString(R.string.snackbar_deleted_undo),
+            {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+                findNavController().navigate(
+                    HomeFragmentDirections.actionGlobalBrowser(null)
+                )
+            },
+            operation = { },
+            anchorView = snackbarAnchorView
+        )
     }
 
     override fun onDestroyView() {
@@ -554,7 +537,7 @@ class HomeFragment : Fragment() {
                 collections = components.core.tabCollectionStorage.cachedTabCollections,
                 mode = currentMode.getCurrentMode(),
                 topSites = components.core.topSitesStorage.cachedTopSites,
-                tip = StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+                tip = components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                     FenixTipManager(
                         listOf(
                             MasterPasswordTipProvider(
@@ -639,7 +622,8 @@ class HomeFragment : Fragment() {
                 dialog.cancel()
             }
             setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                viewLifecycleOwner.lifecycleScope.launch(IO) {
+                // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                lifecycleScope.launch(IO) {
                     context.components.core.tabCollectionStorage.removeCollection(tabCollection)
                     context.components.analytics.metrics.track(Event.CollectionRemoved)
                 }.invokeOnCompletion {
@@ -989,7 +973,6 @@ class HomeFragment : Fragment() {
         const val ALL_PRIVATE_TABS = "all_private"
 
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
-        private const val SESSION_TO_DELETE = "session_to_delete"
         private const val ANIMATION_DELAY = 100L
 
         private const val NON_TAB_ITEM_NUM = 3

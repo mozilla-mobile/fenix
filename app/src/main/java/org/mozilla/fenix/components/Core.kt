@@ -20,6 +20,7 @@ import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
+import mozilla.components.browser.session.undo.UndoMiddleware
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -59,9 +60,9 @@ import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.StrictModeManager
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.media.MediaService
 import org.mozilla.fenix.search.telemetry.ads.AdsTelemetry
@@ -69,13 +70,19 @@ import org.mozilla.fenix.search.telemetry.incontent.InContentTelemetry
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
 import org.mozilla.fenix.utils.Mockable
+import org.mozilla.fenix.utils.getUndoDelay
 import java.util.concurrent.TimeUnit
 
 /**
  * Component group for all core browser functionality.
  */
 @Mockable
-class Core(private val context: Context, private val crashReporter: CrashReporting) {
+@Suppress("LargeClass")
+class Core(
+    private val context: Context,
+    private val crashReporter: CrashReporting,
+    strictMode: StrictModeManager
+) {
     /**
      * The browser engine component initialized based on the build
      * configuration (see build variants).
@@ -146,11 +153,16 @@ class Core(private val context: Context, private val crashReporter: CrashReporti
                 MediaMiddleware(context, MediaService::class.java),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                ThumbnailsMiddleware(thumbnailStorage)
+                ThumbnailsMiddleware(thumbnailStorage),
+                UndoMiddleware(::lookupSessionManager, context.getUndoDelay())
             ) + EngineMiddleware.create(engine, ::findSessionById)
         ).also {
             it.dispatch(RecentlyClosedAction.InitializeRecentlyClosedState)
         }
+    }
+
+    private fun lookupSessionManager(): SessionManager {
+        return sessionManager
     }
 
     private fun findSessionById(tabId: String): Session? {
@@ -207,6 +219,18 @@ class Core(private val context: Context, private val crashReporter: CrashReporti
                     .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                     .whenGoingToBackground()
                     .whenSessionsChange()
+
+                // Now that we have restored our previous state (if there's one) let's remove timed out tabs
+                if (!context.settings().manuallyCloseTabs) {
+                    store.state.tabs.filter {
+                        (System.currentTimeMillis() - it.lastAccess) > context.settings().getTabTimeout()
+                    }.forEach {
+                        val session = sessionManager.findSessionById(it.id)
+                        if (session != null) {
+                            sessionManager.remove(session)
+                        }
+                    }
+                }
             }
 
             WebNotificationFeature(
@@ -261,7 +285,13 @@ class Core(private val context: Context, private val crashReporter: CrashReporti
     val bookmarksStorage by lazy { lazyBookmarksStorage.value }
     val passwordsStorage by lazy { lazyPasswordsStorage.value }
 
-    val tabCollectionStorage by lazy { TabCollectionStorage(context, sessionManager) }
+    val tabCollectionStorage by lazy {
+        TabCollectionStorage(
+            context,
+            sessionManager,
+            strictMode
+        )
+    }
 
     /**
      * A storage component for persisting thumbnail images of tabs.
@@ -273,7 +303,7 @@ class Core(private val context: Context, private val crashReporter: CrashReporti
     val topSitesStorage by lazy {
         val defaultTopSites = mutableListOf<Pair<String, String>>()
 
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             if (!context.settings().defaultTopSitesAdded) {
                 defaultTopSites.add(
                     Pair(
@@ -362,6 +392,6 @@ class Core(private val context: Context, private val crashReporter: CrashReporti
         private const val KEY_STRENGTH = 256
         private const val KEY_STORAGE_NAME = "core_prefs"
         private const val PASSWORDS_KEY = "passwords"
-        private const val RECENTLY_CLOSED_MAX = 5
+        private const val RECENTLY_CLOSED_MAX = 10
     }
 }

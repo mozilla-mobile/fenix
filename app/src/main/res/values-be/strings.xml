@@ -142,6 +142,8 @@
     <string name="browser_menu_install_on_homescreen">Усталяваць</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Сінхранізаваныя карткі</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Сінхранізаваць ізноў</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Знайсці на старонцы</string>
     <!-- Browser menu button that creates a private tab -->
@@ -264,6 +266,8 @@
     <string name="preferences_open_links_in_a_private_tab">Адкрываць спасылкі ў прыватнай картцы</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Дазволіць здымкі экрана ў прыватным рэжыме</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Калі гэта дазволена, прыватныя карткі таксама будуць бачныя, калі адкрыта некалькі праграм</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Дадаць ярлык прыватнага аглядання</string>
     <!-- Preference for accessibility -->
@@ -387,6 +391,8 @@
     <string name="preferences_tracking_protection_settings">Ахова ад сачэння</string>
     <!-- Preference switch for tracking protection -->
     <string name="preferences_tracking_protection">Ахова ад сачэння</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">Блакаваць змест і скрыпты, якія асочваюць вас у інтэрнэце</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Выключэнні</string>
     <!-- Preference description for tracking protection exceptions -->
@@ -409,6 +415,8 @@
     <string name="preferences_usage_data_description">Дзяліцца звесткамі пра прадукцыйнасць, выкарыстанне, апаратнае забеспячэнне і налады вашага браўзера з Mozilla, каб дапамагчы ўдасканаліць %1$s</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Маркетынгавыя дадзеныя</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">Дзяліцца звесткамі пра магчымасці, якімі вы карыстаецеся ў %1$s, з нашым пастаўшчыком мабільнага маркетынгу Leanplum.</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Доследы</string>
 
@@ -419,9 +427,14 @@
     <!-- Preference switch for Mozilla location service -->
     <string name="preferences_mozilla_location_service">Служба месцазнаходжання Mozilla</string>
 
+    <!-- Preference switch for app health report. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preferences_fenix_health_report">Справаздача аб здароўі %s</string>
+
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Уключыць сінхранізацыю</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">Скануйце код спалучэння ў Firefox на камп’ютары</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Увайсці</string>
 
@@ -459,6 +472,14 @@
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
     <string name="preference_gestures_website_pull_to_refresh">Пацягніце, каб абнавіць</string>
+
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Пракруціце, каб схаваць панэль інструментаў</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Пасуньце ўбок панэль інструментаў, каб пераключыць карткі</string>
+
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Пасуньце ўверх панэль інструментаў, каб адкрыць карткі</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -778,6 +799,8 @@
     <string name="tracking_protection_off">Выключана</string>
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Дазволіць гук і відэа</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Блакаваць аўдыё і відэа толькі на мабільных дадзеных</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Аўдыё і відэа будуць прайгравацца праз Wi-Fi</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
@@ -987,9 +1010,13 @@
     <string name="preferences_delete_browsing_data_on_quit">Выдаляць звесткі аглядання пры выхадзе</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">Аўтаматычна выдаляе дадзеныя аглядання, калі вы выбіраеце &quot;Выйсці&quot; ў галоўным меню</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Аўтаматычна выдаляе дадзеныя аглядання, калі вы выбіраеце \&quot;Выйсці\&quot; ў галоўным меню</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Выйсці</string>
 
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">Гэта выдаліць усе дадзеныя вашага аглядання.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">Адмена</string>
     <!-- Text for the allow button for the data deletion dialog -->
@@ -1044,6 +1071,10 @@
     <string name="onboarding_account_sign_in_header">Пачніце сінхранізаваць закладкі, паролі і шмат іншага праз свой уліковы запіс Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Падрабязней</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Вы ўвайшлі як %s у іншым браўзеры Firefox на гэтай прыладзе. Ці хочаце аўтарызавацца з дапамогай гэтага ўліковага запісу?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Так, увайсці</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1133,6 +1164,8 @@
     <string name="sign_in_with_camera">Увайдзіце з дапамогай камеры</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Выкарыстаць электронную пошту</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Не маеце ўліковага запісу? <u> Стварыце яго, </u> каб сінхранізаваць Firefox паміж прыладамі.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox спыніць сінхранізацыю з вашым уліковым запісам, але не выдаліць дадзеныя аглядання на гэтай прыладзе.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1199,16 +1232,24 @@
     <string name="enhanced_tracking_protection_allowed">Дазволены</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">Трэкеры сацыяльных сетак</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Абмяжоўвае мажлівасць сацыяльных сетак асочваць вашу дзейнасць у сеціве.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Міжсайтавыя кукі асочвання</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Майнеры крыптавалют</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">Не дазваляе шкодным скрыптам атрымаць доступ да Вашай прылады для здабычы крыптавалюты.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">Збіральнікі лічбавых адбіткаў</string>
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_description">Спыняе збор унікальнай ідэнтыфікацыйнай інфармацыі пра вашу прыладу, якая можа быць выкарыстана для сачэння.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">Змест з элементамі сачэння</string>
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">Спыняе загрузку вонкавай рэкламы, відэа і іншага змесціва, якое змяшчае код асочвання. Можа адбіцца на некаторых функцыях вэб-сайта.</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">Фіялетавы колер шчыта азначае, што %s перапыніў асочвальнікаў на сайце. Націсніце, каб даведацца больш.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Ахова ўключана на гэтым сайце</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1229,6 +1270,12 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Бібліятэкі OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Трэкеры перанакіравання</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Ачышчае кукі, усталяваныя шляхам перанакіравання на вядомыя асочвальныя вэб-сайты.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Падтрымка</string>
@@ -1277,6 +1324,9 @@
     <string name="add_to_homescreen_continue">Перайсці на вэб-сайт</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">Назва ярлыка</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Вы можаце лёгка дадаць гэты вэб-сайт на хатні экран вашай прылады, каб мець да яго імгненны доступ і аглядаць хутчэй, нібыта гэта асобная праграма.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Лагіны і паролі</string>
@@ -1348,8 +1398,12 @@
     <string name="logins_site_copied">Сайт скапіяваны ў буфер абмену</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Капіяваць пароль</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">Ачысціць пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">Капіяваць імя карыстальніка</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">Ачысціць імя карыстальніка</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">Капіяваць сайт</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1408,6 +1462,8 @@
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">Падрабязней</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">Інфармацыя аб дададзенай пошукавай сістэме</string>
     <!-- Accessibility description for the 'Learn more' link -->
     <string name="search_add_custom_engine_learn_more_description">Спасылка на падрабязныя звесткі</string>
 
@@ -1529,6 +1585,8 @@
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Дасягнуты ліміт папулярных сайтаў</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Каб дадаць новы топ-сайт, выдаліце якісь іншы. Націсніце  на сайт і ўтрымлівайце, пасля абярыце &quot;Выдаліць&quot;.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, зразумела</string>
 

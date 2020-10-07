@@ -481,11 +481,11 @@
     <!-- Preferences for using pull to refresh in a webpage -->
     <string name="preference_gestures_website_pull_to_refresh">Trek om te vernieuwen</string>
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">Scroll om de werkbalk te verbergen</string>
+    <string name="preference_gestures_dynamic_toolbar">Scrollen om de werkbalk te verbergen</string>
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
-    <string name="preference_gestures_swipe_toolbar_switch_tabs">Veeg de werkbalk opzij om van tabblad te wisselen</string>
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">De werkbalk opzij vegen om van tabblad te wisselen</string>
     <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
-    <string name="preference_gestures_swipe_toolbar_show_tabs">Veeg de werkbalk omhoog om tabbladen te openen</string>
+    <string name="preference_gestures_swipe_toolbar_show_tabs">De werkbalk omhoog vegen om tabbladen te openen</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -1175,6 +1175,8 @@
     <string name="sign_in_with_camera">Meld u aan met uw camera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">E-mail gebruiken</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Geen account? <u>Maak er een aan</u> om Firefox tussen apparaten te synchroniseren.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox stopt de synchronisatie met uw account, maar zal geen surfgegevens op dit apparaat verwijderen.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1281,6 +1283,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-bibliotheken</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Doorleidingstrackers</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Wist cookies die zijn ingesteld door doorgeleidingen naar bekende trackingwebsites.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Ondersteuning</string>

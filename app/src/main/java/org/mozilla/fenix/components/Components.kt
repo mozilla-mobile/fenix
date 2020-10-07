@@ -17,8 +17,11 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.migration.state.MigrationStore
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.StrictModeManager
 import org.mozilla.fenix.components.metrics.AppStartupTelemetry
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Mockable
 import org.mozilla.fenix.utils.Settings
@@ -28,7 +31,11 @@ import java.util.concurrent.TimeUnit
 private const val DAY_IN_MINUTES = 24 * 60L
 
 /**
- * Provides access to all components.
+ * Provides access to all components. This class is an implementation of the Service Locator
+ * pattern, which helps us manage the dependencies in our app.
+ *
+ * Note: these aren't just "components" from "android-components": they're any "component" that
+ * can be considered a building block of our app.
  */
 @Mockable
 class Components(private val context: Context) {
@@ -40,11 +47,12 @@ class Components(private val context: Context) {
             core.lazyHistoryStorage,
             core.lazyBookmarksStorage,
             core.lazyPasswordsStorage,
-            core.lazyRemoteTabsStorage
+            core.lazyRemoteTabsStorage,
+            strictMode
         )
     }
     val services by lazy { Services(context, backgroundServices.accountManager) }
-    val core by lazy { Core(context, analytics.crashReporter) }
+    val core by lazy { Core(context, analytics.crashReporter, strictMode) }
     val search by lazy { Search(context) }
     val useCases by lazy {
         UseCases(
@@ -71,14 +79,26 @@ class Components(private val context: Context) {
     }
 
     val addonCollectionProvider by lazy {
-        if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
+        // Check if we have a customized (overridden) AMO collection (only supported in Nightly)
+        if (Config.channel.isNightlyOrDebug && context.settings().amoCollectionOverrideConfigured()) {
+            AddonCollectionProvider(
+                context,
+                core.client,
+                collectionUser = context.settings().overrideAmoUser,
+                collectionName = context.settings().overrideAmoCollection
+            )
+        }
+        // Use build config otherwise
+        else if (!BuildConfig.AMO_COLLECTION.isNullOrEmpty()) {
             AddonCollectionProvider(
                 context,
                 core.client,
                 collectionName = BuildConfig.AMO_COLLECTION,
                 maxCacheAgeInMinutes = DAY_IN_MINUTES
             )
-        } else {
+        }
+        // Fall back to defaults
+        else {
             AddonCollectionProvider(context, core.client, maxCacheAgeInMinutes = DAY_IN_MINUTES)
         }
     }
@@ -112,6 +132,7 @@ class Components(private val context: Context) {
     val performance by lazy { PerformanceComponent() }
     val push by lazy { Push(context, analytics.crashReporter) }
     val wifiConnectionMonitor by lazy { WifiConnectionMonitor(context as Application) }
+    val strictMode by lazy { StrictModeManager(Config, this) }
 
     val settings by lazy { Settings(context) }
 
