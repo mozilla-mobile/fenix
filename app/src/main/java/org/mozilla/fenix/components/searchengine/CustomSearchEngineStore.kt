@@ -164,7 +164,8 @@ data class CustomSearchEngineState(
 sealed class CustomSearchEngineAction : Action {
     data class AddCustomSearchEngine(val newSearchEngine: SearchEngine) : CustomSearchEngineAction()
     data class DeleteCustomSearchEngine(val id: String) : CustomSearchEngineAction()
-    data class EditSearchEngine(val id: String) : CustomSearchEngineAction()
+    data class EditSearchEngine(val oldSearchEngine: SearchEngine,
+                                val newSearchEngine: SearchEngine) : CustomSearchEngineAction()
     data class SetDefaultSearchEngine(val id: String) : CustomSearchEngineAction()
 }
 
@@ -180,19 +181,58 @@ private fun customSearchEngineReducer(
         prevState.copy(
             searchEngineList = SearchEngineList(
                 list = prevState.searchEngineList.list + action.newSearchEngine,
-                default = prevState.searchEngineList.default)
+                default = prevState.searchEngineList.default
+            )
         )
     is CustomSearchEngineAction.DeleteCustomSearchEngine -> {
-        val default = if (prevState.searchEngineList.default.identifier == action.id) {
-            prevState.searchEngineList.list[0]
-        }
+        val default =
+            if (prevState.searchEngineList.default?.identifier == action.id) {
+                // how to get original default from the provider if we delete the curr?
+                prevState.searchEngineList.list[0]
+            } else {
+                prevState.searchEngineList.default
+            }
+
         prevState.copy(
             searchEngineList = SearchEngineList(
                 list = prevState.searchEngineList.list.filter { it.identifier != action.id },
-                default = prevState.searchEngineList.default)
+                default = default
+            )
         )
     }
 
-    is CustomSearchEngineAction.EditSearchEngine -> prevState.copy(selectedTabs = prevState.selectedTabs + action.tab)
-    is CustomSearchEngineAction.SetDefaultSearchEngine -> prevState.copy(selectedTabs = prevState.selectedTabs - action.tab)
+    is CustomSearchEngineAction.EditSearchEngine -> {
+        val default =
+            if (prevState.searchEngineList.default?.identifier == action.oldSearchEngine.identifier) {
+                // how to get original default from the provider if we delete the curr?
+                prevState.searchEngineList.list[0]
+            } else {
+                prevState.searchEngineList.default
+            }
+        // remove old version of engine
+        prevState.copy(
+            searchEngineList = SearchEngineList(
+                list = prevState.searchEngineList.list
+                    .filter { it.identifier != action.oldSearchEngine.identifier },
+                default = default
+            )
+        )
+        // add edited new version, maintaining defaults
+        prevState.copy(
+            searchEngineList = SearchEngineList(
+                list = prevState.searchEngineList.list + action.newSearchEngine,
+                default = default
+            )
+        )
+    }
+    is CustomSearchEngineAction.SetDefaultSearchEngine -> {
+        val newDefault =
+            prevState.searchEngineList.list.first { it.identifier != action.id }
+        prevState.copy(
+            searchEngineList = SearchEngineList(
+                list = prevState.searchEngineList.list,
+                default = newDefault
+            )
+        )
+    }
 }
