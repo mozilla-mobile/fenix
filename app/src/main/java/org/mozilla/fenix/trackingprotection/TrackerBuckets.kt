@@ -100,7 +100,7 @@ class TrackerBuckets {
                 TrackingCategory.CRYPTOMINING -> CRYPTOMINERS
                 TrackingCategory.FINGERPRINTING -> FINGERPRINTERS
                 TrackingCategory.MOZILLA_SOCIAL -> SOCIAL_MEDIA_TRACKERS
-                TrackingCategory.SCRIPTS_AND_SUB_RESOURCES -> TRACKING_CONTENT
+                TrackingCategory.SCRIPTS_AND_SUB_RESOURCES, TrackingCategory.SHIMMED -> TRACKING_CONTENT
                 else -> return
             }
             addTrackerHost(key, tracker)

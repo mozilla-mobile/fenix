@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.trackingprotection
 
+import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory.SHIMMED
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory.SCRIPTS_AND_SUB_RESOURCES
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory.CRYPTOMINING
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.TrackingCategory.FINGERPRINTING
@@ -81,7 +82,8 @@ class TrackerBucketsTest {
             CRYPTOMINING,
             MOZILLA_SOCIAL,
             FINGERPRINTING,
-            SCRIPTS_AND_SUB_RESOURCES
+            SCRIPTS_AND_SUB_RESOURCES,
+            SHIMMED
         )
 
         buckets.updateIfNeeded(
@@ -98,7 +100,7 @@ class TrackerBucketsTest {
         val expectedBlockedMap =
             mapOf(
                 FenixTrackingProtectionCategory.SOCIAL_MEDIA_TRACKERS to listOf("facebook.com"),
-                FenixTrackingProtectionCategory.TRACKING_CONTENT to listOf("facebook.com"),
+                FenixTrackingProtectionCategory.TRACKING_CONTENT to listOf("facebook.com", "facebook.com"),
                 FenixTrackingProtectionCategory.FINGERPRINTERS to listOf("facebook.com"),
                 FenixTrackingProtectionCategory.CRYPTOMINERS to listOf("facebook.com"),
                 FenixTrackingProtectionCategory.CROSS_SITE_TRACKING_COOKIES to listOf("facebook.com")
