@@ -48,7 +48,7 @@
     <string name="tab_tray_multiselect_selected_content_description">მონიშნულია</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s შექმნა Mozilla-მ.</string>
+    <string name="about_content">%1$s შემქმნელი Mozilla.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -143,6 +143,8 @@
     <string name="browser_menu_install_on_homescreen">დაყენება</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">დასინქრონებული ჩანართები</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">კვლავ დასინქრონება</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">პოვნა გვერდზე</string>
     <!-- Browser menu button that creates a private tab -->
@@ -309,7 +311,7 @@
     <!-- Preference category for developer tools -->
     <string name="developer_tools_category">შემმუშავებლის ხელსაწყოები</string>
     <!-- Preference for developers -->
-    <string name="preferences_remote_debugging">დაშორებული გამართვა USB-ით</string>
+    <string name="preferences_remote_debugging">დაშორებული USB-გამართვა</string>
 
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">საძიებო სისტემების ჩვენება</string>
@@ -325,6 +327,8 @@
     <string name="preferences_search_browsing_history">ძიება დათვალიერების ისტორიაში</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">სანიშნების ძიება</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">დასინქრონებული ჩანართების მოძიება</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">ანგარიშის პარამეტრები</string>
     <!-- Preference for enabling url autocomplete-->
@@ -332,7 +336,7 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">ბმულების გახსნა პროგრამებში</string>
     <!-- Preference for open download with an external download manager app -->
-    <string name="preferences_external_download_manager">ჩამოტვირთვის გარეშე მმართველი</string>
+    <string name="preferences_external_download_manager">გარეშე მმართველი ჩამოტვირთვების</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">დამატებები</string>
 
@@ -988,7 +992,7 @@
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">გამოხვალთ ანგარიშებიდან უმეტეს საიტზე</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cached_files">შენახული სურათებისა და ფაილების ასლები</string>
+    <string name="preferences_delete_browsing_data_cached_files">სურათები და ფაილების კეში</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">გაათავისუფლებს მეხსიერებას</string>
     <!-- Title for the site permissions item in Delete browsing data -->
@@ -1159,6 +1163,8 @@
     <string name="sign_in_with_camera">შედით კამერის დახმარებით</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">ელფოსტის გამოყენება სანაცვლოდ</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[არ გაქვთ ანგარიში? <u>შექმენით</u> და დაასინქრონეთ Firefox მოწყობილობებზე.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox შეწყვეტს ამ ანგარიშის სინქრონიზაციას, მაგრამ ამ მოწყობილობიდან დათვალიერების მონაცემები არ წაიშლება.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1168,7 +1174,7 @@
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
     <string name="sign_out_cancel">გაუქმება</string>
     <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
-    <string name="bookmark_cannot_edit_root">ნაგულისხმევი საქაღალდეების ჩასწორება ვერ ხერხდება</string>
+    <string name="bookmark_cannot_edit_root">ნაგულისხმევი საქაღალდეების ჩასწორება ვერ მოხერხდება</string>
 
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
@@ -1234,7 +1240,7 @@
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">საიტთაშორისი მეთვალყურე ფუნთუშები</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description">ზღუდავს ფუნთუშებს, რომლებსაც სარეკლამო და ანალიტიკური კომპანიები იყენებენ თქვენზე მონაცემების ერთიანად აღრიცხვისთვის ბევრ საიტზე.</string>
+    <string name="etp_cookies_description">ზღუდავს ფუნთუშებს, რომლებსაც სარეკლამო და ანალიტიკური კომპანიები იყენებენ თქვენზე მონაცემების ერთიანად შეგროვებისთვის, სხვადასხვა საიტიდან.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">კრიპტოგამომმუშავებლები</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1268,6 +1274,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-ბიბლიოთეკები</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">გადამმისამართებელი მეთვალყურეები</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">ასუფთავებს გადამისამართებით მიღებულ ფუნთუშებს, ცნობილი მეთვალყურეებისგან.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">მხარდაჭერა</string>
@@ -1405,7 +1416,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">დაიცავით თქვენი ანგარიშები</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">დააყენეთ მოწყობილობის ჩასაკეტად მოსახაზი, PIN-კოდი ან პაროლი, თქვენი შენახული ანგარიშების მონაცემებთან, უცხო პირების წვდომის აღსაკვეთათ.</string>
+    <string name="logins_warning_dialog_message">დააყენეთ მოწყობილობის ჩასაკეტად მოსახაზი, PIN-კოდი ან პაროლი, თქვენი შენახული ანგარიშების მონაცემებთან, უცხო პირების წვდომის აღსაკვეთად.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">მოგვიანებით</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->

@@ -356,6 +356,20 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">알림</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">사용자 지정 부가 기능 모음집</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">확인</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">취소</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">모음집 이름</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">모음집 소유자 (사용자 ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">부가 기능 모음집이 변경되었습니다. 변경 사항을 적용하기 위해 응용 프로그램을 종료하는 중…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">지금 동기화</string>
@@ -660,6 +674,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d개 항목 삭제</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">오늘</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">어제</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">지난 24 시간</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -1210,6 +1228,8 @@
     <string name="sign_in_with_camera">카메라로 로그인</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">대신 이메일 사용</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[계정이 없습니까? 기기 간에 Firefox를 동기화하려면 <u>하나를 만드세요</u>.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox가 계정과의 동기화를 중단하지만 이 기기의 사용자 탐색 데이터는 삭제하지 않습니다.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1318,6 +1338,12 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS 라이브러리</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">트래커 리디렉션</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">알려진 추적 웹 사이트로 리디렉션하여 설정된 쿠키를 지웁니다.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">지원</string>

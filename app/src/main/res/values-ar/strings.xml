@@ -47,6 +47,9 @@
     <!-- Content description announcement when entering multiselect mode in tab tray -->
     <string name="tab_tray_enter_multiselect_content_description">دخلت وضع التحديد المتعدد، حدّد الألسنة لحفظها في تجميعة</string>
 
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">محدد</string>
+
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">‏%1$s من Mozilla.</string>
 
@@ -69,6 +72,11 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">لا، شكرًا</string>
 
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">افتح Firefox بسرعة أكبر. أضف أداة Firefox إلى الشاشة الرئيسية.</string>
+    <!-- Text for the positive button -->
+    <string name="search_widget_cfr_pos_button_text">أضف الأداة</string>
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">ليس الآن</string>
 
@@ -138,6 +146,8 @@
     <string name="browser_menu_install_on_homescreen">ثبّت</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">الألسنة المُزامنة</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">أعِد المزامنة</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">ابحث في الصفحة</string>
     <!-- Browser menu button that creates a private tab -->
@@ -155,10 +165,10 @@
     <string name="browser_menu_open_in_fenix">افتح في %1$s</string>
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="browser_menu_powered_by">تدعمها %1$s</string>
+    <string name="browser_menu_powered_by">تدعمه %1$s</string>
     <!-- Browser menu text shown in custom tabs to indicate this is a Fenix tab
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="browser_menu_powered_by2">تدعمها %1$s</string>
+    <string name="browser_menu_powered_by2">تدعمه %1$s</string>
     <!-- Browser menu button to put the current page in reader mode -->
     <string name="browser_menu_read">منظور القارئ</string>
     <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
@@ -261,6 +271,8 @@
     <string name="preferences_open_links_in_a_private_tab">افتح الروابط في ألسنة خاصة</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">اسمح بلقطات الشاشة في التصفّح الخاص</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">إن سمحت فستظهر الألسنة الخاصة حين فتح أكثر من تطبيق</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">أضِف اختصارًا للتصفح الخاص</string>
     <!-- Preference for accessibility -->
@@ -317,8 +329,12 @@
     <string name="preferences_search_browsing_history">البحث في تأريخ التصفح</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">البحث في العلامات</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">ابحث في الألسنة المُزامنة</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">إعدادات الحساب</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">أكمِل العناوين تلقائيا</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">افتح الروابط في التطبيقات</string>
     <!-- Preference for open download with an external download manager app -->
@@ -359,6 +375,11 @@
     <string name="sync_last_synced_summary">تاريخ آخر مزامنة: %s</string>
     <!-- Label summary showing never synced -->
     <string name="sync_never_synced_summary">تاريخ آخر مزامنة: أبدًا</string>
+
+    <!-- Text for displaying the default device name.
+        The first parameter is the application name, the second is the device manufacturer name
+        and the third is the device model. -->
+    <string name="default_device_name_2">‏%1$s على %2$s %3$s</string>
 
     <!-- Send Tab -->
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
@@ -423,6 +444,9 @@
     <!-- Preference for removing FxA account -->
     <string name="preferences_sync_remove_account">أزِل الحساب</string>
 
+    <!-- Pairing Feature strings -->
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions_2"><![CDATA[امسح رمز QR المعروض على <b>firefox.com/pair</b> ضوئيا]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">افتح الكمرة</string>
     <!-- Button to cancel pairing -->
@@ -449,6 +473,11 @@
     <string name="preference_gestures_website_pull_to_refresh">اسحب للإنعاش</string>
     <!-- Preference for using the dynamic toolbar -->
     <string name="preference_gestures_dynamic_toolbar">مرّر لإخفاء شريط الأدوات</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">مرّر شريط الأدوات إلى اليمين واليسار للتبديل بين الألسنة</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">مرّر شريط الأدوات إلى أعلى لفتح الألسنة</string>
 
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
@@ -478,6 +507,8 @@
     <string name="library_search">ابحث</string>
     <!-- Settings Page Title -->
     <string name="settings_title">الإعدادات</string>
+    <!-- Content description (not visible, for screen readers etc.): "Menu icon for items on a history item" -->
+    <string name="content_description_history_menu">عنصر قائمة في التأريخ</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">أغلِق</string>
 
@@ -529,6 +560,8 @@
     <string name="tab_tray_menu_open_new_tab">لسان جديد</string>
     <!-- Shortcut action to open the home screen -->
     <string name="tab_tray_menu_home">انتقل إلى الصفحة الرئيسية</string>
+    <!-- Shortcut action to toggle private mode -->
+    <string name="tab_tray_menu_toggle">بدّل وضع اللسان</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">أزِل اللسان من المجموعة</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
@@ -553,6 +586,8 @@
     <string name="current_session_save">احفظ</string>
     <!-- Button in the current session menu. Opens the share menu when pressed -->
     <string name="current_session_share">شارِك</string>
+    <!-- Content description (not visible, for screen readers etc.): Title icon for current session menu -->
+    <string name="current_session_image">صورة الجلسة الحالية</string>
     <!-- Button to save the current set of tabs into a collection -->
     <string name="save_to_collection">احفظ في التجميعة</string>
     <!-- Text for the menu button to delete a collection -->
@@ -690,6 +725,10 @@
     <string name="bookmark_add_folder_fragment_label">أضِف مجلدًا</string>
     <!-- Bookmark select folder screen title -->
     <string name="bookmark_select_folder_fragment_label">اختر مجلدًا</string>
+    <!-- Bookmark editing error missing title -->
+    <string name="bookmark_empty_title_error">يجب أن يكون للعلامة عنوان</string>
+    <!-- Bookmark editing error missing or improper URL -->
+    <string name="bookmark_invalid_url_error">مسار غير صحيح</string>
     <!-- Bookmark screen message for empty bookmarks folder -->
     <string name="bookmarks_empty_message">ما من علامات هنا</string>
     <!-- Bookmark snackbar message on deletion
@@ -748,6 +787,10 @@
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">اسمح بالصوت والڤِديو</string>
 
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">احجب الصوت والڤديو على بيانات الشبكة في المحمول فقط</string>
+    <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
+    <string name="preference_option_autoplay_allowed_wifi_subtext">سيعمل الصوت والڤديو على الشبكة اللاسلكية</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">احجب الصوت فقط</string>
     <!-- Label that indicates that all video and audio autoplay is blocked -->
@@ -824,6 +867,8 @@
     <string name="sync_connect_device_dialog">لِج إلى Firefox على جهاز واحد آخر على الأقل لإرسال لسان إليه.</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">فهمت</string>
+    <!-- Share error message -->
+    <string name="share_error_snackbar">تعذرت المشاركة مع هذا التطبيق</string>
     <!-- Add new device screen title -->
     <string name="sync_add_new_device_title">أرسِل إلى جهاز</string>
     <!-- Text for the warning message on the Add new device screen -->
@@ -839,8 +884,14 @@
     <string name="notification_pbm_channel_name">جلسة تصفح خاصة</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text">حذف الألسنة الخاصة</string>
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
+    <string name="notification_pbm_delete_text_2">أغلِق الألسنة الخاصة</string>
     <!-- Notification action to open Fenix and resume the current browsing session. -->
     <string name="notification_pbm_action_open">افتح</string>
+    <!-- Notification action to delete all current private browsing sessions AND switch to Fenix (bring it to the foreground) -->
+    <string name="notification_pbm_action_delete_and_open">احذف وافتح</string>
+    <!-- Name of the "Powered by Fenix" notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_powered_by_channel_name">تدعمه</string>
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">حُذفت التجميعة</string>
     <!-- Text shown in snackbar when user renames a collection -->
@@ -853,6 +904,8 @@
     <string name="snackbar_tab_closed">أُغلق اللسان</string>
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">أُغلقت الألسنة</string>
+    <!-- Text shown in snackbar when user adds a site to top sites -->
+    <string name="snackbar_added_to_top_sites">أُضيف إلى المواقع الشائعة!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">أُغلق اللسان الخاص</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -915,6 +968,8 @@
     <string name="preferences_delete_browsing_data_cookies_subtitle">ستخرج من معظم المواقع</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files">الصور والملفات المخبّأة</string>
+    <!-- Subtitle for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files_subtitle">يحرّر مساحة التخزين</string>
     <!-- Title for the site permissions item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_site_permissions">تصاريح المواقع</string>
     <!-- Text for the button to delete browsing data -->
@@ -944,9 +999,25 @@
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_header">صار Firefox Preview الآن Firefox Nightly</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description">تُحدّث النسخة الليلية من Firefox في كل ليلة وتُضاف إليها مزايا تجريبية جديدة.
+ولكن قد يكون استقرارها أقل من العادية. نزّل متصفّح بيتا لتجربة أكثر استقرارًا.</string>
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
     <string name="tip_firefox_preview_moved_button_2">نزّل نسخة Firefox لأندرويد التجريبية</string>
 
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_installed">انتقلت النسخة الليلية من Firefox من هنا</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_installed">لن يتلقى هذا التطبيق تحديثات الأمان بعد الآن. يُنصح بالتوقف عن استخدام هذا التطبيق والانتقال إلى النسخة الليلية الجديدة.
+لنقل علاماتك وجلسات الولوج والتأريخ إلى تطبيق آخر، افتح حساب Firefox.</string>
+    <!-- text for firefox preview moving tip button  -->
+    <string name="tip_firefox_preview_moved_button_preview_installed">انتقل إلى النسخة الليلية الجديدة</string>
+
+    <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
+    <string name="tip_firefox_preview_moved_header_preview_not_installed">انتقلت النسخة الليلية من Firefox من هنا</string>
+    <!-- text for firefox preview moving tip description -->
+    <string name="tip_firefox_preview_moved_description_preview_not_installed">لن يتلقى هذا التطبيق تحديثات الأمان بعد الآن. ننصح بتنزيل النسخة الليلية الجديدة والتوقف عن استخدام هذا التطبيق.
+لنقل علاماتك وجلسات الولوج والتأريخ إلى تطبيق آخر، افتح حساب Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
     <string name="tip_firefox_preview_moved_button_preview_not_installed">نزّل النسخة الليلية الجديدة</string>
 
@@ -961,26 +1032,66 @@
     <string name="onboarding_feature_section_header">تعرف على %s</string>
     <!-- text for the "What's New" onboarding card header -->
     <string name="onboarding_whats_new_header1">اعرف ما الجديد</string>
+    <!-- text for the "what's new" onboarding card description
+    The first parameter is the short name of the app (e.g. Firefox) -->
+    <string name="onboarding_whats_new_description">ألديك أسئلة عن متصفّح %s الذي أعدنا تصميمه؟ أتريد معرفة ما تغيّر؟</string>
+    <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
+    <string name="onboarding_whats_new_description_linktext">ستجد هنا إجابات أسئلتك</string>
+    <!-- text for the Firefox account onboarding sign in card header -->
+    <string name="onboarding_account_sign_in_header">اشرع الآن بمزامنة العلامات وكلمات السر وغيرها الكثير عبر حساب Firefox.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account -->
+    <string name="onboarding_manual_sign_in_learn_more">اطّلع على المزيد</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">ولجت ببريد %s على متصفّح Firefox آخر على هذا الجهاز. أتريد الولوج بنفس الحساب؟</string>
+    <!-- text for the button to confirm automatic sign-in -->
+    <string name="onboarding_firefox_account_auto_signin_confirm">نعم، سألج بنفس الحساب</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
     <string name="onboarding_firefox_account_signing_in">تَلج الآن…</string>
     <!-- text for the button to manually sign into Firefox account. The word "Firefox" should not be translated -->
     <string name="onboarding_firefox_account_sign_in">لِج إلى Firefox</string>
+    <!-- text for the button to stay signed out when presented with an option to automatically sign-in. -->
+    <string name="onboarding_firefox_account_stay_signed_out">لا تلج</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">التزامن يعمل</string>
     <!-- text to display in the snackbar if automatic sign-in fails. user may try again -->
     <string name="onboarding_firefox_account_automatic_signin_failed">فشل الولوج</string>
+    <!-- text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header_2">خصوصية تلقائية</string>
+    <!-- text for the tracking protection card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_tracking_protection_description_2">تحجب إعدادات الخصوصية والأمان المتعقّبات والبرمجيات الخبيثة والشركات التي تحاول تعقّبك.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">القياسي (المبدئي)</string>
+    <!-- text for standard blocking option button description -->
+    <string name="onboarding_tracking_protection_standard_button_description_2">احجب عددًا أقل من المتعقّبات. ستُحمّل الصفحات كما الطبيعي.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_button">صارم (مستحسن)</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">صارم</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_2">احجب متعقّبات وإعلانات ومنبثقات أكثر. ستُحمّل الصفحات بسرعة أكبر، ولكن قد لا تعمل بعض المزايا.</string>
+    <!-- text for the toolbar position card header
+        In English this is an idiom for "choose a side as in an argument or fight"
+        but it is ok to make this more literally about "choosing a position in a physical space -->
+    <string name="onboarding_toolbar_position_header">اختر جهةً</string>
+    <!-- text for the toolbar position card description -->
+    <string name="onboarding_toolbar_position_description">جرّب التصفّح بيد واحدة باستعمال شريط الأدوات بالأسفل، أو انقله إلى أعلى.</string>
     <!-- text for the private browsing onboarding card header -->
     <string name="onboarding_private_browsing_header">تصفّح بخصوصية</string>
+    <!-- text for the private browsing onboarding card description
+    The first parameter is an icon that represents private browsing -->
+    <string name="onboarding_private_browsing_description1">افتح اللسان الخاص الآن فقط: انقر أيقونة %s.</string>
+    <!-- text for the private browsing onboarding card description, explaining how to always using private browsing -->
+    <string name="onboarding_private_browsing_always_description">افتح الألسنة الخاصة في كل مرة: حدّث إعدادات التصفّح الخاص.</string>
     <!-- text for the private browsing onbording card button, that launches settings -->
     <string name="onboarding_private_browsing_button">افتح الإعدادات</string>
     <!-- text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header">خصوصيتك</string>
+    <!-- text for the privacy notice onboarding card description
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string name="onboarding_privacy_notice_description">صمّمنا لك %s لتقدر على التحكّم فيما تُشاركه عبر الشبكة، وما تُشاركه معنا.</string>
     <!-- Content description (not visible, for screen readers etc.): Close onboarding screen -->
     <string name="onboarding_close">أغلِق</string>
 
@@ -991,8 +1102,12 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">اختر السمة</string>
 
+    <!-- text for the theme picker onboarding card description -->
+    <string name="onboarding_theme_picker_description1">وفّر طاقة الطارية واحمِ نظرك بتفعيل الوضع الداكن.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">آلي</string>
+    <!-- Summary of automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_summary">يتأقلم حسب إعدادات الجهاز</string>
     <!-- Theme setting for dark mode -->
     <string name="onboarding_theme_dark_title">سمة داكنة</string>
     <!-- Theme setting for light mode -->
@@ -1006,6 +1121,8 @@
     <string name="sync_sent_tab_error_snackbar">تعذر الإرسال</string>
     <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
     <string name="sync_sent_tab_error_snackbar_action">أعِد المحاولة</string>
+    <!-- Title of QR Pairing Fragment -->
+    <string name="sync_scan_code">امسح الرز ضوئيًا</string>
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[افتح Firefox على حاسوبك وانتقل إلى <b>https://firefox.com/pair</b>]]></string>
     <!-- Text shown for sign in pairing when ready -->
@@ -1014,6 +1131,8 @@
     <string name="sign_in_with_camera">لِج باستخدام كمرتك</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">استعمل البريد بدل المسح</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[ليس لديك حساب؟ <u>أنشِئ واحدًا</u> لمزامنة Firefox بين الأجهزة.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">سيتوقف Firefox عن مزامنة حسابك، لكن لن يحذف أيًا من بيانات تصفحك على هذا الجهاز.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1022,6 +1141,9 @@
     <string name="sign_out_disconnect">اقطع الاتصال</string>
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
     <string name="sign_out_cancel">ألغِ</string>
+
+    <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
+    <string name="bookmark_cannot_edit_root">لا يمكنك تعديل المجلدات المبدئية</string>
 
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
@@ -1037,12 +1159,22 @@
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">اطّلع على المزيد</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">القياسي (المبدئي)</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_3">احجب عددًا أقل من المتعقّبات. ستُحمّل الصفحات كما الطبيعي.</string>
+    <!--  Accessibility text for the Standard protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_standard_info_button">ما يحجبه أسلوب الحماية ضد التعقّب المعياري</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">صارم</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_2">احجب متعقّبات وإعلانات ومنبثقات أكثر. ستُحمّل الصفحات بسرعة أكبر، ولكن قد لا تعمل بعض المزايا.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_strict_info_button">ما يحجبه أسلوب الحماية ضد التعقّب الصارم</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">مخصّص</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_description_2">اختر المتعقّبات والسكربتات التي تريد حجبها.</string>
+    <!--  Accessibility text for the Strict protection information icon  -->
+    <string name="preference_enhanced_tracking_protection_custom_info_button">ما يحجبه أسلوب الحماية ضد التعقّب المخصّص</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">الكعكات</string>
@@ -1075,8 +1207,12 @@
     <string name="etp_social_media_trackers_description">يحدّ من قدرة الشبكات الاجتماعية على تعقب نشاط تصفحك على الإنترنت.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">كعكات تتعقّبك بين المواقع</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">احجب الكعكات التي تستعمله شبكات الإعلانات وشركات التحليل الرقمي لجمع بيانات التصفّح من مختلف المواقع.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">المُعدّنات المعمّاة</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">امنع السكربتات الخبيثة من الوصول إلى جهازك لتعدين العملات رقميًا.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">مسجّلات البصمات</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
@@ -1089,6 +1225,8 @@
     <string name="enhanced_tracking_protection_exceptions">عُطّلت الحماية الموسّعة من التعقب لهذه المواقع</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">حقوقك</string>
+    <!-- About page link text to open open source licenses screen -->
+    <string name="about_open_source_licenses">المكتبات مفتوحة المصدر التي نستخدم</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">ما جديد %s</string>
 
@@ -1102,6 +1240,10 @@
     <string name="about_know_your_rights">اعرف حقوقك</string>
     <!-- About page link text to open licensing information link -->
     <string name="about_licensing_information">معلومات الترخيص</string>
+
+    <!-- About page link text to open a screen with libraries that are used -->
+    <string name="about_other_open_source_libraries">المكتبات التي نستعمل</string>
+    <string name="about_debug_menu_toast_done">فُعّلت قائمة التنقيح</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1123,6 +1265,9 @@
     <string name="add_to_homescreen_continue">تابِع نحو الموقع</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">اسم الاختصار</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">يمكنك إضافة هذا الموقع إلى شاشة البداية في الجهاز لتصل إليه بسرعة وتتصفحه كأي تطبيق آخر.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">جلسات الولوج وكلمات السر</string>
@@ -1147,6 +1292,8 @@
 
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">جلسات الولوج المحفوظة</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text">تظهر هنا جلسات الولوج التي تحفظها أو تُزامنها مع %s.</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">اعرف المزيد عن المزامنة.</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
@@ -1155,6 +1302,8 @@
     <string name="preferences_passwords_exceptions_description_empty">ستظهر جلسات الولوج وكلمات السر غير المحفوظة هنا.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">لن تُحفظ جلسات الولوج وكلمات السر لهذه المواقع.</string>
+    <!-- Text on button to remove all saved login exceptions -->
+    <string name="preferences_passwords_exceptions_remove_all">احذف كل الاستثناءات</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">ابحث في جلسات الولوج</string>
     <!-- Option to sort logins list A-Z, alphabetically -->
@@ -1167,6 +1316,8 @@
     <string name="preferences_passwords_saved_logins_username">اسم المستخدم</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">كلمة السر</string>
+    <!-- Message displayed in security prompt to access saved logins -->
+    <string name="preferences_passwords_saved_logins_enter_pin_description">ألغِ القفل لعرض جلسات الولوج المحفوظة</string>
     <!-- Message displayed when a connection is insecure and we detect the user is entering a password -->
     <string name="logins_insecure_connection_warning">هذا الاتصال ليس آمنا. بيانات الولوج المدخلة هنا عرضة للخطر.</string>
     <!-- Learn more link that will link to a page with more information displayed when a connection is insecure and we detect the user is entering a password -->
@@ -1185,16 +1336,34 @@
     <string name="logins_site_copied">نُسخ الموقع إلى الحافظة</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">انسخ كلمة السر</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
+    <string name="saved_logins_clear_password">امسح كلمة السر</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
     <string name="saved_login_copy_username">اسنخ اسم المستخدم</string>
+    <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
+    <string name="saved_login_clear_username">امسح اسم المستخدم</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a site in logins -->
     <string name="saved_login_copy_site">انسخ الموقع</string>
+    <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
+    <string name="saved_login_open_site">افتح الموقع في المتصفح</string>
     <!-- Content Description (for screenreaders etc) read for the button to reveal a password in logins -->
     <string name="saved_login_reveal_password">أظهِر كلمة السر</string>
     <!-- Content Description (for screenreaders etc) read for the button to hide a password in logins -->
     <string name="saved_login_hide_password">أخفِ كلمة السر</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
+    <string name="logins_biometric_prompt_message">ألغِ القفل لعرض جلسات الولوج المحفوظة</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title">احمِ جلسات الولوج وكلمات السر</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message">اضبط نمطًا أو رمزًا أو كلمة سر لقفل الجهاز ذلك لحماية جلسات الولوج وكلمات السر المحفوظة ضد الوصول إليها ضد من يستعمل جهازك.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">لاحقًا</string>
+    <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_set_up_now">اضبط ذلك الآن</string>
+    <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
+    <string name="logins_biometric_prompt_message_pin">ألغِ قفل جهازك</string>
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">استعمل التقريب على كل المواقع</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">الاسم (ا-ي)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1217,6 +1386,8 @@
     <string name="search_add_custom_engine_label_other">أخرى</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">الاسم</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint">نص البحث المستخدم</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">اطّلع على المزيد</string>
 
@@ -1228,6 +1399,8 @@
     <!-- Text shown when a user leaves the search string field empty -->
     <string name="search_add_custom_engine_error_empty_search_string">أدخِل نص البحث</string>
 
+    <!-- Text shown when a user leaves out the required template string -->
+    <string name="search_add_custom_engine_error_missing_template">تحقق من أن نص البحث يطابق تنسيق المثال</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
     <string name="search_add_custom_engine_error_cannot_reach">عُطل أثناء الاتصال بِ‍ ”%s“</string>
     <!-- Text shown when a user creates a new search engine -->
@@ -1237,10 +1410,14 @@
     <!-- Text shown when a user successfully deletes a custom search engine -->
     <string name="search_delete_search_engine_success_message">حُذف %s</string>
 
+    <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
+    <string name="migration_title">مرحبًا بك في %s الجديد</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">يحدّث %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
     <string name="migration_update_app_button">ابدأ %s</string>
+    <!-- Accessibility description text for a completed migration item -->
+    <string name="migration_icon_description">اكتمل الترحيل</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
     <string name="migration_text_passwords">كلمات السر</string>
 
@@ -1250,6 +1427,9 @@
     <string name="phone_feature_blocked_step_settings">1. انتقل إلى إعدادات أندرويد</string>
     <!-- Second step for the allowing a permission -->
     <string name="phone_feature_blocked_step_permissions"><![CDATA[2. انقر <b>الأذونات</b>]]></string>
+
+    <!-- Third step for the allowing a permission (Fore example: Camera) -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. اضبط <b>%1$s</b> على ”مفعّل/مفعّلة“]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
     <string name="quick_settings_sheet_secure_connection">اتصال آمن</string>
@@ -1263,6 +1443,8 @@
     <string name="confirm_clear_permission_site">أمتأكد من مسح التصريح لهذا الموقع؟</string>
     <!-- label shown when there are not site exceptions to show in the site exception settings -->
     <string name="no_site_exceptions">ما من مواقع مستثناة</string>
+    <!-- Label for the Pocket default top site -->
+    <string name="pocket_top_articles">أهم المقالات</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">أمتأكد من حذف هذه العلامة؟</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
@@ -1309,13 +1491,24 @@
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">لِج إلى «المزامنة»</string>
 
+    <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
+    <string name="synced_tabs_no_open_tabs">لا ألسنة مفتوحة</string>
+
+    <!-- Top Sites -->
+    <!-- Title text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_title">وصلت إلى أقصى حدّ للمواقع الشائعة</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">حسنًا، فهمت</string>
 
-    <!-- depcrecated: text for the firefox account onboarding card header
+    <!-- Content description for close button in collection placeholder. -->
+    <string name="remove_home_collection_placeholder_content_description">أزِل</string>
+
+    <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">استغلّ %s إلى أقصى حد.</string>
 
+    <!-- Deprecated: No Open Tabs Message Header -->
+    <string name="no_collections_header1">اجمع ما يهمّك</string>
     <!-- Deprecated: Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description">يمكنك إضافة هذا الموقع إلى شاشة البداية لتصل إليه بسرعة وتتصفحه كأي تطبيق آخر.</string>
 </resources>

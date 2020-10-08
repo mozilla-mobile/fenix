@@ -813,7 +813,7 @@
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
     <string name="tracking_protection_on">Activado</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
-    <string name="tracking_protection_off">Desactivado</string>
+    <string name="tracking_protection_off">Desactivada</string>
 
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Permitir audio y video</string>
@@ -828,7 +828,7 @@
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Activado</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
-    <string name="delete_browsing_data_quit_off">Desactivado</string>
+    <string name="delete_browsing_data_quit_off">Desactivada</string>
 
     <!-- Collections -->
     <!-- Collections header on home fragment -->
@@ -1182,6 +1182,8 @@
     <string name="sign_in_with_camera">Inicia sesión con tu cámara</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Use el correo electrónico en su lugar</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[¿No tenés cuenta? <u> Creá una </u> para sincronizar Firefox entre dispositivos.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox va a dejar de sincronizar con tu cuenta pero no va a eliminar ningún dato de navegación en este dispositivo.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1218,7 +1220,7 @@
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Qué es lo que está bloqueado por la protección de rastreo estricta</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom">Personalizado</string>
+    <string name="preference_enhanced_tracking_protection_custom">Personalizada</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_description_2">Elegí qué rastreadores y secuencias de comandos querés bloquear.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1289,6 +1291,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliotecas OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Redirigir rastreadores</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Borra las cookies establecidas por redireccionamientos a sitios web de rastreo conocidos.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Ayuda</string>
