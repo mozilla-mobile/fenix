@@ -63,7 +63,7 @@ class TrackingProtectionOverlay(
                 }
             }
             ToolbarPosition.TOP -> {
-                val appBarLayout = getToolbar().parent as AppBarLayout?
+                val appBarLayout = getToolbar().parent as? AppBarLayout
                 appBarLayout?.let { appBar ->
                     if(appBar.y != 0.toFloat()) {
                         return
