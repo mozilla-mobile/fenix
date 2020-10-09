@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
 import com.google.android.material.appbar.AppBarLayout
@@ -46,8 +45,8 @@ class TrackingProtectionOverlay(
 
     private fun shouldShowTrackingProtectionOnboarding(session: Session) =
         session.trackerBlockingEnabled &&
-                session.trackersBlocked.isNotEmpty() &&
-                settings.shouldShowTrackingProtectionCfr
+            session.trackersBlocked.isNotEmpty() &&
+            settings.shouldShowTrackingProtectionCfr
 
     @Suppress("MagicNumber", "InflateParams")
     private fun showTrackingProtectionOnboarding() {
@@ -58,14 +57,14 @@ class TrackingProtectionOverlay(
 
         when (toolbarPosition) {
             ToolbarPosition.BOTTOM -> {
-                if(getToolbar().translationY > 0) {
+                if (getToolbar().translationY > 0) {
                     return
                 }
             }
             ToolbarPosition.TOP -> {
                 val appBarLayout = getToolbar().parent as? AppBarLayout
                 appBarLayout?.let { appBar ->
-                    if(appBar.y != 0.toFloat()) {
+                    if (appBar.y != 0.toFloat()) {
                         return
                     }
                 }
