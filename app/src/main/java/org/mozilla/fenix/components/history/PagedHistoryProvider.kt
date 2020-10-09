@@ -42,8 +42,7 @@ fun HistoryStorage.createSynchronousPagedHistoryProvider(): PagedHistoryProvider
                         VisitType.REDIRECT_TEMPORARY,
                         VisitType.RELOAD,
                         VisitType.EMBED,
-                        VisitType.FRAMED_LINK,
-                        VisitType.REDIRECT_PERMANENT
+                        VisitType.FRAMED_LINK
                     )
                 )
 
