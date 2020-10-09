@@ -1,7 +1,6 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
-import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -15,6 +14,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
+import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
+import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -27,12 +28,11 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class FenixSearchEngineProviderTest {
 
     private lateinit var fenixSearchEngineProvider: FenixSearchEngineProvider
+
     @Before
     fun before() {
         fenixSearchEngineProvider = FakeFenixSearchEngineProvider(testContext)
-        MockKAnnotations.init(this)
         mockkObject(CustomSearchEngineStore)
-
         fenixSearchEngineProvider.let {
             every { CustomSearchEngineStore.loadCustomSearchEngines(testContext) } returns listOf(
                 (it as FakeFenixSearchEngineProvider)
@@ -88,7 +88,7 @@ class FenixSearchEngineProviderTest {
             Context.MODE_PRIVATE
         )
         sp.edit().putStringSet(
-            fenixSearchEngineProvider.localizationProvider.localeAwareInstalledEnginesKey(),
+            fenixSearchEngineProvider.localeAwareInstalledEnginesKey(),
             persistedInstalledEngines
         ).apply()
 
@@ -107,14 +107,26 @@ private suspend fun Deferred<SearchEngineList>.toIdSet() =
 private val persistedInstalledEngines = setOf("bing", "ecosia")
 
 class FakeFenixSearchEngineProvider(context: Context) : FenixSearchEngineProvider(context) {
-
-    override val localizationProvider = mockk<SearchEngineLocalizationProvider>(relaxed = true) {
-        every { this@mockk invokeNoArgs "localeAwareInstalledEnginesKey" } returns "key"
-        every { this@mockk getProperty "isRegionCachedByLocationService" } returns true
-    }
+    override val localizationProvider: SearchLocalizationProvider
+        get() = LocaleSearchLocalizationProvider()
 
     override var localizedSearchEngines: Deferred<SearchEngineList>
         set(_) { throw NotImplementedError("Setting not currently supported on this fake") }
+        get() {
+            val google = mockSearchEngine(id = "google-b-1-m", n = "Google")
+
+            return CompletableDeferred(
+                SearchEngineList(
+                    listOf(
+                        google,
+                        mockSearchEngine("bing", "Bing"),
+                        mockSearchEngine("amazondotcom", "Amazon.com")
+                    ), default = google
+                )
+            )
+        }
+
+    override val fallbackEngines: Deferred<SearchEngineList>
         get() {
             val google = mockSearchEngine(id = "google-b-1-m", n = "Google")
 
