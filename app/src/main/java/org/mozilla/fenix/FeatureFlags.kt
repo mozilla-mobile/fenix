@@ -29,7 +29,7 @@ object FeatureFlags {
     /**
      * Shows the grid view settings for the tabs tray.
      */
-    val showGridViewInTabsSettings = Config.channel.isNightlyOrDebug
+    val showGridViewInTabsSettings = true
 
     /**
      * Enables wait til first contentful paint
