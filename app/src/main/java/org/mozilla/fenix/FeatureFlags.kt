@@ -27,11 +27,6 @@ object FeatureFlags {
     const val topFrecentSite = true
 
     /**
-     * Shows the grid view settings for the tabs tray.
-     */
-    val showGridViewInTabsSettings = true
-
-    /**
      * Enables wait til first contentful paint
      */
     val waitUntilPaintToDraw = Config.channel.isNightlyOrDebug
