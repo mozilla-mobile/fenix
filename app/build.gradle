@@ -375,6 +375,7 @@ dependencies {
     implementation Deps.sentry
 
 
+    implementation Deps.mozilla_concept_base
     implementation Deps.mozilla_concept_engine
     implementation Deps.mozilla_concept_menu
     implementation Deps.mozilla_concept_push
