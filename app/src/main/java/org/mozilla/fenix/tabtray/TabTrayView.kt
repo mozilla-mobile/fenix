@@ -142,6 +142,14 @@ class TabTrayView(
 
     private val components = container.context.components
 
+    private val checkOpenTabs = {
+        if (isPrivateModeSelected) {
+            view.context.components.core.store.state.privateTabs.isNotEmpty()
+        } else {
+            view.context.components.core.store.state.normalTabs.isNotEmpty()
+        }
+    }
+
     init {
         components.analytics.metrics.track(Event.TabsTrayOpened)
 
@@ -240,6 +248,7 @@ class TabTrayView(
         }
 
         updateTabsTrayLayout()
+
         view.tabsTray.apply {
             adapter = concatAdapter
 
@@ -291,14 +300,9 @@ class TabTrayView(
         tabTrayItemMenu =
             TabTrayItemMenu(
                 context = view.context,
-                shouldShowSaveToCollection = { tabs.isNotEmpty() && view.tab_layout.selectedTabPosition == 0 },
-                hasOpenTabs = {
-                    if (isPrivateModeSelected) {
-                        view.context.components.core.store.state.privateTabs.isNotEmpty()
-                    } else {
-                        view.context.components.core.store.state.normalTabs.isNotEmpty()
-                    }
-                }) {
+                shouldShowSaveToCollection = { checkOpenTabs.invoke() && view.tab_layout.selectedTabPosition == 0 },
+                hasOpenTabs = checkOpenTabs
+            ) {
                 when (it) {
                     is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
                         isPrivateModeSelected
@@ -351,14 +355,6 @@ class TabTrayView(
         }
     }
 
-    private fun gridViewNumberOfCols(context: Context): Int {
-        val displayMetrics = context.resources.displayMetrics
-        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-        val columnWidthDp = COLUMN_WIDTH_DP
-        val columnCount = (dpWidth / columnWidthDp).toInt()
-        return if (columnCount >= 2) columnCount else 2
-    }
-
     private fun handleTabClicked(tab: SyncTab) {
         interactor.onSyncedTabClicked(tab)
     }
@@ -401,7 +397,7 @@ class TabTrayView(
 
     private fun setupCompactTabsTrayLayout() {
         view.tabsTray.apply {
-            val gridLayoutManager = GridLayoutManager(container.context, gridViewNumberOfCols(container.context))
+            val gridLayoutManager = GridLayoutManager(container.context, getNumberOfGridColumns(container.context))
             if (useTopTabsTray) {
                 gridLayoutManager.reverseLayout = true
             }
@@ -411,7 +407,7 @@ class TabTrayView(
                     return if (position < numTabs) {
                         1
                     } else {
-                        gridViewNumberOfCols(container.context)
+                        getNumberOfGridColumns(container.context)
                     }
                 }
             }
@@ -469,6 +465,8 @@ class TabTrayView(
         updateUINormalMode(view.context.components.core.store.state)
         scrollToTab(view.context.components.core.store.state.selectedTabId)
 
+        view.tabsTray.invalidateItemDecorations()
+
         if (isPrivateModeSelected) {
             components.analytics.metrics.track(Event.TabsTrayPrivateModeTapped)
         } else {
@@ -481,6 +479,16 @@ class TabTrayView(
 
     var mode: Mode = Mode.Normal
         private set
+
+    /**
+     * Returns the number of columns that will fit in the grid layout for the current screen.
+     */
+    private fun getNumberOfGridColumns(context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
+        val columnCount = (screenWidthDp / COLUMN_WIDTH_DP).toInt()
+        return if (columnCount >= 2) columnCount else 2
+    }
 
     fun updateState(state: TabTrayDialogFragmentState) {
         val oldMode = mode

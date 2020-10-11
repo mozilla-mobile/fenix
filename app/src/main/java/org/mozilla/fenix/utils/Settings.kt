@@ -124,6 +124,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val canShowCfr: Boolean
         get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
 
+    var showGridViewInTabsSettings by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
+        default = false,
+        featureFlag = FeatureFlags.showGridViewInTabsSettings
+    )
+
     var waitToShowPageUntilFirstPaint by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
         default = false,
@@ -305,14 +311,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = loginsSecureWarningCount.underMaxCount()
 
+    fun shouldUseAutoSize() = fontSizeFactor == 1F
+
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
         default = false
-    )
-
-    var shouldUseAutoSize by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
-        default = true
     )
 
     var fontSizeFactor by floatPreference(
@@ -768,7 +771,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             location = getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION),
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
-            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE)
+            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE),
+            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE)
         )
     }
 

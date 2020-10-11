@@ -13,19 +13,19 @@ import org.mozilla.fenix.utils.view.addToRadioGroup
 /**
  * Lets the user customize auto closing tabs.
  */
-class CloseTabsSettingsFragment : PreferenceFragmentCompat() {
+class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioManual: RadioButtonPreference
     private lateinit var radioOneDay: RadioButtonPreference
     private lateinit var radioOneWeek: RadioButtonPreference
     private lateinit var radioOneMonth: RadioButtonPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.close_tabs_preferences, rootKey)
+        setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
     }
 
     override fun onResume() {
         super.onResume()
-        showToolbar(getString(R.string.preferences_close_tabs))
+        showToolbar(getString(R.string.preferences_tabs))
         setupPreferences()
     }
 
@@ -34,6 +34,7 @@ class CloseTabsSettingsFragment : PreferenceFragmentCompat() {
         radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
         radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
         radioOneMonth = requirePreference(R.string.pref_key_close_tabs_after_one_month)
+
         setupRadioGroups()
     }
 
