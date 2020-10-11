@@ -4,7 +4,7 @@ on:
     types: [opened]
     branches:
       - fork
-jobs:
+jobs: # Disabled because we cannot build changes from fork PRs using this repo's secrets due to Github limitations. So, the built apk will be from wrong code, so this is pointless.
   comment-on-pr:
     runs-on: ubuntu-latest
     if: "! contains(toJSON(github.event.pull_request.title), '[skip ci]')"

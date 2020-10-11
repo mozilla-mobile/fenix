@@ -15,17 +15,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Create version name
-        run: echo "::set-env name=VERSION_NAME::$(git describe --tags HEAD)"
       - name: Build forkRelease variant of app
         uses: eskatos/gradle-command-action@v1
         with:
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
-          arguments: assembleForkRelease -PversionName=${{ env.VERSION_NAME }}
+          arguments: assembleForkRelease -PversionName=${{ github.event.ref }}
       - name: Create signed APKs
-        uses: abhijitvalluri/sign-apks@v0.6
+        uses: abhijitvalluri/sign-apks@v0.8
         with:
           releaseDirectory: app/build/outputs/apk/forkRelease/
           signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}

@@ -17,7 +17,7 @@ jobs:
         with:
           java-version: 11
       - name: Create version name
-        run: echo "::set-env name=VERSION_NAME::$(git describe --tags HEAD)"
+        run: echo "VERSION_NAME=$(git describe --tags HEAD)" >> $GITHUB_ENV
       - name: Build forkRelease variant of app
         uses: eskatos/gradle-command-action@v1
         with:
@@ -25,34 +25,6 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           arguments: assembleForkRelease -PversionName=${{ env.VERSION_NAME }}
-      - name: Create signed APKs
-        uses: abhijitvalluri/sign-apks@v0.6
-        with:
-          releaseDirectory: app/build/outputs/apk/forkRelease/
-          signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
-          alias: ${{ secrets.DEBUG_ALIAS }}
-          keyStorePassword: ${{ secrets.DEBUG_KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
-      - name: Archive arm64 apk
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-arm64-v8a-forkRelease.apk
-          path: app/build/outputs/apk/forkRelease/app-arm64-v8a-forkRelease.apk
-      - name: Archive armeabi apk
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-armeabi-v7a-forkRelease.apk
-          path: app/build/outputs/apk/forkRelease/app-armeabi-v7a-forkRelease.apk
-      - name: Archive x86 apk
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-x86-forkRelease.apk
-          path: app/build/outputs/apk/forkRelease/app-x86-forkRelease.apk
-      - name: Archive x86_64 apk
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-x86_64-forkRelease.apk
-          path: app/build/outputs/apk/forkRelease/app-x86_64-forkRelease.apk
 
 
   run-testDebug:
