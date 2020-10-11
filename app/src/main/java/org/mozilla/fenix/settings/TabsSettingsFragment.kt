@@ -5,10 +5,8 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
-import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.utils.view.addToRadioGroup
 

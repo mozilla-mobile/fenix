@@ -17,7 +17,6 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.getDrawableWithTint
 import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.sessioncontrol.SwipeToDeleteCallback
 
 /**
