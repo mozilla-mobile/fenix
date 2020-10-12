@@ -914,7 +914,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
 
-    val topSitesSize by intPreference(
+    var topSitesSize by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
@@ -924,18 +924,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = topSitesMaxCount
     )
 
-    fun setOpenTabsCount(count: Int) {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            count
-        ).apply()
-    }
-
-    val openTabsCount: Int
-        get() = preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            0
-        )
+    var openTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),
