@@ -32,7 +32,6 @@ import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -116,7 +115,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         setupCrashReporting()
 
         // We want the log messages of all builds to go to Android logcat
-        Log.addSink(AndroidLogSink())
+        Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug))
     }
 
     @CallSuper
