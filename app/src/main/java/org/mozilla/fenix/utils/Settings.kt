@@ -869,6 +869,27 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    fun switchUseLocalFxAServer() {
+        val key = appContext.getPreferenceKey(R.string.pref_key_use_local_fxa_server)
+        val newValue = !preferences.getBoolean(key, true)
+        preferences.edit()
+            .putBoolean(key, newValue)
+            .apply()
+    }
+
+    var haveReadFxAAccountJson by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_have_read_fxa_account_json),
+        default = false
+    )
+
+    fun switchHaveReadFxAAccountJson() {
+        val key = appContext.getPreferenceKey(R.string.pref_key_have_read_fxa_account_json)
+        val newValue = !preferences.getBoolean(key, false)
+        preferences.edit()
+            .putBoolean(key, newValue)
+            .apply()
+    }
+
     var overrideFxAServer by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_override_fxa_server),
         default = ""
