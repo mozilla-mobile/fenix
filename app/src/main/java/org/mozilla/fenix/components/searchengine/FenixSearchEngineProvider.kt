@@ -13,7 +13,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.SearchEngineList
@@ -35,7 +34,7 @@ import java.util.Locale
 open class FenixSearchEngineProvider(
     private val context: Context
 ) : SearchEngineProvider, CoroutineScope by CoroutineScope(Job() + Dispatchers.IO) {
-    private val shouldMockMLS = Config.channel.isDebug || BuildConfig.MLS_TOKEN.isNullOrEmpty()
+    private val shouldMockMLS = Config.channel.isDebug || BuildConfig.MLS_TOKEN.isEmpty()
     private val locationService: LocationService = if (shouldMockMLS) {
         LocationService.dummy()
     } else {
@@ -105,13 +104,15 @@ open class FenixSearchEngineProvider(
         CustomSearchEngineProvider().loadSearchEngines(context)
     }
 
+    private var loadedSearchEngines = refreshInstalledEngineListAsync(localizedSearchEngines)
+
     // https://github.com/mozilla-mobile/fenix/issues/9935
     // Create new getter that will return the fallback SearchEngineList if
     // the main one hasn't completed yet
     private val searchEngines: Deferred<SearchEngineList>
         get() =
             if (isRegionCachedByLocationService) {
-                refreshInstalledEngineListAsync(localizedSearchEngines)
+                loadedSearchEngines
             } else {
                 refreshInstalledEngineListAsync(fallbackEngines)
             }
@@ -120,11 +121,19 @@ open class FenixSearchEngineProvider(
         val engines = installedSearchEngines(context)
         val selectedName = context.settings().defaultSearchEngineName
 
-        return engines.list.find { it.name == selectedName } ?: engines.default ?: engines.list.first()
+        return engines.list.find { it.name == selectedName }
+            ?: engines.default
+            ?: engines.list.first()
     }
 
-    private fun setDefaultEngine(id: String) {
-        context.settings().defaultSearchEngineName = id
+    // We should only be setting the default search engine here
+    fun setDefaultEngine(context: Context, id: String) {
+        val engines = installedSearchEngines(context)
+        val newDefault = engines.list.find { it.name == id }
+            ?: engines.default
+            ?: engines.list.first()
+
+        context.settings().defaultSearchEngineName = newDefault.name
     }
 
     /**
@@ -136,18 +145,12 @@ open class FenixSearchEngineProvider(
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
         val defaultList = searchEngines.await()
 
-        val installedDefaultEngines = defaultList.list.filter {
-            installedIdentifiers.contains(it.identifier)
-        }.sortedBy { it.name.toLowerCase(Locale.getDefault()) }
-
-        val installedCustomEngines = customSearchEngines.await().list.filter {
-            installedIdentifiers.contains(it.identifier)
-        }.sortedBy { it.name.toLowerCase(Locale.getDefault()) }
-
-        val fullList = installedDefaultEngines + installedCustomEngines
-
         defaultList.copy(
-            list = fullList,
+            list = defaultList.list.filter {
+                installedIdentifiers.contains(it.identifier)
+            }.sortedBy {
+                it.name.toLowerCase(Locale.getDefault())
+            },
             default = defaultList.default?.let {
                 if (installedIdentifiers.contains(it.identifier)) {
                     it
@@ -158,16 +161,15 @@ open class FenixSearchEngineProvider(
         )
     }
 
-    suspend fun allSearchEngineIdentifiers() =
-        withContext(Dispatchers.Default) {
-            refreshInstalledEngineListAsync(localizedSearchEngines).await().list.map { it.identifier }
-        }
+    fun allSearchEngineIdentifiers() = runBlocking {
+        loadedSearchEngines.await().list.map { it.identifier }
+    }
 
     fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlocking {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
-        val engineList = refreshInstalledEngineListAsync(localizedSearchEngines).await()
+        val engineList = loadedSearchEngines.await()
 
-        engineList.copy(
+        return@runBlocking engineList.copy(
             list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) }
         )
     }
@@ -201,7 +203,6 @@ open class FenixSearchEngineProvider(
         isCustom: Boolean = false
     ) = runBlocking {
         if (isCustom) {
-            handleDefaultEngine(context, searchEngine.identifier)
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
             context.components.analytics.metrics.track(Event.CustomEngineDeleted)
             reloadCustomSearchEngines()
@@ -215,29 +216,10 @@ open class FenixSearchEngineProvider(
         }
     }
 
-    /**
-     * Handles resetting the default search engine when an engine is uninstalled.
-     * @param context The context
-     * @param searchEngineId The id of the search engine that is being uninstalled
-     */
-    private fun handleDefaultEngine(
-        context: Context,
-        searchEngineId: String
-    ) {
-        val defaultEngineId = getDefaultEngine(context).identifier
-        val engines = installedSearchEngines(context)
-
-        val newDefault = if (defaultEngineId == searchEngineId) {
-            engines.default ?: engines.list.first { it.identifier != defaultEngineId }
-        } else {
-            engines.list.first { it.identifier == defaultEngineId }
-        }
-        setDefaultEngine(newDefault.name)
-    }
-
     fun reloadCustomSearchEngines() {
         launch {
             customSearchEngines = async { CustomSearchEngineProvider().loadSearchEngines(context) }
+            loadedSearchEngines = refreshInstalledEngineListAsync(localizedSearchEngines)
         }
     }
 
@@ -250,12 +232,14 @@ open class FenixSearchEngineProvider(
         }
     }
 
-    private fun refreshInstalledEngineListAsync(engines: Deferred<SearchEngineList>) = async {
+    private fun refreshInstalledEngineListAsync(
+        engines: Deferred<SearchEngineList>
+    ): Deferred<SearchEngineList> = async {
         val engineList = engines.await()
         val bundledList = bundledSearchEngines.await().list
         val customList = customSearchEngines.await().list
 
-        engineList.copy(list = engineList.list + bundledList + customList)
+        return@async engineList.copy(list = engineList.list + bundledList + customList)
     }
 
     private fun prefs(context: Context) = context.getSharedPreferences(

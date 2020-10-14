@@ -135,7 +135,9 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                             .setText(successMessage)
                             .show()
                     }
-
+                    if (args.defaultSearchEngine) {
+                        requireComponents.search.provider.setDefaultEngine(requireContext(), name)
+                    }
                     findNavController().popBackStack()
                 }
             }

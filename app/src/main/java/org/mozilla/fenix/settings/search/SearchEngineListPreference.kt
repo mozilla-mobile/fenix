@@ -175,8 +175,9 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
     }
 
     private fun editCustomSearchEngine(engine: SearchEngine) {
+        val wasDefault = context.components.search.provider.getDefaultEngine(context).identifier == engine.identifier
         val directions = SearchEngineFragmentDirections
-            .actionSearchEngineFragmentToEditCustomSearchEngineFragment(engine.identifier)
+            .actionSearchEngineFragmentToEditCustomSearchEngineFragment(engine.identifier, wasDefault)
         Navigation.findNavController(searchEngineGroup!!).navigate(directions)
     }
 
@@ -215,12 +216,8 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             },
             operation = {
                 if (isDefaultEngine) {
-                    context.settings().defaultSearchEngineName = context
-                        .components
-                        .search
-                        .provider
-                        .getDefaultEngine(context)
-                        .name
+                    val default = context.components.search.provider.getDefaultEngine(context).identifier
+                    context.components.search.provider.setDefaultEngine(context, default)
                 }
                 if (isCustomSearchEngine) {
                     context.components.analytics.metrics.track(Event.CustomEngineDeleted)
