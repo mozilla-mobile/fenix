@@ -11,7 +11,8 @@
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:layout_marginStart="@dimen/top_bar_alignment_margin_start">
+    android:paddingStart="@dimen/top_bar_alignment_margin_start"
+    tools:ignore="RtlSymmetry">
     <ImageView
         android:id="@+id/add_icon"
         android:layout_width="wrap_content"
