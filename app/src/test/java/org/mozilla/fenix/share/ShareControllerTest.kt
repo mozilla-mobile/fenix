@@ -19,7 +19,7 @@ import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -84,7 +84,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `handleShareToApp should start a new sharing activity and close this`() = runBlockingCounter {
+    fun `handleShareToApp should start a new sharing activity and close this`() = runBlockingIncrement {
         val appPackageName = "package"
         val appClassName = "activity"
         val appShareOption = AppShareOption("app", mockk(), appPackageName, appClassName)

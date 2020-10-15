@@ -36,7 +36,7 @@ import org.mozilla.fenix.components.searchengine.CustomSearchEngineStore
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import org.mozilla.fenix.settings.SupportUtils
 import java.util.Locale
 
@@ -51,7 +51,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        availableEngines = runBlockingCounter {
+        availableEngines = runBlockingIncrement {
             requireContext()
                 .components
                 .search

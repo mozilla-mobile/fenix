@@ -14,7 +14,7 @@ import io.mockk.verify
 import io.mockk.unmockkObject
 import kotlinx.android.synthetic.main.onboarding_automatic_signin.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.service.fxa.manager.MigrationResult
 import mozilla.components.service.fxa.sharing.ShareableAccount
@@ -69,7 +69,7 @@ class OnboardingAutomaticSignInViewHolderTest {
     }
 
     @Test
-    fun `sign in on click - MigrationResult Success`() = runBlockingCounter {
+    fun `sign in on click - MigrationResult Success`() = runBlockingIncrement {
         val account = mockk<ShareableAccount> {
             every { email } returns "email@example.com"
         }
@@ -86,7 +86,7 @@ class OnboardingAutomaticSignInViewHolderTest {
     }
 
     @Test
-    fun `sign in on click - MigrationResult WillRetry treated the same as Success`() = runBlockingCounter {
+    fun `sign in on click - MigrationResult WillRetry treated the same as Success`() = runBlockingIncrement {
         val account = mockk<ShareableAccount> {
             every { email } returns "email@example.com"
         }

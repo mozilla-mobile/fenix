@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
@@ -14,7 +14,7 @@ class HistoryFragmentStoreTest {
     private val newHistoryItem = HistoryItem(1, "title", "url", 0.toLong())
 
     @Test
-    fun exitEditMode() = runBlockingCounter {
+    fun exitEditMode() = runBlockingIncrement {
         val initialState = oneItemEditState()
         val store = HistoryFragmentStore(initialState)
 
@@ -24,7 +24,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun itemAddedForRemoval() = runBlockingCounter {
+    fun itemAddedForRemoval() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = HistoryFragmentStore(initialState)
 
@@ -37,7 +37,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun removeItemForRemoval() = runBlockingCounter {
+    fun removeItemForRemoval() = runBlockingIncrement {
         val initialState = twoItemEditState()
         val store = HistoryFragmentStore(initialState)
 
@@ -47,7 +47,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun startSync() = runBlockingCounter {
+    fun startSync() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = HistoryFragmentStore(initialState)
 
@@ -57,7 +57,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun finishSync() = runBlockingCounter {
+    fun finishSync() = runBlockingIncrement {
         val initialState = HistoryFragmentState(
             items = listOf(),
             mode = HistoryFragmentState.Mode.Syncing,

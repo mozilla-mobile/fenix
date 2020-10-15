@@ -7,7 +7,7 @@ package org.mozilla.fenix.ui
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import mozilla.appservices.places.BookmarkRoot
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -59,7 +59,7 @@ class BookmarksTest {
         mockWebServer.shutdown()
         // Clearing all bookmarks data after each test to avoid overlapping data
         val bookmarksStorage = activityTestRule.activity?.bookmarkStorage
-        runBlockingCounter {
+        runBlockingIncrement {
             val bookmarks = bookmarksStorage?.getTree(BookmarkRoot.Mobile.id)?.children
             bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
         }

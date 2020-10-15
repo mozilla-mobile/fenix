@@ -11,7 +11,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -83,7 +83,7 @@ class MetricsUtilsTest {
         mockkObject(MetricsUtils)
         every { MetricsUtils.getAdvertisingID(context) } returns testId
         every { MetricsUtils.getHashingSalt() } returns testPackageName
-        runBlockingCounter {
+        runBlockingIncrement {
             assertEquals(mockedHexReturn, MetricsUtils.getHashedIdentifier(context))
         }
 

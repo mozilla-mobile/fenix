@@ -5,7 +5,6 @@
 package org.mozilla.fenix
 
 import android.content.Context
-import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.support.migration.FennecMigrator
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.migration.MigrationTelemetryListener

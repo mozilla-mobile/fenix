@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import io.mockk.verifyAll
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.SessionState
@@ -34,7 +34,7 @@ class FennecBookmarkShortcutsIntentProcessorTest {
     private val loadUrlUseCase = mockk<SessionUseCases.DefaultLoadUrlUseCase>(relaxed = true)
 
     @Test
-    fun `do not process blank Intents`() = runBlockingCounter {
+    fun `do not process blank Intents`() = runBlockingIncrement {
         val processor = FennecBookmarkShortcutsIntentProcessor(sessionManager, loadUrlUseCase)
         val fennecShortcutsIntent = Intent(ACTION_FENNEC_HOMESCREEN_SHORTCUT)
         fennecShortcutsIntent.data = Uri.parse("http://mozilla.org")
@@ -49,7 +49,7 @@ class FennecBookmarkShortcutsIntentProcessorTest {
     }
 
     @Test
-    fun `processing a Fennec shortcut Intent results in loading it's URL in a new Session`() = runBlockingCounter {
+    fun `processing a Fennec shortcut Intent results in loading it's URL in a new Session`() = runBlockingIncrement {
         mockkStatic(UUID::class)
         // The Session constructor uses UUID.randomUUID().toString() as the default value for it's id field
         every { UUID.randomUUID().toString() } returns "test"

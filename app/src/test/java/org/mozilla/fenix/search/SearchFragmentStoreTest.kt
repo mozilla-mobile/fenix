@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.state.state.BrowserState
@@ -145,7 +145,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun updateQuery() = runBlockingCounter {
+    fun updateQuery() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
         val query = "test query"
@@ -156,7 +156,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun selectSearchShortcutEngine() = runBlockingCounter {
+    fun selectSearchShortcutEngine() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -167,7 +167,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun showSearchShortcutEnginePicker() = runBlockingCounter {
+    fun showSearchShortcutEnginePicker() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -177,7 +177,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun hideSearchShortcutEnginePicker() = runBlockingCounter {
+    fun hideSearchShortcutEnginePicker() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -187,7 +187,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun showSearchSuggestions() = runBlockingCounter {
+    fun showSearchSuggestions() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -200,7 +200,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun allowSearchInPrivateMode() = runBlockingCounter {
+    fun allowSearchInPrivateMode() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -213,7 +213,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun selectNewDefaultEngine() = runBlockingCounter {
+    fun selectNewDefaultEngine() = runBlockingIncrement {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 

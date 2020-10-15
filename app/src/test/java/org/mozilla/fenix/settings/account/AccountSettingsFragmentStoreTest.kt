@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.settings.account
 
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
@@ -12,7 +12,7 @@ import org.junit.Test
 class AccountSettingsFragmentStoreTest {
 
     @Test
-    fun syncFailed() = runBlockingCounter {
+    fun syncFailed() = runBlockingIncrement {
         val initialState = AccountSettingsFragmentState()
         val store = AccountSettingsFragmentStore(initialState)
         val duration = 1L
@@ -23,7 +23,7 @@ class AccountSettingsFragmentStoreTest {
     }
 
     @Test
-    fun syncEnded() = runBlockingCounter {
+    fun syncEnded() = runBlockingIncrement {
         val initialState = AccountSettingsFragmentState()
         val store = AccountSettingsFragmentStore(initialState)
         val duration = 1L
@@ -34,7 +34,7 @@ class AccountSettingsFragmentStoreTest {
     }
 
     @Test
-    fun signOut() = runBlockingCounter {
+    fun signOut() = runBlockingIncrement {
         val initialState = AccountSettingsFragmentState()
         val store = AccountSettingsFragmentStore(initialState)
         val deviceName = "testing"

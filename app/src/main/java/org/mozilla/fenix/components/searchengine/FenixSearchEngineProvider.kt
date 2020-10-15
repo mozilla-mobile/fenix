@@ -26,7 +26,7 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import java.util.Locale
 
 @SuppressWarnings("TooManyFunctions")
@@ -116,7 +116,7 @@ open class FenixSearchEngineProvider(
      * @return a list of all SearchEngines that are currently active. These are the engines that
      * are readily available throughout the app.
      */
-    fun installedSearchEngines(context: Context): SearchEngineList = runBlockingCounter {
+    fun installedSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
         val engineList = searchEngines.await()
 
@@ -134,11 +134,11 @@ open class FenixSearchEngineProvider(
         )
     }
 
-    fun allSearchEngineIdentifiers() = runBlockingCounter {
+    fun allSearchEngineIdentifiers() = runBlockingIncrement {
         loadedSearchEngines.await().list.map { it.identifier }
     }
 
-    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlockingCounter {
+    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
         val engineList = loadedSearchEngines.await()
 
@@ -153,7 +153,7 @@ open class FenixSearchEngineProvider(
         context: Context,
         searchEngine: SearchEngine,
         isCustom: Boolean = false
-    ) = runBlockingCounter {
+    ) = runBlockingIncrement {
         if (isCustom) {
             val searchUrl = searchEngine.getSearchTemplate()
             CustomSearchEngineStore.addSearchEngine(context, searchEngine.name, searchUrl)
@@ -170,7 +170,7 @@ open class FenixSearchEngineProvider(
         context: Context,
         searchEngine: SearchEngine,
         isCustom: Boolean = false
-    ) = runBlockingCounter {
+    ) = runBlockingIncrement {
         if (isCustom) {
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
             reload()

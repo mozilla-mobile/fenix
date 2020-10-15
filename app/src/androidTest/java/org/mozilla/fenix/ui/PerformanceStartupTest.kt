@@ -9,14 +9,14 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.RunblockingCounter
+import org.mozilla.fenix.RunBlockingCounter
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 
 // PLEASE CONSULT WITH PERF TEAM BEFORE CHANGING THIS VALUE.
 private const val EXPECTED_SUPPRESSION_COUNT = 11
 
-private const val EXPECTED_RUNBLOCKING_COUNT  = 2
+private const val EXPECTED_RUNBLOCKING_COUNT = 2
 private const val STRICTMODE_FAILURE_MSG = """StrictMode startup suppression count does not match expected count.
     
     If this PR removed code that suppressed StrictMode, great! Please decrement the suppression count.
@@ -67,11 +67,10 @@ class StrictModeStartupSuppressionCountTest {
         // This might cause intermittents: at an arbitrary point after start up (such as the visual
         // completeness queue), we might run code on the main thread that suppresses StrictMode,
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
-        val actual_suppresion_count = activityTestRule.activity.components.strictMode.suppressionCount.toInt()
-        val actual_runblocking_count = RunblockingCounter.runBlockingCount
+        val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.toInt()
+        val actualRunBlocking = RunBlockingCounter.runBlockingCount
 
-        assertEquals(STRICTMODE_FAILURE_MSG, EXPECTED_SUPPRESSION_COUNT, actual_suppresion_count)
-        assertEquals(RUNBLOCKING_FAILURE_MSG, EXPECTED_RUNBLOCKING_COUNT, actual_runblocking_count)
-
+        assertEquals(STRICTMODE_FAILURE_MSG, EXPECTED_SUPPRESSION_COUNT, actualSuppresionCount)
+        assertEquals(RUNBLOCKING_FAILURE_MSG, EXPECTED_RUNBLOCKING_COUNT, actualRunBlocking)
     }
 }

@@ -19,7 +19,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * Counts the number of runBlocking calls made
  */
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-class RunblockingCounter {
+class RunBlockingCounter {
     companion object {
         var runBlockingCount = 0
     }
@@ -28,13 +28,13 @@ class RunblockingCounter {
 /**
  * Wrapper around `runBlocking`
  */
-fun <T> runBlockingCounter(
+fun <T> runBlockingIncrement(
     context: CoroutineContext = EmptyCoroutineContext,
     action: suspend CoroutineScope.() -> T
 ): T {
-    RunblockingCounter.runBlockingCount += 1
-    if(context != EmptyCoroutineContext){
-        return runBlocking(context) { action()}
+    RunBlockingCounter.runBlockingCount += 1
+    if (context != EmptyCoroutineContext) {
+        return runBlocking(context) { action() }
     }
     return runBlocking { action() }
 }

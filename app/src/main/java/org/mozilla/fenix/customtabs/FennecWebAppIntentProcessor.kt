@@ -27,7 +27,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import org.json.JSONObject
 import org.mozilla.fenix.R
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import java.io.File
 import java.io.IOException
 
@@ -58,7 +58,7 @@ class FennecWebAppIntentProcessor(
         val url = safeIntent.dataString
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val webAppManifest = runBlockingCounter { loadManifest(safeIntent, url) }
+            val webAppManifest = runBlockingIncrement { loadManifest(safeIntent, url) }
 
             val session = Session(url, private = false, source = SessionState.Source.HOME_SCREEN)
             session.webAppManifest = webAppManifest

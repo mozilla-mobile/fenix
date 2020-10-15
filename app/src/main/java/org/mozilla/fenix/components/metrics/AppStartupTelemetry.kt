@@ -24,7 +24,7 @@ import org.mozilla.fenix.components.metrics.Event.AppAllStartup.Type.ERROR
 import org.mozilla.fenix.components.metrics.Event.AppAllStartup.Type.HOT
 import org.mozilla.fenix.components.metrics.Event.AppAllStartup.Type.COLD
 import org.mozilla.fenix.components.metrics.Event.AppAllStartup.Type.WARM
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import java.lang.reflect.Modifier.PRIVATE
 
 /**
@@ -186,7 +186,7 @@ class AppStartupTelemetry(
      * the application potentially closes.
      */
     fun onStop() {
-        runBlockingCounter {
+        runBlockingIncrement {
             recordMetric()
         }
     }

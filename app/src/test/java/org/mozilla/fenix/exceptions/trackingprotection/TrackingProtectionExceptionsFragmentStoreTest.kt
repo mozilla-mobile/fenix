@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.exceptions.trackingprotection
 
-import org.mozilla.fenix.runBlockingCounter
+import org.mozilla.fenix.runBlockingIncrement
 import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
@@ -12,7 +12,7 @@ import org.junit.Test
 
 class TrackingProtectionExceptionsFragmentStoreTest {
     @Test
-    fun onChange() = runBlockingCounter {
+    fun onChange() = runBlockingIncrement {
         val initialState = ExceptionsFragmentState()
         val store = ExceptionsFragmentStore(initialState)
         val newExceptionsItem = ExceptionItem("URL")
