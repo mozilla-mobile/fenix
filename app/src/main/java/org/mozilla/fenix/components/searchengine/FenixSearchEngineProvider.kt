@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
 import mozilla.components.browser.search.provider.SearchEngineList
@@ -27,6 +26,7 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.runBlockingCounter
 import java.util.Locale
 
 @SuppressWarnings("TooManyFunctions")
@@ -116,7 +116,7 @@ open class FenixSearchEngineProvider(
      * @return a list of all SearchEngines that are currently active. These are the engines that
      * are readily available throughout the app.
      */
-    fun installedSearchEngines(context: Context): SearchEngineList = runBlocking {
+    fun installedSearchEngines(context: Context): SearchEngineList = runBlockingCounter {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
         val engineList = searchEngines.await()
 
@@ -134,11 +134,11 @@ open class FenixSearchEngineProvider(
         )
     }
 
-    fun allSearchEngineIdentifiers() = runBlocking {
+    fun allSearchEngineIdentifiers() = runBlockingCounter {
         loadedSearchEngines.await().list.map { it.identifier }
     }
 
-    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlocking {
+    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlockingCounter {
         val installedIdentifiers = installedSearchEngineIdentifiers(context)
         val engineList = loadedSearchEngines.await()
 
@@ -149,7 +149,11 @@ open class FenixSearchEngineProvider(
         return installedSearchEngines(context)
     }
 
-    fun installSearchEngine(context: Context, searchEngine: SearchEngine, isCustom: Boolean = false) = runBlocking {
+    fun installSearchEngine(
+        context: Context,
+        searchEngine: SearchEngine,
+        isCustom: Boolean = false
+    ) = runBlockingCounter {
         if (isCustom) {
             val searchUrl = searchEngine.getSearchTemplate()
             CustomSearchEngineStore.addSearchEngine(context, searchEngine.name, searchUrl)
@@ -162,7 +166,11 @@ open class FenixSearchEngineProvider(
         }
     }
 
-    fun uninstallSearchEngine(context: Context, searchEngine: SearchEngine, isCustom: Boolean = false) = runBlocking {
+    fun uninstallSearchEngine(
+        context: Context,
+        searchEngine: SearchEngine,
+        isCustom: Boolean = false
+    ) = runBlockingCounter {
         if (isCustom) {
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
             reload()

@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import mozilla.appservices.Megazord
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.state.action.SystemAction
@@ -137,7 +136,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // to invoke parts of itself that require complete megazord initialization
             // before that process completes, we wait here, if necessary.
             if (!megazordSetup.isCompleted) {
-                runBlocking { megazordSetup.await(); }
+                runBlockingCounter { megazordSetup.await(); }
             }
         }
 

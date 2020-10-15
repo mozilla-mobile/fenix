@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_DOCUMENT
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.state.state.CustomTabConfig
@@ -28,6 +27,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import org.json.JSONObject
 import org.mozilla.fenix.R
+import org.mozilla.fenix.runBlockingCounter
 import java.io.File
 import java.io.IOException
 
@@ -58,7 +58,7 @@ class FennecWebAppIntentProcessor(
         val url = safeIntent.dataString
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val webAppManifest = runBlocking { loadManifest(safeIntent, url) }
+            val webAppManifest = runBlockingCounter { loadManifest(safeIntent, url) }
 
             val session = Session(url, private = false, source = SessionState.Source.HOME_SCREEN)
             session.webAppManifest = webAppManifest

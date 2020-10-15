@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -162,7 +162,7 @@ class QuickSettingsFragmentStoreTest {
     @Test
     @ExperimentalCoroutinesApi
     fun `TogglePermission should only modify status and visibility of a specific WebsitePermissionsState`() =
-        runBlocking {
+        runBlockingCounter {
             val initialCameraStatus = "initialCameraStatus"
             val initialMicStatus = "initialMicStatus"
             val initialNotificationStatus = "initialNotificationStatus"

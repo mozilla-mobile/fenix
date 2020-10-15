@@ -7,7 +7,7 @@ package org.mozilla.fenix.ui
 import android.content.Context
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -53,7 +53,7 @@ class HistoryTest {
         val applicationContext: Context = activityTestRule.activity.applicationContext
         val historyStorage = PlacesHistoryStorage(applicationContext)
 
-        runBlocking {
+        runBlockingCounter {
             historyStorage.deleteEverything()
         }
 

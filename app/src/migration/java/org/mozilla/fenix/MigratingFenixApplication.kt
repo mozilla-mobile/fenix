@@ -5,7 +5,7 @@
 package org.mozilla.fenix
 
 import android.content.Context
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.support.migration.FennecMigrator
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.migration.MigrationTelemetryListener
@@ -81,7 +81,7 @@ class MigratingFenixApplication : FenixApplication() {
             .migrateSettings()
             .build()
 
-        runBlocking {
+        runBlockingCounter {
             migrator.migrateAsync(components.migrationStore).await()
         }
     }

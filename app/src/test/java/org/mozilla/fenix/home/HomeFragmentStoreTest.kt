@@ -7,7 +7,7 @@ package org.mozilla.fenix.home
 import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -62,7 +62,7 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test toggling the mode in HomeFragmentStore`() = runBlocking {
+    fun `Test toggling the mode in HomeFragmentStore`() = runBlockingCounter {
         // Verify that the default mode and tab states of the HomeFragment are correct.
         assertEquals(Mode.Normal, homeFragmentStore.state.mode)
 
@@ -76,7 +76,7 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test changing the collections in HomeFragmentStore`() = runBlocking {
+    fun `Test changing the collections in HomeFragmentStore`() = runBlockingCounter {
         assertEquals(0, homeFragmentStore.state.collections.size)
 
         // Add 2 TabCollections to the HomeFragmentStore.
@@ -87,7 +87,7 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test changing the top sites in HomeFragmentStore`() = runBlocking {
+    fun `Test changing the top sites in HomeFragmentStore`() = runBlockingCounter {
         assertEquals(0, homeFragmentStore.state.topSites.size)
 
         // Add 2 TopSites to the HomeFragmentStore.
@@ -98,7 +98,7 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test changing hiding collections placeholder`() = runBlocking {
+    fun `Test changing hiding collections placeholder`() = runBlockingCounter {
         assertTrue(homeFragmentStore.state.showCollectionPlaceholder)
 
         homeFragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder).join()
@@ -107,7 +107,7 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test changing the expanded collections in HomeFragmentStore`() = runBlocking {
+    fun `Test changing the expanded collections in HomeFragmentStore`() = runBlockingCounter {
         val collection: TabCollection = mockk<TabCollection>().apply {
             every { id } returns 0
         }
@@ -122,7 +122,7 @@ class HomeFragmentStoreTest {
 
     @Test
     fun `Test changing the collections, mode and top sites in the HomeFragmentStore`() =
-        runBlocking {
+        runBlockingCounter {
             // Verify that the default state of the HomeFragment is correct.
             assertEquals(0, homeFragmentStore.state.collections.size)
             assertEquals(0, homeFragmentStore.state.topSites.size)

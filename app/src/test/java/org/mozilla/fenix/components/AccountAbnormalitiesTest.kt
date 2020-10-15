@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.test.robolectric.testContext
@@ -51,7 +51,7 @@ class AccountAbnormalitiesTest {
     }
 
     @Test
-    fun `LogoutWithoutAuth detected`() = runBlocking {
+    fun `LogoutWithoutAuth detected`() = runBlockingCounter {
         val crashReporter: CrashReporter = mockk(relaxed = true)
         val accountManager: FxaAccountManager = mockk(relaxed = true)
 
@@ -64,7 +64,7 @@ class AccountAbnormalitiesTest {
     }
 
     @Test
-    fun `OverlappingFxaLogoutRequest detected`() = runBlocking {
+    fun `OverlappingFxaLogoutRequest detected`() = runBlockingCounter {
         val crashReporter: CrashReporter = mockk(relaxed = true)
         val accountManager: FxaAccountManager = mockk(relaxed = true)
 
@@ -82,7 +82,7 @@ class AccountAbnormalitiesTest {
     }
 
     @Test
-    fun `callback logout abnormalities detected`() = runBlocking {
+    fun `callback logout abnormalities detected`() = runBlockingCounter {
         val crashReporter: CrashReporter = mockk(relaxed = true)
         val accountManager: FxaAccountManager = mockk(relaxed = true)
 
@@ -95,7 +95,7 @@ class AccountAbnormalitiesTest {
     }
 
     @Test
-    fun `login happy case + disappearing account detected`() = runBlocking {
+    fun `login happy case + disappearing account detected`() = runBlockingCounter {
         val crashReporter: CrashReporter = mockk(relaxed = true)
         val accountManager: FxaAccountManager = mockk(relaxed = true)
 
@@ -116,7 +116,7 @@ class AccountAbnormalitiesTest {
     }
 
     @Test
-    fun `logout happy case`() = runBlocking {
+    fun `logout happy case`() = runBlockingCounter {
         val crashReporter: CrashReporter = mockk()
         val accountManager: FxaAccountManager = mockk(relaxed = true)
 

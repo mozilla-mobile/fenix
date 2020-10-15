@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
-import kotlinx.coroutines.runBlocking
+import org.mozilla.fenix.runBlockingCounter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
@@ -14,7 +14,7 @@ class HistoryFragmentStoreTest {
     private val newHistoryItem = HistoryItem(1, "title", "url", 0.toLong())
 
     @Test
-    fun exitEditMode() = runBlocking {
+    fun exitEditMode() = runBlockingCounter {
         val initialState = oneItemEditState()
         val store = HistoryFragmentStore(initialState)
 
@@ -24,7 +24,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun itemAddedForRemoval() = runBlocking {
+    fun itemAddedForRemoval() = runBlockingCounter {
         val initialState = emptyDefaultState()
         val store = HistoryFragmentStore(initialState)
 
@@ -37,7 +37,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun removeItemForRemoval() = runBlocking {
+    fun removeItemForRemoval() = runBlockingCounter {
         val initialState = twoItemEditState()
         val store = HistoryFragmentStore(initialState)
 
@@ -47,7 +47,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun startSync() = runBlocking {
+    fun startSync() = runBlockingCounter {
         val initialState = emptyDefaultState()
         val store = HistoryFragmentStore(initialState)
 
@@ -57,7 +57,7 @@ class HistoryFragmentStoreTest {
     }
 
     @Test
-    fun finishSync() = runBlocking {
+    fun finishSync() = runBlockingCounter {
         val initialState = HistoryFragmentState(
             items = listOf(),
             mode = HistoryFragmentState.Mode.Syncing,

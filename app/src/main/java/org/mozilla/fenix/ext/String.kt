@@ -11,13 +11,13 @@ import android.util.Patterns
 import android.webkit.URLUtil
 import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.fetch.Request
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.publicsuffixlist.ext.urlToTrimmedHost
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
+import org.mozilla.fenix.runBlockingCounter
 import java.io.IOException
 import java.net.IDN
 import java.util.Locale
@@ -92,7 +92,7 @@ private fun Uri.isIpv6(): Boolean {
 /**
  * Trim a host's prefix and suffix
  */
-fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String = runBlocking {
+fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String = runBlockingCounter {
     urlToTrimmedHost(publicSuffixList).await()
 }
 
