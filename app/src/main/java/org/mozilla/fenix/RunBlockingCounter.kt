@@ -21,7 +21,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class RunBlockingCounter {
     companion object {
-        var runBlockingCount = 0
+        var runBlockingCount = 0L
     }
 }
 

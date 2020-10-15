@@ -11,7 +11,7 @@ class RunBlockingCounterTest {
 
     @Test
     fun `GIVEN we call runBlockingCounter THEN the count should increase`() {
-        assertEquals(0, RunBlockingCounter.runBlockingCount)
+        assertEquals(0L, RunBlockingCounter.runBlockingCount)
         runBlockingIncrement {}
         assertEquals(1, RunBlockingCounter.runBlockingCount)
     }
