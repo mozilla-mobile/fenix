@@ -37,18 +37,20 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     ): View? {
         val view = inflater.inflate(R.layout.fragment_downloads, container, false)
 
-        val items = requireComponents.core.store.state.downloads.map {
-            DownloadItem(
-                it.value.id.toString(),
-                it.value.fileName,
-                it.value.filePath,
-                it.value.contentLength.toString(),
-                it.value.contentType,
-                it.value.status
-            )
-        }.filter {
-            it.status == DownloadState.Status.COMPLETED
-        }.filterNotExistsOnDisk()
+        val items = requireComponents.core.store.state.downloads.values
+            .sortedByDescending { it.createdTime } // sort from newest to oldest
+            .map {
+                DownloadItem(
+                    it.id,
+                    it.fileName,
+                    it.filePath,
+                    it.contentLength.toString(),
+                    it.contentType,
+                    it.status
+                )
+            }.filter {
+                it.status == DownloadState.Status.COMPLETED
+            }.filterNotExistsOnDisk()
 
         downloadStore = StoreProvider.get(this) {
             DownloadFragmentStore(
