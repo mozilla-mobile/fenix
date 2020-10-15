@@ -9,6 +9,7 @@
 
 package org.mozilla.fenix
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
@@ -17,7 +18,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 /**
  * Counts the number of runBlocking calls made
  */
-private class RunblockingCounter {
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+class RunblockingCounter {
     companion object {
         var runBlockingCount = 0
     }
