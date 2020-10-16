@@ -97,7 +97,8 @@ open class FenixSearchEngineProvider(
     // https://github.com/mozilla-mobile/fenix/issues/9935
     // Create new getter that will return the fallback SearchEngineList if
     // the main one hasn't completed yet
-    private val searchEngines: Deferred<SearchEngineList>
+    @VisibleForTesting
+    internal val searchEngines: Deferred<SearchEngineList>
         get() =
             if (isRegionCachedByLocationService) {
                 loadedSearchEngines
@@ -117,13 +118,22 @@ open class FenixSearchEngineProvider(
      * are readily available throughout the app.
      */
     fun installedSearchEngines(context: Context): SearchEngineList = runBlocking {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context)
+        var installedIdentifiers = installedSearchEngineIdentifiers(context)
         val engineList = searchEngines.await()
 
+        val installedEngines = engineList.list
+            .filter { installedIdentifiers.contains(it.identifier) }
+            .sortedBy { it.name.toLowerCase(Locale.getDefault()) }
+            // Edgecase: We have search engines but none installed. Let's reinstall one.
+            .ifEmpty {
+                val engine = engineList.default ?: engineList.list[0]
+                installSearchEngine(context, engine)
+                installedIdentifiers = installedSearchEngineIdentifiers(context)
+                listOf(engine)
+            }
+
         engineList.copy(
-            list = engineList.list.filter {
-                installedIdentifiers.contains(it.identifier)
-            }.sortedBy { it.name.toLowerCase(Locale.getDefault()) },
+            list = installedEngines,
             default = engineList.default?.let {
                 if (installedIdentifiers.contains(it.identifier)) {
                     it

@@ -1,13 +1,14 @@
 package org.mozilla.fenix.components.searchengine
 
 import android.content.Context
-import io.mockk.every
-import io.mockk.mockk
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.spyk
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +19,9 @@ import mozilla.components.browser.search.provider.localization.LocaleSearchLocal
 import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -91,6 +95,41 @@ class FenixSearchEngineProviderTest {
 
         val actual = fenixSearchEngineProvider.installedSearchEngineIdentifiers(testContext)
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `installedSearchEngines will return the default engine if all were uninstalled`() = runBlockingTest {
+        fenixSearchEngineProvider = spyk(fenixSearchEngineProvider)
+        val defaultEngine: SearchEngine = mockk(relaxed = true)
+        every { fenixSearchEngineProvider.searchEngines } returns CompletableDeferred(
+            SearchEngineList(listOf(mockk(relaxed = true), defaultEngine, mockk(relaxed = true)), defaultEngine)
+        )
+        // No identifiers means no installed search engines
+        val sp = testContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
+        sp.edit().putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), emptySet<String>()).apply()
+
+        val availableEngines = fenixSearchEngineProvider.installedSearchEngines(testContext)
+
+        assertTrue(availableEngines.list.isNotEmpty())
+        assertSame(availableEngines.default, defaultEngine)
+    }
+
+    @Test
+    fun `installedSearchEngines will return the first found engine if no defaults and all were uninstalled`() = runBlockingTest {
+        fenixSearchEngineProvider = spyk(fenixSearchEngineProvider)
+        val firstEngine: SearchEngine = mockk(relaxed = true)
+        every { fenixSearchEngineProvider.searchEngines } returns CompletableDeferred(
+            SearchEngineList(listOf(firstEngine, mockk(relaxed = true), mockk(relaxed = true)), null)
+        )
+        // No identifiers means no installed search engines
+        val sp = testContext.getSharedPreferences(FenixSearchEngineProvider.PREF_FILE_SEARCH_ENGINES, Context.MODE_PRIVATE)
+        sp.edit().putStringSet(fenixSearchEngineProvider.localeAwareInstalledEnginesKey(), emptySet<String>()).apply()
+
+        val availableEngines = fenixSearchEngineProvider.installedSearchEngines(testContext)
+
+        assertTrue(availableEngines.list.isNotEmpty())
+        assertSame(availableEngines.list[0], firstEngine)
+        assertNull(availableEngines.default)
     }
 }
 
