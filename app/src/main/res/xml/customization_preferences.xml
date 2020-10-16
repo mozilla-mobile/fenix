@@ -62,7 +62,8 @@
         app:iconSpaceReserved="false">
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_website_pull_to_refresh"
-            android:title="@string/preference_gestures_website_pull_to_refresh" />
+            android:title="@string/preference_gestures_website_pull_to_refresh"
+            app:isPreferenceVisible="false" />
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_dynamic_toolbar"
             android:title="@string/preference_gestures_dynamic_toolbar" />
