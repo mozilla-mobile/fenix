@@ -31,7 +31,8 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED
+        autoplayInaudible = AutoplayAction.BLOCKED,
+        persistentStorage = ASK_TO_ALLOW
     )
 
     @Before
@@ -50,6 +51,19 @@ class SettingsTest {
 
         // Then
         assertTrue(settings.openLinksInAPrivateTab)
+    }
+
+    @Test
+    fun shouldReturnToBrowser() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldReturnToBrowser)
+
+        // When
+        settings.shouldReturnToBrowser = true
+
+        // Then
+        assertTrue(settings.shouldReturnToBrowser)
     }
 
     @Test
@@ -242,19 +256,6 @@ class SettingsTest {
 
         // Then
         assertEquals(settings.getTabTimeout(), Settings.ONE_MONTH_MS)
-    }
-
-    @Test
-    fun shouldUseAutoSize() {
-        // When just created
-        // Then
-        assertTrue(settings.shouldUseAutoSize)
-
-        // When
-        settings.shouldUseAutoSize = false
-
-        // Then
-        assertFalse(settings.shouldUseAutoSize)
     }
 
     @Test
@@ -573,6 +574,23 @@ class SettingsTest {
 
         assertEquals(
             defaultPermissions.copy(autoplayInaudible = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+
+    @Test
+    fun getSitePermissionsCustomSettingsRules_persistentStorage() {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, ALLOWED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, BLOCKED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = BLOCKED),
             settings.getSitePermissionsCustomSettingsRules()
         )
     }

@@ -213,6 +213,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Даведацца больш</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Адкрыць новую картку Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Пошук</string>
     <!-- Text preview for larger sized widgets -->
@@ -276,6 +278,8 @@
     <string name="preferences_override_fxa_server">Уласны сервер уліковых запісаў Firefox</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Уласны сервер сінхранізацыі</string>
+    <!-- Toast shown after updating the FxA/Sync server override preferences -->
+    <string name="toast_override_fxa_sync_server_done">Сервер уліковага запісу Firefox/сінхранізацыі зменены. Выхад з праграмы, каб прымяніць змены…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Уліковы запіс</string>
     <!-- Preference shown on banner to sign into account -->
@@ -339,6 +343,21 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Абвесткі</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Уласная калекцыя дадаткаў</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Скасаваць</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Назва калекцыі</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Уладальнік калекцыі (ID карыстальніка)</string>
+
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Калекцыя дадаткаў зменена. Выхад з праграмы, каб прымяніць змены…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Сінхранізаваць</string>
@@ -391,6 +410,8 @@
     <string name="preferences_tracking_protection_settings">Ахова ад сачэння</string>
     <!-- Preference switch for tracking protection -->
     <string name="preferences_tracking_protection">Ахова ад сачэння</string>
+    <!-- Preference switch description for tracking protection -->
+    <string name="preferences_tracking_protection_description">Блакаваць змест і скрыпты, якія асочваюць вас у інтэрнэце</string>
     <!-- Preference for tracking protection exceptions -->
     <string name="preferences_tracking_protection_exceptions">Выключэнні</string>
     <!-- Preference description for tracking protection exceptions -->
@@ -413,6 +434,8 @@
     <string name="preferences_usage_data_description">Дзяліцца звесткамі пра прадукцыйнасць, выкарыстанне, апаратнае забеспячэнне і налады вашага браўзера з Mozilla, каб дапамагчы ўдасканаліць %1$s</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Маркетынгавыя дадзеныя</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">Дзяліцца звесткамі пра магчымасці, якімі вы карыстаецеся ў %1$s, з нашым пастаўшчыком мабільнага маркетынгу Leanplum.</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">Доследы</string>
 
@@ -429,6 +452,8 @@
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
     <string name="preferences_sync">Уключыць сінхранізацыю</string>
+    <!-- Preference for pairing -->
+    <string name="preferences_sync_pair">Скануйце код спалучэння ў Firefox на камп’ютары</string>
     <!-- Preference for account login -->
     <string name="preferences_sync_sign_in">Увайсці</string>
 
@@ -468,9 +493,9 @@
     <string name="preference_gestures_website_pull_to_refresh">Пацягніце, каб абнавіць</string>
 
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">Пракруціце, каб схаваць панэль інструментаў</string>
+    <string name="preference_gestures_dynamic_toolbar">Пракруціць, каб схаваць панэль інструментаў</string>
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
-    <string name="preference_gestures_swipe_toolbar_switch_tabs">Пасуньце ўбок панэль інструментаў, каб пераключыць карткі</string>
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Пасунуць убок панэль інструментаў, каб пераключыць карткі</string>
 
     <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
     <string name="preference_gestures_swipe_toolbar_show_tabs">Пасуньце ўверх панэль інструментаў, каб адкрыць карткі</string>
@@ -521,6 +546,14 @@
     <string name="recently_closed_empty_message">Тут няма нядаўна закрытых картак</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Карткі</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Выгляд карткі</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Спіс</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Сетка</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Закрываць карткі</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -598,6 +631,8 @@
     <string name="collection_rename">Перайменаваць калекцыю</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Адкрыць карткі</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Назва калекцыі</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Выдаліць</string>
 
@@ -636,6 +671,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Выдаліць %1$d элементаў</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Сёння</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Учора</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Апошнія 24 гадзіны</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -743,6 +782,8 @@
     <string name="bookmark_deletion_snackbar_message">%1$s выдалена</string>
     <!-- Bookmark snackbar message on deleting multiple bookmarks not including folders-->
     <string name="bookmark_deletion_multiple_snackbar_message_2">Закладкі выдалены</string>
+    <!-- Bookmark snackbar message on deleting multiple bookmarks including folders-->
+    <string name="bookmark_deletion_multiple_snackbar_message_3">Выдаленне абраных папак</string>
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">АДМЯНІЦЬ</string>
 
@@ -777,6 +818,8 @@
     <string name="preference_phone_feature_location">Месцазнаходжанне</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Абвестка</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Пастаяннае сховішча</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Запытваць дазвол</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -793,6 +836,8 @@
     <string name="tracking_protection_off">Выключана</string>
     <!-- Label that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Дазволіць гук і відэа</string>
+    <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
+    <string name="preference_option_autoplay_allowed_wifi_only2">Блакаваць аўдыё і відэа толькі на мабільных дадзеных</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Аўдыё і відэа будуць прайгравацца праз Wi-Fi</string>
     <!-- Label that indicates that video autoplay is allowed, but audio autoplay is blocked -->
@@ -1002,9 +1047,15 @@
     <string name="preferences_delete_browsing_data_on_quit">Выдаляць звесткі аглядання пры выхадзе</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">Аўтаматычна выдаляе дадзеныя аглядання, калі вы выбіраеце &quot;Выйсці&quot; ў галоўным меню</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Аўтаматычна выдаляе дадзеныя аглядання, калі вы выбіраеце \&quot;Выйсці\&quot; ў галоўным меню</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Выйсці</string>
 
+    <!-- Dialog message to the user asking to delete browsing data. -->
+    <string name="delete_browsing_data_prompt_message">Гэта выдаліць усе дадзеныя вашага аглядання.</string>
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">%s выдаліць выбраныя дадзеныя аглядання.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_cancel">Адмена</string>
     <!-- Text for the allow button for the data deletion dialog -->
@@ -1012,6 +1063,9 @@
 
     <!-- Text for the snackbar confirmation that the data was deleted -->
     <string name="preferences_delete_browsing_data_snackbar">Дадзеныя аглядання выдалены</string>
+
+    <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
+    <string name="deleting_browsing_data_in_progress">Выдаленне дадзеныя аглядання…</string>
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
@@ -1059,6 +1113,10 @@
     <string name="onboarding_account_sign_in_header">Пачніце сінхранізаваць закладкі, паролі і шмат іншага праз свой уліковы запіс Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Падрабязней</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Вы ўвайшлі як %s у іншым браўзеры Firefox на гэтай прыладзе. Ці хочаце аўтарызавацца з дапамогай гэтага ўліковага запісу?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Так, увайсці</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1159,6 +1217,9 @@
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
     <string name="sign_out_cancel">Адмена</string>
 
+    <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
+    <string name="bookmark_cannot_edit_root">Нельга рэдагаваць прадвызначаныя папкі</string>
+
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
     <string name="etp_settings">Налады аховы</string>
@@ -1216,16 +1277,26 @@
     <string name="enhanced_tracking_protection_allowed">Дазволены</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">Трэкеры сацыяльных сетак</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">Абмяжоўвае мажлівасць сацыяльных сетак асочваць вашу дзейнасць у сеціве.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Міжсайтавыя кукі асочвання</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">Блакуе файлы cookie, якія рэкламныя сеткі і аналітычныя кампаніі выкарыстоўваюць, каб аб’яднаць звесткі аглядання з многіх сайтаў.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Майнеры крыптавалют</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">Не дазваляе шкодным скрыптам атрымаць доступ да Вашай прылады для здабычы крыптавалюты.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">Збіральнікі лічбавых адбіткаў</string>
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_description">Спыняе збор унікальнай ідэнтыфікацыйнай інфармацыі пра вашу прыладу, якая можа быць выкарыстана для сачэння.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">Змест з элементамі сачэння</string>
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">Спыняе загрузку вонкавай рэкламы, відэа і іншага змесціва, якое змяшчае код асочвання. Можа адбіцца на некаторых функцыях вэб-сайта.</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">Фіялетавы колер шчыта азначае, што %s перапыніў асочвальнікаў на сайце. Націсніце, каб даведацца больш.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">Ахова ўключана на гэтым сайце</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1246,6 +1317,12 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Бібліятэкі OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Трэкеры перанакіравання</string>
+
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Ачышчае кукі, усталяваныя шляхам перанакіравання на вядомыя асочвальныя вэб-сайты.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Падтрымка</string>
@@ -1398,7 +1475,7 @@
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">Маштабаванне на ўсіх сайтах</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
-    <string name="preference_accessibility_force_enable_zoom_summary">Актываваць, каб дазволіць маштабаванне нават на тых вэб-сайтах, якія гэта забараняюць.</string>
+    <string name="preference_accessibility_force_enable_zoom_summary">Уключыце, каб дазволіць маштабаванне нават на тых сайтах, якія гэта забараняюць.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">Назва (А-Я)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1561,7 +1638,7 @@
     <string name="top_sites_max_limit_confirmation_button">OK, зразумела</string>
 
     <!-- Label for the show most visited sites preference -->
-    <string name="top_sites_toggle_top_frecent_sites">Паказаць найбольш наведаныя сайты</string>
+    <string name="top_sites_toggle_top_frecent_sites">Паказваць найбольш наведаныя сайты</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Выдаліць</string>
@@ -1570,10 +1647,15 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Атрымайце максімум ад %s.</string>
 
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Пстрыкніце, каб атрымаць падрабязнасці</string>
+
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Збірайце важныя для вас рэчы</string>
     <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
     <string name="no_collections_description1">Групуйце падобныя пошукі, сайты і карткі для хуткага доступу.</string>
     <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
     <string name="onboarding_firefox_account_auto_signin_header_2">Вы ўвайшлі як %s у іншым браўзеры Firefox на гэтым тэлефоне. Ці хочаце аўтарызавацца з дапамогай гэтага ўліковага запісу?</string>
-    </resources>
+    <!-- Deprecated: Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description">Вы можаце лёгка дадаць гэты вэб-сайт на хатні экран свайго тэлефона, каб мець да яго імгненны доступ і аглядаць хутчэй, нібыта гэта асобная праграма.</string>
+</resources>

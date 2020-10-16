@@ -19,13 +19,13 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
 import mozilla.components.browser.toolbar.MAX_URI_LENGTH
+import mozilla.components.concept.base.images.ImageLoadRequest
+import mozilla.components.concept.base.images.ImageLoader
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.TabsTray
 import mozilla.components.feature.media.ext.pauseIfPlaying
 import mozilla.components.feature.media.ext.playIfPaused
 import mozilla.components.support.base.observer.Observable
-import mozilla.components.support.images.ImageLoadRequest
-import mozilla.components.support.images.loader.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.getMediaStateForSession
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.removeAndDisable
 import org.mozilla.fenix.ext.removeTouchDelegate
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.utils.Do
@@ -49,6 +50,8 @@ class TabTrayViewHolder(
     private val metrics: MetricController = itemView.context.components.analytics.metrics
 ) : TabViewHolder(itemView) {
 
+    private val faviconView: ImageView? =
+        itemView.findViewById(R.id.mozac_browser_tabstray_favicon_icon)
     private val titleView: TextView = itemView.findViewById(R.id.mozac_browser_tabstray_title)
     private val closeView: AppCompatImageButton =
         itemView.findViewById(R.id.mozac_browser_tabstray_close)
@@ -72,12 +75,10 @@ class TabTrayViewHolder(
     ) {
         this.tab = tab
 
-        // Basic text
         updateTitle(tab)
         updateUrl(tab)
+        updateFavicon(tab)
         updateCloseButtonDescription(tab.title)
-
-        // Drawables and theme
         updateBackgroundColor(isSelected)
 
         if (tab.thumbnail != null) {
@@ -139,6 +140,15 @@ class TabTrayViewHolder(
         }
     }
 
+    private fun updateFavicon(tab: Tab) {
+        if (tab.icon != null) {
+            faviconView?.visibility = View.VISIBLE
+            faviconView?.setImageBitmap(tab.icon)
+        } else {
+            faviconView?.visibility = View.GONE
+        }
+    }
+
     private fun updateTitle(tab: Tab) {
         val title = if (tab.title.isNotEmpty()) {
             tab.title
@@ -161,6 +171,11 @@ class TabTrayViewHolder(
 
     @VisibleForTesting
     internal fun updateBackgroundColor(isSelected: Boolean) {
+        if (itemView.context.settings().gridTabView) {
+            // No need to set a background color in the item view for grid tabs.
+            return
+        }
+
         val color = if (isSelected) {
             R.color.tab_tray_item_selected_background_normal_theme
         } else {
@@ -180,10 +195,17 @@ class TabTrayViewHolder(
     }
 
     private fun loadIntoThumbnailView(thumbnailView: ImageView, id: String) {
-        val thumbnailSize = max(
-            itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_thumbnail_height),
-            itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_thumbnail_width)
-        )
+        val thumbnailSize = if (itemView.context.settings().gridTabView) {
+            max(
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_height),
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_grid_item_thumbnail_width)
+            )
+        } else {
+            max(
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),
+                itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_width)
+            )
+        }
         imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
     }
 

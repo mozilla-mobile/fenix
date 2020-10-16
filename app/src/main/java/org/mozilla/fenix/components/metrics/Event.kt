@@ -194,6 +194,8 @@ sealed class Event {
     object MasterPasswordMigrationSuccess : Event()
     object MasterPasswordMigrationDisplayed : Event()
 
+    object TabSettingsOpened : Event()
+
     // Interaction events with extras
 
     data class TopSiteSwipeCarousel(val page: Int) : Event() {
@@ -337,7 +339,8 @@ sealed class Event {
     data class AppAllStartup(
         val source: Source,
         val type: Type,
-        val hasSavedInstanceState: Boolean? = null
+        val hasSavedInstanceState: Boolean? = null,
+        var launchTime: Long? = null
     ) : Event() {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
         enum class Type { COLD, WARM, HOT, ERROR }
@@ -353,6 +356,10 @@ sealed class Event {
                 if (hasSavedInstanceState != null) {
                     extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
                         hasSavedInstanceState.toString()
+                }
+                if (launchTime != null) {
+                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
+                        launchTime.toString()
                 }
                 return extrasMap
             }

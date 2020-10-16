@@ -322,6 +322,8 @@
     <string name="preferences_search_synced_tabs">Buscar llingüetes sincronizaes</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Axustes de la cuenta</string>
+    <!-- Preference for enabling url autocomplete-->
+    <string name="preferences_enable_autocomplete_urls">Autocompletar les URLs</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Abrir los enllaces nes aplicaciones</string>
     <!-- Preference for open download with an external download manager app -->
@@ -331,6 +333,9 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Avisos</string>
+
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Encaboxar</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -478,6 +483,8 @@
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Llingüetes zarraes apocayá</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Amosar l\'historial completu</string>
     <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
     <string name="recently_closed_tabs">%d llingüetes</string>
@@ -486,9 +493,15 @@
     <string name="recently_closed_tab">%d llingüeta</string>
 
     <!-- Recently closed tabs screen message when there are no recently closed tabs -->
-    <string name="recently_closed_empty_message">Equí nun hai llingüetes zarraes apocayá</string>
+    <string name="recently_closed_empty_message">Equí nun hai llingüetes que se zarraren apocayá</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Llingüetes</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">En llista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">En rexáu</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Zarru de llingüetes</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -588,6 +601,10 @@
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Elementos esbillaos: %1$d</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Güei</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ayeri</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Les últimes 24 hores</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -990,7 +1007,7 @@
     <!-- text for underlined clickable link that is part of "what's new" onboarding card description that links to an FAQ -->
     <string name="onboarding_whats_new_description_linktext">Consigui les rempuestes equí</string>
     <!-- text for the Firefox account onboarding sign in card header -->
-    <string name="onboarding_account_sign_in_header">Apenza a sincronizar los marcadores, les contraseñes y muncho más cola to cuenta de Firefox.</string>
+    <string name="onboarding_account_sign_in_header">Comienza a sincronizar los marcadores, les contraseñes y muncho más cola to cuenta de Firefox.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Deprender más</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1046,7 +1063,7 @@
     <string name="onboarding_close">Zarrar</string>
 
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Apenzar a restolar</string>
+    <string name="onboarding_finish">Comenzar a restolar</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->

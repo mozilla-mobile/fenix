@@ -21,9 +21,9 @@
 # the paths you specify in .gitignore:
 # http://www.benjaminoakes.com/git/2018/08/10/Testing-changes-to-GitHub-CODEOWNERS/
 
-# By default the fenix team will be the owner for everything in
+# By default the Android Components team will be the owner for everything in
 # the repo. Unless a later match takes precedence.
-* @mozilla-mobile/fenix
+* @mozilla-mobile/ACT @mozilla-mobile/fenix
 /.cron.yml @mozilla-mobile/releng @mozilla-mobile/fenix
 /.taskcluster.yml @mozilla-mobile/releng @mozilla-mobile/fenix
 /automation/ @mozilla-mobile/releng @mozilla-mobile/fenix
@@ -48,6 +48,8 @@
 
 # Possible startup regressions
 *Application.kt @mozilla-mobile/Performance
+*StrictMode*kt @mozilla-mobile/Performance
+*ConstraintLayoutPerfDetector.kt @mozilla-mobile/Performance
 
 # We want to be aware of new features behind flags as well as features
 # about to be enabled.

@@ -124,6 +124,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val canShowCfr: Boolean
         get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
 
+    var showGridViewInTabsSettings by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
+        default = false,
+        featureFlag = FeatureFlags.showGridViewInTabsSettings
+    )
+
     var waitToShowPageUntilFirstPaint by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
         default = false,
@@ -174,6 +180,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldDisplayMasterPasswordMigrationTip by booleanPreference(
         appContext.getString(R.string.pref_key_master_password_tip),
         true
+    )
+
+    var shouldReturnToBrowser by booleanPreference(
+        appContext.getString(R.string.pref_key_return_to_browser),
+        false
     )
 
     // If any of the prefs have been modified, quit displaying the fenix moved tip
@@ -305,14 +316,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = loginsSecureWarningCount.underMaxCount()
 
+    fun shouldUseAutoSize() = fontSizeFactor == 1F
+
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
         default = false
-    )
-
-    var shouldUseAutoSize by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
-        default = true
     )
 
     var fontSizeFactor by floatPreference(
@@ -345,6 +353,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    var listTabView by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tab_view_list),
+        default = true
+    )
+
+    var gridTabView by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
+        default = false
+    )
+
     var manuallyCloseTabs by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_manually),
         default = true
@@ -370,6 +388,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         closeTabsAfterOneWeek -> ONE_WEEK_MS
         closeTabsAfterOneMonth -> ONE_MONTH_MS
         else -> System.currentTimeMillis()
+    }
+
+    enum class TabView {
+        GRID, LIST
+    }
+
+    fun getTabViewPingString() = if (gridTabView) TabView.GRID.name else TabView.LIST.name
+
+    enum class TabTimout {
+        ONE_DAY, ONE_WEEK, ONE_MONTH, MANUAL
+    }
+
+    fun getTabTimeoutPingString(): String = when {
+        closeTabsAfterOneDay -> {
+            TabTimout.ONE_DAY.name
+        }
+        closeTabsAfterOneWeek -> {
+            TabTimout.ONE_WEEK.name
+        }
+        closeTabsAfterOneMonth -> {
+            TabTimout.ONE_MONTH.name
+        }
+        else -> {
+            TabTimout.MANUAL.name
+        }
     }
 
     fun getTabTimeoutString(): String = when {
@@ -758,7 +801,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             location = getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION),
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
-            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE)
+            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE),
+            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE)
         )
     }
 
@@ -900,7 +944,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
 
-    val topSitesSize by intPreference(
+    var topSitesSize by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
@@ -910,18 +954,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = topSitesMaxCount
     )
 
-    fun setOpenTabsCount(count: Int) {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            count
-        ).apply()
-    }
-
-    val openTabsCount: Int
-        get() = preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            0
-        )
+    var openTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),

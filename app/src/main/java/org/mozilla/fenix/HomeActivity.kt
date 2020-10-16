@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -32,13 +33,13 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
@@ -113,6 +114,11 @@ import java.lang.ref.WeakReference
 @OptIn(ExperimentalCoroutinesApi::class)
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
+    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
+    // we need to store startup timestamp for warm startup. we cant directly store
+    // inside AppStartupTelemetry since that class lives inside components and
+    // components requires context to access.
+    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
@@ -121,7 +127,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var isVisuallyComplete = false
 
-    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? = null
+    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? =
+        null
 
     private var isToolbarInflated = false
 
@@ -187,14 +194,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any {
+        if (isActivityColdStarted(
+                intent,
+                savedInstanceState
+            ) && !externalSourceIntentProcessors.any {
                 it.process(
                     intent,
                     navHost.navController,
                     this.intent
                 )
             }
+        ) {
+            navigateToBrowserOnColdStart()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -235,14 +246,26 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+    protected open fun startupTelemetryOnCreateCalled(
+        safeIntent: SafeIntent,
+        hasSavedInstanceState: Boolean
+    ) {
+        components.appStartupTelemetry.onHomeActivityOnCreate(
+            safeIntent,
+            hasSavedInstanceState,
+            homeActivityInitTimeStampNanoSeconds, rootContainer
+        )
     }
 
     override fun onRestart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS..
+        // we are measuring startup time for hot startup type
+        startupTelemetryOnRestartCalled()
         super.onRestart()
+    }
 
-        components.appStartupTelemetry.onHomeActivityOnRestart()
+    private fun startupTelemetryOnRestartCalled() {
+        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -254,8 +277,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onResume()"
         )
-
-        components.appStartupTelemetry.onHomeActivityOnResume()
 
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
@@ -281,16 +302,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-
-            if (!settings().manuallyCloseTabs) {
-                val toClose = components.core.store.state.tabs.filter {
-                    (System.currentTimeMillis() - it.lastAccess) > settings().getTabTimeout()
-                }
-                // Removal needs to happen on the main thread.
-                lifecycleScope.launch(Main) {
-                    toClose.forEach { components.useCases.tabsUseCases.removeTab(it.id) }
-                }
-            }
         }
     }
 
@@ -315,12 +326,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
+
+        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
+        // We should return to the browser if there were normal tabs when we left the app
+        settings().shouldReturnToBrowser =
+            components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
+
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+
+        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
+        // https://github.com/mozilla-mobile/android-components/issues/8679
+        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         super.onPause()
 
@@ -751,7 +772,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (components.core.engine.profiler?.isProfilerActive() == true) {
             // Wrapping the `addMarker` method with `isProfilerActive` even though it's no-op when
             // profiler is not active. That way, `text` argument will not create a string builder all the time.
-            components.core.engine.profiler?.addMarker("HomeActivity.load", startTime, "newTab: $newTab")
+            components.core.engine.profiler?.addMarker(
+                "HomeActivity.load",
+                startTime,
+                "newTab: $newTab"
+            )
+        }
+    }
+
+    open fun navigateToBrowserOnColdStart() {
+        // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
+        // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
+        if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
+            openToBrowser(BrowserDirection.FromGlobal, null)
         }
     }
 

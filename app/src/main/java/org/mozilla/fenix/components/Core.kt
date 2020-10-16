@@ -21,6 +21,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.session.undo.UndoMiddleware
+import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -77,6 +78,7 @@ import java.util.concurrent.TimeUnit
  * Component group for all core browser functionality.
  */
 @Mockable
+@Suppress("LargeClass")
 class Core(
     private val context: Context,
     private val crashReporter: CrashReporting,
@@ -94,8 +96,8 @@ class Core(
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
             preferredColorScheme = getPreferredColorScheme(),
-            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
-            fontInflationEnabled = context.settings().shouldUseAutoSize,
+            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize(),
+            fontInflationEnabled = context.settings().shouldUseAutoSize(),
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
             loginAutofillEnabled = context.settings().shouldAutofillLogins
@@ -218,6 +220,20 @@ class Core(
                     .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
                     .whenGoingToBackground()
                     .whenSessionsChange()
+
+                // Now that we have restored our previous state (if there's one) let's remove timed out tabs
+                if (!context.settings().manuallyCloseTabs) {
+                    store.state.tabs.filter {
+                        (System.currentTimeMillis() - it.lastAccess) > context.settings().getTabTimeout()
+                    }.forEach {
+                        val session = sessionManager.findSessionById(it.id)
+                        if (session != null) {
+                            sessionManager.remove(session)
+                        }
+                    }
+                }
+
+                store.dispatch(RestoreCompleteAction)
             }
 
             WebNotificationFeature(
@@ -272,11 +288,13 @@ class Core(
     val bookmarksStorage by lazy { lazyBookmarksStorage.value }
     val passwordsStorage by lazy { lazyPasswordsStorage.value }
 
-    val tabCollectionStorage by lazy { TabCollectionStorage(
-        context,
-        sessionManager,
-        strictMode
-    ) }
+    val tabCollectionStorage by lazy {
+        TabCollectionStorage(
+            context,
+            sessionManager,
+            strictMode
+        )
+    }
 
     /**
      * A storage component for persisting thumbnail images of tabs.
