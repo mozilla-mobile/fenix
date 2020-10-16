@@ -7,18 +7,23 @@ package org.mozilla.fenix.components.toolbar
 import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
+import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.storage.HistoryStorage
+import mozilla.components.feature.tabs.toolbar.TabCounterToolbarButton
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.ToolbarFeature
+import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarPresenter
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.feature.LifecycleAwareFeature
+import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -132,12 +137,11 @@ class DefaultToolbarIntegration(
             )
         }
 
+        // what is the correct way to access the session manager?
+        val sessionManager = context.components.core.sessionManager
+
         val tabsAction = TabCounterToolbarButton(
-            lifecycleOwner,
-            isPrivate,
-            onItemTapped = {
-                interactor.onTabCounterMenuItemTapped(it)
-            },
+            sessionManager,
             showTabs = {
                 toolbar.hideKeyboard()
                 interactor.onTabCounterClicked()

@@ -42,6 +42,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.no_collections_message.view.*
@@ -85,6 +87,7 @@ import org.mozilla.fenix.components.tips.FenixTipManager
 import org.mozilla.fenix.components.tips.Tip
 import org.mozilla.fenix.components.tips.providers.MasterPasswordTipProvider
 import org.mozilla.fenix.components.toolbar.TabCounterMenu
+import org.mozilla.fenix.components.toolbar.ToolbarHelper
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
@@ -375,10 +378,6 @@ class HomeFragment : Fragment() {
             BrowsingMode.Private -> BrowsingMode.Normal
         }
         tabCounterMenu.updateMenu(showOnly = inverseBrowsingMode)
-        view.tab_button.setOnLongClickListener {
-            tabCounterMenu.menuController.show(anchor = it)
-            true
-        }
 
         view.menuButton.setColorFilter(
             ContextCompat.getColor(
@@ -405,8 +404,15 @@ class HomeFragment : Fragment() {
             true
         }
 
-        view.tab_button.setOnClickListener {
-            openTabTray()
+        view.tab_button.createView(view.rootContainer).apply {
+            setOnLongClickListener {
+                tabCounterMenu.menuController.show(anchor = it)
+                true
+            }
+            setOnClickListener {
+                tabCounterMenu.menuController.show(anchor = it)
+                true
+            }
         }
 
         PrivateBrowsingButtonView(
@@ -960,7 +966,8 @@ class HomeFragment : Fragment() {
             browserState.normalTabs.size
         }
 
-        view?.tab_button?.setCountWithAnimation(tabCount)
+//        view?.tab_button?.setCountWithAnimation(tabCount)
+
         view?.add_tabs_to_collections_button?.isVisible = tabCount > 0
     }
 

@@ -23,6 +23,8 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import kotlin.math.max
 
+// Suppression for Android Extensions IDE error: https://youtrack.jetbrains.com/issue/KT-9186
+@Suppress("SYNTHETIC_UNRESOLVED_WIDGET_TYPE")
 class TabPreview @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

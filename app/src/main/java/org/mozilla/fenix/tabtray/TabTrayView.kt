@@ -46,9 +46,9 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
-import org.mozilla.fenix.components.toolbar.TabCounter.Companion.SO_MANY_TABS_OPEN
+import org.mozilla.fenix.components.toolbar.ToolbarHelper.Companion.INFINITE_CHAR_PADDING_BOTTOM
+import org.mozilla.fenix.components.toolbar.ToolbarHelper.Companion.MAX_VISIBLE_TABS
+import org.mozilla.fenix.components.toolbar.ToolbarHelper.Companion.SO_MANY_TABS_OPEN
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
