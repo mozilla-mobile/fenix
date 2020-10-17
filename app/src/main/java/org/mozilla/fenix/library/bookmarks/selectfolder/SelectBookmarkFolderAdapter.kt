@@ -65,7 +65,8 @@ class SelectBookmarkFolderAdapter(private val sharedViewModel: BookmarksSharedVi
             viewWrapper.widget.setOnClickListener {
                 onSelect(folder.node)
             }
-            val pxToIndent = view.resources.getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
+            val pxToIndent = viewWrapper.widget.resources
+                .getDimensionPixelSize(R.dimen.bookmark_select_folder_indent)
             val padding = pxToIndent * minOf(MAX_DEPTH, folder.depth)
             viewWrapper.widget.updatePaddingRelative(start = padding)
         }
