@@ -12,6 +12,8 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
 
     companion object {
 
+        const val FULLY_QUALIFIED_CONTEXT_COMPAT = "androidx.core.content.ContextCompat"
+
         private val Implementation = Implementation(
             ContextCompatDetector::class.java,
             Scope.JAVA_FILE_SCOPE
@@ -19,8 +21,8 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
 
         val ISSUE_GET_DRAWABLE_CALL = Issue.create(
             id = "UnsafeCompatGetDrawable",
-            briefDescription = "TODO", // TODO
-            explanation = "TODO", // TODO
+            briefDescription = "Prohibits using the ContextCompat.getDrawable method",
+            explanation = "Using this method can lead to crashes in older Android versions as newer features might not be available",
             category = Category.CORRECTNESS,
             severity = Severity.ERROR,
             implementation = Implementation
@@ -28,8 +30,8 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
 
         val ISSUE_GET_COLOR_STATE_LIST_CALL = Issue.create(
             id = "UnsafeCompatGetColorStateList",
-            briefDescription = "TODO", // TODO
-            explanation = "TODO", // TODO
+            briefDescription = "Prohibits using the ContextCompat.getColorStateList method",
+            explanation = "Using this method can lead to crashes in older Android versions as newer features might not be available",
             category = Category.CORRECTNESS,
             severity = Severity.ERROR,
             implementation = Implementation
@@ -39,8 +41,6 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
             ISSUE_GET_DRAWABLE_CALL,
             ISSUE_GET_COLOR_STATE_LIST_CALL
         )
-
-        private const val ContextCompatClass = "androidx.core.content.ContextCompat"
     }
 
     override fun getApplicableMethodNames(): List<String>? = listOf(
@@ -51,7 +51,7 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
     override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
         val evaluator = context.evaluator
 
-        if (!evaluator.isMemberInClass(method, ContextCompatClass)) {
+        if (!evaluator.isMemberInClass(method, FULLY_QUALIFIED_CONTEXT_COMPAT)) {
             return
         }
 
