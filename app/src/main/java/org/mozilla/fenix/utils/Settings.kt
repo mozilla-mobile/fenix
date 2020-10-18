@@ -62,6 +62,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val CFR_COUNT_CONDITION_FOCUS_NOT_INSTALLED = 3
 
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
+        const val THREE_DAYS_MS = 3 * ONE_DAY_MS
         const val ONE_WEEK_MS = 60 * 60 * 24 * 7 * 1000L
         const val ONE_MONTH_MS = (60 * 60 * 24 * 365 * 1000L) / 12
 
@@ -99,10 +100,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by featureFlagPreference(
+    var showTopFrecentSites by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
-        default = true,
-        featureFlag = FeatureFlags.topFrecentSite
+        default = true
     )
 
     var numberOfAppLaunches by intPreference(
@@ -113,6 +113,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var lastReviewPromptTimeInMillis by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_last_review_prompt_shown_time),
         default = 0L
+    )
+
+    var lastCfrShownTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_last_cfr_shown_time),
+        default = 0L
+    )
+
+    val canShowCfr: Boolean
+        get() = (System.currentTimeMillis() - lastCfrShownTimeInMillis) > THREE_DAYS_MS
+
+    var showGridViewInTabsSettings by featureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
+        default = false,
+        featureFlag = FeatureFlags.showGridViewInTabsSettings
     )
 
     var waitToShowPageUntilFirstPaint by featureFlagPreference(
@@ -167,6 +181,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
+    var shouldReturnToBrowser by booleanPreference(
+        appContext.getString(R.string.pref_key_return_to_browser),
+        false
+    )
+
     // If any of the prefs have been modified, quit displaying the fenix moved tip
     fun shouldDisplayFenixMovingTip(): Boolean =
         preferences.getBoolean(
@@ -191,11 +210,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     private val isActiveSearcher: Boolean
         get() = activeSearchCount.value > 2
 
-    fun shouldDisplaySearchWidgetCFR(): Boolean =
-        isActiveSearcher &&
-                searchWidgetCFRDismissCount.underMaxCount() &&
-                !searchWidgetInstalled &&
-                !searchWidgetCFRManuallyDismissed
+    fun shouldDisplaySearchWidgetCfr(): Boolean = canShowCfr && isActiveSearcher &&
+            searchWidgetCFRDismissCount.underMaxCount() &&
+            !searchWidgetInstalled &&
+            !searchWidgetCFRManuallyDismissed
 
     private val searchWidgetCFRDisplayCount = counterPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_display_count)
@@ -284,8 +302,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     private var trackingProtectionOnboardingShownThisSession = false
     var isOverrideTPPopupsForPerformanceTest = false
 
-    val shouldShowTrackingProtectionOnboarding: Boolean
-        get() = !isOverrideTPPopupsForPerformanceTest &&
+    val shouldShowTrackingProtectionCfr: Boolean
+        get() = !isOverrideTPPopupsForPerformanceTest && canShowCfr &&
                 (trackingProtectionOnboardingCount.underMaxCount() &&
                         !trackingProtectionOnboardingShownThisSession)
 
@@ -297,14 +315,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = loginsSecureWarningCount.underMaxCount()
 
+    fun shouldUseAutoSize() = fontSizeFactor == 1F
+
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
         default = false
-    )
-
-    var shouldUseAutoSize by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
-        default = true
     )
 
     var fontSizeFactor by floatPreference(
@@ -337,6 +352,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    var listTabView by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tab_view_list),
+        default = true
+    )
+
+    var gridTabView by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
+        default = false
+    )
+
     var manuallyCloseTabs by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_manually),
         default = true
@@ -362,6 +387,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         closeTabsAfterOneWeek -> ONE_WEEK_MS
         closeTabsAfterOneMonth -> ONE_MONTH_MS
         else -> System.currentTimeMillis()
+    }
+
+    enum class TabView {
+        GRID, LIST
+    }
+
+    fun getTabViewPingString() = if (gridTabView) TabView.GRID.name else TabView.LIST.name
+
+    enum class TabTimout {
+        ONE_DAY, ONE_WEEK, ONE_MONTH, MANUAL
+    }
+
+    fun getTabTimeoutPingString(): String = when {
+        closeTabsAfterOneDay -> {
+            TabTimout.ONE_DAY.name
+        }
+        closeTabsAfterOneWeek -> {
+            TabTimout.ONE_WEEK.name
+        }
+        closeTabsAfterOneMonth -> {
+            TabTimout.ONE_MONTH.name
+        }
+        else -> {
+            TabTimout.MANUAL.name
+        }
     }
 
     fun getTabTimeoutString(): String = when {
@@ -650,8 +700,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     private val userNeedsToVisitInstallableSites: Boolean
         get() = pwaInstallableVisitCount.underMaxCount()
 
-    val shouldShowPwaOnboarding: Boolean
+    val shouldShowPwaCfr: Boolean
         get() {
+            if (!canShowCfr) return false
             // We only want to show this on the 3rd time a user visits a site
             if (userNeedsToVisitInstallableSites) return false
 
@@ -674,6 +725,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var shouldShowOpenInAppBanner by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_open_in_app_banner),
+        default = true
+    )
+
+    val shouldShowOpenInAppCfr: Boolean
+        get() = canShowCfr && shouldShowOpenInAppBanner
+
+    var shouldShowAutoCloseTabsBanner by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_auto_close_tabs_banner),
         default = true
     )
 
@@ -741,7 +800,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             location = getSitePermissionsPhoneFeatureAction(PhoneFeature.LOCATION),
             camera = getSitePermissionsPhoneFeatureAction(PhoneFeature.CAMERA),
             autoplayAudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_AUDIBLE),
-            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE)
+            autoplayInaudible = getSitePermissionsPhoneFeatureAutoplayAction(PhoneFeature.AUTOPLAY_INAUDIBLE),
+            persistentStorage = getSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE)
         )
     }
 
@@ -833,8 +893,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_private_mode_opened)
     )
 
-    val showPrivateModeContextualFeatureRecommender: Boolean
+    val showPrivateModeCfr: Boolean
         get() {
+            if (!canShowCfr) return false
             val focusInstalled = MozillaProductDetector
                 .getInstalledMozillaProducts(appContext as Application)
                 .contains(MozillaProductDetector.MozillaProducts.FOCUS.productName)
@@ -868,7 +929,21 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = ""
     )
 
-    val topSitesSize by intPreference(
+    var overrideAmoUser by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_amo_user),
+        default = ""
+    )
+
+    var overrideAmoCollection by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_override_amo_collection),
+        default = ""
+    )
+
+    fun amoCollectionOverrideConfigured(): Boolean {
+        return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
+    }
+
+    var topSitesSize by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_top_sites_size),
         default = 0
     )
@@ -878,18 +953,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = topSitesMaxCount
     )
 
-    fun setOpenTabsCount(count: Int) {
-        preferences.edit().putInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            count
-        ).apply()
-    }
-
-    val openTabsCount: Int
-        get() = preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
-            0
-        )
+    var openTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0
+    )
 
     private var savedLoginsSortingStrategyString by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_saved_logins_sorting_strategy),

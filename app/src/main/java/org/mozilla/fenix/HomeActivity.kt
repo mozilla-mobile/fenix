@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -37,7 +38,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
@@ -60,7 +61,6 @@ import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -72,7 +72,6 @@ import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.resetPoliciesAfter
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
@@ -86,8 +85,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.StartupTimeline
-import org.mozilla.fenix.search.SearchFragmentDirections
-import org.mozilla.fenix.searchdialog.SearchDialogFragmentDirections
+import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
@@ -114,15 +112,20 @@ import java.lang.ref.WeakReference
 @OptIn(ExperimentalCoroutinesApi::class)
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
+    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
+    // we need to store startup timestamp for warm startup. we cant directly store
+    // inside AppStartupTelemetry since that class lives inside components and
+    // components requires context to access.
+    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
-    private lateinit var sessionObserver: SessionManager.Observer
 
     private var isVisuallyComplete = false
 
-    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? = null
+    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? =
+        null
 
     private var isToolbarInflated = false
 
@@ -150,9 +153,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private lateinit var navigationToolbar: Toolbar
 
     final override fun onCreate(savedInstanceState: Bundle?) {
-        StrictModeManager.changeStrictModePolicies(supportFragmentManager)
+        components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.onCreate(savedInstanceState)
         }
 
@@ -177,8 +180,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
         }
 
-        sessionObserver = UriOpenedObserver(this)
-
         checkPrivateShortcutEntryPoint(intent)
         privateNotificationObserver = PrivateNotificationFeature(
             applicationContext,
@@ -188,14 +189,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any {
+        if (isActivityColdStarted(
+                intent,
+                savedInstanceState
+            ) && !externalSourceIntentProcessors.any {
                 it.process(
                     intent,
                     navHost.navController,
                     this.intent
                 )
             }
+        ) {
+            navigateToBrowserOnColdStart()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -236,14 +241,26 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
-        components.appStartupTelemetry.onHomeActivityOnCreate(safeIntent, hasSavedInstanceState)
+    protected open fun startupTelemetryOnCreateCalled(
+        safeIntent: SafeIntent,
+        hasSavedInstanceState: Boolean
+    ) {
+        components.appStartupTelemetry.onHomeActivityOnCreate(
+            safeIntent,
+            hasSavedInstanceState,
+            homeActivityInitTimeStampNanoSeconds, rootContainer
+        )
     }
 
     override fun onRestart() {
+        // DO NOT MOVE ANYTHING ABOVE THIS..
+        // we are measuring startup time for hot startup type
+        startupTelemetryOnRestartCalled()
         super.onRestart()
+    }
 
-        components.appStartupTelemetry.onHomeActivityOnRestart()
+    private fun startupTelemetryOnRestartCalled() {
+        components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
     }
 
     @CallSuper
@@ -256,15 +273,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             message = "onResume()"
         )
 
-        components.appStartupTelemetry.onHomeActivityOnResume()
-
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch {
                 // Make sure accountManager is initialized.
-                components.backgroundServices.accountManager.initAsync().await()
+                components.backgroundServices.accountManager.start()
                 // If we're authenticated, kick-off a sync and a device state refresh.
                 components.backgroundServices.accountManager.authenticatedAccount()?.let {
-                    components.backgroundServices.accountManager.syncNowAsync(
+                    components.backgroundServices.accountManager.syncNow(
                         SyncReason.Startup,
                         debounce = true
                     )
@@ -282,14 +297,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             settings().wasDefaultBrowserOnLastResume = settings().isDefaultBrowser()
-
-            if (!settings().manuallyCloseTabs) {
-                components.core.store.state.tabs.filter {
-                    (System.currentTimeMillis() - it.lastAccess) > settings().getTabTimeout()
-                }.forEach {
-                    components.useCases.tabsUseCases.removeTab(it.id)
-                }
-            }
         }
     }
 
@@ -314,12 +321,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString()
             )
         )
+
+        components.appStartupTelemetry.onStop()
     }
 
     final override fun onPause() {
+        // We should return to the browser if there were normal tabs when we left the app
+        settings().shouldReturnToBrowser =
+            components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
+
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+
+        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
+        // https://github.com/mozilla-mobile/android-components/issues/8679
+        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         super.onPause()
 
@@ -670,8 +687,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             NavGraphDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHome ->
             HomeFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSearch ->
-            SearchFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSearchDialog ->
             SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSettings ->
@@ -752,12 +767,24 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (components.core.engine.profiler?.isProfilerActive() == true) {
             // Wrapping the `addMarker` method with `isProfilerActive` even though it's no-op when
             // profiler is not active. That way, `text` argument will not create a string builder all the time.
-            components.core.engine.profiler?.addMarker("HomeActivity.load", startTime, "newTab: $newTab")
+            components.core.engine.profiler?.addMarker(
+                "HomeActivity.load",
+                startTime,
+                "newTab: $newTab"
+            )
+        }
+    }
+
+    open fun navigateToBrowserOnColdStart() {
+        // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
+        // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
+        if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
+            openToBrowser(BrowserDirection.FromGlobal, null)
         }
     }
 
     override fun attachBaseContext(base: Context) {
-        StrictMode.allowThreadDiskReads().resetPoliciesAfter {
+        base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)
         }
     }

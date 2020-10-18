@@ -77,6 +77,9 @@
     <!-- Text for the negative button -->
     <string name="search_widget_cfr_neg_button_text">Pas ara</string>
 
+    <!-- Open in App "contextual feature recommendation" (CFR) -->
+    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
+    <string name="open_in_app_cfr_info_message">Podètz configurar Firefox per dobrir automaticament los ligams dins las aplicacions.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Anar als paramètres</string>
     <!-- Text for the negative action button -->
@@ -139,6 +142,8 @@
     <string name="browser_menu_install_on_homescreen">Installar</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Onglets sincronizats</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Tornar sincronizar</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Recercar dins la pagina</string>
     <!-- Browser menu button that creates a private tab -->
@@ -207,6 +212,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Ne saber mai</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Dobrir dins un onglet Firefox novèl</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Recercar</string>
     <!-- Text preview for larger sized widgets -->
@@ -262,6 +269,8 @@
     <string name="preferences_open_links_in_a_private_tab">Dobrir los ligams en navigacion privada</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Permetre las capturas d’ecran en navegacion privada</string>
+    <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Se permés, los onglets privats seràn tanben visibles quand mantunas aplicacions son dubèrtas</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Ajustar un acorchi per la navegacion privada</string>
     <!-- Preference for accessibility -->
@@ -319,6 +328,8 @@
     <string name="preferences_search_browsing_history">Recercar dins l’istoric de navegacion</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Cercar dins los marcapaginas</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Cercar dins los onglets sincronizats</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Paramètres del compte</string>
     <!-- Preference for enabling url autocomplete-->
@@ -332,6 +343,19 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Notificacions</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Colleccion de moduls personalizada</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">D’acòrdi</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Anullar</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Nom de la collecion</string>
+
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Proprietari de la colleccion (ID utilizaire)</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -468,6 +492,11 @@
     <!-- Preference for using the dynamic toolbar -->
     <string name="preference_gestures_dynamic_toolbar">Desfilar per amagar la barra d’aisinas</string>
 
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Cambiar d’onglet en lisant la barra d’aisinas cap las costats</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Dobrir los ligams en lisant la barra d’aisina amont</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sessions</string>
@@ -514,6 +543,14 @@
     <string name="recently_closed_empty_message">Cap d’onglets pas tampats recentament</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Onglets</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Vista onglet</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Lista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Grasilha</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Tampar los onglets</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -592,6 +629,8 @@
     <string name="collection_rename">Renomenar la colleccion</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Onglets dobèrts</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Nom de la collecion</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Suprimir</string>
 
@@ -630,6 +669,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Suprimir %1$d elements</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Uèi</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ièr</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Las darrièras 24 oras</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -773,6 +816,8 @@
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Notificacion</string>
 
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Emmagazinatge persistent</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Demandar per autorizar</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -809,6 +854,8 @@
     <string name="collections_header">Colleccions</string>
     <!-- Content description (not visible, for screen readers etc.): Opens the collection menu when pressed -->
     <string name="collection_menu_button_content_description">Menú de colleccion</string>
+    <!-- Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description2">Amassatz çò important per vos\nGropatz las recèrcas, los sites e onglets similars per i tornar mai tard.</string>
     <!-- Title for the "select tabs" step of the collection creator -->
     <string name="create_collection_select_tabs">Seleccionar d’onglets</string>
     <!-- Title for the "select collection" step of the collection creator -->
@@ -938,6 +985,8 @@
     <string name="qr_scanner_dialog_negative">REFUSAR</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Volètz vertadièrament suprimir %1$s ?</string>
+    <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
+    <string name="delete_tab_and_collection_dialog_message">La supression d’aqueste onglet suprimirà tota la collecion. Podètz crear colleccions novèlas quand volgatz.</string>
     <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
     <string name="delete_tab_and_collection_dialog_title">Suprimir %1$s ?</string>
     <!-- Tab collection deletion prompt dialog option to delete the collection -->
@@ -990,6 +1039,8 @@
     <string name="preferences_delete_browsing_data_on_quit">Suprimir las donadas de navegacion en quitant</string>
     <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
     <string name="preference_summary_delete_browsing_data_on_quit">Suprimís automaticament las donadas de navegacion quand seleccionatz « Quitar » al menú principal</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Suprimís automaticament las donadas de navegacion quand seleccionatz « Quitar » al menú principal</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Sortir</string>
 
@@ -1219,6 +1270,9 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliotècas liuras</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Traçador per redireccion</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Assisténcia</string>
@@ -1506,6 +1560,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Ne fasètz mai amb %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Clicatz per aver de detalhs</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Amassatz çò que compta per vos</string>

@@ -5,10 +5,12 @@
 package org.mozilla.fenix.library.history.viewholders
 
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.history_list_item.view.*
 import kotlinx.android.synthetic.main.library_site_item.view.*
+import kotlinx.android.synthetic.main.recently_closed_nav_item.view.*
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideAndDisable
@@ -41,7 +43,7 @@ class HistoryListItemViewHolder(
             }
         }
 
-        itemView.recently_closed.setOnClickListener {
+        itemView.findViewById<ConstraintLayout>(R.id.recently_closed_nav).setOnClickListener {
             historyInteractor.onRecentlyClosedClicked()
         }
     }
@@ -96,10 +98,11 @@ class HistoryListItemViewHolder(
         showTopContent: Boolean,
         isNormalMode: Boolean
     ) {
+        itemView.delete_button.isVisible = showTopContent
+        itemView.findViewById<ConstraintLayout>(R.id.recently_closed_nav).isVisible = showTopContent
+
         if (showTopContent) {
             itemView.delete_button.run {
-                visibility = View.VISIBLE
-
                 if (isNormalMode) {
                     isEnabled = true
                     alpha = 1f
@@ -115,10 +118,15 @@ class HistoryListItemViewHolder(
                         R.string.recently_closed_tab else R.string.recently_closed_tabs
                 ), numRecentTabs
             )
-            itemView.recently_closed.isVisible = true
-        } else {
-            itemView.recently_closed.visibility = View.GONE
-            itemView.delete_button.visibility = View.GONE
+            itemView.findViewById<ConstraintLayout>(R.id.recently_closed_nav).run {
+                if (isNormalMode) {
+                    isEnabled = true
+                    alpha = 1f
+                } else {
+                    isEnabled = false
+                    alpha = DELETE_BUTTON_DISABLED_ALPHA
+                }
+            }
         }
     }
 

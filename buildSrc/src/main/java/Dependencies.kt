@@ -5,7 +5,12 @@
 object Versions {
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.3"
-    const val android_gradle_plugin = "3.5.0"
+
+    // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
+    // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
+    const val android_gradle_plugin = "3.6.4"
+    const val android_lint_api = "26.6.4"
+
     const val sentry = "1.7.10"
     const val leakcanary = "2.4"
     const val leanplum = "5.4.0"
@@ -13,17 +18,17 @@ object Versions {
     const val detekt = "1.9.1"
 
     const val androidx_appcompat = "1.2.0-rc01"
-    const val androidx_biometric = "1.1.0-alpha01"
+    const val androidx_biometric = "1.1.0-beta01"
     const val androidx_coordinator_layout = "1.1.0-rc01"
-    const val androidx_constraint_layout = "2.0.0-beta6"
+    const val androidx_constraint_layout = "2.0.0"
     const val androidx_preference = "1.1.0"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.2.0"
     const val androidx_fragment = "1.2.5"
     const val androidx_navigation = "2.3.0"
-    const val androidx_recyclerview = "1.2.0-alpha05"
-    const val androidx_core = "1.2.0"
+    const val androidx_recyclerview = "1.2.0-alpha06"
+    const val androidx_core = "1.3.2"
     const val androidx_paging = "2.1.0"
     const val androidx_transition = "1.3.0"
     const val androidx_work = "2.2.0"
@@ -43,8 +48,6 @@ object Versions {
     const val google_ads_id_version = "16.0.0"
 
     const val google_play_store_version = "1.8.0"
-
-    const val airbnb_lottie = "3.4.0"
 }
 
 @Suppress("unused")
@@ -59,6 +62,7 @@ object Deps {
     const val allopen = "org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}"
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 
+    const val mozilla_concept_base = "org.mozilla.components:concept-base:${Versions.mozilla_android_components}"
     const val mozilla_concept_engine = "org.mozilla.components:concept-engine:${Versions.mozilla_android_components}"
     const val mozilla_concept_menu = "org.mozilla.components:concept-menu:${Versions.mozilla_android_components}"
     const val mozilla_concept_push = "org.mozilla.components:concept-push:${Versions.mozilla_android_components}"
@@ -215,8 +219,6 @@ object Deps {
     // Required for in-app reviews
     const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
 
-    const val lottie = "com.airbnb.android:lottie:${Versions.airbnb_lottie}"
-
     const val detektApi = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val detektTest = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
     const val junitApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit}"
@@ -234,7 +236,7 @@ object Deps {
 object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
-    const val comAndroid = "com\\.android\\..*"
+    const val comAndroid = "com\\.android.*"
     const val comGoogleFirebase = "com\\.google\\.firebase"
 
     /**

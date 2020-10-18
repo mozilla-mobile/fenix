@@ -31,7 +31,8 @@ class SettingsTest {
         microphone = ASK_TO_ALLOW,
         notification = ASK_TO_ALLOW,
         autoplayAudible = AutoplayAction.BLOCKED,
-        autoplayInaudible = AutoplayAction.BLOCKED
+        autoplayInaudible = AutoplayAction.BLOCKED,
+        persistentStorage = ASK_TO_ALLOW
     )
 
     @Before
@@ -50,6 +51,19 @@ class SettingsTest {
 
         // Then
         assertTrue(settings.openLinksInAPrivateTab)
+    }
+
+    @Test
+    fun shouldReturnToBrowser() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldReturnToBrowser)
+
+        // When
+        settings.shouldReturnToBrowser = true
+
+        // Then
+        assertTrue(settings.shouldReturnToBrowser)
     }
 
     @Test
@@ -115,6 +129,20 @@ class SettingsTest {
         // When just created
         // Then
         assertFalse(settings.isRemoteDebuggingEnabled)
+    }
+
+    @Test
+    fun canShowCfrTest() {
+        // When just created
+        // Then
+        assertEquals(0L, settings.lastCfrShownTimeInMillis)
+        assertTrue(settings.canShowCfr)
+
+        // When
+        settings.lastCfrShownTimeInMillis = System.currentTimeMillis()
+
+        // Then
+        assertFalse(settings.canShowCfr)
     }
 
     @Test
@@ -228,19 +256,6 @@ class SettingsTest {
 
         // Then
         assertEquals(settings.getTabTimeout(), Settings.ONE_MONTH_MS)
-    }
-
-    @Test
-    fun shouldUseAutoSize() {
-        // When just created
-        // Then
-        assertTrue(settings.shouldUseAutoSize)
-
-        // When
-        settings.shouldUseAutoSize = false
-
-        // Then
-        assertFalse(settings.shouldUseAutoSize)
     }
 
     @Test
@@ -394,25 +409,25 @@ class SettingsTest {
     fun showPwaFragment() {
         // When just created
         // Then
-        assertFalse(settings.shouldShowPwaOnboarding)
+        assertFalse(settings.shouldShowPwaCfr)
 
         // When visited once
         settings.incrementVisitedInstallableCount()
 
         // Then
-        assertFalse(settings.shouldShowPwaOnboarding)
+        assertFalse(settings.shouldShowPwaCfr)
 
         // When visited twice
         settings.incrementVisitedInstallableCount()
 
         // Then
-        assertFalse(settings.shouldShowPwaOnboarding)
+        assertFalse(settings.shouldShowPwaCfr)
 
         // When visited thrice
         settings.incrementVisitedInstallableCount()
 
         // Then
-        assertTrue(settings.shouldShowPwaOnboarding)
+        assertTrue(settings.shouldShowPwaCfr)
     }
 
     @Test
@@ -561,5 +576,52 @@ class SettingsTest {
             defaultPermissions.copy(autoplayInaudible = ALLOWED),
             settings.getSitePermissionsCustomSettingsRules()
         )
+    }
+
+    @Test
+    fun getSitePermissionsCustomSettingsRules_persistentStorage() {
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, ALLOWED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = ALLOWED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+
+        settings.setSitePermissionsPhoneFeatureAction(PhoneFeature.PERSISTENT_STORAGE, BLOCKED)
+
+        assertEquals(
+            defaultPermissions.copy(persistentStorage = BLOCKED),
+            settings.getSitePermissionsCustomSettingsRules()
+        )
+    }
+
+    @Test
+    fun overrideAmoCollection() {
+        // When just created
+        // Then
+        assertEquals("", settings.overrideAmoCollection)
+        assertFalse(settings.amoCollectionOverrideConfigured())
+
+        // When
+        settings.overrideAmoCollection = "testCollection"
+
+        // Then
+        assertEquals("testCollection", settings.overrideAmoCollection)
+        assertTrue(settings.amoCollectionOverrideConfigured())
+    }
+
+    @Test
+    fun overrideAmoUser() {
+        // When just created
+        // Then
+        assertEquals("", settings.overrideAmoUser)
+        assertFalse(settings.amoCollectionOverrideConfigured())
+
+        // When
+        settings.overrideAmoUser = "testAmoUser"
+
+        // Then
+        assertEquals("testAmoUser", settings.overrideAmoUser)
+        assertTrue(settings.amoCollectionOverrideConfigured())
     }
 }

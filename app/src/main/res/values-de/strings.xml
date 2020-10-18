@@ -220,6 +220,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Weitere Informationen</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">In einem neuen Firefox-Tab öffnen</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Suchen</string>
     <!-- Text preview for larger sized widgets -->
@@ -350,6 +352,20 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Benachrichtigungen</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Benutzerdefinierte Add-on-Sammlung</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Abbrechen</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Name der Sammlung</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Sammlungsbesitzer (Benutzer-ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Add-on-Sammlung geändert. Anwendung wird beendet, um Änderungen zu übernehmen…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -538,6 +554,14 @@
     <string name="recently_closed_empty_message">Keine kürzlich geschlossenen Tabs vorhanden</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tabs</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Tab-Ansicht</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Liste</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Raster</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Tabs schließen</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -616,6 +640,8 @@
     <string name="collection_open_tabs">Tabs öffnen</string>
 
 
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Name der Sammlung</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Entfernen</string>
 
@@ -654,6 +680,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d Elemente löschen</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Heute</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Gestern</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Letzte 24 Stunden</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -797,6 +827,8 @@
     <string name="preference_phone_feature_location">Standort</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Benachrichtigung</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Dauerhafter Speicher</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Um Erlaubnis fragen</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1197,6 +1229,8 @@
     <string name="sign_in_with_camera">Melden Sie sich mit Ihrer Kamera an</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Stattdessen E-Mail-Adresse verwenden</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Kein Konto? <u>Erstellen Sie eines</u>, um Firefox zwischen Geräten zu synchronisieren.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox beendet die Synchronisation mit Ihrem Konto, löscht aber keine Surf-Daten auf diesem Gerät.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1303,6 +1337,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-Bibliotheken</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Weiterleitungs-Tracker</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Löscht Cookies, die durch Weiterleitungen zu bekannten Tracking-Websites gesetzt wurden.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Hilfe</string>
@@ -1614,6 +1653,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Machen Sie das Beste aus %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Klicken Sie hier für weitere Details</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Sammeln Sie die Dinge, die Ihnen wichtig sind</string>

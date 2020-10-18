@@ -45,7 +45,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
-import org.mozilla.fenix.library.bookmarks.DesktopFolders
+import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
 
 /**
  * Menu to edit the name, URL, and location of a bookmark item.
@@ -88,9 +88,6 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     sharedViewModel.selectedFolder
                 } else {
                     bookmarkNode?.parentGuid?.let { bookmarksStorage.getBookmark(it) }
-                }?.let {
-                    // No-op for non-root nodes, and copies a node with a friendly title otherwise.
-                    DesktopFolders(context, showMobileRoot = true).withRootTitle(it)
                 }
             }
 
@@ -113,7 +110,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
             }
 
             bookmarkParent?.let { node ->
-                bookmarkParentFolderSelector.text = node.title
+                bookmarkParentFolderSelector.text = friendlyRootTitle(context, node)
             }
 
             bookmarkParentFolderSelector.setOnClickListener {
@@ -185,7 +182,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
-                    viewLifecycleOwner.lifecycleScope.launch(IO) {
+                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                    lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(args.guidToEdit)
                         requireComponents.analytics.metrics.track(Event.RemoveBookmark)
 

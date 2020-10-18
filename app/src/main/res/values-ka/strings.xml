@@ -48,7 +48,7 @@
     <string name="tab_tray_multiselect_selected_content_description">მონიშნულია</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
-    <string name="about_content">%1$s შექმნა Mozilla-მ.</string>
+    <string name="about_content">%1$s შემქმნელი Mozilla.</string>
 
     <!-- Private Browsing -->
     <!-- Title for private session option -->
@@ -143,6 +143,8 @@
     <string name="browser_menu_install_on_homescreen">დაყენება</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">დასინქრონებული ჩანართები</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">კვლავ დასინქრონება</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">პოვნა გვერდზე</string>
     <!-- Browser menu button that creates a private tab -->
@@ -210,6 +212,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">ვრცლად</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">ახალი Firefox-ჩანართის გახსნა</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">ძიება</string>
     <!-- Text preview for larger sized widgets -->
@@ -309,7 +313,7 @@
     <!-- Preference category for developer tools -->
     <string name="developer_tools_category">შემმუშავებლის ხელსაწყოები</string>
     <!-- Preference for developers -->
-    <string name="preferences_remote_debugging">დაშორებული გამართვა USB-ით</string>
+    <string name="preferences_remote_debugging">დაშორებული USB-გამართვა</string>
 
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">საძიებო სისტემების ჩვენება</string>
@@ -325,6 +329,8 @@
     <string name="preferences_search_browsing_history">ძიება დათვალიერების ისტორიაში</string>
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">სანიშნების ძიება</string>
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">დასინქრონებული ჩანართების მოძიება</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">ანგარიშის პარამეტრები</string>
     <!-- Preference for enabling url autocomplete-->
@@ -332,12 +338,26 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">ბმულების გახსნა პროგრამებში</string>
     <!-- Preference for open download with an external download manager app -->
-    <string name="preferences_external_download_manager">ჩამოტვირთვის გარეშე მმართველი</string>
+    <string name="preferences_external_download_manager">გარეშე მმართველი ჩამოტვირთვების</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">დამატებები</string>
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">შეტყობინებები</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">შერჩეული დამატებების კრებული</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">კარგი</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">გაუქმება</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">კრებულის დასახელება</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">კრებულის მფლობელი (მომხმარებლის ID)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">დამატებების კრებული შეიცვალა. დატოვეთ პროგრამა ცვლილებების ასასახად…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -523,6 +543,14 @@
     <string name="recently_closed_empty_message">ბოლოს დახურული ჩანართები არაა</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">ჩანართები</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">ჩანართის ხედი</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">სია</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">ბადე</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">ჩანართების დახურვა</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -600,6 +628,8 @@
     <string name="collection_rename">კრებულის გადარქმევა</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">ჩანართების გახსნა</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">კრებულის დასახელება</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">მოცილება</string>
 
@@ -639,6 +669,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">%1$d ჩანაწერის წაშლა</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">დღეს</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">გუშინ</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">ბოლო 24 საათი</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -778,6 +812,8 @@
     <string name="preference_phone_feature_location">მდებარეობა</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">შეტყობინება</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">მუდმივი მეხსიერება</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">კითხვა ყოველ ჯერზე</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -988,7 +1024,7 @@
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">გამოხვალთ ანგარიშებიდან უმეტეს საიტზე</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cached_files">შენახული სურათებისა და ფაილების ასლები</string>
+    <string name="preferences_delete_browsing_data_cached_files">სურათები და ფაილების კეში</string>
     <!-- Subtitle for the cached images and files item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cached_files_subtitle">გაათავისუფლებს მეხსიერებას</string>
     <!-- Title for the site permissions item in Delete browsing data -->
@@ -1159,6 +1195,8 @@
     <string name="sign_in_with_camera">შედით კამერის დახმარებით</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">ელფოსტის გამოყენება სანაცვლოდ</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[არ გაქვთ ანგარიში? <u>შექმენით</u> და დაასინქრონეთ Firefox მოწყობილობებზე.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox შეწყვეტს ამ ანგარიშის სინქრონიზაციას, მაგრამ ამ მოწყობილობიდან დათვალიერების მონაცემები არ წაიშლება.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1168,7 +1206,7 @@
     <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
     <string name="sign_out_cancel">გაუქმება</string>
     <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
-    <string name="bookmark_cannot_edit_root">ნაგულისხმევი საქაღალდეების ჩასწორება ვერ ხერხდება</string>
+    <string name="bookmark_cannot_edit_root">ნაგულისხმევი საქაღალდეების ჩასწორება ვერ მოხერხდება</string>
 
     <!-- Enhanced Tracking Protection -->
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
@@ -1234,7 +1272,7 @@
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">საიტთაშორისი მეთვალყურე ფუნთუშები</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description">ზღუდავს ფუნთუშებს, რომლებსაც სარეკლამო და ანალიტიკური კომპანიები იყენებენ თქვენზე მონაცემების ერთიანად აღრიცხვისთვის ბევრ საიტზე.</string>
+    <string name="etp_cookies_description">ზღუდავს ფუნთუშებს, რომლებსაც სარეკლამო და ანალიტიკური კომპანიები იყენებენ თქვენზე მონაცემების ერთიანად შეგროვებისთვის, სხვადასხვა საიტიდან.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">კრიპტოგამომმუშავებლები</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1268,6 +1306,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS-ბიბლიოთეკები</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">გადამმისამართებელი მეთვალყურეები</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">ასუფთავებს გადამისამართებით მიღებულ ფუნთუშებს, ცნობილი მეთვალყურეებისგან.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">მხარდაჭერა</string>
@@ -1405,7 +1448,7 @@
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">დაიცავით თქვენი ანგარიშები</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">დააყენეთ მოწყობილობის ჩასაკეტად მოსახაზი, PIN-კოდი ან პაროლი, თქვენი შენახული ანგარიშების მონაცემებთან, უცხო პირების წვდომის აღსაკვეთათ.</string>
+    <string name="logins_warning_dialog_message">დააყენეთ მოწყობილობის ჩასაკეტად მოსახაზი, PIN-კოდი ან პაროლი, თქვენი შენახული ანგარიშების მონაცემებთან, უცხო პირების წვდომის აღსაკვეთად.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">მოგვიანებით</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1581,6 +1624,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">სრულყოფილად გამოიყენეთ %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">დაწკაპეთ ვრცლად სანახავად</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">შეაგროვეთ, რაც თქვენთვის ღირებულია</string>

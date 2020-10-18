@@ -22,14 +22,9 @@ object FeatureFlags {
     val syncedTabsInTabsTray = Config.channel.isNightlyOrDebug
 
     /**
-     * Enables the new search experience
+     * Shows the grid view settings for the tabs tray.
      */
-    const val newSearchExperience = true
-
-    /**
-     * Enables showing the top frequently visited sites
-     */
-    const val topFrecentSite = true
+    val showGridViewInTabsSettings = Config.channel.isNightlyOrDebug
 
     /**
      * Enables wait til first contentful paint

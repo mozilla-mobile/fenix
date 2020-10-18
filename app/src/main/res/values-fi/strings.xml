@@ -218,6 +218,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Lue lisää</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Avaa uusi Firefox-välilehti</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Hae</string>
     <!-- Text preview for larger sized widgets -->
@@ -349,6 +351,20 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Ilmoitukset</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Mukautettu lisäosakokoelma</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Peruuta</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Kokoelman nimi</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Kokoelman omistaja (käyttäjätunniste)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Lisäosakokoelmaa muokattu. Lopetetaan sovellus, jotta muutokset tulevat voimaan…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -535,6 +551,14 @@
     <string name="recently_closed_empty_message">Ei viimeksi suljettuja välilehtiä</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Välilehdet</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Välilehtinäkymä</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Lista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Ruudukko</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Sulje välilehdet</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -614,6 +638,8 @@
     <string name="collection_open_tabs">Avaa välilehdet</string>
 
 
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Kokoelman nimi</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Poista</string>
 
@@ -653,6 +679,10 @@
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Poista %1$d tietuetta</string>
 
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Tänään</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Eilen</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Viimeiset 24 tuntia</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -791,6 +821,8 @@
     <string name="preference_phone_feature_location">Sijainti</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Ilmoitus</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Pysyvä tallennustila</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Kysy lupaa</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1178,6 +1210,8 @@
     <string name="sign_in_with_camera">Kirjaudu sisään kamerallasi</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Käytä sähköpostia</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Vailla tiliä? <u>Luo tili</u> synkronoidaksesi Firefox laitteiden välillä.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox lopettaa tilisi synkronoinnin, mutta ei poista mitään selaustietoja tältä laitteelta.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1285,6 +1319,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Avoimen lähdekoodin kirjastot</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Uudelleenohjausseuraimet</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Tyhjentää evästeet, jotka on asetettu tunnetuille seurantasivustoille johtavilla uudelleenohjauksilla.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Tuki</string>
@@ -1598,6 +1637,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Ota kaikki irti %sista.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Napsauta saadaksesi lisätietoja</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Kerää yhteen sinulle tärkeät asiat</string>

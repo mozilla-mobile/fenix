@@ -16,6 +16,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -41,8 +43,8 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -53,6 +55,7 @@ import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.normalSessionSize
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentState.Mode
 import org.mozilla.fenix.utils.allowUndo
 
@@ -159,6 +162,13 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         if (newConfig.orientation != currentOrientation) {
             tabTrayView.dismissMenu()
             tabTrayView.expand()
+
+            if (requireContext().settings().gridTabView) {
+                // Update the number of columns to use in the grid view when the screen
+                // orientation changes.
+                tabTrayView.updateTabsTrayLayout()
+            }
+
             currentOrientation = newConfig.orientation
         }
     }
@@ -257,19 +267,15 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
 
     private fun showUndoSnackbarForTab(sessionId: String) {
         val store = requireComponents.core.store
-        val sessionManager = requireComponents.core.sessionManager
-
         val tab = requireComponents.core.store.state.findTab(sessionId) ?: return
-        val session = sessionManager.findSessionById(sessionId) ?: return
 
         // Check if this is the last tab of this session type
-        val isLastOpenTab = store.state.tabs.filter { it.content.private == tab.content.private }.size == 1
+        val isLastOpenTab =
+            store.state.tabs.filter { it.content.private == tab.content.private }.size == 1
         if (isLastOpenTab) {
             dismissTabTrayAndNavigateHome(sessionId)
             return
         }
-
-        val isSelected = sessionId == requireComponents.core.store.state.selectedTabId ?: false
 
         val snackbarMessage = if (tab.content.private) {
             getString(R.string.snackbar_private_tab_closed)
@@ -282,8 +288,8 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
             snackbarMessage,
             getString(R.string.snackbar_deleted_undo),
             {
-                sessionManager.add(session, isSelected, engineSessionState = tab.engineState.engineSessionState)
-                _tabTrayView?.scrollToTab(session.id)
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+                _tabTrayView?.scrollToTab(tab.id)
             },
             operation = { },
             elevation = ELEVATION,
@@ -291,8 +297,13 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
         )
     }
 
+    private val homeViewModel: HomeScreenViewModel by activityViewModels {
+        ViewModelProvider.NewInstanceFactory() // this is a workaround for #4652
+    }
+
     private fun dismissTabTrayAndNavigateHome(sessionId: String) {
-        val directions = BrowserFragmentDirections.actionGlobalHome(sessionToDelete = sessionId)
+        homeViewModel.sessionToDelete = sessionId
+        val directions = NavGraphDirections.actionGlobalHome()
         findNavController().navigate(directions)
         dismissAllowingStateLoss()
     }
@@ -413,7 +424,7 @@ class TabTrayDialogFragment : AppCompatDialogFragment(), UserInteractionHandler 
 
             AlertDialog.Builder(it).setTitle(R.string.tab_tray_add_new_collection)
                 .setView(customLayout).setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         tabCollectionStorage.createCollection(
                             collectionNameEditText.text.toString(),
                             sessionList

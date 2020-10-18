@@ -59,8 +59,8 @@
             android:defaultValue="false"
             android:dependency="@string/pref_key_show_search_suggestions"
             android:key="@string/pref_key_show_search_suggestions_in_private"
-            android:title="@string/preferences_show_search_suggestions_in_private"
             android:layout="@layout/checkbox_left_sub_preference"
+            android:title="@string/preferences_show_search_suggestions_in_private"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

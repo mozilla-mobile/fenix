@@ -14,11 +14,12 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.browser.tabstray.TabsAdapter
 import mozilla.components.concept.tabstray.Tab
 import mozilla.components.concept.tabstray.Tabs
-import mozilla.components.support.images.loader.ImageLoader
+import mozilla.components.concept.base.images.ImageLoader
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.metrics
+import org.mozilla.fenix.ext.settings
 
 class FenixTabsAdapter(
     private val context: Context,
@@ -27,7 +28,7 @@ class FenixTabsAdapter(
     viewHolderProvider = { parentView ->
         TabTrayViewHolder(
             LayoutInflater.from(context).inflate(
-                R.layout.tab_tray_item,
+                if (context.settings().gridTabView) R.layout.tab_tray_grid_item else R.layout.tab_tray_item,
                 parentView,
                 false
             ),

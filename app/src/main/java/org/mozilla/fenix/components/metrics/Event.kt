@@ -67,7 +67,8 @@ sealed class Event {
     object SyncAuthPaired : Event()
     object SyncAuthRecovered : Event()
     object SyncAuthOtherExternal : Event()
-    object SyncAuthFromShared : Event()
+    object SyncAuthFromSharedReuse : Event()
+    object SyncAuthFromSharedCopy : Event()
     object SyncAccountOpened : Event()
     object SyncAccountClosed : Event()
     object SyncAccountSyncNow : Event()
@@ -192,6 +193,8 @@ sealed class Event {
 
     object MasterPasswordMigrationSuccess : Event()
     object MasterPasswordMigrationDisplayed : Event()
+
+    object TabSettingsOpened : Event()
 
     // Interaction events with extras
 
@@ -336,7 +339,8 @@ sealed class Event {
     data class AppAllStartup(
         val source: Source,
         val type: Type,
-        val hasSavedInstanceState: Boolean? = null
+        val hasSavedInstanceState: Boolean? = null,
+        var launchTime: Long? = null
     ) : Event() {
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
         enum class Type { COLD, WARM, HOT, ERROR }
@@ -352,6 +356,10 @@ sealed class Event {
                 if (hasSavedInstanceState != null) {
                     extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
                         hasSavedInstanceState.toString()
+                }
+                if (launchTime != null) {
+                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
+                        launchTime.toString()
                 }
                 return extrasMap
             }

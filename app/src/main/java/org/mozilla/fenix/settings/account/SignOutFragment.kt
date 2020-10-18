@@ -50,8 +50,10 @@ class SignOutFragment : BottomSheetDialogFragment() {
     ): View? {
         accountManager = requireComponents.backgroundServices.accountManager
         val view = inflater.inflate(R.layout.fragment_sign_out, container, false)
-        view.sign_out_message.text = view.context.getString(
-            R.string.sign_out_confirmation_message_2,
+        view.sign_out_message.text = String.format(
+            view.context.getString(
+                R.string.sign_out_confirmation_message_2
+            ),
             view.context.getString(R.string.app_name)
         )
         return view
@@ -64,7 +66,7 @@ class SignOutFragment : BottomSheetDialogFragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 requireComponents
                     .backgroundServices.accountAbnormalities.userRequestedLogout()
-                accountManager.logoutAsync().await()
+                accountManager.logout()
             }.invokeOnCompletion {
                 if (!findNavController().popBackStack(R.id.settingsFragment, false)) {
                     dismiss()

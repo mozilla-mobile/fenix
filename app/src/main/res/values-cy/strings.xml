@@ -145,6 +145,8 @@
     <string name="browser_menu_install_on_homescreen">Gosod</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Tabiau wedi’u cydweddu</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Ailgydweddu</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Canfod yn y dudalen</string>
     <!-- Browser menu button that creates a private tab -->
@@ -212,6 +214,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Dysgu rhagor</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Agorwch tab Firefox newydd</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Chwilio</string>
     <!-- Text preview for larger sized widgets -->
@@ -342,6 +346,20 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Hysbysiadau</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Casgliad Ychwanegion Cyfaddas</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">Iawn</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Diddymu</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Enw’r casgliad</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Perchennog y casgliad (ID Defnyddiwr)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Mae’r casgliad Ychwanegion wedi’i addasu. Yn gadael y rhaglen i osod y newidiadau…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -525,6 +543,14 @@
     <string name="recently_closed_empty_message">Dim tabiau wedi’u cau yn ddiweddar yma </string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tabiau</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Golwg tab</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Rhestr</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Grid</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Cau tabiau</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -602,6 +628,8 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Agor tabiau</string>
 
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Enw’r casgliad</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Tynnu</string>
 
@@ -640,6 +668,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Dileu %1$d eitem</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Heddiw</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ddoe</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 awr ddiwethaf</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -779,6 +811,8 @@
     <string name="preference_phone_feature_location">Lleoliad</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Hysbysiad</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Storfa Barhaol</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Gofyn i ganiatáu</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1160,6 +1194,8 @@ Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr Beta i gael profiad 
     <string name="sign_in_with_camera">Mewngofnodi gyda’ch camera</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Defnyddiwch e-bost yn lle hynny</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Dim cyfrif? <u>Crëwch un</u> i gydweddu Firefox rhwng dyfeisiau.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Bydd Firefox yn peidio cydweddu eich cyfrif ond ni fydd yn dileu eich data pori ar y ddyfais hon.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1267,6 +1303,11 @@ Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr Beta i gael profiad 
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s| Llyfrgelloedd OSS</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Ailgyfeirio Tracwyr</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Yn clirio cwcis wedi’u gosod i ailgyfeirio i wefannau tracio hysbys.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Cefnogaeth</string>
@@ -1578,6 +1619,9 @@ Fodd bynnag, gall fod yn llai sefydlog. Llwythwch ein porwr Beta i gael profiad 
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Cael y gorau o %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Cliciwch am ragor o fanylion</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Casglwch y pethau sy’n bwysig i chi</string>

@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.*
 import kotlinx.android.synthetic.main.tracking_protection_onboarding_popup.view.*
 import mozilla.components.browser.session.Session
@@ -43,13 +44,32 @@ class TrackingProtectionOverlay(
     }
 
     private fun shouldShowTrackingProtectionOnboarding(session: Session) =
-        settings.shouldShowTrackingProtectionOnboarding &&
-            session.trackerBlockingEnabled &&
-            session.trackersBlocked.isNotEmpty()
+        session.trackerBlockingEnabled &&
+            session.trackersBlocked.isNotEmpty() &&
+            settings.shouldShowTrackingProtectionCfr
 
     @Suppress("MagicNumber", "InflateParams")
     private fun showTrackingProtectionOnboarding() {
+
         if (!getToolbar().hasWindowFocus()) return
+
+        val toolbarPosition = settings.toolbarPosition
+
+        when (toolbarPosition) {
+            ToolbarPosition.BOTTOM -> {
+                if (getToolbar().translationY > 0) {
+                    return
+                }
+            }
+            ToolbarPosition.TOP -> {
+                val appBarLayout = getToolbar().parent as? AppBarLayout
+                appBarLayout?.let { appBar ->
+                    if (appBar.y != 0.toFloat()) {
+                        return
+                    }
+                }
+            }
+        }
 
         val trackingOnboardingDialog = object : Dialog(context) {
             override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -57,13 +77,12 @@ class TrackingProtectionOverlay(
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     metrics.track(Event.ContextualHintETPOutsideTap)
                 }
-                    return super.onTouchEvent(event)
-                }
+                return super.onTouchEvent(event)
             }
+        }
 
         val layout = LayoutInflater.from(context)
             .inflate(R.layout.tracking_protection_onboarding_popup, null)
-        val toolbarPosition = settings.toolbarPosition
 
         layout.drop_down_triangle.isVisible = toolbarPosition == ToolbarPosition.TOP
         layout.pop_up_triangle.isVisible = toolbarPosition == ToolbarPosition.BOTTOM
@@ -121,6 +140,7 @@ class TrackingProtectionOverlay(
 
         metrics.track(Event.ContextualHintETPDisplayed)
         trackingOnboardingDialog.show()
+        settings.lastCfrShownTimeInMillis = System.currentTimeMillis()
         settings.incrementTrackingProtectionOnboardingCount()
     }
 

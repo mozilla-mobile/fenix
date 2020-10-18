@@ -48,6 +48,7 @@ import org.mozilla.fenix.GleanMetrics.SearchWidgetCfr
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.GleanMetrics.Tab
+import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.GleanMetrics.Tip
 import org.mozilla.fenix.GleanMetrics.ToolbarSettings
@@ -269,7 +270,7 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.SyncAuthOtherExternal -> EventWrapper<NoExtraKeys>(
             { SyncAuth.otherExternal.record(it) }
         )
-        is Event.SyncAuthFromShared -> EventWrapper<NoExtraKeys>(
+        is Event.SyncAuthFromSharedReuse, Event.SyncAuthFromSharedCopy -> EventWrapper<NoExtraKeys>(
             { SyncAuth.autoLogin.record(it) }
         )
         is Event.SyncAuthRecovered -> EventWrapper<NoExtraKeys>(
@@ -705,6 +706,9 @@ private val Event.wrapper: EventWrapper<*>?
         Event.MasterPasswordMigrationSuccess -> EventWrapper<NoExtraKeys>(
             { MasterPassword.migration.record(it) }
         )
+        Event.TabSettingsOpened -> EventWrapper<NoExtraKeys>(
+            { Tabs.settingOpened.record(it) }
+        )
 
         // Don't record other events in Glean:
         is Event.AddBookmark -> null
@@ -719,7 +723,11 @@ private val Event.wrapper: EventWrapper<*>?
         is Event.ChangedToDefaultBrowser -> null
     }
 
-class GleanMetricsService(private val context: Context) : MetricsService {
+class GleanMetricsService(
+    private val context: Context,
+    private val browsersCache: BrowsersCache = BrowsersCache,
+    private val mozillaProductDetector: MozillaProductDetector = MozillaProductDetector
+) : MetricsService {
     override val type = MetricServiceType.Data
 
     private val logger = Logger("GleanMetricsService")
@@ -754,12 +762,12 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
     internal fun setStartupMetrics() {
         setPreferenceMetrics()
-        Metrics.apply {
-            defaultBrowser.set(BrowsersCache.all(context).isDefaultBrowser)
-            MozillaProductDetector.getMozillaBrowserDefault(context)?.also {
+        with(Metrics) {
+            defaultBrowser.set(browsersCache.all(context).isDefaultBrowser)
+            mozillaProductDetector.getMozillaBrowserDefault(context)?.also {
                 defaultMozBrowser.set(it)
             }
-            mozillaProducts.set(MozillaProductDetector.getInstalledMozillaProducts(context))
+            mozillaProducts.set(mozillaProductDetector.getInstalledMozillaProducts(context))
 
             adjustCampaign.set(context.settings().adjustCampaignId)
             adjustAdGroup.set(context.settings().adjustAdGroup)
@@ -786,6 +794,9 @@ class GleanMetricsService(private val context: Context) : MetricsService {
                     ToolbarPosition.TOP -> Event.ToolbarPositionChanged.Position.TOP.name
                 }
             )
+
+            tabViewSetting.set(context.settings().getTabViewPingString())
+            closeTabSetting.set(context.settings().getTabTimeoutPingString())
         }
 
         SearchDefaultEngine.apply {
@@ -808,7 +819,7 @@ class GleanMetricsService(private val context: Context) : MetricsService {
         // We purposefully make all of our preferences the string_list format to make data analysis
         // simpler. While it makes things like booleans a bit more complicated, it means all our
         // preferences can be analyzed with the same dashboard and compared.
-        Preferences.apply {
+        with(Preferences) {
             showSearchSuggestions.set(context.settings().shouldShowSearchSuggestions.toStringList())
             remoteDebugging.set(context.settings().isRemoteDebuggingEnabled.toStringList())
             telemetry.set(context.settings().isTelemetryEnabled.toStringList())
@@ -859,7 +870,9 @@ class GleanMetricsService(private val context: Context) : MetricsService {
 
             val accessibilitySelection = mutableListOf<String>()
 
-            if (context.settings().switchServiceIsEnabled) { accessibilitySelection.add("switch") }
+            if (context.settings().switchServiceIsEnabled) {
+                accessibilitySelection.add("switch")
+            }
 
             if (context.settings().touchExplorationIsEnabled) {
                 accessibilitySelection.add("touch exploration")

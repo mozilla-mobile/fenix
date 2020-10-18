@@ -149,6 +149,8 @@
     <string name="browser_menu_install_on_homescreen">Mohenda</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Tendayke mbojuehepyre</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Mbojuajujey</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Eheka kuatiaroguépe</string>
     <!-- Browser menu button that creates a private tab -->
@@ -346,6 +348,21 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Ñemomarandu</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Moĩmbaha aty momba’epyre</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">MONEĨ</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Heja</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Ñembyatyha réra</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Ñembyatyha jára (puruhára ID)</string>
+
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Moĩmbaha aty moambuepyre. Embotyhína tembipuru’i emoambuekuaa hag̃ua…</string>
+
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Embojuehe ko’ág̃a</string>
@@ -532,6 +549,14 @@
     <string name="recently_closed_empty_message">Ndaipóri tendayke oñemboty ramóva</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tendayke</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Tendayke jehecha</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Tysýi</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Kora’ieta</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Emboty tendayke</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -649,6 +674,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Emboguete %1$d mba’epuru</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Ko’árape</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Kuehe</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 aravo ohasamóva</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -791,6 +820,8 @@
     <string name="preference_phone_feature_location">Tendaite</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Ñemomarandu</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Ñongatuharenda areguáva</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Ejerure ñemoneĩ</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1178,6 +1209,8 @@
     <string name="sign_in_with_camera">Eñepyrũ tembiapo ne ra’ãngamýi ndive</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Eipuru ñandutiveve</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[¿Ndererekói mba’ete? <u>Emoheñói</u> embojuehe hag̃ua Firefox mba’e’oka ndive.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox nombojuehemo’ãvéima ne mba’ete, hákatu nomboguemo’ãi ne kundahára mba’ekuaarã ko mba’e’oka pegua.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1289,6 +1322,11 @@
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | OSS Arandukarenda</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Embohapejey tapykuehoha</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Embogue umi kookie oñembohapejeýva ñanduti renda rapykuehohápe.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Ñepytyvõ</string>

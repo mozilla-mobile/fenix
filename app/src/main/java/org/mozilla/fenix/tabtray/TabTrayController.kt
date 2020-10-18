@@ -43,6 +43,7 @@ interface TabTrayController {
     fun handleOpenTab(tab: Tab)
     fun handleEnterMultiselect()
     fun handleRecentlyClosedClicked()
+    fun handleSetUpAutoCloseTabsClicked()
 }
 
 /**
@@ -91,7 +92,7 @@ class DefaultTabTrayController(
     }
 
     override fun handleTabSettingsClicked() {
-        navController.navigate(TabTrayDialogFragmentDirections.actionGlobalCloseTabSettingsFragment())
+        navController.navigate(TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment())
     }
 
     override fun onTabTrayDismissed() {
@@ -182,6 +183,11 @@ class DefaultTabTrayController(
 
     override fun handleRecentlyClosedClicked() {
         val directions = TabTrayDialogFragmentDirections.actionGlobalRecentlyClosed()
+        navController.navigate(directions)
+    }
+
+    override fun handleSetUpAutoCloseTabsClicked() {
+        val directions = TabTrayDialogFragmentDirections.actionGlobalTabSettingsFragment()
         navController.navigate(directions)
     }
 }

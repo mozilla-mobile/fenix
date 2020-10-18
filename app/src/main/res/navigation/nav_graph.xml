@@ -24,10 +24,6 @@
         app:popUpToInclusive="false" />
 
     <action
-        android:id="@+id/action_global_search"
-        app:destination="@id/searchFragment" />
-
-    <action
         android:id="@+id/action_global_search_dialog"
         app:destination="@id/searchDialogFragment" />
 
@@ -115,8 +111,8 @@
         android:id="@+id/action_global_tabHistoryDialogFragment"
         app:destination="@id/tabHistoryDialogFragment" />
     <action
-        android:id="@+id/action_global_closeTabSettingsFragment"
-        app:destination="@id/closeTabsSettingsFragment" />
+        android:id="@+id/action_global_tabSettingsFragment"
+        app:destination="@id/tabsSettingsFragment" />
 
     <dialog
         android:id="@+id/tabTrayDialogFragment"
@@ -136,16 +132,11 @@
             android:name="focusOnAddressBar"
             android:defaultValue="false"
             app:argType="boolean" />
-        <argument
-            android:name="session_to_delete"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
     </fragment>
 
     <dialog
         android:id="@+id/searchDialogFragment"
-        android:name="org.mozilla.fenix.searchdialog.SearchDialogFragment"
+        android:name="org.mozilla.fenix.search.SearchDialogFragment"
         tools:layout="@layout/fragment_search_dialog">
         <argument
             android:name="session_id"
@@ -161,25 +152,6 @@
             android:defaultValue="NONE"
             app:argType="org.mozilla.fenix.components.metrics.Event$PerformedSearch$SearchAccessPoint" />
     </dialog>
-
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="org.mozilla.fenix.search.SearchFragment"
-        tools:layout="@layout/fragment_search">
-        <argument
-            android:name="session_id"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="pastedText"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="search_access_point"
-            android:defaultValue="NONE"
-            app:argType="org.mozilla.fenix.components.metrics.Event$PerformedSearch$SearchAccessPoint" />
-    </fragment>
 
     <fragment
         android:id="@+id/recentlyClosedFragment"
@@ -200,11 +172,6 @@
         android:name="org.mozilla.fenix.browser.BrowserFragment"
         app:exitAnim="@anim/fade_out"
         tools:layout="@layout/fragment_browser">
-        <action
-            android:id="@+id/action_browserFragment_to_searchFragment"
-            app:destination="@id/searchFragment"
-            app:enterAnim="@anim/fade_in_up"
-            app:popExitAnim="@anim/fade_out_down" />
         <argument
             android:name="activeSessionId"
             app:argType="string"
@@ -546,17 +513,17 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_settingsFragment_to_closeTabsSettingsFragment"
-            app:destination="@id/closeTabsSettingsFragment"
+            android:id="@+id/action_settingsFragment_to_tabsSettingsFragment"
+            app:destination="@id/tabsSettingsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/closeTabsSettingsFragment"
-        android:name="org.mozilla.fenix.settings.CloseTabsSettingsFragment"
-        android:label="@string/preferences_close_tabs" />
+        android:id="@+id/tabsSettingsFragment"
+        android:name="org.mozilla.fenix.settings.TabsSettingsFragment"
+        android:label="@string/preferences_tabs" />
     <fragment
         android:id="@+id/dataChoicesFragment"
         android:name="org.mozilla.fenix.settings.DataChoicesFragment"
@@ -836,7 +803,12 @@
     <dialog
         android:id="@+id/tabHistoryDialogFragment"
         android:name="org.mozilla.fenix.tabhistory.TabHistoryDialogFragment"
-        tools:layout="@layout/fragment_tab_history_dialog" />
+        tools:layout="@layout/fragment_tab_history_dialog">
+        <argument
+            android:name="activeSessionId"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
 
     <navigation
         android:id="@+id/site_permissions_exceptions_graph"

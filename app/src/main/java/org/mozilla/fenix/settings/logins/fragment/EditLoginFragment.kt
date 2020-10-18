@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.logins.fragment
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -12,7 +13,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,11 +32,11 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
-import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.SavedLogin
-import org.mozilla.fenix.settings.logins.togglePasswordReveal
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
+import org.mozilla.fenix.settings.logins.togglePasswordReveal
 
 /**
  * Displays the editable saved login information for a single website
@@ -54,7 +56,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     private var usernameChanged = false
     private var passwordChanged = false
-    private var saveEnabled = false
 
     private var validPassword = true
     private var validUsername = true
@@ -66,22 +67,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
         loginsFragmentStore = StoreProvider.get(this) {
             LoginsFragmentStore(
-                LoginsListState(
-                    isLoading = true,
-                    loginList = listOf(),
-                    filteredItems = listOf(),
-                    searchedForText = null,
-                    sortingStrategy = requireContext().settings().savedLoginsSortingStrategy,
-                    highlightedItem = requireContext().settings().savedLoginsMenuHighlightedItem,
-                    duplicateLogins = listOf()
-                )
+                createInitialLoginsListState(requireContext().settings())
             )
         }
 
         interactor = EditLoginInteractor(
             SavedLoginsStorageController(
                 passwordsStorage = requireContext().components.core.passwordsStorage,
-                viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
+                lifecycleScope = lifecycleScope,
                 navController = findNavController(),
                 loginsFragmentStore = loginsFragmentStore
             )
@@ -95,8 +88,9 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         usernameText.text = args.savedLoginItem.username.toEditable()
         passwordText.text = args.savedLoginItem.password.toEditable()
 
+        clearUsernameTextButton.isEnabled = oldLogin.username.isNotEmpty()
+
         formatEditableValues()
-        initSaveState()
         setUpClickListeners()
         setUpTextListeners()
         togglePasswordReveal(passwordText, revealPasswordButton)
@@ -104,16 +98,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         consumeFrom(loginsFragmentStore) {
             listOfPossibleDupes = loginsFragmentStore.state.duplicateLogins
         }
-    }
-
-    private fun initSaveState() {
-        saveEnabled = false // don't enable saving until something has been changed
-        val saveButton =
-            activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
-        saveButton?.isEnabled = saveEnabled
-
-        usernameChanged = false
-        passwordChanged = false
     }
 
     private fun formatEditableValues() {
@@ -140,7 +124,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             passwordText.isCursorVisible = true
             passwordText.hasFocus()
             inputLayoutPassword.hasFocus()
-            it.isEnabled = false
         }
         revealPasswordButton.setOnClickListener {
             togglePasswordReveal(passwordText, revealPasswordButton)
@@ -168,13 +151,14 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         validUsername = true
                         inputLayoutUsername.error = null
                         inputLayoutUsername.errorIconDrawable = null
+                        clearUsernameTextButton.isVisible = true
                     }
                     else -> {
                         usernameChanged = true
-                        clearUsernameTextButton.isEnabled = true
                         setDupeError()
                     }
                 }
+                clearUsernameTextButton.isEnabled = u.toString().isNotEmpty()
                 setSaveButtonState()
             }
 
@@ -192,7 +176,8 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 when {
                     p.toString().isEmpty() -> {
                         passwordChanged = true
-                        clearPasswordTextButton.isEnabled = false
+                        revealPasswordButton.isVisible = false
+                        clearPasswordTextButton.isVisible = false
                         setPasswordError()
                     }
                     p.toString() == oldLogin.password -> {
@@ -200,14 +185,16 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                         validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
-                        clearPasswordTextButton.isEnabled = true
+                        revealPasswordButton.isVisible = true
+                        clearPasswordTextButton.isVisible = true
                     }
                     else -> {
                         passwordChanged = true
                         validPassword = true
                         inputLayoutPassword.error = null
                         inputLayoutPassword.errorIconDrawable = null
-                        clearPasswordTextButton.isEnabled = true
+                        revealPasswordButton.isVisible = true
+                        clearPasswordTextButton.isVisible = true
                     }
                 }
                 setSaveButtonState()
@@ -231,13 +218,21 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             inputLayoutUsername?.let {
                 usernameChanged = true
                 validUsername = false
-                it.setErrorIconDrawable(R.drawable.mozac_ic_warning)
                 it.error = context?.getString(R.string.saved_login_duplicate)
+                it.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
+                it.setErrorIconTintList(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.design_error)
+                    )
+                )
+                clearUsernameTextButton.isVisible = false
             }
         } else {
             usernameChanged = true
             validUsername = true
             inputLayoutUsername.error = null
+            inputLayoutUsername.errorIconDrawable = null
+            clearUsernameTextButton.isVisible = true
         }
     }
 
@@ -245,23 +240,28 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         inputLayoutPassword?.let { layout ->
             validPassword = false
             layout.error = context?.getString(R.string.saved_login_password_required)
-            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning)
+            layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
+            layout.setErrorIconTintList(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.design_error)
+                )
+            )
         }
     }
 
     private fun setSaveButtonState() {
-        val saveButton = activity?.findViewById<ActionMenuItemView>(R.id.save_login_button)
-        val changesMadeWithNoErrors =
-            validUsername && validPassword && (usernameChanged || passwordChanged)
-
-        changesMadeWithNoErrors.let {
-            saveButton?.isEnabled = it
-            saveEnabled = it
-        }
+        activity?.invalidateOptionsMenu()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.login_save, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val saveButton = menu.findItem(R.id.save_login_button)
+        val changesMadeWithNoErrors =
+            validUsername && validPassword && (usernameChanged || passwordChanged)
+        saveButton.isEnabled = changesMadeWithNoErrors // don't enable saving until something has been changed
     }
 
     override fun onPause() {
@@ -275,14 +275,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.save_login_button -> {
             view?.hideKeyboard()
-            if (saveEnabled) {
-                interactor.onSaveLogin(
-                    args.savedLoginItem.guid,
-                    usernameText.text.toString(),
-                    passwordText.text.toString()
-                )
-                requireComponents.analytics.metrics.track(Event.EditLoginSave)
-            }
+            interactor.onSaveLogin(
+                args.savedLoginItem.guid,
+                usernameText.text.toString(),
+                passwordText.text.toString()
+            )
+            requireComponents.analytics.metrics.track(Event.EditLoginSave)
             true
         }
         else -> false

@@ -22,6 +22,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
@@ -43,6 +44,7 @@ import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.INFINITE_CHAR_PADDING_BOTTOM
 import org.mozilla.fenix.components.toolbar.TabCounter.Companion.MAX_VISIBLE_TABS
@@ -88,7 +90,8 @@ class TabTrayView(
     private var tabsTouchHelper: TabsTouchHelper
     private val collectionsButtonAdapter = SaveToCollectionsButtonAdapter(interactor, isPrivate)
 
-    private val syncedTabsController = SyncedTabsController(lifecycleOwner, view, store, concatAdapter)
+    private val syncedTabsController =
+        SyncedTabsController(lifecycleOwner, view, store, concatAdapter)
     private val syncedTabsFeature = ViewBoundFeatureWrapper<SyncedTabsFeature>()
 
     private var hasLoaded = false
@@ -97,6 +100,14 @@ class TabTrayView(
         get() = container
 
     private val components = container.context.components
+
+    private val checkOpenTabs = {
+        if (isPrivateModeSelected) {
+            view.context.components.core.store.state.privateTabs.isNotEmpty()
+        } else {
+            view.context.components.core.store.state.normalTabs.isNotEmpty()
+        }
+    }
 
     init {
         components.analytics.metrics.track(Event.TabsTrayOpened)
@@ -164,11 +175,9 @@ class TabTrayView(
             )
         }
 
+        updateTabsTrayLayout()
+
         view.tabsTray.apply {
-            layoutManager = LinearLayoutManager(container.context).apply {
-                reverseLayout = true
-                stackFromEnd = true
-            }
             adapter = concatAdapter
 
             tabsTouchHelper = TabsTouchHelper(
@@ -180,11 +189,15 @@ class TabTrayView(
 
             tabsAdapter.tabTrayInteractor = interactor
             tabsAdapter.onTabsUpdated = {
-                // Put the 'Add to collections' button after the tabs have loaded.
-                concatAdapter.addAdapter(0, collectionsButtonAdapter)
-
-                // Put the Synced Tabs adapter at the end.
-                concatAdapter.addAdapter(0, syncedTabsController.adapter)
+                if (view.context.settings().gridTabView) {
+                    concatAdapter.addAdapter(collectionsButtonAdapter)
+                    concatAdapter.addAdapter(syncedTabsController.adapter)
+                } else {
+                    // Put the 'Add to collections' button after the tabs have loaded.
+                    concatAdapter.addAdapter(0, collectionsButtonAdapter)
+                    // Put the Synced Tabs adapter at the end.
+                    concatAdapter.addAdapter(syncedTabsController.adapter)
+                }
 
                 if (hasAccessibilityEnabled) {
                     tabsAdapter.notifyItemRangeChanged(0, tabs.size)
@@ -210,7 +223,11 @@ class TabTrayView(
         }
 
         tabTrayItemMenu =
-            TabTrayItemMenu(view.context, { view.tab_layout.selectedTabPosition == 0 }) {
+            TabTrayItemMenu(
+                context = view.context,
+                shouldShowSaveToCollection = { checkOpenTabs.invoke() && view.tab_layout.selectedTabPosition == 0 },
+                hasOpenTabs = checkOpenTabs
+            ) {
                 when (it) {
                     is TabTrayItemMenu.Item.ShareAllTabs -> interactor.onShareTabsClicked(
                         isPrivateModeSelected
@@ -239,6 +256,28 @@ class TabTrayView(
         }
 
         adjustNewTabButtonsForNormalMode()
+
+        if (
+            view.context.settings().shouldShowAutoCloseTabsBanner &&
+            view.context.settings().canShowCfr &&
+            tabs.size >= TAB_COUNT_SHOW_CFR
+        ) {
+            InfoBanner(
+                context = view.context,
+                message = view.context.getString(R.string.tab_tray_close_tabs_banner_message),
+                dismissText = view.context.getString(R.string.tab_tray_close_tabs_banner_negative_button_text),
+                actionText = view.context.getString(R.string.tab_tray_close_tabs_banner_positive_button_text),
+                container = view.infoBanner,
+                dismissByHiding = true,
+                dismissAction = { view.context.settings().shouldShowAutoCloseTabsBanner = false }
+            ) {
+                interactor.onSetUpAutoCloseTabsClicked()
+                view.context.settings().shouldShowAutoCloseTabsBanner = false
+            }.apply {
+                view.infoBanner.visibility = View.VISIBLE
+                showBanner()
+            }
+        }
     }
 
     private fun handleTabClicked(tab: SyncTab) {
@@ -308,6 +347,53 @@ class TabTrayView(
 
     var mode: Mode = Mode.Normal
         private set
+
+    fun updateTabsTrayLayout() {
+        if (container.context.settings().gridTabView) {
+            setupGridTabView()
+        } else {
+            setupListTabView()
+        }
+    }
+
+    private fun setupGridTabView() {
+        view.tabsTray.apply {
+            val gridLayoutManager =
+                GridLayoutManager(container.context, getNumberOfGridColumns(container.context))
+
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val numTabs = tabsAdapter.itemCount
+                    return if (position < numTabs) {
+                        1
+                    } else {
+                        getNumberOfGridColumns(container.context)
+                    }
+                }
+            }
+
+            layoutManager = gridLayoutManager
+        }
+    }
+
+    /**
+     * Returns the number of columns that will fit in the grid layout for the current screen.
+     */
+    private fun getNumberOfGridColumns(context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
+        val columnCount = (screenWidthDp / COLUMN_WIDTH_DP).toInt()
+        return if (columnCount >= 2) columnCount else 2
+    }
+
+    private fun setupListTabView() {
+        view.tabsTray.apply {
+            layoutManager = LinearLayoutManager(container.context).apply {
+                reverseLayout = true
+                stackFromEnd = true
+            }
+        }
+    }
 
     fun updateState(state: TabTrayDialogFragmentState) {
         val oldMode = mode
@@ -408,7 +494,6 @@ class TabTrayView(
         } else {
             View.VISIBLE
         }
-        view.tab_tray_overflow.isVisible = !hasNoTabs
 
         counter_text.text = updateTabCounter(browserState.normalTabs.size)
         updateTabCounterContentDescription(browserState.normalTabs.size)
@@ -433,14 +518,14 @@ class TabTrayView(
                 if (multiselect) {
                     R.dimen.tab_tray_multiselect_handle_height
                 } else {
-                    R.dimen.tab_tray_normal_handle_height
+                    R.dimen.bottom_sheet_handle_height
                 }
             )
             topMargin = view.resources.getDimensionPixelSize(
                 if (multiselect) {
                     R.dimen.tab_tray_multiselect_handle_top_margin
                 } else {
-                    R.dimen.tab_tray_normal_handle_top_margin
+                    R.dimen.bottom_sheet_handle_top_margin
                 }
             )
         }
@@ -496,7 +581,7 @@ class TabTrayView(
         view.tab_layout.getTabAt(0)?.contentDescription = if (count == 1) {
             view.context?.getString(R.string.open_tab_tray_single)
         } else {
-            view.context?.getString(R.string.open_tab_tray_plural, count.toString())
+            String.format(view.context.getString(R.string.open_tab_tray_plural), count.toString())
         }
 
         view.tabsTray.accessibilityDelegate = object : View.AccessibilityDelegate() {
@@ -578,18 +663,21 @@ class TabTrayView(
     }
 
     companion object {
+        private const val TAB_COUNT_SHOW_CFR = 6
         private const val DEFAULT_TAB_ID = 0
         private const val PRIVATE_TAB_ID = 1
         private const val EXPAND_AT_SIZE = 3
         private const val SLIDE_OFFSET = 0
         private const val SELECTION_DELAY = 500
         private const val NORMAL_HANDLE_PERCENT_WIDTH = 0.1F
+        private const val COLUMN_WIDTH_DP = 180
     }
 }
 
 class TabTrayItemMenu(
     private val context: Context,
     private val shouldShowSaveToCollection: () -> Boolean,
+    private val hasOpenTabs: () -> Boolean,
     private val onItemTapped: (Item) -> Unit = {}
 ) {
 
@@ -619,7 +707,7 @@ class TabTrayItemMenu(
             ) {
                 context.components.analytics.metrics.track(Event.TabsTrayShareAllTabsPressed)
                 onItemTapped.invoke(Item.ShareAllTabs)
-            },
+            }.apply { visible = hasOpenTabs },
 
             SimpleBrowserMenuItem(
                 context.getString(R.string.tab_tray_menu_tab_settings),
@@ -641,7 +729,7 @@ class TabTrayItemMenu(
             ) {
                 context.components.analytics.metrics.track(Event.TabsTrayCloseAllTabsPressed)
                 onItemTapped.invoke(Item.CloseAllTabs)
-            }
+            }.apply { visible = hasOpenTabs }
         )
     }
 }

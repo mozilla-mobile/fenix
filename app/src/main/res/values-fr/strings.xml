@@ -537,6 +537,12 @@
     <string name="recently_closed_empty_message">Aucun onglet récemment fermé ici</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Onglets</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Liste</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Grille</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Fermer les onglets</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -794,6 +800,8 @@
     <string name="preference_phone_feature_location">Localisation</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Notifications</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Stockage persistant</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Demander pour autoriser</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1199,6 +1207,8 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
     <string name="sign_in_with_camera">Connectez-vous avec votre appareil photo</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Utiliser plutôt une adresse électronique</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Vous n’avez pas de compte ? <u>Créez-en un</u> pour synchroniser Firefox entre vos appareils.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox ne se synchronisera plus avec votre compte, mais ne supprimera aucune de vos données de navigation sur cet appareil.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1305,6 +1315,11 @@ Cependant, il peut être moins stable. Téléchargez la version bêta de notre n
     <!-- Open source licenses page title
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Bibliothèques open source</string>
+
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Traqueurs par redirection</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">Efface les cookies définis par redirection vers des sites web connus pour le pistage.</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Assistance</string>
