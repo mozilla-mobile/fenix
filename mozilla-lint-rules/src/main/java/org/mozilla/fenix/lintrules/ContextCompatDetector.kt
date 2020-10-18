@@ -4,11 +4,9 @@
 
 package org.mozilla.fenix.lintrules
 
-import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UCallExpression
 
 class ContextCompatDetector : Detector(), SourceCodeScanner {
 
@@ -42,32 +40,18 @@ class ContextCompatDetector : Detector(), SourceCodeScanner {
             ISSUE_GET_COLOR_STATE_LIST_CALL
         )
 
+        private const val ContextCompatClass = "androidx.core.content.ContextCompat"
     }
-
-    override fun getApplicableUastTypes(): List<Class<out UElement>>? =
-        listOf(UCallExpression::class.java)
-
-
-    override fun createUastHandler(context: JavaContext): UElementHandler? =
-        ContextCompatChecker(context)
 
     override fun getApplicableMethodNames(): List<String>? = listOf(
         "getDrawable",
         "getColorStateList"
     )
 
-}
-
-class ContextCompatChecker(private val context: JavaContext) : UElementHandler() {
-
-    companion object {
-        private const val ContextCompatClass = "androidx.core.content.ContextCompat"
-    }
-
-    override fun visitCallExpression(node: UCallExpression) {
+    override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
         val evaluator = context.evaluator
 
-        if (!evaluator.isMemberInClass(node.resolve(), ContextCompatClass)) {
+        if (!evaluator.isMemberInClass(method, ContextCompatClass)) {
             return
         }
 
@@ -78,7 +62,7 @@ class ContextCompatChecker(private val context: JavaContext) : UElementHandler()
     }
 
     private fun reportGetDrawableCall(context: JavaContext, node: UCallExpression) = context.report(
-        ContextCompatDetector.ISSUE_GET_DRAWABLE_CALL,
+        ISSUE_GET_DRAWABLE_CALL,
         context.getLocation(node),
         "This call can lead to crashes, replace with AppCompatResources.getDrawable",
         replaceUnsafeGetDrawableQuickFix(node)
@@ -86,7 +70,7 @@ class ContextCompatChecker(private val context: JavaContext) : UElementHandler()
 
     private fun reportGetColorStateListCall(context: JavaContext, node: UCallExpression) =
         context.report(
-            ContextCompatDetector.ISSUE_GET_COLOR_STATE_LIST_CALL,
+            ISSUE_GET_COLOR_STATE_LIST_CALL,
             context.getLocation(node),
             "This call can lead to crashes, replace with AppCompatResources.getColorStateList",
             replaceUnsafeGetColorStateListCallQuickFix(node)
