@@ -16,6 +16,7 @@ object Versions {
     const val leanplum = "5.4.0"
     const val osslicenses_plugin = "0.9.5"
     const val detekt = "1.9.1"
+    const val jna = "5.6.0"
 
     const val androidx_appcompat = "1.2.0-rc01"
     const val androidx_biometric = "1.1.0-beta01"
@@ -185,6 +186,8 @@ object Deps {
 
     const val adjust = "com.adjust.sdk:adjust-android:${Versions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${Versions.installreferrer}"
+
+    const val jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
 
     const val junit = "junit:junit:${Versions.junit}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
