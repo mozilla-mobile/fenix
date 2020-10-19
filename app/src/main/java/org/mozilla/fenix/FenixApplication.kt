@@ -49,7 +49,6 @@ import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
-import org.mozilla.fenix.BuildConfig
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
