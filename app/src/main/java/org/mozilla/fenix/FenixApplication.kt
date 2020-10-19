@@ -49,6 +49,7 @@ import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.BuildConfig
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -80,7 +81,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             return
         }
 
-        if (Config.channel.isFenix) {
+        if (Config.channel.isFenix && BuildConfig.TELEMETRY) {
             // We need to always initialize Glean and do it early here.
             // Note that we are only initializing Glean here for "fenix" builds. "fennec" builds
             // will initialize in MigratingFenixApplication because we first need to migrate the
