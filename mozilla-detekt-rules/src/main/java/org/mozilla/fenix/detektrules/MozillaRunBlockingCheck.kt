@@ -23,7 +23,7 @@ private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.CoroutineManage
 class MozillaRunBlockingCheck(config: Config) : Rule(config) {
 
     override val issue = Issue(
-        "MozillaRunblockingCheck",
+        "MozillaRunBlockingCheck",
         Severity.Performance,
         "Prevents us from working around mechanisms we implemented to count how many " +
                 "runBlocking are used",

@@ -5,7 +5,7 @@
 // This class implements the alternative ways to invoke runBlocking with some
 // monitoring by wrapping the raw methods. This lint check tells us not to use the raw
 // methods so we suppress the check.
-@file:Suppress("MozillaRunblockingCheck")
+@file:Suppress("MozillaRunBlockingCheck")
 
 package org.mozilla.fenix.perf
 
