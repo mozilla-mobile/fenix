@@ -8,7 +8,7 @@ import android.os.Environment
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -62,7 +62,7 @@ class DownloadTest {
         mockWebServer.shutdown()
 
         // Clear Download
-        runBlockingIncrement {
+        runBlocking {
             val downloadedFile = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "Globe.svg.html"

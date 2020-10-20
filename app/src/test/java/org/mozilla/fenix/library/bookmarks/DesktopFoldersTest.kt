@@ -8,7 +8,7 @@ import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -62,13 +62,12 @@ class DesktopFoldersTest {
     }
 
     @Test
-    fun `withOptionalDesktopFolders other node`() =
-        runBlockingIncrement {
-            val node = basicNode.copy(guid = "12345")
-            val desktopFolders = DesktopFolders(context, showMobileRoot = true)
+    fun `withOptionalDesktopFolders other node`() = runBlocking {
+        val node = basicNode.copy(guid = "12345")
+        val desktopFolders = DesktopFolders(context, showMobileRoot = true)
 
-            assertSame(node, desktopFolders.withOptionalDesktopFolders(node))
-        }
+        assertSame(node, desktopFolders.withOptionalDesktopFolders(node))
+    }
 
     private fun mockNodeWithTitle(title: String) = basicNode.copy(title = title)
 }

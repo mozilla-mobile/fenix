@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.components.feature.sitepermissions.SitePermissions
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -162,7 +162,7 @@ class QuickSettingsFragmentStoreTest {
     @Test
     @ExperimentalCoroutinesApi
     fun `TogglePermission should only modify status and visibility of a specific WebsitePermissionsState`() =
-        runBlockingIncrement {
+        runBlocking {
             val initialCameraStatus = "initialCameraStatus"
             val initialMicStatus = "initialMicStatus"
             val initialNotificationStatus = "initialNotificationStatus"
@@ -227,94 +227,34 @@ class QuickSettingsFragmentStoreTest {
             assertSame(websiteInfoState, store.state.webInfoState)
 
             assertNotNull(store.state.websitePermissionsState[PhoneFeature.CAMERA])
-            assertEquals(
-                PhoneFeature.CAMERA,
-                store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).phoneFeature
-            )
-            assertEquals(
-                initialCameraStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).status
-            )
-            assertEquals(
-                defaultVisibilityStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isVisible
-            )
-            assertEquals(
-                defaultEnabledStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isEnabled
-            )
-            assertEquals(
-                defaultBlockedByAndroidStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isBlockedByAndroid
-            )
+            assertEquals(PhoneFeature.CAMERA, store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).phoneFeature)
+            assertEquals(initialCameraStatus, store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).status)
+            assertEquals(defaultVisibilityStatus, store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isVisible)
+            assertEquals(defaultEnabledStatus, store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isEnabled)
+            assertEquals(defaultBlockedByAndroidStatus, store.state.websitePermissionsState.getValue(PhoneFeature.CAMERA).isBlockedByAndroid)
 
             assertNotNull(store.state.websitePermissionsState[PhoneFeature.MICROPHONE])
-            assertEquals(
-                PhoneFeature.MICROPHONE,
-                store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).phoneFeature
-            )
+            assertEquals(PhoneFeature.MICROPHONE, store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).phoneFeature)
 
             // Only the following two properties must have been changed!
-            assertEquals(
-                updatedMicrophoneStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).status
-            )
-            assertEquals(
-                updatedMicrophoneEnabledStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isEnabled
-            )
+            assertEquals(updatedMicrophoneStatus, store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).status)
+            assertEquals(updatedMicrophoneEnabledStatus, store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isEnabled)
 
-            assertEquals(
-                defaultVisibilityStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isVisible
-            )
-            assertEquals(
-                defaultBlockedByAndroidStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isBlockedByAndroid
-            )
+            assertEquals(defaultVisibilityStatus, store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isVisible)
+            assertEquals(defaultBlockedByAndroidStatus, store.state.websitePermissionsState.getValue(PhoneFeature.MICROPHONE).isBlockedByAndroid)
 
             assertNotNull(store.state.websitePermissionsState[PhoneFeature.NOTIFICATION])
-            assertEquals(
-                PhoneFeature.NOTIFICATION,
-                store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).phoneFeature
-            )
-            assertEquals(
-                initialNotificationStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).status
-            )
-            assertEquals(
-                defaultVisibilityStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isVisible
-            )
-            assertEquals(
-                defaultEnabledStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isEnabled
-            )
-            assertEquals(
-                defaultBlockedByAndroidStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isBlockedByAndroid
-            )
+            assertEquals(PhoneFeature.NOTIFICATION, store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).phoneFeature)
+            assertEquals(initialNotificationStatus, store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).status)
+            assertEquals(defaultVisibilityStatus, store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isVisible)
+            assertEquals(defaultEnabledStatus, store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isEnabled)
+            assertEquals(defaultBlockedByAndroidStatus, store.state.websitePermissionsState.getValue(PhoneFeature.NOTIFICATION).isBlockedByAndroid)
 
             assertNotNull(store.state.websitePermissionsState[PhoneFeature.LOCATION])
-            assertEquals(
-                PhoneFeature.LOCATION,
-                store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).phoneFeature
-            )
-            assertEquals(
-                initialLocationStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).status
-            )
-            assertEquals(
-                defaultVisibilityStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isVisible
-            )
-            assertEquals(
-                defaultEnabledStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isEnabled
-            )
-            assertEquals(
-                defaultBlockedByAndroidStatus,
-                store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isBlockedByAndroid
-            )
+            assertEquals(PhoneFeature.LOCATION, store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).phoneFeature)
+            assertEquals(initialLocationStatus, store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).status)
+            assertEquals(defaultVisibilityStatus, store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isVisible)
+            assertEquals(defaultEnabledStatus, store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isEnabled)
+            assertEquals(defaultBlockedByAndroidStatus, store.state.websitePermissionsState.getValue(PhoneFeature.LOCATION).isBlockedByAndroid)
         }
 }

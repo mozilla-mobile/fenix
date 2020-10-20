@@ -14,7 +14,7 @@ import io.mockk.verify
 import io.mockk.unmockkObject
 import kotlinx.android.synthetic.main.onboarding_automatic_signin.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.service.fxa.manager.MigrationResult
 import mozilla.components.service.fxa.sharing.ShareableAccount
@@ -69,40 +69,38 @@ class OnboardingAutomaticSignInViewHolderTest {
     }
 
     @Test
-    fun `sign in on click - MigrationResult Success`() =
-        runBlockingIncrement {
-            val account = mockk<ShareableAccount> {
-                every { email } returns "email@example.com"
-            }
-            coEvery {
-                backgroundServices.accountManager.migrateFromAccount(account)
-            } returns MigrationResult.Success
-
-            val holder = OnboardingAutomaticSignInViewHolder(view, scope = this)
-            holder.bind(account)
-            holder.onClick(view.fxa_sign_in_button)
-
-            assertEquals("Signing in…", view.fxa_sign_in_button.text)
-            assertFalse(view.fxa_sign_in_button.isEnabled)
+    fun `sign in on click - MigrationResult Success`() = runBlocking {
+        val account = mockk<ShareableAccount> {
+            every { email } returns "email@example.com"
         }
+        coEvery {
+            backgroundServices.accountManager.migrateFromAccount(account)
+        } returns MigrationResult.Success
+
+        val holder = OnboardingAutomaticSignInViewHolder(view, scope = this)
+        holder.bind(account)
+        holder.onClick(view.fxa_sign_in_button)
+
+        assertEquals("Signing in…", view.fxa_sign_in_button.text)
+        assertFalse(view.fxa_sign_in_button.isEnabled)
+    }
 
     @Test
-    fun `sign in on click - MigrationResult WillRetry treated the same as Success`() =
-        runBlockingIncrement {
-            val account = mockk<ShareableAccount> {
-                every { email } returns "email@example.com"
-            }
-            coEvery {
-                backgroundServices.accountManager.migrateFromAccount(account)
-            } returns MigrationResult.WillRetry
-
-            val holder = OnboardingAutomaticSignInViewHolder(view, scope = this)
-            holder.bind(account)
-            holder.onClick(view.fxa_sign_in_button)
-
-            assertEquals("Signing in…", view.fxa_sign_in_button.text)
-            assertFalse(view.fxa_sign_in_button.isEnabled)
+    fun `sign in on click - MigrationResult WillRetry treated the same as Success`() = runBlocking {
+        val account = mockk<ShareableAccount> {
+            every { email } returns "email@example.com"
         }
+        coEvery {
+            backgroundServices.accountManager.migrateFromAccount(account)
+        } returns MigrationResult.WillRetry
+
+        val holder = OnboardingAutomaticSignInViewHolder(view, scope = this)
+        holder.bind(account)
+        holder.onClick(view.fxa_sign_in_button)
+
+        assertEquals("Signing in…", view.fxa_sign_in_button.text)
+        assertFalse(view.fxa_sign_in_button.isEnabled)
+    }
 
     @Test
     fun `show error if sign in fails`() = runBlockingTest {

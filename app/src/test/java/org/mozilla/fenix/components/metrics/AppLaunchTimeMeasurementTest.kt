@@ -8,7 +8,7 @@ import android.os.SystemClock
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -37,7 +37,7 @@ class AppLaunchTimeMeasurementTest {
 
     @Test
     fun `WHEN application is launched with cold startup THEN report the correct value`() {
-        runBlockingIncrement {
+        runBlocking {
             appLaunchTimeMeasurement.onFirstFramePreDraw(endTime)
 
             val actualResult = endTime.minus(startTime)
@@ -51,7 +51,7 @@ class AppLaunchTimeMeasurementTest {
         appLaunchTimeMeasurement.onFirstFramePreDraw(endTime)
 
         val actualResult = endTime.minus(startTime)
-        runBlockingIncrement {
+        runBlocking {
             assertTrue(appLaunchTimeMeasurement.getApplicationLaunchTime(WARM) == actualResult)
         }
     }
@@ -62,7 +62,7 @@ class AppLaunchTimeMeasurementTest {
         appLaunchTimeMeasurement.onFirstFramePreDraw(endTime)
 
         val actualResult = endTime.minus(startTime)
-        runBlockingIncrement {
+        runBlocking {
             assertTrue(appLaunchTimeMeasurement.getApplicationLaunchTime(HOT) == actualResult)
         }
     }
@@ -72,7 +72,7 @@ class AppLaunchTimeMeasurementTest {
         appLaunchTimeMeasurement.onHomeActivityOnCreate(startTime)
 
         val actualResult = null
-        runBlockingIncrement {
+        runBlocking {
             assertTrue(appLaunchTimeMeasurement.getApplicationLaunchTime(ERROR) == actualResult)
         }
     }

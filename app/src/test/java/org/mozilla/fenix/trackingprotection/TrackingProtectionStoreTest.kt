@@ -5,7 +5,7 @@
 package org.mozilla.fenix.trackingprotection
 
 import io.mockk.mockk
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.content.blocking.TrackerLog
 import org.junit.Assert.assertEquals
@@ -17,7 +17,7 @@ class TrackingProtectionStoreTest {
     val session: Session = mockk(relaxed = true)
 
     @Test
-    fun enterDetailsMode() = runBlockingIncrement {
+    fun enterDetailsMode() = runBlocking {
         val initialState = defaultState()
         val store = TrackingProtectionStore(initialState)
 
@@ -33,14 +33,11 @@ class TrackingProtectionStoreTest {
             store.state.mode,
             TrackingProtectionState.Mode.Details(TrackingProtectionCategory.FINGERPRINTERS, true)
         )
-        assertEquals(
-            store.state.lastAccessedCategory,
-            TrackingProtectionCategory.FINGERPRINTERS.name
-        )
+        assertEquals(store.state.lastAccessedCategory, TrackingProtectionCategory.FINGERPRINTERS.name)
     }
 
     @Test
-    fun exitDetailsMode() = runBlockingIncrement {
+    fun exitDetailsMode() = runBlocking {
         val initialState = detailsState()
         val store = TrackingProtectionStore(initialState)
 
@@ -54,7 +51,7 @@ class TrackingProtectionStoreTest {
     }
 
     @Test
-    fun trackerBlockingChanged() = runBlockingIncrement {
+    fun trackerBlockingChanged() = runBlocking {
         val initialState = defaultState()
         val store = TrackingProtectionStore(initialState)
 
@@ -71,7 +68,7 @@ class TrackingProtectionStoreTest {
     }
 
     @Test
-    fun trackerListChanged() = runBlockingIncrement {
+    fun trackerListChanged() = runBlocking {
         val initialState = defaultState()
         val store = TrackingProtectionStore(initialState)
         val tracker = TrackerLog("url", listOf())
@@ -85,7 +82,7 @@ class TrackingProtectionStoreTest {
     }
 
     @Test
-    fun urlChanged() = runBlockingIncrement {
+    fun urlChanged() = runBlocking {
         val initialState = defaultState()
         val store = TrackingProtectionStore(initialState)
 
@@ -98,7 +95,7 @@ class TrackingProtectionStoreTest {
     }
 
     @Test
-    fun onChange() = runBlockingIncrement {
+    fun onChange() = runBlocking {
         val initialState = defaultState()
         val store = TrackingProtectionStore(initialState)
         val tracker = TrackerLog("url", listOf(), listOf(), cookiesHasBeenBlocked = false)

@@ -7,7 +7,7 @@ package org.mozilla.fenix.home
 import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -62,74 +62,67 @@ class HomeFragmentStoreTest {
     }
 
     @Test
-    fun `Test toggling the mode in HomeFragmentStore`() =
-        runBlockingIncrement {
-            // Verify that the default mode and tab states of the HomeFragment are correct.
-            assertEquals(Mode.Normal, homeFragmentStore.state.mode)
+    fun `Test toggling the mode in HomeFragmentStore`() = runBlocking {
+        // Verify that the default mode and tab states of the HomeFragment are correct.
+        assertEquals(Mode.Normal, homeFragmentStore.state.mode)
 
-            // Change the HomeFragmentStore to Private mode.
-            homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(Mode.Private)).join()
-            assertEquals(Mode.Private, homeFragmentStore.state.mode)
+        // Change the HomeFragmentStore to Private mode.
+        homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(Mode.Private)).join()
+        assertEquals(Mode.Private, homeFragmentStore.state.mode)
 
-            // Change the HomeFragmentStore back to Normal mode.
-            homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(Mode.Normal)).join()
-            assertEquals(Mode.Normal, homeFragmentStore.state.mode)
-        }
-
-    @Test
-    fun `Test changing the collections in HomeFragmentStore`() =
-        runBlockingIncrement {
-            assertEquals(0, homeFragmentStore.state.collections.size)
-
-            // Add 2 TabCollections to the HomeFragmentStore.
-            val tabCollections: List<TabCollection> = listOf(mockk(), mockk())
-            homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(tabCollections)).join()
-
-            assertEquals(tabCollections, homeFragmentStore.state.collections)
-        }
+        // Change the HomeFragmentStore back to Normal mode.
+        homeFragmentStore.dispatch(HomeFragmentAction.ModeChange(Mode.Normal)).join()
+        assertEquals(Mode.Normal, homeFragmentStore.state.mode)
+    }
 
     @Test
-    fun `Test changing the top sites in HomeFragmentStore`() =
-        runBlockingIncrement {
-            assertEquals(0, homeFragmentStore.state.topSites.size)
+    fun `Test changing the collections in HomeFragmentStore`() = runBlocking {
+        assertEquals(0, homeFragmentStore.state.collections.size)
 
-            // Add 2 TopSites to the HomeFragmentStore.
-            val topSites: List<TopSite> = listOf(mockk(), mockk())
-            homeFragmentStore.dispatch(HomeFragmentAction.TopSitesChange(topSites)).join()
+        // Add 2 TabCollections to the HomeFragmentStore.
+        val tabCollections: List<TabCollection> = listOf(mockk(), mockk())
+        homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(tabCollections)).join()
 
-            assertEquals(topSites, homeFragmentStore.state.topSites)
-        }
-
-    @Test
-    fun `Test changing hiding collections placeholder`() =
-        runBlockingIncrement {
-            assertTrue(homeFragmentStore.state.showCollectionPlaceholder)
-
-            homeFragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder).join()
-
-            assertFalse(homeFragmentStore.state.showCollectionPlaceholder)
-        }
+        assertEquals(tabCollections, homeFragmentStore.state.collections)
+    }
 
     @Test
-    fun `Test changing the expanded collections in HomeFragmentStore`() =
-        runBlockingIncrement {
-            val collection: TabCollection = mockk<TabCollection>().apply {
-                every { id } returns 0
-            }
+    fun `Test changing the top sites in HomeFragmentStore`() = runBlocking {
+        assertEquals(0, homeFragmentStore.state.topSites.size)
 
-            // Expand the given collection.
-            homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(listOf(collection)))
-                .join()
-            homeFragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, true))
-                .join()
+        // Add 2 TopSites to the HomeFragmentStore.
+        val topSites: List<TopSite> = listOf(mockk(), mockk())
+        homeFragmentStore.dispatch(HomeFragmentAction.TopSitesChange(topSites)).join()
 
-            assertTrue(homeFragmentStore.state.expandedCollections.contains(collection.id))
-            assertEquals(1, homeFragmentStore.state.expandedCollections.size)
+        assertEquals(topSites, homeFragmentStore.state.topSites)
+    }
+
+    @Test
+    fun `Test changing hiding collections placeholder`() = runBlocking {
+        assertTrue(homeFragmentStore.state.showCollectionPlaceholder)
+
+        homeFragmentStore.dispatch(HomeFragmentAction.RemoveCollectionsPlaceholder).join()
+
+        assertFalse(homeFragmentStore.state.showCollectionPlaceholder)
+    }
+
+    @Test
+    fun `Test changing the expanded collections in HomeFragmentStore`() = runBlocking {
+        val collection: TabCollection = mockk<TabCollection>().apply {
+            every { id } returns 0
         }
+
+        // Expand the given collection.
+        homeFragmentStore.dispatch(HomeFragmentAction.CollectionsChange(listOf(collection))).join()
+        homeFragmentStore.dispatch(HomeFragmentAction.CollectionExpanded(collection, true)).join()
+
+        assertTrue(homeFragmentStore.state.expandedCollections.contains(collection.id))
+        assertEquals(1, homeFragmentStore.state.expandedCollections.size)
+    }
 
     @Test
     fun `Test changing the collections, mode and top sites in the HomeFragmentStore`() =
-        runBlockingIncrement {
+        runBlocking {
             // Verify that the default state of the HomeFragment is correct.
             assertEquals(0, homeFragmentStore.state.collections.size)
             assertEquals(0, homeFragmentStore.state.topSites.size)

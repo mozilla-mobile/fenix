@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.tabtray
 
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.tabstray.Tab
@@ -15,7 +15,7 @@ import org.junit.Test
 class TabTrayDialogFragmentStoreTest {
 
     @Test
-    fun browserStateChange() = runBlockingIncrement {
+    fun browserStateChange() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayDialogFragmentStore(initialState)
 
@@ -39,7 +39,7 @@ class TabTrayDialogFragmentStoreTest {
     }
 
     @Test
-    fun enterMultiselectMode() = runBlockingIncrement {
+    fun enterMultiselectMode() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayDialogFragmentStore(initialState)
 
@@ -55,7 +55,7 @@ class TabTrayDialogFragmentStoreTest {
     }
 
     @Test
-    fun exitMultiselectMode() = runBlockingIncrement {
+    fun exitMultiselectMode() = runBlocking {
         val initialState = TabTrayDialogFragmentState(
             browserState = BrowserState(),
             mode = TabTrayDialogFragmentState.Mode.MultiSelect(setOf())
@@ -78,7 +78,7 @@ class TabTrayDialogFragmentStoreTest {
     }
 
     @Test
-    fun addItemForCollection() = runBlockingIncrement {
+    fun addItemForCollection() = runBlocking {
         val initialState = emptyDefaultState()
         val store = TabTrayDialogFragmentStore(initialState)
 
@@ -99,7 +99,7 @@ class TabTrayDialogFragmentStoreTest {
     }
 
     @Test
-    fun removeItemForCollection() = runBlockingIncrement {
+    fun removeItemForCollection() = runBlocking {
         val tab = Tab(id = "1234", url = "mozilla.org")
         val secondTab = Tab(id = "12345", url = "pocket.com")
 

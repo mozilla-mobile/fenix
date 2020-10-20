@@ -19,7 +19,7 @@ import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -84,41 +84,38 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `handleShareToApp should start a new sharing activity and close this`() =
-        runBlockingIncrement {
-            val appPackageName = "package"
-            val appClassName = "activity"
-            val appShareOption = AppShareOption("app", mockk(), appPackageName, appClassName)
-            val shareIntent = slot<Intent>()
-            // Our share Intent uses `FLAG_ACTIVITY_NEW_TASK` but when resolving the startActivity call
-            // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
-            // need to use an Activity Context.
-            val activityContext: Context = mockk<Activity>()
-            val testController = DefaultShareController(
-                activityContext, shareSubject, shareData, mockk(),
-                mockk(), mockk(), recentAppStorage, testCoroutineScope, dismiss
-            )
-            every { activityContext.startActivity(capture(shareIntent)) } just Runs
-            every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
+    fun `handleShareToApp should start a new sharing activity and close this`() = runBlocking {
+        val appPackageName = "package"
+        val appClassName = "activity"
+        val appShareOption = AppShareOption("app", mockk(), appPackageName, appClassName)
+        val shareIntent = slot<Intent>()
+        // Our share Intent uses `FLAG_ACTIVITY_NEW_TASK` but when resolving the startActivity call
+        // needed for capturing the actual Intent used the `slot` one doesn't have this flag so we
+        // need to use an Activity Context.
+        val activityContext: Context = mockk<Activity>()
+        val testController = DefaultShareController(activityContext, shareSubject, shareData, mockk(),
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, dismiss)
+        every { activityContext.startActivity(capture(shareIntent)) } just Runs
+        every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
 
-            testController.handleShareToApp(appShareOption)
+        testController.handleShareToApp(appShareOption)
 
-            // Check that the Intent used for querying apps has the expected structure
-            assertTrue(shareIntent.isCaptured)
-            assertEquals(Intent.ACTION_SEND, shareIntent.captured.action)
-            assertEquals(shareSubject, shareIntent.captured.extras!![Intent.EXTRA_SUBJECT])
-            assertEquals(textToShare, shareIntent.captured.extras!![Intent.EXTRA_TEXT])
-            assertEquals("text/plain", shareIntent.captured.type)
-            assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, shareIntent.captured.flags)
-            assertEquals(appPackageName, shareIntent.captured.component!!.packageName)
-            assertEquals(appClassName, shareIntent.captured.component!!.className)
+        // Check that the Intent used for querying apps has the expected structure
+        assertTrue(shareIntent.isCaptured)
+        assertEquals(Intent.ACTION_SEND, shareIntent.captured.action)
+        assertEquals(shareSubject, shareIntent.captured.extras!![Intent.EXTRA_SUBJECT])
+        assertEquals(textToShare, shareIntent.captured.extras!![Intent.EXTRA_TEXT])
+        assertEquals("text/plain", shareIntent.captured.type)
+        assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, shareIntent.captured.flags)
+        assertEquals(appPackageName, shareIntent.captured.component!!.packageName)
+        assertEquals(appClassName, shareIntent.captured.component!!.className)
 
-            verify { recentAppStorage.updateRecentApp(appShareOption.activityName) }
-            verifyOrder {
-                activityContext.startActivity(shareIntent.captured)
-                dismiss(ShareController.Result.SUCCESS)
-            }
+        verify { recentAppStorage.updateRecentApp(appShareOption.activityName) }
+        verifyOrder {
+            activityContext.startActivity(shareIntent.captured)
+            dismiss(ShareController.Result.SUCCESS)
         }
+    }
 
     @Test
     fun `handleShareToApp should dismiss with an error start when a security exception occurs`() {

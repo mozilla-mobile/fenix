@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.mozilla.fenix.perf.runBlockingIncrement
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.search.SearchEngine
 import mozilla.components.browser.search.provider.SearchEngineList
 import mozilla.components.browser.state.state.BrowserState
@@ -145,7 +145,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun updateQuery() = runBlockingIncrement {
+    fun updateQuery() = runBlocking {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
         val query = "test query"
@@ -156,41 +156,38 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun selectSearchShortcutEngine() =
-        runBlockingIncrement {
-            val initialState = emptyDefaultState()
-            val store = SearchFragmentStore(initialState)
+    fun selectSearchShortcutEngine() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
 
-            store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)).join()
-            assertNotSame(initialState, store.state)
-            assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
-            assertEquals(false, store.state.showSearchShortcuts)
-        }
-
-    @Test
-    fun showSearchShortcutEnginePicker() =
-        runBlockingIncrement {
-            val initialState = emptyDefaultState()
-            val store = SearchFragmentStore(initialState)
-
-            store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)).join()
-            assertNotSame(initialState, store.state)
-            assertEquals(true, store.state.showSearchShortcuts)
-        }
+        store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
+        assertEquals(false, store.state.showSearchShortcuts)
+    }
 
     @Test
-    fun hideSearchShortcutEnginePicker() =
-        runBlockingIncrement {
-            val initialState = emptyDefaultState()
-            val store = SearchFragmentStore(initialState)
+    fun showSearchShortcutEnginePicker() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
 
-            store.dispatch(SearchFragmentAction.UpdateShortcutsAvailability(false)).join()
-            assertNotSame(initialState, store.state)
-            assertEquals(false, store.state.showSearchShortcuts)
-        }
+        store.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(true)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(true, store.state.showSearchShortcuts)
+    }
 
     @Test
-    fun showSearchSuggestions() = runBlockingIncrement {
+    fun hideSearchShortcutEnginePicker() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.UpdateShortcutsAvailability(false)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(false, store.state.showSearchShortcuts)
+    }
+
+    @Test
+    fun showSearchSuggestions() = runBlocking {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
@@ -203,23 +200,20 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun allowSearchInPrivateMode() =
-        runBlockingIncrement {
-            val initialState = emptyDefaultState()
-            val store = SearchFragmentStore(initialState)
+    fun allowSearchInPrivateMode() = runBlocking {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
 
-            store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(true))
-                .join()
-            assertNotSame(initialState, store.state)
-            assertTrue(store.state.showSearchSuggestionsHint)
+        store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(true)).join()
+        assertNotSame(initialState, store.state)
+        assertTrue(store.state.showSearchSuggestionsHint)
 
-            store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(false))
-                .join()
-            assertFalse(store.state.showSearchSuggestionsHint)
-        }
+        store.dispatch(SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(false)).join()
+        assertFalse(store.state.showSearchSuggestionsHint)
+    }
 
     @Test
-    fun selectNewDefaultEngine() = runBlockingIncrement {
+    fun selectNewDefaultEngine() = runBlocking {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
