@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.tabtray
 
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.tabstray.Tab

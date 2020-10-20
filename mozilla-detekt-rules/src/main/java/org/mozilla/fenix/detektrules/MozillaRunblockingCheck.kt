@@ -15,19 +15,19 @@ private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.CoroutineManage
         "us to monitor the code for performance regressions."
 
 /**
- * A check to prevent us from working around mechanisms we implemented to prevent suppressing StrictMode.
+ * A check to prevent us from working around mechanisms we implemented to count how many runBlocking
+ * are used.
  *
  * IF YOU UPDATE THIS FILE NAME, UPDATE CODE OWNERS.
  */
-
-
 class MozillaRunblockingCheck(config: Config) : Rule(config) {
 
     override val issue = Issue(
         "MozillaRunblockingCheck",
         Severity.Performance,
-        "Prevents us from working around mechanisms we implemented to prevent suppressing StrictMode",
-        Debt.TEN_MINS
+        "Prevents us from working around mechanisms we implemented to count how many " +
+                "runBlocking are used",
+        Debt.TWENTY_MINS
     )
 
     override fun visitImportDirective(importDirective: KtImportDirective) {

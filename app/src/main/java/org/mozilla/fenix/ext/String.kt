@@ -17,7 +17,7 @@ import mozilla.components.concept.fetch.Request
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.lib.publicsuffixlist.ext.urlToTrimmedHost
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import java.io.IOException
 import java.net.IDN
 import java.util.Locale
@@ -92,9 +92,10 @@ private fun Uri.isIpv6(): Boolean {
 /**
  * Trim a host's prefix and suffix
  */
-fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String = runBlockingIncrement {
-    urlToTrimmedHost(publicSuffixList).await()
-}
+fun String.urlToTrimmedHost(publicSuffixList: PublicSuffixList): String =
+    runBlockingIncrement {
+        urlToTrimmedHost(publicSuffixList).await()
+    }
 
 /**
  * Trims a URL string of its scheme and common prefixes.

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.settings.account
 
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test

@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.exceptions.trackingprotection
 
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame

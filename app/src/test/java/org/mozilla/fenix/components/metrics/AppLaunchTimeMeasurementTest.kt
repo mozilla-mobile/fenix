@@ -8,7 +8,7 @@ import android.os.SystemClock
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test

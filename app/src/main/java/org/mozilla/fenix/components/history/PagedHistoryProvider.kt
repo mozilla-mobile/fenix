@@ -7,7 +7,7 @@ package org.mozilla.fenix.components.history
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 
 /**
  * An Interface for providing a paginated list of [VisitInfo]

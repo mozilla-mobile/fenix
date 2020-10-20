@@ -8,7 +8,7 @@ import android.os.Environment
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before

@@ -26,7 +26,7 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import java.util.Locale
 
 @SuppressWarnings("TooManyFunctions")
@@ -116,34 +116,37 @@ open class FenixSearchEngineProvider(
      * @return a list of all SearchEngines that are currently active. These are the engines that
      * are readily available throughout the app.
      */
-    fun installedSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context)
-        val engineList = searchEngines.await()
+    fun installedSearchEngines(context: Context): SearchEngineList =
+        runBlockingIncrement {
+            val installedIdentifiers = installedSearchEngineIdentifiers(context)
+            val engineList = searchEngines.await()
 
-        engineList.copy(
-            list = engineList.list.filter {
-                installedIdentifiers.contains(it.identifier)
-            }.sortedBy { it.name.toLowerCase(Locale.getDefault()) },
-            default = engineList.default?.let {
-                if (installedIdentifiers.contains(it.identifier)) {
-                    it
-                } else {
-                    null
+            engineList.copy(
+                list = engineList.list.filter {
+                    installedIdentifiers.contains(it.identifier)
+                }.sortedBy { it.name.toLowerCase(Locale.getDefault()) },
+                default = engineList.default?.let {
+                    if (installedIdentifiers.contains(it.identifier)) {
+                        it
+                    } else {
+                        null
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
-    fun allSearchEngineIdentifiers() = runBlockingIncrement {
-        loadedSearchEngines.await().list.map { it.identifier }
-    }
+    fun allSearchEngineIdentifiers() =
+        runBlockingIncrement {
+            loadedSearchEngines.await().list.map { it.identifier }
+        }
 
-    fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
-        val installedIdentifiers = installedSearchEngineIdentifiers(context)
-        val engineList = loadedSearchEngines.await()
+    fun uninstalledSearchEngines(context: Context): SearchEngineList =
+        runBlockingIncrement {
+            val installedIdentifiers = installedSearchEngineIdentifiers(context)
+            val engineList = loadedSearchEngines.await()
 
-        engineList.copy(list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) })
-    }
+            engineList.copy(list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) })
+        }
 
     override suspend fun loadSearchEngines(context: Context): SearchEngineList {
         return installedSearchEngines(context)
@@ -177,7 +180,8 @@ open class FenixSearchEngineProvider(
         } else {
             val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
             installedIdentifiers.remove(searchEngine.identifier)
-            prefs(context).edit().putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
+            prefs(context).edit()
+                .putStringSet(localeAwareInstalledEnginesKey(), installedIdentifiers).apply()
         }
     }
 

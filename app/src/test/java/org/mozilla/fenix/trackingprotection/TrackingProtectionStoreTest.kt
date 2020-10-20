@@ -5,7 +5,7 @@
 package org.mozilla.fenix.trackingprotection
 
 import io.mockk.mockk
-import org.mozilla.fenix.runBlockingIncrement
+import org.mozilla.fenix.perf.runBlockingIncrement
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.content.blocking.TrackerLog
 import org.junit.Assert.assertEquals
@@ -33,7 +33,10 @@ class TrackingProtectionStoreTest {
             store.state.mode,
             TrackingProtectionState.Mode.Details(TrackingProtectionCategory.FINGERPRINTERS, true)
         )
-        assertEquals(store.state.lastAccessedCategory, TrackingProtectionCategory.FINGERPRINTERS.name)
+        assertEquals(
+            store.state.lastAccessedCategory,
+            TrackingProtectionCategory.FINGERPRINTERS.name
+        )
     }
 
     @Test

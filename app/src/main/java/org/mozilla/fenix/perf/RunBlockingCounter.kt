@@ -7,7 +7,7 @@
 // methods so we suppress the check.
 @file:Suppress("MozillaRunblockingCheck")
 
-package org.mozilla.fenix
+package org.mozilla.fenix.perf
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
@@ -19,10 +19,8 @@ import kotlin.coroutines.EmptyCoroutineContext
  * Counts the number of runBlocking calls made
  */
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-class RunBlockingCounter {
-    companion object {
-        var runBlockingCount = 0L
-    }
+object RunBlockingCounter {
+    var count = 0L
 }
 
 /**
@@ -32,7 +30,7 @@ fun <T> runBlockingIncrement(
     context: CoroutineContext = EmptyCoroutineContext,
     action: suspend CoroutineScope.() -> T
 ): T {
-    RunBlockingCounter.runBlockingCount += 1
+    RunBlockingCounter.count += 1
     if (context != EmptyCoroutineContext) {
         return runBlocking(context) { action() }
     }
