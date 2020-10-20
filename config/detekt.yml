@@ -119,6 +119,7 @@ mozilla-detekt-rules:
     active: true
   MozillaRunBlockingCheck:
     active: true
+    excludes: "**/*Test.kt"
 
 empty-blocks:
   active: true
