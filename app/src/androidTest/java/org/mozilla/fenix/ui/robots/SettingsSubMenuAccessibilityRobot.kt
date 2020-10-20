@@ -6,31 +6,32 @@
 
 package org.mozilla.fenix.ui.robots
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
-import android.view.KeyEvent.KEYCODE_DPAD_LEFT
 import android.view.KeyEvent.ACTION_DOWN
+import android.view.KeyEvent.KEYCODE_DPAD_LEFT
+import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewAssertion
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import org.hamcrest.CoreMatchers.allOf
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.helpers.assertIsEnabled
+import org.mozilla.fenix.helpers.isEnabled
 import org.mozilla.fenix.ui.robots.SettingsSubMenuAccessibilityRobot.Companion.DECIMAL_CONVERSION
 import org.mozilla.fenix.ui.robots.SettingsSubMenuAccessibilityRobot.Companion.MIN_VALUE
 import org.mozilla.fenix.ui.robots.SettingsSubMenuAccessibilityRobot.Companion.STEP_SIZE
@@ -53,9 +54,9 @@ class SettingsSubMenuAccessibilityRobot {
 
     fun clickFontSizingSwitch() = toggleFontSizingSwitch()
 
-    fun verifyNewMenuItems() = assertNewMenuItems()
+    fun verifyEnabledMenuItems() = assertEnabledMenuItems()
 
-    fun verifyNewMenuItemsAreGone() = assertNewMenuItemsAreGone()
+    fun verifyMenuItemsAreDisabled() = assertMenuItemsAreDisabled()
 
     fun changeTextSizeSlider(seekBarPercentage: Int) = adjustTextSizeSlider(seekBarPercentage)
 
@@ -91,7 +92,7 @@ private fun toggleFontSizingSwitch() {
         .perform(click())
 }
 
-private fun assertNewMenuItems() {
+private fun assertEnabledMenuItems() {
     assertFontSize()
     assertSliderBar()
 }
@@ -99,9 +100,11 @@ private fun assertNewMenuItems() {
 private fun assertFontSize() {
     val view = onView(withText("Font Size"))
     view.check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isEnabled(true)))
     val strFont = "Make text on websites larger or smaller"
     onView(withText(strFont))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        .check(matches(isEnabled(true)))
 }
 
 private fun assertSliderBar() {
@@ -125,20 +128,18 @@ private fun assertTextSizePercentage(textSize: Int) {
         .check(textSizePercentageEquals(textSize))
 }
 
-private fun assertNewMenuItemsAreGone() {
-    onView(withText("Font Size")).check(doesNotExist())
+private fun assertMenuItemsAreDisabled() {
+    onView(withText("Font Size")).assertIsEnabled(false)
+
     val strFont = "Make text on websites larger or smaller"
-    onView(withText(strFont))
-        .check(doesNotExist())
 
-    onView(withId(org.mozilla.fenix.R.id.sampleText))
-        .check(doesNotExist())
+    onView(withText(strFont)).assertIsEnabled(false)
 
-    onView(withId(org.mozilla.fenix.R.id.seekbar_value))
-        .check(doesNotExist())
+    onView(withId(org.mozilla.fenix.R.id.sampleText)).assertIsEnabled(false)
 
-    onView(withId(org.mozilla.fenix.R.id.seekbar))
-        .check(doesNotExist())
+    onView(withId(org.mozilla.fenix.R.id.seekbar_value)).assertIsEnabled(false)
+
+    onView(withId(org.mozilla.fenix.R.id.seekbar)).assertIsEnabled(false)
 }
 
 private fun goBackButton() =

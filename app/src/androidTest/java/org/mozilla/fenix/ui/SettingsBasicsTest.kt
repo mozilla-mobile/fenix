@@ -10,9 +10,9 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Ignore
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -194,7 +194,7 @@ class SettingsBasicsTest {
         }.openSettings {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
-            verifyNewMenuItems()
+            verifyEnabledMenuItems()
             changeTextSizeSlider(textSizePercentage)
             verifyTextSizePercentage(textSizePercentage)
         }.goBack {
@@ -209,7 +209,7 @@ class SettingsBasicsTest {
         }.openSettings {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
-            verifyNewMenuItemsAreGone()
+            verifyMenuItemsAreDisabled()
         }
     }
 

@@ -73,8 +73,9 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
             if (!useAutoSize) {
                 components.core.engine.settings.fontSizeFactor = settings.fontSizeFactor
             }
-            // Show the manual sizing controls if automatic sizing is turned off.
-            textSizePreference.isVisible = !useAutoSize
+
+            // Enable the manual sizing controls if automatic sizing is turned off.
+            textSizePreference.isEnabled = !useAutoSize
 
             // Reload the current session to reflect the new text scale
             components.useCases.sessionUseCases.reload()
