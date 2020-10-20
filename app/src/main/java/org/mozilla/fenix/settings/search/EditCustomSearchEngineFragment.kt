@@ -35,8 +35,7 @@ import java.util.Locale
 /**
  * Fragment to enter a custom search engine name and URL template.
  */
-class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
-    CoroutineScope by CoroutineScope(Job() + IO) {
+class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine) {
 
     private val args by navArgs<EditCustomSearchEngineFragmentArgs>()
     private lateinit var searchEngine: SearchEngine
