@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import kotlin.math.exp
 
-private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.CoroutineManager.fenixRunBlocking` instead because it allows " +
-        "us to monitor the code for performance regressions."
+private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.perf.RunBlockingCounter" +
+        ".fenixRunBlocking` instead because it allows us to monitor the code for performance " +
+        "regressions."
 
 /**
  * A check to prevent us from working around mechanisms we implemented to count how many runBlocking

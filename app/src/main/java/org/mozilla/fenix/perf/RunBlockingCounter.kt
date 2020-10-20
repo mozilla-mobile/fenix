@@ -13,7 +13,6 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Counts the number of runBlocking calls made
@@ -21,18 +20,26 @@ import kotlin.coroutines.EmptyCoroutineContext
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 object RunBlockingCounter {
     var count = 0L
+        @Synchronized set
 }
 
 /**
- * Wrapper around `runBlocking`
+ * Wrapper around `runBlocking`. RunBlocking seems to be a "fix-all" to return values to the thread
+ * where the coroutine is called. The official doc explains runBlocking:  "Runs a new coroutine and
+ * blocks the current thread interruptibly until its completion`. This can have negative
+ * side-effects on the our main thread which could lead to significant jank. This wrapper aims to
+ * count the number of runBlocking call to try to limit them as much as possible to encourage
+ * alternatives solutions whenever this function might be needed.
  */
 fun <T> runBlockingIncrement(
-    context: CoroutineContext = EmptyCoroutineContext,
+    context: CoroutineContext? = null,
     action: suspend CoroutineScope.() -> T
 ): T {
     RunBlockingCounter.count += 1
-    if (context != EmptyCoroutineContext) {
-        return runBlocking(context) { action() }
+
+    context?.let {
+        return runBlocking(it) { action() }
+    } ?: run {
+        return runBlocking { action() }
     }
-    return runBlocking { action() }
 }

@@ -54,14 +54,14 @@ private const val RUNBLOCKING_FAILURE_MSG = """RunblockingCounter startup count 
  *
  * IF YOU UPDATE THE TEST NAME, UPDATE CODE OWNERS.
  */
-class StrictModeStartupSuppressionCountTest {
+class StartupExcessiveResourceUseTest {
     @get:Rule
     val activityTestRule = HomeActivityTestRule(skipOnboarding = true)
 
     private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Test
-    fun verifyStrictModeSuppressionCount() {
+    fun verifyRunBlockingAndStrictModeSuppresionCount() {
         uiDevice.waitForIdle() // wait for async UI to load.
 
         // This might cause intermittents: at an arbitrary point after start up (such as the visual
