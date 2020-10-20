@@ -17,7 +17,7 @@ class CustomRulesetProvider : RuleSetProvider {
             MozillaBannedPropertyAccess(config),
             MozillaStrictModeSuppression(config),
             MozillaCorrectUnitTestRunner(config),
-            MozillaRunblockingCheck(config)
+            MozillaRunBlockingCheck(config)
         )
     )
 }

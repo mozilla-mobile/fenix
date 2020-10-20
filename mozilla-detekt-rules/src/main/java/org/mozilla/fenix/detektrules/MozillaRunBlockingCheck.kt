@@ -20,7 +20,7 @@ private const val VIOLATION_MSG = "Please use `org.mozilla.fenix.CoroutineManage
  *
  * IF YOU UPDATE THIS FILE NAME, UPDATE CODE OWNERS.
  */
-class MozillaRunblockingCheck(config: Config) : Rule(config) {
+class MozillaRunBlockingCheck(config: Config) : Rule(config) {
 
     override val issue = Issue(
         "MozillaRunblockingCheck",
