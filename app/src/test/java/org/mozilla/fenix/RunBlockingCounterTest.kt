@@ -5,11 +5,17 @@
 package org.mozilla.fenix
 
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.perf.RunBlockingCounter
 import org.mozilla.fenix.perf.runBlockingIncrement
 
 class RunBlockingCounterTest {
+
+    @Before
+    fun setup() {
+        RunBlockingCounter.count = 0
+    }
 
     @Test
     fun `GIVEN we call runBlockingCounter THEN the count should increase`() {
