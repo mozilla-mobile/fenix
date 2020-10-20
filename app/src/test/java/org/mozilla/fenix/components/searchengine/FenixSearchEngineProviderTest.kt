@@ -73,7 +73,7 @@ class FenixSearchEngineProviderTest {
 
     @Test
     fun `GIVEN sharedprefs does not contain installed engines WHEN installedSearchEngineIdentifiers THEN defaultEngines + customEngines ids are returned`() = runBlockingTest {
-        val expectedDefaults = fenixSearchEngineProvider.localizedSearchEngines.toIdSet()
+        val expectedDefaults = fenixSearchEngineProvider.baseSearchEngines.toIdSet()
         val expectedCustom = fenixSearchEngineProvider.customSearchEngines.toIdSet()
         val expected = expectedDefaults + expectedCustom
 
@@ -110,7 +110,7 @@ class FakeFenixSearchEngineProvider(context: Context) : FenixSearchEngineProvide
     override val localizationProvider: SearchLocalizationProvider
         get() = LocaleSearchLocalizationProvider()
 
-    override var localizedSearchEngines: Deferred<SearchEngineList>
+    override var baseSearchEngines: Deferred<SearchEngineList>
         set(_) { throw NotImplementedError("Setting not currently supported on this fake") }
         get() {
             val google = mockSearchEngine(id = "google-b-1-m", n = "Google")

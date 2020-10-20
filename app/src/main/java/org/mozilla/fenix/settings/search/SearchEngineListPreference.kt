@@ -71,15 +71,14 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             return
         }
 
-        val defaultEngine = context.components.search.provider.getDefaultEngine(context).identifier
+        val defaultEngineId = context.components.search.provider.getDefaultEngine(context).identifier
+
         val selectedEngine = (searchEngineList.list.find {
-            it.identifier == defaultEngine
+            it.identifier == defaultEngineId
         } ?: searchEngineList.list.first()).identifier
 
-        context.components.search.searchEngineManager.defaultSearchEngine =
-            searchEngineList.list.find {
-                it.identifier == selectedEngine
-            }
+        // set the search engine manager default
+        context.components.search.provider.setDefaultEngine(context, selectedEngine)
 
         searchEngineGroup!!.removeAllViews()
 
@@ -216,8 +215,9 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
             },
             operation = {
                 if (isDefaultEngine) {
-                    val default = context.components.search.provider.getDefaultEngine(context).identifier
-                    context.components.search.provider.setDefaultEngine(context, default)
+                    val default = context.components.search.provider.getDefaultEngine(context)
+                    context.components.search.provider.setDefaultEngine(context, default.identifier)
+                    context.settings().defaultSearchEngineName = default.name
                 }
                 if (isCustomSearchEngine) {
                     context.components.analytics.metrics.track(Event.CustomEngineDeleted)
@@ -231,7 +231,7 @@ abstract class SearchEngineListPreference @JvmOverloads constructor(
                 it.identifier != engine.identifier
             },
             default = if (searchEngineList.default?.identifier == engine.identifier) {
-                searchEngineList.list.first { it.identifier != engine.identifier }
+                null
             } else {
                 searchEngineList.default
             }

@@ -15,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.LinearLayout
-import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -142,7 +141,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
         val name = edit_engine_name.text?.toString()?.trim() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
-        val hasError = checkErrors(name, searchString)
+        val hasError = checkForErrors(name, searchString)
 
         if (hasError) { return }
 
@@ -175,7 +174,7 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
                             )
                         return@launch
                     }
-                    requireComponents.search.provider.reloadCustomSearchEngines()
+                    requireComponents.search.provider.reload()
                     val successMessage = resources
                         .getString(R.string.search_add_custom_engine_success_message, name)
 
@@ -196,16 +195,12 @@ class AddSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine),
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun checkErrors(name: String, searchString: String): Boolean {
-        var existingIdentifiers: List<String> = listOf()
-        lifecycleScope.launch(IO) {
-            existingIdentifiers = requireComponents
+    fun checkForErrors(name: String, searchString: String): Boolean {
+        val existingIdentifiers = requireComponents
                 .search
                 .provider
                 .allSearchEngineIdentifiers()
                 .map { it.toLowerCase(Locale.ROOT) }
-        }
 
         val hasError = when {
             name.isEmpty() -> {

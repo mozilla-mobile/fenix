@@ -25,7 +25,6 @@ import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.location.search.RegionSearchLocalizationProvider
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import java.util.Locale
@@ -59,7 +58,7 @@ open class FenixSearchEngineProvider(
     /**
      * Unfiltered list of search engines based on locale.
      */
-    open var localizedSearchEngines = async {
+    open var baseSearchEngines = async {
         AssetsSearchEngineProvider(localizationProvider)
             .loadSearchEngines(context)
     }
@@ -83,7 +82,7 @@ open class FenixSearchEngineProvider(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open val bundledSearchEngines = async {
         val defaultEngineIdentifiers =
-            localizedSearchEngines.await().list.map { it.identifier }.toSet()
+            baseSearchEngines.await().list.map { it.identifier }.toSet()
         AssetsSearchEngineProvider(
             localizationProvider,
             filters = listOf(object : SearchEngineFilter {
@@ -104,7 +103,7 @@ open class FenixSearchEngineProvider(
         CustomSearchEngineProvider().loadSearchEngines(context)
     }
 
-    private var loadedSearchEngines = refreshInstalledEngineListAsync(localizedSearchEngines)
+    private var loadedSearchEngines = refreshInstalledEngineListAsync(baseSearchEngines)
 
     // https://github.com/mozilla-mobile/fenix/issues/9935
     // Create new getter that will return the fallback SearchEngineList if
@@ -134,6 +133,7 @@ open class FenixSearchEngineProvider(
             ?: engines.list.first()
 
         context.settings().defaultSearchEngineName = newDefault.name
+        context.components.search.searchEngineManager.defaultSearchEngine = newDefault
     }
 
     /**
@@ -186,7 +186,7 @@ open class FenixSearchEngineProvider(
         if (isCustom) {
             val searchUrl = searchEngine.getSearchTemplate()
             CustomSearchEngineStore.addSearchEngine(context, searchEngine.name, searchUrl)
-            reloadCustomSearchEngines()
+            reload()
         } else {
             val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
             installedIdentifiers.add(searchEngine.identifier)
@@ -204,8 +204,7 @@ open class FenixSearchEngineProvider(
     ) = runBlocking {
         if (isCustom) {
             CustomSearchEngineStore.removeSearchEngine(context, searchEngine.identifier)
-            context.components.analytics.metrics.track(Event.CustomEngineDeleted)
-            reloadCustomSearchEngines()
+            reload()
         } else {
             val installedIdentifiers = installedSearchEngineIdentifiers(context).toMutableSet()
             installedIdentifiers.remove(searchEngine.identifier)
@@ -216,17 +215,17 @@ open class FenixSearchEngineProvider(
         }
     }
 
-    fun reloadCustomSearchEngines() {
+    fun reload() {
         launch {
             customSearchEngines = async { CustomSearchEngineProvider().loadSearchEngines(context) }
-            loadedSearchEngines = refreshInstalledEngineListAsync(localizedSearchEngines)
+            loadedSearchEngines = refreshInstalledEngineListAsync(baseSearchEngines)
         }
     }
 
     // When we change the locale we need to update the baseSearchEngines list
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     open fun updateBaseSearchEngines() {
-        localizedSearchEngines = async {
+        baseSearchEngines = async {
             AssetsSearchEngineProvider(localizationProvider)
                 .loadSearchEngines(context)
         }
@@ -255,7 +254,7 @@ open class FenixSearchEngineProvider(
         if (!prefs.contains(installedEnginesKey)) {
             val searchEngines =
                 if (isRegionCachedByLocationService) {
-                    localizedSearchEngines
+                    baseSearchEngines
                 } else {
                     fallbackEngines
                 }

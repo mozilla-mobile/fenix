@@ -944,7 +944,7 @@
                 android:name="searchEngineIdentifier"
                 app:argType="string" />
             <argument
-                android:name="defaultSearchEngine"
+                android:name="isDefaultSearchEngine"
                 app:argType="boolean" />
         </fragment>
     </navigation>

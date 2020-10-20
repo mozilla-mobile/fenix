@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -96,7 +95,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         val name = edit_engine_name.text?.toString()?.trim() ?: ""
         val searchString = edit_search_string.text?.toString() ?: ""
 
-        val hasError = checkErrors(name, searchString)
+        val hasError = checkForErrors(name, searchString)
 
         if (hasError) {
             return
@@ -122,7 +121,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                         newEngineName = name,
                         searchQuery = searchString
                     )
-                    requireComponents.search.provider.reloadCustomSearchEngines()
+                    requireComponents.search.provider.reload()
                     val successMessage = resources
                         .getString(R.string.search_edit_custom_engine_success_message, name)
 
@@ -135,7 +134,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                             .setText(successMessage)
                             .show()
                     }
-                    if (args.defaultSearchEngine) {
+                    if (args.isDefaultSearchEngine) {
                         requireComponents.search.provider.setDefaultEngine(requireContext(), name)
                     }
                     findNavController().popBackStack()
@@ -144,16 +143,12 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    private fun checkErrors(name: String, searchString: String): Boolean {
-        var existingIdentifiers: List<String> = listOf()
-        lifecycleScope.launch {
-            existingIdentifiers = requireComponents
-                .search
-                .provider
-                .allSearchEngineIdentifiers()
-                .map { it.toLowerCase(Locale.ROOT) }
-        }
+    private fun checkForErrors(name: String, searchString: String): Boolean {
+        val existingIdentifiers = requireComponents
+            .search
+            .provider
+            .allSearchEngineIdentifiers()
+            .map { it.toLowerCase(Locale.ROOT) }
 
         val nameHasChanged = name != args.searchEngineIdentifier
         val hasError = when {
