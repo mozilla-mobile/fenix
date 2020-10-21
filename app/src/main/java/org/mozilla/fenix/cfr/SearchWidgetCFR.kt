@@ -61,13 +61,11 @@ class SearchWidgetCFR(
         val gravity = Gravity.CENTER_HORIZONTAL or toolbarPosition.androidGravity
 
         layout.cfr_neg_button.setOnClickListener {
-            metrics.track(Event.SearchWidgetCFRNotNowPressed)
             searchWidgetCFRDialog.dismiss()
             settings.manuallyDismissSearchWidgetCFR()
         }
 
         layout.cfr_pos_button.setOnClickListener {
-            metrics.track(Event.SearchWidgetCFRAddWidgetPressed)
             SearchWidgetCreator.createSearchWidget(context)
             searchWidgetCFRDialog.dismiss()
             settings.manuallyDismissSearchWidgetCFR()
@@ -88,7 +86,6 @@ class SearchWidgetCFR(
 
         searchWidgetCFRDialog.setOnCancelListener {
             isShown = false
-            metrics.track(Event.SearchWidgetCFRCanceled)
         }
 
         searchWidgetCFRDialog.setOnDismissListener {
@@ -97,7 +94,6 @@ class SearchWidgetCFR(
         }
 
         searchWidgetCFRDialog.show()
-        metrics.track(Event.SearchWidgetCFRDisplayed)
     }
 
     companion object {
