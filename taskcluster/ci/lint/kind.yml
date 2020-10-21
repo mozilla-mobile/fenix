@@ -69,7 +69,7 @@ jobs:
         description: 'Running lint over all modules'
         run:
             using: gradlew
-            gradlew: ['lintDebug', 'githubLintAndroidDetails']
+            gradlew: ['lintDebug', 'githubLintAndroidDetails', 'mozilla-lint-rules:test']
         treeherder:
             symbol: lint
         worker:
