@@ -23,6 +23,7 @@ internal class MozillaStrictModeSuppressionTest {
     fun `GIVEN a file with import not resetAfter WHEN linting THEN pass`() {
         val file = """import android.os.StrictMode"""
         assertNoFinding(file)
+        throw IllegalStateException()
     }
 
     @Test
