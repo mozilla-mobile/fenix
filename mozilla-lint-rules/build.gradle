@@ -12,8 +12,10 @@ dependencies {
     // I didn't look thoroughly enough to really know what's going on here but I think
     // the lint API uses jdk8 so if we provide jdk7, the dependency collision system
     // doesn't work and there are duplicate APIs with different versions in the output.
-    implementation Deps.kotlin_stdlib_jdk8
-    implementation Deps.kotlin_reflect
+    compileOnly Deps.kotlin_stdlib_jdk8
+    compileOnly Deps.kotlin_reflect
+    testImplementation Deps.kotlin_stdlib_jdk8
+    testImplementation Deps.kotlin_reflect
 
     compileOnly "com.android.tools.lint:lint-api:${Versions.android_lint_api}"
     compileOnly "com.android.tools.lint:lint-checks:${Versions.android_lint_api}"
