@@ -9,19 +9,17 @@ targetCompatibility = JavaVersion.VERSION_1_8
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compileOnly Deps.kotlin_stdlib
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
-    compileOnly Deps.kotlin_reflect
+    // I didn't look thoroughly enough to really know what's going on here but I think
+    // the lint API uses jdk8 so if we provide jdk7, the dependency collision system
+    // doesn't work and there are duplicate APIs with different versions in the output.
+    implementation Deps.kotlin_stdlib_jdk8
+    implementation Deps.kotlin_reflect
 
     compileOnly "com.android.tools.lint:lint-api:${Versions.android_lint_api}"
     compileOnly "com.android.tools.lint:lint-checks:${Versions.android_lint_api}"
 
-    testImplementation Deps.kotlin_stdlib
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
-    testImplementation Deps.kotlin_reflect
     testImplementation "com.android.tools.lint:lint:${Versions.android_lint_api}"
     testImplementation "com.android.tools.lint:lint-tests:${Versions.android_lint_api}"
-    testImplementation Deps.junitApi
 }
 
 jar {
