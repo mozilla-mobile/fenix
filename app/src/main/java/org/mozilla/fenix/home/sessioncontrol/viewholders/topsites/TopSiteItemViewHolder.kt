@@ -22,6 +22,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.view.ViewHolder
 
 class TopSiteItemViewHolder(
@@ -41,6 +42,9 @@ class TopSiteItemViewHolder(
             val topSiteMenu = TopSiteItemMenu(view.context, topSite.type != FRECENT) { item ->
                 when (item) {
                     is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
+                        topSite
+                    )
+                    is TopSiteItemMenu.Item.RenameTopSite -> interactor.onRenameTopSiteClicked(
                         topSite
                     )
                     is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(
@@ -100,18 +104,24 @@ class TopSiteItemMenu(
 ) {
     sealed class Item {
         object OpenInPrivateTab : Item()
+        object RenameTopSite : Item()
         object RemoveTopSite : Item()
     }
 
     val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     private val menuItems by lazy {
-        listOf(
+        listOfNotNull(
             SimpleBrowserMenuItem(
                 context.getString(R.string.bookmark_menu_open_in_private_tab_button)
             ) {
                 onItemTapped.invoke(Item.OpenInPrivateTab)
             },
+            if (isPinnedSite) SimpleBrowserMenuItem(
+                context.getString(R.string.rename_top_site)
+            ) {
+                onItemTapped.invoke(Item.RenameTopSite)
+            } else null,
             SimpleBrowserMenuItem(
                 if (isPinnedSite) {
                     context.getString(R.string.remove_top_site)

@@ -4,6 +4,9 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
+import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +18,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.ext.restore
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -84,6 +88,11 @@ interface SessionControlController {
      * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
+
+    /**
+     * @see [TopSiteInteractor.onRenameTopSiteClicked]
+     */
+    fun handleRenameTopSiteClicked(topSite: TopSite)
 
     /**
      * @see [TopSiteInteractor.onRemoveTopSiteClicked]
@@ -279,6 +288,35 @@ class DefaultSessionControlController(
             newTab = true,
             from = BrowserDirection.FromHome
         )
+    }
+
+    override fun handleRenameTopSiteClicked(topSite: TopSite) {
+        if (topSite.id != null) {
+            activity.let {
+                val customLayout =
+                        LayoutInflater.from(it).inflate(R.layout.rename_top_site_dialog, null)
+                val topSiteLabelEditText: EditText =
+                        customLayout.findViewById(R.id.top_site_title)
+                topSiteLabelEditText.setText(topSite.title)
+
+                AlertDialog.Builder(it).setTitle(R.string.rename_top_site)
+                    .setView(customLayout).setPositiveButton(android.R.string.ok) { _, _ ->
+                        val newTitle = topSiteLabelEditText.text.toString()
+                        if (newTitle.isNotBlank()) {
+                            // TODO: it.metrics.track(Event.TopSiteRenamed)
+                            viewLifecycleScope.launch(Dispatchers.IO) {
+                                with(activity.components.useCases.topSitesUseCase) {
+                                    renameTopSites(topSite, newTitle)
+                                }
+                            }
+                        }
+                    }.setNegativeButton(android.R.string.cancel, null) 
+                    .create().show().also {
+                        topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
+                        topSiteLabelEditText.showKeyboard()
+                    }
+            }
+        }
     }
 
     override fun handleRemoveTopSiteClicked(topSite: TopSite) {
