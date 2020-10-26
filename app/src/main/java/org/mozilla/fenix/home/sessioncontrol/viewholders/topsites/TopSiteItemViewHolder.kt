@@ -127,7 +127,8 @@ class TopSiteItemMenu(
                     context.getString(R.string.remove_top_site)
                 } else {
                     context.getString(R.string.delete_from_history)
-                }
+                },
+                textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
             ) {
                 onItemTapped.invoke(Item.RemoveTopSite)
             }
