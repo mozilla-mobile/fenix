@@ -131,9 +131,6 @@ class HomeScreenTest {
             verifyPrivateSessionMessage()
             verifyHomeToolbar()
             verifyHomeComponent()
-        }.openCommonMythsLink {
-            verifyUrl("common-myths-about-private-browsing")
-            mDevice.pressBack()
         }
 
         homeScreen {

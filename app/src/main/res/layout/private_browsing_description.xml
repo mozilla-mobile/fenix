@@ -39,5 +39,6 @@
         android:scrollHorizontally="false"
         android:text="@string/private_browsing_common_myths"
         android:textColor="?primaryText"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:visibility="gone" />
 </LinearLayout>
