@@ -393,6 +393,8 @@ class TabTrayView(
         } else {
             setupRegularTabsTrayLayout()
         }
+        // We will need to learn call setupGridTabView(), Mozilla's new
+        // official grid layout, by preference.
     }
 
     private fun setupCompactTabsTrayLayout() {
@@ -465,8 +467,6 @@ class TabTrayView(
         updateUINormalMode(view.context.components.core.store.state)
         scrollToTab(view.context.components.core.store.state.selectedTabId)
 
-        view.tabsTray.invalidateItemDecorations()
-
         if (isPrivateModeSelected) {
             components.analytics.metrics.track(Event.TabsTrayPrivateModeTapped)
         } else {
@@ -479,6 +479,26 @@ class TabTrayView(
 
     var mode: Mode = Mode.Normal
         private set
+
+    private fun setupGridTabView() {
+        view.tabsTray.apply {
+            val gridLayoutManager =
+                GridLayoutManager(container.context, getNumberOfGridColumns(container.context))
+
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val numTabs = tabsAdapter.itemCount
+                    return if (position < numTabs) {
+                        1
+                    } else {
+                        getNumberOfGridColumns(container.context)
+                    }
+                }
+            }
+
+            layoutManager = gridLayoutManager
+        }
+    }
 
     /**
      * Returns the number of columns that will fit in the grid layout for the current screen.
@@ -688,7 +708,7 @@ class TabTrayView(
         view.tab_layout.getTabAt(0)?.contentDescription = if (count == 1) {
             view.context?.getString(R.string.open_tab_tray_single)
         } else {
-            view.context?.getString(R.string.open_tab_tray_plural, count.toString())
+            String.format(view.context.getString(R.string.open_tab_tray_plural), count.toString())
         }
 
         view.tabsTray.accessibilityDelegate = object : View.AccessibilityDelegate() {
@@ -774,6 +794,10 @@ class TabTrayView(
             }
 
             layoutManager?.scrollToPosition(recyclerViewIndex)
+            smoothScrollBy(
+                0,
+                - resources.getDimensionPixelSize(R.dimen.tab_tray_tab_item_height) / 2
+            )
         }
     }
 

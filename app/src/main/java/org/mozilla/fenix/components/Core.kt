@@ -21,6 +21,7 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.session.undo.UndoMiddleware
+import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -61,6 +62,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.TelemetryMiddleware
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -95,8 +97,8 @@ class Core(
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
             preferredColorScheme = getPreferredColorScheme(),
-            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize(),
-            fontInflationEnabled = context.settings().shouldUseAutoSize(),
+            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
+            fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
             loginAutofillEnabled = context.settings().shouldAutofillLogins
@@ -153,6 +155,11 @@ class Core(
                 MediaMiddleware(context, MediaService::class.java),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
+                TelemetryMiddleware(
+                    context.settings(),
+                    adsTelemetry,
+                    metrics
+                ),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(::lookupSessionManager, context.getUndoDelay())
             ) + EngineMiddleware.create(engine, ::findSessionById)
@@ -231,6 +238,8 @@ class Core(
                         }
                     }
                 }
+
+                store.dispatch(RestoreCompleteAction)
             }
 
             WebNotificationFeature(
@@ -247,12 +256,16 @@ class Core(
         BrowserIcons(context, client)
     }
 
+    val metrics by lazy {
+        context.components.analytics.metrics
+    }
+
     val adsTelemetry by lazy {
-        AdsTelemetry(context.components.analytics.metrics)
+        AdsTelemetry(metrics)
     }
 
     val searchTelemetry by lazy {
-        InContentTelemetry(context.components.analytics.metrics)
+        InContentTelemetry(metrics)
     }
 
     /**
