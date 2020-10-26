@@ -303,14 +303,13 @@ class DefaultSessionControlController(
                     .setView(customLayout).setPositiveButton(android.R.string.ok) { _, _ ->
                         val newTitle = topSiteLabelEditText.text.toString()
                         if (newTitle.isNotBlank()) {
-                            // TODO: it.metrics.track(Event.TopSiteRenamed)
                             viewLifecycleScope.launch(Dispatchers.IO) {
                                 with(activity.components.useCases.topSitesUseCase) {
                                     renameTopSites(topSite, newTitle)
                                 }
                             }
                         }
-                    }.setNegativeButton(android.R.string.cancel, null) 
+                    }.setNegativeButton(android.R.string.cancel, null)
                     .create().show().also {
                         topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                         topSiteLabelEditText.showKeyboard()
