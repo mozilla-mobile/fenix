@@ -12,6 +12,7 @@ package org.mozilla.fenix.perf
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -19,8 +20,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 object RunBlockingCounter {
-    var count = 0L
-        @Synchronized set
+    var count = AtomicInteger(0)
 }
 
 /**
@@ -35,11 +35,14 @@ fun <T> runBlockingIncrement(
     context: CoroutineContext? = null,
     action: suspend CoroutineScope.() -> T
 ): T {
-    RunBlockingCounter.count += 1
+    synchronized(lock = Any()) {
+        if (RunBlockingCounter.count.get() >= Int.MAX_VALUE) RunBlockingCounter.count.set(0)
+        else RunBlockingCounter.count.addAndGet(1)
+    }
 
-    context?.let {
-        return runBlocking(it) { action() }
-    } ?: run {
-        return runBlocking { action() }
+    return if (context != null) {
+        runBlocking(context) { action() }
+    } else {
+        runBlocking { action() }
     }
 }

@@ -14,13 +14,13 @@ class RunBlockingCounterTest {
 
     @Before
     fun setup() {
-        RunBlockingCounter.count = 0
+        RunBlockingCounter.count.set(0)
     }
 
     @Test
     fun `GIVEN we call runBlockingCounter THEN the count should increase`() {
-        assertEquals(0L, RunBlockingCounter.count)
+        assertEquals(0, RunBlockingCounter.count.get())
         runBlockingIncrement {}
-        assertEquals(1, RunBlockingCounter.count)
+        assertEquals(1, RunBlockingCounter.count.get())
     }
 }
