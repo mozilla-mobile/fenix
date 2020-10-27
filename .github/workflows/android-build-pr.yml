@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install non-automatically-fetched NDK
+        run: sdkmanager "ndk;21.0.6113669"
       - name: Create version name
         run: echo "VERSION_NAME=$(git describe --tags HEAD)" >> $GITHUB_ENV
       - name: Build forkRelease variant of app
@@ -37,6 +39,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install non-automatically-fetched NDK
+        run: sdkmanager "ndk;21.0.6113669"
       - name: Run tests
         uses: eskatos/gradle-command-action@v1
         with:
@@ -56,6 +60,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install non-automatically-fetched NDK
+        run: sdkmanager "ndk;21.0.6113669"
       - name: Run detekt
         uses: eskatos/gradle-command-action@v1
         with:
@@ -80,6 +86,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install non-automatically-fetched NDK
+        run: sdkmanager "ndk;21.0.6113669"
       - name: Run ktlint
         uses: eskatos/gradle-command-action@v1
         with:
@@ -99,6 +107,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install non-automatically-fetched NDK
+        run: sdkmanager "ndk;21.0.6113669"
       - name: Run lintDebug
         uses: eskatos/gradle-command-action@v1
         with:
