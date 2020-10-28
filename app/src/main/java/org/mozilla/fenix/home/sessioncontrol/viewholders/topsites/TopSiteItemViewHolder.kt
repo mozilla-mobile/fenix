@@ -46,6 +46,9 @@ class TopSiteItemViewHolder(
                     is TopSiteItemMenu.Item.RemoveTopSite -> interactor.onRemoveTopSiteClicked(
                         topSite
                     )
+                    is TopSiteItemMenu.Item.RenameTopSite -> interactor.onRenameTopSiteClicked(
+                        topSite
+                    )
                 }
             }
             val menu = topSiteMenu.menuBuilder.build(view.context).show(anchor = it)
@@ -101,12 +104,13 @@ class TopSiteItemMenu(
     sealed class Item {
         object OpenInPrivateTab : Item()
         object RemoveTopSite : Item()
+        object RenameTopSite : Item()
     }
 
     val menuBuilder by lazy { BrowserMenuBuilder(menuItems) }
 
     private val menuItems by lazy {
-        listOf(
+        val menuItems = mutableListOf(
             SimpleBrowserMenuItem(
                 context.getString(R.string.bookmark_menu_open_in_private_tab_button)
             ) {
@@ -122,5 +126,15 @@ class TopSiteItemMenu(
                 onItemTapped.invoke(Item.RemoveTopSite)
             }
         )
+
+        if (isPinnedSite) {
+            menuItems.add(1, SimpleBrowserMenuItem(
+                context.getString(R.string.rename_top_site)
+            ) {
+                onItemTapped.invoke(Item.RenameTopSite)
+            })
+        }
+
+        menuItems
     }
 }

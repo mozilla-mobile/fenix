@@ -164,6 +164,13 @@ interface TopSiteInteractor {
     fun onRemoveTopSiteClicked(topSite: TopSite)
 
     /**
+     * Renames the given top site. Called when an user clicks on the "Rename" top site menu item.
+     *
+     * @param topSite The top site that will be renamed.
+     */
+    fun onRenameTopSiteClicked(topSite: TopSite)
+
+    /**
      * Selects the given top site. Called when a user clicks on a top site.
      *
      * @param url The URL of the top site.
@@ -212,6 +219,10 @@ class SessionControlInteractor(
 
     override fun onRemoveTopSiteClicked(topSite: TopSite) {
         controller.handleRemoveTopSiteClicked(topSite)
+    }
+
+    override fun onRenameTopSiteClicked(topSite: TopSite) {
+        controller.handleRenameTopSiteClicked(topSite)
     }
 
     override fun onRenameCollectionTapped(collection: TabCollection) {

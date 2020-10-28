@@ -91,6 +91,11 @@ interface SessionControlController {
     fun handleRemoveTopSiteClicked(topSite: TopSite)
 
     /**
+     * @see [TopSiteInteractor.onRenameTopSiteClicked]
+     */
+    fun handleRenameTopSiteClicked(topSite: TopSite)
+
+    /**
      * @see [CollectionInteractor.onRenameCollectionTapped]
      */
     fun handleRenameCollectionTapped(collection: TabCollection)
@@ -172,6 +177,7 @@ class DefaultSessionControlController(
         wasSwiped: Boolean,
         handleSwipedItemDeletionCancel: () -> Unit
     ) -> Unit,
+    private val showRenameTopSitePrompt: (topSite: TopSite) -> Unit,
     private val showTabTray: () -> Unit,
     private val handleSwipedItemDeletionCancel: () -> Unit
 ) : SessionControlController {
@@ -292,6 +298,10 @@ class DefaultSessionControlController(
                 removeTopSites(topSite)
             }
         }
+    }
+
+    override fun handleRenameTopSiteClicked(topSite: TopSite) {
+        showRenameTopSitePrompt(topSite)
     }
 
     override fun handleRenameCollectionTapped(collection: TabCollection) {

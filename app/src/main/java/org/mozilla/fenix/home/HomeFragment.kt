@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AlertDialog
@@ -65,6 +66,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.state.ext.consumeFrom
@@ -241,6 +243,7 @@ class HomeFragment : Fragment() {
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 showDeleteCollectionPrompt = ::showDeleteCollectionPrompt,
+                showRenameTopSitePrompt = ::showRenameTopSitePrompt,
                 showTabTray = ::openTabTray,
                 handleSwipedItemDeletionCancel = ::handleSwipedItemDeletionCancel
             )
@@ -634,6 +637,32 @@ class HomeFragment : Fragment() {
                 }
             }
             create()
+        }.show()
+    }
+
+    private fun showRenameTopSitePrompt(topSite: TopSite) {
+        val context = context ?: return
+        val customLayout =
+            LayoutInflater.from(context).inflate(R.layout.top_sites_rename_dialog, null)
+        val topSiteRenameEditText: EditText = customLayout.findViewById(R.id.top_site_name)
+        topSiteRenameEditText.setText(topSite.title)
+
+        AlertDialog.Builder(context).apply {
+            setView(customLayout)
+            setTitle(R.string.top_sites_rename_dialog_title)
+            setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
+            setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog: DialogInterface, _ ->
+                lifecycleScope.launch(IO) {
+                    with(requireComponents.useCases.topSitesUseCase) {
+                        renameTopSites(topSite, topSiteRenameEditText.text.toString())
+                    }
+                    launch(Main) {
+                        dialog.dismiss()
+                    }
+                }
+            }
         }.show()
     }
 
