@@ -21,6 +21,16 @@ import kotlin.coroutines.CoroutineContext
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 object RunBlockingCounter {
     var count = AtomicInteger(0)
+
+    fun incrementCounter() {
+        var prev: Int
+        var next: Int
+        do {
+            prev = count.get()
+            next = prev + 1
+            if (next == Integer.MAX_VALUE) next = 0
+        } while (!count.compareAndSet(prev, next))
+    }
 }
 
 /**
@@ -35,10 +45,7 @@ fun <T> runBlockingIncrement(
     context: CoroutineContext? = null,
     action: suspend CoroutineScope.() -> T
 ): T {
-    synchronized(lock = Any()) {
-        if (RunBlockingCounter.count.get() >= Int.MAX_VALUE) RunBlockingCounter.count.set(0)
-        else RunBlockingCounter.count.addAndGet(1)
-    }
+    RunBlockingCounter.incrementCounter()
 
     return if (context != null) {
         runBlocking(context) { action() }

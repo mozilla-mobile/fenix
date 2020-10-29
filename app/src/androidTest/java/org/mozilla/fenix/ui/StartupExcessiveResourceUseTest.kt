@@ -44,13 +44,19 @@ private const val RUNBLOCKING_FAILURE_MSG = """RunblockingCounter startup count 
 """
 
 /**
- * A performance test to limit the number of StrictMode suppressions on startup.
+ * A performance test to limit the number of StrictMode suppressions and number of runBlocking used
+ * on startup.
+ *
  * This test was written by the perf team.
  *
  * StrictMode detects main thread IO, which is often indicative of a performance issue.
  * It's easy to suppress StrictMode so we wrote a test to ensure we have a discussion
- * if the StrictMode count changes. The perf team is code owners for this file so they
- * should be notified when the count is modified.
+ * if the StrictMode count changes.
+ *
+ * RunBlocking is mostly used to return values to a thread from a coroutine. However, if that
+ * coroutine takes too long, it can lead that thread to block every other operations.
+ *
+ * The perf team is code owners for this file so they should be notified when the count is modified.
  *
  * IF YOU UPDATE THE TEST NAME, UPDATE CODE OWNERS.
  */

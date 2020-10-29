@@ -137,7 +137,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // to invoke parts of itself that require complete megazord initialization
             // before that process completes, we wait here, if necessary.
             if (!megazordSetup.isCompleted) {
-                runBlockingIncrement { megazordSetup.await(); }
+                runBlockingIncrement {
+                    megazordSetup.await()
+                }
             }
         }
 

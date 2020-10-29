@@ -58,12 +58,7 @@ class FennecWebAppIntentProcessor(
         val url = safeIntent.dataString
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val webAppManifest = runBlockingIncrement {
-                loadManifest(
-                    safeIntent,
-                    url
-                )
-            }
+            val webAppManifest = runBlockingIncrement { loadManifest(safeIntent, url) }
 
             val session = Session(url, private = false, source = SessionState.Source.HOME_SCREEN)
             session.webAppManifest = webAppManifest

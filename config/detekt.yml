@@ -119,7 +119,7 @@ mozilla-detekt-rules:
     active: true
   MozillaRunBlockingCheck:
     active: true
-    excludes: "**/*Test.kt"
+    excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/androidTest/**"
 
 empty-blocks:
   active: true
