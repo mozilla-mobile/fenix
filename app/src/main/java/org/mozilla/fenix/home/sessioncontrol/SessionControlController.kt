@@ -291,29 +291,30 @@ class DefaultSessionControlController(
     }
 
     override fun handleRenameTopSiteClicked(topSite: TopSite) {
-        if (topSite.id != null) {
-            activity.let {
-                val customLayout =
-                        LayoutInflater.from(it).inflate(R.layout.rename_top_site_dialog, null)
-                val topSiteLabelEditText: EditText =
-                        customLayout.findViewById(R.id.top_site_title)
-                topSiteLabelEditText.setText(topSite.title)
+        activity.let {
+            val customLayout =
+                    LayoutInflater.from(it).inflate(R.layout.top_sites_rename_dialog, null)
+            val topSiteLabelEditText: EditText =
+                    customLayout.findViewById(R.id.top_site_title)
+            topSiteLabelEditText.setText(topSite.title)
 
-                AlertDialog.Builder(it).setTitle(R.string.rename_top_site)
-                    .setView(customLayout).setPositiveButton(android.R.string.ok) { _, _ ->
-                        val newTitle = topSiteLabelEditText.text.toString()
-                        if (newTitle.isNotBlank()) {
-                            viewLifecycleScope.launch(Dispatchers.IO) {
-                                with(activity.components.useCases.topSitesUseCase) {
-                                    renameTopSites(topSite, newTitle)
-                                }
+            AlertDialog.Builder(it).apply {
+                setTitle(R.string.rename_top_site)
+                setView(customLayout)
+                setPositiveButton(R.string.top_sites_rename_dialog_ok) { _, _ ->
+                    val newTitle = topSiteLabelEditText.text.toString()
+                    if (newTitle.isNotBlank()) {
+                        viewLifecycleScope.launch(Dispatchers.IO) {
+                            with(activity.components.useCases.topSitesUseCase) {
+                                renameTopSites(topSite, newTitle)
                             }
                         }
-                    }.setNegativeButton(android.R.string.cancel, null)
-                    .create().show().also {
-                        topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
-                        topSiteLabelEditText.showKeyboard()
                     }
+                }
+                setNegativeButton(R.string.top_sites_rename_dialog_cancel, null)
+            }.show().also {
+                topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
+                topSiteLabelEditText.showKeyboard()
             }
         }
     }
