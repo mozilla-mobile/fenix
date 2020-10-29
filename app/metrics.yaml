@@ -1027,7 +1027,7 @@ metrics:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/16075
     data_reviews:
-      - tbd
+      - https://github.com/mozilla-mobile/fenix/pull/16257
     data_sensitivity:
       - interaction
     notification_emails:
