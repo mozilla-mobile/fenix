@@ -301,7 +301,7 @@ class DefaultSessionControlController(
             AlertDialog.Builder(it).apply {
                 setTitle(R.string.rename_top_site)
                 setView(customLayout)
-                setPositiveButton(R.string.top_sites_rename_dialog_ok) { _, _ ->
+                setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog, _ ->
                     val newTitle = topSiteLabelEditText.text.toString()
                     if (newTitle.isNotBlank()) {
                         viewLifecycleScope.launch(Dispatchers.IO) {
@@ -310,8 +310,11 @@ class DefaultSessionControlController(
                             }
                         }
                     }
+                    dialog.dismiss()
                 }
-                setNegativeButton(R.string.top_sites_rename_dialog_cancel, null)
+                setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
+                    dialog.cancel()
+                }
             }.show().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
