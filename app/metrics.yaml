@@ -850,6 +850,26 @@ metrics:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+  adjust_campaign:
+    type: string
+    lifetime: application
+    description: |
+      A string containing the Adjust campaign ID from which the user installed
+      Fenix. This will not send on the first session the user runs. If the
+      install is organic, this will be empty.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/1298
+      - https://github.com/mozilla-mobile/fenix/issues/9136
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/5579
+      - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - fenix-core@mozilla.com
+    expires: "2021-08-01"
   adjust_ad_group:
     type: string
     lifetime: application
