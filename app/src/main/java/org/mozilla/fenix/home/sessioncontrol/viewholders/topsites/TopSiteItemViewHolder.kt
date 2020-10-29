@@ -22,7 +22,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.view.ViewHolder
 
 class TopSiteItemViewHolder(
@@ -127,8 +126,7 @@ class TopSiteItemMenu(
                     context.getString(R.string.remove_top_site)
                 } else {
                     context.getString(R.string.delete_from_history)
-                },
-                textColorResource = ThemeManager.resolveAttribute(R.attr.destructive, context)
+                }
             ) {
                 onItemTapped.invoke(Item.RemoveTopSite)
             }
