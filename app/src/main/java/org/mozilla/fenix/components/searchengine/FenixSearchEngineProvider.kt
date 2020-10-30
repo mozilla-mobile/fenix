@@ -117,33 +117,33 @@ open class FenixSearchEngineProvider(
      * are readily available throughout the app.
      */
     fun installedSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
-            val installedIdentifiers = installedSearchEngineIdentifiers(context)
-            val engineList = searchEngines.await()
+        val installedIdentifiers = installedSearchEngineIdentifiers(context)
+        val engineList = searchEngines.await()
 
-            engineList.copy(
-                list = engineList.list.filter {
-                    installedIdentifiers.contains(it.identifier)
-                }.sortedBy { it.name.toLowerCase(Locale.getDefault()) },
-                default = engineList.default?.let {
-                    if (installedIdentifiers.contains(it.identifier)) {
-                        it
-                    } else {
-                        null
-                    }
+        engineList.copy(
+            list = engineList.list.filter {
+                installedIdentifiers.contains(it.identifier)
+            }.sortedBy { it.name.toLowerCase(Locale.getDefault()) },
+            default = engineList.default?.let {
+                if (installedIdentifiers.contains(it.identifier)) {
+                    it
+                } else {
+                    null
                 }
-            )
-        }
+            }
+        )
+    }
 
     fun allSearchEngineIdentifiers() = runBlockingIncrement {
-            loadedSearchEngines.await().list.map { it.identifier }
-        }
+        loadedSearchEngines.await().list.map { it.identifier }
+    }
 
     fun uninstalledSearchEngines(context: Context): SearchEngineList = runBlockingIncrement {
-            val installedIdentifiers = installedSearchEngineIdentifiers(context)
-            val engineList = loadedSearchEngines.await()
+        val installedIdentifiers = installedSearchEngineIdentifiers(context)
+        val engineList = loadedSearchEngines.await()
 
-            engineList.copy(list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) })
-        }
+        engineList.copy(list = engineList.list.filterNot { installedIdentifiers.contains(it.identifier) })
+    }
 
     override suspend fun loadSearchEngines(context: Context): SearchEngineList {
         return installedSearchEngines(context)

@@ -74,7 +74,7 @@ class StartupExcessiveResourceUseTest {
         // completeness queue), we might run code on the main thread that suppresses StrictMode,
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
         val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.toInt()
-        val actualRunBlocking = RunBlockingCounter.count
+        val actualRunBlocking = RunBlockingCounter.count.get()
 
         assertEquals(STRICTMODE_FAILURE_MSG, EXPECTED_SUPPRESSION_COUNT, actualSuppresionCount)
         assertEquals(RUNBLOCKING_FAILURE_MSG, EXPECTED_RUNBLOCKING_COUNT, actualRunBlocking)
