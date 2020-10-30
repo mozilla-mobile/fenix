@@ -279,6 +279,8 @@
     <string name="preferences_override_sync_tokenserver">Custom Sync server</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
     <string name="toast_override_fxa_sync_server_done">Firefox Account/Sync server modified. Quitting the application to apply changes…</string>
+    <!-- Switch Preference for local/global fxa server -->
+    <string name="preferences_use_local_fxa_server">Use local service</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Account</string>
     <!-- Preference shown on banner to sign into account -->
@@ -467,6 +469,8 @@
     <!-- Pairing Feature strings -->
     <!-- Instructions on how to access pairing -->
     <string name="pair_instructions_2"><![CDATA[Scan the QR code shown at <b>firefox.com/pair</b>]]></string>
+    <!-- Instructions on how to access pairing -->
+    <string name="pair_instructions_2_cn"><![CDATA[Scan the QR code shown at <b>firefox.com.cn/pair</b>]]></string>
     <!-- Button to open camera for pairing -->
     <string name="pair_open_camera">Open Camera</string>
     <!-- Button to cancel pairing -->
@@ -1221,6 +1225,8 @@
     <string name="sync_scan_code">Scan the code</string>
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[On your computer open Firefox and go to <b>https://firefox.com/pair</b>]]></string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions_cn"><![CDATA[On your computer open Firefox and go to <b>https://firefox.com.cn/pair</b>]]></string>
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">Ready to scan</string>
     <!-- Text shown for settings option for sign with pairing -->
