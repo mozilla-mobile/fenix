@@ -119,7 +119,9 @@ def enable_webrender(config, tasks):
         task["run"]["command"].append("--enable-webrender")
         task["name"] += "-wr"
         task["description"] += "-wr"
-        task["treeherder"].setdefault("groupSymbol", "Btime") += "-wr"
+        task["treeherder"]["groupSymbol"] = "{}-wr".format(
+            task["treeherder"].get("groupSymbol", "Btime")
+        )
         yield task
 
 
