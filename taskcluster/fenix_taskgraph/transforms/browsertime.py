@@ -52,6 +52,8 @@ def enable_webrender(config, tasks):
             newtask = copy.deepcopy(task)
             yield newtask
         task["run"]["command"].append("--enable-webrender")
+        task["name"] += "-wr"
+        task["description"] += "-wr"
         yield task
 
 
