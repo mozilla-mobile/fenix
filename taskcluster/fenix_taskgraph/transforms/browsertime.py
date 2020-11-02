@@ -46,18 +46,6 @@ def add_variants(config, tasks):
 
 
 @transforms.add
-def enable_webrender(config, tasks):
-    for task in tasks:
-        if not task.pop("web-render-only", False):
-            newtask = copy.deepcopy(task)
-            yield newtask
-        task["run"]["command"].append("--enable-webrender")
-        task["name"] += "-wr"
-        task["description"] += "-wr"
-        yield task
-
-
-@transforms.add
 def build_browsertime_task(config, tasks):
     for task in tasks:
         signing = task.pop("primary-dependency")
@@ -119,6 +107,18 @@ def build_browsertime_task(config, tasks):
         if 'youtube-playback' in task["name"]:
             task["run"]["command"].remove("--cold")
 
+        yield task
+
+
+@transforms.add
+def enable_webrender(config, tasks):
+    for task in tasks:
+        if not task.pop("web-render-only", False):
+            newtask = copy.deepcopy(task)
+            yield newtask
+        task["run"]["command"].append("--enable-webrender")
+        task["name"] += "-wr"
+        task["description"] += "-wr"
         yield task
 
 
