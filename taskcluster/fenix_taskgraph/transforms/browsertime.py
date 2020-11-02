@@ -46,6 +46,16 @@ def add_variants(config, tasks):
 
 
 @transforms.add
+def enable_webrender(config, tasks):
+    for task in tasks:
+        if not task.pop("web-render-only", False):
+            newtask = copy.deepcopy(task)
+            yield newtask
+        task["run"]["command"].append("--enable-webrender")
+        yield task
+
+
+@transforms.add
 def build_browsertime_task(config, tasks):
     for task in tasks:
         signing = task.pop("primary-dependency")
