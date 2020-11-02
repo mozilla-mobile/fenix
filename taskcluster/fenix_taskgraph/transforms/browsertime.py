@@ -119,6 +119,7 @@ def enable_webrender(config, tasks):
         task["run"]["command"].append("--enable-webrender")
         task["name"] += "-wr"
         task["description"] += "-wr"
+        task['extra']['treeherder']["groupSymbol"] += "-wr"
         yield task
 
 
