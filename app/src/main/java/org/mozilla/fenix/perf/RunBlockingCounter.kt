@@ -36,7 +36,7 @@ fun <T> runBlockingIncrement(
     context: CoroutineContext? = null,
     action: suspend CoroutineScope.() -> T
 ): T {
-    RunBlockingCounter.count.getAndIncrementNoOverflow(RunBlockingCounter.count)
+    RunBlockingCounter.count.getAndIncrementNoOverflow()
     return if (context != null) {
         runBlocking(context) { action() }
     } else {

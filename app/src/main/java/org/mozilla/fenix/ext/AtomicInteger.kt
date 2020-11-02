@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  *  Increases an AtomicInteger safely.
  */
-fun AtomicInteger.getAndIncrementNoOverflow(counter: AtomicInteger) {
+fun AtomicInteger.getAndIncrementNoOverflow() {
     var prev: Int
     var next: Int
     do {
-        prev = counter.get()
+        prev = this.get()
         next = if (prev == Integer.MAX_VALUE) prev else prev + 1
-    } while (!counter.compareAndSet(prev, next))
+    } while (!this.compareAndSet(prev, next))
 }
