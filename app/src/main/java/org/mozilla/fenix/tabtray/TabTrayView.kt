@@ -40,9 +40,11 @@ import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabViewHolder
 import mozilla.components.feature.syncedtabs.SyncedTabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.InfoBanner
 import org.mozilla.fenix.components.metrics.Event
@@ -54,6 +56,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabtray.SaveToCollectionsButtonAdapter.MultiselectModeChange
 import org.mozilla.fenix.tabtray.TabTrayDialogFragmentState.Mode
 import java.text.NumberFormat
+import kotlin.math.max
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 /**
@@ -66,7 +69,7 @@ class TabTrayView(
     private val interactor: TabTrayInteractor,
     store: TabTrayDialogFragmentStore,
     isPrivate: Boolean,
-    startingInLandscape: Boolean,
+    private val isInLandscape: () -> Boolean,
     lifecycleOwner: LifecycleOwner,
     private val filterTabs: (Boolean) -> Unit
 ) : LayoutContainer, TabLayout.OnTabSelectedListener {
@@ -145,20 +148,14 @@ class TabTrayView(
 
         view.tab_layout.addOnTabSelectedListener(this)
 
-        val tabs = if (isPrivate) {
-            view.context.components.core.store.state.privateTabs
-        } else {
-            view.context.components.core.store.state.normalTabs
-        }
+        val tabs = getTabs(isPrivate)
 
         val selectedBrowserTabIndex = tabs
             .indexOfFirst { it.id == view.context.components.core.store.state.selectedTabId }
 
-        if (tabs.size > EXPAND_AT_SIZE || startingInLandscape) {
-            expand()
-        }
+        updateBottomSheetBehavior()
 
-        setTopOffset(startingInLandscape)
+        setTopOffset(isInLandscape())
 
         if (view.context.settings().syncedTabsInTabsTray) {
             syncedTabsFeature.set(
@@ -280,6 +277,27 @@ class TabTrayView(
         }
     }
 
+    private fun getTabs(isPrivate: Boolean): List<TabSessionState> = if (isPrivate) {
+        view.context.components.core.store.state.privateTabs
+    } else {
+        view.context.components.core.store.state.normalTabs
+    }
+
+    private fun getTabsNumberInAnyMode(): Int {
+        return max(
+            view.context.components.core.store.state.normalTabs.size,
+            view.context.components.core.store.state.privateTabs.size
+        )
+    }
+
+    private fun getTabsNumberForExpandingTray(): Int {
+        return if (container.context.settings().gridTabView) {
+            EXPAND_AT_GRID_SIZE
+        } else {
+            EXPAND_AT_LIST_SIZE
+        }
+    }
+
     private fun handleTabClicked(tab: SyncTab) {
         interactor.onSyncedTabClicked(tab)
     }
@@ -312,8 +330,17 @@ class TabTrayView(
         components.analytics.metrics.track(eventToSend)
     }
 
-    fun expand() {
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    /**
+     * Updates the bottom sheet height based on the number tabs or screen orientation.
+     * Show the bottom sheet fully expanded if it is in landscape mode or the number of
+     * tabs are greater or equal to the expand size limit.
+     */
+    fun updateBottomSheetBehavior() {
+        if (isInLandscape() || getTabsNumberInAnyMode() >= getTabsNumberForExpandingTray()) {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     enum class TabChange {
@@ -373,6 +400,15 @@ class TabTrayView(
             }
 
             layoutManager = gridLayoutManager
+
+            // Ensure items have the same all around padding - 16 dp. Avoid the double spacing issue.
+            // A 8dp padding is already set in xml, pad the parent with the remaining needed 8dp.
+            updateLayoutParams<ConstraintLayout.LayoutParams> {
+                val padding = GRID_ITEM_PARENT_PADDING.dpToPx(resources.displayMetrics)
+                // Account for the already set bottom padding needed to accommodate the fab.
+                val bottomPadding = paddingBottom + padding
+                setPadding(padding, padding, padding, bottomPadding)
+            }
         }
     }
 
@@ -652,13 +688,15 @@ class TabTrayView(
 
             // We offset the tab index by the number of items in the other adapters.
             // We add the offset, because the layoutManager is initialized with `reverseLayout`.
-            // We also add 1 to display the tab item above the selected browser tab.
             val recyclerViewIndex = selectedBrowserTabIndex +
                 collectionsButtonAdapter.itemCount +
-                syncedTabsController.adapter.itemCount +
-                1
+                syncedTabsController.adapter.itemCount
 
             layoutManager?.scrollToPosition(recyclerViewIndex)
+            smoothScrollBy(
+                0,
+                - resources.getDimensionPixelSize(R.dimen.tab_tray_tab_item_height) / 2
+            )
         }
     }
 
@@ -666,11 +704,16 @@ class TabTrayView(
         private const val TAB_COUNT_SHOW_CFR = 6
         private const val DEFAULT_TAB_ID = 0
         private const val PRIVATE_TAB_ID = 1
-        private const val EXPAND_AT_SIZE = 3
+        // Minimum number of list items for which to show the tabs tray as expanded.
+        private const val EXPAND_AT_LIST_SIZE = 4
+        // Minimum number of grid items for which to show the tabs tray as expanded.
+        private const val EXPAND_AT_GRID_SIZE = 3
         private const val SLIDE_OFFSET = 0
         private const val SELECTION_DELAY = 500
         private const val NORMAL_HANDLE_PERCENT_WIDTH = 0.1F
         private const val COLUMN_WIDTH_DP = 180
+        // The remaining padding offset needed to provide a 16dp column spacing between the grid items.
+        const val GRID_ITEM_PARENT_PADDING = 8
     }
 }
 

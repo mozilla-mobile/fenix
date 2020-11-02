@@ -73,6 +73,9 @@
     <!-- Text for the negative button -->
     <string name="cfr_neg_button_text">לא תודה</string>
 
+    <!-- Search widget "contextual feature recommendation" (CFR) -->
+    <!-- Text for the main message. 'Firefox' intentionally hardcoded here.-->
+    <string name="search_widget_cfr_message">מהיום ניגשים ל־Firefox מהר יותר. מוסיפים וידג׳ט למסך הבית.</string>
     <!-- Text for the positive button -->
     <string name="search_widget_cfr_pos_button_text">הוספת וידג׳ט</string>
     <!-- Text for the negative button -->
@@ -213,6 +216,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">מידע נוסף</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">פתיחת לשונית חדשה ב־Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">חיפוש</string>
     <!-- Text preview for larger sized widgets -->
@@ -622,6 +627,8 @@
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">פתיחת לשוניות</string>
 
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">שם האוסף</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">הסרה</string>
 
@@ -802,6 +809,8 @@
     <string name="preference_phone_feature_location">מיקום</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">התרעה</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">אחסון קבוע</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">לבקש לאפשר</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1598,6 +1607,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">להוציא את המיטב מ־%s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">יש ללחוץ לפרטים נוספים</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">לאסוף את הדברים החשובים לך</string>

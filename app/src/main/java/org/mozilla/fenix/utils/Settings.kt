@@ -100,10 +100,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     override val preferences: SharedPreferences =
         appContext.getSharedPreferences(FENIX_PREFERENCES, MODE_PRIVATE)
 
-    var showTopFrecentSites by featureFlagPreference(
+    var showTopFrecentSites by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_top_frecent_sites),
-        default = true,
-        featureFlag = FeatureFlags.topFrecentSite
+        default = true
     )
 
     var numberOfAppLaunches by intPreference(
@@ -128,12 +127,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_show_grid_view_tabs_settings),
         default = false,
         featureFlag = FeatureFlags.showGridViewInTabsSettings
-    )
-
-    var waitToShowPageUntilFirstPaint by featureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_wait_first_paint),
-        default = false,
-        featureFlag = FeatureFlags.waitUntilPaintToDraw
     )
 
     var syncedTabsInTabsTray by featureFlagPreference(
@@ -202,57 +195,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
                     true
                 )
 
-    private val activeSearchCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_count)
-    )
-
-    fun incrementActiveSearchCount() = activeSearchCount.increment()
-
-    private val isActiveSearcher: Boolean
-        get() = activeSearchCount.value > 2
-
-    fun shouldDisplaySearchWidgetCfr(): Boolean = canShowCfr && isActiveSearcher &&
-            searchWidgetCFRDismissCount.underMaxCount() &&
-            !searchWidgetInstalled &&
-            !searchWidgetCFRManuallyDismissed
-
-    private val searchWidgetCFRDisplayCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_display_count)
-    )
-
-    fun incrementSearchWidgetCFRDisplayed() = searchWidgetCFRDisplayCount.increment()
-
-    private val searchWidgetCFRManuallyDismissed by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-        default = false
-    )
-
-    fun manuallyDismissSearchWidgetCFR() {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_manually_dismissed),
-            true
-        ).apply()
-    }
-
-    private val searchWidgetCFRDismissCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_cfr_dismiss_count),
-        maxCount = 3
-    )
-
-    fun incrementSearchWidgetCFRDismissed() = searchWidgetCFRDismissCount.increment()
-
-    val isInSearchWidgetExperiment by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-        default = false
-    )
-
-    fun setSearchWidgetExperiment(value: Boolean) {
-        preferences.edit().putBoolean(
-            appContext.getPreferenceKey(R.string.pref_key_is_in_search_widget_experiment),
-            value
-        ).apply()
-    }
-
     var defaultSearchEngineName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_engine),
         default = ""
@@ -316,11 +258,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = loginsSecureWarningCount.underMaxCount()
 
-    fun shouldUseAutoSize() = fontSizeFactor == 1F
-
     var shouldUseLightTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_light_theme),
         default = false
+    )
+
+    var shouldUseAutoSize by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_accessibility_auto_size),
+        default = true
     )
 
     var fontSizeFactor by floatPreference(

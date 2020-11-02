@@ -12,6 +12,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.StrictMode
 import android.speech.RecognizerIntent
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
@@ -21,11 +22,11 @@ import android.view.ViewStub
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
 import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -431,7 +432,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun addSearchButton(toolbarView: ToolbarView) {
         toolbarView.view.addEditAction(
             BrowserToolbar.Button(
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_microphone)!!,
+                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_microphone)!!,
                 requireContext().getString(R.string.voice_search_content_description),
                 visible = {
                     store.state.searchEngineSource.searchEngine.identifier.contains("google") &&
@@ -470,19 +471,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
     private fun setShortcutsChangedListener(preferenceFileName: String) {
-        requireContext().getSharedPreferences(
-            preferenceFileName,
-            Context.MODE_PRIVATE
-        ).registerOnSharedPreferenceChangeListener(viewLifecycleOwner) { _, _ ->
-            awesomeBarView.update(store.state)
+        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            requireContext().getSharedPreferences(
+                preferenceFileName,
+                Context.MODE_PRIVATE
+            ).registerOnSharedPreferenceChangeListener(viewLifecycleOwner) { _, _ ->
+                awesomeBarView.update(store.state)
+            }
         }
     }
 
     private fun updateClipboardSuggestion(searchState: SearchFragmentState, clipboardUrl: String?) {
         val shouldShowView = searchState.showClipboardSuggestions &&
                 searchState.query.isEmpty() &&
-                !clipboardUrl.isNullOrEmpty() &&
-                !searchState.showSearchShortcuts
+                !clipboardUrl.isNullOrEmpty()
 
         fill_link_from_clipboard.visibility = if (shouldShowView) View.VISIBLE else View.GONE
         clipboard_url.text = clipboardUrl

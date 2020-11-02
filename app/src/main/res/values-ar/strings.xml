@@ -217,6 +217,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">اطّلع على المزيد</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">افتح في لسان Firefox جديد</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">ابحث</string>
     <!-- Text preview for larger sized widgets -->
@@ -345,6 +347,9 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">التنبيهات</string>
 
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">مجموعة إضافات مخصّصة</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">حسنا</string>
     <!-- Button caption to abort the add-on collection configuration -->
@@ -434,6 +439,8 @@
     <string name="preferences_usage_data_description">شارك بيانات المتصفح فيما يتعلق بالأداء و الاستخدام و العتاد و التخصيصات مع Mozilla لمساعدتنا في جعل %1$s أفضل</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">بيانات التسويق</string>
+    <!-- Preference description for marketing data collection, parameter is the app name (e.g. Firefox) -->
+    <string name="preferences_marketing_data_description">يُشارك بيانات الميزات التي تستعملها في %1$s مع Leanplum، شركة التسويق للمحمول التي نتعامل معها.</string>
     <!-- Title for experiments preferences -->
     <string name="preference_experiments">التجارب</string>
     <!-- Summary for experiments preferences -->
@@ -624,6 +631,8 @@
     <string name="collection_rename">إعادة تسمية المجموعة</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">افتح الألسنة</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">اسم التجميعة</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">أزِل</string>
 
@@ -1270,18 +1279,27 @@
     <string name="etp_fingerprinters_title">مسجّلات البصمات</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">المحتوى الذي يتعقّبك</string>
+    <!-- Enhanced Tracking Protection Onboarding Message shown in a dialog above the toolbar. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="etp_onboarding_cfr_message">متى ما رأيت الدرع بنفسجيًا اعرف أنّ %s حجب المتعقّبات في أحد المواقع. اضغط لتفاصيل أكثر.</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">فُعّلت الحماية في هذا الموقع</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
     <string name="etp_panel_off">عُطّلت الحماية في هذا الموقع</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
     <string name="enhanced_tracking_protection_exceptions">عُطّلت الحماية الموسّعة من التعقب لهذه المواقع</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate
+    back from ETP details (Ex: Tracking content) -->
+    <string name="etp_back_button_content_description">عُد</string>
     <!-- About page Your rights link text -->
     <string name="about_your_rights">حقوقك</string>
     <!-- About page link text to open open source licenses screen -->
     <string name="about_open_source_licenses">المكتبات مفتوحة المصدر التي نستخدم</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">ما جديد %s</string>
+
+    <!-- Open source licenses page title
+    The first parameter is the app name -->
+    <string name="open_source_licenses_title">‏%s | المكتبات مفتوحة المصدر</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">الدعم</string>
@@ -1427,6 +1445,8 @@
     <string name="logins_biometric_prompt_message_pin">ألغِ قفل جهازك</string>
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">استعمل التقريب على كل المواقع</string>
+    <!-- Summary for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom_summary">فعّله للسماح بالتقريب والإبعاد حتّى على المواقع التي تمنع هذه الإيماءة.</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
     <string name="saved_logins_sort_strategy_alphabetically">الاسم (ا-ي)</string>
     <!-- Saved logins sorting strategy menu item -by last used- (if selected, it will sort saved logins by last used) -->
@@ -1454,9 +1474,13 @@
     <string name="search_add_custom_engine_name_hint">الاسم</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">نص البحث المستخدم</string>
+    <!-- Description text for the Search String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_search_string_example">استبدِل الاستعلام بِ‍ ”%s“. مثال:\nhttps://www.google.com/search?q=%s</string>
     <!-- Text for the button to learn more about adding a custom search engine -->
     <string name="search_add_custom_engine_learn_more_label">اطّلع على المزيد</string>
 
+    <!-- Accessibility description for the form in which details about the custom search engine are entered -->
+    <string name="search_add_custom_engine_form_description">تفاصيل محرك البحث المخصّص</string>
     <!-- Accessibility description for the 'Learn more' link -->
     <string name="search_add_custom_engine_learn_more_description">رابط ”اطّلع على المزيد“</string>
 
@@ -1480,6 +1504,8 @@
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
     <string name="migration_title">مرحبًا بك في %s الجديد</string>
+    <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
+    <string name="migration_description">ينتظرك بعد التحديث متصفّح أُعيد تصميمه تمامًا بأداء أفضل وميزات تُساعدك لإنجاز المزيد على الإنترنت.\n\nمن فضلك انتظر ريثما نحدّث %s ونسترجع </string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">يحدّث %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
@@ -1568,6 +1594,9 @@
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">حسنًا، فهمت</string>
 
+    <!-- Label for the show most visited sites preference -->
+    <string name="top_sites_toggle_top_frecent_sites">اعرض المواقع الأكثر زيارة</string>
+
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">أزِل</string>
 
@@ -1575,8 +1604,15 @@
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">استغلّ %s إلى أقصى حد.</string>
 
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">انقر لتفاصيل أكثر</string>
+
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">اجمع ما يهمّك</string>
+    <!-- Deprecated: Label to describe what collections are to a new user without any collections -->
+    <string name="no_collections_description1">جمّع عمليات البحث والمواقع والألسنة المتشابهة لتصل إليها بسرعة لاحقًا.</string>
+    <!-- Deprecated: text for the firefox account onboarding card header when we detect you're already signed in to -->
+    <string name="onboarding_firefox_account_auto_signin_header_2">ولجت ببريد %s على متصفّح Firefox آخر على هذا المحمول. أتريد الولوج بنفس الحساب؟</string>
     <!-- Deprecated: Describes the add to homescreen functionality -->
     <string name="add_to_homescreen_description">يمكنك إضافة هذا الموقع إلى شاشة البداية لتصل إليه بسرعة وتتصفحه كأي تطبيق آخر.</string>
 </resources>

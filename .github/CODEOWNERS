@@ -49,7 +49,7 @@
 # Possible startup regressions
 *Application.kt @mozilla-mobile/Performance
 *StrictMode*kt @mozilla-mobile/Performance
-*ConstraintLayoutPerfDetector.kt @mozilla-mobile/Performance
+*ConstraintLayoutPerfDetector* @mozilla-mobile/Performance
 *MozillaRunBlockingCheck.kt @mozilla-mobile/Performance
 *StartupExcessiveResourceUseTest.kt @mozilla-mobile/Performance
 

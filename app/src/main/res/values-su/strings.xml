@@ -143,6 +143,8 @@
     <string name="browser_menu_install_on_homescreen">Pasang</string>
     <!-- Menu option on the toolbar that takes you to synced tabs page-->
     <string name="synced_tabs">Tab singkron</string>
+    <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
+    <string name="resync_button_content_description">Singkronkeun deui</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Panggihan dina kaca</string>
     <!-- Browser menu button that creates a private tab -->
@@ -212,6 +214,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Lenyepan</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Buka tab Firefox anyar</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Paluruh</string>
     <!-- Text preview for larger sized widgets -->
@@ -288,6 +292,8 @@
     <string name="preferences_theme">Téma</string>
     <!-- Preference for customizing the home screen -->
     <string name="preferences_home">Tepas</string>
+    <!-- Preference for gestures based actions -->
+    <string name="preferences_gestures">Réngkak</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Sesuaikeun</string>
     <!-- Preference description for banner about signing in -->
@@ -324,6 +330,8 @@
     <!-- Preference title for switch preference to suggest bookmarks when searching -->
     <string name="preferences_search_bookmarks">Paluruh markah</string>
 
+    <!-- Preference title for switch preference to suggest synced tabs when searching -->
+    <string name="preferences_search_synced_tabs">Paluruh tab anu singkron</string>
     <!-- Preference for account settings -->
     <string name="preferences_account_settings">Setélan akun</string>
 
@@ -338,6 +346,21 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Iber</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Koléksi Émboh sakahayang</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">Heug</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Bolay</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Ngaran koléksi</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Pamilik koléksi (Sandiasma)</string>
+
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Koléksi Émboh geus dirobah. Kaluar ti aplikasi pikeun nerapkeun parobahan…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -471,6 +494,14 @@
     <!-- Preferences for using pull to refresh in a webpage -->
     <string name="preference_gestures_website_pull_to_refresh">Betot pikeun nyegerkeun</string>
 
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Gorolongkeun pikeun nyumputkeun tulbar</string>
+
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Gilerkeun tulbar ka gigir pikeun pindah tab</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Gilerkeun tulbar ka luhur pikeun muka tab</string>
+
     <!-- Library -->
     <!-- Option in Library to open Sessions page -->
     <string name="library_sessions">Sesi</string>
@@ -518,6 +549,14 @@
     <string name="recently_closed_empty_message">Taya tab nu anyar ditutup di dieu</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tab</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Panémbong tab</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Béréndélan</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Grid</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Tutup tab</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -594,6 +633,8 @@
     <string name="collection_rename">Ganti ngaran koléksi</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Buka tab</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Ngaran koléksi</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Piceun</string>
     <!-- Text for the menu button to delete a top site from history -->
@@ -632,6 +673,10 @@
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Hapus %1$d item</string>
 
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Poé ieu</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Kamari</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">24 jam terakhir</string>
 
@@ -772,6 +817,8 @@
     <string name="preference_phone_feature_location">Lokasi</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Iber</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Panyimpen panceg</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Nyuhunkeun diidinan</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1064,6 +1111,10 @@
     <string name="onboarding_account_sign_in_header">Mimitian nyingkronkeun markah, kecap konci, jeung nu lianna maké akun Firefox anjeun.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account -->
     <string name="onboarding_manual_sign_in_learn_more">Lenyepan</string>
+    <!-- text for the firefox account onboarding card header when we detect you're already signed in to
+        another Firefox browser. (The word `Firefox` should not be translated)
+        The first parameter is the email of the detected user's account -->
+    <string name="onboarding_firefox_account_auto_signin_header_3">Anjeun asup salaku %s dina séjén panyungsi Firefox di ieu telepon. Anjeun rék asup maké ieu akun?</string>
     <!-- text for the button to confirm automatic sign-in -->
     <string name="onboarding_firefox_account_auto_signin_confirm">Enya, asupkeun</string>
     <!-- text for the automatic sign-in button while signing in is in process -->
@@ -1153,6 +1204,8 @@
     <string name="sign_in_with_camera">Asup maké kaméra anjeun</string>
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Maké surél wéh</string>
+    <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
+    <string name="sign_in_create_account_text"><![CDATA[Teu boga akun? <u>Jieun</u> pikeun nyingkronkeun Firefox dina sakabéh parabot.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account -->
     <string name="sign_out_confirmation_message">Firefox bakal eureun nyingkronkeun jeung akun anjeun, ngan moal mupus sakur data langlangan anjeun dina ieu alat.</string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1265,6 +1318,8 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Pabukon OSS</string>
 
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">Palacak Alihan</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Meresihan réréméh anu diatur ku alihan ka raramatloka palacak anu dipikawanoh.</string>
 
@@ -1313,6 +1368,9 @@
 
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">Ngaran takulan</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">Anjeun bisa kalawan gampang nambahkeun ieu raramatloka kana layar Tepas ponsél pikeun aksés instan sarta maluruh leuwih gancang kawas muka aplikasi.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Login jeung kecap sandi</string>
@@ -1565,6 +1623,8 @@
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
     <string name="top_sites_max_limit_title">Wates loka top geus kahontal</string>
+    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
+    <string name="top_sites_max_limit_content_2">Pikeun nambah loka anyar pangluhurna, piceun hiji. Pencét lila lokana sarta pilih piceun.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Okéh, Ngarti</string>
 
@@ -1577,6 +1637,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Maksimalkeun %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Pencét sangkan leuwih écés</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Kumpulkeun hal anu penting pikeun anjeun</string>

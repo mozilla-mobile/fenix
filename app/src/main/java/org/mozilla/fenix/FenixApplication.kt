@@ -171,24 +171,21 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         fun queueInitExperiments() {
+            @Suppress("ControlFlowWithEmptyBody")
             if (settings().isExperimentationEnabled) {
                 queue.runIfReadyOrQueue {
                     Experiments.initialize(
                         applicationContext = applicationContext,
-                        onExperimentsUpdated = {
-                            ExperimentsManager.initSearchWidgetExperiment(this)
-                        },
+                        onExperimentsUpdated = null,
                         configuration = mozilla.components.service.experiments.Configuration(
                             httpClient = components.core.client,
                             kintoEndpoint = KINTO_ENDPOINT_PROD
                         )
                     )
-                    ExperimentsManager.initSearchWidgetExperiment(this)
                 }
             } else {
                 // We should make a better way to opt out for when we have more experiments
                 // See https://github.com/mozilla-mobile/fenix/issues/6278
-                ExperimentsManager.optOutSearchWidgetExperiment(this)
             }
         }
 
@@ -431,8 +428,17 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         // https://issuetracker.google.com/issues/143570309#comment3
         applicationContext.resources.configuration.uiMode = config.uiMode
 
-        // random StrictMode onDiskRead violation even when Fenix is not running in the background.
-        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+        if (isMainProcess()) {
+            // We can only do this on the main process as resetAfter will access components.core, which
+            // will initialize the engine and create an additional GeckoRuntime from the Gecko
+            // child process, causing a crash.
+
+            // There's a strict mode violation in A-Cs LocaleAwareApplication which
+            // reads from shared prefs: https://github.com/mozilla-mobile/android-components/issues/8816
+            components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+                super.onConfigurationChanged(config)
+            }
+        } else {
             super.onConfigurationChanged(config)
         }
     }

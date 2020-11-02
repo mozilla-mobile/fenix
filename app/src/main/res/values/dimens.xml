@@ -91,6 +91,7 @@
 
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
+    <dimen name="home_collection_elevation">5dp</dimen>
 
     <!-- Browser Fragment -->
     <!--The size of the gap between the tab preview and content layout.-->
@@ -171,8 +172,9 @@
 
     <!-- Tabs Tray -->
     <dimen name="tab_tray_top_offset">40dp</dimen>
+    <dimen name="tab_tray_tab_item_height">88dp</dimen>
     <dimen name="tab_tray_list_item_thumbnail_width">92dp</dimen>
-    <dimen name="tab_tray_list_item_thumbnail_height">69dp</dimen>
+    <dimen name="tab_tray_list_item_thumbnail_height">72dp</dimen>
     <dimen name="tab_tray_grid_item_thumbnail_width">156dp</dimen>
     <dimen name="tab_tray_grid_item_thumbnail_height">156dp</dimen>
     <dimen name="tab_tray_grid_item_border_radius">8dp</dimen>

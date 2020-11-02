@@ -49,7 +49,7 @@ class TabbedBrowsingTest {
     @Before
     fun setUp() {
         mockWebServer = MockWebServer().apply {
-            setDispatcher(AndroidAssetDispatcher())
+            dispatcher = AndroidAssetDispatcher()
             start()
         }
     }
@@ -311,8 +311,10 @@ class TabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openNewPrivateTabFromShortcutsMenu {
-            verifyHomeScreen()
-            verifyNavigationToolbar()
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
             verifyHomePrivateBrowsingButton()
             verifyHomeMenu()
             verifyHomeWordmark()
@@ -326,8 +328,10 @@ class TabbedBrowsingTest {
 
         }.openTabButtonShortcutsMenu {
         }.openTabFromShortcutsMenu {
-            verifyHomeScreen()
-            verifyNavigationToolbar()
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
             verifyHomeMenu()
             verifyHomeWordmark()
             verifyTabButton()

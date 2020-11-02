@@ -11,6 +11,7 @@
     <string name="pref_key_site_permissions" translatable="false">pref_key_site_permissions</string>
     <string name="pref_key_add_private_browsing_shortcut" translatable="false">pref_key_add_private_browsing_shortcut</string>
     <string name="pref_key_accessibility" translatable="false">pref_key_accessibility</string>
+    <string name="pref_key_accessibility_auto_size" translatable="false">pref_key_accessibility_auto_size</string>
     <string name="pref_key_accessibility_font_scale" translatable="false">pref_key_accessibility_font_scale</string>
     <string name="pref_key_accessibility_force_enable_zoom" translatable="false">pref_key_accessibility_force_enable_zoom</string>
     <string name="pref_key_advanced" translatable="false">pref_key_advanced</string>
@@ -128,7 +129,6 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Customization Settings -->
-    <string name="pref_home_category" translatable="false">pref_home_category</string>
     <string name="pref_key_website_pull_to_refresh" translatable="false">pref_key_website_pull_to_refresh</string>
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
@@ -202,8 +202,6 @@
     <string name="pref_key_migrating_from_fenix_tip" translatable="false">pref_key_migrating_from_fenix_tip</string>
     <string name="pref_key_master_password_tip" translatable="false">pref_key_master_password_tip</string>
 
-    <string name="pref_key_wait_first_paint" translatable="false">pref_key_wait_first_paint</string>
-
     <string name="pref_key_synced_tabs_tabs_tray" translatable="false">pref_key_synced_tabs_tabs_tray</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
@@ -211,11 +209,6 @@
     <string name="pref_key_open_tabs_count" translatable="false">pref_key_open_tabs_count</string>
 
     <string name="pref_key_search_count" translatable="false">pref_key_search_count</string>
-    <string name="pref_key_search_widget_cfr_display_count" translatable="false">pref_key_search_widget_cfr_display_count</string>
-    <string name="pref_key_search_widget_cfr_dismiss_count" translatable="false">pref_key_search_widget_cfr_dismiss_count</string>
-    <string name="pref_key_search_widget_cfr_manually_dismissed" translatable="false">pref_key_search_widget_cfr_manually_dismissed</string>
-    <string name="pref_key_is_in_search_widget_experiment" translatable="false">pref_key_is_in_search_widget_experiment</string>
-    <string name="pref_key_show_search_widget_cfr" translatable="false">pref_key_show_search_widget_cfr</string>
 
     <string name="pref_key_default_browser" translatable="false">pref_key_default_browser</string>
 

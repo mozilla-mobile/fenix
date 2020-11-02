@@ -7,7 +7,9 @@ package org.mozilla.fenix.components
 import GeckoProvider
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.StrictMode
+import androidx.core.content.ContextCompat
 import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,8 +23,8 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.session.undo.UndoMiddleware
-import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
+import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -62,6 +64,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.StrictModeManager
+import org.mozilla.fenix.TelemetryMiddleware
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -91,16 +94,21 @@ class Core(
     val engine: Engine by lazy {
         val defaultSettings = DefaultSettings(
             requestInterceptor = AppRequestInterceptor(context),
-            remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled,
+            remoteDebuggingEnabled = context.settings().isRemoteDebuggingEnabled &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             testingModeEnabled = false,
             trackingProtectionPolicy = trackingProtectionPolicyFactory.createTrackingProtectionPolicy(),
             historyTrackingDelegate = HistoryDelegate(lazyHistoryStorage),
             preferredColorScheme = getPreferredColorScheme(),
-            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize(),
-            fontInflationEnabled = context.settings().shouldUseAutoSize(),
+            automaticFontSizeAdjustment = context.settings().shouldUseAutoSize,
+            fontInflationEnabled = context.settings().shouldUseAutoSize,
             suspendMediaWhenInactive = false,
             forceUserScalableContent = context.settings().forceEnableZoom,
-            loginAutofillEnabled = context.settings().shouldAutofillLogins
+            loginAutofillEnabled = context.settings().shouldAutofillLogins,
+            clearColor = ContextCompat.getColor(
+                context,
+                R.color.foundation_normal_theme
+            )
         )
 
         GeckoEngine(
@@ -154,6 +162,11 @@ class Core(
                 MediaMiddleware(context, MediaService::class.java),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
+                TelemetryMiddleware(
+                    context.settings(),
+                    adsTelemetry,
+                    metrics
+                ),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(::lookupSessionManager, context.getUndoDelay())
             ) + EngineMiddleware.create(engine, ::findSessionById)
@@ -224,7 +237,8 @@ class Core(
                 // Now that we have restored our previous state (if there's one) let's remove timed out tabs
                 if (!context.settings().manuallyCloseTabs) {
                     store.state.tabs.filter {
-                        (System.currentTimeMillis() - it.lastAccess) > context.settings().getTabTimeout()
+                        (System.currentTimeMillis() - it.lastAccess) > context.settings()
+                            .getTabTimeout()
                     }.forEach {
                         val session = sessionManager.findSessionById(it.id)
                         if (session != null) {
@@ -250,12 +264,16 @@ class Core(
         BrowserIcons(context, client)
     }
 
+    val metrics by lazy {
+        context.components.analytics.metrics
+    }
+
     val adsTelemetry by lazy {
-        AdsTelemetry(context.components.analytics.metrics)
+        AdsTelemetry(metrics)
     }
 
     val searchTelemetry by lazy {
-        InContentTelemetry(context.components.analytics.metrics)
+        InContentTelemetry(metrics)
     }
 
     /**
