@@ -4,17 +4,12 @@
 
 package org.mozilla.fenix.perf
 
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import mozilla.components.support.base.log.logger.Logger
 import java.util.concurrent.atomic.AtomicInteger
 
 private val logger = Logger("LazyMonitored")
-
-/**
- * A container for the number of components initialized.
- */
-object ComponentInitCount {
-    val count = AtomicInteger(0)
-}
 
 /**
  * A convenience function for setting the [LazyMonitored] property delegate, which wraps
@@ -27,19 +22,28 @@ fun <T> lazyMonitored(initializer: () -> T): Lazy<T> = LazyMonitored(initializer
  * For example, we can count the number of components initialized to see how the number of
  * components initialized on start up impacts start up time.
  */
-private class LazyMonitored<T>(initializer: () -> T) : Lazy<T> {
+@VisibleForTesting(otherwise = PRIVATE)
+class LazyMonitored<T>(initializer: () -> T) : Lazy<T> {
     // Lazy is thread safe.
     private val lazyValue = lazy {
         // We're unlikely to have 4 billion components so we don't handle overflow.
-        val componentInitCount = ComponentInitCount.count.incrementAndGet()
+        val componentInitCount = initCount.incrementAndGet()
 
         initializer().also {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // the compiler fails with !! but warns with !!.
             val className = if (it == null) "null" else it!!::class.java.canonicalName
-            logger.debug("Init component #$componentInitCount: $className")
+            logger.debug("Initialized lazyMonitored #$componentInitCount: $className")
         }
     }
 
     override val value: T get() = lazyValue.value
     override fun isInitialized(): Boolean = lazyValue.isInitialized()
+
+    companion object {
+        /**
+         * The number of [LazyMonitored] initialized.
+         */
+        @VisibleForTesting(otherwise = PRIVATE)
+        val initCount = AtomicInteger(0)
+    }
 }

@@ -18,6 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.perf.LazyMonitored
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
 private const val EXPECTED_SUPPRESSION_COUNT = 11
@@ -84,7 +85,7 @@ class StartupExcessiveResourceUseTest {
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
         val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.get().toInt()
         val actualRunBlocking = RunBlockingCounter.count.get()
-        val actualComponentInitCount = ComponentInitCount.count.get()
+        val actualComponentInitCount = LazyMonitored.initCount.get()
 
         val rootView = activityTestRule.activity.rootContainer
         val actualViewHierarchyDepth = countAndLogViewHierarchyDepth(rootView, 1)

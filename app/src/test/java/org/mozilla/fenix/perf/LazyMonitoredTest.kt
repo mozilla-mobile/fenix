@@ -10,11 +10,11 @@ import org.junit.Test
 
 class LazyMonitoredTest {
 
-    private val componentInitCount get() = ComponentInitCount.count.get()
+    private val initCount get() = LazyMonitored.initCount.get()
 
     @Before
     fun setUp() {
-        ComponentInitCount.count.set(0)
+        LazyMonitored.initCount.set(0)
     }
 
     @Test
@@ -25,12 +25,12 @@ class LazyMonitoredTest {
 
     @Test
     fun `WHEN accessing a lazy monitored THEN the component init count is incremented`() {
-        assertEquals(0, componentInitCount)
+        assertEquals(0, initCount)
 
         val monitored by lazyMonitored { }
         // We must access the value to trigger init.
         @Suppress("UNUSED_EXPRESSION") monitored
 
-        assertEquals(1, componentInitCount)
+        assertEquals(1, initCount)
     }
 }
