@@ -4,15 +4,8 @@
 
 package org.mozilla.fenix.perf
 
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.children
-import androidx.recyclerview.widget.RecyclerView
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import kotlinx.android.synthetic.main.activity_home.*
+import mozilla.components.support.base.utils.LazyComponent
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -77,7 +70,7 @@ class StartupExcessiveResourceUseTest {
     private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Test
-    fun verifyRunBlockingAndStrictModeSuppresionCount() {
+    fun testExcessiveResourceUse() {
         uiDevice.waitForIdle() // wait for async UI to load.
 
         // This might cause intermittents: at an arbitrary point after start up (such as the visual
@@ -85,7 +78,9 @@ class StartupExcessiveResourceUseTest {
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
         val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.get().toInt()
         val actualRunBlocking = RunBlockingCounter.count.get()
-        val actualComponentInitCount = LazyMonitored.initCount.get()
+
+        // We're transitioning to LazyComponent so we count both kinds of components.
+        val actualComponentInitCount = LazyMonitored.initCount.get() + LazyComponent.initCount.get()
 
         val rootView = activityTestRule.activity.rootContainer
         val actualViewHierarchyDepth = countAndLogViewHierarchyDepth(rootView, 1)
