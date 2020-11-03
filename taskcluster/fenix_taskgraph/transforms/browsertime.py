@@ -119,8 +119,15 @@ def enable_webrender(config, tasks):
         task["run"]["command"].append("--enable-webrender")
         task["name"] += "-wr"
         task["description"] += "-wr"
+
+        # Setup group symbol
         group, sym = task["treeherder"]["symbol"].split("(")
         task["treeherder"]["symbol"] = "{}-wr({})".format(group, sym[:-1])
+
+        # Setup the platform name
+        platform, plttype = task["treeherder"]["platform"].split("/")
+        task["treeherder"]["platform"] = "{}-qr/{}".format(platform, plttype)
+
         yield task
 
 
