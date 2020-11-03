@@ -73,14 +73,21 @@ class StartupExcessiveResourceUseTest {
     fun testExcessiveResourceUse() {
         uiDevice.waitForIdle() // wait for async UI to load.
 
+        // We're transitioning to LazyComponent so we count both kinds of components.
+        val actualComponentInitCount = LazyMonitored.initCount.get() + LazyComponent.initCount.get()
+
         // This might cause intermittents: at an arbitrary point after start up (such as the visual
         // completeness queue), we might run code on the main thread that suppresses StrictMode,
         // causing this number to fluctuate depending on device speed. We'll deal with it if it occurs.
         val actualSuppresionCount = activityTestRule.activity.components.strictMode.suppressionCount.get().toInt()
         val actualRunBlocking = RunBlockingCounter.count.get()
 
-        // We're transitioning to LazyComponent so we count both kinds of components.
-        val actualComponentInitCount = LazyMonitored.initCount.get() + LazyComponent.initCount.get()
+        // This assertion is intentionally first: for example, if a change to the code indirectly
+        // causes a component to be initialized, or no longer initialized, that called runBlocking,
+        // it would be less intuitive to the dev if this test failed with "runBlocking count has changed!"
+        // Therefore, we warn about the higher level concept - component init count changed - first
+        // so that it's more intuitive why runBlocking might also change.
+        assertEquals(failureMsgComponentInit, EXPECTED_COMPONENT_INIT_COUNT, actualComponentInitCount)
 
         val rootView = activityTestRule.activity.rootContainer
         val actualViewHierarchyDepth = countAndLogViewHierarchyDepth(rootView, 1)
