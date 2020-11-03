@@ -815,7 +815,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private fun captureSnapshotTelemetryMetrics() = CoroutineScope(Dispatchers.IO).launch {
         // PWA
-        val recentlyUsedPwaCount = components.core.webAppShortcutManager.recentlyUsedWebAppsCount(
+        val recentlyUsedPwaCount = components.core.webAppShortcutManager.get().recentlyUsedWebAppsCount(
             activeThresholdMs = PWA_RECENTLY_USED_THRESHOLD
         )
         if (recentlyUsedPwaCount == 0) {

@@ -21,6 +21,7 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSitesStorage
 import mozilla.components.feature.top.sites.TopSitesUseCases
+import mozilla.components.support.base.utils.LazyComponent
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.Mockable
 
@@ -35,7 +36,7 @@ class UseCases(
     private val engine: Engine,
     private val sessionManager: SessionManager,
     private val store: BrowserStore,
-    private val shortcutManager: WebAppShortcutManager,
+    private val shortcutManager: LazyComponent<WebAppShortcutManager>,
     private val topSitesStorage: TopSitesStorage
 ) {
     /**

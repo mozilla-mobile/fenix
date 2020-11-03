@@ -16,6 +16,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
+import mozilla.components.support.base.utils.LazyComponent
 
 class TestCore(context: Context, crashReporter: CrashReporting) : Core(
     context,
@@ -29,7 +30,7 @@ class TestCore(context: Context, crashReporter: CrashReporting) : Core(
     override val sessionManager = SessionManager(engine)
     override val store = mockk<BrowserStore>()
     override val client = mockk<Client>()
-    override val webAppShortcutManager = mockk<WebAppShortcutManager>()
+    override val webAppShortcutManager = LazyComponent { mockk<WebAppShortcutManager>() }
     override val thumbnailStorage = mockk<ThumbnailStorage>()
     override val topSitesStorage = mockk<DefaultTopSitesStorage>()
 }

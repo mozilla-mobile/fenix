@@ -60,6 +60,7 @@ import mozilla.components.service.digitalassetlinks.local.StatementRelationCheck
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.utils.LazyComponent
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
@@ -316,7 +317,7 @@ class Core(
     /**
      * Shortcut component for managing shortcuts on the device home screen.
      */
-    val webAppShortcutManager by lazyMonitored {
+    val webAppShortcutManager = LazyComponent {
         WebAppShortcutManager(
             context,
             client,
