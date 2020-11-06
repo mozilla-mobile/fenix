@@ -196,8 +196,3 @@ def build_version_bump_payload(config, task, task_def):
 
     if worker.get('force-dry-run'):
         task_def['payload']['dry_run'] = True
-
-    scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
-    # FIXME: should we s/treescript/tree/g here?
-    scopes = ["{}:treescript:action:{}".format(scope_prefix, action) for action in actions]
-    task_def["scopes"].extend(scopes)
