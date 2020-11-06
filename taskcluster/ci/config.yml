@@ -82,7 +82,7 @@ workers:
             provisioner: scriptworker-k8s
             implementation: scriptworker-tree
             os: scriptworker
-            worker-type: 'mobile-{level}-tree'
+            worker-type: 'mobile-1-tree-dev' # TODO: s/this/`mobile-{level}-tree`
         t-bitbar.*:
             provisioner: proj-autophone
             implementation: generic-worker

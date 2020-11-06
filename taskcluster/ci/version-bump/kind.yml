@@ -10,9 +10,9 @@ transforms:
     - taskgraph.transforms.task:transforms
 
 kind-dependencies:
-    - github-release
+    - push-apk
 
-primary-dependency: github-release # FIXME: should we block on pushapk instead or both?
+primary-dependency: push-apk
 
 group-by: build-type
 
@@ -25,8 +25,6 @@ job-template:
     worker-type: tree
     worker:
         # TODO: configure with proper payload expected input
-        dontbuild: true
-        tags: ['release']
         bump: true
         bump-files:
             by-build-type:

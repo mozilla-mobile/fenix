@@ -162,16 +162,13 @@ def build_github_release_payload(config, task, task_def):
 @payload_builder(
     "scriptworker-tree",
     schema={
-        # FIXME: do we need upstream artifacts?
-        Required("upstream-artifacts"): [
+        Optional("upstream-artifacts"): [
             {
-                Required("taskId"): taskref_or_string,
-                Required("taskType"): text_type,
-                Required("paths"): [text_type],
+                Optional("taskId"): taskref_or_string,
+                Optional("taskType"): text_type,
+                Optional("paths"): [text_type],
             }
         ],
-        Optional("dontbuild"): bool,
-        Required("tags"): [Any("buildN", "release", None)],
         Required("bump"): bool,
         Optional("bump-files"): [text_type],
         Optional("push"): bool,
@@ -184,9 +181,6 @@ def build_version_bump_payload(config, task, task_def):
 
     task_def['payload'] = {'actions': []}
     actions = task_def['payload']['actions']
-    if worker['tags']:
-        # TODO: add tags logic here
-        pass
 
     if worker['bump']:
         if not worker['bump-files']:
@@ -202,9 +196,6 @@ def build_version_bump_payload(config, task, task_def):
 
     if worker.get('force-dry-run'):
         task_def['payload']['dry_run'] = True
-
-    if worker.get('dontbuild'):
-        task_def['payload']['dontbuild'] = True
 
     scope_prefix = config.graph_config["scriptworker"]["scope-prefix"]
     # FIXME: should we s/treescript/tree/g here?
