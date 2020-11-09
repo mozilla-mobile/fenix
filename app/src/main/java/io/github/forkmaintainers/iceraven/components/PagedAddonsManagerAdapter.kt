@@ -58,6 +58,10 @@ private const val VIEW_HOLDER_TYPE_ADDON = 2
  * @property style Indicates how items should look like.
  */
 @Suppress("TooManyFunctions", "LargeClass")
+// We have an extra "Lint" Android Studio linter pass that Android Components
+// where the original code came from doesn't. So we tell it to ignore us. Make
+// sure to keep up with changes in Android Components though.
+@SuppressLint("all")
 class PagedAddonsManagerAdapter(
     private val addonCollectionProvider: PagedAddonCollectionProvider,
     private val addonsManagerDelegate: AddonsManagerAdapterDelegate,

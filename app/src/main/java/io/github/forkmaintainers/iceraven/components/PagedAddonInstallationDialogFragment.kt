@@ -53,6 +53,10 @@ private const val DEFAULT_VALUE = Int.MAX_VALUE
 /**
  * A dialog that shows [Addon] installation confirmation.
  */
+// We have an extra "Lint" Android Studio linter pass that Android Components
+// where the original code came from doesn't. So we tell it to ignore us. Make
+// sure to keep up with changes in Android Components though.
+@SuppressLint("all")
 class PagedAddonInstallationDialogFragment : AppCompatDialogFragment() {
     private val scope = CoroutineScope(Dispatchers.IO)
     @VisibleForTesting internal var iconJob: Job? = null
