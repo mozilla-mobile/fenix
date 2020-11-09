@@ -187,12 +187,13 @@ def build_version_bump_payload(config, task, task_def):
             raise Exception("Version Bump requested without bump-files")
 
         bump_info = {}
+        # bump_info["next_version"] = release_config["next_version"]
         bump_info['files'] = worker['bump-files']
         task_def['payload']['version_bump_info'] = bump_info
         actions.append('version_bump')
 
-    if worker['push']:
-        actions.append('push')
+    if worker["push"]:
+        task_def['payload']['push'] = True
 
     if worker.get('force-dry-run'):
         task_def['payload']['dry_run'] = True

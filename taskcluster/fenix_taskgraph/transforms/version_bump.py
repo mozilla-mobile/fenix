@@ -34,10 +34,8 @@ def resolve_keys(config, tasks):
 @transforms.add
 def build_worker_definition(config, tasks):
     for task in tasks:
-        worker_definition = {
-        }
+        worker_definition = {}
         task["worker"].update(worker_definition)
-        # TODO: add action here
 
         yield task
 
