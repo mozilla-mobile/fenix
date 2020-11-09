@@ -11,15 +11,16 @@ echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> licenses/android-sdk-license
 if [ ! -e cmdline-tools ] ; then
     mkdir -p cmdline-tools
     pushd cmdline-tools
-    wget "$(curl -s https://developer.android.com/studio | grep -oP "https://dl.google.com/android/repository/commandlinetools-linux-[0-9]+_latest.zip")"
+    wget --quiet "$(curl -s https://developer.android.com/studio | grep -oP "https://dl.google.com/android/repository/commandlinetools-linux-[0-9]+_latest.zip")"
     unzip commandlinetools-linux-*_latest.zip
+    mv cmdline-tools tools
     popd
 fi
 popd
-export ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux/
+export ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux
 
 # Install the weirdly missing NDK
-${ANDROID_SDK_ROOT}/cmdline-tools/bin/sdkmanager "ndk;21.0.6113669"
+${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager "ndk;21.0.6113669"
 
 # Point the build at the tools
 echo "sdk.dir=${ANDROID_SDK_ROOT}" >> local.properties
