@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install Android SDK with pieces Gradle skips
+        run: ./automation/iceraven/install-sdk.sh
       - name: Create version name
         run: echo "VERSION_NAME=$(git describe --tags HEAD)" >> $GITHUB_ENV
       - name: Build forkRelease variant of app
