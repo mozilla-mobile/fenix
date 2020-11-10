@@ -54,6 +54,19 @@ class SettingsTest {
     }
 
     @Test
+    fun shouldReturnToBrowser() {
+        // When just created
+        // Then
+        assertFalse(settings.shouldReturnToBrowser)
+
+        // When
+        settings.shouldReturnToBrowser = true
+
+        // Then
+        assertTrue(settings.shouldReturnToBrowser)
+    }
+
+    @Test
     fun clearDataOnQuit() {
         // When just created
         // Then
@@ -243,6 +256,19 @@ class SettingsTest {
 
         // Then
         assertEquals(settings.getTabTimeout(), Settings.ONE_MONTH_MS)
+    }
+
+    @Test
+    fun shouldUseAutoSize() {
+        // When just created
+        // Then
+        assertTrue(settings.shouldUseAutoSize)
+
+        // When
+        settings.shouldUseAutoSize = false
+
+        // Then
+        assertFalse(settings.shouldUseAutoSize)
     }
 
     @Test

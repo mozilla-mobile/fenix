@@ -211,6 +211,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Ulteriuras infurmaziuns</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Avrir in nov tab da Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Tschertgar</string>
     <!-- Text preview for larger sized widgets -->
@@ -339,6 +341,20 @@
 
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Communicaziuns</string>
+
+    <!-- Add-on Preferences -->
+    <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
+    <string name="preferences_customize_amo_collection">Collecziun da supplements persunalisada</string>
+    <!-- Button caption to confirm the add-on collection configuration -->
+    <string name="customize_addon_collection_ok">OK</string>
+    <!-- Button caption to abort the add-on collection configuration -->
+    <string name="customize_addon_collection_cancel">Interrumper</string>
+    <!-- Hint displayed on input field for custom collection name -->
+    <string name="customize_addon_collection_hint">Num da la collecziun</string>
+    <!-- Hint displayed on input field for custom collection user ID-->
+    <string name="customize_addon_collection_user_hint">Possessur da la collecziun (ID da l\'utilisader)</string>
+    <!-- Toast shown after confirming the custom add-on collection configuration -->
+    <string name="toast_customize_addon_collection_done">Modifitgà la collecziun da supplements. L\'applicaziun vegn serrada per applitgar las midadas…</string>
 
     <!-- Account Preferences -->
     <!-- Preference for triggering sync -->
@@ -522,6 +538,14 @@
     <string name="recently_closed_empty_message">Nagins tabs serrads dacurt</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Tabs</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Vista da tab</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Glista</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Griglia</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Serrar ils tabs</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -598,6 +622,8 @@
     <string name="collection_rename">Renumnar la collecziun</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Avrir ils tabs</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Num da collecziun</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Allontanar</string>
 
@@ -636,6 +662,10 @@
     <!-- Text for the button to clear selected history items. The first parameter
         is a digit showing the number of items you have selected -->
     <string name="history_delete_some">Stizzar %1$d elements</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Oz</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Ier</string>
     <!-- Text for the header that groups the history for last 24 hours -->
     <string name="history_24_hours">Ultimas 24 uras</string>
     <!-- Text for the header that groups the history the past 7 days -->
@@ -773,6 +803,8 @@
     <string name="preference_phone_feature_location">Posiziun</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Communicaziuns</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Memoria durabla</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Dumandar il permiss</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1592,6 +1624,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Rabla ora il maximum da %s.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Cliccar per ulteriurs detagls</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Rimna las chaussas che t\'èn impurtantas</string>

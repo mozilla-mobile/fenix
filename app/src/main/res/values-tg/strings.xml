@@ -8,9 +8,9 @@
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Имконоти бештар</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
-    <string name="content_description_private_browsing_button">Фаъол кардан баррасии махфӣ</string>
+    <string name="content_description_private_browsing_button">Фаъол кардани тамошокунии махфӣ</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
-    <string name="content_description_disable_private_browsing_button">Ғайрифаъол кардан баррасии махфӣ</string>
+    <string name="content_description_disable_private_browsing_button">Ғайрифаъол кардани тамошокунии махфӣ</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Нишониеро ҷустуҷӯ кунед ё ворид намоед</string>
     <!-- No Open Tabs Message Description -->
@@ -215,6 +215,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Маълумоти бештар</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Кушодани варақаи нави Firefox</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Ҷустуҷӯ</string>
     <!-- Text preview for larger sized widgets -->
@@ -264,7 +266,7 @@
     <!-- Preference for advanced site permissions -->
     <string name="preferences_site_permissions">Иҷозатҳои сомона</string>
     <!-- Preference for private browsing options -->
-    <string name="preferences_private_browsing_options">Баррасии махфӣ</string>
+    <string name="preferences_private_browsing_options">Тамошокунии махфӣ</string>
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Кушодани пайвандҳо дар варақаи махфӣ</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
@@ -272,7 +274,7 @@
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
     <string name="preferences_screenshots_in_private_mode_disclaimer">Агар иҷозат дода шавад, варақаҳои махфӣ низ ҳангоми кушода будани якчанд барнома намоён мешаванд</string>
     <!-- Preference for adding private browsing shortcut -->
-    <string name="preferences_add_private_browsing_shortcut">Илова кардани миёнбури тамошои махфӣ</string>
+    <string name="preferences_add_private_browsing_shortcut">Илова кардани миёнбури тамошокунии махфӣ</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Қобилияти дастрасӣ</string>
     <!-- Preference to override the Firefox Account server -->
@@ -625,6 +627,8 @@
     <string name="collection_rename">Иваз кардани номи маҷмӯа</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Варақаҳои кушодашуда</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Номи пайваст</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Тоза кардан</string>
     <!-- Text for the menu button to delete a top site from history -->
@@ -926,7 +930,7 @@
 
     <!-- Notifications -->
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active. -->
-    <string name="notification_pbm_channel_name">Ҷаласаи баррасии махфӣ</string>
+    <string name="notification_pbm_channel_name">Ҷаласаи тамошокунии махфӣ</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text">Нест кардани варақаҳои махфӣ</string>
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
@@ -1139,7 +1143,7 @@
     <!-- text for the toolbar position card description -->
     <string name="onboarding_toolbar_position_description">Тамошокуниро бо як даст тавассути навори абзорҳои поён кӯшиш кунед ё ин ки наворро ба боло гузоред.</string>
     <!-- text for the private browsing onboarding card header -->
-    <string name="onboarding_private_browsing_header">Реҷаи тамошои махфӣ</string>
+    <string name="onboarding_private_browsing_header">Реҷаи тамошокунии махфӣ</string>
     <!-- text for the private browsing onboarding card description
     The first parameter is an icon that represents private browsing -->
     <string name="onboarding_private_browsing_description1">Варақаи махфиро як бор кушоед: Ба нишонии %s зарба занед.</string>
@@ -1510,6 +1514,8 @@
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
     <string name="migration_title">Хуш омадед ба барномаи комилан нави %s</string>
+    <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
+    <string name="migration_description">Шуморо браузери комилан аз нав тарҳрезишуда интизор аст, ки ба шумо бо самаранокӣ ва хусусиятҳои такмилёфта барои кори бештар дар Интернет кумак мерасонад.\n\nЛутфан, интизор шавед, то мо %s-ро навсозӣ кунем, аз он ҷумла</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
     <string name="migration_updating_app_button_text">%s нав шуда истодааст...</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
@@ -1616,6 +1622,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">Аз %s баштар истифода баред.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Барои тафсилоти бештар зер кунед</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Чизҳоеро, ки ба шумо муҳиманд, ҷамъ кунед</string>

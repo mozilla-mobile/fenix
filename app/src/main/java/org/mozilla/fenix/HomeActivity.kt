@@ -38,7 +38,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
@@ -61,7 +61,6 @@ import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.browser.UriOpenedObserver
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -122,11 +121,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private var webExtScope: CoroutineScope? = null
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
-    private lateinit var sessionObserver: SessionManager.Observer
 
     private var isVisuallyComplete = false
 
-    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? = null
+    private var privateNotificationObserver: PrivateNotificationFeature<PrivateNotificationService>? =
+        null
 
     private var isToolbarInflated = false
 
@@ -181,8 +180,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 .attachViewToRunVisualCompletenessQueueLater(WeakReference(rootContainer))
         }
 
-        sessionObserver = UriOpenedObserver(this)
-
         checkPrivateShortcutEntryPoint(intent)
         privateNotificationObserver = PrivateNotificationFeature(
             applicationContext,
@@ -192,14 +189,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (isActivityColdStarted(intent, savedInstanceState)) {
-            externalSourceIntentProcessors.any {
+        if (isActivityColdStarted(
+                intent,
+                savedInstanceState
+            ) && !externalSourceIntentProcessors.any {
                 it.process(
                     intent,
                     navHost.navController,
                     this.intent
                 )
             }
+        ) {
+            navigateToBrowserOnColdStart()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -240,7 +241,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    protected open fun startupTelemetryOnCreateCalled(safeIntent: SafeIntent, hasSavedInstanceState: Boolean) {
+    protected open fun startupTelemetryOnCreateCalled(
+        safeIntent: SafeIntent,
+        hasSavedInstanceState: Boolean
+    ) {
         components.appStartupTelemetry.onHomeActivityOnCreate(
             safeIntent,
             hasSavedInstanceState,
@@ -322,9 +326,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     final override fun onPause() {
+        // We should return to the browser if there were normal tabs when we left the app
+        settings().shouldReturnToBrowser =
+            components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
+
         if (settings().lastKnownMode.isPrivate) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+
+        // We will remove this when AC code lands to emit a fact on getTopSites in DefaultTopSitesStorage
+        // https://github.com/mozilla-mobile/android-components/issues/8679
+        settings().topSitesSize = components.core.topSitesStorage.cachedTopSites.size
 
         super.onPause()
 
@@ -760,6 +772,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 startTime,
                 "newTab: $newTab"
             )
+        }
+    }
+
+    open fun navigateToBrowserOnColdStart() {
+        // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
+        // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
+        if (FeatureFlags.returnToBrowserOnColdStart &&
+            settings().shouldReturnToBrowser &&
+            !browsingModeManager.mode.isPrivate
+        ) {
+            openToBrowser(BrowserDirection.FromGlobal, null)
         }
     }
 

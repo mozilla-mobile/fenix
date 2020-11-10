@@ -11,6 +11,7 @@
     <string name="pref_key_site_permissions" translatable="false">pref_key_site_permissions</string>
     <string name="pref_key_add_private_browsing_shortcut" translatable="false">pref_key_add_private_browsing_shortcut</string>
     <string name="pref_key_accessibility" translatable="false">pref_key_accessibility</string>
+    <string name="pref_key_accessibility_auto_size" translatable="false">pref_key_accessibility_auto_size</string>
     <string name="pref_key_accessibility_font_scale" translatable="false">pref_key_accessibility_font_scale</string>
     <string name="pref_key_accessibility_force_enable_zoom" translatable="false">pref_key_accessibility_force_enable_zoom</string>
     <string name="pref_key_advanced" translatable="false">pref_key_advanced</string>
@@ -129,7 +130,6 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Customization Settings -->
-    <string name="pref_home_category" translatable="false">pref_home_category</string>
     <string name="pref_key_website_pull_to_refresh" translatable="false">pref_key_website_pull_to_refresh</string>
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
@@ -258,4 +258,6 @@
     <string name="pref_key_show_grid_view_tabs_settings" translatable="false">pref_key_show_grid_view_tabs_settings</string>
 
     <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
+
+    <string name="pref_key_return_to_browser" translatable="false">pref_key_return_to_browser</string>
 </resources>

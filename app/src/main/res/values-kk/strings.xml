@@ -211,6 +211,8 @@
     <string name="search_suggestions_onboarding_learn_more_link">Көбірек білу</string>
 
     <!-- Search Widget -->
+    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
+    <string name="search_widget_content_description">Жаңа Firefox бетін ашу</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Іздеу</string>
     <!-- Text preview for larger sized widgets -->
@@ -534,6 +536,14 @@
     <string name="recently_closed_empty_message">Осында жуырда жабылған беттер жоқ</string>
 
     <!-- Tab Management -->
+    <!-- Title of preference for tabs management -->
+    <string name="preferences_tabs">Беттер</string>
+    <!-- Title of preference that allows a user to specify the tab view -->
+    <string name="preferences_tab_view">Бет көрінісі</string>
+    <!-- Option for a list tab view -->
+    <string name="tab_view_list">Тізім</string>
+    <!-- Option for a grid tab view -->
+    <string name="tab_view_grid">Тор</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Беттерді жабу</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -611,6 +621,8 @@
     <string name="collection_rename">Жинақ атын өзгерту</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Беттерді ашу</string>
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Жинақ атауы</string>
     <!-- Text for the menu button to remove a top site -->
     <string name="remove_top_site">Өшіру</string>
 
@@ -790,6 +802,8 @@
     <string name="preference_phone_feature_location">Орналасу</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Хабарлама</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Тұрақты қойма</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Рұқсат ету үшін сұрау</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1600,6 +1614,9 @@
     <!-- Deprecated: text for the firefox account onboarding card header
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="onboarding_firefox_account_header">%s өнімін толықтай пайдаланыңыз.</string>
+
+    <!-- Content description radio buttons with a link to more information -->
+    <string name="radio_preference_info_content_description">Көбірек білу үшін шертіңіз</string>
 
     <!-- Deprecated: No Open Tabs Message Header -->
     <string name="no_collections_header1">Өзіңізге маңызды заттарды жинаңыз</string>

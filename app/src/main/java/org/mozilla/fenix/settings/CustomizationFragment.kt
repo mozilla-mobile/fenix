@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import org.mozilla.fenix.FeatureFlags
@@ -219,12 +218,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupHomeCategory() {
-        requirePreference<PreferenceCategory>(R.string.pref_home_category).apply {
-            isVisible = FeatureFlags.topFrecentSite
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_enable_top_frecent_sites).apply {
-            isVisible = FeatureFlags.topFrecentSite
             isChecked = context.settings().showTopFrecentSites
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }

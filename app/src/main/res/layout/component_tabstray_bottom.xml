@@ -25,6 +25,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        tools:ignore="MozMultipleConstraintLayouts"
         android:id="@+id/infoBanner"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -49,6 +50,7 @@
         app:layout_constraintTop_toBottomOf="@id/infoBanner" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        tools:ignore="MozMultipleConstraintLayouts"
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
