@@ -68,6 +68,7 @@ class ThreeDotMenuMainRobot {
 
     fun verifyShareTabButton() = assertShareTabButton()
     fun verifySaveCollection() = assertSaveCollectionButton()
+    fun verifySelectTabs() = assertSelectTabsButton()
 
     fun clickBrowserViewSaveCollectionButton() {
         browserViewSaveCollectionButton().click()
@@ -429,6 +430,10 @@ private fun browserViewSaveCollectionButton() = onView(
 
 private fun saveCollectionButton() = onView(allOf(withText("Save to collection"))).inRoot(RootMatchers.isPlatformPopup())
 private fun assertSaveCollectionButton() = saveCollectionButton()
+    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+private fun selectTabsButton() = onView(allOf(withText("Select tabs"))).inRoot(RootMatchers.isPlatformPopup())
+private fun assertSelectTabsButton() = selectTabsButton()
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun addNewCollectionButton() = onView(allOf(withText("Add new collection")))
