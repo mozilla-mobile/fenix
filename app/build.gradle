@@ -177,6 +177,10 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+
+        unitTests.all {
+            jvmArgs '-Xmx2g'
+        }
     }
 }
 
