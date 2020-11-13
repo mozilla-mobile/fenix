@@ -172,7 +172,6 @@ def build_github_release_payload(config, task, task_def):
         Required("bump"): bool,
         Optional("bump-files"): [text_type],
         Optional("push"): bool,
-        # TODO: configure with proper payload expected input
     },
 )
 def build_version_bump_payload(config, task, task_def):
@@ -187,7 +186,7 @@ def build_version_bump_payload(config, task, task_def):
             raise Exception("Version Bump requested without bump-files")
 
         bump_info = {}
-        # bump_info["next_version"] = release_config["next_version"]
+        bump_info["next_version"] = config.params["next_version"]
         bump_info['files'] = worker['bump-files']
         task_def['payload']['version_bump_info'] = bump_info
         actions.append('version_bump')

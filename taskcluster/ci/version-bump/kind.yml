@@ -24,18 +24,15 @@ job-template:
     description: Fenix version bump/tag
     worker-type: tree
     worker:
-        # TODO: configure with proper payload expected input
         bump: true
-        bump-files:
-            by-build-type:
-                beta: ["version.txt"]
-                release: ["version.txt"]
-                default: ["version.txt"]
+        bump-files: ["version.txt"]
         push:
             by-level:
-                '3': true
+                "3": true
+                # If you set the following line to true, you need to grant write access
+                # to https://github.com/mozilla-release-automation-bot-staging on your
+                # fork.
                 default: false
-
 
     treeherder:
         job-symbol: vb
