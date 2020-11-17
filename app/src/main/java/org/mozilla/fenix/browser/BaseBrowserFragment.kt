@@ -486,7 +486,8 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler,
                     sessionId = customTabSessionId,
                     fragmentManager = parentFragmentManager,
                     launchInApp = { context.settings().openLinksInExternalApp },
-                    loadUrlUseCase = context.components.useCases.sessionUseCases.loadUrl
+                    loadUrlUseCase = context.components.useCases.sessionUseCases.loadUrl,
+                    failedToLaunchAction = { context.components.useCases.sessionUseCases.loadUrl }
                 ),
                 owner = this,
                 view = view
