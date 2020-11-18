@@ -4197,3 +4197,8 @@ tabs:
     notification_emails:
       - fenix-core@mozilla.com
     expires: "2021-08-01"
+
+open_tab_saved_data_count:
+  type: labeled_counter
+  description: |
+    This is a labeled counter.

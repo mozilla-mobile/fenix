@@ -539,6 +539,14 @@ sealed class Event {
             get() = mapOf(Events.tabCounterMenuActionKeys.item to item.toString().toLowerCase(Locale.ROOT))
     }
 
+    data class OpenSavedTab(val eventSource: String, val savedType: String) : Event() {
+        val countLabel: String
+            get() = "$savedType.$eventSource"
+
+        val sourceLabel: String
+            get() = "$savedType.$eventSource"
+    }
+
     object AutoPlaySettingVisited : Event()
 
     data class AutoPlaySettingChanged(val setting: AutoplaySetting) : Event() {

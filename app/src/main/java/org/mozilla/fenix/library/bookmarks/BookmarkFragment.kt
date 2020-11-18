@@ -51,8 +51,10 @@ import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.allowUndo
 
 /**
@@ -216,6 +218,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
                 showTabTray()
                 metrics?.track(Event.OpenedBookmarksInNewTabs)
+                metrics?.track(Event.OpenSavedTab("library", "bookmark"))
                 true
             }
             R.id.open_bookmarks_in_private_tabs_multi_select -> {

@@ -126,6 +126,14 @@ private val Event.wrapper: EventWrapper<*>?
             },
             { Events.performedSearchKeys.valueOf(it) }
         )
+
+        is Event.OpenSavedTab -> EventWrapper<NoExtraKeys>(
+            {
+                Metrics.openTabSavedDataCount[this.eventSource.countLabel].add(1)
+            }
+
+        )
+
         is Event.SearchWithAds -> EventWrapper<NoExtraKeys>(
             {
                 BrowserSearch.withAds[label].add(1)
@@ -767,6 +775,11 @@ class GleanMetricsService(
             hasOpenTabs.set(openTabsCount > 0)
             if (openTabsCount > 0) {
                 tabsOpenCount.add(openTabsCount)
+            }
+
+            val openedTabFromSavedDataCount = context.settings().openedTabFromSavedDataCount
+            if (openedTabFromSavedDataCount > 0) {
+                openTabSavedDataCount.add(openedTabFromSavedDataCount)
             }
 
             val topSitesSize = context.settings().topSitesSize

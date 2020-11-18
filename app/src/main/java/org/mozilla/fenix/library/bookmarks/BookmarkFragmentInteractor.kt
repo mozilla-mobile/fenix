@@ -4,12 +4,15 @@
 
 package org.mozilla.fenix.library.bookmarks
 
+import androidx.core.content.ContentProviderCompat.requireContext
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.Do
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Interactor for the Bookmarks screen.
@@ -66,6 +69,7 @@ class BookmarkFragmentInteractor(
         item.url?.let {
             bookmarksController.handleOpeningBookmark(item, BrowsingMode.Normal)
             metrics.track(Event.OpenedBookmarkInNewTab)
+            requireContext().settings.setOpenedTabFromSavedDataCount(settings.)
         }
     }
 
