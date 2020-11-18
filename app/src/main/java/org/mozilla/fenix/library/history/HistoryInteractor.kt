@@ -5,6 +5,8 @@
 package org.mozilla.fenix.library.history
 
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricController
 
 /**
  * Interactor for the history screen
@@ -12,9 +14,11 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
  */
 @SuppressWarnings("TooManyFunctions")
 class HistoryInteractor(
-    private val historyController: HistoryController
+    private val historyController: HistoryController,
+    private val metrics: MetricController
 ) : HistoryViewInteractor {
     override fun open(item: HistoryItem) {
+        metrics.track(Event.OpenSavedTab("library", "history"))
         historyController.handleOpen(item)
     }
 
