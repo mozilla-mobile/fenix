@@ -183,6 +183,8 @@ sealed class Event {
 
     object TabSettingsOpened : Event()
 
+    object RecentlyClosedTabsOpened : Event()
+
     // Interaction events with extras
 
     data class TopSiteSwipeCarousel(val page: Int) : Event() {
