@@ -19,7 +19,10 @@ import java.util.concurrent.atomic.AtomicInteger
  * the behavior of the app since all we want to do is count the inflations done.
  *
  */
-open class PerformanceInflater(val inflater: LayoutInflater, context: Context) : LayoutInflater(
+open class PerformanceInflater(
+    val inflater: LayoutInflater,
+    context: Context
+) : LayoutInflater(
     inflater,
     context
 ){
