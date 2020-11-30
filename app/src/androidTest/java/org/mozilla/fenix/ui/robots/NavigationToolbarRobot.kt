@@ -61,15 +61,7 @@ class NavigationToolbarRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
-            )
             urlBar().click()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_edit_url_view")),
-                waitingTime
-            )
             clearAddressBar().click()
             awesomeBar().check((matches(withText(containsString("")))))
             goBackButton()
