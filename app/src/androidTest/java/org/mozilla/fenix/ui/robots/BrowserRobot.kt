@@ -60,6 +60,7 @@ class BrowserRobot {
             Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_url_view")),
             waitingTime
         )
+
         runWithIdleRes(sessionLoadedIdlingResource) {
             onView(withId(R.id.mozac_browser_toolbar_url_view))
                 .check(matches(withText(containsString(url.replace("http://", "")))))
