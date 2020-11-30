@@ -1,5 +1,5 @@
 -dontobfuscate
-
+-dontoptimize
 ####################################################################################################
 # Sentry
 ####################################################################################################
@@ -120,3 +120,4 @@
 # Keep Android Lifecycle methods
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1596302
 -keep class androidx.lifecycle.** { *; }
+-keep class okhttp3.** { *; }
