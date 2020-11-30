@@ -98,10 +98,10 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
 
         fun clickOpenNewTab(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             openInNewTabButton().click()
-            mDevice.waitNotNull(
+            /*mDevice.waitNotNull(
                 Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
                 waitingTime
-            )
+            )*/
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
@@ -109,10 +109,10 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
 
         fun clickOpenPrivateTab(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             openInPrivateTabButton().click()
-            mDevice.waitNotNull(
+            /*mDevice.waitNotNull(
                 Until.findObject(By.res("org.mozilla.fenix.debug:id/tab_layout")),
                 waitingTime
-            )
+            )*/
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()

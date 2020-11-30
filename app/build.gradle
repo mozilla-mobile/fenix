@@ -100,7 +100,6 @@ android {
                     "sharedUserId": "org.mozilla.firefox.sharedID",
                     "deepLinkScheme": deepLinkSchemeValue
             ]
-            testBuildType "beta"
         }
         release releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -551,7 +550,6 @@ dependencies {
     androidTestImplementation Deps.androidx_junit
     androidTestImplementation Deps.androidx_work_testing
     androidTestImplementation Deps.mockwebserver
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
     testImplementation Deps.mozilla_support_test
     testImplementation Deps.mozilla_support_test_libstate
     testImplementation Deps.androidx_junit
