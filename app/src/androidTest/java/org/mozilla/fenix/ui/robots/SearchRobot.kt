@@ -69,9 +69,7 @@ class SearchRobot {
         selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(UiSelector()
-            .resourceId("org.mozilla.fenix.debug:id/search_engines_shortcut_button"))
-        searchEnginesShortcutButton.waitForExists(waitingTime)
+        val searchEnginesShortcutButton = onView(withId(R.id.search_engines_shortcut_button))
         searchEnginesShortcutButton.click()
     }
 

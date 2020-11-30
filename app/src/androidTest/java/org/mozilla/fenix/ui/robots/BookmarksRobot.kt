@@ -26,7 +26,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
