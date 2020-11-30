@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import org.mozilla.fenix.ext.getAndIncrementNoOverflow
 import java.util.concurrent.atomic.AtomicInteger
 
-
 /**
  * Counts the number of inflations fenix does. This class behaves only as an inflation counter since
  * it takes the `inflater` that is given by the base system. This is done in order not to change
@@ -25,7 +24,7 @@ open class PerformanceInflater(
 ) : LayoutInflater(
     inflater,
     context
-){
+) {
 
     private val sClassPrefixList = arrayOf(
         "android.widget.",
@@ -48,6 +47,7 @@ open class PerformanceInflater(
      * it hardcodes the prefix as "android.view." this means that a xml element such as
      * ImageButton will crash the app using android.view.ImageButton.
      */
+    @Suppress("EmptyCatchBlock")
     @Throws(ClassNotFoundException::class)
     override fun onCreateView(name: String?, attrs: AttributeSet?): View? {
         for (prefix in sClassPrefixList) {
@@ -57,13 +57,10 @@ open class PerformanceInflater(
                     return view
                 }
             } catch (e: ClassNotFoundException) {
-
             }
         }
         return super.onCreateView(name, attrs)
     }
-
-
 }
 
 object InflationCounter {

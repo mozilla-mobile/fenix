@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import io.mockk.every
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -18,7 +17,7 @@ import java.io.File
 @RunWith(FenixRobolectricTestRunner::class)
 class PerformanceInflaterTest {
 
-    private lateinit var perfInflater : MockInflater
+    private lateinit var perfInflater: MockInflater
 
     private val layoutNotToTest = setOf(
         "fragment_browser",
@@ -47,17 +46,17 @@ class PerformanceInflaterTest {
     }
 
     @Test
-    fun `WHEN inflating one of our resource file, the inflater should not crash`(){
+    fun `WHEN inflating one of our resource file, the inflater should not crash`() {
         val fileList = File("./src/main/res/layout").listFiles()
-        if(fileList != null){
-            for(file in fileList){
+        if (fileList != null) {
+            for (file in fileList) {
                 val layoutName = file.name.split(".")[0]
                 val layoutId = testContext.resources.getIdentifier(
                     layoutName,
                     "layout",
                     testContext.packageName
                 )
-                if(layoutId != -1 && !layoutNotToTest.contains(layoutName)){
+                if (layoutId != -1 && !layoutNotToTest.contains(layoutName)) {
                     perfInflater.inflate(layoutId, FrameLayout(testContext), true)
                 }
             }
@@ -74,7 +73,7 @@ private class MockInflater(
 ) {
 
     override fun onCreateView(name: String?, attrs: AttributeSet?): View? {
-        if(name!!.contains("fragment")) {
+        if (name!!.contains("fragment")) {
             return FrameLayout(testContext)
         }
         return super.onCreateView(name, attrs)

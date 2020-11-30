@@ -140,7 +140,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         WebExtensionPopupFeature(components.core.store, ::openPopup)
     }
 
-    private var inflater : LayoutInflater?  = null
+    private var inflater: LayoutInflater? = null
 
     private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
@@ -829,8 +829,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     override fun getSystemService(name: String): Any? {
-        if(LAYOUT_INFLATER_SERVICE == name){
-            if(inflater == null) {
+        if (LAYOUT_INFLATER_SERVICE == name) {
+            if (inflater == null) {
                 inflater = PerformanceInflater(LayoutInflater.from(baseContext).cloneInContext(this), this)
             }
             return inflater
