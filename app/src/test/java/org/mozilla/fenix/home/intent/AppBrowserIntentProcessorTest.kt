@@ -100,6 +100,7 @@ class AppBrowserIntentProcessorTest {
         }
         Assert.assertTrue(processor.process(intent, navController, out))
 
+        verify { activity.components.intentProcessors.intentProcessor }
         verify { activity.openToBrowser(BrowserDirection.FromGlobal) }
         verify { navController wasNot Called }
         verify { out wasNot Called }
@@ -116,6 +117,7 @@ class AppBrowserIntentProcessorTest {
         }
         Assert.assertTrue(processor.process(intent, navController, out))
 
+        verify { activity.components.intentProcessors.privateIntentProcessor }
         verify { activity.openToBrowser(BrowserDirection.FromGlobal) }
         verify { navController wasNot Called }
         verify { out wasNot Called }
