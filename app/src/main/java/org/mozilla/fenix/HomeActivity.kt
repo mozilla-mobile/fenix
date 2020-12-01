@@ -81,6 +81,7 @@ import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
+import org.mozilla.fenix.home.intent.AppBrowserIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
@@ -144,7 +145,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             StartSearchIntentProcessor(components.analytics.metrics),
             DeepLinkIntentProcessor(this, components.analytics.leanplumMetricsService),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
-            OpenSpecificTabIntentProcessor(this)
+            OpenSpecificTabIntentProcessor(this),
+            AppBrowserIntentProcessor(this)
         )
     }
 
