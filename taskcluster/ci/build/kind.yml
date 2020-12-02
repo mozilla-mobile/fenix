@@ -66,10 +66,10 @@ jobs:
         treeherder:
             symbol: debug(Bat)
 
-    # android-test-nightly, while still being a debug build, is meant to be signed with the nightly
-    # key. The Firebase testing infrastructure requires both the androidTest APK and the APK under
-    # test to be signed with the same key. Thus, the nightly APK being signed with nightly means
-    # we need an androidTest APK with the same signature.
+    # android-test-nightly and android-test-beta, while still being debug builds, are meant to be signed
+    # with the nightly/beta key. The Firebase testing infrastructure requires both the androidTest APK
+    # and the APK under test to be signed with the same key. Thus, the nightly APK being signed with
+    # nightly means we need an androidTest APK with the same signature.
     #
     # TODO: See if we can tweak the signing kind to make 2 signing jobs out of a single `android-test`
     # job.
@@ -83,6 +83,18 @@ jobs:
             path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
         treeherder:
             symbol: nightly(Bat)
+
+    android-test-beta:
+        run:
+            gradle-build-type: androidTest
+            test-build-type: beta
+        run-on-tasks-for: [github-push] # We want this on push so that we detect problem before triggering a new beta
+        disable-optimization: true
+        apk-artifact-template:
+            # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "debug"
+            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
+        treeherder:
+            symbol: beta(Bat)
 
     nightly-simulation:
         attributes:
