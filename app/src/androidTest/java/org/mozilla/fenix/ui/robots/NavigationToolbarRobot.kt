@@ -33,6 +33,7 @@ import org.hamcrest.CoreMatchers.not
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreEqualTo
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreGreaterThan
 import org.mozilla.fenix.helpers.click
@@ -61,7 +62,15 @@ class NavigationToolbarRobot {
         val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.waitNotNull(
+                    Until.findObject(By.res("$packageName:id/toolbar")),
+                    waitingTime
+            )
             urlBar().click()
+            mDevice.waitNotNull(
+                    Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+                    waitingTime
+            )
             clearAddressBar().click()
             awesomeBar().check((matches(withText(containsString("")))))
             goBackButton()
@@ -76,8 +85,14 @@ class NavigationToolbarRobot {
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
-            onView(withId(R.id.toolbar))
-                    .perform(ViewActions.click())
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")),
+            waitingTime
+            )
+            urlBar().click()
+            mDevice.waitNotNull(
+                    Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+                    waitingTime
+            )
 
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 
@@ -97,10 +112,7 @@ class NavigationToolbarRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_menu")),
-                waitingTime
-            )
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_menu")), waitingTime)
             threeDotButton().click()
 
             ThreeDotMenuMainRobot().interact()
@@ -122,11 +134,7 @@ class NavigationToolbarRobot {
             interact: BrowserRobot.() -> Unit
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-            mDevice.waitNotNull(
-                Until.findObject(By.res("org.mozilla.fenix.debug:id/toolbar")),
-                waitingTime
-            )
-
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/toolbar")), waitingTime)
             urlBar().click()
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())
 

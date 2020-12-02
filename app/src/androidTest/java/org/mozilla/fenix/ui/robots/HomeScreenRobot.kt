@@ -50,6 +50,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -367,6 +368,11 @@ class HomeScreenRobot {
             mDevice.waitForIdle()
 
             tabsCounter().click()
+
+            mDevice.waitNotNull(
+                    Until.findObject(By.res("$packageName:id/tab_layout")),
+                    waitingTime
+            )
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
