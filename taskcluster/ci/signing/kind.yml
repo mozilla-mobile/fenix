@@ -20,7 +20,7 @@ job-template:
     description: Sign Fenix
     worker-type:
         by-build-type:
-            (nightly|beta|release|android-test-nightly|android-test-beta):
+            (nightly|beta|release|android-test-nightly):
                 by-level:
                     '3': signing
                     default: dep-signing
@@ -49,7 +49,7 @@ job-template:
             # No test job runs on push against this build type. Although we do want nightly-simulation
             # signed to use it in the gecko trees.
             # We want beta on push so that we detect problem before shipping it
-            (nightly-simulation|beta|android-test-beta): [github-push]
+            (nightly-simulation|beta-firebase|android-test-beta): [github-push]
             default: []
     treeherder:
         job-symbol:
