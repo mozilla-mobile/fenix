@@ -126,6 +126,7 @@ jobs:
         filter-incomplete-translations: true
         run:
             gradle-build-type: beta
+        run-on-tasks-for: [github-push] # We want this on push so that we detect problem before triggering a new beta
         treeherder:
             symbol: beta(B)
 

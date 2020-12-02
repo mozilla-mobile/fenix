@@ -48,7 +48,8 @@ job-template:
         by-build-type:
             # No test job runs on push against this build type. Although we do want nightly-simulation
             # signed to use it in the gecko trees.
-            nightly-simulation: [github-push]
+            # We want beta on push so that we detect problem before shipping it
+            (nightly-simulation|beta|android-test-beta): [github-push]
             default: []
     treeherder:
         job-symbol:
