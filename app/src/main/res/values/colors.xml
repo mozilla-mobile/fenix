@@ -284,6 +284,7 @@
     <color name="top_site_pager_dot">@color/photonLightGrey30</color>
     <color name="top_site_pager_dot_selected">@color/light_grey_50</color>
     <color name="top_site_pin_icon_background_tint">@color/ink_20</color>
+    <color name="top_site_loading_in_progress_cover">#7D7D7D</color>
 
     <!-- Synced tabs colors-->
     <color name="synced_tabs_separator">@color/synced_tabs_separator_light_theme</color>

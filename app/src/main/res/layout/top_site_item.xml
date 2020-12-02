@@ -21,6 +21,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/favicon_cover"
+        android:layout_height="32dp"
+        android:visibility="visible"
+        android:layout_width="32dp"
+        android:layout_gravity="center"
+        android:background="@color/top_site_loading_in_progress_cover"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="@+id/favicon_image"
+        app:layout_constraintEnd_toEndOf="@+id/favicon_image"
+        app:layout_constraintStart_toStartOf="@+id/favicon_image"
+        app:layout_constraintTop_toTopOf="@+id/favicon_image" />
+
     <TextView
         android:id="@+id/top_site_title"
         android:layout_width="64dp"

@@ -10,7 +10,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupWindow
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import kotlinx.android.synthetic.main.top_site_item.*
+import kotlinx.android.synthetic.main.top_site_item.favicon_cover
+import kotlinx.android.synthetic.main.top_site_item.favicon_image
+import kotlinx.android.synthetic.main.top_site_item.pin_indicator
+import kotlinx.android.synthetic.main.top_site_item.top_site_item
+import kotlinx.android.synthetic.main.top_site_item.top_site_title
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import mozilla.components.feature.top.sites.TopSite
@@ -71,16 +75,32 @@ class TopSiteItemViewHolder(
 
         when (topSite.url) {
             SupportUtils.POCKET_TRENDING_URL -> {
-                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_pocket))
+                itemView.context.components.core.icons.loadIntoView(
+                    view = favicon_image,
+                    localImage = getDrawable(itemView.context, R.drawable.ic_pocket),
+                    iconCover = favicon_cover
+                )
             }
             SupportUtils.BAIDU_URL -> {
-                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_baidu))
+                itemView.context.components.core.icons.loadIntoView(
+                    view = favicon_image,
+                    localImage = getDrawable(itemView.context, R.drawable.ic_baidu),
+                    iconCover = favicon_cover
+                )
             }
             SupportUtils.JD_URL -> {
-                favicon_image.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_jd))
+                itemView.context.components.core.icons.loadIntoView(
+                    view = favicon_image,
+                    localImage = getDrawable(itemView.context, R.drawable.ic_jd),
+                    iconCover = favicon_cover
+                )
             }
             else -> {
-                itemView.context.components.core.icons.loadIntoView(favicon_image, topSite.url)
+                itemView.context.components.core.icons.loadIntoView(
+                    view = favicon_image,
+                    url = topSite.url,
+                    iconCover = favicon_cover
+                )
             }
         }
 
