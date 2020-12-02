@@ -26,6 +26,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
@@ -34,6 +35,7 @@ import org.junit.Assert.assertEquals
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -182,6 +184,7 @@ class BookmarksRobot {
     }
 
     class Transition {
+
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
             closeButton().click()
 
@@ -207,7 +210,7 @@ class BookmarksRobot {
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            // mDevice.waitNotNull(Until.findObject(res("org.mozilla.fenix.debug:id/overflow_menu")))
+            mDevice.waitNotNull(Until.findObject(res("$packageName:id/overflow_menu")))
             threeDotMenu().click()
 
             ThreeDotMenuBookmarksRobot().interact()
@@ -215,7 +218,7 @@ class BookmarksRobot {
         }
 
         fun openThreeDotMenu(bookmarkTitle: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            // mDevice.waitNotNull(Until.findObject(res("org.mozilla.fenix.debug:id/overflow_menu")))
+            mDevice.waitNotNull(Until.findObject(res("$packageName:id/overflow_menu")))
             threeDotMenu(bookmarkTitle).click()
 
             ThreeDotMenuBookmarksRobot().interact()
