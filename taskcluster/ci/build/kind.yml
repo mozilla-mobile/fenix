@@ -61,7 +61,7 @@ jobs:
             gradle-build-type: beta
             test-build-type: beta
         treeherder:
-            symbol: beta(Bd)
+            symbol: beta(Bf)
 
     android-test-debug:
         attributes:

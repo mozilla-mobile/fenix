@@ -55,6 +55,7 @@ job-template:
         job-symbol:
             by-build-type:
                 android-test.+: Bats
+                beta-firebase: Bfs
                 default: Bs
         kind: build
         platform: android-all/opt
