@@ -89,8 +89,8 @@ class BrowserRobot {
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
         mDevice.waitNotNull(
-            Until.findObject(By.res("org.mozilla.fenix.debug:id/engineView")),
-            waitingTime
+                Until.findObject(By.res("$packageName:id/engineView")),
+                waitingTime
         )
 
         runWithIdleRes(sessionLoadedIdlingResource) {
