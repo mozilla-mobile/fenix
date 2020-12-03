@@ -95,8 +95,8 @@ jobs:
 
     android-test-beta:
         apk-artifact-template:
-            # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "debug"
-            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/debug/{fileName}'
+            # 2 differences here: "androidTest/" is added and "{gradle_build_type}" is forced to "beta"
+            path: '/builds/worker/checkouts/src/app/build/outputs/apk/androidTest/beta/{fileName}'
         disable-optimization: true
         run:
             gradle-build-type: androidTest
