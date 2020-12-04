@@ -72,8 +72,8 @@ jobs:
     x86-beta:
         attributes:
             build-type: beta
-            code-review: true
-            retrigger: true
+        description: Test Fenix
+        run-on-tasks-for: [github-push]
         dependencies:
             signing: signing-beta-firebase
             signing-android-test: signing-android-test-beta
@@ -89,10 +89,5 @@ jobs:
                   json: true
         using: run-commands
         use-caches: false
-        description: Test Fenix
-        run-on-tasks-for: [github-push]
-        run:
-            commands:
-                - [automation/taskcluster/androidTest/ui-test.sh, x86, app.apk, android-test.apk, '50']
         treeherder:
             symbol: debug(ui-test-x86)
