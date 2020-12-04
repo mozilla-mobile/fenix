@@ -184,7 +184,6 @@ class BookmarksRobot {
     }
 
     class Transition {
-
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
             closeButton().click()
 
