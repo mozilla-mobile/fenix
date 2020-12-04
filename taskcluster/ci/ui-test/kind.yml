@@ -81,9 +81,9 @@ jobs:
                 - [automation/taskcluster/androidTest/ui-test.sh, x86-beta-tests, app.apk, android-test.apk, '50']
             secrets:
                 - name: project/mobile/fenix/firebase
-                key: firebaseToken
-                path: .firebase_token.json
-                json: true
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
         using: run-commands
         use-caches: false
         description: Test Fenix
