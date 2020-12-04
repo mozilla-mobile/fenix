@@ -76,4 +76,4 @@ jobs:
             commands:
                 - [automation/taskcluster/androidTest/ui-test.sh, x86-beta-tests, app.apk, android-test.apk, '50']
         treeherder:
-            symbol: debug(ui-test-x86)
+            symbol: debug(ui-test-x86-beta)
