@@ -18,17 +18,6 @@ job-defaults:
             signing: signing-debug
             signing-android-test: signing-android-test-debug
     include-pull-request-number: true
-    run:
-        commands:
-            - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
-            - [wget, {artifact-reference: '<signing-android-test/public/build/noarch/target.apk>'}, '-O', android-test.apk]
-        secrets:
-            - name: project/mobile/fenix/firebase
-              key: firebaseToken
-              path: .firebase_token.json
-              json: true
-        using: run-commands
-        use-caches: false
     treeherder:
         kind: test
         platform: 'ui-test/opt'
@@ -52,7 +41,16 @@ jobs:
         run-on-git-branches: [master]
         run:
             commands:
+                - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signing-android-test/public/build/noarch/target.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, x86, app.apk, android-test.apk, '50']
+            secrets:
+                - name: project/mobile/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+        using: run-commands
+        use-caches: false
         treeherder:
             symbol: debug(ui-test-x86)
     screenshots-x86:
@@ -63,12 +61,19 @@ jobs:
         run-on-git-branches: [master]
         run:
             commands:
+                - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signing-android-test/public/build/noarch/target.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, x86-screenshots-tests, app.apk, android-test.apk, '-1']
+            secrets:
+                - name: project/mobile/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
         treeherder:
             symbol: debug(screenshots-x86)
     x86-beta:
         attributes:
-            build-type: debug
+            build-type: beta
             code-review: true
             retrigger: true
         dependencies:
@@ -76,8 +81,8 @@ jobs:
             signing-android-test: signing-android-test-beta
         run:
             commands:
-                - [wget, {artifact-reference: '<signing-beta-firebase/public/build/x86/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signing-android-test-beta/public/build/noarch/target.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signing/public/build/x86/target.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signing-android-test/public/build/noarch/target.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, x86-beta-tests, app.apk, android-test.apk, '50']
             secrets:
                 - name: project/mobile/fenix/firebase
@@ -93,4 +98,3 @@ jobs:
                 - [automation/taskcluster/androidTest/ui-test.sh, x86, app.apk, android-test.apk, '50']
         treeherder:
             symbol: debug(ui-test-x86)
-

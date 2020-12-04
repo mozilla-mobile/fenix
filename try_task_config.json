@@ -1,0 +1,7 @@
+{
+    "parameters": {
+        "optimize_target_tasks": true,
+        "tasks_for": "github-push"
+    },
+    "version": 2
+}
