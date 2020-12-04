@@ -121,7 +121,7 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
 }
 
 private fun assertDownloadPrompt() {
-        mDevice.waitNotNull(Until.findObjects(By.res("$packageName:id/download_button")))
+    mDevice.waitNotNull(Until.findObjects(By.res("$packageName:id/download_button")))
 }
 
 private fun assertDownloadNotificationPopup() {

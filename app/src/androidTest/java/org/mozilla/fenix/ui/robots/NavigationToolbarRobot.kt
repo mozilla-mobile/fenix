@@ -63,13 +63,13 @@ class NavigationToolbarRobot {
 
         fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.waitNotNull(
-                    Until.findObject(By.res("$packageName:id/toolbar")),
-                    waitingTime
+                Until.findObject(By.res("$packageName:id/toolbar")),
+                waitingTime
             )
             urlBar().click()
             mDevice.waitNotNull(
-                    Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-                    waitingTime
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+                waitingTime
             )
             clearAddressBar().click()
             awesomeBar().check((matches(withText(containsString("")))))
@@ -90,8 +90,8 @@ class NavigationToolbarRobot {
             )
             urlBar().click()
             mDevice.waitNotNull(
-                    Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-                    waitingTime
+                Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
+                waitingTime
             )
 
             awesomeBar().perform(replaceText(url.toString()), pressImeActionButton())

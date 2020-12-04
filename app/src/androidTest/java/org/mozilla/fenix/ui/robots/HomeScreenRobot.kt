@@ -370,8 +370,8 @@ class HomeScreenRobot {
             tabsCounter().click()
 
             mDevice.waitNotNull(
-                    Until.findObject(By.res("$packageName:id/tab_layout")),
-                    waitingTime
+                Until.findObject(By.res("$packageName:id/tab_layout")),
+                waitingTime
             )
 
             TabDrawerRobot().interact()

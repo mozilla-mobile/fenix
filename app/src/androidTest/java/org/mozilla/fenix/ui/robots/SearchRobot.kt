@@ -71,7 +71,7 @@ class SearchRobot {
 
     fun clickSearchEngineShortcutButton() {
         val searchEnginesShortcutButton = mDevice.findObject(UiSelector()
-                .resourceId("$packageName:id/search_engines_shortcut_button"))
+            .resourceId("$packageName:id/search_engines_shortcut_button"))
         searchEnginesShortcutButton.waitForExists(waitingTime)
         searchEnginesShortcutButton.click()
     }
