@@ -31,8 +31,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -95,6 +94,7 @@ import org.mozilla.fenix.perf.Performance
 import org.mozilla.fenix.perf.PerformanceInflater
 import org.mozilla.fenix.perf.ProfilerMarkers
 import org.mozilla.fenix.perf.StartupTimeline
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
 import org.mozilla.fenix.settings.SettingsFragmentDirections
@@ -145,7 +145,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var inflater: LayoutInflater? = null
 
+    private lateinit var navGraphJob : Deferred<Unit>
+
     private val navHost by lazy {
+        loadNavFragment()
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
@@ -188,6 +191,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
         setContentView(R.layout.activity_home)
+
+        navGraphJob = createNavGraphAsync()
 
         // Must be after we set the content view
         if (isVisuallyComplete) {
@@ -254,7 +259,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.core.requestInterceptor.setNavigationController(navHost.navController)
 
+        loadNavFragment()
+
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
+    }
+
+    private fun createNavGraphAsync() = MainScope().async(Dispatchers.Default) {
+        val navHostFragment = container as NavHostFragment
+        val inflater = navHostFragment.navController.navInflater
+        val graph = inflater.inflate(R.navigation.nav_graph)
+        navHostFragment.navController.graph = graph
     }
 
     protected open fun startupTelemetryOnCreateCalled(
@@ -277,6 +291,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private fun startupTelemetryOnRestartCalled() {
         components.appStartupTelemetry.onHomeActivityOnRestart(rootContainer)
+    }
+
+    private fun loadNavFragment() {
+        if(!navGraphJob.isCompleted){
+            runBlockingIncrement { navGraphJob.await() }
+        }
     }
 
     @CallSuper
