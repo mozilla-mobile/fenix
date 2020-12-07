@@ -36,6 +36,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.ext.directionsEq
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
@@ -86,7 +87,6 @@ class DefaultQuickSettingsControllerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-
         tab = createTab("https://mozilla.org")
         browserStore = BrowserStore(BrowserState(tabs = listOf(tab)))
         sitePermissions = SitePermissions(origin = "", savedAt = 123)
@@ -183,12 +183,12 @@ class DefaultQuickSettingsControllerTest {
 
         every { websitePermission.phoneFeature } returns PhoneFeature.CAMERA
         every { websitePermission.isBlockedByAndroid } returns false
-        every { navController.navigate(any<NavDirections>()) } just Runs
+        every { navController.navigateBlockingForAsyncNavGraph(any<NavDirections>()) } just Runs
 
         invalidSitePermissionsController.handlePermissionToggled(websitePermission)
 
         verify {
-            navController.navigate(directionsEq(
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(
                 QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(PhoneFeature.CAMERA)
             ))
         }

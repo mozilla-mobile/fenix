@@ -21,6 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -64,6 +65,6 @@ class OnboardingManualSignInViewHolderTest {
         OnboardingManualSignInViewHolder(view)
         view.fxa_sign_in_button.performClick()
 
-        verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(HomeFragmentDirections.actionGlobalTurnOnSync()) }
     }
 }

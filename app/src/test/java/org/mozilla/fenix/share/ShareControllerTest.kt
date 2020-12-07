@@ -45,6 +45,7 @@ import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
 @RunWith(FenixRobolectricTestRunner::class)

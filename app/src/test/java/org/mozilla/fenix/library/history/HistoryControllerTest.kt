@@ -27,6 +27,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.directionsEq
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 // Robolectric needed for `onShareItem()`
@@ -199,7 +200,7 @@ class HistoryControllerTest {
         controller.handleShare(historyItem)
 
         verify {
-            navController.navigate(directionsEq(
+            navController.navigateBlockingForAsyncNavGraph(directionsEq(
                 HistoryFragmentDirections.actionGlobalShareFragment(
                     data = arrayOf(ShareData(url = historyItem.url, title = historyItem.title))
                 )
