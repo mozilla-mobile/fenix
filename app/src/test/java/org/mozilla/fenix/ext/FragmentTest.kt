@@ -48,21 +48,21 @@ class FragmentTest {
 
     @Test
     fun `Test nav fun with ID and directions`() {
-        every { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, null)) } just Runs
+        every { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, null)) } just Runs
 
         mockFragment.nav(mockId, navDirections)
         verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, null)) }
+        verify { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, null)) }
         confirmVerified(mockFragment)
     }
 
     @Test
     fun `Test nav fun with ID, directions, and options`() {
-        every { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, mockOptions)) } just Runs
+        every { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, mockOptions)) } just Runs
 
         mockFragment.nav(mockId, navDirections, mockOptions)
         verify { (NavHostFragment.findNavController(mockFragment).currentDestination) }
-        verify { (NavHostFragment.findNavController(mockFragment).navigate(navDirections, mockOptions)) }
+        verify { (NavHostFragment.findNavController(mockFragment).navigateBlockingForAsyncNavGraph(navDirections, mockOptions)) }
         confirmVerified(mockFragment)
     }
 }

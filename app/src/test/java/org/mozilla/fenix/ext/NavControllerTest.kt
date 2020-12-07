@@ -19,8 +19,11 @@ import io.mockk.verify
 import io.sentry.Sentry
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.components.isSentryEnabled
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class)
 class NavControllerTest {
 
     private val currentDestId = 4

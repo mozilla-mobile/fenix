@@ -10,17 +10,25 @@ import androidx.navigation.NavController
 import io.mockk.Called
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.NavGraphDirections
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class CrashReporterIntentProcessorTest {
 
+    private lateinit var navController: NavController
+
+    @Before
+    fun setup() {
+        navController = mockk(relaxed = true)
+    }
+
     @Test
     fun `do not process blank intents`() {
-        val navController: NavController = mockk()
         val out: Intent = mockk()
         CrashReporterIntentProcessor().process(Intent(), navController, out)
 
@@ -30,14 +38,13 @@ class CrashReporterIntentProcessorTest {
 
     @Test
     fun `process crash intents`() {
-        val navController: NavController = mockk(relaxed = true)
         val out: Intent = mockk()
         val intent = Intent().apply {
             putExtra("mozilla.components.lib.crash.CRASH", mockk<Bundle>())
         }
         CrashReporterIntentProcessor().process(intent, navController, out)
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalCrashReporter(intent)) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalCrashReporter(intent)) }
         verify { out wasNot Called }
     }
 }

@@ -24,6 +24,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 
@@ -40,7 +41,6 @@ class LoginsSyncPreferenceViewTest {
     fun setup() {
         MockKAnnotations.init(this)
         mockkConstructor(SyncEnginesStorage::class)
-
         accountObserver = slot()
         clickListener = slot()
         val context = mockk<Context> {
@@ -72,7 +72,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
             )
         }
@@ -97,7 +97,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
             )
         }
@@ -113,7 +113,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }
@@ -132,7 +132,7 @@ class LoginsSyncPreferenceViewTest {
         assertTrue(clickListener.captured.onPreferenceClick(syncLoginsPreference))
 
         verify {
-            navController.navigate(
+            navController.navigateBlockingForAsyncNavGraph(
                 SavedLoginsAuthFragmentDirections.actionGlobalAccountSettingsFragment()
             )
         }

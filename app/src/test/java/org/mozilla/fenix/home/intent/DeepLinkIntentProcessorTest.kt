@@ -26,6 +26,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.SearchWidgetCreator
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -80,7 +81,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("home"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalHome()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHome()) }
         verify { out wasNot Called }
     }
 
@@ -88,7 +89,7 @@ class DeepLinkIntentProcessorTest {
     fun `process urls_bookmarks deep link`() {
         assertTrue(processor.process(testIntent("urls_bookmarks"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalBookmarkFragment(BookmarkRoot.Root.id)) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalBookmarkFragment(BookmarkRoot.Root.id)) }
         verify { out wasNot Called }
     }
 
@@ -96,7 +97,7 @@ class DeepLinkIntentProcessorTest {
     fun `process urls_history deep link`() {
         assertTrue(processor.process(testIntent("urls_history"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalHistoryFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHistoryFragment()) }
         verify { out wasNot Called }
     }
 
@@ -104,7 +105,7 @@ class DeepLinkIntentProcessorTest {
     fun `process home_collections deep link`() {
         assertTrue(processor.process(testIntent("home_collections"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalHome()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHome()) }
         verify { out wasNot Called }
     }
 
@@ -113,7 +114,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("settings"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalSettingsFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalSettingsFragment()) }
         verify { out wasNot Called }
     }
 
@@ -122,7 +123,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("turn_on_sync"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalTurnOnSync()) }
         verify { out wasNot Called }
     }
 
@@ -131,7 +132,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("settings_search_engine"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalSearchEngineFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalSearchEngineFragment()) }
         verify { out wasNot Called }
     }
 
@@ -140,7 +141,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("settings_accessibility"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalAccessibilityFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAccessibilityFragment()) }
         verify { out wasNot Called }
     }
 
@@ -149,7 +150,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("settings_delete_browsing_data"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalDeleteBrowsingDataFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalDeleteBrowsingDataFragment()) }
         verify { out wasNot Called }
     }
 
@@ -157,7 +158,7 @@ class DeepLinkIntentProcessorTest {
     fun `process settings_addon_manager deep link`() {
         assertTrue(processor.process(testIntent("settings_addon_manager"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalAddonsManagementFragment()) }
         verify { out wasNot Called }
     }
 
@@ -165,7 +166,7 @@ class DeepLinkIntentProcessorTest {
     fun `process settings_logins deep link`() {
         assertTrue(processor.process(testIntent("settings_logins"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalSavedLoginsAuthFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalSavedLoginsAuthFragment()) }
         verify { out wasNot Called }
     }
 
@@ -173,7 +174,7 @@ class DeepLinkIntentProcessorTest {
     fun `process settings_tracking_protection deep link`() {
         assertTrue(processor.process(testIntent("settings_tracking_protection"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalTrackingProtectionFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalTrackingProtectionFragment()) }
         verify { out wasNot Called }
     }
 
@@ -181,7 +182,7 @@ class DeepLinkIntentProcessorTest {
     fun `process settings_privacy deep link`() {
         assertTrue(processor.process(testIntent("settings_privacy"), navController, out))
 
-        verify { navController.navigate(NavGraphDirections.actionGlobalSettingsFragment()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalSettingsFragment()) }
         verify { out wasNot Called }
     }
 
@@ -190,7 +191,7 @@ class DeepLinkIntentProcessorTest {
         assertTrue(processor.process(testIntent("enable_private_browsing"), navController, out))
 
         verify { activity.browsingModeManager.mode = BrowsingMode.Private }
-        verify { navController.navigate(NavGraphDirections.actionGlobalHome()) }
+        verify { navController.navigateBlockingForAsyncNavGraph(NavGraphDirections.actionGlobalHome()) }
         verify { out wasNot Called }
     }
 

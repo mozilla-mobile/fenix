@@ -26,13 +26,17 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavGraphTestRule
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsUtils
+import org.mozilla.fenix.ext.navigateBlockingForAsyncNavGraph
+
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
 import org.mozilla.fenix.settings.SupportUtils
@@ -55,13 +59,14 @@ class SearchDialogControllerTest {
 
     private lateinit var controller: SearchDialogController
 
+    @get:Rule
+    val navGraphTestRule = NavGraphTestRule()
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
-
         val browserStore = BrowserStore()
-
         every { store.state.tabId } returns "test-tab-id"
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
         every { sessionManager.select(any()) } just Runs
@@ -155,7 +160,7 @@ class SearchDialogControllerTest {
 
         controller.handleUrlCommitted(url)
 
-        verify { navController.navigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test
@@ -304,7 +309,7 @@ class SearchDialogControllerTest {
 
         controller.handleClickSearchEngineSettings()
 
-        verify { navController.navigate(directions) }
+        verify { navController.navigateBlockingForAsyncNavGraph(directions) }
     }
 
     @Test
