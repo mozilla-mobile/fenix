@@ -68,7 +68,7 @@ jobs:
             symbol: debug(screenshots-x86)
     x86-beta:
         attributes:
-            build-type: beta
+            build-type: beta-firebase
         description: Test Fenix
         run-on-tasks-for: [github-push]
         dependencies:
@@ -78,4 +78,4 @@ jobs:
             commands:
                 - [automation/taskcluster/androidTest/ui-test.sh, x86-beta-tests, app.apk, android-test.apk, '50']
         treeherder:
-            symbol: debug(ui-test-x86-beta)
+            symbol: beta(ui-test-x86-beta)
