@@ -4,6 +4,14 @@
 
 package org.mozilla.fenix.perf
 
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import kotlinx.android.synthetic.main.activity_home.*
 import mozilla.components.support.base.utils.LazyComponent
 import org.junit.Assert.assertEquals
@@ -11,7 +19,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.perf.LazyMonitored
 
 // BEFORE INCREASING THESE VALUES, PLEASE CONSULT WITH THE PERF TEAM.
 private const val EXPECTED_SUPPRESSION_COUNT = 11
