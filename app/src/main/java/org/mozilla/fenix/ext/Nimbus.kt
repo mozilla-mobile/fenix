@@ -5,6 +5,8 @@
 package org.mozilla.fenix.ext
 
 import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.FeatureFlags
 
 /**
  * Gets the branch of the given `experimentId` and transforms it with given closure.
@@ -14,8 +16,20 @@ import mozilla.components.service.nimbus.NimbusApi
  * If we're not enrolled in the experiment, or the experiment is not valid then the transform
  * is passed a `null`.
  */
-fun <T> NimbusApi.withExperiment(experimentId: String, transform: (String?) -> T) =
-    this.getExperimentBranch(experimentId).let(transform)
+@Suppress("TooGenericExceptionCaught")
+fun <T> NimbusApi.withExperiment(experimentId: String, transform: (String?) -> T): T {
+    val branch = if (FeatureFlags.nimbusExperiments) {
+        try {
+            getExperimentBranch(experimentId)
+        } catch (e: Throwable) {
+            Logger.error("Failed to getExperimentBranch($experimentId)", e)
+            null
+        }
+    } else {
+        null
+    }
+    return transform(branch)
+}
 
 /**
  * The degenerate case of `withExperiment(String, (String?) -> T))`, with an identity transform.
@@ -23,4 +37,6 @@ fun <T> NimbusApi.withExperiment(experimentId: String, transform: (String?) -> T
  * Short-hand for `mozilla.components.service.nimbus.NimbusApi.getExperimentBranch`.
  */
 fun NimbusApi.withExperiment(experimentId: String) =
-    this.getExperimentBranch(experimentId)
+    this.withExperiment(experimentId, ::identity)
+
+private fun <T> identity(value: T) = value
